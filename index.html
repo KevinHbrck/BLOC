@@ -135,11 +135,11 @@ h1,h2,h3{ margin:0 0 4px; }
 
 label{ display:block; font-size:13px; color:var(--text-dim); margin:14px 0 6px; }
 label:first-child{ margin-top:0; }
-input[type="text"], input[type="number"]{
+input[type="text"], input[type="number"], select{
   width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border);
   background:var(--surface-2); color:var(--text); font-size:16px; outline:none;
 }
-input:focus{ border-color:var(--accent); }
+input:focus, select:focus{ border-color:var(--accent); }
 .row{ display:flex; gap:10px; }
 .row > *{ flex:1; }
 .numrow{ display:flex; align-items:center; gap:10px; }
@@ -303,7 +303,7 @@ function defaultDB(){
   return {
     blocks: [],
     workouts: [],
-    settings: { theme:"system", sound:true, soundStyle:"classic", voice:false, vibration:true, keepAwake:true, countIn:true, volume:0.6 }
+    settings: { theme:"system", sound:true, soundStyle:"classic", voice:false, voiceStyle:"standard", voiceURI:"", vibration:true, keepAwake:true, countIn:true, volume:0.6 }
   };
 }
 
@@ -346,8 +346,63 @@ var SOUND_STYLES = {
     blockrest:[{f:880,d:0,dur:180,v:0.75,type:"triangle"}],
     prep:[{f:880,d:0,dur:180,v:0.75,type:"triangle"}],
     done:[{f:1046,d:0,dur:120,v:0.85,type:"triangle"},{f:1318,d:120,dur:120,v:0.85,type:"triangle"},{f:1568,d:240,dur:220,v:0.95,type:"triangle"}]
+  },
+  digital: { label:"Digital",
+    tick:[{f:1800,d:0,dur:50,v:0.35,type:"sawtooth"}],
+    work:[{f:900,d:0,dur:80,v:0.8,type:"sawtooth"},{f:1200,d:90,dur:80,v:0.6,type:"sawtooth"}],
+    rest:[{f:600,d:0,dur:100,v:0.6,type:"sawtooth"}],
+    blockrest:[{f:700,d:0,dur:80,v:0.6,type:"sawtooth"},{f:500,d:90,dur:80,v:0.6,type:"sawtooth"}],
+    prep:[{f:700,d:0,dur:80,v:0.6,type:"sawtooth"},{f:500,d:90,dur:80,v:0.6,type:"sawtooth"}],
+    done:[{f:900,d:0,dur:70,v:0.7,type:"sawtooth"},{f:1200,d:90,dur:70,v:0.7,type:"sawtooth"},{f:1500,d:180,dur:70,v:0.7,type:"sawtooth"},{f:1800,d:270,dur:160,v:0.8,type:"sawtooth"}]
+  },
+  glocke: { label:"Glocke",
+    tick:[{f:1500,d:0,dur:120,v:0.3,type:"triangle"}],
+    work:[{f:659,d:0,dur:500,v:0.7,type:"triangle"},{f:988,d:0,dur:500,v:0.35,type:"triangle"}],
+    rest:[{f:494,d:0,dur:500,v:0.55,type:"triangle"},{f:740,d:0,dur:500,v:0.28,type:"triangle"}],
+    blockrest:[{f:587,d:0,dur:500,v:0.55,type:"triangle"},{f:880,d:0,dur:500,v:0.28,type:"triangle"}],
+    prep:[{f:587,d:0,dur:500,v:0.55,type:"triangle"},{f:880,d:0,dur:500,v:0.28,type:"triangle"}],
+    done:[{f:659,d:0,dur:400,v:0.6,type:"triangle"},{f:988,d:0,dur:400,v:0.3,type:"triangle"},{f:880,d:350,dur:600,v:0.6,type:"triangle"},{f:1319,d:350,dur:600,v:0.3,type:"triangle"}]
+  },
+  perkussiv: { label:"Perkussiv",
+    tick:[{f:1200,d:0,dur:40,v:0.4,type:"square"}],
+    work:[{f:800,d:0,dur:50,v:0.9,type:"square"},{f:800,d:80,dur:50,v:0.7,type:"square"},{f:800,d:160,dur:50,v:0.5,type:"square"}],
+    rest:[{f:500,d:0,dur:60,v:0.6,type:"square"}],
+    blockrest:[{f:600,d:0,dur:50,v:0.6,type:"square"},{f:600,d:80,dur:50,v:0.6,type:"square"}],
+    prep:[{f:600,d:0,dur:50,v:0.6,type:"square"},{f:600,d:80,dur:50,v:0.6,type:"square"}],
+    done:[{f:800,d:0,dur:60,v:0.7,type:"square"},{f:800,d:90,dur:60,v:0.7,type:"square"},{f:1000,d:180,dur:60,v:0.7,type:"square"},{f:1000,d:270,dur:200,v:0.8,type:"square"}]
   }
 };
+
+/* Sprachansage-Varianten: je Stil eine Funktion pro Phase, die den anzusagenden Text liefert */
+function pickPhrase(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+var VOICE_STYLES = {
+  kurz: { label:"Kurz",
+    prep:function(){ return "Los"; },
+    work:function(){ return ""; },
+    rest:function(){ return ""; },
+    blockrest:function(){ return ""; },
+    done:function(){ return "Fertig"; }
+  },
+  standard: { label:"Standard",
+    prep:function(step){ return "Los geht's" + (step.blockName? ". " + step.blockName : ""); },
+    work:function(step){ return step.blockName || "Arbeit"; },
+    rest:function(){ return "Pause"; },
+    blockrest:function(step){ return "Blockpause" + (step.blockName? ". Als nächstes " + step.blockName : ""); },
+    done:function(){ return "Workout geschafft"; }
+  },
+  motivierend: { label:"Motivierend",
+    prep:function(step){ var bn = step.blockName? ". " + step.blockName : ""; return pickPhrase(["Bereit machen"+bn,"Auf die Plätze, fertig, los"+bn,"Gleich geht's los"+bn]); },
+    work:function(step){ var bn = step.blockName || ""; return pickPhrase(["Los geht's, "+bn,"Auf geht's, "+bn,"Dran bleiben, "+bn,"Jetzt zeigen, "+bn]); },
+    rest:function(){ return pickPhrase(["Kurz verschnaufen","Gut gemacht, kurze Pause","Pause, gleich weiter","Durchatmen"]); },
+    blockrest:function(step){ return "Nächster Block" + (step.blockName? ": " + step.blockName : "") + ". Du schaffst das!"; },
+    done:function(){ return pickPhrase(["Super gemacht, Workout geschafft!","Stark! Du hast es geschafft!","Klasse Leistung, fertig!","Geschafft, gut gemacht!"]); }
+  }
+};
+function announceText(kind, step){
+  var style = VOICE_STYLES[state.db.settings.voiceStyle] || VOICE_STYLES.standard;
+  var fn = style[kind];
+  return fn ? fn(step) : "";
+}
 
 function loadDB(){
   try{
@@ -699,6 +754,7 @@ function bindSteppers(root, onChange){
       input.value = clamp(parseInt(input.value)||min, min, max);
       onChange();
     });
+    input.addEventListener("focus", function(){ input.select(); });
   });
 }
 
@@ -833,9 +889,18 @@ function renderSettings(){
       toggleRow("f-sound","Ton", "Signaltöne bei Phasenwechsel", s.sound)+
       '<div class="range-row"><div class="label" style="margin-bottom:10px;">Klang</div><div class="style-pick">'+
         styleBtn("classic","Klassisch")+styleBtn("doppel","Doppelton")+styleBtn("sanft","Sanft")+styleBtn("xylophon","Xylophon")+
+        styleBtn("digital","Digital")+styleBtn("glocke","Glocke")+styleBtn("perkussiv","Perkussiv")+
       '</div></div>'+
       toggleRow("f-countin","Countdown-Piepsen", "Kurze Töne in den letzten 3 Sekunden", s.countIn)+
       toggleRow("f-voice","Sprachansage", 'Sagt Phase, Übung und „3, 2, 1" laut an – praktisch, wenn du nicht aufs Display schaust', s.voice)+
+      (s.voice ?
+        '<div class="range-row"><div class="label" style="margin-bottom:10px;">Ansage-Stil</div><div class="theme-pick">'+
+          voiceStyleBtn("kurz","Kurz")+voiceStyleBtn("standard","Standard")+voiceStyleBtn("motivierend","Motivierend")+
+        '</div></div>'+
+        '<div class="range-row"><div class="label" style="margin-bottom:10px;">Stimme</div>'+
+          '<select id="f-voiceuri">'+voiceOptionsHTML()+'</select>'+
+        '</div>'
+      : "")+
       '<button type="button" class="btn btn-secondary" style="margin:14px 0;" data-testvoice>Stimme testen</button>'+
       toggleRow("f-vibration","Vibration", "Haptisches Feedback (falls unterstützt)", s.vibration)+
       toggleRow("f-keepawake","Bildschirm an lassen", "Verhindert, dass der Bildschirm während des Workouts ausgeht", s.keepAwake)+
@@ -873,14 +938,45 @@ function renderSettings(){
     });
   });
 
+  function voiceStyleBtn(val, label){
+    return '<button type="button" data-voicestyle="'+val+'" class="'+(s.voiceStyle===val?"active":"")+'">'+label+'</button>';
+  }
+  app.querySelectorAll("[data-voicestyle]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      s.voiceStyle = btn.getAttribute("data-voicestyle");
+      save();
+      speakRaw(announceText("work", { blockName:"Liegestütze" }));
+      renderSettings();
+    });
+  });
+
+  function voiceOptionsHTML(){
+    var opts = '<option value="">Standardstimme des Geräts</option>';
+    var sorted = availableVoices.slice().sort(function(a,b){
+      var ag = a.lang.toLowerCase().indexOf("de")===0 ? 0 : 1;
+      var bg = b.lang.toLowerCase().indexOf("de")===0 ? 0 : 1;
+      return ag-bg;
+    });
+    sorted.forEach(function(v){
+      opts += '<option value="'+esc(v.voiceURI)+'" '+(s.voiceURI===v.voiceURI?"selected":"")+'>'+esc(v.name)+' ('+esc(v.lang)+')</option>';
+    });
+    return opts;
+  }
+  var voiceSelect = app.querySelector("#f-voiceuri");
+  if(voiceSelect) voiceSelect.addEventListener("change", function(){
+    s.voiceURI = voiceSelect.value;
+    save();
+    speakRaw(announceText("work", { blockName:"Liegestütze" }));
+  });
+
   bindToggle("f-sound", function(v){ s.sound=v; save(); });
   bindToggle("f-countin", function(v){ s.countIn=v; save(); });
-  bindToggle("f-voice", function(v){ s.voice=v; save(); if(v) speakRaw("Sprachansage aktiviert"); });
+  bindToggle("f-voice", function(v){ s.voice=v; save(); if(v) speakRaw("Sprachansage aktiviert"); renderSettings(); });
   bindToggle("f-vibration", function(v){ s.vibration=v; save(); });
   bindToggle("f-keepawake", function(v){ s.keepAwake=v; save(); });
 
   app.querySelector("[data-testvoice]").addEventListener("click", function(){
-    if(!speakRaw("Noch drei, zwei, eins. Los geht's, Liegestütze.")){
+    if(!speakRaw(announceText("work", { blockName:"Liegestütze" }) || "Noch drei, zwei, eins.")){
       alert("Sprachausgabe wird von diesem Browser leider nicht unterstützt.");
     }
   });
@@ -1031,7 +1127,20 @@ function vibrate(pattern){
 }
 
 /* ============ Sprachansage ============ */
+var availableVoices = [];
+function loadVoices(){
+  if(!("speechSynthesis" in window)) return;
+  availableVoices = window.speechSynthesis.getVoices();
+}
+if("speechSynthesis" in window){
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = function(){
+    loadVoices();
+    if(parseHash()[0]==="settings") renderSettings();
+  };
+}
 function speakRaw(text){
+  if(!text) return false;
   if(!("speechSynthesis" in window)) return false;
   try{
     window.speechSynthesis.cancel();
@@ -1039,6 +1148,11 @@ function speakRaw(text){
     u.lang = "de-DE";
     u.rate = 1.02;
     u.volume = state.db.settings.volume!=null ? state.db.settings.volume : 1;
+    var vURI = state.db.settings.voiceURI;
+    if(vURI){
+      var match = availableVoices.filter(function(v){ return v.voiceURI===vURI; })[0];
+      if(match) u.voice = match;
+    }
     window.speechSynthesis.speak(u);
     return true;
   }catch(e){ return false; }
@@ -1202,17 +1316,17 @@ function enterStep(idx){
     playerState.beepedAt = {};
     document.getElementById("pl-next").innerHTML = nextStepPreview(idx);
     updateDots(step);
-    if(step.phase==="work"){ phaseBeep("work"); speak(step.blockName || "Arbeit"); }
-    else if(step.phase==="rest"){ phaseBeep("rest"); speak("Pause"); }
-    else if(step.phase==="blockrest"){ phaseBeep("blockrest"); speak("Blockpause" + (step.blockName? ". Als nächstes " + step.blockName : "")); }
-    else if(step.phase==="prep"){ phaseBeep("prep"); speak("Los geht's" + (step.blockName? ". " + step.blockName : "")); }
+    if(step.phase==="work"){ phaseBeep("work"); speak(announceText("work", step)); }
+    else if(step.phase==="rest"){ phaseBeep("rest"); speak(announceText("rest", step)); }
+    else if(step.phase==="blockrest"){ phaseBeep("blockrest"); speak(announceText("blockrest", step)); }
+    else if(step.phase==="prep"){ phaseBeep("prep"); speak(announceText("prep", step)); }
     vibrate(step.phase==="work" ? [40] : [20,60,20]);
     bindPlayPause();
     tickLoop();
   } else {
     releaseWakeLock();
     phaseBeep("done");
-    speak("Workout geschafft");
+    speak(announceText("done", step));
     vibrate([60,80,60,80,120]);
     var doneBody = document.getElementById("pl-body");
     var finishBtn = doneBody.querySelector("[data-finish]");
