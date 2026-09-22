@@ -68,44 +68,45 @@
   }
 }
 
-/* Retro: analoges Fahrzeug-Cockpit spät-80er/früh-90er (VW Golf 2, Audi 80, VDO-Instrumente) */
+/* Retro: authentisches Fahrzeug-Cockpit spät-70er/80er (VW Golf 1/2, VDO-Instrumente) -
+   gedämpfte, natürliche Materialtöne statt glänzender 3D-Optik. */
 :root[data-theme="retro-light"]{
   color-scheme: light;
-  --bg:#d9cfb7;
-  --surface:#f0e9d6;
-  --surface-2:#e2d6b6;
-  --border:#b7a87d;
-  --text:#2a2419;
-  --text-dim:#6e6450;
-  --accent:#a97c1f;
+  --bg:#e3d7bd;
+  --surface:#f3ead6;
+  --surface-2:#e8dcbc;
+  --border:#c9b98e;
+  --text:#332a1c;
+  --text-dim:#7d6f52;
+  --accent:#a9691f;
   --accent-text:#fbf3e0;
-  --rest:#5c6b45;
-  --rest-text:#f2f5e9;
-  --blockrest:#4f6570;
-  --danger:#93392b;
-  --radius:12px;
-  --tc-top:#fbf4e3; --tc-midtop:#ece0c2; --tc-midbot:#d9c99e; --tc-bot:#c4b284; --tc-text:#241f17;
-  --shadow:0 1px 2px rgba(0,0,0,.10), 0 6px 16px rgba(0,0,0,.12);
-  --bevel: inset 0 1px 0 rgba(255,255,255,.35), inset 0 -2px 3px rgba(0,0,0,.18);
+  --rest:#5f6f47;
+  --rest-text:#f4f6ec;
+  --blockrest:#6b6048;
+  --danger:#8c3f2c;
+  --radius:11px;
+  --tc-top:#f2e6c9; --tc-midtop:#e8d9b0; --tc-midbot:#ddc99b; --tc-bot:#d0ba88; --tc-text:#2b2214;
+  --shadow:0 1px 1px rgba(0,0,0,.06), 0 3px 8px rgba(0,0,0,.08);
+  --bevel: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 2px rgba(0,0,0,.10);
 }
 :root[data-theme="retro-dark"]{
   color-scheme: dark;
-  --bg:#131211;
-  --surface:#1d1b17;
-  --surface-2:#272420;
-  --border:#3a352b;
-  --text:#e6ddc9;
-  --text-dim:#8d8570;
-  --accent:#b1502c;
-  --accent-text:#17110c;
+  --bg:#161513;
+  --surface:#201e1a;
+  --surface-2:#2a2721;
+  --border:#3c372d;
+  --text:#e2d8c5;
+  --text-dim:#8a8170;
+  --accent:#9c5a34;
+  --accent-text:#161513;
   --rest:#5c6b4a;
   --rest-text:#eef2e6;
-  --blockrest:#4d5f68;
-  --danger:#a4462f;
-  --radius:12px;
-  --tc-top:#3c3830; --tc-midtop:#221f19; --tc-midbot:#17140f; --tc-bot:#0b0a08; --tc-text:#e7ded0;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 20px rgba(0,0,0,.4);
-  --bevel: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 3px rgba(0,0,0,.4);
+  --blockrest:#575144;
+  --danger:#8f4530;
+  --radius:11px;
+  --tc-top:#332f28; --tc-midtop:#211e19; --tc-midbot:#17140f; --tc-bot:#0d0b08; --tc-text:#ddd0b8;
+  --shadow:0 1px 1px rgba(0,0,0,.3), 0 4px 10px rgba(0,0,0,.28);
+  --bevel: inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 2px rgba(0,0,0,.25);
 }
 :root[data-theme^="retro-"] .btn,
 :root[data-theme^="retro-"] .iconbtn,
@@ -354,22 +355,21 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .time{ display:flex; align-items:center; justify-content:center; }
 .tc{
   display:inline-block; font-size:min(20vw,108px); font-weight:700; line-height:1;
-  border-radius:7px; padding:0 .06em; margin:0 3px; min-width:.62em; text-align:center;
+  border-radius:5px; padding:0 .06em; margin:0 2px; min-width:.62em; text-align:center;
   position:relative;
   background:linear-gradient(180deg,var(--tc-top) 0%, var(--tc-midtop) 48%, var(--tc-midbot) 52%, var(--tc-bot) 100%);
   color:var(--tc-text);
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.15), 0 2px 6px rgba(0,0,0,.35);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.18);
 }
-.tc::after{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(0,0,0,.5); }
-.tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.55; min-width:auto; padding:0 .02em; }
+.tc::after{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(0,0,0,.32); }
+.tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.5; min-width:auto; padding:0 .02em; }
 .tc.sep::after{ content:none; }
 .tc-window{ display:block; overflow:hidden; height:1.08em; line-height:1.08em; }
 .tc-strip{ display:flex; flex-direction:column; }
 .tc-d{ display:block; height:1.08em; line-height:1.08em; text-align:center; }
-.tc-strip.rolling{ animation:odoRoll .42s cubic-bezier(.32,.85,.4,1) both; }
+.tc-strip.rolling{ animation:odoRoll .34s cubic-bezier(.2,.65,.1,1) both; }
 @keyframes odoRoll{
   0%{ transform:translateY(-1.08em); }
-  72%{ transform:translateY(.05em); }
   100%{ transform:translateY(0); }
 }
 .player-controls{ display:flex; align-items:center; justify-content:center; gap:22px; padding:20px 24px calc(30px + env(safe-area-inset-bottom)); }
@@ -558,6 +558,30 @@ var SOUND_STYLES = {
     blockrest:[{f:600,d:0,dur:90,v:0.6,type:"square"},{f:750,d:100,dur:90,v:0.6,type:"square"}],
     prep:[{f:600,d:0,dur:90,v:0.6,type:"square"},{f:750,d:100,dur:90,v:0.6,type:"square"}],
     done:[{f:700,d:0,dur:100,v:0.9,type:"square"},{f:900,d:110,dur:100,v:0.9,type:"square"},{f:700,d:220,dur:100,v:0.9,type:"square"},{f:900,d:330,dur:220,v:1,type:"square"}]
+  },
+  weich: { label:"Weich",
+    tick:[{f:600,d:0,dur:160,v:0.22,type:"sine"}],
+    work:[{f:480,d:0,dur:380,v:0.55,type:"sine"},{f:604,d:0,dur:380,v:0.22,type:"sine"}],
+    rest:[{f:360,d:0,dur:380,v:0.45,type:"sine"},{f:453,d:0,dur:380,v:0.18,type:"sine"}],
+    blockrest:[{f:400,d:0,dur:380,v:0.45,type:"sine"},{f:504,d:0,dur:380,v:0.18,type:"sine"}],
+    prep:[{f:400,d:0,dur:380,v:0.45,type:"sine"},{f:504,d:0,dur:380,v:0.18,type:"sine"}],
+    done:[{f:480,d:0,dur:320,v:0.55,type:"sine"},{f:604,d:0,dur:320,v:0.22,type:"sine"},{f:604,d:340,dur:460,v:0.5,type:"sine"},{f:760,d:340,dur:460,v:0.2,type:"sine"}]
+  },
+  klar: { label:"Klar",
+    tick:[{f:900,d:0,dur:60,v:0.2,type:"sine"}],
+    work:[{f:660,d:0,dur:140,v:0.5,type:"sine"}],
+    rest:[{f:494,d:0,dur:140,v:0.4,type:"sine"}],
+    blockrest:[{f:554,d:0,dur:140,v:0.4,type:"sine"}],
+    prep:[{f:554,d:0,dur:140,v:0.4,type:"sine"}],
+    done:[{f:660,d:0,dur:100,v:0.5,type:"sine"},{f:880,d:120,dur:180,v:0.5,type:"sine"}]
+  },
+  ruhe: { label:"Ruhe",
+    tick:[{f:500,d:0,dur:180,v:0.15,type:"sine"}],
+    work:[{f:340,d:0,dur:520,v:0.4,type:"sine"}],
+    rest:[{f:260,d:0,dur:520,v:0.32,type:"sine"}],
+    blockrest:[{f:300,d:0,dur:520,v:0.32,type:"sine"}],
+    prep:[{f:300,d:0,dur:520,v:0.32,type:"sine"}],
+    done:[{f:340,d:0,dur:420,v:0.4,type:"sine"},{f:430,d:420,dur:600,v:0.38,type:"sine"}]
   }
 };
 
@@ -1540,7 +1564,7 @@ function renderTimeCells(text){
   }
   return html;
 }
-function rollCell(cell, newCh){
+function rollCell(cell, newCh, delayMs){
   if(cell.getAttribute("data-digit")===newCh) return;
   var oldCh = cell.getAttribute("data-digit");
   cell.setAttribute("data-digit", newCh);
@@ -1548,9 +1572,11 @@ function rollCell(cell, newCh){
   strip.innerHTML = '<span class="tc-d">'+esc(newCh)+'</span><span class="tc-d">'+esc(oldCh)+'</span>';
   strip.classList.remove("rolling");
   void strip.offsetHeight;
+  strip.style.animationDelay = (delayMs||0)+"ms";
   strip.classList.add("rolling");
   strip.addEventListener("animationend", function done(){
     strip.classList.remove("rolling");
+    strip.style.animationDelay = "";
     strip.innerHTML = '<span class="tc-d">'+esc(newCh)+'</span>';
     strip.removeEventListener("animationend", done);
   });
@@ -1561,10 +1587,22 @@ function updateTimeCells(container, text){
     container.innerHTML = renderTimeCells(text);
     return;
   }
+  /* Wie bei einem echten mechanischen Kilometerzähler: die rechte (niedrigste) Walze
+     rollt zuerst, die Walzen links davon ziehen mit leichter Verzögerung nach -
+     als würde sich der Rollover über das Zahnradgetriebe nach links fortpflanzen. */
+  var digitCells = [];
   for(var i=0;i<chars.length;i++){
     var cell = container.children[i];
     if(cell.classList.contains("sep")) continue;
-    rollCell(cell, chars[i]);
+    digitCells.push({ cell:cell, ch:chars[i] });
+  }
+  var delay = 0;
+  for(var j=digitCells.length-1;j>=0;j--){
+    var entry = digitCells[j];
+    if(entry.cell.getAttribute("data-digit") !== entry.ch){
+      rollCell(entry.cell, entry.ch, delay);
+      delay += 30;
+    }
   }
 }
 
