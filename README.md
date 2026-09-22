@@ -14,8 +14,8 @@ Minimalistischer Intervall-Timer für Workouts. Läuft als PWA (Progressive Web 
 - Vollbild-Timer mit Fortschrittsring, Phasenanzeige (Arbeit/Pause/Blockpause), Rundenzähler, „Nochmal"-Neustart nach dem Workout
 - Play/Pause, Weiter (Skip), Phase neu starten, Beenden mit Bestätigung
 - Lautstärke jederzeit einstellbar – auch direkt während der Timer läuft (Lautsprecher-Symbol im Player)
-- Vier auswählbare Klänge (Klassisch, Doppelton, Sanft, Xylophon) + Countdown-Piepsen in den letzten 3 Sekunden
-- Sprachansage (optional): sagt Phase, Übungsname und „3, 2, 1" laut an
+- Sieben auswählbare Klänge (Klassisch, Doppelton, Sanft, Xylophon, Digital, Glocke, Perkussiv) + Countdown-Piepsen in den letzten 3 Sekunden
+- Sprachansage (optional, drei Stile: Kurz/Standard/Motivierend, freie Stimmenwahl): sagt Phase, Übungsname und „3, 2, 1" laut an
 - Vibration bei Phasenwechsel (auf unterstützten Geräten, primär Android)
 - „Bildschirm an lassen" während des Workouts (Wake Lock)
 - Hell-/Dunkel-/Systemdesign
@@ -41,14 +41,12 @@ und dann `http://localhost:8080` öffnen.
 
 ## Auf GitHub Pages veröffentlichen
 
-1. Neues Repository auf GitHub anlegen, z. B. `SportTimer`.
-2. Dieses Verzeichnis pushen:
-   ```bash
-   git remote add origin https://github.com/<dein-user>/SportTimer.git
-   git push -u origin main
-   ```
-3. In den Repository-Einstellungen unter **Pages** als Quelle den `main`-Branch (Root) auswählen.
-4. Die App ist danach unter `https://<dein-user>.github.io/SportTimer/` erreichbar.
+Das Repository liegt bereits unter [github.com/KevinHbrck/Timer](https://github.com/KevinHbrck/Timer). Es fehlt nur noch, GitHub Pages dafür einzuschalten:
+
+1. Auf [github.com/KevinHbrck/Timer/settings/pages](https://github.com/KevinHbrck/Timer/settings/pages) gehen.
+2. Unter **Build and deployment → Source** die Option **„Deploy from a branch"** wählen.
+3. Als Branch **`main`** und als Ordner **`/ (root)`** auswählen, dann **Save**.
+4. Nach ein bis zwei Minuten ist die App unter `https://kevinhbrck.github.io/Timer/` erreichbar.
 5. Auf dem iPhone die Seite in Safari öffnen → Teilen-Symbol → **„Zum Home-Bildschirm"**. Ab dann läuft sie wie eine echte App mit dauerhaftem Speicher.
 
 ## Dateien
