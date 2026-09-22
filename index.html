@@ -79,7 +79,7 @@
   --text:#332a1c;
   --text-dim:#7d6f52;
   --accent:#a9691f;
-  --accent-text:#fbf3e0;
+  --accent-text:#f7f6f2;
   --rest:#5f6f47;
   --rest-text:#f4f6ec;
   --blockrest:#6b6048;
@@ -153,6 +153,15 @@
 :root[data-theme^="retro-"] .playbtn,
 :root[data-theme^="retro-"] .fab{
   border:1px solid var(--border);
+}
+/* Transportsteuerung im Player wie die Tastenreihe eines alten Kassettenrekorders:
+   rechteckige, leicht abgerundete Tasten statt runder Kreise. */
+:root[data-theme^="retro-"] .ctrl-btn{
+  border-radius:13px;
+  border:1px solid rgba(0,0,0,.25);
+}
+:root[data-theme^="retro-"] .ctrl-btn.main{
+  border-radius:18px;
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body{ height:100%; }
@@ -455,6 +464,14 @@ var ICON_TRASH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" st
 var ICON_VOLUME = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M19 6a9 9 0 0 1 0 12"/></svg>';
 var ICON_DOWNLOAD = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>';
 var ICON_HOME = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5l9-8 9 8"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6.5h5V20"/></svg>';
+/* Handgezeichnete SVG-Icons statt Unicode-Glyphen: die sitzen unabhängig von
+   Schriftart/Plattform immer exakt zentriert und bleiben bei jeder Größe klar erkennbar. */
+var ICON_PLAY = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 4.3v15.4c0 .8.9 1.3 1.6.9l12-7.7c.6-.4.6-1.4 0-1.8l-12-7.7c-.7-.4-1.6.1-1.6.9z"/></svg>';
+var ICON_PAUSE = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><rect x="5.5" y="4.5" width="5" height="15" rx="1.2"/><rect x="13.5" y="4.5" width="5" height="15" rx="1.2"/></svg>';
+var ICON_SKIP = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M5.5 5.2v13.6c0 .8.9 1.3 1.6.9l9.4-6.8c.6-.4.6-1.3 0-1.8L7.1 4.3c-.7-.4-1.6.1-1.6.9z"/><rect x="17" y="5" width="2.6" height="14" rx="1"/></svg>';
+var ICON_RESTART = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>';
+var ICON_SETTINGS = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2.1 2.1 0 1 1-3 3l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2.1 2.1 0 0 1-4.2 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2.1 2.1 0 1 1-3-3l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2.1 2.1 0 0 1 0-4.2h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2.1 2.1 0 1 1 3-3l.1.1a1.7 1.7 0 0 0 1.9.3H9.5a1.7 1.7 0 0 0 1-1.6V3a2.1 2.1 0 0 1 4.2 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2.1 2.1 0 1 1 3 3l-.1.1a1.7 1.7 0 0 0-.3 1.9V9c.2.7.8 1.2 1.6 1.2H21a2.1 2.1 0 0 1 0 4.2h-.1a1.7 1.7 0 0 0-1.5 1.6z"/></svg>';
+var ICON_LIST = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>';
 
 /* Auswählbare Klänge: jeweils Liste von Tönen {f:Frequenz, d:Verzögerung(ms), dur:Dauer(ms), v:Lautstärke-Faktor, type:Wellenform} */
 var SOUND_STYLES = {
@@ -766,7 +783,7 @@ function renderHome(){
   var items = ws.map(function(w){
     var count = w.items.length;
     return '<div class="list-item" data-nav="#workout/'+w.id+'">'+
-      '<button class="playbtn" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+'>&#9658;</button>'+
+      '<button class="playbtn" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+'>'+ICON_PLAY+'</button>'+
       '<div class="meta"><div class="name">'+esc(w.name||"Ohne Namen")+'</div>'+
       '<div class="sub">'+count+' Block'+(count===1?'':'e')+' &middot; '+fmtDuration(workoutDuration(w))+'</div></div>'+
       '</div>';
@@ -778,19 +795,19 @@ function renderHome(){
   var bs = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
   var blockItems = bs.map(function(b){
     return '<div class="list-item" data-nav="#block/'+b.id+'">'+
-      '<button class="playbtn" data-playblock="'+b.id+'" title="Block einzeln starten">&#9658;</button>'+
+      '<button class="playbtn" data-playblock="'+b.id+'" title="Block einzeln starten">'+ICON_PLAY+'</button>'+
       '<div class="meta"><div class="name">'+esc(b.name)+'</div>'+
       '<div class="sub">'+b.reps+'&times;'+b.workSec+'s/'+b.restSec+'s &middot; '+fmtDuration(blockDuration(b))+'</div></div>'+
       '</div>';
   }).join("");
   if(!bs.length){
-    blockItems = '<div class="empty">Noch kein Block angelegt.<br>Tippe oben auf <b>&#9636;</b>, um einen anzulegen.</div>';
+    blockItems = '<div class="empty">Noch kein Block angelegt.<br>Tippe oben auf <b>Blöcke</b>, um einen anzulegen.</div>';
   }
 
   app.innerHTML =
     topbar("Workouts", { right:
-      '<button class="iconbtn" data-nav="#blocks" title="Blöcke">&#9636;</button>'+
-      '<button class="iconbtn" data-nav="#settings" title="Einstellungen">&#9881;</button>'
+      '<button class="iconbtn" data-nav="#blocks" title="Blöcke">'+ICON_LIST+'</button>'+
+      '<button class="iconbtn" data-nav="#settings" title="Einstellungen">'+ICON_SETTINGS+'</button>'
     }) +
     installTipHTML() +
     items +
@@ -882,7 +899,7 @@ function renderBlockList(){
   var bs = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
   var items = bs.map(function(b){
     return '<div class="list-item" data-nav="#block/'+b.id+'">'+
-      '<button class="playbtn" data-playblock="'+b.id+'" title="Block einzeln starten">&#9658;</button>'+
+      '<button class="playbtn" data-playblock="'+b.id+'" title="Block einzeln starten">'+ICON_PLAY+'</button>'+
       '<div class="meta"><div class="name">'+esc(b.name)+'</div>'+
       '<div class="sub">'+b.reps+' &times; '+b.workSec+'s Arbeit / '+b.restSec+'s Pause &middot; '+fmtDuration(blockDuration(b))+'</div></div>'+
       '</div>';
@@ -1031,7 +1048,7 @@ function renderWorkoutEdit(id){
   }).join("") || '<div class="empty">Keine Blöcke vorhanden. <br><a href="#blocks" style="color:var(--accent)">Erst einen Block anlegen</a></div>';
 
   app.innerHTML =
-    topbar("Workout", { back:"#home", right:'<button class="iconbtn" data-play title="Start">&#9658;</button>' }) +
+    topbar("Workout", { back:"#home", right:'<button class="iconbtn" data-play title="Start">'+ICON_PLAY+'</button>' }) +
     '<div class="card">'+
       '<label for="w-name">Name</label>'+
       '<input type="text" id="w-name" value="'+esc(w.name)+'" maxlength="40">'+
@@ -1466,7 +1483,7 @@ function stepBodyHTML(step){
     var total = fmtDuration(workoutDuration(playerState.workout));
     return '<div class="done-screen"><h2>Workout geschafft!</h2><p>'+esc(playerState.workout.name)+' &middot; '+total+'</p>'+
       '<div class="btn-row" style="width:100%;max-width:300px;">'+
-        '<button class="btn btn-secondary" data-again>&#8635; Nochmal</button>'+
+        '<button class="btn btn-secondary" data-again>'+ICON_RESTART+' Nochmal</button>'+
         '<button class="btn btn-primary" data-finish>Fertig</button>'+
       '</div></div>';
   }
@@ -1484,9 +1501,9 @@ function stepBodyHTML(step){
     repInfo+
     '<div class="next-up" id="pl-next"></div>'+
     '<div class="player-controls">'+
-      '<button class="ctrl-btn" data-skip title="Weiter">&#9197;</button>'+
-      '<button class="ctrl-btn main" id="pl-playpause" title="Pause"><span>&#10074;&#10074;</span></button>'+
-      '<button class="ctrl-btn" data-restart title="Phase neu">&#8635;</button>'+
+      '<button class="ctrl-btn" data-skip title="Weiter">'+ICON_SKIP+'</button>'+
+      '<button class="ctrl-btn main" id="pl-playpause" title="Pause"><span>'+ICON_PAUSE+'</span></button>'+
+      '<button class="ctrl-btn" data-restart title="Phase neu">'+ICON_RESTART+'</button>'+
     '</div>';
 }
 
@@ -1666,12 +1683,12 @@ function bindPlayPause(){
     if(playerState.paused){
       playerState.paused = false;
       playerState.endAt = Date.now() + playerState.remainingMs;
-      btn.querySelector("span").innerHTML = "&#10074;&#10074;";
+      btn.querySelector("span").innerHTML = ICON_PAUSE;
       requestWakeLock();
       tickLoop();
     } else {
       playerState.paused = true;
-      btn.querySelector("span").innerHTML = "&#9658;";
+      btn.querySelector("span").innerHTML = ICON_PLAY;
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
     }
   };
