@@ -14,11 +14,11 @@ Minimalistischer Intervall-Timer für Workouts. Läuft als PWA (Progressive Web 
 - Vollbild-Timer mit großer Phasen-/Übungsanzeige, Fortschrittsring, Rundenzähler, „Nochmal"-Neustart nach dem Workout
 - Play/Pause, Weiter (Skip), Phase neu starten, Beenden mit Bestätigung
 - Home-Button auf jeder Unterseite, um mit einem Tap zur Startseite zurückzukehren
-- Lautstärke jederzeit einstellbar – auch direkt während der Timer läuft (Lautsprecher-Symbol im Player)
-- Elf auswählbare Klänge über ein Dropdown-Menü (u. a. Klassisch, Xylophon, Hupe, Pfeife, Trommel, Gong) + Countdown-Piepsen in den letzten 3 Sekunden
+- Lautstärke jederzeit einstellbar (bis 150 %) – auch direkt während der Timer läuft (Lautsprecher-Symbol im Player)
+- 15 auswählbare Klänge über ein Kachel-Menü (u. a. Klassisch, Xylophon, Hupe, Gong, Pong, Arcade, Laser, Sirene) + Countdown-Piepsen in den letzten 3 Sekunden
 - Vibration bei Phasenwechsel (auf unterstützten Geräten, primär Android)
 - „Bildschirm an lassen" während des Workouts (Wake Lock)
-- Hell-/Dunkel-/System- und ein verspieltes Retro-Design (analoge Kombiinstrument-Optik mit rollendem Walzenzähler für die Restzeit, wie ein klassischer Kilometerzähler)
+- Hell/Dunkel im modernen Design, plus Retro Hell/Dunkel mit rollendem Walzenzähler für die Restzeit (wie ein klassischer Kilometerzähler)
 - Direkter „Jetzt installieren"-Button auf Android/Chrome, Schritt-für-Schritt-Anleitung für iOS
 - „App verlassen"-Button auf der Startseite (versucht das Fenster zu schließen, sonst Hinweis zum manuellen Schließen)
 - Backup als JSON exportieren/importieren

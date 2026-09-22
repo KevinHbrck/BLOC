@@ -47,7 +47,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]):not([data-theme="retro"]){
+  :root:not([data-theme="light"]):not([data-theme^="retro-"]){
     color-scheme: dark;
     --bg:#121214;
     --surface:#1c1c1f;
@@ -64,7 +64,7 @@
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
 }
-:root[data-theme="retro"]{
+:root[data-theme="retro-dark"]{
   color-scheme: dark;
   --bg:#070502;
   --surface:#141009;
@@ -80,33 +80,50 @@
   --danger:#ff4d4d;
   --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.5);
 }
-:root[data-theme="retro"] .phase-label,
-:root[data-theme="retro"] .block-label,
-:root[data-theme="retro"] h1,
-:root[data-theme="retro"] .section-title,
-:root[data-theme="retro"] .list-item .name,
-:root[data-theme="retro"] .list-item .sub,
-:root[data-theme="retro"] .wblock .name,
-:root[data-theme="retro"] .wblock .sub,
-:root[data-theme="retro"] .block-pick .name,
-:root[data-theme="retro"] .block-pick .sub,
-:root[data-theme="retro"] .next-up,
-:root[data-theme="retro"] .btn,
-:root[data-theme="retro"] .theme-pick button,
-:root[data-theme="retro"] .chip{
+:root[data-theme="retro-light"]{
+  color-scheme: light;
+  --bg:#ece6d6;
+  --surface:#f6f1e3;
+  --surface-2:#e6ddc4;
+  --border:#c7bb98;
+  --text:#211d14;
+  --text-dim:#736b53;
+  --accent:#c2410c;
+  --accent-text:#fdf3e4;
+  --rest:#2f7d4f;
+  --rest-text:#eafff1;
+  --blockrest:#2563a8;
+  --danger:#b91c1c;
+  --shadow:0 1px 2px rgba(0,0,0,.12), 0 8px 20px rgba(0,0,0,.12);
+}
+:root[data-theme^="retro-"] .phase-label,
+:root[data-theme^="retro-"] .block-label,
+:root[data-theme^="retro-"] h1,
+:root[data-theme^="retro-"] .section-title,
+:root[data-theme^="retro-"] .list-item .name,
+:root[data-theme^="retro-"] .list-item .sub,
+:root[data-theme^="retro-"] .wblock .name,
+:root[data-theme^="retro-"] .wblock .sub,
+:root[data-theme^="retro-"] .block-pick .name,
+:root[data-theme^="retro-"] .block-pick .sub,
+:root[data-theme^="retro-"] .next-up,
+:root[data-theme^="retro-"] .btn,
+:root[data-theme^="retro-"] .theme-pick button,
+:root[data-theme^="retro-"] .sound-tile,
+:root[data-theme^="retro-"] .chip{
   font-family:"Courier New",monospace;
   letter-spacing:.03em;
 }
-:root[data-theme="retro"] .ring-bg{ stroke-dasharray:3 7; stroke-width:4; opacity:.6; }
-:root[data-theme="retro"] .card, :root[data-theme="retro"] .list-item, :root[data-theme="retro"] .wblock, :root[data-theme="retro"] .block-pick{
+:root[data-theme^="retro-"] .ring-bg{ stroke-dasharray:3 7; stroke-width:4; opacity:.6; }
+:root[data-theme^="retro-"] .card, :root[data-theme^="retro-"] .list-item, :root[data-theme^="retro-"] .wblock, :root[data-theme^="retro-"] .block-pick{
   border:1px solid var(--border);
   background:linear-gradient(180deg, var(--surface), var(--surface-2));
 }
-:root[data-theme="retro"] .playbtn,
-:root[data-theme="retro"] .fab{
-  box-shadow: inset 0 -3px 5px rgba(0,0,0,.4), inset 0 2px 3px rgba(255,255,255,.3), 0 0 10px rgba(255,176,32,.55);
+:root[data-theme^="retro-"] .playbtn,
+:root[data-theme^="retro-"] .fab{
+  box-shadow: inset 0 -3px 5px rgba(0,0,0,.35), inset 0 2px 3px rgba(255,255,255,.22);
 }
-:root[data-theme="retro"] .iconbtn{
+:root[data-theme^="retro-"] .iconbtn{
   border:1px solid var(--border);
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -309,28 +326,36 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .rep-dots span.now{ opacity:1; width:22px; height:22px; box-shadow:0 0 0 4px currentColor, 0 0 0 4px transparent; position:relative; }
 .rep-dots span.now::after{ content:""; position:absolute; inset:-5px; border-radius:50%; border:2px solid currentColor; opacity:.5; }
 
-/* Rollenzähler-Ziffern im Retro-Theme */
-:root[data-theme="retro"] .tc{
+/* Rollenzähler-Ziffern im Retro-Theme: zweigeteilter Verlauf simuliert eine Zahlenwalze */
+:root[data-theme^="retro-"] .tc{
   font-family:"Courier New",monospace;
-  background:linear-gradient(180deg,#f4e9c9,#ddc98e);
-  color:#1a1006;
-  border-radius:5px;
-  padding:0 5px;
-  margin:0 2px;
-  min-width:.6em;
+  border-radius:6px;
+  padding:0 6px;
+  margin:0 3px;
+  min-width:.62em;
   text-align:center;
   position:relative;
-  box-shadow:inset 0 2px 3px rgba(0,0,0,.4), inset 0 -2px 3px rgba(255,255,255,.5), 0 2px 5px rgba(0,0,0,.55);
+  overflow:hidden;
 }
-:root[data-theme="retro"] .tc::after{
-  content:""; position:absolute; left:2px; right:2px; top:50%; height:1px; background:rgba(0,0,0,.35);
+:root[data-theme="retro-dark"] .tc{
+  background:linear-gradient(180deg,#3d3830 0%,#221e18 48%,#171310 52%,#0c0a08 100%);
+  color:#f2e2ba;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 2px 5px rgba(0,0,0,.6);
 }
-:root[data-theme="retro"] .tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.7; }
-:root[data-theme="retro"] .tc.sep::after{ content:none; }
-:root[data-theme="retro"] .tc.flip{ animation:odoFlip .22s ease-out; }
+:root[data-theme="retro-light"] .tc{
+  background:linear-gradient(180deg,#fffaee 0%,#efe6cd 48%,#dfd1ab 52%,#cbb98d 100%);
+  color:#211d14;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.1), 0 2px 5px rgba(0,0,0,.22);
+}
+:root[data-theme^="retro-"] .tc::after{
+  content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(0,0,0,.55);
+}
+:root[data-theme^="retro-"] .tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.6; }
+:root[data-theme^="retro-"] .tc.sep::after{ content:none; }
+:root[data-theme^="retro-"] .tc.flip{ animation:odoFlip .24s ease-out; }
 @keyframes odoFlip{
-  0%{ transform:translateY(-35%); filter:brightness(1.4); }
-  60%{ transform:translateY(6%); }
+  0%{ transform:translateY(-40%); filter:brightness(1.5); }
+  55%{ transform:translateY(8%); }
   100%{ transform:translateY(0); }
 }
 .player-controls{ display:flex; align-items:center; justify-content:center; gap:22px; padding:20px 24px calc(30px + env(safe-area-inset-bottom)); }
@@ -346,8 +371,15 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .done-screen p{ color:inherit; opacity:.7; margin:0 0 24px; }
 
 .confirm-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:60; display:flex; align-items:flex-end; justify-content:center; }
-.confirm-sheet{ background:var(--surface); color:var(--text); width:100%; max-width:560px; border-radius:20px 20px 0 0; padding:20px 20px calc(20px + env(safe-area-inset-bottom)); }
+.confirm-sheet{ background:var(--surface); color:var(--text); width:100%; max-width:560px; max-height:82vh; overflow-y:auto; border-radius:20px 20px 0 0; padding:20px 20px calc(20px + env(safe-area-inset-bottom)); }
 .confirm-sheet p{ color:var(--text-dim); font-size:14px; margin:4px 0 16px; }
+.sound-tiles{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0 4px; }
+.sound-tile{
+  padding:18px 8px; border-radius:14px; border:1px solid var(--border); background:var(--surface-2);
+  color:var(--text); font-size:15px; font-weight:600; cursor:pointer;
+}
+.sound-tile.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+.sound-tile:active{ transform:scale(.97); }
 
 .hidden{ display:none !important; }
 ::selection{ background:var(--accent); color:var(--accent-text); }
@@ -471,6 +503,38 @@ var SOUND_STYLES = {
     blockrest:[{f:260,d:0,dur:800,v:0.55,type:"triangle"}],
     prep:[{f:260,d:0,dur:800,v:0.55,type:"triangle"}],
     done:[{f:300,d:0,dur:1100,v:0.75,type:"triangle"},{f:1200,d:0,dur:150,v:0.5,noise:true,filterType:"bandpass",q:8}]
+  },
+  pong: { label:"Pong",
+    tick:[{f:880,d:0,dur:40,v:0.35,type:"square"}],
+    work:[{f:440,d:0,dur:70,v:0.9,type:"square"}],
+    rest:[{f:330,d:0,dur:70,v:0.6,type:"square"}],
+    blockrest:[{f:392,d:0,dur:70,v:0.6,type:"square"}],
+    prep:[{f:392,d:0,dur:70,v:0.6,type:"square"}],
+    done:[{f:440,d:0,dur:70,v:0.85,type:"square"},{f:440,d:120,dur:70,v:0.85,type:"square"},{f:440,d:240,dur:70,v:0.85,type:"square"},{f:440,d:360,dur:200,v:0.95,type:"square"}]
+  },
+  arcade: { label:"Arcade",
+    tick:[{f:1200,d:0,dur:35,v:0.35,type:"square"}],
+    work:[{f:523,d:0,dur:70,v:0.9,type:"square"},{f:659,d:70,dur:70,v:0.9,type:"square"},{f:784,d:140,dur:120,v:1,type:"square"}],
+    rest:[{f:392,d:0,dur:100,v:0.6,type:"square"}],
+    blockrest:[{f:494,d:0,dur:80,v:0.7,type:"square"},{f:587,d:90,dur:100,v:0.7,type:"square"}],
+    prep:[{f:494,d:0,dur:80,v:0.7,type:"square"},{f:587,d:90,dur:100,v:0.7,type:"square"}],
+    done:[{f:523,d:0,dur:80,v:0.9,type:"square"},{f:659,d:90,dur:80,v:0.9,type:"square"},{f:784,d:180,dur:80,v:0.9,type:"square"},{f:1046,d:270,dur:260,v:1,type:"square"}]
+  },
+  laser: { label:"Laser",
+    tick:[{f:2000,d:0,dur:40,v:0.3,type:"sawtooth",sweepTo:800}],
+    work:[{f:1800,d:0,dur:130,v:1,type:"sawtooth",sweepTo:300}],
+    rest:[{f:1200,d:0,dur:110,v:0.65,type:"sawtooth",sweepTo:400}],
+    blockrest:[{f:1400,d:0,dur:120,v:0.7,type:"sawtooth",sweepTo:350}],
+    prep:[{f:1400,d:0,dur:120,v:0.7,type:"sawtooth",sweepTo:350}],
+    done:[{f:1800,d:0,dur:110,v:0.9,type:"sawtooth",sweepTo:300},{f:1800,d:150,dur:110,v:0.9,type:"sawtooth",sweepTo:300},{f:2200,d:300,dur:260,v:1,type:"sawtooth",sweepTo:200}]
+  },
+  sirene: { label:"Sirene",
+    tick:[{f:1100,d:0,dur:40,v:0.35,type:"square"}],
+    work:[{f:700,d:0,dur:90,v:0.9,type:"square"},{f:900,d:100,dur:90,v:0.9,type:"square"}],
+    rest:[{f:500,d:0,dur:100,v:0.6,type:"square"}],
+    blockrest:[{f:600,d:0,dur:90,v:0.6,type:"square"},{f:750,d:100,dur:90,v:0.6,type:"square"}],
+    prep:[{f:600,d:0,dur:90,v:0.6,type:"square"},{f:750,d:100,dur:90,v:0.6,type:"square"}],
+    done:[{f:700,d:0,dur:100,v:0.9,type:"square"},{f:900,d:110,dur:100,v:0.9,type:"square"},{f:700,d:220,dur:100,v:0.9,type:"square"},{f:900,d:330,dur:220,v:1,type:"square"}]
   }
 };
 
@@ -483,6 +547,7 @@ function loadDB(){
     db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
     db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
+    if(db.settings.theme==="retro") db.settings.theme = "retro-dark";
     return db;
   }catch(e){ return defaultDB(); }
 }
@@ -570,7 +635,7 @@ function triggerInstall(){
 /* ============ Theme ============ */
 function applyTheme(){
   var t = state.db.settings.theme;
-  if(t==="light" || t==="dark" || t==="retro") document.documentElement.setAttribute("data-theme", t);
+  if(t==="light" || t==="dark" || t==="retro-light" || t==="retro-dark") document.documentElement.setAttribute("data-theme", t);
   else document.documentElement.removeAttribute("data-theme");
 }
 
@@ -955,7 +1020,7 @@ function renderSettings(){
     topbar("Einstellungen", { back:"#home" }) +
     '<div class="section-title">Darstellung</div>'+
     '<div class="card"><div class="theme-pick">'+
-      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+themeBtn("retro","Retro")+
+      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+themeBtn("retro-light","Retro Hell")+themeBtn("retro-dark","Retro Dunkel")+
     '</div></div>'+
     '<div class="section-title">Installation</div>'+
     '<div class="list-item" data-nav="#install">'+
@@ -966,10 +1031,11 @@ function renderSettings(){
     '<div class="section-title">Timer</div>'+
     '<div class="card">'+
       '<div class="range-row"><div class="label">Lautstärke <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
-      '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'"></div>'+
+      '<input type="range" id="f-volume" min="0" max="150" step="5" value="'+Math.round(s.volume*100)+'"></div>'+
       toggleRow("f-sound","Ton", "Signaltöne bei Phasenwechsel", s.sound)+
-      '<div class="range-row"><div class="label" style="margin-bottom:10px;">Klang</div>'+
-        '<select id="f-soundstyle">'+soundOptionsHTML()+'</select>'+
+      '<div class="range-row" data-opensounds style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
+        '<div><div class="label" style="margin:0 0 2px;">Klang</div><div style="font-size:13px;color:var(--text-dim);">'+esc((SOUND_STYLES[s.soundStyle]||SOUND_STYLES.classic).label)+'</div></div>'+
+        '<span class="chip">&#8250;</span>'+
       '</div>'+
       toggleRow("f-countin","Countdown-Piepsen", "Kurze Töne in den letzten 3 Sekunden", s.countIn)+
       toggleRow("f-vibration","Vibration", "Haptisches Feedback (falls unterstützt)", s.vibration)+
@@ -996,18 +1062,8 @@ function renderSettings(){
     });
   });
 
-  function soundOptionsHTML(){
-    var opts = "";
-    Object.keys(SOUND_STYLES).forEach(function(key){
-      opts += '<option value="'+key+'" '+(s.soundStyle===key?"selected":"")+'>'+esc(SOUND_STYLES[key].label)+'</option>';
-    });
-    return opts;
-  }
-  var soundSelect = app.querySelector("#f-soundstyle");
-  soundSelect.addEventListener("change", function(){
-    s.soundStyle = soundSelect.value;
-    save();
-    phaseBeep("work");
+  app.querySelector("[data-opensounds]").addEventListener("click", function(){
+    openSoundSheet(function(){ renderSettings(); });
   });
 
   bindToggle("f-sound", function(v){ s.sound=v; save(); });
@@ -1049,6 +1105,7 @@ function renderSettings(){
           db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
           db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
           if(parsed.settings) Object.assign(db.settings, parsed.settings);
+          if(db.settings.theme==="retro") db.settings.theme = "retro-dark";
           state.db = db; save(); applyTheme();
           go("#home");
         });
@@ -1116,6 +1173,32 @@ function confirmSheet(title, desc, actionLabel, onConfirm){
   root.querySelector("[data-cancel]").addEventListener("click", close);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
   root.querySelector("[data-ok]").addEventListener("click", function(){ close(); onConfirm(); });
+}
+
+/* ============ Sound-Kachel-Menü ============ */
+function openSoundSheet(onClose){
+  var root = document.getElementById("overlayRoot");
+  var current = state.db.settings.soundStyle;
+  var tiles = Object.keys(SOUND_STYLES).map(function(key){
+    return '<button type="button" class="sound-tile'+(key===current?" active":"")+'" data-pick="'+key+'">'+esc(SOUND_STYLES[key].label)+'</button>';
+  }).join("");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet">'+
+    '<h3>Klang wählen</h3>'+
+    '<div class="sound-tiles">'+tiles+'</div>'+
+    '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:4px;">Schließen</button>'+
+    '</div></div>';
+  function close(){ root.innerHTML=""; if(onClose) onClose(); }
+  root.querySelector("[data-cancel]").addEventListener("click", close);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
+  root.querySelectorAll("[data-pick]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      state.db.settings.soundStyle = btn.getAttribute("data-pick");
+      save();
+      phaseBeep("work");
+      root.querySelectorAll(".sound-tile").forEach(function(t){ t.classList.remove("active"); });
+      btn.classList.add("active");
+    });
+  });
 }
 
 /* ============ Audio & Haptics ============ */
@@ -1272,7 +1355,7 @@ function playerTemplate(){
       '<button class="exit" data-vol-toggle title="Lautstärke">'+ICON_VOLUME+'</button>'+
     '</div>'+
     '<div class="vol-popover hidden" id="pl-vol-pop">'+ICON_VOLUME+
-      '<input type="range" id="pl-vol-range" min="0" max="100" step="5" value="'+vol+'">'+
+      '<input type="range" id="pl-vol-range" min="0" max="150" step="5" value="'+vol+'">'+
       '<span id="pl-vol-val">'+vol+'%</span>'+
     '</div>'+
     '<div class="progressbar"><div class="progressbar-fill" id="pl-progress" style="width:0%"></div></div>'+
