@@ -1,8 +1,9 @@
 # Sport Timer
 
-Minimalistischer Intervall-Timer für Workouts im Stil analoger Fahrzeug-Cockpit-Instrumente
-(VW Golf 2, Audi 80, VDO) der späten 80er/frühen 90er. Läuft als PWA (Progressive Web App)
-direkt im Browser auf iOS und Android, ganz ohne App Store.
+Minimalistischer Intervall-Timer für Workouts. Läuft als PWA (Progressive Web App) direkt im
+Browser auf iOS und Android, ganz ohne App Store. Zwei Design-Welten zur Wahl: ein schlichtes,
+modernes Design und ein Retro-Design im Stil analoger Fahrzeug-Cockpit-Instrumente der späten
+80er/frühen 90er (VW Golf 2, Audi 80, VDO).
 
 ## Konzept
 
@@ -13,14 +14,14 @@ direkt im Browser auf iOS und Android, ganz ohne App Store.
 ## Funktionen
 
 - Blöcke & Workouts anlegen, bearbeiten, neu anordnen, löschen – jeder Block ist auch einzeln von der Startseite aus startbar
-- Vollbild-Timer mit großem mechanischem Walzenzähler als zentralem Element (wie ein echter Kilometerzähler: die neue Ziffer rollt von oben ein, die alte rutscht nach unten weg), Rundenzähler, „Nochmal"-Neustart nach dem Workout
+- Vollbild-Timer: im modernen Design mit Fortschrittsring, im Retro-Design mit großem mechanischem Walzenzähler als zentralem Element (wie ein echter Kilometerzähler: die neue Ziffer rollt von oben ein, die alte rutscht nach unten weg); jeweils mit Rundenzähler und „Nochmal"-Neustart nach dem Workout
 - Play/Pause, Weiter (Skip), Phase neu starten, Beenden mit Bestätigung
 - Home-Button auf jeder Unterseite, um mit einem Tap zur Startseite zurückzukehren; „Zurück" führt immer zur tatsächlich zuvor besuchten Seite (nicht zu einem festen Ziel)
 - Lautstärke jederzeit einstellbar (bis 100 %, unverzerrt) – auch direkt während der Timer läuft (Lautsprecher-Symbol im Player)
 - 15 auswählbare Klänge über ein Kachel-Menü (u. a. Klassisch, Xylophon, Hupe, Gong, Pong, Arcade, Laser, Sirene) + Countdown-Piepsen in den letzten 3 Sekunden
 - Vibration bei Phasenwechsel (auf unterstützten Geräten, primär Android)
 - „Bildschirm an lassen" während des Workouts (Wake Lock)
-- Zwei Designs: **Hell** (warmes Beige, Senfgelb, Cremeweiß) und **Dunkel** – der „Golf-2-Modus" (Anthrazit/Schwarz mit gedämpftem Rot/Orange, wie beleuchtete Nachtinstrumente); technische Monospace-Schrift, robuste Tasten mit Kunststoff-Bevel-Optik
+- Fünf Design-Optionen: **System / Hell / Dunkel** (schlicht, minimalistisch) sowie **Retro Hell / Retro Dunkel** (analoges Cockpit-Design: warmes Beige/Senfgelb bzw. Anthrazit/gedämpftes Rot-Orange, Monospace-Schrift, robuste Tasten mit Kunststoff-Bevel-Optik)
 - Direkter „Jetzt installieren"-Button auf Android/Chrome, Schritt-für-Schritt-Anleitung für iOS
 - „App verlassen"-Button auf der Startseite (versucht das Fenster zu schließen, sonst Hinweis zum manuellen Schließen)
 - Backup als JSON exportieren/importieren
