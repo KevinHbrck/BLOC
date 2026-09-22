@@ -10,13 +10,16 @@ Minimalistischer Intervall-Timer für Workouts. Läuft als PWA (Progressive Web 
 
 ## Funktionen
 
-- Blöcke & Workouts anlegen, bearbeiten, neu anordnen, löschen
-- Vollbild-Timer mit Fortschrittsring, Phasenanzeige (Arbeit/Pause/Blockpause), Rundenzähler
+- Blöcke & Workouts anlegen, bearbeiten, neu anordnen, löschen – jeder Block ist auch einzeln von der Startseite aus startbar
+- Vollbild-Timer mit Fortschrittsring, Phasenanzeige (Arbeit/Pause/Blockpause), Rundenzähler, „Nochmal"-Neustart nach dem Workout
 - Play/Pause, Weiter (Skip), Phase neu starten, Beenden mit Bestätigung
-- Signaltöne bei Phasenwechsel + Countdown-Piepsen in den letzten 3 Sekunden
+- Lautstärke jederzeit einstellbar – auch direkt während der Timer läuft (Lautsprecher-Symbol im Player)
+- Vier auswählbare Klänge (Klassisch, Doppelton, Sanft, Xylophon) + Countdown-Piepsen in den letzten 3 Sekunden
+- Sprachansage (optional): sagt Phase, Übungsname und „3, 2, 1" laut an
 - Vibration bei Phasenwechsel (auf unterstützten Geräten, primär Android)
 - „Bildschirm an lassen" während des Workouts (Wake Lock)
 - Hell-/Dunkel-/Systemdesign
+- Direkter „Jetzt installieren"-Button auf Android/Chrome, Schritt-für-Schritt-Anleitung für iOS
 - Backup als JSON exportieren/importieren
 - Funktioniert offline (Service Worker)
 

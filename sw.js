@@ -5,7 +5,7 @@
  * ohne Verbindung startet die zuletzt geladene aus dem Speicher.
  */
 
-var FASSUNG = "2026-09-22-2";
+var FASSUNG = "2026-09-22-3";
 var SPEICHER = "sporttimer-" + FASSUNG;
 var GRUNDGERUEST = ["./", "./index.html", "./manifest.json", "./icon.png"];
 
