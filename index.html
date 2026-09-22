@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Sport Timer</title>
+<meta name="description" content="Minimalistischer Intervall-Timer für Workouts aus wiederverwendbaren Blöcken.">
+<meta name="theme-color" content="#121214">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon.png">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Timer">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f5f5f2;
+  --surface:#ffffff;
+  --surface-2:#ececea;
+  --border:#e2e1dd;
+  --text:#1c1c1e;
+  --text-dim:#6c6c70;
+  --accent:#ff5a36;
+  --accent-text:#ffffff;
+  --rest:#2fa88a;
+  --rest-text:#ffffff;
+  --blockrest:#4a7dff;
+  --danger:#e0393f;
+  --radius:18px;
+  --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#121214;
+  --surface:#1c1c1f;
+  --surface-2:#232326;
+  --border:#2e2e32;
+  --text:#f2f2f2;
+  --text-dim:#98989d;
+  --accent:#ff6b47;
+  --accent-text:#1a1005;
+  --rest:#34c19b;
+  --rest-text:#04231b;
+  --blockrest:#6f92ff;
+  --danger:#ff5c60;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#121214;
+    --surface:#1c1c1f;
+    --surface-2:#232326;
+    --border:#2e2e32;
+    --text:#f2f2f2;
+    --text-dim:#98989d;
+    --accent:#ff6b47;
+    --accent-text:#1a1005;
+    --rest:#34c19b;
+    --rest-text:#04231b;
+    --blockrest:#6f92ff;
+    --danger:#ff5c60;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  overscroll-behavior-y:none;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+#app{ max-width:560px; margin:0 auto; padding:0 16px 100px; min-height:100%; }
+h1,h2,h3{ margin:0 0 4px; }
+.topbar{
+  position:sticky; top:0; z-index:5;
+  display:flex; align-items:center; gap:8px;
+  padding:calc(env(safe-area-inset-top) + 14px) 0 10px;
+  background:linear-gradient(var(--bg) 70%, transparent);
+}
+.topbar h1{ font-size:20px; flex:1; }
+.iconbtn{
+  width:40px; height:40px; border-radius:12px; border:none;
+  background:var(--surface); color:var(--text);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; cursor:pointer; box-shadow:var(--shadow);
+}
+.iconbtn:active{ transform:scale(.94); }
+.back{ font-size:20px; }
+.section-title{
+  font-size:12px; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--text-dim); margin:22px 4px 10px;
+}
+.card{
+  background:var(--surface); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:16px; margin-bottom:12px;
+}
+.list-item{
+  background:var(--surface); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:14px 16px; margin-bottom:10px;
+  display:flex; align-items:center; gap:12px; cursor:pointer;
+}
+.list-item:active{ transform:scale(.99); }
+.list-item .meta{ flex:1; min-width:0; }
+.list-item .name{ font-weight:600; font-size:16px; margin-bottom:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.list-item .sub{ font-size:13px; color:var(--text-dim); }
+.chip{
+  font-size:12px; font-weight:600; padding:3px 9px; border-radius:100px;
+  background:var(--surface-2); color:var(--text-dim); white-space:nowrap;
+}
+.playbtn{
+  width:38px; height:38px; border-radius:50%; border:none;
+  background:var(--accent); color:var(--accent-text);
+  display:flex; align-items:center; justify-content:center; font-size:15px;
+  flex-shrink:0; cursor:pointer;
+}
+.empty{
+  text-align:center; color:var(--text-dim); padding:60px 20px; font-size:14px;
+}
+.fab{
+  position:fixed; right:calc(16px + env(safe-area-inset-right));
+  bottom:calc(24px + env(safe-area-inset-bottom));
+  width:58px; height:58px; border-radius:50%; border:none;
+  background:var(--accent); color:var(--accent-text);
+  font-size:28px; box-shadow:var(--shadow); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.fab:active{ transform:scale(.93); }
+
+label{ display:block; font-size:13px; color:var(--text-dim); margin:14px 0 6px; }
+label:first-child{ margin-top:0; }
+input[type="text"], input[type="number"]{
+  width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
+  background:var(--surface-2); color:var(--text); font-size:16px; outline:none;
+}
+input:focus{ border-color:var(--accent); }
+.row{ display:flex; gap:10px; }
+.row > *{ flex:1; }
+.numrow{ display:flex; align-items:center; gap:10px; }
+.stepper{
+  display:flex; align-items:center; background:var(--surface-2); border-radius:12px; border:1px solid var(--border);
+  overflow:hidden; flex:1;
+}
+.stepper button{
+  border:none; background:transparent; color:var(--text); font-size:20px; width:44px; height:44px; cursor:pointer;
+}
+.stepper button:active{ background:var(--border); }
+.stepper input{ border:none; background:transparent; text-align:center; width:100%; padding:0; font-size:17px; font-weight:600; }
+.btn{
+  border:none; border-radius:14px; padding:14px 18px; font-size:16px; font-weight:600;
+  cursor:pointer; width:100%; margin-top:14px;
+}
+.btn:active{ transform:scale(.98); }
+.btn-primary{ background:var(--accent); color:var(--accent-text); }
+.btn-secondary{ background:var(--surface-2); color:var(--text); }
+.btn-danger{ background:transparent; color:var(--danger); }
+.btn-ghost{ background:transparent; color:var(--text-dim); }
+.btn-row{ display:flex; gap:10px; }
+.btn-row .btn{ margin-top:0; }
+
+.block-pick{
+  background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; cursor:pointer;
+}
+.block-pick .name{ font-weight:600; flex:1; }
+.block-pick .sub{ font-size:13px; color:var(--text-dim); }
+
+.wblock{
+  background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:14px 16px; margin-bottom:10px;
+}
+.wblock-top{ display:flex; align-items:center; gap:10px; }
+.wblock-top .name{ font-weight:600; flex:1; }
+.wblock-top .sub{ font-size:13px; color:var(--text-dim); }
+.wblock-actions{ display:flex; gap:4px; }
+.wblock-actions button{
+  border:none; background:var(--surface-2); color:var(--text); width:32px; height:32px; border-radius:9px; font-size:14px; cursor:pointer;
+}
+.wblock-actions button:disabled{ opacity:.3; }
+.gap-row{ display:flex; align-items:center; gap:8px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); font-size:13px; color:var(--text-dim); }
+.gap-row input{ width:64px; padding:6px 8px; font-size:14px; text-align:center; }
+
+.toggle-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); }
+.toggle-row:last-child{ border-bottom:none; }
+.toggle-row .label{ font-size:15px; }
+.toggle-row .desc{ font-size:12px; color:var(--text-dim); margin-top:2px; }
+.switch{ position:relative; width:48px; height:28px; flex-shrink:0; }
+.switch input{ opacity:0; width:100%; height:100%; margin:0; position:absolute; cursor:pointer; }
+.switch .track{ position:absolute; inset:0; background:var(--border); border-radius:100px; transition:.15s; }
+.switch .thumb{ position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); transition:.15s; }
+.switch input:checked + .track{ background:var(--accent); }
+.switch input:checked ~ .thumb{ transform:translateX(20px); }
+
+.theme-pick{ display:flex; gap:8px; }
+.theme-pick button{
+  flex:1; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--surface-2);
+  color:var(--text); font-size:14px; cursor:pointer;
+}
+.theme-pick button.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+
+.installtip{
+  background:var(--surface-2); border-radius:var(--radius); padding:14px 16px; margin:14px 0; font-size:13px; color:var(--text-dim); display:flex; gap:10px; align-items:flex-start;
+}
+.installtip button{ border:none; background:transparent; color:var(--text-dim); font-size:16px; cursor:pointer; padding:0 0 0 6px; }
+
+/* ---- Player ---- */
+.player{
+  position:fixed; inset:0; background:var(--phase-bg, var(--bg)); z-index:50;
+  display:flex; flex-direction:column; color:var(--phase-text, var(--text));
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  transition:background-color .35s ease;
+}
+.player-top{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px 0; }
+.player-top .exit{ background:rgba(128,128,128,.18); border:none; color:inherit; width:38px; height:38px; border-radius:50%; font-size:16px; cursor:pointer; }
+.progressbar{ height:4px; background:rgba(128,128,128,.25); border-radius:100px; margin:14px 18px 0; overflow:hidden; }
+.progressbar-fill{ height:100%; background:currentColor; border-radius:100px; transition:width .3s linear; }
+.player-mid{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px 24px; }
+.phase-label{ font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.85; margin-bottom:6px; }
+.block-label{ font-size:17px; opacity:.75; margin-bottom:22px; min-height:22px; }
+.ring-wrap{ position:relative; width:min(72vw,300px); height:min(72vw,300px); }
+.ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
+.ring-bg{ fill:none; stroke:rgba(128,128,128,.2); stroke-width:6; }
+.ring-fg{ fill:none; stroke:currentColor; stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset .25s linear; }
+.time{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:min(17vw,72px); font-weight:700; font-variant-numeric:tabular-nums;
+}
+.next-up{ margin-top:26px; font-size:14px; opacity:.6; min-height:18px; }
+.rep-dots{ display:flex; gap:6px; margin-top:16px; flex-wrap:wrap; justify-content:center; max-width:260px; }
+.rep-dots span{ width:7px; height:7px; border-radius:50%; background:currentColor; opacity:.25; }
+.rep-dots span.done{ opacity:.55; }
+.rep-dots span.now{ opacity:1; width:9px; height:9px; }
+.player-controls{ display:flex; align-items:center; justify-content:center; gap:22px; padding:20px 24px calc(30px + env(safe-area-inset-bottom)); }
+.ctrl-btn{
+  border:none; background:rgba(128,128,128,.16); color:inherit; border-radius:50%;
+  width:56px; height:56px; font-size:20px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.ctrl-btn.main{ width:76px; height:76px; font-size:26px; background:currentColor; }
+.ctrl-btn.main span{ color:var(--phase-bg,var(--bg)); }
+.ctrl-btn:active{ transform:scale(.92); }
+.done-screen{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; padding:24px; }
+.done-screen .big{ font-size:52px; margin-bottom:8px; }
+.done-screen h2{ font-size:24px; margin-bottom:6px; }
+.done-screen p{ color:inherit; opacity:.7; margin:0 0 24px; }
+
+.confirm-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:60; display:flex; align-items:flex-end; justify-content:center; }
+.confirm-sheet{ background:var(--surface); color:var(--text); width:100%; max-width:560px; border-radius:20px 20px 0 0; padding:20px 20px calc(20px + env(safe-area-inset-bottom)); }
+.confirm-sheet p{ color:var(--text-dim); font-size:14px; margin:4px 0 16px; }
+
+.hidden{ display:none !important; }
+::selection{ background:var(--accent); color:var(--accent-text); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="playerRoot"></div>
+<div id="overlayRoot"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============ Storage ============ */
+var DB_KEY = "sporttimer-data-v1";
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function defaultDB(){
+  return {
+    blocks: [],
+    workouts: [],
+    settings: { theme:"system", sound:true, vibration:true, keepAwake:true, countIn:true }
+  };
+}
+
+function loadDB(){
+  try{
+    var raw = localStorage.getItem(DB_KEY);
+    if(!raw) return defaultDB();
+    var parsed = JSON.parse(raw);
+    var db = defaultDB();
+    db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
+    db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
+    if(parsed.settings) Object.assign(db.settings, parsed.settings);
+    return db;
+  }catch(e){ return defaultDB(); }
+}
+
+var state = { db: loadDB() };
+
+function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state.db)); }
+
+/* ============ Helpers ============ */
+function fmtTime(totalSec){
+  totalSec = Math.max(0, Math.round(totalSec));
+  var m = Math.floor(totalSec/60), s = totalSec%60;
+  return m + ":" + (s<10?"0":"") + s;
+}
+function fmtDuration(totalSec){
+  totalSec = Math.max(0, Math.round(totalSec));
+  var h = Math.floor(totalSec/3600), m = Math.floor((totalSec%3600)/60), s = totalSec%60;
+  if(h>0) return h+" Std " + m + " Min";
+  if(m>0) return m + " Min " + (s>0? s+" Sek": "");
+  return s + " Sek";
+}
+function blockDuration(b){
+  return b.reps * b.workSec + Math.max(0, b.reps-1) * b.restSec;
+}
+function findBlock(id){
+  for(var i=0;i<state.db.blocks.length;i++) if(state.db.blocks[i].id===id) return state.db.blocks[i];
+  return null;
+}
+function findWorkout(id){
+  for(var i=0;i<state.db.workouts.length;i++) if(state.db.workouts[i].id===id) return state.db.workouts[i];
+  return null;
+}
+function workoutDuration(w){
+  var total = 0;
+  for(var i=0;i<w.items.length;i++){
+    var b = findBlock(w.items[i].blockId);
+    if(!b) continue;
+    total += blockDuration(b);
+    if(i < w.items.length-1) total += (w.items[i].restAfterSec||0);
+  }
+  return total;
+}
+function esc(str){
+  return String(str==null?"":str).replace(/[&<>"']/g, function(c){
+    return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+  });
+}
+
+/* ============ Router ============ */
+function go(hash){ location.hash = hash; }
+function parseHash(){
+  var h = location.hash.replace(/^#\/?/, "");
+  var parts = h.split("/").filter(Boolean);
+  return parts;
+}
+
+window.addEventListener("hashchange", render);
+window.addEventListener("load", function(){
+  if(!location.hash) location.hash = "#home";
+  applyTheme();
+  render();
+  registerSW();
+  maybeShowInstallTip();
+});
+
+/* ============ Theme ============ */
+function applyTheme(){
+  var t = state.db.settings.theme;
+  if(t==="light") document.documentElement.setAttribute("data-theme","light");
+  else if(t==="dark") document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.removeAttribute("data-theme");
+}
+
+/* ============ Render dispatch ============ */
+var app = document.getElementById("app");
+
+function render(){
+  if(document.getElementById("playerRoot").innerHTML) return; // don't re-render behind active player
+  var parts = parseHash();
+  var route = parts[0] || "home";
+  if(route==="home") return renderHome();
+  if(route==="blocks") return renderBlockList();
+  if(route==="block") return renderBlockEdit(parts[1]);
+  if(route==="workout") return renderWorkoutEdit(parts[1]);
+  if(route==="settings") return renderSettings();
+  if(route==="play") return startPlayer(parts[1]);
+  return renderHome();
+}
+
+function topbar(title, opts){
+  opts = opts || {};
+  var back = opts.back ? '<button class="iconbtn back" data-nav="'+opts.back+'">&#8249;</button>' : "";
+  var right = opts.right || "";
+  return '<div class="topbar">'+back+'<h1>'+esc(title)+'</h1>'+right+'</div>';
+}
+
+/* ============ Home: Workout list ============ */
+function renderHome(){
+  var ws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
+  var items = ws.map(function(w){
+    var count = w.items.length;
+    return '<div class="list-item" data-nav="#workout/'+w.id+'">'+
+      '<button class="playbtn" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+'>&#9658;</button>'+
+      '<div class="meta"><div class="name">'+esc(w.name||"Ohne Namen")+'</div>'+
+      '<div class="sub">'+count+' Block'+(count===1?'':'e')+' &middot; '+fmtDuration(workoutDuration(w))+'</div></div>'+
+      '</div>';
+  }).join("");
+  if(!ws.length){
+    items = '<div class="empty">Noch kein Workout angelegt.<br>Tippe unten rechts auf +, um loszulegen.</div>';
+  }
+  app.innerHTML =
+    topbar("Workouts", { right:
+      '<button class="iconbtn" data-nav="#blocks" title="Blöcke">&#9636;</button>'+
+      '<button class="iconbtn" data-nav="#settings" title="Einstellungen">&#9881;</button>'
+    }) +
+    installTipHTML() +
+    items +
+    '<button class="fab" data-newworkout>+</button>';
+  bindCommon();
+  app.querySelector("[data-newworkout]").addEventListener("click", function(){
+    var w = { id:uid(), name:"Neues Workout", items:[], updatedAt:Date.now() };
+    state.db.workouts.push(w); save();
+    go("#workout/"+w.id);
+  });
+  app.querySelectorAll("[data-play]").forEach(function(btn){
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      if(btn.disabled) return;
+      go("#play/"+btn.getAttribute("data-play"));
+    });
+  });
+}
+
+/* ============ Install tip (iOS) ============ */
+function isStandalone(){
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+function isIOS(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+}
+function installTipHTML(){
+  if(isStandalone()) return "";
+  if(localStorage.getItem("sporttimer-tip-hidden")==="1") return "";
+  if(!isIOS()) return "";
+  return '<div class="installtip"><div>Für dauerhaften Speicher: Teile-Symbol &#8593; antippen und <b>„Zum Home-Bildschirm"</b> wählen. So bleiben deine Workouts sicher erhalten.</div>'+
+    '<button data-hidetip>&times;</button></div>';
+}
+function maybeShowInstallTip(){}
+
+/* ============ Common bindings ============ */
+function bindCommon(){
+  app.querySelectorAll("[data-nav]").forEach(function(el){
+    el.addEventListener("click", function(ev){
+      if(ev.target.closest("[data-play]")) return;
+      go(el.getAttribute("data-nav"));
+    });
+  });
+  var tip = app.querySelector("[data-hidetip]");
+  if(tip) tip.addEventListener("click", function(e){
+    e.stopPropagation();
+    localStorage.setItem("sporttimer-tip-hidden","1");
+    renderHome();
+  });
+}
+
+/* ============ Block list ============ */
+function renderBlockList(){
+  var bs = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
+  var items = bs.map(function(b){
+    return '<div class="list-item" data-nav="#block/'+b.id+'">'+
+      '<div class="meta"><div class="name">'+esc(b.name)+'</div>'+
+      '<div class="sub">'+b.reps+' &times; '+b.workSec+'s Arbeit / '+b.restSec+'s Pause &middot; '+fmtDuration(blockDuration(b))+'</div></div>'+
+      '<span class="chip">&#8250;</span>'+
+      '</div>';
+  }).join("");
+  if(!bs.length){
+    items = '<div class="empty">Noch kein Block angelegt.<br>Ein Block ist z.B. „6&times;30s Arbeit / 10s Pause".</div>';
+  }
+  app.innerHTML =
+    topbar("Blöcke", { back:"#home" }) +
+    items +
+    '<button class="fab" data-newblock>+</button>';
+  bindCommon();
+  app.querySelector("[data-newblock]").addEventListener("click", function(){
+    var b = { id:uid(), name:"Neuer Block", reps:6, workSec:30, restSec:10, updatedAt:Date.now() };
+    state.db.blocks.push(b); save();
+    go("#block/"+b.id);
+  });
+}
+
+/* ============ Block edit ============ */
+function renderBlockEdit(id){
+  var b = findBlock(id);
+  if(!b){ go("#blocks"); return; }
+  app.innerHTML =
+    topbar("Block bearbeiten", { back:"#blocks" }) +
+    '<div class="card">'+
+      '<label for="f-name">Name</label>'+
+      '<input type="text" id="f-name" value="'+esc(b.name)+'" maxlength="40">'+
+
+      '<label>Wiederholungen</label>'+
+      stepperHTML("f-reps", b.reps, 1, 99, 1) +
+
+      '<label>Arbeit (Sekunden)</label>'+
+      stepperHTML("f-work", b.workSec, 1, 3600, 5) +
+
+      '<label>Pause zwischen Wiederholungen (Sekunden)</label>'+
+      stepperHTML("f-rest", b.restSec, 0, 3600, 5) +
+
+      '<div class="section-title" style="margin:16px 4px 0;">Gesamtdauer: <span id="f-total">'+fmtDuration(blockDuration(b))+'</span></div>'+
+    '</div>'+
+    '<button class="btn btn-danger" data-delete>Block löschen</button>';
+  bindCommon();
+
+  function refreshTotal(){
+    var reps = parseInt(app.querySelector("#f-reps").value)||1;
+    var work = parseInt(app.querySelector("#f-work").value)||0;
+    var rest = parseInt(app.querySelector("#f-rest").value)||0;
+    app.querySelector("#f-total").textContent = fmtDuration(reps*work + Math.max(0,reps-1)*rest);
+  }
+  function persist(){
+    b.name = app.querySelector("#f-name").value.trim() || "Ohne Namen";
+    b.reps = clamp(parseInt(app.querySelector("#f-reps").value)||1, 1, 99);
+    b.workSec = clamp(parseInt(app.querySelector("#f-work").value)||1, 1, 3600);
+    b.restSec = clamp(parseInt(app.querySelector("#f-rest").value)||0, 0, 3600);
+    b.updatedAt = Date.now();
+    save();
+    refreshTotal();
+  }
+  bindSteppers(app, persist);
+  app.querySelector("#f-name").addEventListener("input", persist);
+  app.querySelector("#f-name").addEventListener("blur", persist);
+
+  app.querySelector("[data-delete]").addEventListener("click", function(){
+    confirmSheet("Block löschen?", "„"+b.name+"“ wird auch aus allen Workouts entfernt.", "Löschen", function(){
+      state.db.blocks = state.db.blocks.filter(function(x){ return x.id!==id; });
+      state.db.workouts.forEach(function(w){
+        w.items = w.items.filter(function(it){ return it.blockId!==id; });
+      });
+      save();
+      go("#blocks");
+    });
+  });
+}
+
+function clamp(v,min,max){ return Math.min(max, Math.max(min, v)); }
+
+function stepperHTML(name, value, min, max, step){
+  return '<div class="stepper" data-min="'+min+'" data-max="'+max+'" data-step="'+step+'">'+
+    '<button type="button" data-dec>&minus;</button>'+
+    '<input type="number" id="'+name+'" value="'+value+'" inputmode="numeric">'+
+    '<button type="button" data-inc>&plus;</button>'+
+    '</div>';
+}
+function bindSteppers(root, onChange){
+  root.querySelectorAll(".stepper").forEach(function(st){
+    var input = st.querySelector("input");
+    var min = parseInt(st.getAttribute("data-min")), max = parseInt(st.getAttribute("data-max")), step = parseInt(st.getAttribute("data-step"));
+    st.querySelector("[data-dec]").addEventListener("click", function(){
+      input.value = clamp((parseInt(input.value)||0) - step, min, max);
+      onChange();
+    });
+    st.querySelector("[data-inc]").addEventListener("click", function(){
+      input.value = clamp((parseInt(input.value)||0) + step, min, max);
+      onChange();
+    });
+    input.addEventListener("change", function(){
+      input.value = clamp(parseInt(input.value)||min, min, max);
+      onChange();
+    });
+  });
+}
+
+/* ============ Workout edit ============ */
+function renderWorkoutEdit(id){
+  var w = findWorkout(id);
+  if(!w){ go("#home"); return; }
+
+  var itemsHTML = w.items.map(function(it, idx){
+    var b = findBlock(it.blockId);
+    var name = b ? b.name : "(gelöschter Block)";
+    var sub = b ? (b.reps+'&times;'+b.workSec+'s/'+b.restSec+'s &middot; '+fmtDuration(blockDuration(b))) : "";
+    var gap = "";
+    if(idx < w.items.length-1){
+      gap = '<div class="gap-row">Pause danach: <input type="number" inputmode="numeric" data-gap="'+idx+'" value="'+(it.restAfterSec||0)+'"> Sek</div>';
+    }
+    return '<div class="wblock">'+
+      '<div class="wblock-top">'+
+        '<div class="meta"><div class="name">'+esc(name)+'</div><div class="sub">'+sub+'</div></div>'+
+        '<div class="wblock-actions">'+
+          '<button data-up="'+idx+'" '+(idx===0?'disabled':'')+'>&#8593;</button>'+
+          '<button data-down="'+idx+'" '+(idx===w.items.length-1?'disabled':'')+'>&#8595;</button>'+
+          '<button data-remove="'+idx+'">&times;</button>'+
+        '</div>'+
+      '</div>'+
+      gap+
+    '</div>';
+  }).join("");
+
+  var pickerHTML = state.db.blocks.map(function(b){
+    return '<div class="block-pick" data-addblock="'+b.id+'">'+
+      '<div class="meta"><div class="name">'+esc(b.name)+'</div><div class="sub">'+b.reps+'&times;'+b.workSec+'s/'+b.restSec+'s</div></div>'+
+      '<span class="chip">+</span></div>';
+  }).join("") || '<div class="empty">Keine Blöcke vorhanden. <br><a href="#blocks" style="color:var(--accent)">Erst einen Block anlegen</a></div>';
+
+  app.innerHTML =
+    topbar("Workout", { back:"#home", right:'<button class="iconbtn" data-play title="Start">&#9658;</button>' }) +
+    '<div class="card">'+
+      '<label for="w-name">Name</label>'+
+      '<input type="text" id="w-name" value="'+esc(w.name)+'" maxlength="40">'+
+    '</div>'+
+    '<div class="section-title">Blöcke ('+w.items.length+') &middot; Gesamt '+fmtDuration(workoutDuration(w))+'</div>'+
+    (itemsHTML || '<div class="empty">Noch keine Blöcke im Workout.</div>') +
+    '<div class="section-title">Block hinzufügen</div>'+
+    pickerHTML +
+    '<button class="btn btn-danger" data-delete>Workout löschen</button>';
+
+  bindCommon();
+
+  app.querySelector("#w-name").addEventListener("input", function(){
+    w.name = app.querySelector("#w-name").value.trim() || "Ohne Namen";
+    w.updatedAt = Date.now();
+    save();
+  });
+
+  app.querySelectorAll("[data-addblock]").forEach(function(el){
+    el.addEventListener("click", function(){
+      w.items.push({ blockId: el.getAttribute("data-addblock"), restAfterSec: 30 });
+      w.updatedAt = Date.now();
+      save();
+      renderWorkoutEdit(id);
+    });
+  });
+  app.querySelectorAll("[data-up]").forEach(function(el){
+    el.addEventListener("click", function(){
+      var i = parseInt(el.getAttribute("data-up"));
+      if(i>0){ var tmp=w.items[i-1]; w.items[i-1]=w.items[i]; w.items[i]=tmp; save(); renderWorkoutEdit(id); }
+    });
+  });
+  app.querySelectorAll("[data-down]").forEach(function(el){
+    el.addEventListener("click", function(){
+      var i = parseInt(el.getAttribute("data-down"));
+      if(i<w.items.length-1){ var tmp=w.items[i+1]; w.items[i+1]=w.items[i]; w.items[i]=tmp; save(); renderWorkoutEdit(id); }
+    });
+  });
+  app.querySelectorAll("[data-remove]").forEach(function(el){
+    el.addEventListener("click", function(){
+      var i = parseInt(el.getAttribute("data-remove"));
+      w.items.splice(i,1); save(); renderWorkoutEdit(id);
+    });
+  });
+  app.querySelectorAll("[data-gap]").forEach(function(el){
+    el.addEventListener("change", function(){
+      var i = parseInt(el.getAttribute("data-gap"));
+      w.items[i].restAfterSec = clamp(parseInt(el.value)||0, 0, 3600);
+      save();
+      renderWorkoutEdit(id);
+    });
+  });
+  var playBtn = app.querySelector("[data-play]");
+  if(playBtn) playBtn.addEventListener("click", function(){
+    if(!w.items.length) return;
+    go("#play/"+w.id);
+  });
+
+  app.querySelector("[data-delete]").addEventListener("click", function(){
+    confirmSheet("Workout löschen?", "Diese Aktion kann nicht rückgängig gemacht werden.", "Löschen", function(){
+      state.db.workouts = state.db.workouts.filter(function(x){ return x.id!==id; });
+      save();
+      go("#home");
+    });
+  });
+}
+
+/* ============ Settings ============ */
+function renderSettings(){
+  var s = state.db.settings;
+  app.innerHTML =
+    topbar("Einstellungen", { back:"#home" }) +
+    '<div class="section-title">Darstellung</div>'+
+    '<div class="card"><div class="theme-pick">'+
+      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+
+    '</div></div>'+
+    '<div class="section-title">Timer</div>'+
+    '<div class="card">'+
+      toggleRow("f-sound","Ton", "Signaltöne bei Phasenwechsel", s.sound)+
+      toggleRow("f-countin","Countdown-Piepsen", "Kurze Töne in den letzten 3 Sekunden", s.countIn)+
+      toggleRow("f-vibration","Vibration", "Haptisches Feedback (falls unterstützt)", s.vibration)+
+      toggleRow("f-keepawake","Bildschirm an lassen", "Verhindert, dass der Bildschirm während des Workouts ausgeht", s.keepAwake)+
+    '</div>'+
+    '<div class="section-title">Daten</div>'+
+    '<div class="card">'+
+      '<button class="btn btn-secondary" data-export>Backup exportieren (JSON)</button>'+
+      '<button class="btn btn-secondary" data-import>Backup importieren</button>'+
+      '<input type="file" id="import-file" accept="application/json" style="display:none">'+
+      '<button class="btn btn-danger" data-reset>Alle Daten löschen</button>'+
+    '</div>'+
+    '<div class="empty" style="padding:20px 8px;">Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.</div>';
+
+  bindCommon();
+
+  function themeBtn(val, label){
+    return '<button data-theme="'+val+'" class="'+(s.theme===val?"active":"")+'">'+label+'</button>';
+  }
+  app.querySelectorAll("[data-theme]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      s.theme = btn.getAttribute("data-theme");
+      save(); applyTheme(); renderSettings();
+    });
+  });
+
+  bindToggle("f-sound", function(v){ s.sound=v; save(); });
+  bindToggle("f-countin", function(v){ s.countIn=v; save(); });
+  bindToggle("f-vibration", function(v){ s.vibration=v; save(); });
+  bindToggle("f-keepawake", function(v){ s.keepAwake=v; save(); });
+
+  app.querySelector("[data-export]").addEventListener("click", function(){
+    var blob = new Blob([JSON.stringify(state.db,null,2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "sporttimer-backup-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
+  app.querySelector("[data-import]").addEventListener("click", function(){
+    app.querySelector("#import-file").click();
+  });
+  app.querySelector("#import-file").addEventListener("change", function(ev){
+    var file = ev.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var parsed = JSON.parse(reader.result);
+        confirmSheet("Backup importieren?", "Bestehende Blöcke und Workouts werden überschrieben.", "Importieren", function(){
+          var db = defaultDB();
+          db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
+          db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
+          if(parsed.settings) Object.assign(db.settings, parsed.settings);
+          state.db = db; save(); applyTheme();
+          go("#home");
+        });
+      }catch(e){ alert("Datei konnte nicht gelesen werden."); }
+    };
+    reader.readAsText(file);
+  });
+  app.querySelector("[data-reset]").addEventListener("click", function(){
+    confirmSheet("Alle Daten löschen?", "Alle Blöcke und Workouts werden unwiderruflich gelöscht.", "Alles löschen", function(){
+      state.db = defaultDB(); save(); applyTheme();
+      go("#home");
+    });
+  });
+}
+function toggleRow(id, label, desc, checked){
+  return '<div class="toggle-row"><div><div class="label">'+label+'</div><div class="desc">'+desc+'</div></div>'+
+    '<label class="switch"><input type="checkbox" id="'+id+'" '+(checked?"checked":"")+'><span class="track"></span><span class="thumb"></span></label></div>';
+}
+function bindToggle(id, cb){
+  app.querySelector("#"+id).addEventListener("change", function(e){ cb(e.target.checked); });
+}
+
+/* ============ Confirm sheet ============ */
+function confirmSheet(title, desc, actionLabel, onConfirm){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet">'+
+    '<h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p>'+
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>Abbrechen</button>'+
+    '<button class="btn btn-danger" style="background:var(--danger);color:#fff" data-ok>'+esc(actionLabel)+'</button></div>'+
+    '</div></div>';
+  function close(){ root.innerHTML=""; }
+  root.querySelector("[data-cancel]").addEventListener("click", close);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
+  root.querySelector("[data-ok]").addEventListener("click", function(){ close(); onConfirm(); });
+}
+
+/* ============ Audio & Haptics ============ */
+var actx = null;
+function audioCtx(){
+  if(!actx){ var AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
+  return actx;
+}
+function beep(freq, durMs, vol){
+  if(!state.db.settings.sound) return;
+  var ctx = audioCtx();
+  if(!ctx) return;
+  if(ctx.state==="suspended") ctx.resume();
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.value = freq;
+  gain.gain.value = 0;
+  osc.connect(gain); gain.connect(ctx.destination);
+  var now = ctx.currentTime;
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(vol||0.25, now+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + durMs/1000);
+  osc.start(now);
+  osc.stop(now + durMs/1000 + 0.02);
+}
+function tick(){ beep(880, 90, 0.18); }
+function phaseBeep(kind){
+  if(kind==="work") beep(660,160,0.28);
+  else if(kind==="rest") beep(440,160,0.24);
+  else if(kind==="blockrest") beep(520,160,0.24);
+  else if(kind==="done"){ beep(660,120,0.25); setTimeout(function(){beep(880,120,0.25);},130); setTimeout(function(){beep(1100,220,0.28);},260); }
+}
+function vibrate(pattern){
+  if(!state.db.settings.vibration) return;
+  if(navigator.vibrate) try{ navigator.vibrate(pattern); }catch(e){}
+}
+
+/* ============ Wake Lock ============ */
+var wakeLock = null;
+function requestWakeLock(){
+  if(!state.db.settings.keepAwake) return;
+  if(!("wakeLock" in navigator)) return;
+  navigator.wakeLock.request("screen").then(function(wl){ wakeLock = wl; }).catch(function(){});
+}
+function releaseWakeLock(){
+  if(wakeLock){ wakeLock.release().catch(function(){}); wakeLock = null; }
+}
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState==="visible" && playerState && playerState.running) requestWakeLock();
+});
+
+/* ============ Timer engine ============ */
+function buildSteps(w){
+  var steps = [];
+  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: (function(){
+    var b = findBlock(w.items[0] ? w.items[0].blockId : null); return b?b.name:"";
+  })() });
+  for(var i=0;i<w.items.length;i++){
+    var it = w.items[i];
+    var b = findBlock(it.blockId);
+    if(!b) continue;
+    for(var r=0;r<b.reps;r++){
+      steps.push({ phase:"work", label:b.name, blockName:b.name, duration:b.workSec, rep:r+1, totalReps:b.reps });
+      if(r < b.reps-1){
+        steps.push({ phase:"rest", label:b.name, blockName:b.name, duration:b.restSec, rep:r+1, totalReps:b.reps });
+      }
+    }
+    if(i < w.items.length-1 && it.restAfterSec>0){
+      var nb = findBlock(w.items[i+1].blockId);
+      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec });
+    }
+  }
+  steps.push({ phase:"done", label:"Fertig", duration:0 });
+  return steps;
+}
+
+var playerState = null;
+
+function startPlayer(workoutId){
+  var w = findWorkout(workoutId);
+  if(!w || !w.items.length){ go("#home"); return; }
+  var steps = buildSteps(w);
+  playerState = {
+    workout: w, steps: steps, idx: 0,
+    running: true, paused: false,
+    endAt: 0, remainingMs: steps[0].duration*1000,
+    rafId: null
+  };
+  document.getElementById("playerRoot").innerHTML = playerTemplate();
+  bindPlayerControls();
+  enterStep(0);
+  requestWakeLock();
+}
+
+function phaseVars(phase){
+  if(phase==="work") return { bg:"var(--accent)", text:"var(--accent-text)", label:"Arbeit" };
+  if(phase==="rest") return { bg:"var(--rest)", text:"var(--rest-text)", label:"Pause" };
+  if(phase==="blockrest") return { bg:"var(--blockrest)", text:"#ffffff", label:"Blockpause" };
+  if(phase==="prep") return { bg:"var(--blockrest)", text:"#ffffff", label:"Los geht's" };
+  return { bg:"var(--bg)", text:"var(--text)", label:"" };
+}
+
+function playerTemplate(){
+  return '<div class="player" id="playerEl">'+
+    '<div class="player-top"><button class="exit" data-exit>&times;</button><div style="font-size:13px;opacity:.7" id="pl-counter"></div><div style="width:38px"></div></div>'+
+    '<div class="progressbar"><div class="progressbar-fill" id="pl-progress" style="width:0%"></div></div>'+
+    '<div id="pl-body" class="player-mid"></div>'+
+    '</div>';
+}
+
+function circleCirc(){ return 2*Math.PI*54; }
+
+function stepBodyHTML(step){
+  if(step.phase==="done"){
+    var total = fmtDuration(workoutDuration(playerState.workout));
+    return '<div class="done-screen"><div class="big">&#127881;</div><h2>Workout geschafft!</h2><p>'+esc(playerState.workout.name)+' &middot; '+total+'</p>'+
+      '<button class="btn btn-primary" style="width:220px" data-finish>Fertig</button></div>';
+  }
+  var pv = phaseVars(step.phase);
+  var repInfo = step.totalReps ? '<div class="rep-dots" id="pl-dots"></div>' : "";
+  return '<div class="phase-label">'+pv.label+'</div>'+
+    '<div class="block-label">'+esc(step.blockName||"")+(step.totalReps? " &middot; "+step.rep+"/"+step.totalReps : "")+'</div>'+
+    '<div class="ring-wrap"><svg viewBox="0 0 120 120">'+
+      '<circle class="ring-bg" cx="60" cy="60" r="54"></circle>'+
+      '<circle class="ring-fg" id="pl-ring" cx="60" cy="60" r="54" stroke-dasharray="'+circleCirc()+'" stroke-dashoffset="0"></circle>'+
+    '</svg><div class="time" id="pl-time">0:00</div></div>'+
+    repInfo+
+    '<div class="next-up" id="pl-next"></div>'+
+    '<div class="player-controls">'+
+      '<button class="ctrl-btn" data-skip title="Weiter">&#9197;</button>'+
+      '<button class="ctrl-btn main" id="pl-playpause" title="Pause"><span>&#10074;&#10074;</span></button>'+
+      '<button class="ctrl-btn" data-restart title="Phase neu">&#8635;</button>'+
+    '</div>';
+}
+
+function nextStepPreview(idx){
+  var steps = playerState.steps;
+  if(idx+1 >= steps.length) return "";
+  var n = steps[idx+1];
+  if(n.phase==="done") return "Danach: Fertig";
+  var pv = phaseVars(n.phase);
+  return "Als nächstes: "+pv.label+(n.blockName? " &middot; "+esc(n.blockName):"")+" ("+fmtTime(n.duration)+")";
+}
+
+function enterStep(idx){
+  var steps = playerState.steps;
+  if(idx >= steps.length) idx = steps.length-1;
+  playerState.idx = idx;
+  var step = steps[idx];
+  var el = document.getElementById("playerEl");
+  var pv = phaseVars(step.phase);
+  el.style.setProperty("--phase-bg", pv.bg);
+  el.style.setProperty("--phase-text", pv.text);
+  document.getElementById("pl-body").innerHTML = stepBodyHTML(step);
+  document.getElementById("pl-counter").textContent = (idx+1)+" / "+steps.length;
+
+  if(step.phase!=="done"){
+    playerState.remainingMs = step.duration*1000;
+    playerState.endAt = Date.now() + playerState.remainingMs;
+    playerState.paused = false;
+    playerState.beepedAt = {};
+    document.getElementById("pl-next").innerHTML = nextStepPreview(idx);
+    updateDots(step);
+    if(step.phase==="work") phaseBeep("work");
+    else if(step.phase==="rest") phaseBeep("rest");
+    else if(step.phase==="blockrest") phaseBeep("blockrest");
+    vibrate(step.phase==="work" ? [40] : [20,60,20]);
+    bindPlayPause();
+    tickLoop();
+  } else {
+    releaseWakeLock();
+    phaseBeep("done");
+    vibrate([60,80,60,80,120]);
+    var finishBtn = document.getElementById("pl-body").querySelector("[data-finish]");
+    if(finishBtn) finishBtn.addEventListener("click", exitPlayer);
+  }
+  updateProgress();
+}
+
+function updateDots(step){
+  var wrap = document.getElementById("pl-dots");
+  if(!wrap) return;
+  var html = "";
+  for(var i=1;i<=step.totalReps;i++){
+    var cls = i<step.rep ? "done" : (i===step.rep ? "now":"");
+    html += '<span class="'+cls+'"></span>';
+  }
+  wrap.innerHTML = html;
+}
+
+function updateProgress(){
+  var steps = playerState.steps;
+  var totalDur = 0, elapsed = 0;
+  for(var i=0;i<steps.length-1;i++){ totalDur += steps[i].duration; }
+  for(i=0;i<playerState.idx;i++){ elapsed += steps[i].duration; }
+  var step = steps[playerState.idx];
+  if(step && step.phase!=="done"){
+    var doneMs = (step.duration*1000 - Math.max(0,playerState.remainingMs));
+    elapsed += doneMs/1000;
+  } else {
+    elapsed = totalDur;
+  }
+  var pct = totalDur>0 ? Math.min(100, elapsed/totalDur*100) : 100;
+  var bar = document.getElementById("pl-progress");
+  if(bar) bar.style.width = pct+"%";
+}
+
+function tickLoop(){
+  if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
+  function frame(){
+    if(!playerState || playerState.paused){ return; }
+    var step = playerState.steps[playerState.idx];
+    if(!step || step.phase==="done") return;
+    var remaining = playerState.endAt - Date.now();
+    if(remaining <= 0){
+      enterStep(playerState.idx+1);
+      return;
+    }
+    playerState.remainingMs = remaining;
+    var remSec = Math.ceil(remaining/1000);
+    var timeEl = document.getElementById("pl-time");
+    if(timeEl) timeEl.textContent = fmtTime(remSec);
+    var ring = document.getElementById("pl-ring");
+    if(ring){
+      var frac = remaining / (step.duration*1000);
+      ring.setAttribute("stroke-dashoffset", (circleCirc()*(1-frac)).toFixed(1));
+    }
+    if(state.db.settings.countIn && remSec<=3 && remSec>=1 && playerState.beepedAt[remSec]!==true){
+      playerState.beepedAt[remSec] = true;
+      tick();
+    }
+    updateProgress();
+    playerState.rafId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+function bindPlayPause(){
+  var btn = document.getElementById("pl-playpause");
+  if(!btn) return;
+  btn.onclick = function(){
+    if(playerState.paused){
+      playerState.paused = false;
+      playerState.endAt = Date.now() + playerState.remainingMs;
+      btn.querySelector("span").innerHTML = "&#10074;&#10074;";
+      requestWakeLock();
+      tickLoop();
+    } else {
+      playerState.paused = true;
+      btn.querySelector("span").innerHTML = "&#9658;";
+      if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
+    }
+  };
+}
+
+function bindPlayerControls(){
+  var root = document.getElementById("playerRoot");
+  root.addEventListener("click", function(e){
+    if(e.target.closest("[data-exit]")){
+      confirmSheet("Workout beenden?", "Der Fortschritt geht verloren.", "Beenden", exitPlayer);
+    }
+    if(e.target.closest("[data-skip]")){
+      if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
+      enterStep(playerState.idx+1);
+    }
+    if(e.target.closest("[data-restart]")){
+      var step = playerState.steps[playerState.idx];
+      playerState.remainingMs = step.duration*1000;
+      playerState.endAt = Date.now() + playerState.remainingMs;
+      playerState.paused = false;
+      if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
+      tickLoop();
+    }
+  });
+}
+
+function exitPlayer(){
+  if(playerState && playerState.rafId) cancelAnimationFrame(playerState.rafId);
+  playerState = null;
+  releaseWakeLock();
+  document.getElementById("playerRoot").innerHTML = "";
+  go("#home");
+  render();
+}
+
+/* ============ Service worker ============ */
+function registerSW(){
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  }
+}
+
+})();
+</script>
+</body>
+</html>
