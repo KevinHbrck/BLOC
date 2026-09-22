@@ -22,9 +22,8 @@ späten 70er/80er (VW Golf 1/2, VDO) – gedämpfte, natürliche Materialtöne s
 - 18 auswählbare Klänge über ein Kachel-Menü – von sanft (Sanft, Weich, Klar, Ruhe) über klassisch (Klassisch, Glocke, Xylophon) bis arcade-artig (Pong, Arcade, Laser, Sirene) + Countdown-Piepsen in den letzten 3 Sekunden
 - Vibration bei Phasenwechsel (auf unterstützten Geräten, primär Android)
 - „Bildschirm an lassen" während des Workouts (Wake Lock)
-- Fünf Design-Optionen: **System / Hell / Dunkel** (schlicht, minimalistisch) sowie **Retro Hell / Retro Dunkel** (authentisches Cockpit-Design: warmes Beige/Sand/Elfenbein/Ocker bzw. Anthrazit/Dunkelgrau mit dezenten Orange-Akzenten, Monospace-Schrift, matte statt glänzende Oberflächen)
+- Fünf Design-Optionen: **System / Hell / Dunkel** (schlicht, minimalistisch) sowie **Retro Hell / Retro Dunkel** (authentisches Cockpit-Design: neutrales Weiß/Sand mit Ocker-Akzenten bzw. Anthrazit/Dunkelgrau mit dezenten Orange-Akzenten, Monospace-Schrift, matte statt glänzende Oberflächen)
 - Direkter „Jetzt installieren"-Button auf Android/Chrome, Schritt-für-Schritt-Anleitung für iOS
-- „App verlassen"-Button auf der Startseite (versucht das Fenster zu schließen, sonst Hinweis zum manuellen Schließen)
 - Backup als JSON exportieren/importieren
 - Funktioniert offline (Service Worker)
 

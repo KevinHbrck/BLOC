@@ -72,10 +72,10 @@
    gedämpfte, natürliche Materialtöne statt glänzender 3D-Optik. */
 :root[data-theme="retro-light"]{
   color-scheme: light;
-  --bg:#e3d7bd;
-  --surface:#f3ead6;
-  --surface-2:#e8dcbc;
-  --border:#c9b98e;
+  --bg:#eeece5;
+  --surface:#fbfaf6;
+  --surface-2:#e9e6dc;
+  --border:#d7d3c5;
   --text:#332a1c;
   --text-dim:#7d6f52;
   --accent:#a9691f;
@@ -251,9 +251,6 @@ input:focus, select:focus{ border-color:var(--accent); }
 .btn-primary{ background:var(--accent); color:var(--accent-text); }
 .btn-secondary{ background:var(--surface-2); color:var(--text); }
 .btn-danger{ background:transparent; color:var(--danger); }
-.btn-ghost{ background:transparent; color:var(--text-dim); }
-.quit-row{ margin-top:48px; padding-top:20px; border-top:1px solid var(--border); text-align:center; }
-.quit-row .btn{ width:auto; padding:10px 20px; font-size:14px; margin:0 auto; }
 .btn-row{ display:flex; gap:10px; }
 .btn-row .btn{ margin-top:0; }
 
@@ -458,7 +455,6 @@ var ICON_TRASH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" st
 var ICON_VOLUME = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M19 6a9 9 0 0 1 0 12"/></svg>';
 var ICON_DOWNLOAD = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>';
 var ICON_HOME = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5l9-8 9 8"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6.5h5V20"/></svg>';
-var ICON_EXIT = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
 
 /* Auswählbare Klänge: jeweils Liste von Tönen {f:Frequenz, d:Verzögerung(ms), dur:Dauer(ms), v:Lautstärke-Faktor, type:Wellenform} */
 var SOUND_STYLES = {
@@ -800,8 +796,7 @@ function renderHome(){
     items +
     '<button class="fab" data-newworkout>+</button>' +
     '<div class="section-title" style="margin-top:34px;">Blöcke einzeln starten</div>' +
-    blockItems +
-    '<div class="quit-row"><button type="button" class="btn btn-ghost" data-quit>'+ICON_EXIT+' App verlassen</button></div>';
+    blockItems;
   bindCommon();
   app.querySelector("[data-newworkout]").addEventListener("click", function(){
     var w = { id:uid(), name:"Neues Workout", items:[], updatedAt:Date.now() };
@@ -819,16 +814,6 @@ function renderHome(){
     btn.addEventListener("click", function(e){
       e.stopPropagation();
       go("#playblock/"+btn.getAttribute("data-playblock"));
-    });
-  });
-  app.querySelector("[data-quit]").addEventListener("click", function(){
-    confirmSheet("App verlassen?", "Schließt die App, sofern der Browser das zulässt. Sonst kannst du den Tab danach einfach selbst schließen.", "Verlassen", function(){
-      try{ window.close(); }catch(e){}
-      setTimeout(function(){
-        app.innerHTML = '<div class="empty" style="padding-top:140px;">Du kannst dieses Fenster jetzt schließen.<br><button type="button" class="btn btn-secondary" style="width:auto;margin-top:18px;padding:10px 20px;" data-backhome>Doch zurück zur App</button></div>';
-        var backBtn = app.querySelector("[data-backhome]");
-        if(backBtn) backBtn.addEventListener("click", function(){ go("#home"); });
-      }, 250);
     });
   });
 }
