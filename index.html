@@ -47,7 +47,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
+  :root:not([data-theme="light"]):not([data-theme="retro"]){
     color-scheme: dark;
     --bg:#121214;
     --surface:#1c1c1f;
@@ -63,6 +63,33 @@
     --danger:#ff5c60;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
+}
+:root[data-theme="retro"]{
+  color-scheme: dark;
+  --bg:#070502;
+  --surface:#141009;
+  --surface-2:#1d160c;
+  --border:#3a2c15;
+  --text:#f0dfb8;
+  --text-dim:#9c8256;
+  --accent:#ffb020;
+  --accent-text:#1a1000;
+  --rest:#4fdc7a;
+  --rest-text:#04230f;
+  --blockrest:#4ad4e0;
+  --danger:#ff4d4d;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.5);
+}
+:root[data-theme="retro"] .time,
+:root[data-theme="retro"] .phase-label,
+:root[data-theme="retro"] .block-label,
+:root[data-theme="retro"] h1{
+  font-family:"Courier New",monospace;
+  letter-spacing:.04em;
+}
+:root[data-theme="retro"] .ring-bg{ stroke-dasharray:3 7; stroke-width:4; opacity:.6; }
+:root[data-theme="retro"] .card, :root[data-theme="retro"] .list-item, :root[data-theme="retro"] .wblock, :root[data-theme="retro"] .block-pick{
+  border:1px solid var(--border);
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body{ height:100%; }
@@ -162,6 +189,8 @@ input:focus, select:focus{ border-color:var(--accent); }
 .btn-secondary{ background:var(--surface-2); color:var(--text); }
 .btn-danger{ background:transparent; color:var(--danger); }
 .btn-ghost{ background:transparent; color:var(--text-dim); }
+.quit-row{ margin-top:48px; padding-top:20px; border-top:1px solid var(--border); text-align:center; }
+.quit-row .btn{ width:auto; padding:10px 20px; font-size:14px; margin:0 auto; }
 .btn-row{ display:flex; gap:10px; }
 .btn-row .btn{ margin-top:0; }
 
@@ -203,9 +232,9 @@ input:focus, select:focus{ border-color:var(--accent); }
 .range-row .label span{ color:var(--text-dim); font-variant-numeric:tabular-nums; }
 input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor:pointer; }
 
-.theme-pick{ display:flex; gap:8px; }
+.theme-pick{ display:flex; flex-wrap:wrap; gap:8px; }
 .theme-pick button{
-  flex:1; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--surface-2);
+  flex:1 1 auto; min-width:72px; padding:14px 8px; border-radius:12px; border:1px solid var(--border); background:var(--surface-2);
   color:var(--text); font-size:15px; cursor:pointer;
 }
 .theme-pick button.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
@@ -250,21 +279,21 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .progressbar{ height:4px; background:rgba(128,128,128,.25); border-radius:100px; margin:14px 18px 0; overflow:hidden; }
 .progressbar-fill{ height:100%; background:currentColor; border-radius:100px; transition:width .3s linear; }
 .player-mid{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px 24px; }
-.phase-label{ font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.85; margin-bottom:6px; }
-.block-label{ font-size:17px; opacity:.75; margin-bottom:22px; min-height:22px; }
-.ring-wrap{ position:relative; width:min(72vw,300px); height:min(72vw,300px); }
+.phase-label{ font-size:26px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; opacity:.9; margin-bottom:8px; }
+.block-label{ font-size:24px; font-weight:600; opacity:.8; margin-bottom:20px; min-height:30px; }
+.ring-wrap{ position:relative; width:min(62vw,255px); height:min(62vw,255px); }
 .ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
 .ring-bg{ fill:none; stroke:rgba(128,128,128,.2); stroke-width:6; }
 .ring-fg{ fill:none; stroke:currentColor; stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset .25s linear; }
 .time{
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-size:min(17vw,72px); font-weight:700; font-variant-numeric:tabular-nums;
+  font-size:min(14vw,60px); font-weight:700; font-variant-numeric:tabular-nums;
 }
-.next-up{ margin-top:26px; font-size:14px; opacity:.6; min-height:18px; }
-.rep-dots{ display:flex; gap:6px; margin-top:16px; flex-wrap:wrap; justify-content:center; max-width:260px; }
-.rep-dots span{ width:7px; height:7px; border-radius:50%; background:currentColor; opacity:.25; }
+.next-up{ margin-top:22px; font-size:21px; font-weight:600; opacity:.7; min-height:26px; }
+.rep-dots{ display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; justify-content:center; max-width:300px; }
+.rep-dots span{ width:11px; height:11px; border-radius:50%; background:currentColor; opacity:.25; }
 .rep-dots span.done{ opacity:.55; }
-.rep-dots span.now{ opacity:1; width:9px; height:9px; }
+.rep-dots span.now{ opacity:1; width:14px; height:14px; }
 .player-controls{ display:flex; align-items:center; justify-content:center; gap:22px; padding:20px 24px calc(30px + env(safe-area-inset-bottom)); }
 .ctrl-btn{
   border:none; background:rgba(128,128,128,.16); color:inherit; border-radius:50%;
@@ -303,7 +332,7 @@ function defaultDB(){
   return {
     blocks: [],
     workouts: [],
-    settings: { theme:"system", sound:true, soundStyle:"classic", voice:false, voiceStyle:"standard", voiceURI:"", vibration:true, keepAwake:true, countIn:true, volume:0.6 }
+    settings: { theme:"system", sound:true, soundStyle:"classic", voice:false, voiceURI:"", vibration:true, keepAwake:true, countIn:true, volume:0.6 }
   };
 }
 
@@ -312,6 +341,8 @@ var ICON_TRASH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" st
 var ICON_VOLUME = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M19 6a9 9 0 0 1 0 12"/></svg>';
 var COUNT_WORDS = { 3:"Drei", 2:"Zwei", 1:"Eins" };
 var ICON_DOWNLOAD = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>';
+var ICON_HOME = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5l9-8 9 8"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6.5h5V20"/></svg>';
+var ICON_EXIT = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
 
 /* Auswählbare Klänge: jeweils Liste von Tönen {f:Frequenz, d:Verzögerung(ms), dur:Dauer(ms), v:Lautstärke-Faktor, type:Wellenform} */
 var SOUND_STYLES = {
@@ -370,37 +401,51 @@ var SOUND_STYLES = {
     blockrest:[{f:600,d:0,dur:50,v:0.6,type:"square"},{f:600,d:80,dur:50,v:0.6,type:"square"}],
     prep:[{f:600,d:0,dur:50,v:0.6,type:"square"},{f:600,d:80,dur:50,v:0.6,type:"square"}],
     done:[{f:800,d:0,dur:60,v:0.7,type:"square"},{f:800,d:90,dur:60,v:0.7,type:"square"},{f:1000,d:180,dur:60,v:0.7,type:"square"},{f:1000,d:270,dur:200,v:0.8,type:"square"}]
+  },
+  hupe: { label:"Hupe",
+    tick:[{f:1000,d:0,dur:60,v:0.4,type:"square"}],
+    work:[{f:220,d:0,dur:450,v:0.9,type:"sawtooth"},{f:225,d:0,dur:450,v:0.55,type:"sawtooth"}],
+    rest:[{f:180,d:0,dur:350,v:0.6,type:"sawtooth"}],
+    blockrest:[{f:200,d:0,dur:350,v:0.6,type:"sawtooth"},{f:205,d:0,dur:350,v:0.4,type:"sawtooth"}],
+    prep:[{f:200,d:0,dur:350,v:0.6,type:"sawtooth"},{f:205,d:0,dur:350,v:0.4,type:"sawtooth"}],
+    done:[{f:220,d:0,dur:280,v:0.85,type:"sawtooth"},{f:225,d:0,dur:280,v:0.5,type:"sawtooth"},{f:220,d:340,dur:520,v:0.9,type:"sawtooth"},{f:225,d:340,dur:520,v:0.55,type:"sawtooth"}]
+  },
+  pfeife: { label:"Pfeife",
+    tick:[{f:1600,d:0,dur:60,v:0.35,type:"sine"}],
+    work:[{f:900,d:0,dur:260,v:0.9,type:"sine",sweepTo:1700}],
+    rest:[{f:1400,d:0,dur:220,v:0.6,type:"sine",sweepTo:900}],
+    blockrest:[{f:900,d:0,dur:260,v:0.7,type:"sine",sweepTo:1700}],
+    prep:[{f:900,d:0,dur:260,v:0.7,type:"sine",sweepTo:1700}],
+    done:[{f:900,d:0,dur:220,v:0.8,type:"sine",sweepTo:1700},{f:900,d:280,dur:220,v:0.8,type:"sine",sweepTo:1700},{f:900,d:560,dur:400,v:0.9,type:"sine",sweepTo:1900}]
+  },
+  trommel: { label:"Trommel",
+    tick:[{f:1600,d:0,dur:35,v:0.3,noise:true,filterType:"highpass"}],
+    work:[{f:150,d:0,dur:180,v:1,type:"sine",sweepTo:45},{f:2200,d:0,dur:40,v:0.5,noise:true,filterType:"bandpass"}],
+    rest:[{f:110,d:0,dur:160,v:0.6,type:"sine",sweepTo:40}],
+    blockrest:[{f:130,d:0,dur:150,v:0.7,type:"sine",sweepTo:40},{f:130,d:170,dur:150,v:0.7,type:"sine",sweepTo:40}],
+    prep:[{f:130,d:0,dur:150,v:0.7,type:"sine",sweepTo:40},{f:130,d:170,dur:150,v:0.7,type:"sine",sweepTo:40}],
+    done:[{f:150,d:0,dur:140,v:0.9,type:"sine",sweepTo:45},{f:150,d:160,dur:140,v:0.9,type:"sine",sweepTo:45},{f:150,d:320,dur:140,v:0.9,type:"sine",sweepTo:45},{f:150,d:480,dur:420,v:1,type:"sine",sweepTo:35}]
+  },
+  gong: { label:"Gong",
+    tick:[{f:2000,d:0,dur:50,v:0.3,noise:true,filterType:"highpass"}],
+    work:[{f:300,d:0,dur:900,v:0.7,type:"triangle"},{f:1200,d:0,dur:120,v:0.5,noise:true,filterType:"bandpass",q:8}],
+    rest:[{f:220,d:0,dur:800,v:0.55,type:"triangle"}],
+    blockrest:[{f:260,d:0,dur:800,v:0.55,type:"triangle"}],
+    prep:[{f:260,d:0,dur:800,v:0.55,type:"triangle"}],
+    done:[{f:300,d:0,dur:1100,v:0.75,type:"triangle"},{f:1200,d:0,dur:150,v:0.5,noise:true,filterType:"bandpass",q:8}]
   }
 };
 
-/* Sprachansage-Varianten: je Stil eine Funktion pro Phase, die den anzusagenden Text liefert */
-function pickPhrase(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-var VOICE_STYLES = {
-  kurz: { label:"Kurz",
-    prep:function(){ return "Los"; },
-    work:function(){ return ""; },
-    rest:function(){ return ""; },
-    blockrest:function(){ return ""; },
-    done:function(){ return "Fertig"; }
-  },
-  standard: { label:"Standard",
-    prep:function(step){ return "Los geht's" + (step.blockName? ". " + step.blockName : ""); },
-    work:function(step){ return step.blockName || "Arbeit"; },
-    rest:function(){ return "Pause"; },
-    blockrest:function(step){ return "Blockpause" + (step.blockName? ". Als nächstes " + step.blockName : ""); },
-    done:function(){ return "Workout geschafft"; }
-  },
-  motivierend: { label:"Motivierend",
-    prep:function(step){ var bn = step.blockName? ". " + step.blockName : ""; return pickPhrase(["Bereit machen"+bn,"Auf die Plätze, fertig, los"+bn,"Gleich geht's los"+bn]); },
-    work:function(step){ var bn = step.blockName || ""; return pickPhrase(["Los geht's, "+bn,"Auf geht's, "+bn,"Dran bleiben, "+bn,"Jetzt zeigen, "+bn]); },
-    rest:function(){ return pickPhrase(["Kurz verschnaufen","Gut gemacht, kurze Pause","Pause, gleich weiter","Durchatmen"]); },
-    blockrest:function(step){ return "Nächster Block" + (step.blockName? ": " + step.blockName : "") + ". Du schaffst das!"; },
-    done:function(){ return pickPhrase(["Super gemacht, Workout geschafft!","Stark! Du hast es geschafft!","Klasse Leistung, fertig!","Geschafft, gut gemacht!"]); }
-  }
+/* Sprachansage: feste, knappe Ansage je Phase (nennt Phase, Übung und die Countdown-Zahlen) */
+var VOICE_PHRASES = {
+  prep:function(step){ return "Los geht's" + (step.blockName? ". " + step.blockName : ""); },
+  work:function(step){ return step.blockName || "Arbeit"; },
+  rest:function(){ return "Pause"; },
+  blockrest:function(step){ return "Blockpause" + (step.blockName? ". Als nächstes " + step.blockName : ""); },
+  done:function(){ return "Workout geschafft"; }
 };
 function announceText(kind, step){
-  var style = VOICE_STYLES[state.db.settings.voiceStyle] || VOICE_STYLES.standard;
-  var fn = style[kind];
+  var fn = VOICE_PHRASES[kind];
   return fn ? fn(step) : "";
 }
 
@@ -500,8 +545,7 @@ function triggerInstall(){
 /* ============ Theme ============ */
 function applyTheme(){
   var t = state.db.settings.theme;
-  if(t==="light") document.documentElement.setAttribute("data-theme","light");
-  else if(t==="dark") document.documentElement.setAttribute("data-theme","dark");
+  if(t==="light" || t==="dark" || t==="retro") document.documentElement.setAttribute("data-theme", t);
   else document.documentElement.removeAttribute("data-theme");
 }
 
@@ -526,8 +570,9 @@ function render(){
 function topbar(title, opts){
   opts = opts || {};
   var back = opts.back ? '<button class="iconbtn back" data-nav="'+opts.back+'">&#8249;</button>' : "";
+  var home = opts.back ? '<button class="iconbtn" data-nav="#home" title="Zur Startseite">'+ICON_HOME+'</button>' : "";
   var right = opts.right || "";
-  return '<div class="topbar">'+back+'<h1>'+esc(title)+'</h1>'+right+'</div>';
+  return '<div class="topbar">'+back+home+'<h1>'+esc(title)+'</h1>'+right+'</div>';
 }
 
 /* ============ Home: Workout list ============ */
@@ -566,7 +611,8 @@ function renderHome(){
     items +
     '<button class="fab" data-newworkout>+</button>' +
     '<div class="section-title" style="margin-top:34px;">Blöcke einzeln starten</div>' +
-    blockItems;
+    blockItems +
+    '<div class="quit-row"><button type="button" class="btn btn-ghost" data-quit>'+ICON_EXIT+' App verlassen</button></div>';
   bindCommon();
   app.querySelector("[data-newworkout]").addEventListener("click", function(){
     var w = { id:uid(), name:"Neues Workout", items:[], updatedAt:Date.now() };
@@ -584,6 +630,16 @@ function renderHome(){
     btn.addEventListener("click", function(e){
       e.stopPropagation();
       go("#playblock/"+btn.getAttribute("data-playblock"));
+    });
+  });
+  app.querySelector("[data-quit]").addEventListener("click", function(){
+    confirmSheet("App verlassen?", "Schließt die App, sofern der Browser das zulässt. Sonst kannst du den Tab danach einfach selbst schließen.", "Verlassen", function(){
+      try{ window.close(); }catch(e){}
+      setTimeout(function(){
+        app.innerHTML = '<div class="empty" style="padding-top:140px;">Du kannst dieses Fenster jetzt schließen.<br><button type="button" class="btn btn-secondary" style="width:auto;margin-top:18px;padding:10px 20px;" data-backhome>Doch zurück zur App</button></div>';
+        var backBtn = app.querySelector("[data-backhome]");
+        if(backBtn) backBtn.addEventListener("click", function(){ go("#home"); });
+      }, 250);
     });
   });
 }
@@ -874,7 +930,7 @@ function renderSettings(){
     topbar("Einstellungen", { back:"#home" }) +
     '<div class="section-title">Darstellung</div>'+
     '<div class="card"><div class="theme-pick">'+
-      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+
+      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+themeBtn("retro","Retro")+
     '</div></div>'+
     '<div class="section-title">Installation</div>'+
     '<div class="list-item" data-nav="#install">'+
@@ -889,14 +945,12 @@ function renderSettings(){
       toggleRow("f-sound","Ton", "Signaltöne bei Phasenwechsel", s.sound)+
       '<div class="range-row"><div class="label" style="margin-bottom:10px;">Klang</div><div class="style-pick">'+
         styleBtn("classic","Klassisch")+styleBtn("doppel","Doppelton")+styleBtn("sanft","Sanft")+styleBtn("xylophon","Xylophon")+
-        styleBtn("digital","Digital")+styleBtn("glocke","Glocke")+styleBtn("perkussiv","Perkussiv")+
+        styleBtn("digital","Digital")+styleBtn("glocke","Glocke")+styleBtn("perkussiv","Perkussiv")+styleBtn("hupe","Hupe")+
+        styleBtn("pfeife","Pfeife")+styleBtn("trommel","Trommel")+styleBtn("gong","Gong")+
       '</div></div>'+
       toggleRow("f-countin","Countdown-Piepsen", "Kurze Töne in den letzten 3 Sekunden", s.countIn)+
       toggleRow("f-voice","Sprachansage", 'Sagt Phase, Übung und „3, 2, 1" laut an – praktisch, wenn du nicht aufs Display schaust', s.voice)+
       (s.voice ?
-        '<div class="range-row"><div class="label" style="margin-bottom:10px;">Ansage-Stil</div><div class="theme-pick">'+
-          voiceStyleBtn("kurz","Kurz")+voiceStyleBtn("standard","Standard")+voiceStyleBtn("motivierend","Motivierend")+
-        '</div></div>'+
         '<div class="range-row"><div class="label" style="margin-bottom:10px;">Stimme</div>'+
           '<select id="f-voiceuri">'+voiceOptionsHTML()+'</select>'+
         '</div>'
@@ -934,18 +988,6 @@ function renderSettings(){
       s.soundStyle = btn.getAttribute("data-soundstyle");
       save();
       phaseBeep("work");
-      renderSettings();
-    });
-  });
-
-  function voiceStyleBtn(val, label){
-    return '<button type="button" data-voicestyle="'+val+'" class="'+(s.voiceStyle===val?"active":"")+'">'+label+'</button>';
-  }
-  app.querySelectorAll("[data-voicestyle]").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      s.voiceStyle = btn.getAttribute("data-voicestyle");
-      save();
-      speakRaw(announceText("work", { blockName:"Liegestütze" }));
       renderSettings();
     });
   });
@@ -1090,25 +1132,47 @@ function audioCtx(){
   if(!actx){ var AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
   return actx;
 }
-function tone(freq, durMs, vol, type){
+function noiseBurst(ctx, gain, n, now){
+  var durSec = n.dur/1000;
+  var buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate*(durSec+0.05)), ctx.sampleRate);
+  var data = buf.getChannelData(0);
+  for(var i=0;i<data.length;i++){ data[i] = Math.random()*2-1; }
+  var src = ctx.createBufferSource();
+  src.buffer = buf;
+  var filter = ctx.createBiquadFilter();
+  filter.type = n.filterType || "bandpass";
+  filter.frequency.value = n.f || 1200;
+  filter.Q.value = n.q || 1;
+  src.connect(filter); filter.connect(gain);
+  src.start(now);
+  src.stop(now + durSec + 0.05);
+}
+/* Spielt eine Notiz {f,dur,v,type,sweepTo,noise,filterType,q}: einfacher Ton, Pitch-Sweep oder gefiltertes Rauschen (für Trommel/Gong-artige Klänge jenseits reiner Oszillator-Beeps) */
+function tone(n){
   if(!state.db.settings.sound) return;
   var ctx = audioCtx();
   if(!ctx) return;
   if(ctx.state==="suspended") ctx.resume();
-  var level = (vol==null?0.7:vol) * (state.db.settings.volume!=null ? state.db.settings.volume : 1);
+  var level = (n.v==null?0.7:n.v) * (state.db.settings.volume!=null ? state.db.settings.volume : 1);
   if(level<=0) return;
-  var osc = ctx.createOscillator();
-  var gain = ctx.createGain();
-  osc.type = type || "sine";
-  osc.frequency.value = freq;
-  gain.gain.value = 0;
-  osc.connect(gain); gain.connect(ctx.destination);
   var now = ctx.currentTime;
+  var gain = ctx.createGain();
+  gain.connect(ctx.destination);
   gain.gain.setValueAtTime(0, now);
   gain.gain.linearRampToValueAtTime(level, now+0.008);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + durMs/1000);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + n.dur/1000);
+
+  if(n.noise){
+    noiseBurst(ctx, gain, n, now);
+    return;
+  }
+  var osc = ctx.createOscillator();
+  osc.type = n.type || "sine";
+  osc.frequency.setValueAtTime(n.f, now);
+  if(n.sweepTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1,n.sweepTo), now + n.dur/1000);
+  osc.connect(gain);
   osc.start(now);
-  osc.stop(now + durMs/1000 + 0.02);
+  osc.stop(now + n.dur/1000 + 0.02);
 }
 function currentSoundStyle(){
   return SOUND_STYLES[state.db.settings.soundStyle] || SOUND_STYLES.classic;
@@ -1116,7 +1180,7 @@ function currentSoundStyle(){
 function playNotes(notes){
   if(!notes) return;
   notes.forEach(function(n){
-    setTimeout(function(){ tone(n.f, n.dur, n.v, n.type); }, n.d);
+    setTimeout(function(){ tone(n); }, n.d);
   });
 }
 function tick(){ playNotes(currentSoundStyle().tick); }
