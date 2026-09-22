@@ -13,117 +13,78 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Timer">
 <style>
+/* Farbsystem: analoges Fahrzeug-Cockpit spät-80er/früh-90er (VW Golf 2, Audi 80, VDO-Instrumente) */
 :root{
   color-scheme: light;
-  --bg:#f5f5f2;
-  --surface:#ffffff;
-  --surface-2:#ececea;
-  --border:#e2e1dd;
-  --text:#1c1c1e;
-  --text-dim:#6c6c70;
-  --accent:#ff5a36;
-  --accent-text:#ffffff;
-  --rest:#2fa88a;
-  --rest-text:#ffffff;
-  --blockrest:#4a7dff;
-  --danger:#e0393f;
-  --radius:18px;
-  --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+  --bg:#d9cfb7;
+  --surface:#f0e9d6;
+  --surface-2:#e2d6b6;
+  --border:#b7a87d;
+  --text:#2a2419;
+  --text-dim:#6e6450;
+  --accent:#a97c1f;
+  --accent-text:#fbf3e0;
+  --rest:#5c6b45;
+  --rest-text:#f2f5e9;
+  --blockrest:#4f6570;
+  --danger:#93392b;
+  --radius:12px;
+  --tc-top:#fbf4e3; --tc-midtop:#ece0c2; --tc-midbot:#d9c99e; --tc-bot:#c4b284; --tc-text:#241f17;
+  --shadow:0 1px 2px rgba(0,0,0,.10), 0 6px 16px rgba(0,0,0,.12);
+  --bevel: inset 0 1px 0 rgba(255,255,255,.35), inset 0 -2px 3px rgba(0,0,0,.18);
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --bg:#121214;
-  --surface:#1c1c1f;
-  --surface-2:#232326;
-  --border:#2e2e32;
-  --text:#f2f2f2;
-  --text-dim:#98989d;
-  --accent:#ff6b47;
-  --accent-text:#1a1005;
-  --rest:#34c19b;
-  --rest-text:#04231b;
-  --blockrest:#6f92ff;
-  --danger:#ff5c60;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  --bg:#131211;
+  --surface:#1d1b17;
+  --surface-2:#272420;
+  --border:#3a352b;
+  --text:#e6ddc9;
+  --text-dim:#8d8570;
+  --accent:#b1502c;
+  --accent-text:#17110c;
+  --rest:#5c6b4a;
+  --rest-text:#eef2e6;
+  --blockrest:#4d5f68;
+  --danger:#a4462f;
+  --tc-top:#3c3830; --tc-midtop:#221f19; --tc-midbot:#17140f; --tc-bot:#0b0a08; --tc-text:#e7ded0;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 20px rgba(0,0,0,.4);
+  --bevel: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 3px rgba(0,0,0,.4);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]):not([data-theme^="retro-"]){
+  :root:not([data-theme="light"]){
     color-scheme: dark;
-    --bg:#121214;
-    --surface:#1c1c1f;
-    --surface-2:#232326;
-    --border:#2e2e32;
-    --text:#f2f2f2;
-    --text-dim:#98989d;
-    --accent:#ff6b47;
-    --accent-text:#1a1005;
-    --rest:#34c19b;
-    --rest-text:#04231b;
-    --blockrest:#6f92ff;
-    --danger:#ff5c60;
-    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    --bg:#131211;
+    --surface:#1d1b17;
+    --surface-2:#272420;
+    --border:#3a352b;
+    --text:#e6ddc9;
+    --text-dim:#8d8570;
+    --accent:#b1502c;
+    --accent-text:#17110c;
+    --rest:#5c6b4a;
+    --rest-text:#eef2e6;
+    --blockrest:#4d5f68;
+    --danger:#a4462f;
+    --tc-top:#3c3830; --tc-midtop:#221f19; --tc-midbot:#17140f; --tc-bot:#0b0a08; --tc-text:#e7ded0;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 20px rgba(0,0,0,.4);
+    --bevel: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 3px rgba(0,0,0,.4);
   }
 }
-:root[data-theme="retro-dark"]{
-  color-scheme: dark;
-  --bg:#070502;
-  --surface:#141009;
-  --surface-2:#1d160c;
-  --border:#3a2c15;
-  --text:#f0dfb8;
-  --text-dim:#9c8256;
-  --accent:#ffb020;
-  --accent-text:#1a1000;
-  --rest:#4fdc7a;
-  --rest-text:#04230f;
-  --blockrest:#4ad4e0;
-  --danger:#ff4d4d;
-  --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.5);
-}
-:root[data-theme="retro-light"]{
-  color-scheme: light;
-  --bg:#ece6d6;
-  --surface:#f6f1e3;
-  --surface-2:#e6ddc4;
-  --border:#c7bb98;
-  --text:#211d14;
-  --text-dim:#736b53;
-  --accent:#c2410c;
-  --accent-text:#fdf3e4;
-  --rest:#2f7d4f;
-  --rest-text:#eafff1;
-  --blockrest:#2563a8;
-  --danger:#b91c1c;
-  --shadow:0 1px 2px rgba(0,0,0,.12), 0 8px 20px rgba(0,0,0,.12);
-}
-:root[data-theme^="retro-"] .phase-label,
-:root[data-theme^="retro-"] .block-label,
-:root[data-theme^="retro-"] h1,
-:root[data-theme^="retro-"] .section-title,
-:root[data-theme^="retro-"] .list-item .name,
-:root[data-theme^="retro-"] .list-item .sub,
-:root[data-theme^="retro-"] .wblock .name,
-:root[data-theme^="retro-"] .wblock .sub,
-:root[data-theme^="retro-"] .block-pick .name,
-:root[data-theme^="retro-"] .block-pick .sub,
-:root[data-theme^="retro-"] .next-up,
-:root[data-theme^="retro-"] .btn,
-:root[data-theme^="retro-"] .theme-pick button,
-:root[data-theme^="retro-"] .sound-tile,
-:root[data-theme^="retro-"] .chip{
+body, .btn, .iconbtn, .theme-pick button, .sound-tile, h1, .phase-label, .block-label,
+.section-title, .list-item .name, .list-item .sub, .wblock .name, .wblock .sub,
+.block-pick .name, .block-pick .sub, .next-up, .chip, input, select{
   font-family:"Courier New",monospace;
-  letter-spacing:.03em;
+  letter-spacing:.02em;
 }
-:root[data-theme^="retro-"] .ring-bg{ stroke-dasharray:3 7; stroke-width:4; opacity:.6; }
-:root[data-theme^="retro-"] .card, :root[data-theme^="retro-"] .list-item, :root[data-theme^="retro-"] .wblock, :root[data-theme^="retro-"] .block-pick{
+.card, .list-item, .wblock, .block-pick{
   border:1px solid var(--border);
   background:linear-gradient(180deg, var(--surface), var(--surface-2));
 }
-:root[data-theme^="retro-"] .playbtn,
-:root[data-theme^="retro-"] .fab{
-  box-shadow: inset 0 -3px 5px rgba(0,0,0,.35), inset 0 2px 3px rgba(255,255,255,.22);
+.btn, .iconbtn, .playbtn, .fab, .ctrl-btn, .theme-pick button, .sound-tile, .stepper, .wblock-actions button{
+  box-shadow: var(--bevel), var(--shadow);
 }
-:root[data-theme^="retro-"] .iconbtn{
+.iconbtn, .playbtn, .fab{
   border:1px solid var(--border);
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -307,55 +268,34 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .progressbar{ height:4px; background:rgba(128,128,128,.25); border-radius:100px; margin:14px 18px 0; overflow:hidden; }
 .progressbar-fill{ height:100%; background:currentColor; border-radius:100px; transition:width .3s linear; }
 .player-mid{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px 24px; }
-.phase-label{ font-size:26px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; opacity:.9; margin-bottom:8px; }
-.block-label{ font-size:24px; font-weight:600; opacity:.8; margin-bottom:20px; min-height:30px; }
-.ring-wrap{ position:relative; width:min(62vw,255px); height:min(62vw,255px); }
-.ring-wrap svg{ width:100%; height:100%; transform:rotate(-90deg); }
-.ring-bg{ fill:none; stroke:rgba(128,128,128,.2); stroke-width:6; }
-.ring-fg{ fill:none; stroke:currentColor; stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset .25s linear; }
-.time{
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-variant-numeric:tabular-nums;
-}
-.tc{ display:inline-block; font-size:min(14vw,60px); font-weight:700; }
-.tc.sep{ opacity:.6; }
-.next-up{ margin-top:22px; font-size:21px; font-weight:600; opacity:.7; min-height:26px; }
-.rep-dots{ display:flex; gap:14px; margin-top:24px; flex-wrap:wrap; justify-content:center; max-width:320px; }
-.rep-dots span{ width:16px; height:16px; border-radius:50%; background:currentColor; opacity:.25; }
-.rep-dots span.done{ opacity:.6; }
-.rep-dots span.now{ opacity:1; width:22px; height:22px; box-shadow:0 0 0 4px currentColor, 0 0 0 4px transparent; position:relative; }
-.rep-dots span.now::after{ content:""; position:absolute; inset:-5px; border-radius:50%; border:2px solid currentColor; opacity:.5; }
+.phase-label{ font-size:24px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.85; margin-bottom:6px; }
+.block-label{ font-size:20px; font-weight:600; opacity:.75; margin-bottom:22px; min-height:26px; }
+.next-up{ margin-top:26px; font-size:19px; font-weight:600; opacity:.65; min-height:24px; }
+.rep-dots{ display:flex; gap:12px; margin-top:22px; flex-wrap:wrap; justify-content:center; max-width:320px; }
+.rep-dots span{ width:13px; height:13px; border-radius:3px; background:currentColor; opacity:.25; }
+.rep-dots span.done{ opacity:.55; }
+.rep-dots span.now{ opacity:1; width:16px; height:16px; }
 
-/* Rollenzähler-Ziffern im Retro-Theme: zweigeteilter Verlauf simuliert eine Zahlenwalze */
-:root[data-theme^="retro-"] .tc{
-  font-family:"Courier New",monospace;
-  border-radius:6px;
-  padding:0 6px;
-  margin:0 3px;
-  min-width:.62em;
-  text-align:center;
+/* Walzenzähler: mechanischer Rollenzähler wie ein echter Kilometerzähler */
+.time{ display:flex; align-items:center; justify-content:center; }
+.tc{
+  display:inline-block; font-size:min(20vw,108px); font-weight:700; line-height:1;
+  border-radius:7px; padding:0 .06em; margin:0 3px; min-width:.62em; text-align:center;
   position:relative;
-  overflow:hidden;
+  background:linear-gradient(180deg,var(--tc-top) 0%, var(--tc-midtop) 48%, var(--tc-midbot) 52%, var(--tc-bot) 100%);
+  color:var(--tc-text);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.15), 0 2px 6px rgba(0,0,0,.35);
 }
-:root[data-theme="retro-dark"] .tc{
-  background:linear-gradient(180deg,#3d3830 0%,#221e18 48%,#171310 52%,#0c0a08 100%);
-  color:#f2e2ba;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 2px 5px rgba(0,0,0,.6);
-}
-:root[data-theme="retro-light"] .tc{
-  background:linear-gradient(180deg,#fffaee 0%,#efe6cd 48%,#dfd1ab 52%,#cbb98d 100%);
-  color:#211d14;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.1), 0 2px 5px rgba(0,0,0,.22);
-}
-:root[data-theme^="retro-"] .tc::after{
-  content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(0,0,0,.55);
-}
-:root[data-theme^="retro-"] .tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.6; }
-:root[data-theme^="retro-"] .tc.sep::after{ content:none; }
-:root[data-theme^="retro-"] .tc.flip{ animation:odoFlip .24s ease-out; }
-@keyframes odoFlip{
-  0%{ transform:translateY(-40%); filter:brightness(1.5); }
-  55%{ transform:translateY(8%); }
+.tc::after{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(0,0,0,.5); }
+.tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.55; min-width:auto; padding:0 .02em; }
+.tc.sep::after{ content:none; }
+.tc-window{ display:block; overflow:hidden; height:1.08em; line-height:1.08em; }
+.tc-strip{ display:flex; flex-direction:column; }
+.tc-d{ display:block; height:1.08em; line-height:1.08em; text-align:center; }
+.tc-strip.rolling{ animation:odoRoll .42s cubic-bezier(.32,.85,.4,1) both; }
+@keyframes odoRoll{
+  0%{ transform:translateY(-1.08em); }
+  72%{ transform:translateY(.05em); }
   100%{ transform:translateY(0); }
 }
 .player-controls{ display:flex; align-items:center; justify-content:center; gap:22px; padding:20px 24px calc(30px + env(safe-area-inset-bottom)); }
@@ -405,6 +345,13 @@ function defaultDB(){
     workouts: [],
     settings: { theme:"system", sound:true, soundStyle:"classic", vibration:true, keepAwake:true, countIn:true, volume:0.6 }
   };
+}
+/* Frühere Versionen kannten "retro"/"retro-dark"/"retro-light" als eigene Themes -
+   das Cockpit-Design ist jetzt der Standard-Look, daher auf hell/dunkel abbilden. */
+function migrateTheme(t){
+  if(t==="retro-light") return "light";
+  if(t==="retro" || t==="retro-dark") return "dark";
+  return t;
 }
 
 var ICON_SAVE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
@@ -547,7 +494,7 @@ function loadDB(){
     db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
     db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
-    if(db.settings.theme==="retro") db.settings.theme = "retro-dark";
+    db.settings.theme = migrateTheme(db.settings.theme);
     return db;
   }catch(e){ return defaultDB(); }
 }
@@ -597,16 +544,39 @@ function esc(str){
 }
 
 /* ============ Router ============ */
+/* Eigener Navigations-Stack: "Zurück" geht immer zur tatsächlich zuvor besuchten Seite
+   zurück (nicht zu einem fest codierten Ziel), egal von wo man eine Ansicht geöffnet hat. */
+var navStack = [];
+var backInProgress = false;
+
 function go(hash){ location.hash = hash; }
+function goBack(fallback){
+  if(navStack.length > 1){
+    backInProgress = true;
+    navStack.pop();
+    location.hash = navStack[navStack.length-1];
+  } else {
+    go(fallback);
+  }
+}
 function parseHash(){
   var h = location.hash.replace(/^#\/?/, "");
   var parts = h.split("/").filter(Boolean);
   return parts;
 }
 
-window.addEventListener("hashchange", render);
+window.addEventListener("hashchange", function(){
+  var h = location.hash || "#home";
+  if(backInProgress){
+    backInProgress = false;
+  } else if(navStack.length===0 || navStack[navStack.length-1] !== h){
+    navStack.push(h);
+  }
+  render();
+});
 window.addEventListener("load", function(){
   if(!location.hash) location.hash = "#home";
+  else if(navStack.length===0) navStack.push(location.hash);
   applyTheme();
   render();
   registerSW();
@@ -635,7 +605,7 @@ function triggerInstall(){
 /* ============ Theme ============ */
 function applyTheme(){
   var t = state.db.settings.theme;
-  if(t==="light" || t==="dark" || t==="retro-light" || t==="retro-dark") document.documentElement.setAttribute("data-theme", t);
+  if(t==="light" || t==="dark") document.documentElement.setAttribute("data-theme", t);
   else document.documentElement.removeAttribute("data-theme");
 }
 
@@ -659,7 +629,7 @@ function render(){
 
 function topbar(title, opts){
   opts = opts || {};
-  var back = opts.back ? '<button class="iconbtn back" data-nav="'+opts.back+'">&#8249;</button>' : "";
+  var back = opts.back ? '<button class="iconbtn back" data-back="'+opts.back+'">&#8249;</button>' : "";
   var home = opts.back ? '<button class="iconbtn" data-nav="#home" title="Zur Startseite">'+ICON_HOME+'</button>' : "";
   var right = opts.right || "";
   return '<div class="topbar">'+back+home+'<h1>'+esc(title)+'</h1>'+right+'</div>';
@@ -768,6 +738,10 @@ function bindCommon(){
       if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]")) return;
       go(el.getAttribute("data-nav"));
     });
+  });
+  var backBtn = app.querySelector("[data-back]");
+  if(backBtn) backBtn.addEventListener("click", function(){
+    goBack(backBtn.getAttribute("data-back"));
   });
   var tip = app.querySelector("[data-hidetip]");
   if(tip) tip.addEventListener("click", function(e){
@@ -1020,8 +994,10 @@ function renderSettings(){
     topbar("Einstellungen", { back:"#home" }) +
     '<div class="section-title">Darstellung</div>'+
     '<div class="card"><div class="theme-pick">'+
-      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+themeBtn("retro-light","Retro Hell")+themeBtn("retro-dark","Retro Dunkel")+
-    '</div></div>'+
+      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+
+    '</div>'+
+    '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">„Dunkel" im Golf-2-Cockpit-Look: Anthrazit &amp; Schwarz mit gedämpften Rot-/Orangetönen.</div>'+
+    '</div>'+
     '<div class="section-title">Installation</div>'+
     '<div class="list-item" data-nav="#install">'+
       '<div class="meta"><div class="name">App auf den Home-Bildschirm legen</div>'+
@@ -1031,7 +1007,7 @@ function renderSettings(){
     '<div class="section-title">Timer</div>'+
     '<div class="card">'+
       '<div class="range-row"><div class="label">Lautstärke <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
-      '<input type="range" id="f-volume" min="0" max="150" step="5" value="'+Math.round(s.volume*100)+'"></div>'+
+      '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'"></div>'+
       toggleRow("f-sound","Ton", "Signaltöne bei Phasenwechsel", s.sound)+
       '<div class="range-row" data-opensounds style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
         '<div><div class="label" style="margin:0 0 2px;">Klang</div><div style="font-size:13px;color:var(--text-dim);">'+esc((SOUND_STYLES[s.soundStyle]||SOUND_STYLES.classic).label)+'</div></div>'+
@@ -1105,7 +1081,7 @@ function renderSettings(){
           db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
           db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
           if(parsed.settings) Object.assign(db.settings, parsed.settings);
-          if(db.settings.theme==="retro") db.settings.theme = "retro-dark";
+          db.settings.theme = migrateTheme(db.settings.theme);
           state.db = db; save(); applyTheme();
           go("#home");
         });
@@ -1355,15 +1331,13 @@ function playerTemplate(){
       '<button class="exit" data-vol-toggle title="Lautstärke">'+ICON_VOLUME+'</button>'+
     '</div>'+
     '<div class="vol-popover hidden" id="pl-vol-pop">'+ICON_VOLUME+
-      '<input type="range" id="pl-vol-range" min="0" max="150" step="5" value="'+vol+'">'+
+      '<input type="range" id="pl-vol-range" min="0" max="100" step="5" value="'+vol+'">'+
       '<span id="pl-vol-val">'+vol+'%</span>'+
     '</div>'+
     '<div class="progressbar"><div class="progressbar-fill" id="pl-progress" style="width:0%"></div></div>'+
     '<div id="pl-body" class="player-mid"></div>'+
     '</div>';
 }
-
-function circleCirc(){ return 2*Math.PI*54; }
 
 function stepBodyHTML(step){
   if(step.phase==="done"){
@@ -1378,10 +1352,7 @@ function stepBodyHTML(step){
   var repInfo = step.totalReps ? '<div class="rep-dots" id="pl-dots"></div>' : "";
   return '<div class="phase-label">'+pv.label+'</div>'+
     '<div class="block-label">'+esc(step.blockName||"")+(step.totalReps? " &middot; "+step.rep+"/"+step.totalReps : "")+'</div>'+
-    '<div class="ring-wrap"><svg viewBox="0 0 120 120">'+
-      '<circle class="ring-bg" cx="60" cy="60" r="54"></circle>'+
-      '<circle class="ring-fg" id="pl-ring" cx="60" cy="60" r="54" stroke-dasharray="'+circleCirc()+'" stroke-dashoffset="0"></circle>'+
-    '</svg><div class="time" id="pl-time">'+renderTimeCells(fmtTime(step.duration))+'</div></div>'+
+    '<div class="time" id="pl-time">'+renderTimeCells(fmtTime(step.duration))+'</div>'+
     repInfo+
     '<div class="next-up" id="pl-next"></div>'+
     '<div class="player-controls">'+
@@ -1471,14 +1442,34 @@ function updateProgress(){
   if(bar) bar.style.width = pct+"%";
 }
 
-/* Walzenzähler-Ziffern: jedes Zeichen als eigenes Feld, damit nur geänderte Ziffern "umklappen" (Retro-Theme) */
+/* Walzenzähler-Ziffern: jede Ziffer eine eigene Walze. Beim Wechsel rollt die neue Zahl von
+   oben nach unten ein, die alte rutscht nach unten weg - wie bei einem echten Kilometerzähler. */
 function renderTimeCells(text){
   var html = "";
   for(var i=0;i<text.length;i++){
     var ch = text[i];
-    html += ch===":" ? '<span class="tc sep">:</span>' : '<span class="tc">'+esc(ch)+'</span>';
+    if(ch===":"){
+      html += '<span class="tc sep">:</span>';
+    } else {
+      html += '<span class="tc" data-digit="'+ch+'"><span class="tc-window"><span class="tc-strip"><span class="tc-d">'+ch+'</span></span></span></span>';
+    }
   }
   return html;
+}
+function rollCell(cell, newCh){
+  if(cell.getAttribute("data-digit")===newCh) return;
+  var oldCh = cell.getAttribute("data-digit");
+  cell.setAttribute("data-digit", newCh);
+  var strip = cell.querySelector(".tc-strip");
+  strip.innerHTML = '<span class="tc-d">'+esc(newCh)+'</span><span class="tc-d">'+esc(oldCh)+'</span>';
+  strip.classList.remove("rolling");
+  void strip.offsetHeight;
+  strip.classList.add("rolling");
+  strip.addEventListener("animationend", function done(){
+    strip.classList.remove("rolling");
+    strip.innerHTML = '<span class="tc-d">'+esc(newCh)+'</span>';
+    strip.removeEventListener("animationend", done);
+  });
 }
 function updateTimeCells(container, text){
   var chars = text.split("");
@@ -1487,13 +1478,9 @@ function updateTimeCells(container, text){
     return;
   }
   for(var i=0;i<chars.length;i++){
-    var span = container.children[i];
-    if(span.textContent !== chars[i]){
-      span.textContent = chars[i];
-      span.classList.remove("flip");
-      void span.offsetWidth;
-      span.classList.add("flip");
-    }
+    var cell = container.children[i];
+    if(cell.classList.contains("sep")) continue;
+    rollCell(cell, chars[i]);
   }
 }
 
@@ -1512,11 +1499,6 @@ function tickLoop(){
     var remSec = Math.ceil(remaining/1000);
     var timeEl = document.getElementById("pl-time");
     if(timeEl) updateTimeCells(timeEl, fmtTime(remSec));
-    var ring = document.getElementById("pl-ring");
-    if(ring){
-      var frac = remaining / (step.duration*1000);
-      ring.setAttribute("stroke-dashoffset", (circleCirc()*(1-frac)).toFixed(1));
-    }
     if(state.db.settings.countIn && remSec<=3 && remSec>=1 && playerState.beepedAt[remSec]!==true){
       playerState.beepedAt[remSec] = true;
       tick();
