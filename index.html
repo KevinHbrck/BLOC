@@ -365,11 +365,23 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   display:inline-block; font-size:min(20vw,108px); font-weight:700; line-height:1;
   border-radius:3px; padding:0 .05em; margin:0 1px; min-width:.62em; text-align:center;
   position:relative;
-  background:linear-gradient(180deg,var(--tc-top) 0%, var(--tc-midtop) 48%, var(--tc-midbot) 52%, var(--tc-bot) 100%);
+  /* Lichtkante + Wölbung oben, Kernschatten am Walzenspalt, zweite schwache Reflexion darunter -
+     simuliert die gekrümmte Oberfläche eines echten Zahlenrads statt einer flachen Fläche */
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.28) 0%, rgba(255,255,255,0) 20%,
+      rgba(0,0,0,0) 42%, rgba(0,0,0,.16) 50%, rgba(0,0,0,0) 58%,
+      rgba(255,255,255,.08) 68%, rgba(0,0,0,0) 80%, rgba(0,0,0,.18) 100%),
+    linear-gradient(180deg,var(--tc-top) 0%, var(--tc-midtop) 48%, var(--tc-midbot) 52%, var(--tc-bot) 100%);
   color:var(--tc-text);
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.15);
+  box-shadow:
+    inset 5px 0 6px -5px rgba(0,0,0,.3), inset -5px 0 6px -5px rgba(0,0,0,.3),
+    inset 0 0 0 1px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.15);
 }
-.tc::after{ content:""; position:absolute; left:0; right:0; top:calc(50% - 1px); height:2px; background:linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,.18)); }
+.tc::after{
+  content:""; position:absolute; left:0; right:0; top:calc(50% - 2px); height:4px;
+  background:linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.5) 45%, rgba(255,255,255,.14) 60%, rgba(255,255,255,0) 100%);
+}
 .tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.45; min-width:auto; padding:0 .05em; }
 .tc.sep::after{ content:none; }
 .tc-window{ display:block; overflow:hidden; height:1.08em; line-height:1.08em; }
@@ -655,17 +667,24 @@ function esc(str){
 }
 
 /* ============ Router ============ */
-/* Eigener Navigations-Stack: "Zurück" geht immer zur tatsächlich zuvor besuchten Seite
-   zurück (nicht zu einem fest codierten Ziel), egal von wo man eine Ansicht geöffnet hat. */
-var navStack = [];
-var backInProgress = false;
+/* Eigener Navigations-Stack (rein im Speicher): "Zurück" geht immer zur tatsächlich
+   zuvor besuchten Seite zurück, egal von wo man eine Ansicht geöffnet hat.
+   Navigation nutzt history.replaceState statt location.hash= , damit der echte
+   Browser-Verlauf flach bleibt - sonst muss die Android-Zurück-Geste/der System-Button
+   erst durch die komplette In-App-Historie, bevor die App tatsächlich verlassen wird. */
+var navStack = ["#home"];
 
-function go(hash){ location.hash = hash; }
+function go(hash){
+  if(navStack[navStack.length-1] !== hash) navStack.push(hash);
+  try{ history.replaceState(null, "", hash); }catch(e){ location.hash = hash; }
+  render();
+}
 function goBack(fallback){
   if(navStack.length > 1){
-    backInProgress = true;
     navStack.pop();
-    location.hash = navStack[navStack.length-1];
+    var prev = navStack[navStack.length-1];
+    try{ history.replaceState(null, "", prev); }catch(e){ location.hash = prev; }
+    render();
   } else {
     go(fallback);
   }
@@ -676,18 +695,17 @@ function parseHash(){
   return parts;
 }
 
+/* Fallback: falls sich der Hash doch einmal außerhalb von go()/goBack() ändert
+   (z.B. ein zurückgebliebener echter Verlaufseintrag). */
 window.addEventListener("hashchange", function(){
   var h = location.hash || "#home";
-  if(backInProgress){
-    backInProgress = false;
-  } else if(navStack.length===0 || navStack[navStack.length-1] !== h){
-    navStack.push(h);
-  }
+  if(navStack[navStack.length-1] !== h) navStack.push(h);
   render();
 });
 window.addEventListener("load", function(){
-  if(!location.hash) location.hash = "#home";
-  else if(navStack.length===0) navStack.push(location.hash);
+  var initial = location.hash || "#home";
+  navStack = [initial];
+  try{ history.replaceState(null, "", initial); }catch(e){ location.hash = initial; }
   applyTheme();
   render();
   registerSW();
@@ -864,6 +882,12 @@ function bindCommon(){
     btn.addEventListener("click", function(e){
       e.stopPropagation();
       triggerInstall();
+    });
+  });
+  app.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener("click", function(ev){
+      ev.preventDefault();
+      go(a.getAttribute("href"));
     });
   });
 }
@@ -1708,7 +1732,6 @@ function exitPlayer(){
   releaseWakeLock();
   document.getElementById("playerRoot").innerHTML = "";
   go("#home");
-  render();
 }
 
 /* ============ Service worker ============ */
