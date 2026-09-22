@@ -86,6 +86,7 @@
   --danger:#8c3f2c;
   --radius:11px;
   --tc-top:#f2e6c9; --tc-midtop:#e8d9b0; --tc-midbot:#ddc99b; --tc-bot:#d0ba88; --tc-text:#2b2214;
+  --housing-top:#2b2822; --housing-bot:#141210;
   --shadow:0 1px 1px rgba(0,0,0,.06), 0 3px 8px rgba(0,0,0,.08);
   --bevel: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 2px rgba(0,0,0,.10);
 }
@@ -105,6 +106,7 @@
   --danger:#8f4530;
   --radius:11px;
   --tc-top:#332f28; --tc-midtop:#211e19; --tc-midbot:#17140f; --tc-bot:#0d0b08; --tc-text:#ddd0b8;
+  --housing-top:#242019; --housing-bot:#100e0b;
   --shadow:0 1px 1px rgba(0,0,0,.3), 0 4px 10px rgba(0,0,0,.28);
   --bevel: inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 2px rgba(0,0,0,.25);
 }
@@ -353,20 +355,29 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 
 /* Retro: Walzenzähler - mechanischer Rollenzähler wie ein echter Kilometerzähler */
 .time{ display:flex; align-items:center; justify-content:center; }
+:root[data-theme^="retro-"] .time{
+  background:linear-gradient(180deg, var(--housing-top), var(--housing-bot));
+  padding:14px 16px;
+  border-radius:9px;
+  box-shadow:inset 0 3px 6px rgba(0,0,0,.55), inset 0 -1px 0 rgba(255,255,255,.05), inset 0 0 0 1px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.25);
+}
 .tc{
   display:inline-block; font-size:min(20vw,108px); font-weight:700; line-height:1;
-  border-radius:5px; padding:0 .06em; margin:0 2px; min-width:.62em; text-align:center;
+  border-radius:3px; padding:0 .05em; margin:0 1px; min-width:.62em; text-align:center;
   position:relative;
   background:linear-gradient(180deg,var(--tc-top) 0%, var(--tc-midtop) 48%, var(--tc-midbot) 52%, var(--tc-bot) 100%);
   color:var(--tc-text);
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.18);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.15);
 }
-.tc::after{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(0,0,0,.32); }
-.tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.5; min-width:auto; padding:0 .02em; }
+.tc::after{ content:""; position:absolute; left:0; right:0; top:calc(50% - 1px); height:2px; background:linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,.18)); }
+.tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.45; min-width:auto; padding:0 .05em; }
 .tc.sep::after{ content:none; }
 .tc-window{ display:block; overflow:hidden; height:1.08em; line-height:1.08em; }
 .tc-strip{ display:flex; flex-direction:column; }
-.tc-d{ display:block; height:1.08em; line-height:1.08em; text-align:center; }
+.tc-d{
+  display:block; height:1.08em; line-height:1.08em; text-align:center;
+  text-shadow:0 1px 0 rgba(255,255,255,.18), 0 -1px 1px rgba(0,0,0,.3);
+}
 .tc-strip.rolling{ animation:odoRoll .34s cubic-bezier(.2,.65,.1,1) both; }
 @keyframes odoRoll{
   0%{ transform:translateY(-1.08em); }
