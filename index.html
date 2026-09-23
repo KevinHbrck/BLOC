@@ -12,6 +12,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Timer">
+<!-- Schriften für die Vintage-Designs (werden nur geladen, wenn sie tatsächlich verwendet werden;
+     der Service Worker speichert sie für die Offline-Nutzung) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Barlow+Condensed:ital,wght@0,700;1,700&family=Barlow+Semi+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
 <style>
 /* Modern: schlichtes, minimalistisches Design (Original) */
 :root{
@@ -28,6 +33,11 @@
   --rest-text:#ffffff;
   --blockrest:#4a7dff;
   --danger:#e0393f;
+  /* Workouts und Blöcke bekommen je eine eigene Farbe, damit man sie auf einen Blick unterscheidet */
+  --wo-color:var(--accent);
+  --wo-text:var(--accent-text);
+  --bl-color:#3867e8;
+  --bl-text:#ffffff;
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
 }
@@ -45,11 +55,13 @@
   --rest-text:#04231b;
   --blockrest:#6f92ff;
   --danger:#ff5c60;
+  --bl-color:#6f92ff;
+  --bl-text:#0b1330;
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]):not([data-theme^="retro-"]){
+  :root:not([data-theme]){
     color-scheme: dark;
     --bg:#121214;
     --surface:#1c1c1f;
@@ -63,105 +75,134 @@
     --rest-text:#04231b;
     --blockrest:#6f92ff;
     --danger:#ff5c60;
+    --bl-color:#6f92ff;
+    --bl-text:#0b1330;
     --radius:18px;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
 }
 
-/* Retro: authentisches Fahrzeug-Cockpit spät-70er/80er (VW Golf 1/2, VDO-Instrumente) -
-   gedämpfte, natürliche Materialtöne statt glänzender 3D-Optik. */
-:root[data-theme="retro-light"]{
+/* Vintage-Designs: „Retro" (rot-blaue Zierstreifen im Sportlook der 70er/80er),
+   „Kodak" (rot-orange-gelbe Streifen wie auf alten Kodak-Kassetten) und „Tapedeck" (dunkel, s. u.).
+   Alle mit Walzenzähler statt Fortschrittsring; die Standardwerte hier gelten für die hellen. */
+:root[data-vintage]{
   color-scheme: light;
-  --bg:#eeece5;
-  --surface:#fbfaf6;
-  --surface-2:#e9e6dc;
-  --border:#d7d3c5;
-  --text:#332a1c;
-  --text-dim:#7d6f52;
-  --accent:#a9691f;
-  --accent-text:#f7f6f2;
-  --rest:#5f6f47;
-  --rest-text:#f4f6ec;
-  --blockrest:#6b6048;
-  --danger:#8c3f2c;
-  --radius:11px;
-  --tc-top:#f2e6c9; --tc-midtop:#e8d9b0; --tc-midbot:#ddc99b; --tc-bot:#d0ba88; --tc-text:#2b2214;
-  --housing-top:#2b2822; --housing-bot:#141210;
-  --shadow:0 1px 1px rgba(0,0,0,.06), 0 3px 8px rgba(0,0,0,.08);
-  --bevel: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 2px rgba(0,0,0,.10);
+  --f-head:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-mono:"IBM Plex Mono","Courier New",monospace;
+  /* Klassische Grotesk wie auf alten Kassetten-Etiketten */
+  --f-label:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Barlow Semi Condensed","Arial Narrow",sans-serif;
+  --f-brand:"Archivo","Arial Black",sans-serif;
+  --text:#1f1d1a;
+  --text-dim:#5f594e;
+  --accent-text:#ffffff;
+  --radius:8px;
+  --shadow:0 1px 1px rgba(60,48,30,.07), 0 3px 8px rgba(60,48,30,.10);
+  --raised:linear-gradient(180deg,#fdfbf6,#f0ebe0);
+  --housing-top:#2c2926; --housing-bot:#141311;
+  --tc-text:#121110;
+  /* Bauteilfarben der hellen Vintage-Designs (Tapedeck setzt dunkle Gegenstücke) */
+  --text-sub:#4f4a41;
+  --on-accent:#ffffff;
+  --btn-border:#36322c; --btn-shine:#ffffff; --btn-shadow:0 2px 4px rgba(60,48,30,.16);
+  --field:#fdfbf7;
+  --off:#dcd6ca; --off-text:#8a8375;
+  --knob:linear-gradient(180deg,#fdfaf2,#e8e1d0);
+  --track:#d8d1c2; --tick:#b3ab9b;
+  --stripe-left:max(8px, calc(50vw - 274px));
+  --paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .27 0 0 0 0 .18 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23p)'/%3E%3C/svg%3E");
 }
-:root[data-theme="retro-dark"]{
+:root[data-theme="retro"]{
+  --bg:#f3efe5;
+  --surface:#faf7f0;
+  --surface-2:#efeadf;
+  --border:#dcd4c3;
+  --accent:#28537f;
+  --accent-ink:#28537f;
+  --rest:#28537f;
+  --blockrest:#5f594e;
+  --danger:#c7332b;
+  --wo-color:#c7332b; --wo-text:#ffffff;
+  --bl-color:#28537f; --bl-text:#ffffff;
+  --title-color:#1f1d1a;
+  --section-color:#c7332b;
+  --dot-color:#c7332b;
+  --line-1:#c7332b; --line-2:#28537f;
+  --lined-color:#c7332b; --lined-1:#c7332b; --lined-2:#28537f;
+  --colon:#5d5a55;
+  --tc-face:#f2ecde; --tc-edge:#b9ae95;
+  --stripes-w:25px;
+  /* Leicht abgenutzte Lackstreifen: feine helle Sprenkel über Rot und Blau */
+  --stripes:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='140'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .97 0 0 0 0 .95 0 0 0 0 .9 0 0 0 10 -6.6'/%3E%3C/filter%3E%3Crect width='90' height='140' filter='url(%23s)'/%3E%3C/svg%3E"),
+    linear-gradient(90deg,#cf3a30 0 9px,transparent 9px 16px,#2b5b8c 16px 25px);
+}
+:root[data-theme="kodak"]{
+  --bg:#f5f2ea;
+  --surface:#fbf9f4;
+  --surface-2:#f0ece2;
+  --border:#e1dacb;
+  --accent:#ef7b17;
+  --accent-ink:#e0661a;
+  --rest:#ef7b17;
+  --blockrest:#5f594e;
+  --danger:#e1251b;
+  --wo-color:#ef7b17; --wo-text:#ffffff;
+  --bl-color:#f6b01e; --bl-text:#ffffff;
+  --title-color:#e1251b;
+  --section-color:#e1251b;
+  --dot-color:#ea5b1b;
+  --line-1:#e1251b; --line-2:#f6b01e;
+  --lined-color:#ef7b17; --lined-1:#ef7b17; --lined-2:#f39a1c;
+  --colon:#b58f5e;
+  --tc-face:#f1e6ca; --tc-edge:#b8a27a;
+  --stripes-w:27px;
+  --stripes:linear-gradient(90deg,#e1251b 0 9px,#f07c16 9px 18px,#f8b31c 18px 27px);
+}
+/* Tapedeck: dunkles Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er - gebürstetes Metall,
+   links eine Rack-Leiste mit Schraublöchern, bernsteinfarben beleuchtetes Zählwerk und
+   Anzeigen, die wie Kontrolllampen leuchten */
+:root[data-theme="tapedeck"]{
   color-scheme: dark;
-  --bg:#161513;
-  --surface:#201e1a;
-  --surface-2:#2a2721;
-  --border:#3c372d;
-  --text:#e2d8c5;
-  --text-dim:#8a8170;
-  --accent:#9c5a34;
-  --accent-text:#161513;
-  --rest:#5c6b4a;
-  --rest-text:#eef2e6;
-  --blockrest:#575144;
-  --danger:#8f4530;
-  --radius:11px;
-  --tc-top:#332f28; --tc-midtop:#211e19; --tc-midbot:#17140f; --tc-bot:#0d0b08; --tc-text:#ddd0b8;
-  --housing-top:#242019; --housing-bot:#100e0b;
-  --shadow:0 1px 1px rgba(0,0,0,.3), 0 4px 10px rgba(0,0,0,.28);
-  --bevel: inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 2px rgba(0,0,0,.25);
-}
-:root[data-theme^="retro-"] .btn,
-:root[data-theme^="retro-"] .iconbtn,
-:root[data-theme^="retro-"] .theme-pick button,
-:root[data-theme^="retro-"] .sound-tile,
-:root[data-theme^="retro-"] h1,
-:root[data-theme^="retro-"] .phase-label,
-:root[data-theme^="retro-"] .block-label,
-:root[data-theme^="retro-"] .section-title,
-:root[data-theme^="retro-"] .list-item .name,
-:root[data-theme^="retro-"] .list-item .sub,
-:root[data-theme^="retro-"] .wblock .name,
-:root[data-theme^="retro-"] .wblock .sub,
-:root[data-theme^="retro-"] .block-pick .name,
-:root[data-theme^="retro-"] .block-pick .sub,
-:root[data-theme^="retro-"] .next-up,
-:root[data-theme^="retro-"] .chip,
-:root[data-theme^="retro-"] input,
-:root[data-theme^="retro-"] select{
-  font-family:"Courier New",monospace;
-  letter-spacing:.02em;
-}
-:root[data-theme^="retro-"] .card,
-:root[data-theme^="retro-"] .list-item,
-:root[data-theme^="retro-"] .wblock,
-:root[data-theme^="retro-"] .block-pick{
-  border:1px solid var(--border);
-  background:linear-gradient(180deg, var(--surface), var(--surface-2));
-}
-:root[data-theme^="retro-"] .btn,
-:root[data-theme^="retro-"] .iconbtn,
-:root[data-theme^="retro-"] .playbtn,
-:root[data-theme^="retro-"] .fab,
-:root[data-theme^="retro-"] .ctrl-btn,
-:root[data-theme^="retro-"] .theme-pick button,
-:root[data-theme^="retro-"] .sound-tile,
-:root[data-theme^="retro-"] .stepper,
-:root[data-theme^="retro-"] .wblock-actions button{
-  box-shadow: var(--bevel), var(--shadow);
-}
-:root[data-theme^="retro-"] .iconbtn,
-:root[data-theme^="retro-"] .playbtn,
-:root[data-theme^="retro-"] .fab{
-  border:1px solid var(--border);
-}
-/* Transportsteuerung im Player wie die Tastenreihe eines alten Kassettenrekorders:
-   rechteckige, leicht abgerundete Tasten statt runder Kreise. */
-:root[data-theme^="retro-"] .ctrl-btn{
-  border-radius:13px;
-  border:1px solid rgba(0,0,0,.25);
-}
-:root[data-theme^="retro-"] .ctrl-btn.main{
-  border-radius:18px;
+  --bg:#17181a;
+  --surface:#222326;
+  --surface-2:#1a1b1d;
+  --border:#34363a;
+  --text:#e8e6e1;
+  --text-dim:#9d9a93;
+  --text-sub:#b3b0a8;
+  --accent:#ffa928;
+  --accent-ink:#ffb547;
+  --on-accent:#1d1305;
+  --rest:#4fe39a;
+  --blockrest:#3ccfd6;
+  --danger:#ff6a5c;
+  --wo-color:#ffa928; --wo-text:#1d1305;
+  --bl-color:#3ccfd6; --bl-text:#05262a;
+  --title-color:#e9e7e2;
+  --section-color:#ffb547;
+  --dot-color:#ffb547;
+  --line-1:#ffa928; --line-2:#6d7075;
+  --lined-color:#3ccfd6; --lined-1:#3ccfd6; --lined-2:#6d7075;
+  --colon:#ffb13b;
+  --tc-face:#141414; --tc-edge:#050505; --tc-text:#ffb547;
+  --housing-top:#0f0f10; --housing-bot:#050506;
+  --shadow:0 1px 1px rgba(0,0,0,.45), 0 4px 12px rgba(0,0,0,.4);
+  --raised:linear-gradient(180deg,#2f3135,#1e1f22);
+  --btn-border:#50535a; --btn-shine:rgba(255,255,255,.09); --btn-shadow:0 2px 5px rgba(0,0,0,.55);
+  --field:#111214;
+  --off:#2b2d31; --off-text:#85827b;
+  --knob:linear-gradient(180deg,#e6e8eb,#a2a6ab);
+  --track:#2b2d31; --tick:#595c61;
+  /* Gehäuse glatt; gebürstet (feine waagerechte Schliffspuren) sind nur die Frontplatten */
+  --paper:none;
+  --brushed:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='300' height='160' filter='url(%23b)'/%3E%3C/svg%3E");
+  --stripes-w:22px;
+  /* Rack-Leiste aus Aluminium mit Langlöchern für die Schrauben */
+  --stripes:
+    radial-gradient(ellipse 4px 8px at 50% 50%, #060606 0 62%, rgba(0,0,0,0) 76%) center 40px / 100% 240px repeat-y,
+    linear-gradient(90deg, rgba(0,0,0,0) calc(100% - 1px), rgba(0,0,0,.7) 0),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, rgba(0,0,0,.05) 1px 2px),
+    linear-gradient(90deg, #4b4e52, #9a9da2 24%, #6e7176 55%, #a5a8ad 78%, #4f5256);
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body{ height:100%; }
@@ -219,6 +260,10 @@ h1,h2,h3{ margin:0 0 4px; }
   flex-shrink:0; cursor:pointer;
 }
 .playbtn:active{ transform:scale(.92); }
+.playbtn.wo{ background:var(--wo-color); color:var(--wo-text); }
+.playbtn.bl{ background:var(--bl-color); color:var(--bl-text); }
+.chip.chev{ display:flex; align-items:center; padding:5px 8px; }
+.chip svg{ display:block; }
 .empty{
   text-align:center; color:var(--text-dim); padding:60px 20px; font-size:14px;
 }
@@ -231,6 +276,30 @@ h1,h2,h3{ margin:0 0 4px; }
   display:flex; align-items:center; justify-content:center; z-index:4;
 }
 .fab:active{ transform:scale(.93); }
+.fab.bl{ background:var(--bl-color); color:var(--bl-text); }
+.fab.open{ z-index:7; }
+.fab svg{ transition:transform .2s ease; }
+.fab.open svg{ transform:rotate(45deg); }
+/* Plus-Menü auf der Startseite: direkt ein Workout oder einen Block anlegen */
+.fab-backdrop{ position:fixed; inset:0; z-index:6; background:rgba(0,0,0,.2); }
+.fab-menu{
+  position:fixed; right:calc(16px + env(safe-area-inset-right));
+  bottom:calc(102px + env(safe-area-inset-bottom)); z-index:7;
+  display:flex; flex-direction:column; align-items:flex-end; gap:12px;
+}
+.fab-opt{
+  display:flex; align-items:center; gap:12px; border:none; cursor:pointer;
+  background:var(--surface); color:var(--text); border-radius:100px;
+  padding:7px 7px 7px 18px; font-size:16px; font-weight:600;
+  box-shadow:var(--shadow), 0 6px 18px rgba(0,0,0,.14);
+  animation:fabIn .18s ease both;
+}
+.fab-opt:nth-child(2){ animation-delay:.04s; }
+.fab-opt:active{ transform:scale(.97); }
+.fab-opt .ico{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:21px; }
+.fab-opt .ico.wo{ background:var(--wo-color); color:var(--wo-text); }
+.fab-opt .ico.bl{ background:var(--bl-color); color:var(--bl-text); }
+@keyframes fabIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
 
 label{ display:block; font-size:13px; color:var(--text-dim); margin:14px 0 6px; }
 label:first-child{ margin-top:0; }
@@ -267,6 +336,7 @@ input:focus, select:focus{ border-color:var(--accent); }
   background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
   padding:14px 16px; margin-bottom:8px; display:flex; align-items:center; gap:10px; cursor:pointer;
 }
+.block-pick .meta{ flex:1; min-width:0; }
 .block-pick .name{ font-weight:600; flex:1; }
 .block-pick .sub{ font-size:13px; color:var(--text-dim); }
 
@@ -300,12 +370,15 @@ input:focus, select:focus{ border-color:var(--accent); }
 .range-row .label{ font-size:15px; display:flex; justify-content:space-between; margin-bottom:10px; }
 .range-row .label span{ color:var(--text-dim); font-variant-numeric:tabular-nums; }
 input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor:pointer; }
+.range-scale{ display:none; }
 
-.theme-pick{ display:flex; flex-wrap:wrap; gap:8px; }
+/* Oben die drei schlichten Designs, darunter die beiden Vintage-Designs */
+.theme-pick{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
 .theme-pick button{
-  flex:1 1 auto; min-width:72px; padding:14px 8px; border-radius:12px; border:1px solid var(--border); background:var(--surface-2);
+  grid-column:span 2; min-width:0; padding:14px 6px; border-radius:12px; border:1px solid var(--border); background:var(--surface-2);
   color:var(--text); font-size:15px; cursor:pointer;
 }
+.lang-pick button{ grid-column:span 3; }
 .theme-pick button.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
 
 .installtip{
@@ -344,10 +417,14 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .phase-label{ font-size:24px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.85; margin-bottom:6px; }
 .block-label{ font-size:20px; font-weight:600; opacity:.75; margin-bottom:22px; min-height:26px; }
 .next-up{ margin-top:26px; font-size:19px; font-weight:600; opacity:.65; min-height:24px; }
-.rep-dots{ display:flex; gap:12px; margin-top:22px; flex-wrap:wrap; justify-content:center; max-width:320px; }
-.rep-dots span{ width:13px; height:13px; border-radius:3px; background:currentColor; opacity:.25; }
-.rep-dots span.done{ opacity:.55; }
-.rep-dots span.now{ opacity:1; width:16px; height:16px; }
+/* Wiederholungen als große Quadrate, damit man den Fortschritt auch aus der Entfernung sieht:
+   erledigte leuchten, die aktuelle pulsiert, kommende sind blass. Die Größe setzt updateDots(). */
+.rep-dots{ display:flex; gap:10px; margin-top:24px; flex-wrap:wrap; justify-content:center; max-width:340px; }
+.rep-dots span{ width:24px; height:24px; border-radius:4px; background:currentColor; opacity:.22; }
+.rep-dots span.done{ opacity:.9; }
+.rep-dots span.now{ opacity:1; animation:repPulse 1.4s ease-in-out infinite; }
+@keyframes repPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+@media (prefers-reduced-motion: reduce){ .rep-dots span.now{ animation:none; } }
 
 /* Modern: kreisförmiger Fortschrittsring */
 .ring-wrap{ position:relative; width:min(62vw,255px); height:min(62vw,255px); }
@@ -359,47 +436,52 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   font-size:min(14vw,60px); font-weight:700; font-variant-numeric:tabular-nums;
 }
 
-/* Retro: Walzenzähler - mechanischer Rollenzähler wie ein echter Kilometerzähler */
+/* Vintage: Walzenzähler - jede Ziffer ist eine echte 3D-Walze (Zylinder mit rundum aufgedruckten
+   Ziffern), die hinter einem Sichtfenster im dunklen Gehäuse gedreht wird */
 .time{ display:flex; align-items:center; justify-content:center; }
-:root[data-theme^="retro-"] .time{
+:root[data-vintage] .time{
+  position:relative;
   background:linear-gradient(180deg, var(--housing-top), var(--housing-bot));
-  padding:14px 16px;
-  border-radius:9px;
-  box-shadow:inset 0 3px 6px rgba(0,0,0,.55), inset 0 -1px 0 rgba(255,255,255,.05), inset 0 0 0 1px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.25);
+  padding:11px 12px;
+  border-radius:10px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -2px 3px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.45), 0 2px 5px rgba(0,0,0,.28);
+}
+/* Glasscheibe vor dem Zählwerk: schräger, schwacher Lichtreflex */
+:root[data-vintage] .time::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:3;
+  background:linear-gradient(162deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.05) 36%, rgba(255,255,255,0) 37%);
 }
 .tc{
-  display:inline-block; font-size:min(20vw,108px); font-weight:700; line-height:1;
-  border-radius:3px; padding:0 .05em; margin:0 1px; min-width:.62em; text-align:center;
-  position:relative;
-  /* Lichtkante + Wölbung oben, Kernschatten am Walzenspalt, zweite schwache Reflexion darunter -
-     simuliert die gekrümmte Oberfläche eines echten Zahlenrads statt einer flachen Fläche */
-  background:
-    linear-gradient(180deg,
-      rgba(255,255,255,.28) 0%, rgba(255,255,255,0) 20%,
-      rgba(0,0,0,0) 42%, rgba(0,0,0,.16) 50%, rgba(0,0,0,0) 58%,
-      rgba(255,255,255,.08) 68%, rgba(0,0,0,0) 80%, rgba(0,0,0,.18) 100%),
-    linear-gradient(180deg,var(--tc-top) 0%, var(--tc-midtop) 48%, var(--tc-midbot) 52%, var(--tc-bot) 100%);
-  color:var(--tc-text);
-  box-shadow:
-    inset 5px 0 6px -5px rgba(0,0,0,.3), inset -5px 0 6px -5px rgba(0,0,0,.3),
-    inset 0 0 0 1px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.15);
+  display:inline-block; position:relative; width:.74em; margin:0 .025em;
+  font-family:var(--f-brand); font-weight:800; font-size:min(17vw,92px); line-height:1;
 }
-.tc::after{
-  content:""; position:absolute; left:0; right:0; top:calc(50% - 2px); height:4px;
-  background:linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.5) 45%, rgba(255,255,255,.14) 60%, rgba(255,255,255,0) 100%);
+/* Sichtfenster: zeigt die Ziffer vorne und oben/unten ein Stück der Nachbarziffern */
+.tc-window{
+  display:block; position:relative; height:1.3em; overflow:hidden; border-radius:3px;
+  perspective:9em; background:var(--tc-edge);
+  /* Maske schneidet die 3D-Walze auch in Safari zuverlässig am Fenster ab */
+  -webkit-mask-image:linear-gradient(#000,#000); mask-image:linear-gradient(#000,#000);
 }
-.tc.sep{ background:none; box-shadow:none; color:var(--text); opacity:.45; min-width:auto; padding:0 .05em; }
-.tc.sep::after{ content:none; }
-.tc-window{ display:block; overflow:hidden; height:1.08em; line-height:1.08em; }
-.tc-strip{ display:flex; flex-direction:column; }
-.tc-d{
-  display:block; height:1.08em; line-height:1.08em; text-align:center;
-  text-shadow:0 1px 0 rgba(255,255,255,.18), 0 -1px 1px rgba(0,0,0,.3);
+.odo-drum{
+  position:absolute; left:0; right:0; top:50%; height:0; z-index:1;
+  transform-style:preserve-3d; will-change:transform;
 }
-.tc-strip.rolling{ animation:odoRoll .34s cubic-bezier(.2,.65,.1,1) both; }
-@keyframes odoRoll{
-  0%{ transform:translateY(-1.08em); }
-  100%{ transform:translateY(0); }
+.odo-face{
+  position:absolute; left:0; right:0; top:-.565em; height:1.13em; line-height:1.13em;
+  text-align:center; color:var(--tc-text); background:var(--tc-face);
+  -webkit-backface-visibility:hidden; backface-visibility:hidden;
+  text-shadow:0 0 .012em rgba(0,0,0,.4);
+}
+/* Licht und Schatten der Wölbung: oben und unten dunkel, knapp über der Mitte ein Glanzstreifen;
+   an den Rändern die Schlagschatten des Fensterausschnitts */
+.tc-window::after{
+  content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(12,9,5,.82) 0%, rgba(12,9,5,.38) 12%, rgba(12,9,5,.08) 26%,
+    rgba(255,255,255,.17) 37%, rgba(255,255,255,.04) 47%, rgba(12,9,5,0) 58%,
+    rgba(12,9,5,.10) 71%, rgba(12,9,5,.42) 87%, rgba(12,9,5,.85) 100%);
+  box-shadow:inset 0 2px 3px rgba(0,0,0,.6), inset 0 -2px 3px rgba(0,0,0,.5),
+    inset 3px 0 4px -2px rgba(0,0,0,.6), inset -3px 0 4px -2px rgba(0,0,0,.6);
 }
 .player-controls{ display:flex; align-items:center; justify-content:center; gap:22px; padding:20px 24px calc(30px + env(safe-area-inset-bottom)); }
 .ctrl-btn{
@@ -422,10 +504,363 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   color:var(--text); font-size:15px; font-weight:600; cursor:pointer;
 }
 .sound-tile.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+.sound-group{ font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); margin:18px 2px 0; }
+.sound-group + .sound-tiles{ margin-top:10px; }
 .sound-tile:active{ transform:scale(.97); }
 
 .hidden{ display:none !important; }
 ::selection{ background:var(--accent); color:var(--accent-text); }
+
+.kodak-word, .kodak-badge, .deck-word, .deck-badge{ display:none; }
+
+/* ============ Vintage-Designs (Retro, Kodak, Tapedeck): Bauteile ============ */
+:root[data-vintage] body{
+  font-family:var(--f-body);
+  background-color:var(--bg);
+  background-image:var(--paper);
+}
+/* Senkrechte Zierstreifen am linken Rand - auch im Vollbild-Timer */
+:root[data-vintage] body::before,
+:root[data-vintage] .player::before{
+  content:""; position:fixed; top:0; bottom:0; left:var(--stripe-left); width:var(--stripes-w);
+  background:var(--stripes); pointer-events:none; z-index:1;
+}
+:root[data-vintage] #app{ padding-left:calc(var(--stripes-w) + 24px); }
+
+/* Kopfzeile: kursive Condensed-Überschrift mit doppelter Unterstreichung */
+/* Papierstruktur auch in der mitlaufenden Kopfzeile, sonst hebt sie sich als glatter Streifen ab */
+:root[data-vintage] .topbar{ gap:10px; padding-bottom:16px; background:var(--paper), linear-gradient(var(--bg) 70%, transparent); }
+:root[data-vintage] .topbar h1{
+  margin:0 0 0 4px; min-width:0;
+  font-family:var(--f-head); font-style:italic; font-weight:700;
+  font-size:clamp(25px,7.2vw,33px); line-height:1.05; letter-spacing:.005em;
+  text-transform:uppercase; color:var(--title-color);
+}
+:root[data-vintage] .topbar h1 .ttl{
+  display:inline-block; padding:0 6px 11px 0;
+  background:
+    linear-gradient(var(--line-1),var(--line-1)) left 0 bottom 6px / 100% 3px no-repeat,
+    linear-gradient(var(--line-2),var(--line-2)) left 0 bottom 0 / 100% 3px no-repeat;
+}
+:root[data-vintage] .topbar.home h1{ font-size:clamp(34px,10.5vw,46px); margin-left:0; }
+:root[data-vintage] .topbar.home h1 .ttl{ padding-bottom:13px; }
+:root[data-theme="retro"] .topbar.home h1 .ttl{
+  background:
+    linear-gradient(var(--line-1),var(--line-1)) left 0 bottom 7px / 100% 3px no-repeat,
+    linear-gradient(var(--line-2),var(--line-2)) left 0 bottom 0 / 100% 3px no-repeat;
+}
+/* Kodak-Startseite: roter Schriftzug, darunter der Titel mit drei feinen Linien */
+:root[data-theme="kodak"] .topbar.home h1{ display:flex; flex-direction:column; align-items:flex-start; }
+:root[data-theme="kodak"] .kodak-word{
+  display:block; font-family:var(--f-brand); font-style:normal; font-weight:900;
+  font-size:clamp(42px,12.5vw,56px); line-height:.95; letter-spacing:-.035em;
+  text-transform:none; color:#e1251b;
+}
+:root[data-theme="kodak"] .topbar.home h1 .ttl{
+  display:flex; align-items:center; gap:10px; padding:4px 0 0; background:none;
+  font-family:var(--f-brand); font-style:normal; font-weight:800; font-size:15px;
+  letter-spacing:.01em; color:var(--text);
+}
+:root[data-theme="kodak"] .topbar.home h1 .ttl::after{
+  content:""; width:clamp(56px,22vw,130px); height:10px;
+  background:
+    linear-gradient(#e1251b,#e1251b) left top / 100% 2px no-repeat,
+    linear-gradient(#f07c16,#f07c16) left center / 100% 2px no-repeat,
+    linear-gradient(#f8b31c,#f8b31c) left bottom / 100% 2px no-repeat;
+}
+
+:root[data-vintage] .iconbtn{
+  width:50px; height:50px; border-radius:9px; font-size:22px;
+  background:var(--raised); color:var(--text);
+  border:1.75px solid var(--btn-border);
+  box-shadow:var(--btn-shadow), inset 0 1px 0 var(--btn-shine);
+}
+:root[data-vintage] .iconbtn.back{ font-size:23px; }
+
+:root[data-vintage] .section-title{
+  font-family:var(--f-mono); font-weight:700; font-size:13.5px; letter-spacing:.07em;
+  color:var(--section-color); margin:26px 2px 10px;
+}
+:root[data-vintage] .section-title.lined{ display:flex; align-items:center; gap:12px; color:var(--lined-color); }
+:root[data-vintage] .section-title.lined::after{
+  content:""; flex:1; height:7px;
+  background:
+    linear-gradient(var(--lined-1),var(--lined-1)) left top / 100% 2px no-repeat,
+    linear-gradient(var(--lined-2),var(--lined-2)) left bottom / 100% 2px no-repeat;
+}
+
+:root[data-vintage] .card,
+:root[data-vintage] .list-item,
+:root[data-vintage] .wblock,
+:root[data-vintage] .block-pick{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+}
+:root[data-vintage] .list-item{ padding:14px 16px; gap:14px; }
+:root[data-vintage] .list-item .name,
+:root[data-vintage] .wblock .name,
+:root[data-vintage] .block-pick .name{ font-family:var(--f-mono); font-weight:500; font-size:16px; letter-spacing:.01em; }
+:root[data-vintage] .list-item.entry .name{ text-transform:uppercase; font-size:17px; letter-spacing:.03em; margin-bottom:4px; }
+:root[data-vintage] .list-item:not(.entry) .name{ white-space:normal; font-size:15px; }
+:root[data-vintage] .list-item .sub{ font-family:var(--f-body); font-size:14.5px; color:var(--text-sub); }
+:root[data-vintage] .list-item.entry .sub,
+:root[data-vintage] .wblock .sub,
+:root[data-vintage] .block-pick .sub{ font-family:var(--f-mono); font-size:13px; color:var(--text-sub); }
+:root[data-vintage] .sep-dot{ color:var(--dot-color); font-weight:700; font-size:1.3em; line-height:1; vertical-align:-.08em; }
+:root[data-vintage] .playbtn{
+  width:50px; height:50px; font-size:20px; border:none;
+  box-shadow:inset 0 -2px 3px rgba(0,0,0,.16), inset 0 1px 1px rgba(255,255,255,.25), 0 1px 2px rgba(0,0,0,.2);
+}
+:root[data-vintage] .chip{ font-family:var(--f-mono); border-radius:4px; }
+:root[data-vintage] .chip.chev{ background:none; padding:0; font-size:22px; color:var(--text); }
+
+:root[data-vintage] .btn{
+  font-family:var(--f-mono); font-weight:600; font-size:15.5px; letter-spacing:.06em;
+  text-transform:uppercase; border-radius:7px; padding:15px 18px;
+}
+:root[data-vintage] .btn-primary{
+  background:var(--accent); color:var(--on-accent); border:1px solid rgba(0,0,0,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 2px 4px rgba(0,0,0,.18);
+}
+:root[data-vintage] .btn-secondary,
+:root[data-vintage] .btn-danger{
+  background:var(--raised); border:1px solid var(--border);
+  box-shadow:var(--btn-shadow), inset 0 1px 0 var(--btn-shine);
+}
+:root[data-vintage] .btn-secondary{ color:var(--accent-ink); }
+:root[data-vintage] .btn-danger{ color:var(--danger); }
+
+:root[data-vintage] .theme-pick button{
+  font-family:var(--f-mono); font-weight:500; font-size:13px; letter-spacing:.04em; text-transform:uppercase;
+  border-radius:6px; padding:13px 4px; background:var(--raised);
+  box-shadow:var(--btn-shadow), inset 0 1px 0 var(--btn-shine);
+}
+:root[data-vintage] .theme-pick button.vintage{ color:var(--accent-ink); font-weight:600; }
+:root[data-vintage] .theme-pick button.active{
+  background:var(--accent); color:var(--on-accent); border-color:rgba(0,0,0,.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 1px 2px rgba(0,0,0,.2);
+}
+
+:root[data-vintage] input[type="text"],
+:root[data-vintage] input[type="number"],
+:root[data-vintage] select{
+  font-family:var(--f-mono); background:var(--field); border-radius:6px;
+  box-shadow:inset 0 1px 2px rgba(60,48,30,.12);
+}
+:root[data-vintage] .card > label{
+  font-family:var(--f-mono); font-size:12px; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--section-color);
+}
+:root[data-vintage] .stepper{ background:var(--field); border-radius:6px; }
+:root[data-vintage] .stepper input{ font-family:var(--f-mono); font-weight:600; background:transparent; box-shadow:none; }
+:root[data-vintage] .stepper button{ color:var(--accent-ink); font-family:var(--f-mono); }
+:root[data-vintage] .wblock-actions button{
+  background:var(--raised); border:1px solid var(--border); border-radius:6px;
+  box-shadow:var(--btn-shadow);
+}
+
+:root[data-vintage] .toggle-row .label,
+:root[data-vintage] .range-row .label{ font-family:var(--f-mono); font-weight:500; font-size:15.5px; }
+:root[data-vintage] .toggle-row .desc{ font-family:var(--f-body); font-size:14px; color:var(--text-sub); }
+:root[data-vintage] .range-row .label span{ color:var(--text); }
+
+/* Kippschalter: rechteckig, farbiges "ON"-Feld und geriffelter Schieber */
+:root[data-vintage] .switch{ width:72px; height:34px; }
+:root[data-vintage] .switch .track{
+  border-radius:5px; background:var(--off); border:1px solid rgba(0,0,0,.18);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.22);
+}
+:root[data-vintage] .switch .track::after{
+  content:"OFF"; position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  font-family:var(--f-head); font-weight:700; font-size:16px; letter-spacing:.04em; color:var(--off-text);
+}
+:root[data-vintage] .switch input:checked + .track{ background:var(--accent); border-color:rgba(0,0,0,.28); }
+:root[data-vintage] .switch input:checked + .track::after{ content:"ON"; left:9px; right:auto; color:var(--on-accent); }
+:root[data-vintage] .switch .thumb{
+  top:3px; left:3px; width:28px; height:28px; border-radius:4px;
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,.13) 0 1px, transparent 1px 4px) center / 60% 64% no-repeat,
+    var(--knob);
+  box-shadow:0 1px 2px rgba(0,0,0,.35), inset 0 0 0 1px rgba(0,0,0,.14);
+}
+:root[data-vintage] .switch input:checked ~ .thumb{ transform:translateX(38px); }
+
+/* Schieberegler wie ein Mischpult-Fader */
+:root[data-vintage] input[type="range"]{ -webkit-appearance:none; appearance:none; background:transparent; height:42px; }
+:root[data-vintage] input[type="range"]::-webkit-slider-runnable-track{
+  height:6px; border-radius:3px; background:var(--track); border:1px solid rgba(0,0,0,.12);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.28);
+}
+:root[data-vintage] input[type="range"]::-moz-range-track{
+  height:6px; border-radius:3px; background:var(--track); border:1px solid rgba(0,0,0,.12);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.28);
+}
+:root[data-vintage] input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:26px; height:38px; margin-top:-17px; border-radius:4px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.3) 0 1px, transparent 1px 4px) center / 56% 66% no-repeat,
+    var(--accent);
+  border:1px solid rgba(0,0,0,.35);
+  box-shadow:0 2px 3px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.3);
+}
+:root[data-vintage] input[type="range"]::-moz-range-thumb{
+  width:26px; height:38px; border-radius:4px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.3) 0 1px, transparent 1px 4px) center / 56% 66% no-repeat,
+    var(--accent);
+  border:1px solid rgba(0,0,0,.35);
+  box-shadow:0 2px 3px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.3);
+}
+:root[data-vintage] .range-scale{
+  display:flex; justify-content:space-between; margin:-6px 13px 0; padding-top:9px;
+  font-family:var(--f-mono); font-size:12px; color:var(--text-dim);
+  background:repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 12.5%) left top / calc(100% + 1px) 5px no-repeat;
+}
+
+:root[data-vintage] .fab{
+  width:62px; height:62px; border-radius:14px; font-size:30px;
+  background:var(--accent); color:var(--on-accent); border:1px solid rgba(0,0,0,.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 3px 8px rgba(0,0,0,.25);
+}
+:root[data-vintage] .fab-opt{
+  border-radius:9px; border:1px solid var(--border); background:var(--surface);
+  font-family:var(--f-mono); font-weight:600; font-size:14.5px; letter-spacing:.05em; text-transform:uppercase;
+  padding:6px 6px 6px 16px;
+}
+:root[data-vintage] .fab-opt .ico{ border-radius:7px; width:42px; height:42px; }
+
+:root[data-vintage] .installtip{ border:1px solid var(--border); font-size:14px; }
+:root[data-vintage] .step-num{ border-radius:5px; font-family:var(--f-mono); }
+:root[data-vintage] .step-text{ font-size:15.5px; }
+:root[data-vintage] .empty{ font-size:15px; }
+:root[data-vintage] .confirm-sheet{ border-radius:12px 12px 0 0; }
+:root[data-vintage] .confirm-sheet h3{ font-family:var(--f-head); font-style:italic; font-weight:700; font-size:27px; text-transform:uppercase; }
+:root[data-vintage] .sound-tile{
+  font-family:var(--f-mono); font-weight:600; font-size:14px; letter-spacing:.05em; text-transform:uppercase;
+  border-radius:7px; background:var(--raised); box-shadow:var(--btn-shadow), inset 0 1px 0 var(--btn-shine);
+}
+:root[data-vintage] .sound-tile.active{ background:var(--accent); color:var(--on-accent); border-color:rgba(0,0,0,.25); }
+:root[data-vintage] .sound-group{ font-family:var(--f-mono); font-weight:700; font-size:12.5px; letter-spacing:.07em; color:var(--section-color); }
+
+/* Kassetten-Etikett (nur Kodak) */
+:root[data-theme="kodak"] .kodak-badge{ display:flex; align-items:center; gap:9px; margin:28px 0 0 2px; color:var(--text); }
+.kodak-badge svg{ width:44px; height:40px; flex-shrink:0; display:block; }
+.kodak-badge b{ display:block; font-family:var(--f-brand); font-weight:900; font-size:27px; line-height:.9; letter-spacing:-.01em; }
+.kodak-badge span{ display:block; font-family:var(--f-mono); font-size:12px; letter-spacing:.06em; margin-top:3px; }
+
+/* ---- Vintage-Player: Papier statt vollflächiger Phasenfarbe ---- */
+:root[data-vintage] .player{ background-color:var(--bg); background-image:var(--paper); color:var(--text); }
+:root[data-theme="retro"] .player{ --ph-prep:#1f1d1a; --ph-work:#1f1d1a; --ph-rest:#28537f; --ph-blockrest:#c7332b; }
+:root[data-theme="kodak"] .player{ --ph-prep:#e1251b; --ph-work:#b3170f; --ph-rest:#e06d18; --ph-blockrest:#b87c06; }
+:root[data-vintage] .player-top{ padding:14px 16px 0 calc(var(--stripe-left) + var(--stripes-w) + 14px); }
+:root[data-vintage] .player-top .exit{
+  width:44px; height:44px; border-radius:8px; background:var(--raised); color:var(--text);
+  border:1.5px solid var(--btn-border); box-shadow:var(--btn-shadow);
+}
+:root[data-vintage] #pl-counter{ font-family:var(--f-body); font-weight:600; font-size:16px; letter-spacing:.04em; opacity:1 !important; }
+:root[data-vintage] .vol-popover{ margin-left:calc(var(--stripe-left) + var(--stripes-w) + 14px); background:var(--surface); border:1px solid var(--border); border-radius:8px; }
+:root[data-vintage] .progressbar{ height:2px; border-radius:0; background:var(--track); margin:14px 0 0 calc(var(--stripe-left) + var(--stripes-w)); }
+:root[data-vintage] .progressbar-fill{ background:var(--accent); border-radius:0; }
+:root[data-vintage] .player-mid{ padding:10px 16px 10px calc(var(--stripe-left) + var(--stripes-w) + 12px); }
+:root[data-vintage] .phase-label{
+  font-family:var(--f-label); font-weight:800; font-size:29px; letter-spacing:.14em;
+  opacity:1; margin-bottom:4px; color:var(--ph-work);
+}
+:root[data-vintage] .player[data-phase="prep"] .phase-label{
+  font-family:var(--f-head); font-style:italic; font-size:46px; letter-spacing:.01em; line-height:1.05; color:var(--ph-prep);
+}
+:root[data-vintage] .player[data-phase="rest"] .phase-label{ color:var(--ph-rest); }
+:root[data-vintage] .player[data-phase="blockrest"] .phase-label{ color:var(--ph-blockrest); }
+:root[data-vintage] .block-label{ font-family:var(--f-label); font-weight:700; font-size:20px; letter-spacing:.01em; opacity:1; }
+:root[data-vintage] .next-up{ font-family:var(--f-label); font-weight:600; font-size:16px; opacity:1; line-height:1.4; color:var(--text-sub); }
+/* Doppelpunkt als zwei gewölbte Nieten im Gehäuse statt Schriftzeichen */
+:root[data-vintage] .tc.sep{ color:transparent; width:.28em; height:1.3em; margin:0; }
+:root[data-vintage] .tc.sep::before,
+:root[data-vintage] .tc.sep::after{
+  content:""; position:absolute; left:50%; width:.13em; height:.13em; margin-left:-.065em; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.45), rgba(255,255,255,0) 55%), var(--colon);
+  box-shadow:inset 0 -1px 2px rgba(0,0,0,.4), 0 1px 1px rgba(0,0,0,.5);
+}
+:root[data-vintage] .tc.sep::before{ top:32%; }
+:root[data-vintage] .tc.sep::after{ bottom:32%; }
+/* Vintage: wie Kontrolllampen - erledigte und aktuelle leuchten in der Akzentfarbe */
+:root[data-vintage] .rep-dots span{ background:var(--off); opacity:1; box-shadow:inset 0 1px 2px rgba(0,0,0,.14); }
+:root[data-vintage] .rep-dots span.done,
+:root[data-vintage] .rep-dots span.now{
+  background:var(--accent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 3px rgba(0,0,0,.18);
+}
+:root[data-vintage] .ctrl-btn{
+  width:64px; height:64px; border-radius:10px; font-size:24px;
+  background:var(--raised); color:var(--accent-ink); border:1px solid var(--border);
+  box-shadow:var(--btn-shadow), inset 0 1px 0 var(--btn-shine);
+}
+:root[data-vintage] .ctrl-btn.main{
+  width:88px; height:88px; border-radius:14px; font-size:34px;
+  background:var(--accent); border:1px solid rgba(0,0,0,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 3px 8px rgba(0,0,0,.22);
+}
+:root[data-vintage] .ctrl-btn.main span{ color:var(--on-accent); }
+:root[data-vintage] .done-screen h2{ font-family:var(--f-head); font-style:italic; font-weight:700; font-size:40px; text-transform:uppercase; color:var(--title-color); }
+:root[data-vintage] .done-screen p{ font-family:var(--f-label); font-weight:600; font-size:17px; }
+:root[data-theme="kodak"] .player .kodak-badge{ position:absolute; left:calc(var(--stripe-left) + var(--stripes-w) + 14px); bottom:calc(16px + env(safe-area-inset-bottom)); margin:0; }
+:root[data-theme="kodak"] .player-controls{ padding-bottom:calc(76px + env(safe-area-inset-bottom)); }
+
+/* ============ Tapedeck: Leuchtanzeigen, Metall und Hi-Fi-Beschriftung ============ */
+:root[data-theme="tapedeck"] .card,
+:root[data-theme="tapedeck"] .list-item,
+:root[data-theme="tapedeck"] .wblock,
+:root[data-theme="tapedeck"] .block-pick,
+:root[data-theme="tapedeck"] .player{ background-image:var(--brushed); }
+/* Überschriften wie die Beschriftung auf der Frontplatte: aufrecht, weit gesperrt */
+:root[data-theme="tapedeck"] .topbar h1,
+:root[data-theme="tapedeck"] .done-screen h2,
+:root[data-theme="tapedeck"] .confirm-sheet h3{
+  font-family:var(--f-body); font-style:normal; font-weight:600; letter-spacing:.16em;
+}
+:root[data-theme="tapedeck"] .topbar h1 .ttl,
+:root[data-theme="tapedeck"] .topbar.home h1 .ttl{
+  padding-bottom:10px;
+  background:
+    linear-gradient(var(--line-1),var(--line-1)) left 0 bottom 5px / 100% 2px no-repeat,
+    linear-gradient(var(--line-2),var(--line-2)) left 0 bottom 0 / 100% 2px no-repeat;
+}
+:root[data-theme="tapedeck"] .topbar.home h1{ font-size:clamp(28px,8.5vw,38px); }
+:root[data-theme="tapedeck"] .deck-word{
+  display:block; font-family:var(--f-body); font-weight:500; font-size:11px; letter-spacing:.32em;
+  text-transform:uppercase; color:var(--text-dim); margin:0 0 8px;
+}
+/* Zählwerk mit Hintergrundbeleuchtung: schwarze Walzen, bernsteinfarben leuchtende Ziffern */
+:root[data-theme="tapedeck"] .odo-face{ text-shadow:0 0 .05em rgba(255,176,60,.9), 0 0 .22em rgba(255,140,20,.45); }
+:root[data-theme="tapedeck"] .tc.sep::before,
+:root[data-theme="tapedeck"] .tc.sep::after{ background:var(--colon); box-shadow:0 0 6px 1px rgba(255,160,40,.7); }
+:root[data-theme="tapedeck"] .time{ box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 0 0 1px rgba(255,255,255,.05), 0 0 0 1px #000, 0 3px 10px rgba(0,0,0,.6); }
+/* Phasen leuchten wie Kontrolllampen: Los = Bernstein, Pause = Grün, Blockpause = Cyan */
+:root[data-theme="tapedeck"] .player{ --ph-prep:#e9e7e2; --ph-work:#ffb13b; --ph-rest:#4fe39a; --ph-blockrest:#3ccfd6; }
+:root[data-theme="tapedeck"] .phase-label{ text-shadow:0 0 14px currentColor; }
+:root[data-theme="tapedeck"] .player[data-phase="prep"] .phase-label{ text-shadow:none; }
+:root[data-theme="tapedeck"] .rep-dots span{ box-shadow:inset 0 1px 2px rgba(0,0,0,.6); }
+:root[data-theme="tapedeck"] .rep-dots span.done,
+:root[data-theme="tapedeck"] .rep-dots span.now{ box-shadow:0 0 10px rgba(255,169,40,.55), inset 0 1px 0 rgba(255,255,255,.35); }
+:root[data-theme="tapedeck"] .progressbar-fill{ box-shadow:0 0 6px rgba(255,169,40,.8); }
+:root[data-theme="tapedeck"] .btn-primary,
+:root[data-theme="tapedeck"] .fab,
+:root[data-theme="tapedeck"] .ctrl-btn.main,
+:root[data-theme="tapedeck"] .theme-pick button.active,
+:root[data-theme="tapedeck"] .sound-tile.active{ box-shadow:0 0 14px rgba(255,169,40,.35), inset 0 1px 0 rgba(255,255,255,.3); }
+:root[data-theme="tapedeck"] .switch input:checked + .track{ box-shadow:0 0 10px rgba(255,169,40,.35), inset 0 1px 2px rgba(0,0,0,.25); }
+:root[data-theme="tapedeck"] .playbtn.wo{ box-shadow:0 0 12px rgba(255,169,40,.4), inset 0 -2px 3px rgba(0,0,0,.2); }
+:root[data-theme="tapedeck"] .playbtn.bl{ box-shadow:0 0 12px rgba(60,207,214,.4), inset 0 -2px 3px rgba(0,0,0,.2); }
+/* Bandsorten-Anzeige: drei Kontrolllampen, „Metal“ leuchtet */
+:root[data-theme="tapedeck"] .deck-badge{
+  display:flex; gap:16px; margin:30px 0 0 2px;
+  font-family:var(--f-body); font-weight:600; font-size:11px; letter-spacing:.16em; color:var(--text-dim);
+}
+.deck-badge span{ display:flex; align-items:center; gap:7px; }
+.deck-badge i{ width:7px; height:7px; border-radius:50%; background:#3a2d17; box-shadow:inset 0 1px 1px rgba(0,0,0,.7); }
+.deck-badge .on{ color:var(--text); }
+.deck-badge .on i{ background:#ffb13b; box-shadow:0 0 8px 2px rgba(255,160,40,.6); }
+:root[data-theme="tapedeck"] .player .deck-badge{ position:absolute; left:calc(var(--stripe-left) + var(--stripes-w) + 14px); bottom:calc(22px + env(safe-area-inset-bottom)); margin:0; }
+:root[data-theme="tapedeck"] .player-controls{ padding-bottom:calc(64px + env(safe-area-inset-bottom)); }
 </style>
 </head>
 <body>
@@ -446,24 +881,24 @@ function defaultDB(){
   return {
     blocks: [],
     workouts: [],
-    settings: { theme:"system", sound:true, soundStyle:"classic", vibration:true, keepAwake:true, countIn:true, volume:0.6 }
+    settings: { theme:"system", sound:true, soundStyle:"classic", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6 }
   };
 }
-/* Ganz frühe Versionen kannten nur ein einzelnes "retro" (statt retro-hell/retro-dunkel). */
+/* Frühere Versionen hatten „Retro Hell" und „Retro Dunkel" - beide gehen im neuen Retro-Design auf. */
 function migrateTheme(t){
-  if(t==="retro") return "retro-dark";
+  if(t==="retro-light" || t==="retro-dark") return "retro";
   return t;
 }
-function isRetroTheme(){
+/* Retro, Kodak und Tapedeck: Vintage-Look mit Walzenzähler statt Fortschrittsring */
+function isVintageTheme(){
   var t = state.db.settings.theme;
-  return t==="retro-light" || t==="retro-dark";
+  return t==="retro" || t==="kodak" || t==="tapedeck";
 }
 
 var ICON_SAVE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
 var ICON_TRASH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>';
 var ICON_VOLUME = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4"/><path d="M19 6a9 9 0 0 1 0 12"/></svg>';
 var ICON_DOWNLOAD = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>';
-var ICON_HOME = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5l9-8 9 8"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6.5h5V20"/></svg>';
 /* Handgezeichnete SVG-Icons statt Unicode-Glyphen: die sitzen unabhängig von
    Schriftart/Plattform immer exakt zentriert und bleiben bei jeder Größe klar erkennbar. */
 var ICON_PLAY = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 4.3v15.4c0 .8.9 1.3 1.6.9l12-7.7c.6-.4.6-1.4 0-1.8l-12-7.7c-.7-.4-1.6.1-1.6.9z"/></svg>';
@@ -471,10 +906,183 @@ var ICON_PAUSE = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="curren
 var ICON_SKIP = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M5.5 5.2v13.6c0 .8.9 1.3 1.6.9l9.4-6.8c.6-.4.6-1.3 0-1.8L7.1 4.3c-.7-.4-1.6.1-1.6.9z"/><rect x="17" y="5" width="2.6" height="14" rx="1"/></svg>';
 var ICON_RESTART = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>';
 var ICON_SETTINGS = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2.1 2.1 0 1 1-3 3l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2.1 2.1 0 0 1-4.2 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2.1 2.1 0 1 1-3-3l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2.1 2.1 0 0 1 0-4.2h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2.1 2.1 0 1 1 3-3l.1.1a1.7 1.7 0 0 0 1.9.3H9.5a1.7 1.7 0 0 0 1-1.6V3a2.1 2.1 0 0 1 4.2 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2.1 2.1 0 1 1 3 3l-.1.1a1.7 1.7 0 0 0-.3 1.9V9c.2.7.8 1.2 1.6 1.2H21a2.1 2.1 0 0 1 0 4.2h-.1a1.7 1.7 0 0 0-1.5 1.6z"/></svg>';
-var ICON_LIST = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>';
+var ICON_BACK = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+var ICON_CHEV = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+var ICON_PLUS = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>';
+/* Workout = mehrere gestapelte Blöcke, Block = einzelne Stoppuhr */
+var ICON_WORKOUT = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12l9 4.5 9-4.5"/><path d="M3 16.5l9 4.5 9-4.5"/></svg>';
+var ICON_BLOCK = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7.5"/><path d="M12 14v-4"/><path d="M9.5 2.5h5"/><path d="M12 2.5v4"/></svg>';
+/* Kassetten-Etikett für das Kodak-Design: rotes K-Signet und Bandtyp */
+var KODAK_BADGE = '<div class="kodak-badge" aria-hidden="true">'+
+  '<svg viewBox="0 0 44 40"><rect width="44" height="40" rx="2.5" fill="#e1251b"/>'+
+  '<path d="M4 20L18.5 4H29L14.5 20 29 36H18.5z" fill="#fff"/>'+
+  '<g fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="6.2" text-anchor="middle">'+
+  '<text x="37.5" y="10">K</text><text x="37.5" y="17">O</text><text x="37.5" y="24">D</text><text x="37.5" y="31">A</text><text x="37.5" y="38">K</text></g></svg>'+
+  '<div><b>C60</b><span>LOW NOISE</span></div></div>';
+/* Bandsorten-Anzeige für das Tapedeck-Design: drei Kontrolllampen, „Metal“ leuchtet */
+var DECK_BADGE = '<div class="deck-badge" aria-hidden="true">'+
+  '<span><i></i>NORMAL</span><span><i></i>CrO₂</span><span class="on"><i></i>METAL</span></div>';
 
 /* Auswählbare Klänge: jeweils Liste von Tönen {f:Frequenz, d:Verzögerung(ms), dur:Dauer(ms), v:Lautstärke-Faktor, type:Wellenform} */
+/* Bausteine für die natürlich klingenden Stile. Teiltöne als [Frequenzverhältnis, Lautstärke,
+   Ausklingdauer relativ zur Notenlänge] - echte Glocken und Klangschalen haben unharmonische
+   Obertöne, und die hohen klingen schneller aus als der Grundton. */
+var BELL_PARTIALS = [[0.5,.16,1.1],[1,1,1],[2.32,.5,.6],[4.25,.3,.38],[6.63,.18,.24],[9.38,.1,.15]];
+var SMALL_BELL_PARTIALS = [[1,1,1],[2.76,.45,.5],[5.4,.2,.28]];
+var BOWL_PARTIALS = [[1,1,1],[2.71,.5,.6],[5.15,.22,.34],[8.4,.08,.2]];
+/* Glockenschlag mit Hammer-Anschlag */
+function bellHit(f, d, v, dur, pan){ return { f:f, d:d, v:v, dur:dur, att:2, partials:BELL_PARTIALS, strike:.35, pan:pan||0 }; }
+/* Klangschale: weicher Anschlag, langes Ausklingen mit Schwebung */
+function bowlHit(f, d, v, dur, pan){ return { f:f, d:d, v:v, dur:dur, att:18, partials:BOWL_PARTIALS, beat:1.6, pan:pan||0 }; }
+/* Pfiff einer Trillerpfeife: die Kugel im Inneren lässt den Ton flattern, dazu Atemrauschen */
+function whistle(d, len, v){ return { f:2900, d:d, v:v, dur:len, hold:Math.max(20, len-60), att:14, trill:{ rate:34, depth:170 }, breath:.22 }; }
+/* Holzblock: kurzer, leicht fallender Ton plus Klick des Schlegels */
+function knock(f, d, v){ return [
+  { f:f*1.25, sweepTo:f, d:d, v:v, dur:85, att:1, type:"triangle", lp:f*3 },
+  { f:f*2.1, d:d, v:v*.55, dur:28, att:1, noise:true, filterType:"bandpass", q:1.4 }
+]; }
+/* Küchenwecker: der Klöppel schlägt schnell hintereinander auf eine kleine Glocke */
+function ring(f, count, v){
+  var notes = [];
+  for(var i=0;i<count;i++){
+    notes.push({ f:f*(i%2 ? 1.003 : 1), d:i*42, v:v*(i%2 ? .8 : 1), dur:150, att:1, partials:SMALL_BELL_PARTIALS, pan:(i%2 ? -.12 : .12) });
+  }
+  return notes;
+}
+/* Einfacher Zufallsgenerator mit festem Startwert: Kuhglocke und Applaus klingen lebendig
+   unregelmäßig, aber jedes Mal gleich */
+function seededRandom(seed){
+  return function(){ seed = (seed*16807) % 2147483647; return seed/2147483647; };
+}
+var MARIMBA_PARTIALS = [[1,1,1],[3.93,.38,.22],[9.2,.14,.07]];
+var TRIANGLE_PARTIALS = [[1,.45,1],[2.756,.75,.9],[5.404,1,.75],[8.933,.75,.55],[13.34,.5,.42],[18.64,.28,.3]];
+var COWBELL_PARTIALS = [[1,1,1],[1.5,.85,.85],[2.51,.4,.5],[3.37,.28,.35],[4.12,.18,.25]];
+/* Marimba: Holzstab über einem Resonanzrohr, weicher Schlegel */
+/* (klingt sehr voll, deshalb um ein Viertel leiser eingepegelt) */
+function marimbaNote(f, d, v, dur, pan){ return { f:f, d:d, v:v*.75, dur:dur, att:3, partials:MARIMBA_PARTIALS, mallet:.25, pan:pan||0 }; }
+/* Triangel: gebogener Stahlstab, sehr hell und lange klingend */
+function triangleHit(f, d, v, dur, pan, beat){ return { f:f, d:d, v:v, dur:dur, att:1, partials:TRIANGLE_PARTIALS, strike:.28, beat:(beat==null ? 2.3 : beat), pan:pan||0 }; }
+/* Triangel-Wirbel: der Schlegel schlägt schnell zwischen zwei Seiten hin und her, immer kräftiger */
+function triangleRoll(){
+  var notes = [];
+  for(var i=0;i<18;i++) notes.push(triangleHit(640, i*40, .25 + .35*i/17, 420, (i%2 ? -.2 : .2), 0));
+  notes.push(triangleHit(640, 760, .8, 3600));
+  return notes;
+}
+/* Kuhglocke: blechern, kurz ausklingend */
+function clank(f, d, v, dur, pan){ return { f:f, d:d, v:v, dur:dur, att:1, partials:COWBELL_PARTIALS, strike:.4, pan:pan||0 }; }
+/* Geschüttelte Kuhglocke wie am Streckenrand: unregelmäßige Schläge, mal links, mal rechts */
+function cowbellShake(){
+  var notes = [], t = 0, rnd = seededRandom(7);
+  for(var i=0;i<16;i++){
+    notes.push(clank(540 + rnd()*50, Math.round(t), .45 + rnd()*.3, 450, (rnd()-.5)*.8));
+    t += 60 + rnd()*50;
+  }
+  return notes;
+}
+/* Händeklatschen: mehrere schnelle Rauschstöße - die Handflächen treffen nie ganz gleichzeitig.
+   Die kurzen Stöße sind von Natur aus leise, deshalb kräftig verstärkt (der Begrenzer fängt Spitzen ab). */
+function clap(d, v, pan, f){ return { f:f||1250, d:d, v:v*3, dur:110, noise:true, filterType:"bandpass", q:.8, bursts:[0,9,17,27], pan:pan||0 }; }
+/* Applaus: viele Klatscher durcheinander, im ganzen Raum verteilt */
+function applause(){
+  var notes = [], rnd = seededRandom(11);
+  for(var i=0;i<45;i++) notes.push(clap(Math.round(rnd()*2400), .25 + rnd()*.35, (rnd()-.5)*1.4, 950 + rnd()*700));
+  return notes;
+}
+/* Konsolen-Ton: flache Hüllkurve mit hartem Ende, Wellenform eines alten Soundchips */
+function chip(f, d, len, v, wave, trill){ return { f:f, d:d, dur:len, v:v, att:2, hold:Math.max(5, len-14), wave:wave||"pulse25", trill:trill }; }
+
 var SOUND_STYLES = {
+  /* ---- Natürlich: nachgebaute echte Klangquellen ---- */
+  boxglocke: { label:"Boxring-Glocke", natural:true,
+    tick:[{ f:1760, d:0, v:.3, dur:350, att:2, partials:SMALL_BELL_PARTIALS }],
+    work:[bellHit(880, 0, 1, 2600)],
+    rest:[bellHit(660, 0, .8, 2200)],
+    blockrest:[bellHit(740, 0, .8, 1600, -.15), bellHit(740, 320, .8, 2000, .15)],
+    prep:[bellHit(740, 0, .8, 1600, -.15), bellHit(740, 320, .8, 2000, .15)],
+    done:[bellHit(880, 0, .8, 1500, -.2), bellHit(880, 380, .8, 1500, 0), bellHit(880, 760, .9, 2800, .2)]
+  },
+  trillerpfeife: { label:"Trillerpfeife", natural:true,
+    tick:[{ f:3100, d:0, v:.3, dur:70, att:5, trill:{ rate:34, depth:110 }, breath:.25 }],
+    work:[whistle(0, 480, .28)],
+    rest:[whistle(0, 160, .23), whistle(230, 160, .23)],
+    blockrest:[whistle(0, 150, .26), whistle(220, 420, .26)],
+    prep:[whistle(0, 150, .26), whistle(220, 420, .26)],
+    done:[whistle(0, 180, .28), whistle(260, 180, .28), whistle(520, 900, .31)]
+  },
+  klangschale: { label:"Klangschale", natural:true,
+    tick:[{ f:1175, d:0, v:.16, dur:600, att:4, partials:SMALL_BELL_PARTIALS }],
+    work:[bowlHit(392, 0, .9, 5000)],
+    rest:[bowlHit(294, 0, .75, 4500)],
+    blockrest:[bowlHit(330, 0, .8, 4500)],
+    prep:[bowlHit(330, 0, .8, 4500)],
+    done:[bowlHit(392, 0, .8, 5000, -.2), bowlHit(523, 700, .75, 6000, .2)]
+  },
+  holzblock: { label:"Holzblock", natural:true,
+    tick: knock(1500, 0, .45),
+    work: knock(820, 0, 1).concat(knock(820, 120, .8)),
+    rest: knock(1050, 0, .95),
+    blockrest: knock(950, 0, .75).concat(knock(950, 140, .75)),
+    prep: knock(950, 0, .75).concat(knock(950, 140, .75)),
+    done: knock(820, 0, .9).concat(knock(820, 160, .9), knock(1100, 320, .9), knock(1400, 480, 1))
+  },
+  kuechenwecker: { label:"Küchenwecker", natural:true,
+    /* Ticken des Uhrwerks: harter Klick plus heller Metallton */
+    tick:[{ f:2800, d:0, v:.8, dur:18, att:1, noise:true, filterType:"highpass", q:.7 }, { f:4200, d:0, v:.28, dur:25, att:1 }],
+    work: ring(2400, 10, .5),
+    rest: ring(2100, 6, .4),
+    blockrest: ring(2250, 8, .45),
+    prep: ring(2250, 8, .45),
+    done: ring(2400, 32, .5)
+  },
+  marimba: { label:"Marimba", natural:true,
+    tick:[marimbaNote(1047, 0, .35, 350)],
+    work:[marimbaNote(784, 0, .8, 1100, -.1), marimbaNote(1047, 110, .9, 1300, .1)],
+    rest:[marimbaNote(659, 0, .7, 1100, .1), marimbaNote(523, 130, .7, 1400, -.1)],
+    blockrest:[marimbaNote(523, 0, .7, 900, -.15), marimbaNote(659, 110, .7, 900, 0), marimbaNote(784, 220, .75, 1300, .15)],
+    prep:[marimbaNote(523, 0, .7, 900, -.15), marimbaNote(659, 110, .7, 900, 0), marimbaNote(784, 220, .75, 1300, .15)],
+    done:[marimbaNote(523, 0, .7, 800, -.3), marimbaNote(659, 110, .7, 800, -.15), marimbaNote(784, 220, .75, 800, 0),
+      marimbaNote(1047, 330, .8, 900, .15), marimbaNote(1319, 440, .8, 1800, .3),
+      marimbaNote(523, 700, .55, 2000, -.2), marimbaNote(784, 700, .55, 2000, 0), marimbaNote(1047, 700, .6, 2200, .2)]
+  },
+  triangel: { label:"Triangel", natural:true,
+    tick:[triangleHit(700, 0, .22, 500, 0, 0)],
+    work:[triangleHit(640, 0, .9, 3200)],
+    rest:[triangleHit(600, 0, .65, 2400)],
+    blockrest:[triangleHit(640, 0, .6, 1200, -.15), triangleHit(640, 180, .6, 2600, .15)],
+    prep:[triangleHit(640, 0, .6, 1200, -.15), triangleHit(640, 180, .6, 2600, .15)],
+    done: triangleRoll()
+  },
+  kuhglocke: { label:"Kuhglocke", natural:true,
+    tick:[clank(820, 0, .3, 220)],
+    work:[clank(560, 0, .85, 650, -.1), clank(560, 120, .75, 700, .1)],
+    rest:[clank(520, 0, .65, 650)],
+    blockrest:[clank(560, 0, .7, 450, -.15), clank(560, 110, .6, 450, 0), clank(560, 220, .7, 700, .15)],
+    prep:[clank(560, 0, .7, 450, -.15), clank(560, 110, .6, 450, 0), clank(560, 220, .7, 700, .15)],
+    done: cowbellShake()
+  },
+  klatschen: { label:"Klatschen", natural:true,
+    /* Countdown als Fingerschnippen, am Ende Applaus */
+    tick:[{ f:2300, d:0, v:2.2, dur:35, att:1, noise:true, filterType:"bandpass", q:1.5 }, { f:1850, d:0, v:.3, dur:20, att:1 }],
+    work:[clap(0, .9), clap(170, .9)],
+    rest:[clap(0, .7)],
+    blockrest:[clap(0, .75, -.1), clap(150, .75, .1), clap(300, .8, 0)],
+    prep:[clap(0, .75, -.1), clap(150, .75, .1), clap(300, .8, 0)],
+    done: applause()
+  },
+  /* ---- Elektronisch ---- */
+  /* Klang alter 8-Bit-Spielkonsolen: schmale Rechteckpulse, stufiger Dreiecks-Bass, schnelle
+     Arpeggios - eigene kleine Melodien, keine nachgespielten Spielmelodien */
+  achtbit: { label:"8-Bit-Konsole",
+    tick:[chip(1760, 0, 45, .16)],
+    work:[chip(1047, 0, 55, .2, "pulse12"), chip(1319, 55, 55, .2, "pulse12"), chip(1568, 110, 55, .2, "pulse12"), chip(2093, 165, 220, .2, "pulse12"), chip(262, 0, 300, .35, "tri4")],
+    rest:[chip(784, 0, 80, .18, "pulse50"), chip(659, 80, 80, .18, "pulse50"), chip(523, 160, 240, .18, "pulse50"), chip(131, 0, 400, .3, "tri4")],
+    blockrest:[chip(880, 0, 70, .18), chip(1175, 90, 180, .18)],
+    prep:[chip(523, 0, 120, .18), chip(523, 400, 120, .18), chip(1047, 800, 320, .2)],
+    done:[chip(523, 0, 70, .18), chip(659, 70, 70, .18), chip(784, 140, 70, .18), chip(1047, 210, 70, .18), chip(1319, 280, 70, .18), chip(1568, 350, 90, .18),
+      chip(1047, 470, 110, .2), chip(1568, 600, 700, .2, "pulse25", { rate:6, depth:14 }),
+      chip(131, 0, 200, .32, "tri4"), chip(196, 210, 230, .32, "tri4"), chip(262, 470, 830, .32, "tri4")]
+  },
   classic: { label:"Klassisch",
     tick:[{f:880,d:0,dur:90,v:0.55,type:"sine"}],
     work:[{f:660,d:0,dur:170,v:1,type:"sine"}],
@@ -499,14 +1107,6 @@ var SOUND_STYLES = {
     prep:[{f:440,d:0,dur:320,v:0.6,type:"sine"}],
     done:[{f:520,d:0,dur:260,v:0.7,type:"sine"},{f:660,d:260,dur:360,v:0.75,type:"sine"}]
   },
-  xylophon: { label:"Xylophon",
-    tick:[{f:1400,d:0,dur:70,v:0.5,type:"triangle"}],
-    work:[{f:1046,d:0,dur:150,v:0.9,type:"triangle"},{f:1318,d:70,dur:150,v:0.7,type:"triangle"}],
-    rest:[{f:784,d:0,dur:180,v:0.75,type:"triangle"}],
-    blockrest:[{f:880,d:0,dur:180,v:0.75,type:"triangle"}],
-    prep:[{f:880,d:0,dur:180,v:0.75,type:"triangle"}],
-    done:[{f:1046,d:0,dur:120,v:0.85,type:"triangle"},{f:1318,d:120,dur:120,v:0.85,type:"triangle"},{f:1568,d:240,dur:220,v:0.95,type:"triangle"}]
-  },
   digital: { label:"Digital",
     tick:[{f:1800,d:0,dur:50,v:0.35,type:"sawtooth"}],
     work:[{f:900,d:0,dur:80,v:0.8,type:"sawtooth"},{f:1200,d:90,dur:80,v:0.6,type:"sawtooth"}],
@@ -523,14 +1123,6 @@ var SOUND_STYLES = {
     prep:[{f:587,d:0,dur:500,v:0.55,type:"triangle"},{f:880,d:0,dur:500,v:0.28,type:"triangle"}],
     done:[{f:659,d:0,dur:400,v:0.6,type:"triangle"},{f:988,d:0,dur:400,v:0.3,type:"triangle"},{f:880,d:350,dur:600,v:0.6,type:"triangle"},{f:1319,d:350,dur:600,v:0.3,type:"triangle"}]
   },
-  perkussiv: { label:"Perkussiv",
-    tick:[{f:1200,d:0,dur:40,v:0.4,type:"square"}],
-    work:[{f:800,d:0,dur:50,v:0.9,type:"square"},{f:800,d:80,dur:50,v:0.7,type:"square"},{f:800,d:160,dur:50,v:0.5,type:"square"}],
-    rest:[{f:500,d:0,dur:60,v:0.6,type:"square"}],
-    blockrest:[{f:600,d:0,dur:50,v:0.6,type:"square"},{f:600,d:80,dur:50,v:0.6,type:"square"}],
-    prep:[{f:600,d:0,dur:50,v:0.6,type:"square"},{f:600,d:80,dur:50,v:0.6,type:"square"}],
-    done:[{f:800,d:0,dur:60,v:0.7,type:"square"},{f:800,d:90,dur:60,v:0.7,type:"square"},{f:1000,d:180,dur:60,v:0.7,type:"square"},{f:1000,d:270,dur:200,v:0.8,type:"square"}]
-  },
   hupe: { label:"Hupe",
     tick:[{f:1000,d:0,dur:60,v:0.4,type:"square"}],
     work:[{f:220,d:0,dur:450,v:0.9,type:"sawtooth"},{f:225,d:0,dur:450,v:0.55,type:"sawtooth"}],
@@ -538,14 +1130,6 @@ var SOUND_STYLES = {
     blockrest:[{f:200,d:0,dur:350,v:0.6,type:"sawtooth"},{f:205,d:0,dur:350,v:0.4,type:"sawtooth"}],
     prep:[{f:200,d:0,dur:350,v:0.6,type:"sawtooth"},{f:205,d:0,dur:350,v:0.4,type:"sawtooth"}],
     done:[{f:220,d:0,dur:280,v:0.85,type:"sawtooth"},{f:225,d:0,dur:280,v:0.5,type:"sawtooth"},{f:220,d:340,dur:520,v:0.9,type:"sawtooth"},{f:225,d:340,dur:520,v:0.55,type:"sawtooth"}]
-  },
-  pfeife: { label:"Pfeife",
-    tick:[{f:1600,d:0,dur:60,v:0.35,type:"sine"}],
-    work:[{f:900,d:0,dur:260,v:0.9,type:"sine",sweepTo:1700}],
-    rest:[{f:1400,d:0,dur:220,v:0.6,type:"sine",sweepTo:900}],
-    blockrest:[{f:900,d:0,dur:260,v:0.7,type:"sine",sweepTo:1700}],
-    prep:[{f:900,d:0,dur:260,v:0.7,type:"sine",sweepTo:1700}],
-    done:[{f:900,d:0,dur:220,v:0.8,type:"sine",sweepTo:1700},{f:900,d:280,dur:220,v:0.8,type:"sine",sweepTo:1700},{f:900,d:560,dur:400,v:0.9,type:"sine",sweepTo:1900}]
   },
   trommel: { label:"Trommel",
     tick:[{f:1600,d:0,dur:35,v:0.3,noise:true,filterType:"highpass"}],
@@ -555,22 +1139,6 @@ var SOUND_STYLES = {
     prep:[{f:130,d:0,dur:150,v:0.7,type:"sine",sweepTo:40},{f:130,d:170,dur:150,v:0.7,type:"sine",sweepTo:40}],
     done:[{f:150,d:0,dur:140,v:0.9,type:"sine",sweepTo:45},{f:150,d:160,dur:140,v:0.9,type:"sine",sweepTo:45},{f:150,d:320,dur:140,v:0.9,type:"sine",sweepTo:45},{f:150,d:480,dur:420,v:1,type:"sine",sweepTo:35}]
   },
-  gong: { label:"Gong",
-    tick:[{f:2000,d:0,dur:50,v:0.3,noise:true,filterType:"highpass"}],
-    work:[{f:300,d:0,dur:900,v:0.7,type:"triangle"},{f:1200,d:0,dur:120,v:0.5,noise:true,filterType:"bandpass",q:8}],
-    rest:[{f:220,d:0,dur:800,v:0.55,type:"triangle"}],
-    blockrest:[{f:260,d:0,dur:800,v:0.55,type:"triangle"}],
-    prep:[{f:260,d:0,dur:800,v:0.55,type:"triangle"}],
-    done:[{f:300,d:0,dur:1100,v:0.75,type:"triangle"},{f:1200,d:0,dur:150,v:0.5,noise:true,filterType:"bandpass",q:8}]
-  },
-  pong: { label:"Pong",
-    tick:[{f:880,d:0,dur:40,v:0.35,type:"square"}],
-    work:[{f:440,d:0,dur:70,v:0.9,type:"square"}],
-    rest:[{f:330,d:0,dur:70,v:0.6,type:"square"}],
-    blockrest:[{f:392,d:0,dur:70,v:0.6,type:"square"}],
-    prep:[{f:392,d:0,dur:70,v:0.6,type:"square"}],
-    done:[{f:440,d:0,dur:70,v:0.85,type:"square"},{f:440,d:120,dur:70,v:0.85,type:"square"},{f:440,d:240,dur:70,v:0.85,type:"square"},{f:440,d:360,dur:200,v:0.95,type:"square"}]
-  },
   arcade: { label:"Arcade",
     tick:[{f:1200,d:0,dur:35,v:0.35,type:"square"}],
     work:[{f:523,d:0,dur:70,v:0.9,type:"square"},{f:659,d:70,dur:70,v:0.9,type:"square"},{f:784,d:140,dur:120,v:1,type:"square"}],
@@ -579,22 +1147,6 @@ var SOUND_STYLES = {
     prep:[{f:494,d:0,dur:80,v:0.7,type:"square"},{f:587,d:90,dur:100,v:0.7,type:"square"}],
     done:[{f:523,d:0,dur:80,v:0.9,type:"square"},{f:659,d:90,dur:80,v:0.9,type:"square"},{f:784,d:180,dur:80,v:0.9,type:"square"},{f:1046,d:270,dur:260,v:1,type:"square"}]
   },
-  laser: { label:"Laser",
-    tick:[{f:2000,d:0,dur:40,v:0.3,type:"sawtooth",sweepTo:800}],
-    work:[{f:1800,d:0,dur:130,v:1,type:"sawtooth",sweepTo:300}],
-    rest:[{f:1200,d:0,dur:110,v:0.65,type:"sawtooth",sweepTo:400}],
-    blockrest:[{f:1400,d:0,dur:120,v:0.7,type:"sawtooth",sweepTo:350}],
-    prep:[{f:1400,d:0,dur:120,v:0.7,type:"sawtooth",sweepTo:350}],
-    done:[{f:1800,d:0,dur:110,v:0.9,type:"sawtooth",sweepTo:300},{f:1800,d:150,dur:110,v:0.9,type:"sawtooth",sweepTo:300},{f:2200,d:300,dur:260,v:1,type:"sawtooth",sweepTo:200}]
-  },
-  sirene: { label:"Sirene",
-    tick:[{f:1100,d:0,dur:40,v:0.35,type:"square"}],
-    work:[{f:700,d:0,dur:90,v:0.9,type:"square"},{f:900,d:100,dur:90,v:0.9,type:"square"}],
-    rest:[{f:500,d:0,dur:100,v:0.6,type:"square"}],
-    blockrest:[{f:600,d:0,dur:90,v:0.6,type:"square"},{f:750,d:100,dur:90,v:0.6,type:"square"}],
-    prep:[{f:600,d:0,dur:90,v:0.6,type:"square"},{f:750,d:100,dur:90,v:0.6,type:"square"}],
-    done:[{f:700,d:0,dur:100,v:0.9,type:"square"},{f:900,d:110,dur:100,v:0.9,type:"square"},{f:700,d:220,dur:100,v:0.9,type:"square"},{f:900,d:330,dur:220,v:1,type:"square"}]
-  },
   weich: { label:"Weich",
     tick:[{f:600,d:0,dur:160,v:0.22,type:"sine"}],
     work:[{f:480,d:0,dur:380,v:0.55,type:"sine"},{f:604,d:0,dur:380,v:0.22,type:"sine"}],
@@ -602,14 +1154,6 @@ var SOUND_STYLES = {
     blockrest:[{f:400,d:0,dur:380,v:0.45,type:"sine"},{f:504,d:0,dur:380,v:0.18,type:"sine"}],
     prep:[{f:400,d:0,dur:380,v:0.45,type:"sine"},{f:504,d:0,dur:380,v:0.18,type:"sine"}],
     done:[{f:480,d:0,dur:320,v:0.55,type:"sine"},{f:604,d:0,dur:320,v:0.22,type:"sine"},{f:604,d:340,dur:460,v:0.5,type:"sine"},{f:760,d:340,dur:460,v:0.2,type:"sine"}]
-  },
-  klar: { label:"Klar",
-    tick:[{f:900,d:0,dur:60,v:0.2,type:"sine"}],
-    work:[{f:660,d:0,dur:140,v:0.5,type:"sine"}],
-    rest:[{f:494,d:0,dur:140,v:0.4,type:"sine"}],
-    blockrest:[{f:554,d:0,dur:140,v:0.4,type:"sine"}],
-    prep:[{f:554,d:0,dur:140,v:0.4,type:"sine"}],
-    done:[{f:660,d:0,dur:100,v:0.5,type:"sine"},{f:880,d:120,dur:180,v:0.5,type:"sine"}]
   },
   ruhe: { label:"Ruhe",
     tick:[{f:500,d:0,dur:180,v:0.15,type:"sine"}],
@@ -620,6 +1164,13 @@ var SOUND_STYLES = {
     done:[{f:340,d:0,dur:420,v:0.4,type:"sine"},{f:430,d:420,dur:600,v:0.38,type:"sine"}]
   }
 };
+/* Entfernte Klänge: wer einen davon eingestellt hatte, bekommt den ähnlichsten verbliebenen */
+var REMOVED_SOUNDS = { xylophon:"marimba", perkussiv:"holzblock", pfeife:"trillerpfeife", gong:"klangschale",
+  pong:"achtbit", laser:"achtbit", sirene:"arcade", klar:"classic" };
+function migrateSound(key){
+  if(SOUND_STYLES[key]) return key;
+  return REMOVED_SOUNDS[key] || "classic";
+}
 
 function loadDB(){
   try{
@@ -631,6 +1182,7 @@ function loadDB(){
     db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
     db.settings.theme = migrateTheme(db.settings.theme);
+    db.settings.soundStyle = migrateSound(db.settings.soundStyle);
     return db;
   }catch(e){ return defaultDB(); }
 }
@@ -638,6 +1190,155 @@ function loadDB(){
 var state = { db: loadDB() };
 
 function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state.db)); }
+
+/* ============ Sprache (Deutsch / Englisch) ============ */
+var I18N = {
+  de: {
+    back:"Zurück", settings:"Einstellungen", workouts:"Workouts", untitled:"Ohne Namen",
+    blockOne:"Block", blockMany:"Blöcke",
+    noWorkouts:"Noch kein Workout angelegt.<br>Tippe unten rechts auf +, um loszulegen.",
+    singleBlocks:"Blöcke einzeln starten",
+    noBlocksHome:"Noch kein Block angelegt.<br>Tippe unten rechts auf + und wähle <b>Neuer Block</b>.",
+    startBlock:"Block einzeln starten", newWorkout:"Neues Workout", newBlock:"Neuer Block", create:"Neu anlegen",
+    installTitle:"Für dauerhaften Speicher installieren", installText:"Ein Tap und die App liegt auf deinem Startbildschirm.",
+    installNow:"Jetzt installieren",
+    tipIOS:"Für dauerhaften Speicher: Teile-Symbol &#8593; antippen und <b>„Zum Home-Bildschirm“</b> wählen.",
+    tipAndroid:"Für dauerhaften Speicher: Menü &#8942; öffnen und <b>„App installieren“</b> wählen.",
+    viewGuide:"Anleitung ansehen",
+    blocks:"Blöcke", blockSub:"{reps} &times; {work}s Arbeit / {rest}s Pause",
+    noBlocksList:"Noch kein Block angelegt.<br>Ein Block ist z.B. „6&times;30s Arbeit / 10s Pause“.",
+    editBlock:"Block bearbeiten", name:"Name", reps:"Wiederholungen", workSec:"Arbeit (Sekunden)",
+    restSec:"Pause zwischen Wiederholungen (Sekunden)", total:"Gesamtdauer:",
+    save:"Speichern", deleteBlock:"Block löschen", deleteBlockQ:"Block löschen?",
+    deleteBlockText:"„{name}“ wird auch aus allen Workouts entfernt.", del:"Löschen",
+    workout:"Workout", deletedBlock:"(gelöschter Block)", restAfter:"Pause danach:", sec:"Sek", start:"Start",
+    workoutBlocks:"Blöcke ({n}) &middot; Gesamt {d}", noBlocksInWorkout:"Noch keine Blöcke im Workout.",
+    addBlock:"Block hinzufügen", noBlocksAvail:"Keine Blöcke vorhanden.", createBlockFirst:"Erst einen Block anlegen",
+    deleteWorkout:"Workout löschen", deleteWorkoutQ:"Workout löschen?", cantUndo:"Diese Aktion kann nicht rückgängig gemacht werden.",
+    appearance:"Darstellung", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thRetro:"Retro", thKodak:"Kodak", thDeck:"Tapedeck",
+    themeInfo:"„Retro“ mit rot-blauen Zierstreifen im Sportlook der 70er/80er, „Kodak“ im Stil alter Kodak-Kassetten (C60 Low Noise), „Tapedeck“ als dunkles Nachtdesign wie ein altes Hi-Fi-Kassettendeck. Alle drei mit rollendem Walzenzähler statt Fortschrittsring.",
+    language:"Sprache",
+    installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
+    timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Signaltöne bei Phasenwechsel", soundStyle:"Klang",
+    space:"Raumklang", spaceDesc:"Hall und Stereo-Tiefe für alle Klänge",
+    countIn:"Countdown-Piepsen", countInDesc:"Kurze Töne in den letzten 3 Sekunden",
+    vibration:"Vibration", vibrationDesc:"Haptisches Feedback (falls unterstützt)",
+    keepAwake:"Bildschirm an lassen", keepAwakeDesc:"Verhindert, dass der Bildschirm während des Workouts ausgeht",
+    data:"Daten", exportBackup:"Backup exportieren (JSON)", importBackup:"Backup importieren", deleteAll:"Alle Daten löschen",
+    localNote:"Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.",
+    importQ:"Backup importieren?", importText:"Bestehende Blöcke und Workouts werden überschrieben.", importBtn:"Importieren",
+    fileError:"Datei konnte nicht gelesen werden.",
+    deleteAllQ:"Alle Daten löschen?", deleteAllText:"Alle Blöcke und Workouts werden unwiderruflich gelöscht.", deleteAllBtn:"Alles löschen",
+    installApp:"App installieren",
+    iosSteps:[
+      "Diese Seite in <b>Safari</b> öffnen (nicht Chrome – dort fehlt der nötige Button).",
+      "Unten in der Mitte auf das Teilen-Symbol <b>&#8593;</b> tippen.",
+      "Nach unten scrollen und <b>„Zum Home-Bildschirm“</b> auswählen.",
+      "Oben rechts auf <b>„Hinzufügen“</b> tippen.",
+      "Fertig! Das Icon liegt jetzt auf deinem Homescreen und startet als eigene App mit dauerhaftem Speicher."
+    ],
+    androidSteps:[
+      "Diese Seite in <b>Chrome</b> öffnen.",
+      "Oben rechts auf die drei Punkte <b>&#8942;</b> tippen.",
+      "<b>„App installieren“</b> bzw. <b>„Zum Startbildschirm hinzufügen“</b> auswählen.",
+      "Installation im Dialog bestätigen.",
+      "Fertig! Die App erscheint auf dem Startbildschirm und in der App-Liste."
+    ],
+    androidQuickNote:"Ein Tap – kein Menü nötig. Falls das nicht klappt, geht es auch manuell:",
+    installOutro:"Danach läuft die App im Vollbild wie eine echte App – ohne Adressleiste und ohne das iOS-7-Tage-Speicherlimit.",
+    cancel:"Abbrechen", chooseSound:"Klang wählen", natural:"Natürlich", electronic:"Elektronisch", close:"Schließen",
+    phWork:"Los!", phRest:"Pause", phBlockrest:"Blockpause", phPrep:"Los geht's",
+    upNext:"Als nächstes:", thenDone:"Danach: Fertig",
+    doneTitle:"Workout geschafft!", again:"Nochmal", finish:"Fertig",
+    endQ:"Workout beenden?", endText:"Der Fortschritt geht verloren.", endBtn:"Beenden",
+    skip:"Weiter", pause:"Pause", restartPhase:"Phase neu",
+    unitH:"Std", unitMin:"Min", unitSec:"Sek"
+  },
+  en: {
+    back:"Back", settings:"Settings", workouts:"Workouts", untitled:"Untitled",
+    blockOne:"block", blockMany:"blocks",
+    noWorkouts:"No workouts yet.<br>Tap + at the bottom right to get started.",
+    singleBlocks:"Start single blocks",
+    noBlocksHome:"No blocks yet.<br>Tap + at the bottom right and choose <b>New block</b>.",
+    startBlock:"Start this block", newWorkout:"New workout", newBlock:"New block", create:"Create",
+    installTitle:"Install for permanent storage", installText:"One tap and the app is on your home screen.",
+    installNow:"Install now",
+    tipIOS:"For permanent storage: tap the share icon &#8593; and choose <b>“Add to Home Screen”</b>.",
+    tipAndroid:"For permanent storage: open the menu &#8942; and choose <b>“Install app”</b>.",
+    viewGuide:"View guide",
+    blocks:"Blocks", blockSub:"{reps} &times; {work}s work / {rest}s rest",
+    noBlocksList:"No blocks yet.<br>A block is e.g. “6&times;30s work / 10s rest”.",
+    editBlock:"Edit block", name:"Name", reps:"Repetitions", workSec:"Work (seconds)",
+    restSec:"Rest between repetitions (seconds)", total:"Total:",
+    save:"Save", deleteBlock:"Delete block", deleteBlockQ:"Delete block?",
+    deleteBlockText:"“{name}” will also be removed from all workouts.", del:"Delete",
+    workout:"Workout", deletedBlock:"(deleted block)", restAfter:"Rest after:", sec:"s", start:"Start",
+    workoutBlocks:"Blocks ({n}) &middot; Total {d}", noBlocksInWorkout:"No blocks in this workout yet.",
+    addBlock:"Add block", noBlocksAvail:"No blocks available.", createBlockFirst:"Create a block first",
+    deleteWorkout:"Delete workout", deleteWorkoutQ:"Delete workout?", cantUndo:"This can't be undone.",
+    appearance:"Appearance", thSystem:"System", thLight:"Light", thDark:"Dark", thRetro:"Retro", thKodak:"Kodak", thDeck:"Tape deck",
+    themeInfo:"“Retro” with red and blue racing stripes in 70s/80s sports style, “Kodak” in the style of old Kodak cassettes (C60 Low Noise), “Tape deck” as a dark night design like an old hi-fi cassette deck. All three with a rolling drum counter instead of a progress ring.",
+    language:"Language",
+    installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
+    timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Signals when the phase changes", soundStyle:"Sound style",
+    space:"Room sound", spaceDesc:"Reverb and stereo depth for all sounds",
+    countIn:"Countdown beeps", countInDesc:"Short beeps in the last 3 seconds",
+    vibration:"Vibration", vibrationDesc:"Haptic feedback (if supported)",
+    keepAwake:"Keep screen on", keepAwakeDesc:"Keeps the screen from turning off during a workout",
+    data:"Data", exportBackup:"Export backup (JSON)", importBackup:"Import backup", deleteAll:"Delete all data",
+    localNote:"All data stays on this device. For permanent storage on iOS, add the app to your home screen.",
+    importQ:"Import backup?", importText:"Your current blocks and workouts will be replaced.", importBtn:"Import",
+    fileError:"Couldn't read the file.",
+    deleteAllQ:"Delete all data?", deleteAllText:"All blocks and workouts will be permanently deleted.", deleteAllBtn:"Delete everything",
+    installApp:"Install app",
+    iosSteps:[
+      "Open this page in <b>Safari</b> (not Chrome – the button you need is missing there).",
+      "Tap the share icon <b>&#8593;</b> at the bottom center.",
+      "Scroll down and choose <b>“Add to Home Screen”</b>.",
+      "Tap <b>“Add”</b> at the top right.",
+      "Done! The icon is now on your home screen and opens as its own app with permanent storage."
+    ],
+    androidSteps:[
+      "Open this page in <b>Chrome</b>.",
+      "Tap the three dots <b>&#8942;</b> at the top right.",
+      "Choose <b>“Install app”</b> or <b>“Add to Home screen”</b>.",
+      "Confirm the installation in the dialog.",
+      "Done! The app appears on your home screen and in your app list."
+    ],
+    androidQuickNote:"One tap – no menu needed. If that doesn't work, you can do it manually:",
+    installOutro:"Afterwards the app runs full screen like a real app – without an address bar and without the iOS 7-day storage limit.",
+    cancel:"Cancel", chooseSound:"Choose sound", natural:"Natural", electronic:"Electronic", close:"Close",
+    phWork:"Go!", phRest:"Rest", phBlockrest:"Block break", phPrep:"Get ready",
+    upNext:"Up next:", thenDone:"Then: done",
+    doneTitle:"Workout complete!", again:"Again", finish:"Done",
+    endQ:"End workout?", endText:"Your progress will be lost.", endBtn:"End",
+    skip:"Skip", pause:"Pause", restartPhase:"Restart phase",
+    unitH:"h", unitMin:"min", unitSec:"s"
+  }
+};
+var SOUND_LABELS_EN = {
+  boxglocke:"Boxing bell", trillerpfeife:"Referee whistle", klangschale:"Singing bowl", holzblock:"Wood block",
+  kuechenwecker:"Kitchen timer", marimba:"Marimba", triangel:"Triangle", kuhglocke:"Cowbell", klatschen:"Clapping",
+  achtbit:"8-bit console", classic:"Classic", doppel:"Double tone", sanft:"Gentle", digital:"Digital", glocke:"Bell",
+  hupe:"Horn", trommel:"Drum", arcade:"Arcade", weich:"Soft", ruhe:"Calm"
+};
+/* Ohne eigene Einstellung gilt die Sprache des Geräts */
+function currentLang(){
+  var l = state.db.settings.lang;
+  if(l === "de" || l === "en") return l;
+  return /^de/i.test(navigator.language || "") ? "de" : "en";
+}
+function t(key, vars){
+  var s = I18N[currentLang()][key];
+  if(s == null) s = I18N.de[key];
+  if(vars && typeof s === "string") s = s.replace(/\{(\w+)\}/g, function(m, k){ return vars[k] != null ? vars[k] : m; });
+  return s;
+}
+function soundLabel(key){
+  var st = SOUND_STYLES[key] || SOUND_STYLES.classic;
+  return (currentLang() === "en" && SOUND_LABELS_EN[key]) || st.label;
+}
+function applyLang(){ document.documentElement.lang = currentLang(); }
 
 /* ============ Helpers ============ */
 function fmtTime(totalSec){
@@ -648,9 +1349,9 @@ function fmtTime(totalSec){
 function fmtDuration(totalSec){
   totalSec = Math.max(0, Math.round(totalSec));
   var h = Math.floor(totalSec/3600), m = Math.floor((totalSec%3600)/60), s = totalSec%60;
-  if(h>0) return h+" Std " + m + " Min";
-  if(m>0) return m + " Min " + (s>0? s+" Sek": "");
-  return s + " Sek";
+  if(h>0) return h+" "+t("unitH")+" " + m + " "+t("unitMin");
+  if(m>0) return m + " "+t("unitMin") + (s>0? " "+s+" "+t("unitSec") : "");
+  return s + " "+t("unitSec");
 }
 function blockDuration(b){
   return b.reps * b.workSec + Math.max(0, b.reps-1) * b.restSec;
@@ -745,11 +1446,22 @@ function triggerInstall(){
 }
 
 /* ============ Theme ============ */
+/* Farbe der Browser-/Statusleiste passend zum Seitenhintergrund */
+var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214", retro:"#f3efe5", kodak:"#f5f2ea", tapedeck:"#141517" };
 function applyTheme(){
   var t = state.db.settings.theme;
-  if(t==="light" || t==="dark" || t==="retro-light" || t==="retro-dark") document.documentElement.setAttribute("data-theme", t);
-  else document.documentElement.removeAttribute("data-theme");
+  var root = document.documentElement;
+  if(THEME_BAR_COLORS[t]) root.setAttribute("data-theme", t);
+  else root.removeAttribute("data-theme");
+  if(isVintageTheme()) root.setAttribute("data-vintage", "");
+  else root.removeAttribute("data-vintage");
+  var bar = THEME_BAR_COLORS[t] ||
+    (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? THEME_BAR_COLORS.dark : THEME_BAR_COLORS.light);
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", bar);
 }
+applyTheme();
+applyLang();
 
 /* ============ Render dispatch ============ */
 var app = document.getElementById("app");
@@ -771,54 +1483,75 @@ function render(){
 
 function topbar(title, opts){
   opts = opts || {};
-  var back = opts.back ? '<button class="iconbtn back" data-back="'+opts.back+'">&#8249;</button>' : "";
-  var home = opts.back ? '<button class="iconbtn" data-nav="#home" title="Zur Startseite">'+ICON_HOME+'</button>' : "";
+  var back = opts.back ? '<button class="iconbtn back" data-back="'+opts.back+'" title="'+t("back")+'">'+ICON_BACK+'</button>' : "";
   var right = opts.right || "";
-  return '<div class="topbar">'+back+home+'<h1>'+esc(title)+'</h1>'+right+'</div>';
+  var brand = opts.home ? '<span class="kodak-word">Kodak</span><span class="deck-word">Stereo Cassette Deck</span>' : "";
+  return '<div class="topbar'+(opts.home?' home':'')+'">'+back+'<h1>'+brand+'<span class="ttl">'+esc(title)+'</span></h1>'+right+'</div>';
 }
+var SEP = ' <span class="sep-dot">&middot;</span> ';
 
 /* ============ Home: Workout list ============ */
 function renderHome(){
   var ws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
   var items = ws.map(function(w){
     var count = w.items.length;
-    return '<div class="list-item" data-nav="#workout/'+w.id+'">'+
-      '<button class="playbtn" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+'>'+ICON_PLAY+'</button>'+
-      '<div class="meta"><div class="name">'+esc(w.name||"Ohne Namen")+'</div>'+
-      '<div class="sub">'+count+' Block'+(count===1?'':'e')+' &middot; '+fmtDuration(workoutDuration(w))+'</div></div>'+
+    return '<div class="list-item entry" data-nav="#workout/'+w.id+'">'+
+      '<button class="playbtn wo" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+'>'+ICON_PLAY+'</button>'+
+      '<div class="meta"><div class="name">'+esc(w.name||t("untitled"))+'</div>'+
+      '<div class="sub">'+count+' '+(count===1?t("blockOne"):t("blockMany"))+SEP+fmtDuration(workoutDuration(w))+'</div></div>'+
       '</div>';
   }).join("");
   if(!ws.length){
-    items = '<div class="empty">Noch kein Workout angelegt.<br>Tippe unten rechts auf +, um loszulegen.</div>';
+    items = '<div class="empty">'+t("noWorkouts")+'</div>';
   }
 
   var bs = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
   var blockItems = bs.map(function(b){
-    return '<div class="list-item" data-nav="#block/'+b.id+'">'+
-      '<button class="playbtn" data-playblock="'+b.id+'" title="Block einzeln starten">'+ICON_PLAY+'</button>'+
+    return '<div class="list-item entry" data-nav="#block/'+b.id+'">'+
+      '<button class="playbtn bl" data-playblock="'+b.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
       '<div class="meta"><div class="name">'+esc(b.name)+'</div>'+
-      '<div class="sub">'+b.reps+'&times;'+b.workSec+'s/'+b.restSec+'s &middot; '+fmtDuration(blockDuration(b))+'</div></div>'+
+      '<div class="sub">'+b.reps+'&times;'+b.workSec+'s/'+b.restSec+'s'+SEP+fmtDuration(blockDuration(b))+'</div></div>'+
       '</div>';
   }).join("");
   if(!bs.length){
-    blockItems = '<div class="empty">Noch kein Block angelegt.<br>Tippe oben auf <b>Blöcke</b>, um einen anzulegen.</div>';
+    blockItems = '<div class="empty">'+t("noBlocksHome")+'</div>';
   }
 
   app.innerHTML =
-    topbar("Workouts", { right:
-      '<button class="iconbtn" data-nav="#blocks" title="Blöcke">'+ICON_LIST+'</button>'+
-      '<button class="iconbtn" data-nav="#settings" title="Einstellungen">'+ICON_SETTINGS+'</button>'
+    topbar(t("workouts"), { home:true, right:
+      '<button class="iconbtn" data-nav="#settings" title="'+t("settings")+'">'+ICON_SETTINGS+'</button>'
     }) +
     installTipHTML() +
     items +
-    '<button class="fab" data-newworkout>+</button>' +
-    '<div class="section-title" style="margin-top:34px;">Blöcke einzeln starten</div>' +
-    blockItems;
+    '<div class="section-title lined" style="margin-top:34px;">'+t("singleBlocks")+'</div>' +
+    blockItems +
+    KODAK_BADGE + DECK_BADGE +
+    '<div class="fab-backdrop hidden" data-fabclose></div>' +
+    '<div class="fab-menu hidden" id="fab-menu">'+
+      '<button type="button" class="fab-opt" data-newworkout>'+t("newWorkout")+'<span class="ico wo">'+ICON_WORKOUT+'</span></button>'+
+      '<button type="button" class="fab-opt" data-newblock>'+t("newBlock")+'<span class="ico bl">'+ICON_BLOCK+'</span></button>'+
+    '</div>'+
+    '<button class="fab" data-fab title="'+t("create")+'" aria-expanded="false">'+ICON_PLUS+'</button>';
   bindCommon();
+
+  var fab = app.querySelector("[data-fab]");
+  var fabMenu = app.querySelector("#fab-menu");
+  var fabBackdrop = app.querySelector("[data-fabclose]");
+  function setFabMenu(open){
+    fab.classList.toggle("open", open);
+    fab.setAttribute("aria-expanded", open ? "true" : "false");
+    fabMenu.classList.toggle("hidden", !open);
+    fabBackdrop.classList.toggle("hidden", !open);
+  }
+  fab.addEventListener("click", function(){ setFabMenu(fabMenu.classList.contains("hidden")); });
+  fabBackdrop.addEventListener("click", function(){ setFabMenu(false); });
   app.querySelector("[data-newworkout]").addEventListener("click", function(){
-    var w = { id:uid(), name:"Neues Workout", items:[], updatedAt:Date.now() };
+    var w = { id:uid(), name:t("newWorkout"), items:[], updatedAt:Date.now() };
     state.db.workouts.push(w); save();
     go("#workout/"+w.id);
+  });
+  app.querySelector("[data-newblock]").addEventListener("click", function(){
+    go("#block/"+createBlock().id);
   });
   app.querySelectorAll("[data-play]").forEach(function(btn){
     btn.addEventListener("click", function(e){
@@ -849,15 +1582,13 @@ function installTipHTML(){
   if(isStandalone()) return "";
   if(localStorage.getItem("sporttimer-tip-hidden")==="1") return "";
   if(deferredInstallPrompt){
-    return '<div class="installtip"><div><b>Für dauerhaften Speicher installieren</b><br>Ein Tap und die App liegt auf deinem Startbildschirm.'+
-      '<div style="margin-top:10px;"><button type="button" class="btn btn-primary" style="margin:0;width:auto;padding:11px 18px;font-size:14px;" data-install-now>'+ICON_DOWNLOAD+' Jetzt installieren</button></div></div>'+
+    return '<div class="installtip"><div><b>'+t("installTitle")+'</b><br>'+t("installText")+
+      '<div style="margin-top:10px;"><button type="button" class="btn btn-primary" style="margin:0;width:auto;padding:11px 18px;font-size:14px;" data-install-now>'+ICON_DOWNLOAD+' '+t("installNow")+'</button></div></div>'+
       '<button data-hidetip>&times;</button></div>';
   }
   if(!isIOS() && !isAndroid()) return "";
-  var txt = isIOS()
-    ? 'Für dauerhaften Speicher: Teile-Symbol &#8593; antippen und <b>„Zum Home-Bildschirm"</b> wählen.'
-    : 'Für dauerhaften Speicher: Menü &#8942; öffnen und <b>„App installieren"</b> wählen.';
-  return '<div class="installtip"><div>'+txt+' <a href="#install">Anleitung ansehen</a></div>'+
+  var txt = isIOS() ? t("tipIOS") : t("tipAndroid");
+  return '<div class="installtip"><div>'+txt+' <a href="#install">'+t("viewGuide")+'</a></div>'+
     '<button data-hidetip>&times;</button></div>';
 }
 function maybeShowInstallTip(){}
@@ -895,27 +1626,30 @@ function bindCommon(){
 }
 
 /* ============ Block list ============ */
+function createBlock(){
+  var b = { id:uid(), name:t("newBlock"), reps:6, workSec:30, restSec:10, updatedAt:Date.now() };
+  state.db.blocks.push(b); save();
+  return b;
+}
 function renderBlockList(){
   var bs = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
   var items = bs.map(function(b){
-    return '<div class="list-item" data-nav="#block/'+b.id+'">'+
-      '<button class="playbtn" data-playblock="'+b.id+'" title="Block einzeln starten">'+ICON_PLAY+'</button>'+
+    return '<div class="list-item entry" data-nav="#block/'+b.id+'">'+
+      '<button class="playbtn bl" data-playblock="'+b.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
       '<div class="meta"><div class="name">'+esc(b.name)+'</div>'+
-      '<div class="sub">'+b.reps+' &times; '+b.workSec+'s Arbeit / '+b.restSec+'s Pause &middot; '+fmtDuration(blockDuration(b))+'</div></div>'+
+      '<div class="sub">'+t("blockSub", { reps:b.reps, work:b.workSec, rest:b.restSec })+SEP+fmtDuration(blockDuration(b))+'</div></div>'+
       '</div>';
   }).join("");
   if(!bs.length){
-    items = '<div class="empty">Noch kein Block angelegt.<br>Ein Block ist z.B. „6&times;30s Arbeit / 10s Pause".</div>';
+    items = '<div class="empty">'+t("noBlocksList")+'</div>';
   }
   app.innerHTML =
-    topbar("Blöcke", { back:"#home" }) +
+    topbar(t("blocks"), { back:"#home" }) +
     items +
-    '<button class="fab" data-newblock>+</button>';
+    '<button class="fab bl" data-newblock title="'+t("newBlock")+'">'+ICON_PLUS+'</button>';
   bindCommon();
   app.querySelector("[data-newblock]").addEventListener("click", function(){
-    var b = { id:uid(), name:"Neuer Block", reps:6, workSec:30, restSec:10, updatedAt:Date.now() };
-    state.db.blocks.push(b); save();
-    go("#block/"+b.id);
+    go("#block/"+createBlock().id);
   });
   app.querySelectorAll("[data-playblock]").forEach(function(btn){
     btn.addEventListener("click", function(e){
@@ -928,26 +1662,26 @@ function renderBlockList(){
 /* ============ Block edit ============ */
 function renderBlockEdit(id){
   var b = findBlock(id);
-  if(!b){ go("#blocks"); return; }
+  if(!b){ go("#home"); return; }
   app.innerHTML =
-    topbar("Block bearbeiten", { back:"#blocks" }) +
+    topbar(t("editBlock"), { back:"#home" }) +
     '<div class="card">'+
-      '<label for="f-name">Name</label>'+
+      '<label for="f-name">'+t("name")+'</label>'+
       '<input type="text" id="f-name" value="'+esc(b.name)+'" maxlength="40">'+
 
-      '<label>Wiederholungen</label>'+
+      '<label>'+t("reps")+'</label>'+
       stepperHTML("f-reps", b.reps, 1, 99, 1) +
 
-      '<label>Arbeit (Sekunden)</label>'+
+      '<label>'+t("workSec")+'</label>'+
       stepperHTML("f-work", b.workSec, 1, 3600, 5) +
 
-      '<label>Pause zwischen Wiederholungen (Sekunden)</label>'+
+      '<label>'+t("restSec")+'</label>'+
       stepperHTML("f-rest", b.restSec, 0, 3600, 5) +
 
-      '<div class="section-title" style="margin:16px 4px 0;">Gesamtdauer: <span id="f-total">'+fmtDuration(blockDuration(b))+'</span></div>'+
+      '<div class="section-title" style="margin:16px 4px 0;">'+t("total")+' <span id="f-total">'+fmtDuration(blockDuration(b))+'</span></div>'+
     '</div>'+
-    '<button class="btn btn-primary" data-save>'+ICON_SAVE+' Speichern</button>'+
-    '<button class="btn btn-danger" data-delete>'+ICON_TRASH+' Block löschen</button>';
+    '<button class="btn btn-primary" data-save>'+ICON_SAVE+' '+t("save")+'</button>'+
+    '<button class="btn btn-danger" data-delete>'+ICON_TRASH+' '+t("deleteBlock")+'</button>';
   bindCommon();
 
   function refreshTotal(){
@@ -957,7 +1691,7 @@ function renderBlockEdit(id){
     app.querySelector("#f-total").textContent = fmtDuration(reps*work + Math.max(0,reps-1)*rest);
   }
   function persist(){
-    b.name = app.querySelector("#f-name").value.trim() || "Ohne Namen";
+    b.name = app.querySelector("#f-name").value.trim() || t("untitled");
     b.reps = clamp(parseInt(app.querySelector("#f-reps").value)||1, 1, 99);
     b.workSec = clamp(parseInt(app.querySelector("#f-work").value)||1, 1, 3600);
     b.restSec = clamp(parseInt(app.querySelector("#f-rest").value)||0, 0, 3600);
@@ -969,19 +1703,20 @@ function renderBlockEdit(id){
   app.querySelector("#f-name").addEventListener("input", persist);
   app.querySelector("#f-name").addEventListener("blur", persist);
 
+  /* Nach dem Speichern/Löschen zurück dorthin, woher man kam (Startseite, Blockliste oder Workout) */
   app.querySelector("[data-save]").addEventListener("click", function(){
     persist();
-    go("#blocks");
+    goBack("#home");
   });
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
-    confirmSheet("Block löschen?", "„"+b.name+"“ wird auch aus allen Workouts entfernt.", "Löschen", function(){
+    confirmSheet(t("deleteBlockQ"), t("deleteBlockText", { name:b.name }), t("del"), function(){
       state.db.blocks = state.db.blocks.filter(function(x){ return x.id!==id; });
       state.db.workouts.forEach(function(w){
         w.items = w.items.filter(function(it){ return it.blockId!==id; });
       });
       save();
-      go("#blocks");
+      goBack("#home");
     });
   });
 }
@@ -1022,11 +1757,11 @@ function renderWorkoutEdit(id){
 
   var itemsHTML = w.items.map(function(it, idx){
     var b = findBlock(it.blockId);
-    var name = b ? b.name : "(gelöschter Block)";
+    var name = b ? b.name : t("deletedBlock");
     var sub = b ? (b.reps+'&times;'+b.workSec+'s/'+b.restSec+'s &middot; '+fmtDuration(blockDuration(b))) : "";
     var gap = "";
     if(idx < w.items.length-1){
-      gap = '<div class="gap-row">Pause danach: <input type="number" inputmode="numeric" data-gap="'+idx+'" value="'+(it.restAfterSec||0)+'"> Sek</div>';
+      gap = '<div class="gap-row">'+t("restAfter")+' <input type="number" inputmode="numeric" data-gap="'+idx+'" value="'+(it.restAfterSec||0)+'"> '+t("sec")+'</div>';
     }
     return '<div class="wblock">'+
       '<div class="wblock-top">'+
@@ -1045,25 +1780,25 @@ function renderWorkoutEdit(id){
     return '<div class="block-pick" data-addblock="'+b.id+'">'+
       '<div class="meta"><div class="name">'+esc(b.name)+'</div><div class="sub">'+b.reps+'&times;'+b.workSec+'s/'+b.restSec+'s</div></div>'+
       '<span class="chip">+</span></div>';
-  }).join("") || '<div class="empty">Keine Blöcke vorhanden. <br><a href="#blocks" style="color:var(--accent)">Erst einen Block anlegen</a></div>';
+  }).join("") || '<div class="empty">'+t("noBlocksAvail")+' <br><a href="#blocks" style="color:var(--accent)">'+t("createBlockFirst")+'</a></div>';
 
   app.innerHTML =
-    topbar("Workout", { back:"#home", right:'<button class="iconbtn" data-play title="Start">'+ICON_PLAY+'</button>' }) +
+    topbar(t("workout"), { back:"#home", right:'<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
     '<div class="card">'+
-      '<label for="w-name">Name</label>'+
+      '<label for="w-name">'+t("name")+'</label>'+
       '<input type="text" id="w-name" value="'+esc(w.name)+'" maxlength="40">'+
     '</div>'+
-    '<div class="section-title">Blöcke ('+w.items.length+') &middot; Gesamt '+fmtDuration(workoutDuration(w))+'</div>'+
-    (itemsHTML || '<div class="empty">Noch keine Blöcke im Workout.</div>') +
-    '<div class="section-title">Block hinzufügen</div>'+
+    '<div class="section-title">'+t("workoutBlocks", { n:w.items.length, d:fmtDuration(workoutDuration(w)) })+'</div>'+
+    (itemsHTML || '<div class="empty">'+t("noBlocksInWorkout")+'</div>') +
+    '<div class="section-title">'+t("addBlock")+'</div>'+
     pickerHTML +
-    '<button class="btn btn-primary" data-save>'+ICON_SAVE+' Speichern</button>'+
-    '<button class="btn btn-danger" data-delete>'+ICON_TRASH+' Workout löschen</button>';
+    '<button class="btn btn-primary" data-save>'+ICON_SAVE+' '+t("save")+'</button>'+
+    '<button class="btn btn-danger" data-delete>'+ICON_TRASH+' '+t("deleteWorkout")+'</button>';
 
   bindCommon();
 
   app.querySelector("#w-name").addEventListener("input", function(){
-    w.name = app.querySelector("#w-name").value.trim() || "Ohne Namen";
+    w.name = app.querySelector("#w-name").value.trim() || t("untitled");
     w.updatedAt = Date.now();
     save();
   });
@@ -1109,14 +1844,14 @@ function renderWorkoutEdit(id){
   });
 
   app.querySelector("[data-save]").addEventListener("click", function(){
-    w.name = app.querySelector("#w-name").value.trim() || "Ohne Namen";
+    w.name = app.querySelector("#w-name").value.trim() || t("untitled");
     w.updatedAt = Date.now();
     save();
     go("#home");
   });
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
-    confirmSheet("Workout löschen?", "Diese Aktion kann nicht rückgängig gemacht werden.", "Löschen", function(){
+    confirmSheet(t("deleteWorkoutQ"), t("cantUndo"), t("del"), function(){
       state.db.workouts = state.db.workouts.filter(function(x){ return x.id!==id; });
       save();
       go("#home");
@@ -1128,50 +1863,67 @@ function renderWorkoutEdit(id){
 function renderSettings(){
   var s = state.db.settings;
   app.innerHTML =
-    topbar("Einstellungen", { back:"#home" }) +
-    '<div class="section-title">Darstellung</div>'+
+    topbar(t("settings"), { back:"#home" }) +
+    '<div class="section-title">'+t("appearance")+'</div>'+
     '<div class="card"><div class="theme-pick">'+
-      themeBtn("system","System")+themeBtn("light","Hell")+themeBtn("dark","Dunkel")+themeBtn("retro-light","Retro Hell")+themeBtn("retro-dark","Retro Dunkel")+
+      themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+
+      themeBtn("retro",t("thRetro"),"vintage")+themeBtn("kodak",t("thKodak"),"vintage")+themeBtn("tapedeck",t("thDeck"),"vintage")+
     '</div>'+
-    '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">„Retro" im Stil analoger Fahrzeug-Cockpits (VW Golf 2, Audi 80, VDO) – mit rollendem Walzenzähler statt Fortschrittsring.</div>'+
+    '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+t("themeInfo")+'</div>'+
     '</div>'+
-    '<div class="section-title">Installation</div>'+
+    '<div class="section-title">'+t("language")+'</div>'+
+    '<div class="card"><div class="theme-pick lang-pick">'+
+      langBtn("de","Deutsch")+langBtn("en","English")+
+    '</div></div>'+
+    '<div class="section-title">'+t("installation")+'</div>'+
     '<div class="list-item" data-nav="#install">'+
-      '<div class="meta"><div class="name">App auf den Home-Bildschirm legen</div>'+
-      '<div class="sub">Anleitung für iPhone &amp; Android</div></div>'+
-      '<span class="chip">&#8250;</span>'+
+      '<div class="meta"><div class="name">'+t("installRow")+'</div>'+
+      '<div class="sub">'+t("installRowSub")+'</div></div>'+
+      '<span class="chip chev">'+ICON_CHEV+'</span>'+
     '</div>'+
-    '<div class="section-title">Timer</div>'+
+    '<div class="section-title">'+t("timer")+'</div>'+
     '<div class="card">'+
-      '<div class="range-row"><div class="label">Lautstärke <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
-      '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'"></div>'+
-      toggleRow("f-sound","Ton", "Signaltöne bei Phasenwechsel", s.sound)+
+      '<div class="range-row"><div class="label">'+t("volume")+' <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
+      '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'">'+
+      '<div class="range-scale"><span>0</span><span>100</span></div></div>'+
+      toggleRow("f-sound",t("sound"), t("soundDesc"), s.sound)+
       '<div class="range-row" data-opensounds style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
-        '<div><div class="label" style="margin:0 0 2px;">Klang</div><div style="font-size:13px;color:var(--text-dim);">'+esc((SOUND_STYLES[s.soundStyle]||SOUND_STYLES.classic).label)+'</div></div>'+
-        '<span class="chip">&#8250;</span>'+
+        '<div><div class="label" style="margin:0 0 2px;">'+t("soundStyle")+'</div><div style="font-size:13px;color:var(--text-dim);">'+esc(soundLabel(s.soundStyle))+'</div></div>'+
+        '<span class="chip chev">'+ICON_CHEV+'</span>'+
       '</div>'+
-      toggleRow("f-countin","Countdown-Piepsen", "Kurze Töne in den letzten 3 Sekunden", s.countIn)+
-      toggleRow("f-vibration","Vibration", "Haptisches Feedback (falls unterstützt)", s.vibration)+
-      toggleRow("f-keepawake","Bildschirm an lassen", "Verhindert, dass der Bildschirm während des Workouts ausgeht", s.keepAwake)+
+      toggleRow("f-space",t("space"), t("spaceDesc"), s.space)+
+      toggleRow("f-countin",t("countIn"), t("countInDesc"), s.countIn)+
+      toggleRow("f-vibration",t("vibration"), t("vibrationDesc"), s.vibration)+
+      toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake)+
     '</div>'+
-    '<div class="section-title">Daten</div>'+
+    '<div class="section-title">'+t("data")+'</div>'+
     '<div class="card">'+
-      '<button class="btn btn-secondary" data-export>Backup exportieren (JSON)</button>'+
-      '<button class="btn btn-secondary" data-import>Backup importieren</button>'+
+      '<button class="btn btn-secondary" data-export>'+t("exportBackup")+'</button>'+
+      '<button class="btn btn-secondary" data-import>'+t("importBackup")+'</button>'+
       '<input type="file" id="import-file" accept="application/json" style="display:none">'+
-      '<button class="btn btn-danger" data-reset>Alle Daten löschen</button>'+
+      '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>'+
     '</div>'+
-    '<div class="empty" style="padding:20px 8px;">Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.</div>';
+    '<div class="empty" style="padding:20px 8px;">'+t("localNote")+'</div>';
 
   bindCommon();
 
-  function themeBtn(val, label){
-    return '<button data-theme="'+val+'" class="'+(s.theme===val?"active":"")+'">'+label+'</button>';
+  function themeBtn(val, label, cls){
+    var classes = (cls||"") + (s.theme===val ? " active" : "");
+    return '<button data-theme="'+val+'" class="'+classes.trim()+'">'+label+'</button>';
+  }
+  function langBtn(val, label){
+    return '<button data-lang="'+val+'" class="'+(currentLang()===val ? "active" : "")+'">'+label+'</button>';
   }
   app.querySelectorAll("[data-theme]").forEach(function(btn){
     btn.addEventListener("click", function(){
       s.theme = btn.getAttribute("data-theme");
       save(); applyTheme(); renderSettings();
+    });
+  });
+  app.querySelectorAll("[data-lang]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      s.lang = btn.getAttribute("data-lang");
+      save(); applyLang(); renderSettings();
     });
   });
 
@@ -1180,6 +1932,7 @@ function renderSettings(){
   });
 
   bindToggle("f-sound", function(v){ s.sound=v; save(); });
+  bindToggle("f-space", function(v){ s.space=v; save(); applySpace(); phaseBeep("work"); });
   bindToggle("f-countin", function(v){ s.countIn=v; save(); });
   bindToggle("f-vibration", function(v){ s.vibration=v; save(); });
   bindToggle("f-keepawake", function(v){ s.keepAwake=v; save(); });
@@ -1213,22 +1966,23 @@ function renderSettings(){
     reader.onload = function(){
       try{
         var parsed = JSON.parse(reader.result);
-        confirmSheet("Backup importieren?", "Bestehende Blöcke und Workouts werden überschrieben.", "Importieren", function(){
+        confirmSheet(t("importQ"), t("importText"), t("importBtn"), function(){
           var db = defaultDB();
           db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
           db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
           if(parsed.settings) Object.assign(db.settings, parsed.settings);
           db.settings.theme = migrateTheme(db.settings.theme);
-          state.db = db; save(); applyTheme();
+          db.settings.soundStyle = migrateSound(db.settings.soundStyle);
+          state.db = db; save(); applyTheme(); applyLang(); applySpace();
           go("#home");
         });
-      }catch(e){ alert("Datei konnte nicht gelesen werden."); }
+      }catch(e){ alert(t("fileError")); }
     };
     reader.readAsText(file);
   });
   app.querySelector("[data-reset]").addEventListener("click", function(){
-    confirmSheet("Alle Daten löschen?", "Alle Blöcke und Workouts werden unwiderruflich gelöscht.", "Alles löschen", function(){
-      state.db = defaultDB(); save(); applyTheme();
+    confirmSheet(t("deleteAllQ"), t("deleteAllText"), t("deleteAllBtn"), function(){
+      state.db = defaultDB(); save(); applyTheme(); applyLang(); applySpace();
       go("#home");
     });
   });
@@ -1248,29 +2002,18 @@ function stepRow(n, text){
 function renderInstallGuide(){
   var androidQuick = (isAndroid() && deferredInstallPrompt) ?
     '<div class="card" style="text-align:center;">'+
-      '<button type="button" class="btn btn-primary" data-install-now>'+ICON_DOWNLOAD+' Jetzt installieren</button>'+
-      '<div style="font-size:13px;color:var(--text-dim);margin-top:8px;">Ein Tap – kein Menü nötig. Falls das nicht klappt, geht es auch manuell:</div>'+
+      '<button type="button" class="btn btn-primary" data-install-now>'+ICON_DOWNLOAD+' '+t("installNow")+'</button>'+
+      '<div style="font-size:13px;color:var(--text-dim);margin-top:8px;">'+t("androidQuickNote")+'</div>'+
     '</div>' : "";
+  function steps(list){ return list.map(function(text, i){ return stepRow(i+1, text); }).join(""); }
   app.innerHTML =
-    topbar("App installieren", { back:"#settings" }) +
+    topbar(t("installApp"), { back:"#settings" }) +
     '<div class="section-title">iPhone &amp; iPad (Safari)</div>'+
-    '<div class="card">'+
-      stepRow(1, 'Diese Seite in <b>Safari</b> öffnen (nicht Chrome – dort fehlt der nötige Button).')+
-      stepRow(2, 'Unten in der Mitte auf das Teilen-Symbol <b>&#8593;</b> tippen.')+
-      stepRow(3, 'Nach unten scrollen und <b>„Zum Home-Bildschirm"</b> auswählen.')+
-      stepRow(4, 'Oben rechts auf <b>„Hinzufügen"</b> tippen.')+
-      stepRow(5, 'Fertig! Das Icon liegt jetzt auf deinem Homescreen und startet als eigene App mit dauerhaftem Speicher.')+
-    '</div>'+
+    '<div class="card">'+steps(t("iosSteps"))+'</div>'+
     '<div class="section-title">Android (Chrome)</div>'+
     androidQuick+
-    '<div class="card">'+
-      stepRow(1, 'Diese Seite in <b>Chrome</b> öffnen.')+
-      stepRow(2, 'Oben rechts auf die drei Punkte <b>&#8942;</b> tippen.')+
-      stepRow(3, '<b>„App installieren"</b> bzw. <b>„Zum Startbildschirm hinzufügen"</b> auswählen.')+
-      stepRow(4, 'Installation im Dialog bestätigen.')+
-      stepRow(5, 'Fertig! Die App erscheint auf dem Startbildschirm und in der App-Liste.')+
-    '</div>'+
-    '<div class="empty" style="padding:16px 8px;">Danach läuft die App im Vollbild wie eine echte App – ohne Adressleiste und ohne das iOS-7-Tage-Speicherlimit.</div>';
+    '<div class="card">'+steps(t("androidSteps"))+'</div>'+
+    '<div class="empty" style="padding:16px 8px;">'+t("installOutro")+'</div>';
   bindCommon();
 }
 
@@ -1279,7 +2022,7 @@ function confirmSheet(title, desc, actionLabel, onConfirm){
   var root = document.getElementById("overlayRoot");
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet">'+
     '<h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p>'+
-    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>Abbrechen</button>'+
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
     '<button class="btn btn-danger" style="background:var(--danger);color:#fff" data-ok>'+esc(actionLabel)+'</button></div>'+
     '</div></div>';
   function close(){ root.innerHTML=""; }
@@ -1292,13 +2035,18 @@ function confirmSheet(title, desc, actionLabel, onConfirm){
 function openSoundSheet(onClose){
   var root = document.getElementById("overlayRoot");
   var current = state.db.settings.soundStyle;
-  var tiles = Object.keys(SOUND_STYLES).map(function(key){
-    return '<button type="button" class="sound-tile'+(key===current?" active":"")+'" data-pick="'+key+'">'+esc(SOUND_STYLES[key].label)+'</button>';
-  }).join("");
+  function tiles(natural){
+    return Object.keys(SOUND_STYLES).filter(function(key){ return !!SOUND_STYLES[key].natural === natural; }).map(function(key){
+      return '<button type="button" class="sound-tile'+(key===current?" active":"")+'" data-pick="'+key+'">'+esc(soundLabel(key))+'</button>';
+    }).join("");
+  }
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet">'+
-    '<h3>Klang wählen</h3>'+
-    '<div class="sound-tiles">'+tiles+'</div>'+
-    '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:4px;">Schließen</button>'+
+    '<h3>'+t("chooseSound")+'</h3>'+
+    '<div class="sound-group">'+t("natural")+'</div>'+
+    '<div class="sound-tiles">'+tiles(true)+'</div>'+
+    '<div class="sound-group">'+t("electronic")+'</div>'+
+    '<div class="sound-tiles">'+tiles(false)+'</div>'+
+    '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:4px;">'+t("close")+'</button>'+
     '</div></div>';
   function close(){ root.innerHTML=""; if(onClose) onClose(); }
   root.querySelector("[data-cancel]").addEventListener("click", close);
@@ -1315,10 +2063,107 @@ function openSoundSheet(onClose){
 }
 
 /* ============ Audio & Haptics ============ */
-var actx = null;
+var actx = null, audioBus = null;
 function audioCtx(){
   if(!actx){ var AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
   return actx;
+}
+/* Gemeinsamer Ausgang aller Klänge: trockenes Signal + Raumhall, am Ende ein Begrenzer,
+   der nur kurz vor Übersteuern eingreift (normale Lautstärke bleibt unverändert) */
+function soundOut(ctx){
+  if(audioBus) return audioBus.input;
+  var input = ctx.createGain();
+  var wet = ctx.createGain();
+  var limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -3; limiter.knee.value = 0; limiter.ratio.value = 20;
+  limiter.attack.value = 0.002; limiter.release.value = 0.12;
+  input.connect(limiter);
+  if(ctx.createConvolver){
+    var room = ctx.createConvolver();
+    room.buffer = roomImpulse(ctx);
+    input.connect(room); room.connect(wet); wet.connect(limiter);
+  }
+  limiter.connect(ctx.destination);
+  audioBus = { input:input, wet:wet };
+  applySpace();
+  return input;
+}
+/* 0.6: Nachhall kurzer Töne etwa 11 dB unter dem Direktschall - hörbarer Raum, noch nicht verwaschen */
+function applySpace(){ if(audioBus) audioBus.wet.gain.value = state.db.settings.space ? 0.6 : 0; }
+/* Künstlicher Raum als Impulsantwort: kurze Vorverzögerung, einzelne frühe Reflexionen, dann
+   abklingendes Rauschen, das mit der Zeit dumpfer wird. Links und rechts verschieden - das
+   ergibt die räumliche Breite. */
+function roomImpulse(ctx){
+  var rate = ctx.sampleRate, len = Math.floor(rate*1.8), pre = Math.floor(rate*0.012);
+  var ir = ctx.createBuffer(2, len, rate);
+  for(var ch=0; ch<2; ch++){
+    var data = ir.getChannelData(ch), lp = 0;
+    for(var i=pre; i<len; i++){
+      var t = (i-pre)/(len-pre);
+      lp += (0.8 - 0.65*t) * ((Math.random()*2-1) - lp);
+      data[i] = lp * Math.pow(1-t, 3.2);
+    }
+    [0.017, 0.026, 0.039, 0.052, 0.071].forEach(function(s, j){
+      var idx = Math.floor(rate*(s + ch*0.0035));
+      if(idx < len) data[idx] += (j%2 ? -1 : 1) * 0.6 * Math.pow(0.78, j);
+    });
+  }
+  return ir;
+}
+function withPan(ctx, dest, pan){
+  if(!pan || !ctx.createStereoPanner) return dest;
+  var p = ctx.createStereoPanner();
+  p.pan.value = pan;
+  p.connect(dest);
+  return p;
+}
+/* Ein Teilton mit eigenem Ausklingen; mit "beat" zwei leicht verstimmte Töne, die schweben */
+function addPartial(ctx, dest, freq, amp, att, decayS, now, beat, pan){
+  var g = ctx.createGain();
+  g.gain.setValueAtTime(0, now);
+  g.gain.linearRampToValueAtTime(amp, now + att);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + att + decayS);
+  g.connect(withPan(ctx, dest, pan));
+  var freqs = beat ? [freq, freq + beat] : [freq];
+  freqs.forEach(function(fr){
+    var o = ctx.createOscillator();
+    var share = ctx.createGain();
+    o.frequency.value = fr;
+    share.gain.value = 1/freqs.length;
+    o.connect(share); share.connect(g);
+    o.start(now); o.stop(now + att + decayS + 0.05);
+  });
+}
+/* Anschlaggeräusch: metallisch (Hammer auf Glocke) oder weich (Schlegel auf Holz) */
+function strikeNoise(ctx, dest, amp, now, soft){
+  var len = soft ? 0.02 : 0.035;
+  var g = ctx.createGain();
+  g.gain.setValueAtTime(amp, now);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + len);
+  g.connect(dest);
+  noiseBurst(ctx, g, soft ? { f:1400, dur:len*1000, filterType:"bandpass", q:.9 }
+                          : { f:2600, dur:len*1000, filterType:"highpass", q:.7 }, now);
+}
+/* Wellenformen alter Spielkonsolen: Rechteck mit schmalem Puls (12,5 / 25 / 50 %) und das
+   stufige 4-Bit-Dreieck des Bass-Kanals (als Fourier-Reihe, damit nichts klirrt) */
+var chipWaves = {};
+function chipWave(ctx, name){
+  if(chipWaves[name]) return chipWaves[name];
+  var N = 64, real = new Float32Array(N), imag = new Float32Array(N), k;
+  if(name === "tri4"){
+    var M = 512, steps = [];
+    for(var j=0;j<M;j++){ var s = Math.floor(j/16); steps.push(((s < 16 ? 15 - s : s - 16)/7.5) - 1); }
+    for(k=1;k<N;k++){
+      var re = 0, im = 0;
+      for(j=0;j<M;j++){ re += steps[j]*Math.cos(2*Math.PI*k*j/M); im += steps[j]*Math.sin(2*Math.PI*k*j/M); }
+      real[k] = re*2/M; imag[k] = im*2/M;
+    }
+  } else {
+    var duty = name === "pulse12" ? .125 : name === "pulse25" ? .25 : .5;
+    for(k=1;k<N;k++) real[k] = 2/(k*Math.PI) * Math.sin(k*Math.PI*duty);
+  }
+  chipWaves[name] = ctx.createPeriodicWave(real, imag);
+  return chipWaves[name];
 }
 function noiseBurst(ctx, gain, n, now){
   var durSec = n.dur/1000;
@@ -1335,7 +2180,13 @@ function noiseBurst(ctx, gain, n, now){
   src.start(now);
   src.stop(now + durSec + 0.05);
 }
-/* Spielt eine Notiz {f,dur,v,type,sweepTo,noise,filterType,q}: einfacher Ton, Pitch-Sweep oder gefiltertes Rauschen (für Trommel/Gong-artige Klänge jenseits reiner Oszillator-Beeps) */
+/* Spielt eine Notiz {f,dur,v,type,sweepTo,noise,filterType,q}: einfacher Ton, Pitch-Sweep oder
+   gefiltertes Rauschen. Für die natürlichen Klänge zusätzlich:
+   partials (Teiltöne mit eigenem Ausklingen), beat (Schwebung), strike (metallischer Anschlag),
+   mallet (weicher Schlegel-Anschlag), att (Anschlagzeit ms), hold (Ton halten ms),
+   trill (Flattern/Vibrato), breath (Atemrauschen), lp (Tiefpass gegen Schärfe),
+   bursts (mehrere schnelle Rauschstöße, z.B. Klatschen), wave (Soundchip-Wellenform),
+   pan (Position im Stereobild) */
 function tone(n){
   if(!state.db.settings.sound) return;
   var ctx = audioCtx();
@@ -1343,24 +2194,74 @@ function tone(n){
   if(ctx.state==="suspended") ctx.resume();
   var level = (n.v==null?0.7:n.v) * (state.db.settings.volume!=null ? state.db.settings.volume : 1);
   if(level<=0) return;
-  var now = ctx.currentTime;
+  var now = ctx.currentTime, durS = n.dur/1000, att = (n.att||8)/1000, end = now + durS;
   var gain = ctx.createGain();
-  gain.connect(ctx.destination);
+  gain.connect(withPan(ctx, soundOut(ctx), n.pan));
+
+  if(n.partials){
+    gain.gain.value = level;
+    if(n.strike) strikeNoise(ctx, gain, n.strike, now);
+    if(n.mallet) strikeNoise(ctx, gain, n.mallet, now, true);
+    var sum = n.partials.reduce(function(a, p){ return a + p[1]; }, 0);
+    n.partials.forEach(function(p, i){
+      /* Obertöne leicht links/rechts verteilt: der Klang bekommt Breite */
+      var spread = i ? (i%2 ? -1 : 1) * Math.min(.3, .1*i) : 0;
+      addPartial(ctx, gain, n.f*p[0], p[1]*1.4/sum, att, durS*p[2], now, n.beat||0, spread);
+    });
+    return;
+  }
+
+  if(n.bursts){
+    /* Stöße sample-genau im Audio-Takt geplant - ein Timer wäre für 9 ms Abstand zu ungenau */
+    n.bursts.forEach(function(ms, i){
+      var t0 = now + ms/1000, last = i === n.bursts.length-1, len = last ? durS : 0.011;
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(level*(last ? 1 : .8), t0 + 0.001);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+      g.connect(gain);
+      noiseBurst(ctx, g, { f:n.f, q:n.q, filterType:n.filterType, dur:len*1000 }, t0);
+    });
+    return;
+  }
+
   gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(level, now+0.008);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + n.dur/1000);
+  gain.gain.linearRampToValueAtTime(level, now+att);
+  if(n.hold) gain.gain.setValueAtTime(level, now + n.hold/1000);
+  gain.gain.exponentialRampToValueAtTime(0.0001, end);
 
   if(n.noise){
     noiseBurst(ctx, gain, n, now);
     return;
   }
   var osc = ctx.createOscillator();
-  osc.type = n.type || "sine";
+  if(n.wave) osc.setPeriodicWave(chipWave(ctx, n.wave));
+  else osc.type = n.type || "sine";
   osc.frequency.setValueAtTime(n.f, now);
-  if(n.sweepTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1,n.sweepTo), now + n.dur/1000);
-  osc.connect(gain);
+  if(n.sweepTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1,n.sweepTo), end);
+  if(n.trill){
+    var lfo = ctx.createOscillator(), depth = ctx.createGain();
+    lfo.frequency.value = n.trill.rate;
+    depth.gain.value = n.trill.depth;
+    lfo.connect(depth); depth.connect(osc.frequency);
+    lfo.start(now); lfo.stop(end + 0.05);
+  }
+  if(n.lp){
+    var soft = ctx.createBiquadFilter();
+    soft.type = "lowpass";
+    soft.frequency.value = n.lp;
+    osc.connect(soft); soft.connect(gain);
+  } else {
+    osc.connect(gain);
+  }
   osc.start(now);
-  osc.stop(now + n.dur/1000 + 0.02);
+  osc.stop(end + 0.02);
+  if(n.breath){
+    var air = ctx.createGain();
+    air.gain.value = n.breath;
+    air.connect(gain);
+    noiseBurst(ctx, air, { f:n.f, dur:n.dur, filterType:"bandpass", q:2.5 }, now);
+  }
 }
 function currentSoundStyle(){
   return SOUND_STYLES[state.db.settings.soundStyle] || SOUND_STYLES.classic;
@@ -1447,15 +2348,16 @@ function launchPlayer(w, source){
   };
   document.getElementById("playerRoot").innerHTML = playerTemplate();
   bindPlayerControls();
+  odo = null; // Walzen drehen beim Start von 0:00 auf die erste Phase
   enterStep(0);
   requestWakeLock();
 }
 
 function phaseVars(phase){
-  if(phase==="work") return { bg:"var(--accent)", text:"var(--accent-text)", label:"Arbeit" };
-  if(phase==="rest") return { bg:"var(--rest)", text:"var(--rest-text)", label:"Pause" };
-  if(phase==="blockrest") return { bg:"var(--blockrest)", text:"#ffffff", label:"Blockpause" };
-  if(phase==="prep") return { bg:"var(--blockrest)", text:"#ffffff", label:"Los geht's" };
+  if(phase==="work") return { bg:"var(--accent)", text:"var(--accent-text)", label:t("phWork") };
+  if(phase==="rest") return { bg:"var(--rest)", text:"var(--rest-text)", label:t("phRest") };
+  if(phase==="blockrest") return { bg:"var(--blockrest)", text:"#ffffff", label:t("phBlockrest") };
+  if(phase==="prep") return { bg:"var(--blockrest)", text:"#ffffff", label:t("phPrep") };
   return { bg:"var(--bg)", text:"var(--text)", label:"" };
 }
 
@@ -1463,9 +2365,9 @@ function playerTemplate(){
   var vol = Math.round((state.db.settings.volume!=null?state.db.settings.volume:1)*100);
   return '<div class="player" id="playerEl">'+
     '<div class="player-top">'+
-      '<button class="exit" data-exit>&times;</button>'+
+      '<button class="exit" data-exit title="'+t("endBtn")+'">&times;</button>'+
       '<div style="font-size:13px;opacity:.7" id="pl-counter"></div>'+
-      '<button class="exit" data-vol-toggle title="Lautstärke">'+ICON_VOLUME+'</button>'+
+      '<button class="exit" data-vol-toggle title="'+t("volume")+'">'+ICON_VOLUME+'</button>'+
     '</div>'+
     '<div class="vol-popover hidden" id="pl-vol-pop">'+ICON_VOLUME+
       '<input type="range" id="pl-vol-range" min="0" max="100" step="5" value="'+vol+'">'+
@@ -1473,6 +2375,7 @@ function playerTemplate(){
     '</div>'+
     '<div class="progressbar"><div class="progressbar-fill" id="pl-progress" style="width:0%"></div></div>'+
     '<div id="pl-body" class="player-mid"></div>'+
+    KODAK_BADGE + DECK_BADGE +
     '</div>';
 }
 
@@ -1481,29 +2384,29 @@ function circleCirc(){ return 2*Math.PI*54; }
 function stepBodyHTML(step){
   if(step.phase==="done"){
     var total = fmtDuration(workoutDuration(playerState.workout));
-    return '<div class="done-screen"><h2>Workout geschafft!</h2><p>'+esc(playerState.workout.name)+' &middot; '+total+'</p>'+
+    return '<div class="done-screen"><h2>'+t("doneTitle")+'</h2><p>'+esc(playerState.workout.name)+' &middot; '+total+'</p>'+
       '<div class="btn-row" style="width:100%;max-width:300px;">'+
-        '<button class="btn btn-secondary" data-again>'+ICON_RESTART+' Nochmal</button>'+
-        '<button class="btn btn-primary" data-finish>Fertig</button>'+
+        '<button class="btn btn-secondary" data-again>'+ICON_RESTART+' '+t("again")+'</button>'+
+        '<button class="btn btn-primary" data-finish>'+t("finish")+'</button>'+
       '</div></div>';
   }
   var pv = phaseVars(step.phase);
   var repInfo = step.totalReps ? '<div class="rep-dots" id="pl-dots"></div>' : "";
-  var timeHTML = isRetroTheme()
-    ? '<div class="time" id="pl-time">'+renderTimeCells(fmtTime(step.duration))+'</div>'
+  var timeHTML = isVintageTheme()
+    ? '<div class="time" id="pl-time">'+odoHTML(step.duration)+'</div>'
     : '<div class="ring-wrap"><svg viewBox="0 0 120 120">'+
         '<circle class="ring-bg" cx="60" cy="60" r="54"></circle>'+
         '<circle class="ring-fg" id="pl-ring" cx="60" cy="60" r="54" stroke-dasharray="'+circleCirc()+'" stroke-dashoffset="0"></circle>'+
       '</svg><div class="time" id="pl-time">'+esc(fmtTime(step.duration))+'</div></div>';
   return '<div class="phase-label">'+pv.label+'</div>'+
-    '<div class="block-label">'+esc(step.blockName||"")+(step.totalReps? " &middot; "+step.rep+"/"+step.totalReps : "")+'</div>'+
+    '<div class="block-label">'+esc(step.blockName||"")+(step.totalReps? SEP+step.rep+"/"+step.totalReps : "")+'</div>'+
     timeHTML+
     repInfo+
     '<div class="next-up" id="pl-next"></div>'+
     '<div class="player-controls">'+
-      '<button class="ctrl-btn" data-skip title="Weiter">'+ICON_SKIP+'</button>'+
-      '<button class="ctrl-btn main" id="pl-playpause" title="Pause"><span>'+ICON_PAUSE+'</span></button>'+
-      '<button class="ctrl-btn" data-restart title="Phase neu">'+ICON_RESTART+'</button>'+
+      '<button class="ctrl-btn" data-skip title="'+t("skip")+'">'+ICON_SKIP+'</button>'+
+      '<button class="ctrl-btn main" id="pl-playpause" title="'+t("pause")+'"><span>'+ICON_PAUSE+'</span></button>'+
+      '<button class="ctrl-btn" data-restart title="'+t("restartPhase")+'">'+ICON_RESTART+'</button>'+
     '</div>';
 }
 
@@ -1511,9 +2414,11 @@ function nextStepPreview(idx){
   var steps = playerState.steps;
   if(idx+1 >= steps.length) return "";
   var n = steps[idx+1];
-  if(n.phase==="done") return "Danach: Fertig";
-  var pv = phaseVars(n.phase);
-  return "Als nächstes: "+pv.label+(n.blockName? " &middot; "+esc(n.blockName):"")+" ("+fmtTime(n.duration)+")";
+  if(n.phase==="done") return t("thenDone");
+  var time = " ("+fmtTime(n.duration)+")";
+  /* Bei Arbeitsphasen nur der Blockname - „Als nächstes: Los!“ klänge holprig */
+  if(n.phase==="work") return t("upNext")+" "+esc(n.blockName||"")+time;
+  return t("upNext")+" "+phaseVars(n.phase).label+(n.blockName? SEP+esc(n.blockName):"")+time;
 }
 
 function enterStep(idx){
@@ -1525,7 +2430,9 @@ function enterStep(idx){
   var pv = phaseVars(step.phase);
   el.style.setProperty("--phase-bg", pv.bg);
   el.style.setProperty("--phase-text", pv.text);
+  el.setAttribute("data-phase", step.phase);
   document.getElementById("pl-body").innerHTML = stepBodyHTML(step);
+  if(step.phase!=="done" && isVintageTheme()) odoInit(document.getElementById("pl-time"), step.duration);
   document.getElementById("pl-counter").textContent = (idx+1)+" / "+steps.length;
 
   if(step.phase!=="done"){
@@ -1562,10 +2469,15 @@ function enterStep(idx){
 function updateDots(step){
   var wrap = document.getElementById("pl-dots");
   if(!wrap) return;
+  /* So groß wie der Platz erlaubt (bis 34 px); bei vielen Wiederholungen kleiner, notfalls zweireihig */
+  var n = step.totalReps, gap = n > 12 ? 6 : 10;
+  var avail = Math.min(wrap.parentNode.clientWidth - 70, 340);
+  var size = Math.max(14, Math.min(34, Math.floor((avail - (n-1)*gap)/n)));
+  wrap.style.gap = gap+"px";
   var html = "";
-  for(var i=1;i<=step.totalReps;i++){
+  for(var i=1;i<=n;i++){
     var cls = i<step.rep ? "done" : (i===step.rep ? "now":"");
-    html += '<span class="'+cls+'"></span>';
+    html += '<span class="'+cls+'" style="width:'+size+'px;height:'+size+'px;border-radius:'+Math.max(3, Math.round(size*.15))+'px"></span>';
   }
   wrap.innerHTML = html;
 }
@@ -1587,60 +2499,133 @@ function updateProgress(){
   if(bar) bar.style.width = pct+"%";
 }
 
-/* Walzenzähler-Ziffern: jede Ziffer eine eigene Walze. Beim Wechsel rollt die neue Zahl von
-   oben nach unten ein, die alte rutscht nach unten weg - wie bei einem echten Kilometerzähler. */
-function renderTimeCells(text){
+/* ============ Walzenzähler (Vintage-Designs) ============
+   Jede Stelle ist eine 3D-Walze mit rundum aufgedruckten Ziffern, die per rotateX gedreht wird.
+   Das Verhalten ist einem mechanischen Kilometerzähler nachempfunden:
+   - Die Einer-Walze rastet jede Sekunde mit leichtem Überschwingen in die nächste Ziffer ein;
+     die neue Ziffer kommt von oben, die alte dreht nach unten weg.
+   - Höhere Walzen bahnen ihren Wechsel an: schon einige Sekunden vorher drehen sie langsam ein
+     Stück vor, sodass die nächste Ziffer oben ins Fenster lugt - wie das Übertragsritzel eines
+     echten Zählwerks, das allmählich eingreift.
+   - Beim Übertrag rastet zuerst die rechte Walze ein, jede Stelle weiter links etwas später.
+   - Jede Walze sitzt minimal schief (Spiel im Getriebe).
+   - Beim Start, bei "Phase neu" und beim Phasenwechsel drehen die Walzen sichtbar auf den neuen
+     Stand, statt zu springen. */
+var ODO_FACE_H = 1.1;      // Höhe einer Ziffernfläche (em) - bestimmt den Walzenradius
+var ODO_ROLL_MS = 380;     // Dauer des Einrastens nach einem Wechsel
+var ODO_STAGGER_MS = 45;   // jede Stelle weiter links rastet so viel später ein
+var ODO_JUMP_MS = 750;     // Drehen auf einen neuen Stand (Start, "Phase neu", Phasenwechsel)
+var odo = null;
+
+/* Walzen von rechts nach links:
+   P      - alle wie viele Sekunden die Walze um eine Ziffer weiterdreht
+   period - Anzahl verschiedener Ziffern (Zehner-Sekunden: 0-5)
+   faces  - aufgedruckte Flächen (die 0-5-Walze trägt ihre Ziffern zweimal, wie bei Uhren-Zählwerken)
+   win    - wie viele Sekunden vor dem Wechsel die Walze anfängt, ihn anzubahnen
+   creep  - wie weit sie bis zum Wechsel schon vorgedreht hat (Anteil einer Ziffer)
+   play   - Getriebespiel: bleibender kleiner Versatz */
+function odoSpecs(durationSec){
+  var specs = [
+    { P:1,  period:10, faces:10, win:0.6, creep:0.07, play:0 },
+    { P:10, period:6,  faces:12, win:3,   creep:0.12, play:0.02 }
+  ];
+  var minDigits = String(Math.floor(Math.max(0, durationSec)/60)).length;
+  var plays = [-0.025, 0.015];
+  for(var i=0;i<minDigits;i++){
+    specs.push({ P:60*Math.pow(10,i), period:10, faces:10, win:15, creep:0.24, play:plays[i%2] });
+  }
+  return specs;
+}
+/* Radius, bei dem die Ziffernflächen lückenlos ein Vieleck bilden */
+function odoRadius(faces){ return ODO_FACE_H/2/Math.tan(Math.PI/faces); }
+
+function odoHTML(durationSec){
+  var specs = odoSpecs(durationSec);
   var html = "";
-  for(var i=0;i<text.length;i++){
-    var ch = text[i];
-    if(ch===":"){
-      html += '<span class="tc sep">:</span>';
-    } else {
-      html += '<span class="tc" data-digit="'+ch+'"><span class="tc-window"><span class="tc-strip"><span class="tc-d">'+ch+'</span></span></span></span>';
+  for(var k=specs.length-1;k>=0;k--){
+    var sp = specs[k], angle = 360/sp.faces, r = odoRadius(sp.faces).toFixed(4), faces = "";
+    for(var i=0;i<sp.faces;i++){
+      faces += '<span class="odo-face" style="transform:rotateX('+(-i*angle)+'deg) translateZ('+r+'em)">'+(i%sp.period)+'</span>';
     }
+    html += '<span class="tc"><span class="tc-window"><span class="odo-drum">'+faces+'</span></span></span>';
+    if(k===2) html += '<span class="tc sep">:</span>';
   }
   return html;
 }
-function rollCell(cell, newCh, delayMs){
-  if(cell.getAttribute("data-digit")===newCh) return;
-  var oldCh = cell.getAttribute("data-digit");
-  cell.setAttribute("data-digit", newCh);
-  var strip = cell.querySelector(".tc-strip");
-  strip.innerHTML = '<span class="tc-d">'+esc(newCh)+'</span><span class="tc-d">'+esc(oldCh)+'</span>';
-  strip.classList.remove("rolling");
-  void strip.offsetHeight;
-  strip.style.animationDelay = (delayMs||0)+"ms";
-  strip.classList.add("rolling");
-  strip.addEventListener("animationend", function done(){
-    strip.classList.remove("rolling");
-    strip.style.animationDelay = "";
-    strip.innerHTML = '<span class="tc-d">'+esc(newCh)+'</span>';
-    strip.removeEventListener("animationend", done);
-  });
+
+/* Neue Phase: die Walzen starten auf dem bisherigen Stand (beim Start des Players auf 0:00)
+   und drehen von dort auf die neue Dauer */
+function odoInit(container, durationSec){
+  var specs = odoSpecs(durationSec);
+  var drums = container.querySelectorAll(".odo-drum");
+  var prev = odo ? odo.wheels.map(function(w){ return w.value; }) : [];
+  odo = {
+    lastV: null,
+    wheels: specs.map(function(sp, k){
+      return { spec:sp, drum:drums[drums.length-1-k], r:odoRadius(sp.faces), angle:360/sp.faces,
+               value:prev[k]||0, pendingFrom:prev[k]||0, anim:null };
+    })
+  };
 }
-function updateTimeCells(container, text){
-  var chars = text.split("");
-  if(container.children.length !== chars.length){
-    container.innerHTML = renderTimeCells(text);
-    return;
+
+function easeOutBack(x){ var c = 1.2; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); }
+function easeInOutCubic(x){ return x<.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; }
+/* Kürzester Drehweg auf einer Walze mit n Ziffern, Ergebnis in [-n/2, n/2) */
+function odoShortest(d, n){ return ((d % n) + n*1.5) % n - n/2; }
+
+/* Ruhestellung einer Walze in Ziffern (Bruchteile = Walze steht zwischen zwei Ziffern) */
+function odoWheelValue(sp, V, f){
+  var v = Math.floor(V/sp.P) % sp.period;
+  /* Anbahnen: kurz vor dem nächsten Wechsel schon langsam vordrehen (erst kaum, dann zunehmend) */
+  if(V >= sp.P){
+    var x = clamp(1 - ((V % sp.P) + 1 - f)/sp.win, 0, 1);
+    v -= sp.creep * x * x;
   }
-  /* Wie bei einem echten mechanischen Kilometerzähler: die rechte (niedrigste) Walze
-     rollt zuerst, die Walzen links davon ziehen mit leichter Verzögerung nach -
-     als würde sich der Rollover über das Zahnradgetriebe nach links fortpflanzen. */
-  var digitCells = [];
-  for(var i=0;i<chars.length;i++){
-    var cell = container.children[i];
-    if(cell.classList.contains("sep")) continue;
-    digitCells.push({ cell:cell, ch:chars[i] });
-  }
-  var delay = 0;
-  for(var j=digitCells.length-1;j>=0;j--){
-    var entry = digitCells[j];
-    if(entry.cell.getAttribute("data-digit") !== entry.ch){
-      rollCell(entry.cell, entry.ch, delay);
-      delay += 30;
+  return v + sp.play;
+}
+
+/* Setzt alle Walzen auf den Stand der Restzeit. Wechsel werden als Drehung animiert, die nach
+   Uhrzeit (nicht nach Timerzeit) abläuft - so dreht eine angefangene Bewegung auch bei Pause
+   zu Ende. Gibt zurück, ob noch eine Walze in Bewegung ist. */
+function odoUpdate(remMs){
+  if(!odo) return false;
+  var s = Math.max(0, remMs)/1000;
+  var V = Math.max(1, Math.ceil(s));   // angezeigte Sekunden
+  var f = V - s;                       // 0 direkt nach einem Sekundenwechsel, gegen 1 kurz vor dem nächsten
+  var now = performance.now();
+  var ticked = odo.lastV != null && V === odo.lastV - 1;          // normaler Sekundenwechsel
+  var jumped = odo.lastV != null && V !== odo.lastV && !ticked;   // "Phase neu" o.ä.
+  odo.lastV = V;
+  var moving = false;
+  odo.wheels.forEach(function(w, k){
+    var sp = w.spec, model = odoWheelValue(sp, V, f), from = null, snap = false;
+    if(w.pendingFrom != null){ from = w.pendingFrom; w.pendingFrom = null; }
+    else if(jumped) from = w.value;
+    else if(ticked && (V+1) % sp.P === 0){ from = w.value; snap = true; }
+    if(from != null){
+      var offset = odoShortest(from - model, sp.period);
+      if(Math.abs(offset) > 0.001){
+        /* Einrasten mit leichtem Überschwingen, rechte Stelle zuerst - bzw. ruhiges Drehen auf neuen Stand */
+        w.anim = snap
+          ? { start:now + k*ODO_STAGGER_MS, dur:ODO_ROLL_MS, offset:offset, ease:easeOutBack }
+          : { start:now + k*ODO_STAGGER_MS*1.5, dur:ODO_JUMP_MS, offset:offset, ease:easeInOutCubic };
+      }
     }
-  }
+    var v = model;
+    if(w.anim){
+      var p = clamp((now - w.anim.start)/w.anim.dur, 0, 1);
+      v += w.anim.offset * (1 - w.anim.ease(p));
+      if(p >= 1) w.anim = null; else moving = true;
+    }
+    w.value = v;
+    w.drum.style.transform = "translateZ(-"+w.r.toFixed(4)+"em) rotateX("+(v*w.angle).toFixed(3)+"deg)";
+  });
+  return moving;
+}
+/* Während der Pause laufende Drehungen zu Ende bringen, statt sie einzufrieren */
+function odoSettle(){
+  if(!odo || !playerState || !playerState.paused) return;
+  if(odoUpdate(playerState.remainingMs)) requestAnimationFrame(odoSettle);
 }
 
 function tickLoop(){
@@ -1656,10 +2641,11 @@ function tickLoop(){
     }
     playerState.remainingMs = remaining;
     var remSec = Math.ceil(remaining/1000);
-    var timeEl = document.getElementById("pl-time");
-    if(timeEl){
-      if(isRetroTheme()) updateTimeCells(timeEl, fmtTime(remSec));
-      else timeEl.textContent = fmtTime(remSec);
+    if(isVintageTheme()){
+      odoUpdate(remaining);
+    } else {
+      var timeEl = document.getElementById("pl-time");
+      if(timeEl) timeEl.textContent = fmtTime(remSec);
     }
     var ring = document.getElementById("pl-ring");
     if(ring){
@@ -1690,6 +2676,7 @@ function bindPlayPause(){
       playerState.paused = true;
       btn.querySelector("span").innerHTML = ICON_PLAY;
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
+      odoSettle();
     }
   };
 }
@@ -1698,7 +2685,7 @@ function bindPlayerControls(){
   var root = document.getElementById("playerRoot");
   root.addEventListener("click", function(e){
     if(e.target.closest("[data-exit]")){
-      confirmSheet("Workout beenden?", "Der Fortschritt geht verloren.", "Beenden", exitPlayer);
+      confirmSheet(t("endQ"), t("endText"), t("endBtn"), exitPlayer);
     }
     if(e.target.closest("[data-skip]")){
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
@@ -1709,6 +2696,8 @@ function bindPlayerControls(){
       playerState.remainingMs = step.duration*1000;
       playerState.endAt = Date.now() + playerState.remainingMs;
       playerState.paused = false;
+      var ppBtn = document.getElementById("pl-playpause");
+      if(ppBtn) ppBtn.querySelector("span").innerHTML = ICON_PAUSE;
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
       tickLoop();
     }
@@ -1731,6 +2720,7 @@ function bindPlayerControls(){
 function exitPlayer(){
   if(playerState && playerState.rafId) cancelAnimationFrame(playerState.rafId);
   playerState = null;
+  odo = null;
   releaseWakeLock();
   document.getElementById("playerRoot").innerHTML = "";
   go("#home");

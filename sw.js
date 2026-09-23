@@ -3,10 +3,15 @@
  * Strategie: zuerst das Netz, dann der Zwischenspeicher.
  * Online siehst du immer sofort die neueste Fassung,
  * ohne Verbindung startet die zuletzt geladene aus dem Speicher.
+ *
+ * Schriften (Google Fonts) aendern sich nie und kommen deshalb direkt aus
+ * einem eigenen Speicher, der Versionswechsel ueberdauert.
  */
 
-var FASSUNG = "2026-09-22-16";
+var FASSUNG = "2026-09-23-9";
 var SPEICHER = "sporttimer-" + FASSUNG;
+var SCHRIFTEN = "sporttimer-schriften";
+var SCHRIFT_QUELLEN = ["https://fonts.googleapis.com", "https://fonts.gstatic.com"];
 var GRUNDGERUEST = ["./", "./index.html", "./manifest.json", "./icon.png"];
 
 self.addEventListener("install", function (e) {
@@ -22,7 +27,7 @@ self.addEventListener("activate", function (e) {
   e.waitUntil(
     caches.keys().then(function (namen) {
       return Promise.all(namen.map(function (n) {
-        if (n !== SPEICHER) return caches.delete(n);
+        if (n !== SPEICHER && n !== SCHRIFTEN) return caches.delete(n);
       }));
     }).then(function () { return self.clients.claim(); })
   );
@@ -34,6 +39,22 @@ self.addEventListener("fetch", function (e) {
 
   var ziel;
   try { ziel = new URL(anfrage.url); } catch (err) { return; }
+
+  if (SCHRIFT_QUELLEN.indexOf(ziel.origin) !== -1) {
+    e.respondWith(
+      caches.open(SCHRIFTEN).then(function (c) {
+        return c.match(anfrage).then(function (treffer) {
+          if (treffer) return treffer;
+          return fetch(anfrage).then(function (antwort) {
+            if (antwort && (antwort.ok || antwort.type === "opaque")) c.put(anfrage, antwort.clone());
+            return antwort;
+          });
+        });
+      })
+    );
+    return;
+  }
+
   if (ziel.origin !== self.location.origin) return;
 
   e.respondWith(
