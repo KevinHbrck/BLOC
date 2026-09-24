@@ -58,7 +58,7 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - „Bildschirm an lassen" während des Workouts (Wake Lock)
 - Sechs Design-Optionen: **System / Hell / Dunkel** (schlicht, minimalistisch) sowie **Retro** und **Kodak** (Papier-Optik mit senkrechten Zierstreifen, kursiven Condensed-Überschriften, klassischer Grotesk wie auf alten Kassetten-Etiketten und Monospace-Schrift, Kippschaltern mit „ON/OFF", Fader-Schieberegler und 3D-Walzenzähler; Kodak zusätzlich mit Kassetten-Etikett) und **Tapedeck** (dunkles Nachtdesign: glattes schwarzes Gehäuse mit gebürsteten Frontplatten, Rack-Leiste mit Schraublöchern, Beschriftung wie auf einer Hi-Fi-Frontplatte, hinterleuchtetes Zählwerk mit bernsteinfarbenen Ziffern, Anzeigen, die wie Kontrolllampen leuchten – Bernstein für „Los!", Grün für Pause, Cyan für Blockpause – und Bandsorten-Anzeige „Normal / CrO₂ / Metal")
 - Sprache Deutsch oder Englisch (in den Einstellungen; ohne eigene Wahl gilt die Sprache des Geräts)
-- Nur Systemschriften (wie im Vokabelkasten): die App lädt keine Schriften und nichts anderes von fremden Servern
+- Nur Systemschriften (wie im Vokabelkasten), ohne Schreibmaschinenschrift: die App lädt keine Schriften und nichts anderes von fremden Servern
 - Direkter „Jetzt installieren"-Button auf Android/Chrome, Schritt-für-Schritt-Anleitung für iOS
 - Backup als JSON exportieren/importieren
 - Funktioniert offline (Service Worker)

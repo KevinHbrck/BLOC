@@ -94,7 +94,8 @@
   color-scheme: light;
   /* Systemschriften wie im Vokabelkasten - die App lädt keine Schriften aus dem Netz */
   --f-head:"Avenir Next Condensed","Roboto Condensed","sans-serif-condensed","Bahnschrift Condensed","Arial Narrow",sans-serif;
-  --f-mono:ui-monospace,"SF Mono",Menlo,"Roboto Mono","Cascadia Mono",Consolas,"Courier New",monospace;
+  /* keine Schreibmaschinenschrift mehr: normale, klare Grotesk (Name --f-mono bleibt, damit alle Stellen sie weiter nutzen) */
+  --f-mono:"Helvetica Neue",Helvetica,Roboto,"Segoe UI",Arial,sans-serif;
   /* Klassische Grotesk wie auf alten Kassetten-Etiketten */
   --f-label:"Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
   --f-body:"Avenir Next Condensed","Roboto Condensed","sans-serif-condensed","Bahnschrift SemiCondensed","Arial Narrow",system-ui,sans-serif;
@@ -503,6 +504,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .share-btns{ display:flex; gap:8px; }
 .share-btns .btn{ flex:1; margin-top:0; }
 .share-card > .btn{ margin-top:8px; }
+:root[data-vintage] body{ font-variant-numeric:tabular-nums; }
 .lib-hidden{ text-align:center; color:var(--text-dim); font-size:13px; padding:14px 0 90px; }
 .toast{
   position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translateX(-50%);
@@ -1175,6 +1177,15 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .deck-badge .on i{ background:#ffb13b; box-shadow:0 0 8px 2px rgba(255,160,40,.6); }
 :root[data-theme="tapedeck"] .player .deck-badge{ position:absolute; left:calc(var(--stripe-left) + var(--stripes-w) + 14px); bottom:calc(22px + env(safe-area-inset-bottom)); margin:0; }
 :root[data-theme="tapedeck"] .player-controls{ padding-bottom:calc(64px + env(safe-area-inset-bottom)); }
+/* BLOC-Schriftzug auf der Startseite: in allen Designs so kräftig wie „C60“, Farbe je Design */
+:root:not([data-theme="kodak"]) .topbar.home h1 .ttl{
+  font-family:var(--f-brand, "Helvetica Neue","Arial Black",Arial,sans-serif) !important; font-style:normal !important;
+  font-weight:900 !important; font-size:clamp(42px,12.5vw,56px) !important; line-height:.95 !important;
+  letter-spacing:-.035em !important; text-transform:none !important; color:var(--accent) !important;
+}
+:root[data-vintage]:not([data-theme="kodak"]) .topbar.home h1 .ttl{ color:var(--section-color) !important; }
+:root[data-theme="tapedeck"] .topbar.home h1 .ttl{ text-shadow:0 0 14px rgba(255,170,50,.35); }
+.topbar.home h1 .ttl-sub{ margin-top:6px; }
 </style>
 </head>
 <body>
