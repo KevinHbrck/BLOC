@@ -422,6 +422,28 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 }
 .sec-body{ animation:secAuf .18s ease both; }
 @keyframes secAuf{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
+.tpl-chev.zu{ transform:rotate(-90deg); }
+.tpl-mus{ font-size:13px; font-weight:600; color:var(--cat, var(--text)); margin-top:6px; line-height:1.35; }
+.info-mus{ margin:4px 0 10px; padding:10px 12px; border-radius:10px; font-size:14px; line-height:1.4;
+  background:color-mix(in srgb, var(--tp-color) 9%, transparent); border:1px solid color-mix(in srgb, var(--tp-color) 30%, transparent); }
+.info-mus-2{ color:var(--text-dim); font-size:13px; margin-top:3px; }
+.row-illu-wrap{ flex-shrink:0; width:50px; height:50px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--cat) 12%, transparent); color:var(--cat); }
+.row-illu{ width:46px; height:46px; }
+.row-illu .pose-a{ animation:none !important; opacity:1 !important; }
+.dz-row.mit-bild{ padding-top:6px; padding-bottom:6px; }
+.tm-chip{ display:flex; flex-direction:column; align-items:center; line-height:1.15; }
+.tm-side{ font-size:10px; font-weight:600; opacity:.85; }
+.dz-row .meta{ min-width:0; }
+:root[data-vintage] .dz-row.mit-bild .name{ font-size:14px; }
+.row-tm{ font-weight:700; margin-right:6px; white-space:nowrap; }
+.row-mus{ display:inline; }
+.opt-card{ padding:0; }
+.opt-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; cursor:pointer; user-select:none; -webkit-user-select:none; }
+.opt-title{ font-weight:700; font-size:15px; }
+.opt-sum{ font-size:13px; color:var(--text-dim); margin-top:3px; }
+.opt-body{ padding:0 16px 16px; border-top:1px solid var(--border); }
+.opt-sep{ height:1px; background:var(--border); margin:16px 0 4px; }
 .lib-hidden{ text-align:center; color:var(--text-dim); font-size:13px; padding:14px 0 90px; }
 .toast{
   position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translateX(-50%);
@@ -816,6 +838,10 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-vintage] .cover-hero .cover-kicker{ font-family:var(--f-mono); color:var(--section-color); }
 :root[data-vintage] .cover-hero .cover-name{ font-family:var(--f-head); font-style:italic; text-transform:uppercase; font-size:30px; }
 :root[data-vintage] .dz-sticky{ background-color:var(--bg); background-image:var(--paper); }
+:root[data-vintage] .opt-title{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.05em; font-size:13.5px; color:var(--section-color); }
+:root[data-vintage] .tpl-mus{ font-family:var(--f-mono); font-size:12.5px; font-weight:500; }
+:root[data-vintage] .row-illu-wrap{ border-radius:6px; }
+:root[data-vintage] .info-mus{ border-radius:6px; }
 :root[data-vintage] .cat-tag{ font-family:var(--f-mono); border-radius:4px; text-transform:uppercase; font-size:10px; }
 :root[data-vintage] .lib-sort button{ font-family:var(--f-mono); border-radius:6px; font-size:12px; }
 :root[data-vintage] .my-new{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.05em; border-radius:10px; }
@@ -1439,6 +1465,8 @@ var I18N = {
     dropHere:"Übungen am Griff ⠿ hierher ziehen oder unten auf + tippen.", dropToRemove:"Hier ablegen zum Entfernen",
     myDelete:"Eigenes Workout löschen", myDeleteQ:"Eigenes Workout löschen?",
     sortLabel:"Sortieren", sortStd:"Standard", posture:"Haltung", avoid:"Vermeiden",
+    musWorked:"Trainiert", musStretched:"Dehnt", musAssist:"Unterstützend",
+    optTitle:"Zeiten & Sprachansagen", optRestShort:"{n} s Pause", optVoiceOn:"Ansagen an", optVoiceOff:"Ansagen aus",
     libStretch:"Dehnen", stretchRoutines:"Dehnprogramme", stretchExercises:"Dehnübungen",
     hold1:"{s} s halten", holdN:"{n} × {s} s halten", holdSide:"{s} s je Seite", holdSideN:"{n} × {s} s je Seite",
     phHold:"Halten", phSwitch:"Seite wechseln", phRelax:"Lösen",
@@ -1536,6 +1564,8 @@ var I18N = {
     dropHere:"Drag exercises here by the ⠿ handle or tap + below.", dropToRemove:"Drop here to remove",
     myDelete:"Delete own workout", myDeleteQ:"Delete own workout?",
     sortLabel:"Sort", sortStd:"Default", posture:"Posture", avoid:"Avoid",
+    musWorked:"Works", musStretched:"Stretches", musAssist:"Assisting",
+    optTitle:"Timing & voice cues", optRestShort:"{n} s rest", optVoiceOn:"voice on", optVoiceOff:"voice off",
     libStretch:"Stretch", stretchRoutines:"Stretch routines", stretchExercises:"Stretches",
     hold1:"hold {s} s", holdN:"hold {n} × {s} s", holdSide:"{s} s per side", holdSideN:"{n} × {s} s per side",
     phHold:"Hold", phSwitch:"Switch sides", phRelax:"Release",
@@ -2295,6 +2325,12 @@ Object.keys(ILLU_POSES).forEach(function(id){
   var pp = ILLU_POSES[id];
   ILLU[id] = [ qSVG(pp[0]), pp[1] ? qSVG(pp[1]) : null ];
 });
+function illuStillHTML(exId, cls){
+  var p = ILLU[exId];
+  if(!p) return "";
+  return '<svg class="illu still '+(cls||"")+'" viewBox="0 0 100 100" aria-hidden="true">'+
+    '<path class="illu-floor" d="M6 91h88"/><g class="pose-a">'+p[0]+'</g></svg>';
+}
 function illuHTML(exId, cls){
   var p = ILLU[exId];
   if(!p) return "";
@@ -2550,6 +2586,133 @@ Object.assign(EX_POSTURE, {
   "worlds-greatest":["Hinteres Bein lang, Hüfte tief.|Drehung aus dem Brustkorb, nicht aus dem unteren Rücken.","Das vordere Knie nach innen fallen lassen.","Back leg long, hips low.|Rotate through your chest, not your lower back.","Letting the front knee cave in."]
 });
 
+/* Muskeln je Übung: [Hauptmuskeln DE, unterstützend DE, Hauptmuskeln EN, unterstützend EN].
+   Bei Dehnübungen: was gedehnt wird. Grundlage: gängige Übungsbeschreibungen (u. a. ACE-Übungsbibliothek);
+   Beinheben z. B. vor allem Hüftbeuger, der Bauch stabilisiert. */
+var EX_MUSCLES = {
+  "burpees":["Oberschenkel vorn, Gesäß, Brust","Schultern, Trizeps, Rumpf, Ausdauer","Quads, glutes, chest","Shoulders, triceps, core, endurance"],
+  "jump-squats":["Oberschenkel vorn, Gesäß, Waden","Oberschenkel hinten, Rumpf","Quads, glutes, calves","Hamstrings, core"],
+  "mountain-climbers":["Rumpf, Hüftbeuger, Schultern","Oberschenkel vorn, Ausdauer","Core, hip flexors, shoulders","Quads, endurance"],
+  "high-knees":["Hüftbeuger, Oberschenkel vorn, Waden","Gesäß, Rumpf, Ausdauer","Hip flexors, quads, calves","Glutes, core, endurance"],
+  "jumping-jacks":["Waden, seitliches Gesäß, Schultern","Adduktoren, Ausdauer","Calves, side glutes, shoulders","Adductors, endurance"],
+  "skater-jumps":["Seitliches Gesäß, Oberschenkel vorn","Adduktoren, Waden, Rumpf","Side glutes, quads","Adductors, calves, core"],
+  "plank-burpees":["Oberschenkel vorn, Rumpf","Schultern, Gesäß, Ausdauer","Quads, core","Shoulders, glutes, endurance"],
+  "burpee-squat-jumps":["Oberschenkel vorn, Gesäß, Waden","Brust, Schultern, Rumpf, Ausdauer","Quads, glutes, calves","Chest, shoulders, core, endurance"],
+  "frogs":["Oberschenkel vorn, Gesäß, Adduktoren","Waden, Rumpf, Ausdauer","Quads, glutes, adductors","Calves, core, endurance"],
+  "stand-up-jumps":["Oberschenkel vorn, Gesäß, Rumpf","Hüftbeuger, Waden, Ausdauer","Quads, glutes, core","Hip flexors, calves, endurance"],
+  "lateral-hops":["Waden, seitliches Gesäß","Oberschenkel vorn, Fußgelenke, Rumpf","Calves, side glutes","Quads, ankles, core"],
+  "fast-feet":["Waden, Oberschenkel vorn","Hüftbeuger, Ausdauer","Calves, quads","Hip flexors, endurance"],
+  "box-step-ups":["Oberschenkel vorn, Gesäß","Oberschenkel hinten, Waden, Ausdauer","Quads, glutes","Hamstrings, calves, endurance"],
+  "shadow-boxing":["Schultern, schräge Bauchmuskeln","Brust, Trizeps, Waden, Ausdauer","Shoulders, obliques","Chest, triceps, calves, endurance"],
+  "sprint-in-place":["Hüftbeuger, Oberschenkel vorn, Waden","Gesäß, Ausdauer","Hip flexors, quads, calves","Glutes, endurance"],
+
+  "goblet-squat":["Oberschenkel vorn, Gesäß","Adduktoren, Rumpf, oberer Rücken","Quads, glutes","Adductors, core, upper back"],
+  "kb-swing":["Gesäß, Oberschenkel hinten","Rückenstrecker, Rumpf, Schultern, Ausdauer","Glutes, hamstrings","Lower back, core, shoulders, endurance"],
+  "db-thruster":["Oberschenkel vorn, Gesäß, Schultern","Trizeps, Rumpf","Quads, glutes, shoulders","Triceps, core"],
+  "romanian-deadlift":["Oberschenkel hinten, Gesäß","Rückenstrecker, Unterarme","Hamstrings, glutes","Lower back, forearms"],
+  "db-deadlift":["Gesäß, Oberschenkel vorn und hinten","Rückenstrecker, oberer Rücken, Unterarme","Glutes, quads, hamstrings","Lower back, upper back, forearms"],
+  "bent-over-row":["Breiter Rückenmuskel, oberer Rücken","Bizeps, hintere Schulter, Rückenstrecker","Lats, upper back","Biceps, rear delts, lower back"],
+  "one-arm-row":["Breiter Rückenmuskel, oberer Rücken","Bizeps, hintere Schulter, Rumpf","Lats, upper back","Biceps, rear delts, core"],
+  "floor-press":["Brust, Trizeps","Vordere Schulter","Chest, triceps","Front delts"],
+  "shoulder-press":["Schultern, Trizeps","Oberer Trapez, Rumpf","Shoulders, triceps","Upper traps, core"],
+  "push-press":["Schultern, Trizeps","Oberschenkel vorn, Gesäß, Rumpf","Shoulders, triceps","Quads, glutes, core"],
+  "weighted-reverse-lunge":["Oberschenkel vorn, Gesäß","Oberschenkel hinten, Adduktoren, Rumpf","Quads, glutes","Hamstrings, adductors, core"],
+  "front-rack-carry":["Rumpf, oberer Rücken","Schultern, Bizeps, Beine","Core, upper back","Shoulders, biceps, legs"],
+  "farmer-carry":["Unterarme (Griff), Trapez, Rumpf","Schultern, seitliches Gesäß, Beine","Forearms (grip), traps, core","Shoulders, side glutes, legs"],
+  "kb-clean":["Gesäß, Oberschenkel hinten, Schultern","Oberer Rücken, Rumpf, Unterarme","Glutes, hamstrings, shoulders","Upper back, core, forearms"],
+  "renegade-row":["Breiter Rückenmuskel, Rumpf","Schultern, Brust, Trizeps, schräge Bauchmuskeln","Lats, core","Shoulders, chest, triceps, obliques"],
+
+  "push-ups":["Brust, Trizeps, vordere Schulter","Rumpf, Sägemuskel","Chest, triceps, front delts","Core, serratus"],
+  "pike-push-ups":["Schultern, Trizeps","Obere Brust, Rumpf","Shoulders, triceps","Upper chest, core"],
+  "triceps-dips":["Trizeps","Vordere Schulter, Brust","Triceps","Front delts, chest"],
+  "squat-hold":["Oberschenkel vorn, Gesäß","Rumpf, Waden","Quads, glutes","Core, calves"],
+  "walking-lunges":["Oberschenkel vorn, Gesäß","Oberschenkel hinten, Waden, Rumpf","Quads, glutes","Hamstrings, calves, core"],
+  "reverse-lunges":["Oberschenkel vorn, Gesäß","Oberschenkel hinten, Rumpf","Quads, glutes","Hamstrings, core"],
+  "side-lunges":["Gesäß, Oberschenkel vorn, Adduktoren","Oberschenkel hinten","Glutes, quads, adductors","Hamstrings"],
+  "cossack-squats":["Adduktoren, Gesäß, Oberschenkel vorn","Seitliches Gesäß, Oberschenkel hinten, Beweglichkeit","Adductors, glutes, quads","Side glutes, hamstrings, mobility"],
+  "deep-squats":["Oberschenkel vorn, Gesäß","Adduktoren, Waden, Beweglichkeit","Quads, glutes","Adductors, calves, mobility"],
+  "pistol-assist":["Oberschenkel vorn, Gesäß","Seitliches Gesäß, Rumpf, Gleichgewicht","Quads, glutes","Side glutes, core, balance"],
+  "plank-steps":["Trizeps, Schultern, Rumpf","Brust","Triceps, shoulders, core","Chest"],
+  "bear-crawl":["Schultern, Rumpf, Oberschenkel vorn","Hüftbeuger, Trizeps, Sägemuskel","Shoulders, core, quads","Hip flexors, triceps, serratus"],
+  "wall-sit":["Oberschenkel vorn","Gesäß, Waden","Quads","Glutes, calves"],
+  "calf-raises":["Waden","Fußmuskulatur, Fußgelenke","Calves","Foot muscles, ankles"],
+  "glute-bridge":["Gesäß","Oberschenkel hinten, Rückenstrecker, Rumpf","Glutes","Hamstrings, lower back, core"],
+
+  "pull-ups":["Breiter Rückenmuskel, Bizeps","Oberer Rücken, Unterarme, Rumpf","Lats, biceps","Upper back, forearms, core"],
+  "negative-pull-ups":["Breiter Rückenmuskel, Bizeps","Oberer Rücken, Unterarme","Lats, biceps","Upper back, forearms"],
+  "inverted-rows":["Oberer Rücken, breiter Rückenmuskel","Bizeps, hintere Schulter, Rumpf","Upper back, lats","Biceps, rear delts, core"],
+  "superman-hold":["Rückenstrecker, Gesäß","Oberer Rücken, hintere Schulter, Oberschenkel hinten","Lower back, glutes","Upper back, rear delts, hamstrings"],
+  "reverse-snow-angels":["Oberer Rücken, hintere Schulter","Unterer Trapez, Rückenstrecker","Upper back, rear delts","Lower traps, lower back"],
+  "bird-dog":["Rückenstrecker, Gesäß, tiefe Bauchmuskeln","Schultern, Oberschenkel hinten","Lower back, glutes, deep core","Shoulders, hamstrings"],
+  "prone-y-raise":["Unterer Trapez, hintere Schulter","Oberer Rücken, Rückenstrecker","Lower traps, rear delts","Upper back, lower back"],
+  "prone-t-raise":["Mittlerer Trapez, Rautenmuskeln, hintere Schulter","Rückenstrecker","Mid traps, rhomboids, rear delts","Lower back"],
+  "hip-hinge":["Oberschenkel hinten, Gesäß","Rückenstrecker (Haltearbeit)","Hamstrings, glutes","Lower back (holding)"],
+  "good-mornings":["Oberschenkel hinten, Gesäß, Rückenstrecker","Rumpf","Hamstrings, glutes, lower back","Core"],
+  "swimmers":["Rückenstrecker, Gesäß, Schultern","Oberer Rücken, Oberschenkel hinten","Lower back, glutes, shoulders","Upper back, hamstrings"],
+  "cobra-lift":["Rückenstrecker","Gesäß, oberer Rücken","Lower back","Glutes, upper back"],
+  "scapular-push-ups":["Sägemuskel, Schulterblattmuskeln","Rumpf","Serratus, shoulder blade muscles","Core"],
+  "scapular-pull-ups":["Breiter Rückenmuskel, unterer Trapez","Rautenmuskeln, Unterarme (Griff)","Lats, lower traps","Rhomboids, forearms (grip)"],
+  "dead-hang":["Unterarme (Griff), breiter Rückenmuskel","Schultern, Rumpf","Forearms (grip), lats","Shoulders, core"],
+
+  "air-squats":["Oberschenkel vorn, Gesäß","Adduktoren, Oberschenkel hinten, Rumpf","Quads, glutes","Adductors, hamstrings, core"],
+  "split-squats":["Oberschenkel vorn, Gesäß","Adduktoren, Rumpf","Quads, glutes","Adductors, core"],
+  "bulgarian-split-squats":["Oberschenkel vorn, Gesäß","Adduktoren, Rumpf, Hüftbeuger des hinteren Beins (Dehnung)","Quads, glutes","Adductors, core, back-leg hip flexor (stretch)"],
+  "forward-lunges":["Oberschenkel vorn, Gesäß","Oberschenkel hinten, Waden","Quads, glutes","Hamstrings, calves"],
+  "single-leg-glute-bridge":["Gesäß, Oberschenkel hinten","Seitliches Gesäß, Rumpf","Glutes, hamstrings","Side glutes, core"],
+  "lateral-lunge-pulses":["Gesäß, Oberschenkel vorn, Adduktoren","Rumpf","Glutes, quads, adductors","Core"],
+
+  "plank":["Tiefe Bauchmuskeln, gerader Bauch","Schultern, Gesäß, Rückenstrecker","Deep core, abs","Shoulders, glutes, lower back"],
+  "side-plank":["Schräge Bauchmuskeln, seitliches Gesäß","Schultern, tiefe Bauchmuskeln","Obliques, side glutes","Shoulders, deep core"],
+  "dead-bug":["Tiefe Bauchmuskeln, gerader Bauch","Hüftbeuger, Schultern","Deep core, abs","Hip flexors, shoulders"],
+  "bicycle-crunches":["Schräge Bauchmuskeln, gerader Bauch","Hüftbeuger","Obliques, abs","Hip flexors"],
+  "leg-levers":["Hüftbeuger, gerader Bauch (stabilisiert)","Tiefe Bauchmuskeln, schräge Bauchmuskeln","Hip flexors, abs (stabilising)","Deep core, obliques"],
+  "leg-raises":["Hüftbeuger, gerader Bauch (stabilisiert)","Tiefe Bauchmuskeln, schräge Bauchmuskeln","Hip flexors, abs (stabilising)","Deep core, obliques"],
+  "jackknives":["Gerader Bauch, Hüftbeuger","Schultern, Oberschenkel vorn","Abs, hip flexors","Shoulders, quads"],
+  "side-jackknives":["Schräge Bauchmuskeln","Seitliches Gesäß, Hüftbeuger","Obliques","Side glutes, hip flexors"],
+  "hollow-hold":["Gerader Bauch, tiefe Bauchmuskeln","Hüftbeuger, Oberschenkel vorn","Abs, deep core","Hip flexors, quads"],
+  "russian-twists":["Schräge Bauchmuskeln","Gerader Bauch, Hüftbeuger","Obliques","Abs, hip flexors"],
+  "sit-ups":["Gerader Bauch, Hüftbeuger","Schräge Bauchmuskeln","Abs, hip flexors","Obliques"],
+  "toe-touches":["Gerader Bauch","Schultern, Hüftbeuger (Haltearbeit)","Abs","Shoulders, hip flexors (holding)"],
+  "plank-shoulder-taps":["Tiefe und schräge Bauchmuskeln, Schultern","Gesäß, Brust","Deep core, obliques, shoulders","Glutes, chest"],
+  "slow-mountain-climbers":["Rumpf, Hüftbeuger","Schultern, Oberschenkel vorn","Core, hip flexors","Shoulders, quads"],
+  "toes-to-bar":["Hüftbeuger, gerader Bauch","Breiter Rückenmuskel, Unterarme (Griff)","Hip flexors, abs","Lats, forearms (grip)"],
+
+  "wall-push-ups":["Brust, Trizeps","Vordere Schulter, Rumpf","Chest, triceps","Front delts, core"],
+  "close-grip-push-ups":["Trizeps, Brust","Vordere Schulter, Rumpf","Triceps, chest","Front delts, core"],
+  "diamond-push-ups":["Trizeps, Brust","Vordere Schulter, Rumpf","Triceps, chest","Front delts, core"],
+  "sphinx-push-ups":["Trizeps","Schultern, Rumpf","Triceps","Shoulders, core"],
+  "towel-curls":["Bizeps","Unterarme","Biceps","Forearms"],
+  "self-resistance-curls":["Bizeps (Zugarm), Trizeps (Bremsarm)","Unterarme, Schultern","Biceps (working arm), triceps (resisting arm)","Forearms, shoulders"],
+  "backpack-curls":["Bizeps","Unterarme","Biceps","Forearms"],
+  "backpack-triceps":["Trizeps","Schultern, Rumpf","Triceps","Shoulders, core"],
+  "arm-circles":["Seitliche und hintere Schulter","Oberer Rücken, Trapez","Side and rear delts","Upper back, traps"],
+
+  "neck-stretch":["Seitliche Nackenmuskeln, oberer Trapez","","Side neck muscles, upper traps",""],
+  "shoulder-stretch":["Hintere Schulter, oberer Rücken","","Rear delts, upper back",""],
+  "triceps-stretch":["Trizeps","Breiter Rückenmuskel","Triceps","Lats"],
+  "biceps-stretch":["Bizeps, vordere Schulter","Brust","Biceps, front delts","Chest"],
+  "chest-stretch":["Brust, vordere Schulter","Bizeps","Chest, front delts","Biceps"],
+  "wrist-stretch":["Unterarmbeuger und -strecker","","Wrist flexors and extensors",""],
+  "side-bend":["Schräge Bauchmuskeln, breiter Rückenmuskel","Seitlicher unterer Rücken","Obliques, lats","Side of lower back"],
+  "cat-cow":["Beweglichkeit der Wirbelsäule, Rückenstrecker","Bauch, Nacken","Spinal mobility, lower back","Abs, neck"],
+  "childs-pose":["Unterer Rücken, breiter Rückenmuskel","Gesäß, Schultern","Lower back, lats","Glutes, shoulders"],
+  "sphinx-stretch":["Bauch, Hüftbeuger","Streckung der Wirbelsäule","Abs, hip flexors","Spinal extension"],
+  "downward-dog":["Waden, Oberschenkel hinten","Schultern, breiter Rückenmuskel","Calves, hamstrings","Shoulders, lats"],
+  "spinal-twist":["Schräge Bauchmuskeln, unterer Rücken","Gesäß, Brust","Obliques, lower back","Glutes, chest"],
+  "forward-fold":["Oberschenkel hinten, unterer Rücken","Waden","Hamstrings, lower back","Calves"],
+  "hip-flexor-stretch":["Hüftbeuger, Oberschenkel vorn","","Hip flexors, quads",""],
+  "quad-stretch":["Oberschenkel vorn, Hüftbeuger","","Quads, hip flexors",""],
+  "hamstring-stretch":["Oberschenkel hinten","Waden, unterer Rücken","Hamstrings","Calves, lower back"],
+  "calf-stretch":["Waden","Achillessehne","Calves","Achilles tendon"],
+  "figure-four":["Gesäß, tiefe Hüftrotatoren (Piriformis)","","Glutes, deep hip rotators (piriformis)",""],
+  "pigeon-stretch":["Gesäß, tiefe Hüftrotatoren (vorderes Bein)","Hüftbeuger (hinteres Bein)","Glutes, deep hip rotators (front leg)","Hip flexors (back leg)"],
+  "butterfly-stretch":["Adduktoren (Oberschenkel-Innenseite)","Hüfte","Adductors (inner thighs)","Hips"],
+  "worlds-greatest":["Hüftbeuger, Oberschenkel hinten, Brustwirbelsäule","Adduktoren, Brust","Hip flexors, hamstrings, upper back","Adductors, chest"]
+};
+function musclesMain(ex){ var m = EX_MUSCLES[ex.id]; return m ? m[currentLang()==="en" ? 2 : 0] : ""; }
+function musclesAssist(ex){ var m = EX_MUSCLES[ex.id]; return m ? m[currentLang()==="en" ? 3 : 1] : ""; }
+function musclesLabel(ex){ return t(ex.cats.indexOf("stretch") > -1 ? "musStretched" : "musWorked"); }
+
 /* Info-Fenster: großes Piktogramm, Anleitung, Tipp. Im Timer läuft die Zeit sichtbar weiter. */
 var infoTimer = null;
 function openExInfo(exId, live){
@@ -2564,6 +2727,8 @@ function openExInfo(exId, live){
       '<button type="button" class="info-x" data-close aria-label="'+t("close")+'">&times;</button></div>'+
     (live ? '<div class="info-live"><span id="info-live-text"></span><button type="button" class="tpl-adopt" data-infopause></button></div>' : '')+
     illuHTML(exId, "info-illu")+
+    (EX_MUSCLES[exId] ? '<div class="info-mus"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
+      (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>' : '')+
     '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+steps+'</ol>'+
     (function(){
       var p = EX_POSTURE[exId];
@@ -3270,6 +3435,7 @@ function renderLibrary(){
         '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
         '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
         '<div class="sub">'+hold+'</div>'+
+        '<div class="tpl-mus">'+esc(musclesLabel(ex))+': '+esc(musclesMain(ex))+'</div>'+
         '<div class="tpl-desc">'+esc(tplText(ex.hint))+'</div></div>'+
         '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'+
         '<div class="tpl-actions">'+
@@ -3304,6 +3470,7 @@ function renderLibrary(){
         '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
         '<div class="sub">'+levelHTML(ex.level)+SEP+esc(exEquipText(ex))+'</div>'+
         '<div class="cat-tags">'+catTags(ex.cats)+'</div>'+
+        '<div class="tpl-mus">'+esc(musclesLabel(ex))+': '+esc(musclesMain(ex))+'</div>'+
         '<div class="tpl-desc">'+esc(tplText(ex.hint))+'</div></div>'+
         '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'+
         '<div class="tpl-actions">'+
@@ -3387,9 +3554,10 @@ function renderDraftPage(d, cfg){
   exs.forEach(function(ex){ ex.cats.forEach(function(c){ if(cats.indexOf(c)<0) cats.push(c); }); });
   var hasSides = exs.some(function(ex){ return ex.perSide; });
 
-  function row(ex, attrs, sub, right){
-    return '<div class="dz-row" style="--cat:'+catVar(ex.cats[0])+'" '+attrs+'>'+
+  function row(ex, attrs, sub, right, bild){
+    return '<div class="dz-row'+(bild?' mit-bild':'')+'" style="--cat:'+catVar(ex.cats[0])+'" '+attrs+'>'+
       '<span class="dh" aria-hidden="true">'+ICON_GRIP+'</span>'+
+      (bild ? '<span class="row-illu-wrap" data-exinfo="'+ex.id+'">'+illuStillHTML(ex.id, "row-illu")+'</span>' : '')+
       '<div class="meta" data-exinfo="'+ex.id+'"><div class="name">'+esc(tplText(ex.name))+'</div>'+
       '<div class="sub">'+sub+'</div></div>'+right+'</div>';
   }
@@ -3397,10 +3565,14 @@ function renderDraftPage(d, cfg){
     var ex = findExercise(it.ex);
     if(!ex) return "";
     var tm = timingText(itemTiming(d, it), ex.perSide);
-    var sub = d.mode==="uniform" ? tm+' '+catTags(ex.cats) : catTags(ex.cats);
-    var right = (d.mode==="individual" ? '<button type="button" class="tm-chip" data-time="'+i+'">'+tm+'</button>' : '')+
+    var mus = '<span class="row-mus">'+esc(musclesMain(ex))+'</span>';
+    var sub = d.mode==="uniform" ? '<span class="row-tm">'+tm+'</span>'+mus : mus;
+    var tmc = itemTiming(d, it);
+    var chip = (ex.perSide ? Math.ceil(tmc.reps/2) : tmc.reps)+'&times;'+tmc.work+'s/'+tmc.rest+'s'+
+      (ex.perSide ? '<span class="tm-side">'+t("perSide")+'</span>' : '');
+    var right = (d.mode==="individual" ? '<button type="button" class="tm-chip" data-time="'+i+'">'+chip+'</button>' : '')+
       '<button type="button" class="dz-btn" data-rm="'+i+'" aria-label="'+t("del")+'">&times;</button>';
-    return row(ex, 'data-src="list" data-idx="'+i+'"', sub, right);
+    return row(ex, 'data-src="list" data-idx="'+i+'"', sub, right, true);
   }).join("");
   var palOpen = !cfg.cover || d._pal;
   var palHTML = palOpen ? sortedExercises(cat, sort, equip, level).map(function(ex){
@@ -3411,6 +3583,37 @@ function renderDraftPage(d, cfg){
   if(rests.indexOf(d.blockRest) < 0) rests.push(d.blockRest);
   var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : "kindMy";
 
+  // Zeiten (und auf dem Deckblatt die Sprachansagen) - auf dem Deckblatt zugeklappt mit Kurzfassung
+  var optInner =
+    '<label>'+t("timesLabel")+'</label>'+
+    '<div class="seg-row">'+
+      '<button type="button" data-mode="uniform" class="'+(d.mode==="uniform"?"active":"")+'">'+t("modeUniform")+'</button>'+
+      '<button type="button" data-mode="individual" class="'+(d.mode==="individual"?"active":"")+'">'+t("modeIndividual")+'</button>'+
+    '</div>'+
+    (d.mode==="uniform"
+      ? '<div class="tm-grid"><div><label>'+t("tmReps")+'</label>'+stepperHTML("d-reps", d.reps, 1, 30, 1)+'</div>'+
+        '<div><label>'+t("tmWork")+'</label>'+stepperHTML("d-work", d.work, 5, 600, 5)+'</div>'+
+        '<div><label>'+t("tmRest")+'</label>'+stepperHTML("d-rest", d.rest, 0, 300, 5)+'</div></div>'
+      : '<div class="tm-hint">'+t("modeIndividualHint")+'</div>')+
+    (hasSides ? '<div class="tm-hint">'+t("sidesNote")+'</div>' : '')+
+    '<label for="d-br">'+t("myRest")+'</label>'+
+    '<select id="d-br">'+rests.sort(function(a,b){return a-b;}).map(function(v){
+      return '<option value="'+v+'"'+(v===d.blockRest?' selected':'')+'>'+v+' s</option>'; }).join("")+'</select>'+
+    (cfg.cover ? '<div class="opt-sep"></div>'+toggleRow("c-voice", t("voice"), t("voiceDesc"), s.voice !== false) : '');
+  var optOpen = !cfg.cover || !!s.coverOpts;
+  var optSummary = (d.mode==="uniform"
+      ? t("modeUniform")+' '+timingText({ reps:d.reps, work:d.work, rest:d.rest }, false)
+      : t("modeIndividual"))+
+    SEP+t("optRestShort", { n:d.blockRest })+SEP+t(s.voice !== false ? "optVoiceOn" : "optVoiceOff");
+  var optionsHTML = cfg.cover
+    ? '<div class="card opt-card">'+
+        '<div class="opt-head" data-opttoggle role="button" tabindex="0" aria-expanded="'+optOpen+'">'+
+          '<div><div class="opt-title">'+t("optTitle")+'</div><div class="opt-sum">'+optSummary+'</div></div>'+
+          '<span class="tpl-chev'+(optOpen?'':' zu')+'" aria-hidden="true">&#9662;</span></div>'+
+        (optOpen ? '<div class="opt-body">'+optInner+'</div>' : '')+
+      '</div>'
+    : '<div class="card">'+optInner+'</div>';
+
   var head = cfg.cover
     ? '<div class="card cover-hero">'+
         (d.src!=="surprise" ? '<div class="cover-fav">'+favBtn(d.key)+'</div>' : '')+
@@ -3419,7 +3622,6 @@ function renderDraftPage(d, cfg){
         '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
         (exs.length ? '<div class="cat-tags">'+catTags(cats)+levelHTML(woLevel(exs))+'</div>' : '')+
         (exs.length ? '<div class="cover-equip">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div>' : '')+
-        toggleRow("c-voice", t("voice"), t("voiceDesc"), s.voice !== false)+
         '<button class="btn btn-primary" data-go '+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
         (d.src==="surprise" ? '<button class="btn btn-secondary" data-reroll>'+t("reroll")+'</button>' : '')+
         '<button class="btn btn-secondary" data-savemy '+(exs.length?'':'disabled')+'>'+t(d.src==="my" ? "saveAsNewMy" : "saveAsMy")+'</button>'+
@@ -3432,22 +3634,7 @@ function renderDraftPage(d, cfg){
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: cfg.cover ? "" :
       '<button class="iconbtn" data-tocover title="'+t("start")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_PLAY+'</button>' }) +
     head +
-    '<div class="card">'+
-      '<label>'+t("timesLabel")+'</label>'+
-      '<div class="seg-row">'+
-        '<button type="button" data-mode="uniform" class="'+(d.mode==="uniform"?"active":"")+'">'+t("modeUniform")+'</button>'+
-        '<button type="button" data-mode="individual" class="'+(d.mode==="individual"?"active":"")+'">'+t("modeIndividual")+'</button>'+
-      '</div>'+
-      (d.mode==="uniform"
-        ? '<div class="tm-grid"><div><label>'+t("tmReps")+'</label>'+stepperHTML("d-reps", d.reps, 1, 30, 1)+'</div>'+
-          '<div><label>'+t("tmWork")+'</label>'+stepperHTML("d-work", d.work, 5, 600, 5)+'</div>'+
-          '<div><label>'+t("tmRest")+'</label>'+stepperHTML("d-rest", d.rest, 0, 300, 5)+'</div></div>'
-        : '<div class="tm-hint">'+t("modeIndividualHint")+'</div>')+
-      (hasSides ? '<div class="tm-hint">'+t("sidesNote")+'</div>' : '')+
-      '<label for="d-br">'+t("myRest")+'</label>'+
-      '<select id="d-br">'+rests.sort(function(a,b){return a-b;}).map(function(v){
-        return '<option value="'+v+'"'+(v===d.blockRest?' selected':'')+'>'+v+' s</option>'; }).join("")+'</select>'+
-    '</div>'+
+    optionsHTML +
     '<div class="dz-sticky" id="dz-sticky">'+
       '<div class="section-title">'+t("myInWorkout", { n:exs.length, d:fmtDuration(workoutDuration(run)) })+'</div>'+
       '<div class="dz-list" id="dz-list">'+(itemsHTML || '<div class="dz-empty">'+t("dropHere")+'</div>')+'</div>'+
@@ -3484,7 +3671,8 @@ function renderDraftPage(d, cfg){
     d.rest = parseInt(app.querySelector("#d-rest").value)||0;
     speichern(); neu();
   });
-  app.querySelector("#d-br").addEventListener("change", function(){ d.blockRest = parseInt(this.value)||0; speichern(); neu(); });
+  var brSel = app.querySelector("#d-br");
+  if(brSel) brSel.addEventListener("change", function(){ d.blockRest = parseInt(this.value)||0; speichern(); neu(); });
   on("[data-time]", function(el){ openTimingSheet(d, parseInt(el.getAttribute("data-time")), function(){ speichern(); neu(); }); });
   on("[data-rm]", function(el){ d.items.splice(parseInt(el.getAttribute("data-rm")), 1); speichern(); neu(); });
   on("[data-add]", function(el){
@@ -3508,7 +3696,13 @@ function renderDraftPage(d, cfg){
     });
   });
   if(cfg.cover){
-    bindToggle("c-voice", function(v){ s.voice = v; save(); });
+    if(app.querySelector("#c-voice")) bindToggle("c-voice", function(v){ s.voice = v; save(); neu(); });
+    var optT = app.querySelector("[data-opttoggle]");
+    function optUm(){ s.coverOpts = !s.coverOpts; save(); neu(); }
+    if(optT){
+      optT.addEventListener("click", optUm);
+      optT.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); optUm(); } });
+    }
     on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
     on("[data-go]", function(){
       if(!d.items.length) return;

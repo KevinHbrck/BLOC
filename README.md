@@ -26,6 +26,8 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - Reiter **Dehnen** in der Bibliothek: 21 Dehnübungen mit Haltezeiten (meist 30 s je Seite, 5 s zum Umsetzen) und 6 Dehnprogramme (Ganzkörper, nach dem Training Beine bzw. Oberkörper, Rücken & Hüfte, Schultern & Nacken fürs Büro, Morgen-Mobility); im Timer heißt die Phase dann „Halten" bzw. „Seite wechseln"
 - Kategorie **Arme** ohne Gewicht (u. a. Liegestütz an der Wand, Diamant-Liegestütz, Handtuch-Curls, Curls gegen die eigene Hand, Rucksack-Curls, Armkreisen) plus fertiges Workout „Arme ohne Geräte"
 - **Favoriten**: fertige Workouts, Dehnprogramme und eigene Workouts per ☆ markieren – sie stehen dann ganz oben auf der Startseite und starten mit dem Deckblatt
+- Muskeln je Übung (`EX_MUSCLES`): Haupt- und unterstützende Muskeln, bei Dehnübungen die gedehnten Muskeln – in der Info, auf den Bibliothekskarten und in den Übungszeilen von Deckblatt und Baukasten (dort zusammen mit einer kleinen Figur)
+- Deckblatt: „Zeiten & Sprachansagen" als zugeklappter Bereich mit Kurzfassung (z. B. „Je Übung · 45 s Pause · Ansagen an")
 - Startseite mit aufklappbaren Bereichen (Favoriten, Timer-Workouts, Blöcke einzeln starten, Bibliothek), jeweils mit Anzahl; beim ersten Start sind nur die Favoriten offen, danach merkt sich die App den Zustand
 - Im Baukasten bleibt die Workout-Liste beim Scrollen oben stehen, damit man Übungen auch von weit unten kurz hineinziehen kann
 - Beim Bearbeiten eines Timer-Workouts lassen sich Übungen direkt aus der Bibliothek hinzufügen (mit Kategorie-Filter)

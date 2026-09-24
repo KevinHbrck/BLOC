@@ -8,7 +8,7 @@
  * einem eigenen Speicher, der Versionswechsel ueberdauert.
  */
 
-var FASSUNG = "2026-09-24-8";
+var FASSUNG = "2026-09-24-9";
 var SPEICHER = "sporttimer-" + FASSUNG;
 var SCHRIFTEN = "sporttimer-schriften";
 var SCHRIFT_QUELLEN = ["https://fonts.googleapis.com", "https://fonts.gstatic.com"];
