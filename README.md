@@ -1,4 +1,4 @@
-# Sport Timer
+# BLOC – Modular Training Builder (Sport Timer)
 
 Minimalistischer Intervall-Timer für Workouts. Läuft als PWA (Progressive Web App) direkt im
 Browser auf iOS und Android, ganz ohne App Store. Zwei Design-Welten zur Wahl: ein schlichtes,
@@ -28,7 +28,16 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - **Favoriten**: fertige Workouts, Dehnprogramme und eigene Workouts per ☆ markieren – sie stehen dann ganz oben auf der Startseite und starten mit dem Deckblatt
 - Muskeln je Übung (`EX_MUSCLES`): Haupt- und unterstützende Muskeln, bei Dehnübungen die gedehnten Muskeln – in der Info, auf den Bibliothekskarten und in den Übungszeilen von Deckblatt und Baukasten (dort zusammen mit einer kleinen Figur)
 - Deckblatt: „Zeiten & Sprachansagen" als zugeklappter Bereich mit Kurzfassung (z. B. „Je Übung · 45 s Pause · Ansagen an")
-- Startseite mit aufklappbaren Bereichen (Favoriten, Timer-Workouts, Blöcke einzeln starten, Bibliothek), jeweils mit Anzahl; beim ersten Start sind nur die Favoriten offen, danach merkt sich die App den Zustand
+- Übungen: Suche (Name, Muskeln, Hinweis), Mehrfachauswahl bei Körperbereichen und Ausrüstung („Ausrüstung: Ohne Geräte + Stange“ zeigt alles, was damit geht), Stern für einzelne Übungen – markierte stehen in Bibliothek und Baukasten immer oben; kein Schwierigkeitsgrad mehr (bei „Überrasch mich“ nur noch Intensität Locker/Mittel/Intensiv für die Zeiten)
+- Ruhigeres Design: statt vieler Kategorie-Farben eine Akzentfarbe je Design plus Icons für Körperbereiche und Ausrüstung
+- Reiter **Calisthenics** (vor „Dehnen“): 22 Übungen an Stange und Barren (Zug, Druck, Core, dynamische Skills) mit Programmen Zug, Druck, Core, Skills und „Calisthenics 60“; neue Ausrüstung „Dip-Barren / Parallettes“
+- Bauchübungen ergänzt (Reverse Crunch, V-Ups; Mountain Climbers zählen auch zu Bauch/Core) und Programm „Bauch komplett“ mit 10 Übungen
+- Weitere schwere Übungen: Archer-Liegestütz, Pistol Squat, Dragon Flag, Klatsch-Liegestütz, Tuck Jumps
+- 60-Minuten-Workouts (Full Body 60, Bodyweight 60, Advanced 60, Calisthenics 60) und 60 Min bei „Überrasch mich“
+- Filter als zwei Auswahlknöpfe „Körperbereich“ und „Ausrüstung“ mit Liste zum Abhaken (Mehrfachauswahl); schlankere Karten – Hinweise, „Als Block“ und „Ausblenden“ stehen in der Info bzw. auf dem Deckblatt
+- Startseite mit Titel „BLOC – Modular Training Builder“; in den Einstellungen „App teilen“ (Link kopieren)
+- Design „Kodak“ heißt jetzt „C60“ (Schriftzug C60 mit „Modular Training Timer“, Logo mit C)
+- Startseite mit aufklappbaren Kacheln (Icon, Titel, Kurzbeschreibung, Anzahl); die Bibliothek-Kachel öffnet direkt die Bibliothek. Frühere Fassung: Startseite mit aufklappbaren Bereichen (Favoriten, Timer-Workouts, Blöcke einzeln starten, Bibliothek), jeweils mit Anzahl; beim ersten Start sind nur die Favoriten offen, danach merkt sich die App den Zustand
 - Im Baukasten bleibt die Workout-Liste beim Scrollen oben stehen, damit man Übungen auch von weit unten kurz hineinziehen kann
 - Beim Bearbeiten eines Timer-Workouts lassen sich Übungen direkt aus der Bibliothek hinzufügen (mit Kategorie-Filter)
 - Info zu jeder Übung („So geht's"): großes animiertes Piktogramm, Anleitung in drei Schritten, Haltung (zwei konkrete Punkte) mit dem häufigsten Fehler unter „Vermeiden" (`EX_POSTURE`, angelehnt an gängige Technikhinweise u. a. von ACE, NSCA und NASM) und Tipp (Deutsch/Englisch, `EX_INFO` in index.html); zu öffnen in der Bibliothek (Info-Knopf oder Tipp aufs Bild) und im Timer über das ⓘ neben dem Übungsnamen – auch in Vorbereitung und Pausen für die anstehende Übung; der Timer läuft dabei sichtbar weiter und lässt sich direkt im Info-Fenster pausieren
@@ -49,7 +58,7 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - „Bildschirm an lassen" während des Workouts (Wake Lock)
 - Sechs Design-Optionen: **System / Hell / Dunkel** (schlicht, minimalistisch) sowie **Retro** und **Kodak** (Papier-Optik mit senkrechten Zierstreifen, kursiven Condensed-Überschriften, klassischer Grotesk wie auf alten Kassetten-Etiketten und Monospace-Schrift, Kippschaltern mit „ON/OFF", Fader-Schieberegler und 3D-Walzenzähler; Kodak zusätzlich mit Kassetten-Etikett) und **Tapedeck** (dunkles Nachtdesign: glattes schwarzes Gehäuse mit gebürsteten Frontplatten, Rack-Leiste mit Schraublöchern, Beschriftung wie auf einer Hi-Fi-Frontplatte, hinterleuchtetes Zählwerk mit bernsteinfarbenen Ziffern, Anzeigen, die wie Kontrolllampen leuchten – Bernstein für „Los!", Grün für Pause, Cyan für Blockpause – und Bandsorten-Anzeige „Normal / CrO₂ / Metal")
 - Sprache Deutsch oder Englisch (in den Einstellungen; ohne eigene Wahl gilt die Sprache des Geräts)
-- Die Schriften der Vintage-Designs kommen von Google Fonts und werden vom Service Worker für die Offline-Nutzung zwischengespeichert
+- Nur Systemschriften (wie im Vokabelkasten): die App lädt keine Schriften und nichts anderes von fremden Servern
 - Direkter „Jetzt installieren"-Button auf Android/Chrome, Schritt-für-Schritt-Anleitung für iOS
 - Backup als JSON exportieren/importieren
 - Funktioniert offline (Service Worker)

@@ -14,9 +14,6 @@
 <meta name="apple-mobile-web-app-title" content="Timer">
 <!-- Schriften für die Vintage-Designs (werden nur geladen, wenn sie tatsächlich verwendet werden;
      der Service Worker speichert sie für die Offline-Nutzung) -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Barlow+Condensed:ital,wght@0,700;1,700&family=Barlow+Semi+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
 <style>
 /* Modern: schlichtes, minimalistisches Design (Original) */
 :root{
@@ -41,7 +38,7 @@
   --tp-color:#1f9d6b;
   --tp-text:#ffffff;
   /* Kategorien der Bibliothek */
-  --c-cardio:#e0532b; --c-weight:#7a5cc8; --c-bw:#2b78c9; --c-back:#13917f; --c-legs:#c98506; --c-core:#c03f76; --c-arms:#6f8a1f; --c-stretch:#2f95c8;
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
 }
@@ -95,12 +92,13 @@
    Alle mit Walzenzähler statt Fortschrittsring; die Standardwerte hier gelten für die hellen. */
 :root[data-vintage]{
   color-scheme: light;
-  --f-head:"Barlow Condensed","Arial Narrow",sans-serif;
-  --f-mono:"IBM Plex Mono","Courier New",monospace;
+  /* Systemschriften wie im Vokabelkasten - die App lädt keine Schriften aus dem Netz */
+  --f-head:"Avenir Next Condensed","Roboto Condensed","sans-serif-condensed","Bahnschrift Condensed","Arial Narrow",sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,"Roboto Mono","Cascadia Mono",Consolas,"Courier New",monospace;
   /* Klassische Grotesk wie auf alten Kassetten-Etiketten */
-  --f-label:"Archivo","Helvetica Neue",Arial,sans-serif;
-  --f-body:"Barlow Semi Condensed","Arial Narrow",sans-serif;
-  --f-brand:"Archivo","Arial Black",sans-serif;
+  --f-label:"Helvetica Neue",Helvetica,Roboto,Arial,sans-serif;
+  --f-body:"Avenir Next Condensed","Roboto Condensed","sans-serif-condensed","Bahnschrift SemiCondensed","Arial Narrow",system-ui,sans-serif;
+  --f-brand:"Helvetica Neue","Arial Black",Roboto,Arial,sans-serif;
   --text:#1f1d1a;
   --text-dim:#5f594e;
   --accent-text:#ffffff;
@@ -313,15 +311,15 @@ h1,h2,h3{ margin:0 0 4px; }
 .info-steps li{ margin-bottom:6px; }
 .info-tip{ font-size:14px; background:var(--surface-2); border-radius:10px; padding:10px 12px; margin-bottom:14px; }
 :root[data-theme="dark"], :root[data-theme="tapedeck"]{
-  --c-cardio:#ff7a55; --c-weight:#a58cf2; --c-bw:#5ea6f2; --c-back:#34c3ae; --c-legs:#f2b441; --c-core:#ea6fa2; --c-arms:#b3cc57; --c-stretch:#74c7ee;
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme]){
-  --c-cardio:#ff7a55; --c-weight:#a58cf2; --c-bw:#5ea6f2; --c-back:#34c3ae; --c-legs:#f2b441; --c-core:#ea6fa2; --c-arms:#b3cc57; --c-stretch:#74c7ee;
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
 } }
 :root[data-theme="retro"], :root[data-theme="kodak"]{
-  --c-cardio:#c7332b; --c-weight:#5d4b8c; --c-bw:#28537f; --c-back:#2d7566; --c-legs:#b8790f; --c-core:#a23d67; --c-arms:#66751f; --c-stretch:#2f7fa3;
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
 }
-.playbtn.cat{ background:var(--cat); color:#fff; }
+.playbtn.cat{ background:var(--cat); color:var(--tp-text); }
 :root[data-theme="tapedeck"] .playbtn.cat{ color:#101010; box-shadow:0 0 12px color-mix(in srgb, var(--cat) 45%, transparent), inset 0 -2px 3px rgba(0,0,0,.2); }
 .tpl-item[style*="--cat"] .lib-illu{ color:var(--cat); }
 .cat-tags{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
@@ -331,9 +329,8 @@ h1,h2,h3{ margin:0 0 4px; }
   letter-spacing:.02em; white-space:nowrap; vertical-align:1px;
 }
 .lib-chip{ display:inline-flex; align-items:center; gap:6px; }
-.lib-chip::before{ content:""; width:9px; height:9px; border-radius:50%; background:var(--cat); flex-shrink:0; }
-.lib-chip.active{ background:var(--cat); border-color:var(--cat); color:#fff; }
-.lib-chip.active::before{ background:#fff; }
+.lib-chip .ico{ width:16px; height:16px; flex-shrink:0; }
+.lib-chip.active{ background:var(--tp-color); border-color:var(--tp-color); color:var(--tp-text); }
 :root[data-theme="tapedeck"] .lib-chip.active{ color:#101010; }
 :root[data-theme="tapedeck"] .lib-chip.active::before{ background:#101010; }
 .lib-tabs{ grid-template-columns:1fr 1fr 1fr !important; }
@@ -360,7 +357,7 @@ h1,h2,h3{ margin:0 0 4px; }
 .dz-row .sub .cat-tag{ font-size:10px; padding:3px 6px; margin-left:4px; }
 .dh{ width:34px; height:42px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); cursor:grab; touch-action:none; flex-shrink:0; }
 .dz-btn{ width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:20px; line-height:1; cursor:pointer; flex-shrink:0; }
-.dz-btn.add{ background:var(--cat); border-color:var(--cat); color:#fff; font-weight:700; }
+.dz-btn.add{ background:var(--tp-color); border-color:var(--tp-color); color:var(--tp-text); font-weight:700; }
 .dz-dragging{ opacity:.3; }
 .dz-ghost{ position:fixed; z-index:80; pointer-events:none; margin:0; box-shadow:0 12px 30px rgba(0,0,0,.28); transform:rotate(1.5deg) scale(1.02); }
 .dz-ph{ height:54px; margin-bottom:8px; border-radius:12px; border:2px dashed var(--tp-color); background:color-mix(in srgb, var(--tp-color) 10%, transparent); }
@@ -403,7 +400,9 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .cover-note{ font-size:12.5px; color:var(--text-dim); text-align:center; margin-top:10px; }
 .sp-chips{ display:flex; flex-wrap:wrap; gap:8px; }
 .lib-chip.nodot::before{ display:none; }
-.lib-tabs{ grid-template-columns:repeat(4,1fr) !important; gap:6px !important; }
+.lib-tabs{ grid-template-columns:repeat(6,1fr) !important; gap:6px !important; }
+.lib-tabs button{ grid-column:span 2 !important; }
+.lib-tabs button:nth-child(n+4){ grid-column:span 3 !important; }
 .lib-tabs button{ padding-left:2px !important; padding-right:2px !important; }
 .fav-btn{ border:none; background:none; color:var(--text-dim); font-size:24px; line-height:1; cursor:pointer; padding:4px 6px; flex-shrink:0; }
 .fav-btn.on{ color:#f0b400; }
@@ -444,6 +443,66 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .opt-sum{ font-size:13px; color:var(--text-dim); margin-top:3px; }
 .opt-body{ padding:0 16px 16px; border-top:1px solid var(--border); }
 .opt-sep{ height:1px; background:var(--border); margin:16px 0 4px; }
+/* Icons statt Farben */
+.ico{ width:1em; height:1em; vertical-align:-.15em; }
+.cat-tag{ display:inline-flex !important; align-items:center; gap:4px; color:var(--text-dim) !important;
+  background:var(--surface-2) !important; border-color:var(--border) !important; }
+.cat-tag .ico{ width:13px; height:13px; color:var(--tp-color); }
+.sub-ico{ width:14px; height:14px; margin-right:4px; color:var(--tp-color); vertical-align:-2px; }
+.tpl-mus{ color:var(--text) !important; }
+.lib-equips{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:0 0 10px; }
+.lib-lbl{ font-size:12px; color:var(--text-dim); margin-right:2px; }
+.lib-equips .lib-chip{ padding:6px 11px; font-size:13px; }
+.lib-search{ position:relative; margin:0 0 10px; }
+.lib-search input{ width:100%; padding:12px 12px 12px 38px; font-size:15px; }
+.lib-search .s-ico{ position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; color:var(--text-dim); pointer-events:none; }
+.fav-btn.ex-fav{ font-size:22px; }
+.dz-row .fav-btn.ex-fav{ padding:2px; }
+/* Startseite: Kacheln */
+.home-tiles{ margin-top:6px; }
+.home-tile{
+  display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:14px 16px; margin:0 0 10px; cursor:pointer; user-select:none; -webkit-user-select:none;
+}
+.home-tile.offen{ margin-bottom:10px; }
+.ht-ico{ width:44px; height:44px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--tp-color) 14%, transparent); color:var(--tp-color); }
+.ht-ico .ico{ width:24px; height:24px; }
+.ht-txt{ flex:1; min-width:0; }
+.ht-txt b{ display:block; font-size:16px; }
+.ht-txt small{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:2px; }
+.home-tile .sec-count{ margin:0; }
+.sec-body{ margin:0 0 16px 14px; padding-left:12px; border-left:2px solid var(--border); }
+.ttl-sub{ display:block; font-size:12px; font-weight:600; letter-spacing:.06em; color:var(--text-dim); margin-top:3px; text-transform:uppercase; }
+.topbar.home h1 .ttl{ letter-spacing:.08em; }
+:root[data-theme="kodak"] .ttl-sub{ display:none; }
+.filter-bar{ display:flex; gap:8px; margin:0 0 10px; }
+.filter-dd{
+  flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:1px; position:relative;
+  padding:8px 26px 8px 12px; border:1px solid var(--border); border-radius:12px; background:var(--surface); color:var(--text);
+  font:inherit; text-align:left; cursor:pointer;
+}
+.filter-dd.on{ border-color:var(--tp-color); box-shadow:inset 0 0 0 1px var(--tp-color); }
+.fd-l{ font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.05em; }
+.fd-v{ font-size:14px; font-weight:600; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.fd-c{ position:absolute; right:10px; top:50%; transform:translateY(-50%); color:var(--text-dim); }
+.fs-hint{ font-size:13px; color:var(--text-dim); margin:2px 0 12px; }
+.fs-opt{
+  width:100%; display:flex; align-items:center; gap:12px; padding:12px; margin:0 0 6px; border:1px solid var(--border);
+  border-radius:12px; background:var(--surface); color:var(--text); font:inherit; font-size:15px; text-align:left; cursor:pointer;
+}
+.fs-opt.on{ border-color:var(--tp-color); background:color-mix(in srgb, var(--tp-color) 10%, transparent); }
+.fs-ico{ width:22px; display:flex; justify-content:center; color:var(--tp-color); }
+.fs-ico .ico{ width:20px; height:20px; }
+.fs-opt > span:nth-child(2){ flex:1; }
+.fs-check{ color:var(--tp-color); font-weight:700; opacity:0; }
+.fs-opt.on .fs-check{ opacity:1; }
+.info-lib{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 12px; }
+.cover-hide{ display:block; margin:8px auto 0; }
+.share-url{ font-size:14px; word-break:break-all; padding:10px 12px; border-radius:10px; background:var(--surface-2); margin-bottom:10px; user-select:all; -webkit-user-select:all; }
+.share-btns{ display:flex; gap:8px; }
+.share-btns .btn{ flex:1; margin-top:0; }
+.share-card > .btn{ margin-top:8px; }
 .lib-hidden{ text-align:center; color:var(--text-dim); font-size:13px; padding:14px 0 90px; }
 .toast{
   position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translateX(-50%);
@@ -842,6 +901,13 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-vintage] .tpl-mus{ font-family:var(--f-mono); font-size:12.5px; font-weight:500; }
 :root[data-vintage] .row-illu-wrap{ border-radius:6px; }
 :root[data-vintage] .info-mus{ border-radius:6px; }
+:root[data-vintage] .home-tile{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:none; }
+:root[data-vintage] .ht-txt b{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; font-size:15px; }
+:root[data-vintage] .ht-ico{ border-radius:6px; }
+:root[data-vintage] .lib-lbl{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; }
+:root[data-theme="kodak"] .kodak-word small{ display:block; font-size:clamp(13px,3.6vw,16px); font-weight:800; letter-spacing:0; line-height:1.1; margin-top:2px; }
+:root[data-vintage] .filter-dd, :root[data-vintage] .fs-opt{ border-radius:6px; }
+:root[data-vintage] .fd-v{ font-family:var(--f-mono); font-size:13px; }
 :root[data-vintage] .cat-tag{ font-family:var(--f-mono); border-radius:4px; text-transform:uppercase; font-size:10px; }
 :root[data-vintage] .lib-sort button{ font-family:var(--f-mono); border-radius:6px; font-size:12px; }
 :root[data-vintage] .my-new{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.05em; border-radius:10px; }
@@ -1165,10 +1231,10 @@ var ICON_BLOCK = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" 
 /* Kassetten-Etikett für das Kodak-Design: rotes K-Signet und Bandtyp */
 var KODAK_BADGE = '<div class="kodak-badge" aria-hidden="true">'+
   '<svg viewBox="0 0 44 40"><rect width="44" height="40" rx="2.5" fill="#e1251b"/>'+
-  '<path d="M4 20L18.5 4H29L14.5 20 29 36H18.5z" fill="#fff"/>'+
+  '<path d="M24.5 9.5A11 11 0 1 0 24.5 30.5" fill="none" stroke="#fff" stroke-width="6.5"/>'+
   '<g fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="6.2" text-anchor="middle">'+
-  '<text x="37.5" y="10">K</text><text x="37.5" y="17">O</text><text x="37.5" y="24">D</text><text x="37.5" y="31">A</text><text x="37.5" y="38">K</text></g></svg>'+
-  '<div><b>C60</b><span>LOW NOISE</span></div></div>';
+  '</g></svg>'+
+  '<div><span>LOW NOISE</span></div></div>';
 /* Bandsorten-Anzeige für das Tapedeck-Design: drei Kontrolllampen, „Metal“ leuchtet */
 var DECK_BADGE = '<div class="deck-badge" aria-hidden="true">'+
   '<span><i></i>NORMAL</span><span><i></i>CrO₂</span><span class="on"><i></i>METAL</span></div>';
@@ -1465,6 +1531,15 @@ var I18N = {
     dropHere:"Übungen am Griff ⠿ hierher ziehen oder unten auf + tippen.", dropToRemove:"Hier ablegen zum Entfernen",
     myDelete:"Eigenes Workout löschen", myDeleteQ:"Eigenes Workout löschen?",
     sortLabel:"Sortieren", sortStd:"Standard", posture:"Haltung", avoid:"Vermeiden",
+    shareTitle:"App teilen", shareCopy:"Link kopieren", shareWa:"Per WhatsApp", shareMore:"Weitere Möglichkeiten …",
+    shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
+    fCat:"Körperbereich", equipAny:"Alles", fCatHint:"Mehrere möglich. Nichts gewählt = alle.",
+    fEquipHint:"Was hast du da? Mehrere möglich. Nichts gewählt = alles.", hideEx:"In der Bibliothek ausblenden",
+    hideWo:"Dieses Workout in der Bibliothek ausblenden", hiddenToast:"Ausgeblendet – unten in der Liste wieder einblendbar.",
+    libCalis:"Calisthenics", calisRoutines:"Calisthenics-Programme", calisExercises:"Calisthenics-Übungen",
+    equipHave:"Ausrüstung", searchPh:"Übung suchen …", noResult:"Keine passende Übung gefunden.",
+    int1:"Locker", int2:"Mittel", int3:"Intensiv",
+    htFav:"Deine markierten Workouts", htTimer:"Eigene Intervall-Timer", htBlocks:"Einzelne Blöcke direkt starten",
     musWorked:"Trainiert", musStretched:"Dehnt", musAssist:"Unterstützend",
     optTitle:"Zeiten & Sprachansagen", optRestShort:"{n} s Pause", optVoiceOn:"Ansagen an", optVoiceOff:"Ansagen aus",
     libStretch:"Dehnen", stretchRoutines:"Dehnprogramme", stretchExercises:"Dehnübungen",
@@ -1483,7 +1558,7 @@ var I18N = {
     repsBothSides:"Die Runden zählen beide Seiten zusammen, z. B. 6 = 3 je Seite.",
     recommended:"Empfohlen", timeDone:"Fertig",
     voice:"Sprachansagen (Englisch)", voiceDesc:"Kündigt in den Pausen die nächste Übung an – bei fertigen und eigenen Workouts",
-    surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Körperbereiche", spLevel:"Schwierigkeit", spGo:"Zusammenstellen",
+    surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Körperbereiche", spLevel:"Intensität", spGo:"Zusammenstellen",
     spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
     info:"Info", howTo:"So geht's", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
     infoPause:"Pause", infoResume:"Weiter",
@@ -1504,7 +1579,7 @@ var I18N = {
     workoutBlocks:"Blöcke ({n}) &middot; Gesamt {d}", noBlocksInWorkout:"Noch keine Blöcke im Workout.",
     addBlock:"Block hinzufügen", noBlocksAvail:"Keine Blöcke vorhanden.", createBlockFirst:"Erst einen Block anlegen",
     deleteWorkout:"Workout löschen", deleteWorkoutQ:"Workout löschen?", cantUndo:"Diese Aktion kann nicht rückgängig gemacht werden.",
-    appearance:"Darstellung", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thRetro:"Retro", thKodak:"Kodak", thDeck:"Tapedeck",
+    appearance:"Darstellung", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thRetro:"Retro", thKodak:"C60", thDeck:"Tapedeck",
     themeInfo:"„Retro“ mit rot-blauen Zierstreifen im Sportlook der 70er/80er, „Kodak“ im Stil alter Kodak-Kassetten (C60 Low Noise), „Tapedeck“ als dunkles Nachtdesign wie ein altes Hi-Fi-Kassettendeck. Alle drei mit rollendem Walzenzähler statt Fortschrittsring.",
     language:"Sprache",
     installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
@@ -1564,6 +1639,15 @@ var I18N = {
     dropHere:"Drag exercises here by the ⠿ handle or tap + below.", dropToRemove:"Drop here to remove",
     myDelete:"Delete own workout", myDeleteQ:"Delete own workout?",
     sortLabel:"Sort", sortStd:"Default", posture:"Posture", avoid:"Avoid",
+    shareTitle:"Share the app", shareCopy:"Copy link", shareWa:"Via WhatsApp", shareMore:"More options …",
+    shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
+    fCat:"Body area", equipAny:"Anything", fCatHint:"Pick several. None selected = all.",
+    fEquipHint:"What do you have? Pick several. None selected = anything.", hideEx:"Hide in library",
+    hideWo:"Hide this workout in the library", hiddenToast:"Hidden – you can show it again at the bottom of the list.",
+    libCalis:"Calisthenics", calisRoutines:"Calisthenics routines", calisExercises:"Calisthenics exercises",
+    equipHave:"Equipment", searchPh:"Search exercises …", noResult:"No matching exercise found.",
+    int1:"Easy", int2:"Moderate", int3:"Intense",
+    htFav:"Your starred workouts", htTimer:"Your own interval timers", htBlocks:"Start single blocks directly",
     musWorked:"Works", musStretched:"Stretches", musAssist:"Assisting",
     optTitle:"Timing & voice cues", optRestShort:"{n} s rest", optVoiceOn:"voice on", optVoiceOff:"voice off",
     libStretch:"Stretch", stretchRoutines:"Stretch routines", stretchExercises:"Stretches",
@@ -1582,7 +1666,7 @@ var I18N = {
     repsBothSides:"Rounds count both sides together, e.g. 6 = 3 per side.",
     recommended:"Recommended", timeDone:"Done",
     voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests – for ready-made and own workouts",
-    surprise:"Surprise me", spDur:"Duration", spAreas:"Body areas", spLevel:"Difficulty", spGo:"Build it",
+    surprise:"Surprise me", spDur:"Duration", spAreas:"Body areas", spLevel:"Intensity", spGo:"Build it",
     spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
     info:"Info", howTo:"How to", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
     infoPause:"Pause", infoResume:"Resume",
@@ -1603,7 +1687,7 @@ var I18N = {
     workoutBlocks:"Blocks ({n}) &middot; Total {d}", noBlocksInWorkout:"No blocks in this workout yet.",
     addBlock:"Add block", noBlocksAvail:"No blocks available.", createBlockFirst:"Create a block first",
     deleteWorkout:"Delete workout", deleteWorkoutQ:"Delete workout?", cantUndo:"This can't be undone.",
-    appearance:"Appearance", thSystem:"System", thLight:"Light", thDark:"Dark", thRetro:"Retro", thKodak:"Kodak", thDeck:"Tape deck",
+    appearance:"Appearance", thSystem:"System", thLight:"Light", thDark:"Dark", thRetro:"Retro", thKodak:"C60", thDeck:"Tape deck",
     themeInfo:"“Retro” with red and blue racing stripes in 70s/80s sports style, “Kodak” in the style of old Kodak cassettes (C60 Low Noise), “Tape deck” as a dark night design like an old hi-fi cassette deck. All three with a rolling drum counter instead of a progress ring.",
     language:"Language",
     installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
@@ -1720,13 +1804,14 @@ var LIB_CATS = [
   { id:"legs",   de:"Beine",      en:"Legs" },
   { id:"core",   de:"Bauch / Core", en:"Abs / Core" },
   { id:"arms",   de:"Arme",       en:"Arms" },
+  { id:"calis",  de:"Calisthenics", en:"Calisthenics" },
   { id:"stretch", de:"Dehnen",    en:"Stretching" }
 ];
 /* [id, Name DE, Name EN, Kategorien, Runden (je Seite: pro Seite), Arbeit s, je Seite?, Hinweis DE, Hinweis EN] */
 var EXERCISE_ROWS = [
   ["burpees","Burpees","Burpees","cardio",6,30,0,"Ganzkörper, kontrolliertes Tempo","Full body, controlled pace"],
   ["jump-squats","Jump Squats","Jump Squats","cardio legs",6,30,0,"Explosiv, weich landen","Explosive, land softly"],
-  ["mountain-climbers","Mountain Climbers","Mountain Climbers","cardio",6,30,0,"Rumpf stabil","Keep your core stable"],
+  ["mountain-climbers","Mountain Climbers","Mountain Climbers","cardio core",6,30,0,"Rumpf stabil","Keep your core stable"],
   ["high-knees","High Knees","High Knees","cardio",6,30,0,"Aktiver Armeinsatz","Drive your arms"],
   ["jumping-jacks","Jumping Jacks","Jumping Jacks","cardio",6,30,0,"Gleichmäßiger Rhythmus","Steady rhythm"],
   ["skater-jumps","Skater Jumps","Skater Jumps","cardio",6,30,0,"Seitliche Belastung","Lateral loading"],
@@ -1772,9 +1857,9 @@ var EXERCISE_ROWS = [
   ["calf-raises","Calf Raises","Calf Raises","bw legs",6,30,0,"Oben kurz halten","Pause briefly at the top"],
   ["glute-bridge","Glute Bridge","Glute Bridge","bw legs",6,30,0,"Gesäß aktiv anspannen","Actively squeeze your glutes"],
 
-  ["pull-ups","Pull-ups","Pull-ups","back",6,15,0,"Nur saubere Wiederholungen","Clean reps only"],
+  ["pull-ups","Pull-ups","Pull-ups","back calis",6,15,0,"Nur saubere Wiederholungen","Clean reps only"],
   ["negative-pull-ups","Negative Pull-ups","Negative Pull-ups","back",5,20,0,"Langsam absenken","Lower slowly"],
-  ["inverted-rows","Inverted Rows","Inverted Rows","back",6,20,0,"Nur an sicherer Stange","Only on a secure bar"],
+  ["inverted-rows","Inverted Rows","Inverted Rows","back calis",6,20,0,"Nur an sicherer Stange","Only on a secure bar"],
   ["superman-hold","Superman Hold","Superman Hold","back",6,20,0,"Kleine kontrollierte Hebung","Small, controlled lift"],
   ["reverse-snow-angels","Reverse Snow Angels","Reverse Snow Angels","back",6,30,0,"Bauchlage, Arme führen","Lying face down, guide the arms"],
   ["bird-dog","Bird Dog","Bird Dog","back",6,30,0,"Diagonal, langsam","Diagonal, slow"],
@@ -1785,8 +1870,8 @@ var EXERCISE_ROWS = [
   ["swimmers","Swimmers","Swimmers","back",6,30,0,"Kleine Wechselbewegung","Small alternating movement"],
   ["cobra-lift","Cobra Lift","Cobra Lift","back",6,20,0,"Nicht ins Hohlkreuz drücken","Don't overarch your lower back"],
   ["scapular-push-ups","Scapular Push-ups","Scapular Push-ups","back",6,20,0,"Arme bleiben gestreckt","Arms stay straight"],
-  ["scapular-pull-ups","Scapular Pull-ups","Scapular Pull-ups","back",5,15,0,"Nur Schulterblätter bewegen","Move only your shoulder blades"],
-  ["dead-hang","Dead Hang","Dead Hang","back",5,20,0,"Nur bei geeigneter Stange","Only with a suitable bar"],
+  ["scapular-pull-ups","Scapular Pull-ups","Scapular Pull-ups","back calis",5,15,0,"Nur Schulterblätter bewegen","Move only your shoulder blades"],
+  ["dead-hang","Dead Hang","Dead Hang","back calis",5,20,0,"Nur bei geeigneter Stange","Only with a suitable bar"],
 
   ["air-squats","Air Squats","Air Squats","legs",6,30,0,"Knie folgen der Fußrichtung","Knees track over your toes"],
   ["split-squats","Split Squats","Split Squats","legs",3,30,1,"Stabiler Stand","Stable stance"],
@@ -1801,7 +1886,8 @@ var EXERCISE_ROWS = [
   ["bicycle-crunches","Bicycle Crunches","Bicycle Crunches","core",6,30,0,"Nicht am Nacken ziehen","Don't pull on your neck"],
   ["leg-levers","Leg Levers","Leg Levers","core",6,30,0,"Beine kontrolliert senken","Lower your legs with control"],
   ["leg-raises","Leg Raises","Leg Raises","core",6,30,0,"Bei Bedarf Knie beugen","Bend your knees if needed"],
-  ["jackknives","Jackknives","Jackknives","core",5,30,0,"Fortgeschritten","Advanced"],
+  ["jackknives","V-Ups (Jackknives)","V-Ups (Jackknives)","core",5,30,0,"Arme und Beine gleichzeitig zusammenführen","Bring arms and legs together at the same time"],
+  ["reverse-crunch","Reverse Crunch","Reverse Crunch","core",6,30,0,"Knie zur Brust ziehen und Becken anheben","Pull your knees in and lift your pelvis"],
   ["side-jackknives","Side Jackknives","Side Jackknives","core",3,30,1,"Seitliche Bauchmuskeln","Side abs"],
   ["hollow-hold","Hollow Hold","Hollow Hold","core",6,20,0,"Leichter mit gebeugten Knien","Easier with bent knees"],
   ["russian-twists","Russian Twists","Russian Twists","core",6,30,0,"Brustbein aufrecht","Keep your chest up"],
@@ -1809,7 +1895,7 @@ var EXERCISE_ROWS = [
   ["toe-touches","Toe Touches","Toe Touches","core",6,30,0,"Schultern aktiv anheben","Actively lift your shoulders"],
   ["plank-shoulder-taps","Plank Shoulder Taps","Plank Shoulder Taps","core",6,30,0,"Becken ruhig","Keep your pelvis still"],
   ["slow-mountain-climbers","Mountain Climbers langsam","Slow Mountain Climbers","core",6,30,0,"Core statt Geschwindigkeit","Core over speed"],
-  ["toes-to-bar","Toes-to-Bar / Knee Raises","Toes-to-Bar / Knee Raises","core",4,20,0,"Nur an sicherer Stange","Only on a secure bar"],
+  ["toes-to-bar","Toes-to-Bar","Toes-to-Bar","core calis",4,20,0,"Nur an sicherer Stange","Only on a secure bar"],
 
   /* Arme ohne Gewicht */
   ["wall-push-ups","Liegestütz an der Wand","Wall Push-ups","arms",6,30,0,"Leichter Einstieg für Arme und Brust","Easy entry for arms and chest"],
@@ -1843,7 +1929,33 @@ var EXERCISE_ROWS = [
   ["figure-four","Gesäß liegend (Figur 4)","Figure-Four Glute Stretch","stretch",1,30,1,"Knöchel aufs Knie, Bein heranziehen","Ankle on knee, draw the leg in",5],
   ["pigeon-stretch","Taube","Pigeon Stretch","stretch",1,45,1,"Hüfte gerade Richtung Boden","Hips square towards the floor",5],
   ["butterfly-stretch","Schmetterling","Butterfly Stretch","stretch",2,30,0,"Fußsohlen zusammen, Knie sinken lassen","Soles together, let the knees drop",5],
-  ["worlds-greatest","World's Greatest Stretch","World's Greatest Stretch","stretch",2,20,1,"Aus der Brust aufdrehen","Rotate open through your chest",5]
+  ["worlds-greatest","World's Greatest Stretch","World's Greatest Stretch","stretch",2,20,1,"Aus der Brust aufdrehen","Rotate open through your chest",5],
+
+  /* Calisthenics (Stange, Barren) - längere Pausen, weil die Übungen schwer sind */
+  ["archer-row","Archer Row","Archer Row","calis back",3,20,1,"Zu einer Seite ziehen, der andere Arm bleibt länger","Pull to one side, the other arm stays longer",20],
+  ["chin-ups","Chin-Up","Chin-Up","calis back arms",5,20,0,"Klimmzug im Untergriff","Pull-up with an underhand grip",20],
+  ["commando-pull-ups","Commando Pull-Up","Commando Pull-Up","calis back",3,20,1,"Seitlich an der Stange hochziehen","Pull up beside the bar",20],
+  ["parallel-bar-dips","Parallel Bar Dips","Parallel Bar Dips","calis arms",5,20,0,"Zwischen den Holmen absenken und hochdrücken","Lower between the bars and press up",20],
+  ["straight-bar-dips","Straight Bar Dip","Straight Bar Dip","calis arms",5,15,0,"Dip an einer einzelnen Stange","Dip on a single bar",20],
+  ["support-hold","Support Hold","Support Hold","calis arms",5,20,0,"Mit gestreckten Armen im Stütz halten","Hold the support with straight arms",15],
+  ["korean-dips","Korean Dip","Korean Dip","calis arms",4,15,0,"Dip-Variante hinter der Stange","Dip variation behind the bar",25],
+  ["hanging-knee-raise","Hanging Knee Raise","Hanging Knee Raise","calis core",5,20,0,"Knie kontrolliert zur Brust ziehen","Draw your knees to your chest with control",15],
+  ["hanging-leg-raise","Hanging Leg Raise","Hanging Leg Raise","calis core",5,20,0,"Gestreckte Beine anheben","Raise your straight legs",20],
+  ["hanging-l-sit","Hanging L-Sit","Hanging L-Sit","calis core",5,10,0,"Beine waagerecht halten","Hold your legs horizontal",20],
+  ["l-sit","L-Sit","L-Sit","calis core",5,10,0,"Beine gestreckt vor dem Körper halten","Hold your legs straight in front of you",20],
+  ["windshield-wipers","Windshield Wipers","Windshield Wipers","calis core",4,20,0,"Beine im Hang von Seite zu Seite","Legs side to side while hanging",20],
+  ["muscle-ups","Muscle-Up","Muscle-Up","calis back arms",5,15,0,"Kombination aus Klimmzug und Dip","A pull-up flowing into a dip",30],
+  ["monkey-bar-traverse","Monkey Bar Traverse","Monkey Bar Traverse","calis back",4,30,0,"Von Sprosse zu Sprosse hangeln","Swing from rung to rung",30],
+  ["bar-traverse","Bar Traverse","Bar Traverse","calis back",4,30,0,"Seitlich an der Stange entlanghangeln","Traverse sideways along the bar",30],
+  ["human-flag","Human Flag Progression","Human Flag Progression","calis core",3,10,1,"Seitlich an der senkrechten Stange halten","Hold sideways on a vertical pole",30],
+  ["skin-the-cat","Skin The Cat","Skin The Cat","calis back",4,20,0,"Aus dem Hang durch die Schultern rotieren","Rotate through your shoulders from the hang",30],
+
+  /* Weitere schwere Übungen */
+  ["archer-push-ups","Archer-Liegestütz","Archer Push-ups","bw arms",3,20,1,"Gewicht zu einem Arm verlagern","Shift your weight onto one arm",15],
+  ["pistol-squats","Pistol Squat","Pistol Squat","bw legs",3,20,1,"Einbeinige Kniebeuge ohne Hilfe","Single-leg squat without support",15],
+  ["dragon-flags","Dragon Flag","Dragon Flag","core",4,15,0,"Körper wie ein Brett absenken","Lower your body like a plank",25],
+  ["clap-push-ups","Klatsch-Liegestütz","Clap Push-ups","bw arms",5,20,0,"Explosiv hochdrücken und klatschen","Push up explosively and clap",20],
+  ["tuck-jumps","Tuck Jumps","Tuck Jumps","cardio legs",5,20,0,"Knie im Sprung zur Brust","Knees to chest in the air",20]
 ];
 var EXERCISES = EXERCISE_ROWS.map(function(x){
   return { id:x[0], name:{ de:x[1], en:x[2] }, cats:x[3].split(" "), perSide:!!x[6],
@@ -1863,6 +1975,7 @@ var LIB_WORKOUT_ROWS = [
   ["leg-power","Leg Power","Leg Power","legs","jump-squats bulgarian-split-squats side-lunges wall-sit lateral-lunge-pulses",60],
   ["core-basic","Core Basic","Core Basic","core","dead-bug plank side-plank bicycle-crunches leg-raises",45],
   ["core-advanced","Core Advanced","Core Advanced","core","hollow-hold jackknives side-jackknives plank-shoulder-taps toes-to-bar",60],
+  ["core-complete","Bauch komplett","Complete Core","core","russian-twists leg-levers dead-bug bicycle-crunches reverse-crunch jackknives hollow-hold plank l-sit mountain-climbers",45],
   ["full-body-mix","Full Body Mix","Full Body Mix","mix","kb-swing push-ups walking-lunges bent-over-row mountain-climbers plank",60],
   ["arms-bw","Arme ohne Geräte","Arms Without Equipment","arms","wall-push-ups self-resistance-curls close-grip-push-ups towel-curls triceps-dips backpack-curls",45],
   ["stretch-full","Ganzkörper-Dehnen","Full Body Stretch","stretch","neck-stretch shoulder-stretch chest-stretch cat-cow downward-dog hip-flexor-stretch hamstring-stretch figure-four spinal-twist childs-pose",10],
@@ -1870,7 +1983,15 @@ var LIB_WORKOUT_ROWS = [
   ["stretch-post-upper","Nach dem Training: Oberkörper","After Training: Upper Body","stretch","chest-stretch shoulder-stretch triceps-stretch biceps-stretch wrist-stretch childs-pose",10],
   ["stretch-back-hips","Rücken & Hüfte","Back & Hips","stretch","cat-cow childs-pose sphinx-stretch hip-flexor-stretch pigeon-stretch spinal-twist",10],
   ["stretch-office","Schultern & Nacken (Büro)","Shoulders & Neck (Office)","stretch","neck-stretch shoulder-stretch triceps-stretch chest-stretch side-bend wrist-stretch",10],
-  ["stretch-morning","Morgen-Mobility","Morning Mobility","stretch","cat-cow worlds-greatest downward-dog side-bend forward-fold",5]
+  ["stretch-morning","Morgen-Mobility","Morning Mobility","stretch","cat-cow worlds-greatest downward-dog side-bend forward-fold",5],
+  ["calis-pull","Calisthenics Zug","Calisthenics Pull","calis","scapular-pull-ups inverted-rows archer-row chin-ups pull-ups dead-hang",90],
+  ["calis-push","Calisthenics Druck","Calisthenics Push","calis","support-hold parallel-bar-dips straight-bar-dips pike-push-ups diamond-push-ups",90],
+  ["calis-core","Calisthenics Core","Calisthenics Core","calis","hanging-knee-raise hanging-leg-raise windshield-wipers hanging-l-sit l-sit toes-to-bar",60],
+  ["calis-skills","Calisthenics Skills","Calisthenics Skills","calis","skin-the-cat bar-traverse monkey-bar-traverse human-flag muscle-ups",120],
+  ["calis-60","Calisthenics 60","Calisthenics 60","calis","scapular-pull-ups pull-ups support-hold parallel-bar-dips inverted-rows chin-ups straight-bar-dips hanging-knee-raise archer-row l-sit windshield-wipers commando-pull-ups hanging-leg-raise dead-hang",100],
+  ["full-body-60","Full Body 60","Full Body 60","mix","burpees goblet-squat push-ups kb-swing bent-over-row walking-lunges mountain-climbers romanian-deadlift shoulder-press jump-squats plank russian-twists",85],
+  ["bodyweight-60","Bodyweight 60 (ohne Geräte)","Bodyweight 60 (no equipment)","bw","jumping-jacks air-squats push-ups reverse-lunges plank high-knees glute-bridge pike-push-ups side-lunges bicycle-crunches burpees wall-sit superman-hold mountain-climbers",45],
+  ["advanced-60","Advanced 60","Advanced 60","mix","burpee-squat-jumps pistol-squats archer-push-ups tuck-jumps dragon-flags clap-push-ups bulgarian-split-squats pike-push-ups frogs hollow-hold cossack-squats jackknives",120]
 ];
 var LIB_WORKOUTS = LIB_WORKOUT_ROWS.map(function(x){
   return { id:x[0], name:{ de:x[1], en:x[2] }, focus:x[3], exercises:x[4].split(" "), restAfterSec:x[5] };
@@ -1946,7 +2067,7 @@ var EX_LEVEL = {
   "prone-t-raise":1,"hip-hinge":1,"good-mornings":1,"swimmers":1,"cobra-lift":1,"scapular-push-ups":1,"scapular-pull-ups":2,"dead-hang":1,
   "air-squats":1,"split-squats":2,"bulgarian-split-squats":3,"forward-lunges":2,"single-leg-glute-bridge":2,"lateral-lunge-pulses":2,
   "plank":1,"side-plank":2,"dead-bug":1,"bicycle-crunches":1,"leg-levers":3,"leg-raises":2,"jackknives":3,"side-jackknives":3,
-  "hollow-hold":3,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"slow-mountain-climbers":1,"toes-to-bar":3,
+  "hollow-hold":3,"reverse-crunch":2,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"slow-mountain-climbers":1,"toes-to-bar":3,
   "wall-push-ups":1,"close-grip-push-ups":2,"diamond-push-ups":3,"sphinx-push-ups":3,"towel-curls":1,"self-resistance-curls":1,
   "backpack-curls":1,"backpack-triceps":2,"arm-circles":1,
   "neck-stretch":1,"shoulder-stretch":1,"triceps-stretch":1,"biceps-stretch":1,"chest-stretch":1,"wrist-stretch":1,"side-bend":1,
@@ -1957,23 +2078,29 @@ var EX_EQUIP = {
   "goblet-squat":"kb db","kb-swing":"kb","db-thruster":"db","romanian-deadlift":"db kb","db-deadlift":"db kb","bent-over-row":"db",
   "one-arm-row":"db","floor-press":"db","shoulder-press":"db","push-press":"db","weighted-reverse-lunge":"db kb","front-rack-carry":"kb db",
   "farmer-carry":"db kb","kb-clean":"kb","renegade-row":"db",
-  "pull-ups":"bar","negative-pull-ups":"bar","inverted-rows":"bar","scapular-pull-ups":"bar","dead-hang":"bar","toes-to-bar":"bar"
+  "pull-ups":"bar","negative-pull-ups":"bar","inverted-rows":"bar","scapular-pull-ups":"bar","dead-hang":"bar","toes-to-bar":"bar",
+  "archer-row":"bar","chin-ups":"bar","commando-pull-ups":"bar","parallel-bar-dips":"dip","straight-bar-dips":"bar","support-hold":"dip",
+  "korean-dips":"bar","hanging-knee-raise":"bar","hanging-leg-raise":"bar","hanging-l-sit":"bar","l-sit":"dip","windshield-wipers":"bar",
+  "muscle-ups":"bar","monkey-bar-traverse":"bar","bar-traverse":"bar","human-flag":"bar","skin-the-cat":"bar"
 };
 EXERCISES.forEach(function(ex){ ex.level = EX_LEVEL[ex.id] || 2; ex.equip = (EX_EQUIP[ex.id] || "none").split(" "); });
 var EQUIPS = [
   { id:"none", de:"Ohne Geräte", en:"No equipment" },
   { id:"db",   de:"Kurzhantel",  en:"Dumbbell" },
   { id:"kb",   de:"Kettlebell",  en:"Kettlebell" },
-  { id:"bar",  de:"Stange",      en:"Bar" }
+  { id:"bar",  de:"Stange",      en:"Bar" },
+  { id:"dip",  de:"Dip-Barren / Parallettes", en:"Dip bars / parallettes" }
 ];
 function equipName(id){ for(var i=0;i<EQUIPS.length;i++) if(EQUIPS[i].id===id) return tplText(EQUIPS[i]); return id; }
 function exEquipText(ex){ return ex.equip.map(equipName).join(" / "); }
-function levelHTML(l){
+function levelHTML(l){ return ""; }   // Schwierigkeitsgrad bewusst entfernt (zu subjektiv)
+function levelHTMLAlt(l){
   return '<span class="lvl" title="'+esc(t("lvl"+l))+'">'+[1,2,3].map(function(i){ return '<i class="'+(i<=l?'on':'')+'"></i>'; }).join("")+
     ' '+esc(t("lvl"+l))+'</span>';
 }
 /* passt eine Übung zu Ausrüstung und Level? "all" = egal */
-function exFits(ex, equip, level){
+function exFits(ex, equip){ return equipMatch(equip, ex); }
+function exFitsAlt(ex, equip, level){
   if(equip && equip!=="all" && ex.equip.indexOf(equip) < 0) return false;
   if(level && level!=="all" && ex.level !== +level) return false;
   return true;
@@ -1983,11 +2110,15 @@ function woLevel(exs){
   var sum = 0; exs.forEach(function(ex){ sum += ex.level; });
   return Math.round(sum/exs.length);
 }
-/* Workout geht mit der gewählten Ausrüstung, wenn jede Übung ohne Geräte oder mit ihr machbar ist */
-function woFits(exs, equip, level){
-  if(equip && equip!=="all" && !exs.every(function(ex){ return ex.equip.indexOf("none")>-1 || ex.equip.indexOf(equip)>-1; })) return false;
-  if(level && level!=="all" && woLevel(exs) !== +level) return false;
-  return true;
+/* Mehrfachauswahl: leere Liste = alles */
+function selArr(v){ return Array.isArray(v) ? v.slice() : (v && v!=="all" ? [v] : []); }
+function selToggle(arr, id){ var a = selArr(arr), i = a.indexOf(id); if(i > -1) a.splice(i, 1); else a.push(id); return a; }
+function catMatch(sel, cats){ sel = selArr(sel); return !sel.length || cats.some(function(c){ return sel.indexOf(c) > -1; }); }
+function equipMatch(sel, ex){ sel = selArr(sel); return !sel.length || ex.equip.some(function(e){ return sel.indexOf(e) > -1; }); }
+/* Workout geht mit der gewählten Ausrüstung, wenn jede Übung mit einem der gewählten Dinge machbar ist */
+function woFits(exs, equip){
+  var sel = selArr(equip);
+  return !sel.length || exs.every(function(ex){ return ex.equip.some(function(e){ return sel.indexOf(e) > -1; }); });
 }
 function woEquipText(exs){
   var need = [];
@@ -2069,29 +2200,79 @@ var coverDraft = null;   // das Workout auf dem Deckblatt - Änderungen gelten n
 /* Farbe einer Kategorie */
 function exIsStretch(id){ var ex = id && findExercise(id); return !!(ex && ex.cats.indexOf("stretch") > -1); }
 function catVar(id){ return id==="mix" || id==="all" ? "var(--tp-color)" : "var(--c-"+id+")"; }
-function catTags(cats){
-  return cats.map(function(c){ return '<span class="cat-tag" style="--cat:'+catVar(c)+'">'+esc(catName(c))+'</span>'; }).join("");
+var CAT_ICON = {
+  cardio:'<path d="M3 12h4l2-5 4 10 2-5h6"/>',
+  weight:'<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
+  bw:'<circle cx="12" cy="4.5" r="2"/><path d="M12 7v7M7.5 10h9M12 14l-3.5 6M12 14l3.5 6"/>',
+  back:'<path d="M12 3v18M8.5 6.5h7M8 10.5h8M8.5 14.5h7M9.5 18.5h5"/>',
+  legs:'<path d="M9.5 3v9l-1.5 8h3.5M14.5 3v9l1 8h3.5"/>',
+  core:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r=".6"/>',
+  arms:'<path d="M4 18c1.5-4 3.5-7 6.5-8.5M10.5 9.5c1-2.5 3.5-4.5 6-4.5 1.5 0 2.5 1.5 1.5 3l-2.5 3.5M15.5 11c2 .5 4 2.5 4 5-3 2.5-9 3-15.5 2"/>',
+  stretch:'<circle cx="12" cy="4.5" r="2"/><path d="M5 5.5l7 3 7-3M12 8.5v5M12 13.5l-5 6.5M12 13.5l5 6.5"/>',
+  mix:'<rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/>',
+  calis:'<path d="M3 5h18M7 5v3M17 5v3"/><circle cx="12" cy="9.5" r="2"/><path d="M8 8l4 4 4-4M12 12v5M12 17l-2.5 4M12 17l2.5 4"/>'
+};
+var EQUIP_ICON = {
+  none:'<circle cx="12" cy="4.5" r="2"/><path d="M12 7v7M7.5 10h9M12 14l-3.5 6M12 14l3.5 6"/>',
+  db:'<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
+  kb:'<circle cx="12" cy="15" r="5.5"/><path d="M8.5 11V8.5a3.5 3.5 0 0 1 7 0V11"/>',
+  bar:'<path d="M3 6h18M7 6v4M17 6v4M7 10v9M17 10v9"/>',
+  dip:'<path d="M3 9h7M14 9h7M5 9v10M8 9v10M16 9v10M19 9v10"/>'
+};
+function svgIcon(inner, cls){
+  return '<svg class="'+(cls||"ico")+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';
 }
+function catIcon(c){ return CAT_ICON[c] ? svgIcon(CAT_ICON[c]) : ""; }
+function catTags(cats){
+  return cats.map(function(c){ return '<span class="cat-tag">'+catIcon(c)+esc(catName(c))+'</span>'; }).join("");
+}
+/* Stern für einzelne Übungen - markierte stehen in Listen immer oben */
+function isExFav(id){ return (state.db.settings.exFavs || []).indexOf(id) > -1; }
+function toggleExFav(id){ state.db.settings.exFavs = selToggle(state.db.settings.exFavs || [], id); save(); }
+function exFavBtn(id){
+  var on = isExFav(id);
+  return '<button type="button" class="fav-btn ex-fav'+(on?' on':'')+'" data-exfav="'+id+'" aria-pressed="'+on+'" title="'+t("favorite")+'" aria-label="'+t("favorite")+'">'+(on?'\u2605':'\u2606')+'</button>';
+}
+/* Suche: Name (de/en), Muskeln, Hinweis - gefiltert wird im DOM, damit die Tastatur offen bleibt */
+function exSearchText(ex){
+  var m = EX_MUSCLES[ex.id] || [];
+  return [ex.name.de, ex.name.en, m[0], m[1], m[2], m[3], ex.hint.de, ex.hint.en].join(" ").toLowerCase();
+}
+function searchHTML(q, pre){
+  return '<div class="lib-search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>', "ico s-ico")+
+    '<input type="search" id="'+pre+'-q" value="'+esc(q||"")+'" placeholder="'+esc(t("searchPh"))+'" autocomplete="off" aria-label="'+esc(t("searchPh"))+'"></div>';
+}
+function applySearch(root, q){
+  q = (q || "").trim().toLowerCase();
+  var shown = 0;
+  root.querySelectorAll("[data-q]").forEach(function(el){
+    var ok = !q || el.getAttribute("data-q").indexOf(q) > -1;
+    el.style.display = ok ? "" : "none";
+    if(ok) shown++;
+  });
+  var leer = root.querySelector("[data-noresult]");
+  if(leer) leer.style.display = shown ? "none" : "";
+}
+var libQuery = "", buildQuery = "";
 /* Übungen gefiltert und sortiert (Standard = Reihenfolge der Liste, A–Z = alphabetisch) */
-function sortedExercises(cat, sort, equip, level){
+function sortedExercises(cat, sort, equip){
   var list = EXERCISES.filter(function(ex){
-    return !libHidden("ex:"+ex.id) && (cat==="all" || ex.cats.indexOf(cat) > -1) && exFits(ex, equip, level);
+    return !libHidden("ex:"+ex.id) && catMatch(cat, ex.cats) && equipMatch(equip, ex);
   });
   if(sort==="az") list = list.slice().sort(function(a, b){
     return tplText(a.name).localeCompare(tplText(b.name), currentLang());
   });
-  return list;
+  // markierte Übungen immer oben, Reihenfolge sonst unverändert
+  var fav = list.filter(function(ex){ return isExFav(ex.id); });
+  return fav.concat(list.filter(function(ex){ return !isExFav(ex.id); }));
 }
+/* Ausrüstung als Mehrfachauswahl: „Ich habe …“ */
 function filtersHTML(equip, level, pre){
-  return '<div class="lib-filters">'+
-    '<select id="'+pre+'-equip" aria-label="'+esc(t("equipLabel"))+'">'+
-      '<option value="all">'+esc(t("equipAll"))+'</option>'+
-      EQUIPS.map(function(e){ return '<option value="'+e.id+'"'+(equip===e.id?' selected':'')+'>'+esc(tplText(e))+'</option>'; }).join("")+
-    '</select>'+
-    '<select id="'+pre+'-level" aria-label="'+esc(t("spLevel"))+'">'+
-      '<option value="all">'+esc(t("lvlAll"))+'</option>'+
-      [1,2,3].map(function(l){ return '<option value="'+l+'"'+(String(level)===String(l)?' selected':'')+'>'+esc(t("lvl"+l))+'</option>'; }).join("")+
-    '</select></div>';
+  var sel = selArr(equip);
+  return '<div class="lib-equips"><span class="lib-lbl">'+esc(t("equipHave"))+'</span>'+EQUIPS.map(function(e){
+    return '<button type="button" class="lib-chip'+(sel.indexOf(e.id)>-1?' active':'')+'" data-'+pre+'equip="'+e.id+'" aria-pressed="'+(sel.indexOf(e.id)>-1)+'">'+
+      svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>';
+  }).join("")+'</div>';
 }
 function sortRowHTML(sort, attr){
   return '<div class="lib-sort">'+t("sortLabel")+
@@ -2320,6 +2501,41 @@ Object.assign(ILLU_POSES, {
   "worlds-greatest":    [Q(null,[60,48],[44,64],[[62,66,64,89,72,89],[30,84,16,88,14,89]],[[60,68,62,88]]),
                          Q(null,[60,48],[44,64],[[62,66,64,89,72,89],[30,84,16,88,14,89]],[[58,34,56,20],[60,68,62,88]])]
 });
+var P_HANGS = Q([57,24],[50,30],[50,58],[[50,72,50,86]],[[47,19,46,6]], gBar(6,30,70));
+var G_ROW = gBar(57,26,62)+'<path class="ip" d="M32 57V89"/>';
+var G_PB = gBar(50,40,70)+'<path class="ip" d="M44 50V89M66 50V89"/>';
+var G_SB = gBar(50,44,70)+'<path class="ip" d="M46 50V89"/>';
+var G_KB = gBar(50,30,50)+'<path class="ip" d="M34 50V89"/>';
+var G_PT = gBar(80,40,62)+'<path class="ip" d="M44 80V89M58 80V89"/>';
+var G_POLE = '<path class="ip" d="M20 6V89"/>';
+var G_MONKEY = gBar(6,8,92)+'<path class="ip" d="M20 3v6M40 3v6M60 3v6M80 3v6"/>';
+Object.assign(ILLU_POSES, {
+  "archer-row":         [Q(null,[38,76],[62,82],[[76,85,88,87,90,81]],[[40,66,44,57]], G_ROW), Q(null,[40,63],[62,74],[[76,80,88,87,90,81]],[[34,58,44,57],[48,64,56,57]], G_ROW)],
+  "chin-ups":           [P_HANG, P_PULL],
+  "commando-pull-ups":  [P_HANGS, Q([60,8],[50,16],[50,44],[[50,60,50,74]],[[44,14,46,6]], gBar(6,30,70))],
+  "parallel-bar-dips":  [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), Q(null,[54,38],[52,64],[[50,76,40,84,42,86]],[[44,40,56,50]], G_PB)],
+  "straight-bar-dips":  [Q(null,[50,24],[52,52],[[54,70,52,86]],[[54,38,56,50]], G_SB), Q(null,[60,40],[50,60],[[54,76,50,88]],[[50,42,56,50]], G_SB)],
+  "support-hold":       [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), null],
+  "korean-dips":        [Q(null,[54,24],[54,52],[[62,68,66,86,72,88]],[[48,38,44,50]], G_KB), Q(null,[58,38],[58,64],[[66,76,72,88,78,89]],[[48,34,44,50]], G_KB)],
+  "hanging-knee-raise": [P_HANGS, qWith(P_HANGS,{ l:[[66,56,66,72,72,72]] })],
+  "hanging-leg-raise":  [P_HANGS, qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] })],
+  "hanging-l-sit":      [qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] }), null],
+  "l-sit":              [Q(null,[48,44],[50,70],[[68,70,86,70,88,66]],[[52,58,54,80]], G_PT), null],
+  "windshield-wipers":  [qWith(P_HANG,{ l:[[38,50,26,40],[40,54,28,44]] }), qWith(P_HANG,{ l:[[62,50,74,40],[60,54,72,44]] })],
+  "muscle-ups":         [Q([56,36],[50,44],[50,70],[[50,82,50,88]],[[40,48,46,40]], gBar(40,28,72)), Q(null,[50,18],[50,46],[[50,62,50,76]],[[53,31,54,40]], gBar(40,28,72))],
+  "monkey-bar-traverse":[Q([56,24],[50,30],[50,58],[[50,72,48,86]],[[42,18,38,6],[56,18,62,6]], G_MONKEY), Q([62,24],[56,30],[56,58],[[56,72,54,86]],[[62,18,68,6],[48,18,44,6]], G_MONKEY)],
+  "bar-traverse":       [qShift(P_HANG,-8,0), qShift(P_HANG,8,0)],
+  "human-flag":         [Q([28,32],[30,40],[54,42],[[62,30,70,40]],[[24,34,20,30],[26,48,20,58]], G_POLE), Q([28,32],[30,40],[58,40],[[74,40,90,40]],[[24,34,20,30],[26,48,20,58]], G_POLE)],
+  "skin-the-cat":       [P_HANGS, Q([46,34],[50,24],[58,42],[[64,24,72,12]],[[48,15,46,6]], gBar(6,30,70))],
+  "archer-push-ups":    [P_PH, qWith(P_PL,{ a:[[60,71,70,89],[74,82,86,88]] })],
+  "pistol-squats":      [qWith(P_ST,{ l:[[50,70,50,89,58,89],[62,62,68,78,74,76]], a:[[63,25,76,25]] }), Q(null,[48,46],[40,72],[[56,66,50,89,58,89],[58,74,76,74,80,70]],[[62,48,76,48]])],
+  "dragon-flags":       [Q([16,82],[24,84],[40,60],[[52,42,62,26,64,22]],[[14,86,8,82]]), Q([16,82],[24,84],[46,76],[[64,70,84,64,86,60]],[[14,86,8,82]])],
+  "clap-push-ups":      [P_PL, qWith(qShift(P_PH,0,-8),{ a:[[72,62,76,70]] })],
+  "tuck-jumps":         [P_SQ, Q(null,[50,14],[50,42],[[64,40,58,54,62,56]],[[58,28,64,34]])]
+});
+Object.assign(ILLU_POSES, {
+  "reverse-crunch": [qWith(P_LB,{ l:[[52,66,68,66]] }), Q(null,[22,84],[44,80],[[42,62,56,56]],[[32,87,44,87]])]
+});
 var ILLU = {};
 Object.keys(ILLU_POSES).forEach(function(id){
   var pp = ILLU_POSES[id];
@@ -2426,7 +2642,7 @@ var EX_INFO = {
   "toe-touches":["Rückenlage, Beine senkrecht nach oben gestreckt.|Schultern anheben und mit den Händen Richtung Zehen greifen.|Langsam zurück, die Beine bleiben oben.","Lie on your back, legs straight up.|Lift your shoulders and reach for your toes.|Lower slowly, legs stay up."],
   "plank-shoulder-taps":["Hoher Liegestütz, Füße etwas breiter.|Mit einer Hand die gegenüberliegende Schulter antippen.|Hand zurück, Seite wechseln, das Becken nicht kippen lassen.","High plank, feet a little wider.|Tap the opposite shoulder with one hand.|Return the hand and switch, don't let your hips rock."],
   "slow-mountain-climbers":["Hoher Liegestütz, Hände unter den Schultern.|Ein Knie langsam und kontrolliert zur Brust ziehen, kurz halten.|Zurückführen und Seite wechseln, Bauch die ganze Zeit fest.","High plank, hands under your shoulders.|Slowly draw one knee to your chest and hold briefly.|Return and switch sides, abs tight throughout."],
-  "toes-to-bar":["An einer sicheren Stange hängen, Arme gestreckt.|Knie zur Brust ziehen oder die Füße bis zur Stange bringen.|Kontrolliert senken, ohne zu schwingen.","Hang from a secure bar, arms straight.|Pull your knees to your chest or bring your feet to the bar.|Lower with control, without swinging."]
+  "toes-to-bar":["An einer sicheren Stange hängen, Arme gestreckt.|Die Füße bis zur Stange bringen (leichter: Knie zur Brust).|Kontrolliert senken, ohne zu schwingen.","Hang from a secure bar, arms straight.|Pull your knees to your chest or bring your feet to the bar.|Lower with control, without swinging."]
 };
 
 /* Haltung je Übung: [Haltung DE (a|b), Vermeiden DE, Haltung EN (a|b), Vermeiden EN]
@@ -2522,6 +2738,29 @@ var EX_POSTURE = {
 };
 
 Object.assign(EX_INFO, {
+  "reverse-crunch":["Rückenlage, Arme neben dem Körper, Knie über der Hüfte angewinkelt.|Knie Richtung Brust ziehen und das Becken ein Stück vom Boden abrollen.|Langsam Wirbel für Wirbel zurück, ohne Schwung.","Lie on your back, arms by your sides, knees bent over your hips.|Pull your knees towards your chest and curl your pelvis off the floor.|Lower slowly one vertebra at a time, no momentum."],
+  "archer-row":["Unter eine niedrige Stange legen, breiter Griff.|Zu einer Hand hochziehen, der andere Arm streckt sich seitlich.|Absenken, Seite nach jedem Intervall wechseln.","Lie under a low bar with a wide grip.|Pull up towards one hand while the other arm straightens to the side.|Lower, switch sides after each interval."],
+  "chin-ups":["Im Untergriff an der Stange hängen, Hände schulterbreit.|Schultern nach unten ziehen und das Kinn über die Stange ziehen.|Kontrolliert in den gestreckten Hang absenken.","Hang with an underhand grip, hands shoulder-width.|Pull your shoulders down and your chin over the bar.|Lower with control to a full hang."],
+  "commando-pull-ups":["Die Stange längs vor dir greifen, Hände dicht hintereinander.|Den Kopf auf eine Seite der Stange hochziehen.|Absenken, im nächsten Intervall zur anderen Seite.","Grip the bar lengthwise, hands close one behind the other.|Pull your head up to one side of the bar.|Lower, pull to the other side next interval."],
+  "parallel-bar-dips":["Im Stütz zwischen zwei Holmen beginnen, Arme gestreckt.|Absenken, bis die Oberarme etwa waagerecht sind.|Kraftvoll hochdrücken.","Start in a support between two bars, arms straight.|Lower until your upper arms are about horizontal.|Press back up."],
+  "straight-bar-dips":["Über der Stange in den Stütz, Stange vor der Hüfte.|Nach vorn neigen und absenken, bis die Brust nah an der Stange ist.|Wieder hochdrücken.","Support yourself above the bar, bar in front of your hips.|Lean forward and lower until your chest is near the bar.|Press back up."],
+  "support-hold":["Auf Barren oder Parallettes in den Stütz drücken.|Arme gestreckt, Schultern nach unten gedrückt.|Ruhig halten und atmen.","Press up into a support on dip bars or parallettes.|Arms straight, shoulders pushed down.|Hold steadily and breathe."],
+  "korean-dips":["Mit dem Rücken zur Stange, Stange hinter der Hüfte greifen.|Füße nach vorn, absenken, bis die Stange am Rücken ist.|Kontrolliert wieder hochdrücken.","Back to the bar, grip it behind your hips.|Walk your feet forward and lower until the bar is at your back.|Press back up with control."],
+  "hanging-knee-raise":["An der Stange hängen, Arme gestreckt.|Knie kontrolliert zur Brust ziehen.|Langsam senken, ohne zu schwingen.","Hang from the bar, arms straight.|Draw your knees to your chest with control.|Lower slowly without swinging."],
+  "hanging-leg-raise":["An der Stange hängen, Beine gestreckt.|Gestreckte Beine bis auf Hüfthöhe oder höher heben.|Kontrolliert senken.","Hang from the bar, legs straight.|Raise your straight legs to hip height or higher.|Lower with control."],
+  "hanging-l-sit":["An der Stange hängen.|Gestreckte Beine waagerecht nach vorn heben.|Halten, ruhig atmen.","Hang from the bar.|Raise your straight legs forward to horizontal.|Hold and breathe calmly."],
+  "l-sit":["Auf Barren oder Parallettes stützen.|Gestreckte Beine waagerecht nach vorn heben.|Halten, Schultern nach unten drücken.","Support yourself on dip bars or parallettes.|Raise your straight legs to horizontal.|Hold, pushing your shoulders down."],
+  "windshield-wipers":["Im Hang die gestreckten Beine hoch zur Stange bringen.|Beine kontrolliert zur einen Seite kippen.|Über die Mitte zur anderen Seite führen.","In the hang, bring your straight legs up to the bar.|Tilt your legs to one side with control.|Move through the middle to the other side."],
+  "muscle-ups":["Im Hang beginnen, leicht falscher Griff.|Explosiv zur Brust ziehen und die Handgelenke über die Stange bringen.|In den Stütz drücken, kontrolliert zurück.","Start in a hang with a slight false grip.|Pull explosively and bring your wrists over the bar.|Press into the support, return with control."],
+  "monkey-bar-traverse":["An der Hangelleiter hängen.|Mit einer Hand zur nächsten Sprosse greifen.|Im Wechsel weiterhangeln.","Hang from the monkey bars.|Reach to the next rung with one hand.|Keep traversing, alternating hands."],
+  "bar-traverse":["An einer langen Stange hängen.|Hände abwechselnd seitlich versetzen.|Entlang und zurück hangeln.","Hang from a long bar.|Shift your hands sideways one after the other.|Traverse along and back."],
+  "human-flag":["Senkrechte Stange greifen: obere Hand Untergriff, untere Obergriff.|Unten wegdrücken, oben ziehen, Beine anheben (erst angewinkelt).|Seitlich halten, Seite nach jedem Intervall wechseln.","Grip a vertical pole: top hand underhand, bottom hand overhand.|Push with the bottom arm, pull with the top, lift your legs (tucked at first).|Hold sideways, switch sides after each interval."],
+  "skin-the-cat":["Im Hang die Knie zur Brust ziehen.|Beine zwischen den Armen durchführen und kontrolliert durch die Schultern drehen.|Nur so weit wie angenehm, dann zurück.","From the hang, pull your knees to your chest.|Pass your legs through your arms and rotate through your shoulders with control.|Only as far as comfortable, then return."],
+  "archer-push-ups":["Sehr breiter Liegestütz.|Zu einer Hand absenken, der andere Arm streckt sich seitlich.|Hochdrücken, Seite nach jedem Intervall wechseln.","Very wide push-up position.|Lower towards one hand while the other arm straightens.|Press up, switch sides after each interval."],
+  "pistol-squats":["Auf einem Bein stehen, das andere Bein nach vorn gestreckt.|Langsam tief auf dem Standbein absenken, Arme nach vorn.|Hochdrücken, Seite nach jedem Intervall wechseln.","Stand on one leg, the other leg straight in front.|Lower slowly and deep on the standing leg, arms forward.|Push up, switch sides after each interval."],
+  "dragon-flags":["Auf den Rücken legen, hinter dem Kopf festhalten (Bank oder schweres Möbel).|Den gestreckten Körper bis auf die Schultern hochheben.|Wie ein Brett langsam absenken.","Lie on your back and hold on behind your head (bench or heavy furniture).|Lift your straight body onto your shoulders.|Lower slowly like a plank."],
+  "clap-push-ups":["Normaler Liegestütz.|Explosiv hochdrücken, sodass die Hände abheben, und klatschen.|Weich mit leicht gebeugten Armen landen.","Normal push-up position.|Press up explosively so your hands leave the floor, and clap.|Land softly with slightly bent arms."],
+  "tuck-jumps":["Hüftbreit stehen, leicht in die Knie.|Explosiv hochspringen und die Knie zur Brust ziehen.|Weich landen und direkt weiterspringen.","Stand hip-width, knees slightly bent.|Jump explosively and pull your knees to your chest.|Land softly and go straight into the next jump."],
   "wall-push-ups":["Etwa eine Armlänge vor einer Wand stehen, Hände auf Schulterhöhe.|Brust zur Wand senken, der Körper bleibt gerade.|Wieder wegdrücken.","Stand about an arm's length from a wall, hands at shoulder height.|Lower your chest towards the wall, body straight.|Push back away."],
   "close-grip-push-ups":["Hände schulterbreit, etwas enger als beim normalen Liegestütz.|Absenken, die Ellbogen streifen am Körper entlang.|Hochdrücken, bis die Arme gestreckt sind.","Hands shoulder-width, a bit narrower than a normal push-up.|Lower with your elbows brushing past your ribs.|Press up until your arms are straight."],
   "diamond-push-ups":["Hände unter der Brust, Daumen und Zeigefinger bilden ein Dreieck.|Körper gerade, Brust Richtung Hände senken.|Kraftvoll hochdrücken, Ellbogen bleiben nah am Körper.","Hands under your chest, thumbs and index fingers form a triangle.|Keep your body straight and lower your chest to your hands.|Press up, elbows stay close to your body."],
@@ -2554,6 +2793,29 @@ Object.assign(EX_INFO, {
   "worlds-greatest":["Großer Ausfallschritt nach vorn, beide Hände innen neben den vorderen Fuß.|Die innere Hand zur Decke drehen, der Blick folgt der Hand.|Zurückführen, ein paar Mal wiederholen, Seite nach jedem Intervall wechseln.","Big lunge forward, both hands inside your front foot.|Rotate the inside hand up to the ceiling, eyes follow the hand.|Bring it back, repeat a few times, switch sides after each interval."]
 });
 Object.assign(EX_POSTURE, {
+  "reverse-crunch":["Kopf und Schultern bleiben entspannt am Boden.|Die Bewegung kommt aus dem Bauch, nicht aus dem Schwung der Beine.","Die Beine nach hinten schleudern.","Head and shoulders stay relaxed on the floor.|The movement comes from your abs, not from swinging your legs.","Flinging your legs back."],
+  "archer-row":["Körper steif wie ein Brett.|Schulterblatt der Zugseite nach hinten unten.","Die Hüfte durchhängen lassen.","Body rigid like a plank.|Draw the working shoulder blade back and down.","Letting your hips sag."],
+  "chin-ups":["Rumpf fest, Beine ruhig.|Ellbogen zeigen nach unten.","Mit Schwung aus den Beinen ziehen.","Core braced, legs still.|Elbows point down.","Kicking with your legs for momentum."],
+  "commando-pull-ups":["Rumpf fest, nicht ins Drehen geraten.|Schultern tief.","Mit dem Oberkörper schwingen.","Core tight, don't spin.|Shoulders down.","Swinging your torso."],
+  "parallel-bar-dips":["Schultern tief, Oberkörper leicht nach vorn.|Ellbogen nach hinten, nicht nach außen.","Tiefer gehen als schmerzfrei möglich.","Shoulders down, torso slightly forward.|Elbows back, not out.","Going deeper than is pain-free."],
+  "straight-bar-dips":["Beine leicht nach vorn als Gegengewicht.|Schultern weg von den Ohren.","Die Schultern nach vorn einrollen lassen.","Legs slightly forward as a counterweight.|Shoulders away from your ears.","Letting your shoulders roll forward."],
+  "support-hold":["Ellbogen gestreckt, Brust offen.|Rumpf fest, Beine ruhig.","Die Schultern zu den Ohren sinken lassen.","Elbows locked, chest open.|Core braced, legs still.","Letting your shoulders sink to your ears."],
+  "korean-dips":["Schultern aktiv, nicht in die Endposition fallen.|Nur mit guter Schulterbeweglichkeit üben.","Ruckartig tief fallen lassen.","Shoulders active, don't collapse at the bottom.|Only with good shoulder mobility.","Dropping down abruptly."],
+  "hanging-knee-raise":["Schultern aktiv, Becken oben leicht einrollen.|Oberkörper ruhig.","Mit Schwung aus dem Rücken arbeiten.","Active shoulders, tuck your pelvis at the top.|Upper body still.","Swinging from your back."],
+  "hanging-leg-raise":["Beine zusammen, Knie gestreckt.|Kein Schwung.","Die Beine fallen lassen.","Legs together, knees straight.|No swinging.","Dropping your legs."],
+  "hanging-l-sit":["Schultern aktiv, Beine zusammen.|Zehen gestreckt.","Knie beugen, wenn es schwer wird – lieber kürzer halten.","Active shoulders, legs together.|Toes pointed.","Bending your knees when it gets hard – hold shorter instead."],
+  "l-sit":["Arme gestreckt, Schultern tief.|Beine zusammen (leichter: Knie angewinkelt).","Mit rundem Rücken zusammensacken.","Arms straight, shoulders down.|Legs together (easier: knees bent).","Slumping with a rounded back."],
+  "windshield-wipers":["Schultern aktiv, Oberkörper ruhig.|Bewegung aus der Körpermitte.","Die Beine von Seite zu Seite schleudern.","Active shoulders, steady upper body.|Move from your core.","Flinging your legs side to side."],
+  "muscle-ups":["Stange nah am Körper halten.|Erst sichere Klimmzüge und Dips beherrschen.","Mit einem Arm zuerst hochkommen.","Keep the bar close to your body.|Master solid pull-ups and dips first.","Getting one arm over first."],
+  "monkey-bar-traverse":["Schultern aktiv, Rumpf fest.|Ruhig und kontrolliert greifen.","Unkontrolliert schwingen.","Active shoulders, core braced.|Reach calmly and with control.","Swinging uncontrolled."],
+  "bar-traverse":["Schultern aktiv, Körper ruhig.|Kleine Schritte mit den Händen.","Mit den Beinen Schwung holen.","Active shoulders, still body.|Small hand steps.","Using your legs for momentum."],
+  "human-flag":["Unterer Arm gestreckt und gesperrt.|Seitlicher Rumpf fest angespannt.","Ohne sichere Grundkraft ganz gestreckt versuchen.","Bottom arm straight and locked.|Side core tightly braced.","Trying the full flag without solid base strength."],
+  "skin-the-cat":["Langsam, ohne Schwung.|Schultern aktiv halten.","In die Endposition fallen lassen.","Slowly, no momentum.|Keep your shoulders active.","Dropping into the end position."],
+  "archer-push-ups":["Körper eine Linie.|Ellbogen des Arbeitsarms nah am Körper.","Die Hüfte verdrehen.","Body in one line.|Working elbow close to your body.","Twisting your hips."],
+  "pistol-squats":["Standknie in Fußrichtung, Ferse unten.|Rücken lang.","Das Knie nach innen fallen lassen.","Standing knee over your toes, heel down.|Long back.","Letting the knee cave in."],
+  "dragon-flags":["Körper von Schulter bis Fuß gerade.|Unterer Rücken fest, kein Hohlkreuz.","In der Hüfte abknicken.","Body straight from shoulders to feet.|Lower back braced, no arching.","Bending at the hips."],
+  "clap-push-ups":["Rumpf fest, Körper gerade.|Weich abfangen.","Mit gestreckten Armen hart landen.","Core tight, body straight.|Catch yourself softly.","Landing hard on locked arms."],
+  "tuck-jumps":["Oberkörper aufrecht.|Knie folgen bei der Landung der Fußrichtung.","Steifbeinig landen.","Upper body upright.|Knees track your toes on landing.","Landing stiff-legged."],
   "wall-push-ups":["Körper eine Linie, die Fersen dürfen sich heben.|Ellbogen etwa 45° vom Körper.","Mit dem Po nach hinten ausweichen.","Body in one line, heels may lift.|Elbows about 45° from your body.","Sticking your hips back."],
   "close-grip-push-ups":["Körper gerade, Blick knapp vor die Hände.|Schultern weg von den Ohren.","Die Hüfte durchhängen lassen.","Body straight, eyes just ahead of your hands.|Shoulders away from your ears.","Letting your hips sag."],
   "diamond-push-ups":["Linie von Kopf bis Ferse, Gesäß fest.|Ellbogen zeigen nach hinten.","Die Ellbogen seitlich ausstellen.","One line from head to heels, glutes tight.|Elbows point back.","Flaring your elbows out."],
@@ -2590,6 +2852,29 @@ Object.assign(EX_POSTURE, {
    Bei Dehnübungen: was gedehnt wird. Grundlage: gängige Übungsbeschreibungen (u. a. ACE-Übungsbibliothek);
    Beinheben z. B. vor allem Hüftbeuger, der Bauch stabilisiert. */
 var EX_MUSCLES = {
+  "reverse-crunch":["Gerader Bauch (unterer Anteil)","Hüftbeuger, schräge Bauchmuskeln","Abs (lower part)","Hip flexors, obliques"],
+  "archer-row":["Breiter Rückenmuskel, oberer Rücken, Bizeps","Hintere Schulter, Rumpf","Lats, upper back, biceps","Rear delts, core"],
+  "chin-ups":["Bizeps, breiter Rückenmuskel","Oberer Rücken, Unterarme","Biceps, lats","Upper back, forearms"],
+  "commando-pull-ups":["Breiter Rückenmuskel, Bizeps","Rumpf, Unterarme (Griff)","Lats, biceps","Core, forearms (grip)"],
+  "parallel-bar-dips":["Trizeps, Brust","Vordere Schulter","Triceps, chest","Front delts"],
+  "straight-bar-dips":["Brust, Trizeps","Schultern, Rumpf","Chest, triceps","Shoulders, core"],
+  "support-hold":["Schulterstabilität, Trizeps","Rumpf","Shoulder stability, triceps","Core"],
+  "korean-dips":["Trizeps, Brust, Schultern","Oberer Rücken, Rumpf","Triceps, chest, shoulders","Upper back, core"],
+  "hanging-knee-raise":["Hüftbeuger, gerader Bauch","Unterarme (Griff), Schultern","Hip flexors, abs","Forearms (grip), shoulders"],
+  "hanging-leg-raise":["Hüftbeuger, gerader Bauch","Unterarme (Griff), Schultern","Hip flexors, abs","Forearms (grip), shoulders"],
+  "hanging-l-sit":["Gerader Bauch, Hüftbeuger","Unterarme (Griff), Oberschenkel vorn","Abs, hip flexors","Forearms (grip), quads"],
+  "l-sit":["Gerader Bauch, Hüftbeuger, Trizeps","Schultern, Oberschenkel vorn","Abs, hip flexors, triceps","Shoulders, quads"],
+  "windshield-wipers":["Schräge Bauchmuskeln, Rumpf","Hüftbeuger, Unterarme (Griff)","Obliques, core","Hip flexors, forearms (grip)"],
+  "muscle-ups":["Breiter Rückenmuskel, Brust, Trizeps","Schultern, Bizeps, Rumpf","Lats, chest, triceps","Shoulders, biceps, core"],
+  "monkey-bar-traverse":["Unterarme (Griff), breiter Rückenmuskel","Schultern, Rumpf","Forearms (grip), lats","Shoulders, core"],
+  "bar-traverse":["Unterarme (Griff), breiter Rückenmuskel","Schultern, Rumpf","Forearms (grip), lats","Shoulders, core"],
+  "human-flag":["Schultern, seitlicher Rumpf","Unterarme (Griff), breiter Rückenmuskel","Shoulders, lateral core","Forearms (grip), lats"],
+  "skin-the-cat":["Schultern, Rücken, Rumpf","Schulterbeweglichkeit, Unterarme","Shoulders, back, core","Shoulder mobility, forearms"],
+  "archer-push-ups":["Brust, Trizeps (Arbeitsarm)","Schultern, Rumpf","Chest, triceps (working arm)","Shoulders, core"],
+  "pistol-squats":["Oberschenkel vorn, Gesäß","Seitliches Gesäß, Rumpf, Gleichgewicht","Quads, glutes","Side glutes, core, balance"],
+  "dragon-flags":["Gerader Bauch, tiefe Bauchmuskeln","Hüftbeuger, breiter Rückenmuskel","Abs, deep core","Hip flexors, lats"],
+  "clap-push-ups":["Brust, Trizeps, Schultern (Schnellkraft)","Rumpf","Chest, triceps, shoulders (power)","Core"],
+  "tuck-jumps":["Oberschenkel vorn, Gesäß, Waden","Hüftbeuger, Rumpf, Ausdauer","Quads, glutes, calves","Hip flexors, core, endurance"],
   "burpees":["Oberschenkel vorn, Gesäß, Brust","Schultern, Trizeps, Rumpf, Ausdauer","Quads, glutes, chest","Shoulders, triceps, core, endurance"],
   "jump-squats":["Oberschenkel vorn, Gesäß, Waden","Oberschenkel hinten, Rumpf","Quads, glutes, calves","Hamstrings, core"],
   "mountain-climbers":["Rumpf, Hüftbeuger, Schultern","Oberschenkel vorn, Ausdauer","Core, hip flexors, shoulders","Quads, endurance"],
@@ -2715,7 +3000,7 @@ function musclesLabel(ex){ return t(ex.cats.indexOf("stretch") > -1 ? "musStretc
 
 /* Info-Fenster: großes Piktogramm, Anleitung, Tipp. Im Timer läuft die Zeit sichtbar weiter. */
 var infoTimer = null;
-function openExInfo(exId, live){
+function openExInfo(exId, live, lib){
   var ex = findExercise(exId), info = EX_INFO[exId];
   if(!ex || !info) return;
   var lang = currentLang()==="en" ? 1 : 0;
@@ -2738,8 +3023,19 @@ function openExInfo(exId, live){
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(p[lang*2+1])+'</div>';
     })()+
     '<div class="info-tip"><b>'+t("tip")+':</b> '+esc(tplText(ex.hint))+'</div>'+
+    (lib ? '<div class="info-lib">'+
+      '<button type="button" class="tpl-adopt" data-infoblock>'+ICON_PLUS+' '+t("adoptBlock")+'</button>'+
+      '<button type="button" class="tpl-hide" data-infohide>'+t("hideEx")+'</button></div>' : '')+
     '<button class="btn btn-secondary" data-close>'+t("close")+'</button>'+
   '</div></div>';
+  if(lib){
+    root.querySelector("[data-infoblock]").addEventListener("click", function(){
+      adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) }));
+    });
+    root.querySelector("[data-infohide]").addEventListener("click", function(){
+      libHide("ex:"+exId); close(); if(lib.onChange) lib.onChange();
+    });
+  }
   function close(){
     if(infoTimer){ clearInterval(infoTimer); infoTimer = null; }
     root.innerHTML = "";
@@ -2881,8 +3177,9 @@ function topbar(title, opts){
   opts = opts || {};
   var back = opts.back ? '<button class="iconbtn back" data-back="'+opts.back+'" title="'+t("back")+'">'+ICON_BACK+'</button>' : "";
   var right = opts.right || "";
-  var brand = opts.home ? '<span class="kodak-word">Kodak</span><span class="deck-word">Stereo Cassette Deck</span>' : "";
-  return '<div class="topbar'+(opts.home?' home':'')+'">'+back+'<h1>'+brand+'<span class="ttl">'+esc(title)+'</span></h1>'+right+'</div>';
+  var brand = opts.home ? '<span class="kodak-word">C60<small>Modular Training Timer</small></span><span class="deck-word">Stereo Cassette Deck</span>' : "";
+  return '<div class="topbar'+(opts.home?' home':'')+'">'+back+'<h1>'+brand+'<span class="ttl">'+esc(title)+'</span>'+
+    (opts.sub ? '<span class="ttl-sub">'+esc(opts.sub)+'</span>' : '')+'</h1>'+right+'</div>';
 }
 var SEP = ' <span class="sep-dot">&middot;</span> ';
 
@@ -2893,11 +3190,22 @@ function homeOpen(key){
   var o = state.db.settings.homeOpen || {};
   return o[key] != null ? o[key] : HOME_OPEN_DEFAULT[key];
 }
-function sektion(key, titel, anzahl, inhalt){
-  var auf = homeOpen(key);
-  return '<div class="section-title lined tpl-toggle home-sec'+(auf?'':' zu')+'" data-sec="'+key+'" role="button" tabindex="0" aria-expanded="'+auf+'">'+
-      esc(titel)+'<span class="sec-count">'+anzahl+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></div>'+
-    (auf ? '<div class="sec-body">'+inhalt+'</div>' : '');
+var HOME_ICON = {
+  fav:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
+  timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 3h5M18 7l1.5-1.5"/>',
+  blocks:'<rect x="4" y="4" width="16" height="5" rx="1.5"/><rect x="4" y="11" width="16" height="4" rx="1.5"/><rect x="4" y="17" width="16" height="3" rx="1.5"/>',
+  lib:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>'
+};
+function sektion(key, titel, anzahl, inhalt, unter){
+  var auf = homeOpen(key), link = key==="lib";
+  return '<div class="home-tile'+(auf && !link ? ' offen' : '')+'" '+(link ? 'data-nav="#library"' : 'data-sec="'+key+'"')+
+      ' role="button" tabindex="0"'+(link ? '' : ' aria-expanded="'+auf+'"')+'>'+
+      '<span class="ht-ico">'+svgIcon(HOME_ICON[key])+'</span>'+
+      '<span class="ht-txt"><b>'+esc(titel)+'</b><small>'+esc(unter||"")+'</small></span>'+
+      '<span class="sec-count">'+anzahl+'</span>'+
+      (link ? '<span class="chip chev">'+ICON_CHEV+'</span>' : '<span class="tpl-chev'+(auf?'':' zu')+'" aria-hidden="true">&#9662;</span>')+
+    '</div>'+
+    (auf && !link ? '<div class="sec-body">'+inhalt+'</div>' : '');
 }
 function renderHome(){
   var favHTML = favItemsHTML();
@@ -2928,20 +3236,17 @@ function renderHome(){
   }
 
   app.innerHTML =
-    topbar(t("workouts"), { home:true, right:
+    topbar("BLOC", { home:true, sub:"Modular Training Builder", right:
       '<button class="iconbtn" data-nav="#settings" title="'+t("settings")+'">'+ICON_SETTINGS+'</button>'
     }) +
     installTipHTML() +
-    (favCount ? sektion("fav", t("favorites"), favCount, favHTML) : '') +
-    sektion("timer", t("timerWorkouts"), ws.length, items) +
-    sektion("blocks", t("singleBlocks"), bs.length, blockItems) +
-    sektion("lib", t("library"), EXERCISES.length + LIB_WORKOUTS.length,
-      '<div class="list-item entry lib-entry" data-nav="#library">'+
-        '<span class="playbtn tp lib-ico" aria-hidden="true">'+ICON_BOOK+'</span>'+
-        '<div class="meta"><div class="name">'+t("libEntry")+'</div>'+
-        '<div class="sub">'+t("libEntrySub", { e:EXERCISES.length, w:LIB_WORKOUTS.length, m:(state.db.myWorkouts||[]).length })+'</div></div>'+
-        '<span class="chip chev">'+ICON_CHEV+'</span>'+
-      '</div>') +
+    '<div class="home-tiles">'+
+    (favCount ? sektion("fav", t("favorites"), favCount, favHTML, t("htFav")) : '') +
+    sektion("timer", t("timerWorkouts"), ws.length, items, t("htTimer")) +
+    sektion("blocks", t("singleBlocks"), bs.length, blockItems, t("htBlocks")) +
+    sektion("lib", t("library"), EXERCISES.length + LIB_WORKOUTS.length, "",
+      t("libEntrySub", { e:EXERCISES.length, w:LIB_WORKOUTS.length, m:(state.db.myWorkouts||[]).length })) +
+    '</div>' +
     KODAK_BADGE + DECK_BADGE +
     '<div class="fab-backdrop hidden" data-fabclose></div>' +
     '<div class="fab-menu hidden" id="fab-menu">'+
@@ -3365,12 +3670,51 @@ function favItemsHTML(){
 
 /* ============ Bibliothek-Seite ============ */
 function catChipsHTML(active, attr, ohne){
+  var sel = selArr(active);
   var cats = [{ id:"all" }].concat(LIB_CATS.filter(function(c){ return !ohne || ohne.indexOf(c.id) < 0; }));
   return '<div class="lib-chips">'+cats.map(function(c){
     var label = c.id==="all" ? t("catAll") : tplText(c);
-    return '<button type="button" class="lib-chip'+(active===c.id?' active':'')+'" style="--cat:'+catVar(c.id)+'" '+attr+'="'+c.id+'">'+esc(label)+'</button>';
+    var on = c.id==="all" ? !sel.length : sel.indexOf(c.id) > -1;
+    return '<button type="button" class="lib-chip'+(on?' active':'')+'" '+attr+'="'+c.id+'" aria-pressed="'+on+'">'+catIcon(c.id)+esc(label)+'</button>';
   }).join("")+'</div>';
 }
+function filterBarHTML(catSel, equipSel, pre, ohne){
+  catSel = selArr(catSel); equipSel = selArr(equipSel);
+  var catTxt = catSel.length ? catSel.map(catName).join(", ") : t("catAll");
+  var eqTxt = equipSel.length ? equipSel.map(equipName).join(", ") : t("equipAny");
+  function knopf(art, label, wert, aktiv){
+    return '<button type="button" class="filter-dd'+(aktiv?' on':'')+'" data-'+pre+'dd="'+art+'"'+(ohne ? ' data-ohne="'+ohne.join(",")+'"' : '')+'>'+
+      '<span class="fd-l">'+esc(label)+'</span><span class="fd-v">'+esc(wert)+'</span><span class="fd-c" aria-hidden="true">&#9662;</span></button>';
+  }
+  return '<div class="filter-bar">'+knopf("cat", t("fCat"), catTxt, catSel.length)+knopf("equip", t("equipHave"), eqTxt, equipSel.length)+'</div>';
+}
+/* Auswahlliste im Einblendfenster, Mehrfachauswahl */
+function openFilterSheet(art, sel, ohne, onDone){
+  sel = selArr(sel);
+  var opts = art==="cat"
+    ? LIB_CATS.filter(function(c){ return !ohne || ohne.indexOf(c.id) < 0; }).map(function(c){ return { id:c.id, label:tplText(c), ico:catIcon(c.id) }; })
+    : EQUIPS.map(function(e){ return { id:e.id, label:tplText(e), ico:svgIcon(EQUIP_ICON[e.id]) }; });
+  var root = document.getElementById("overlayRoot");
+  function draw(){
+    root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet fs-sheet">'+
+      '<h3>'+esc(t(art==="cat" ? "fCat" : "equipHave"))+'</h3>'+
+      '<div class="fs-hint">'+esc(t(art==="cat" ? "fCatHint" : "fEquipHint"))+'</div>'+
+      '<button type="button" class="fs-opt'+(sel.length?'':' on')+'" data-fsall><span class="fs-ico"></span><span>'+esc(t(art==="cat" ? "catAll" : "equipAny"))+'</span><span class="fs-check">&#10003;</span></button>'+
+      opts.map(function(o){
+        var on = sel.indexOf(o.id) > -1;
+        return '<button type="button" class="fs-opt'+(on?' on':'')+'" data-fsopt="'+o.id+'" aria-pressed="'+on+'"><span class="fs-ico">'+o.ico+'</span><span>'+esc(o.label)+'</span><span class="fs-check">&#10003;</span></button>';
+      }).join("")+
+      '<button class="btn btn-primary" data-fsdone style="margin-top:14px;">'+t("timeDone")+'</button>'+
+    '</div></div>';
+    root.querySelectorAll("[data-fsopt]").forEach(function(b){ b.addEventListener("click", function(){ sel = selToggle(sel, b.getAttribute("data-fsopt")); draw(); }); });
+    root.querySelector("[data-fsall]").addEventListener("click", function(){ sel = []; draw(); });
+    root.querySelector("[data-fsdone]").addEventListener("click", fertig);
+    root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) fertig(); });
+  }
+  function fertig(){ root.innerHTML = ""; onDone(sel); }
+  draw();
+}
+function chipToggle(sel, id){ return id==="all" ? [] : selToggle(sel, id); }
 function showToast(text){
   var old = document.getElementById("toast");
   if(old) old.remove();
@@ -3383,20 +3727,20 @@ function showToast(text){
 }
 function renderLibrary(){
   var s = state.db.settings;
-  var tab = ["exercises","mine","stretch"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
-  var cat = s.libCat || "all";
+  var tab = ["exercises","mine","calis","stretch"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
+  var cat = selArr(s.libCats || s.libCat);
   var sort = s.libSort === "az" ? "az" : "std";
-  var equip = s.libEquip || "all", level = s.libLevel || "all";
+  var equip = selArr(s.libEquips), level = "all";
   var hiddenCount = 0, list = "", controls = "";
   var surpriseBtn = '<button type="button" class="my-new surprise" data-surprise>\u2728 '+t("surprise")+'</button>';
 
   if(tab === "workouts"){
-    controls = surpriseBtn + catChipsHTML(cat, "data-libcat", ["stretch"]) + filtersHTML(equip, level, "l");
+    controls = surpriseBtn + filterBarHTML(cat, equip, "l", ["stretch","calis"]);
     LIB_WORKOUTS.forEach(function(lw){
       var exs = lw.exercises.map(findExercise).filter(Boolean);
-      if(lw.focus==="stretch") return;
-      if(cat!=="all" && lw.focus!==cat) return;
-      if(!woFits(exs, equip, level)) return;
+      if(lw.focus==="stretch" || lw.focus==="calis") return;
+      if(cat.length && cat.indexOf(lw.focus) < 0 && !(lw.focus==="mix" && exs.some(function(ex){ return catMatch(cat, ex.cats); }))) return;
+      if(!woFits(exs, equip)) return;
       if(libHidden("wo:"+lw.id)){ hiddenCount++; return; }
       var run = libWorkoutRun(lw);
       list += '<div class="list-item entry tpl-item" style="--cat:'+catVar(lw.focus)+'" data-cover="lib/'+lw.id+'">'+
@@ -3404,43 +3748,41 @@ function renderLibrary(){
         '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
         '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
         '<div class="cat-tags">'+catTags([lw.focus])+levelHTML(woLevel(exs))+'</div>'+
-        '<div class="tpl-desc">'+esc(exs.map(function(ex){ return tplText(ex.name); }).join(" \u00b7 "))+'</div>'+
-        '<div class="tpl-desc">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div></div>'+
+        '</div>'+
         '<div class="tpl-actions">'+
           favBtn("lib:"+lw.id)+
           '<button type="button" class="tpl-adopt" data-adoptlib="'+lw.id+'" title="'+t("adoptTitle")+'">'+ICON_PLUS+' '+t("adoptMine")+'</button>'+
-          '<button type="button" class="tpl-hide" data-hide="wo:'+lw.id+'">'+t("hide")+'</button>'+
+
         '</div></div>';
     });
-  } else if(tab === "stretch"){
-    list = '<div class="section-title">'+t("stretchRoutines")+'</div>';
+  } else if(tab === "stretch" || tab === "calis"){
+    list = '<div class="section-title">'+t(tab==="calis" ? "calisRoutines" : "stretchRoutines")+'</div>';
     LIB_WORKOUTS.forEach(function(lw){
-      if(lw.focus!=="stretch") return;
+      if(lw.focus!==tab) return;
       var exs = lw.exercises.map(findExercise).filter(Boolean), run = libWorkoutRun(lw);
-      list += '<div class="list-item entry tpl-item" style="--cat:var(--c-stretch)" data-cover="lib/'+lw.id+'">'+
+      list += '<div class="list-item entry tpl-item" style="--cat:var(--tp-color)" data-cover="lib/'+lw.id+'">'+
         '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
         '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
         '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
-        '<div class="tpl-desc">'+esc(exs.map(function(ex){ return tplText(ex.name); }).join(" · "))+'</div></div>'+
+        '</div>'+
         '<div class="tpl-actions">'+favBtn("lib:"+lw.id)+
           '<button type="button" class="tpl-adopt" data-adoptlib="'+lw.id+'" title="'+t("adoptTitle")+'">'+ICON_PLUS+' '+t("adoptMine")+'</button>'+
         '</div></div>';
     });
-    list += '<div class="section-title" style="margin-top:28px;">'+t("stretchExercises")+'</div>' + sortRowHTML(sort, "data-libsort");
-    sortedExercises("stretch", sort, "all", "all").forEach(function(ex){
-      var hold = ex.perSide
+    list += '<div class="section-title" style="margin-top:28px;">'+t(tab==="calis" ? "calisExercises" : "stretchExercises")+'</div>' + sortRowHTML(sort, "data-libsort");
+    sortedExercises(tab, sort, "all").forEach(function(ex){
+      var hold = tab==="calis" ? blockSpec(exBlock(ex))+SEP+esc(exEquipText(ex)) : ex.perSide
         ? (ex.setReps > 1 ? t("holdSideN", { n:ex.setReps, s:ex.workSec }) : t("holdSide", { s:ex.workSec }))
         : (ex.reps > 1 ? t("holdN", { n:ex.reps, s:ex.workSec }) : t("hold1", { s:ex.workSec }));
-      list += '<div class="list-item entry tpl-item" style="--cat:var(--c-stretch)">'+
+      list += '<div class="list-item entry tpl-item" style="--cat:var(--tp-color)">'+
         '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
         '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
         '<div class="sub">'+hold+'</div>'+
         '<div class="tpl-mus">'+esc(musclesLabel(ex))+': '+esc(musclesMain(ex))+'</div>'+
-        '<div class="tpl-desc">'+esc(tplText(ex.hint))+'</div></div>'+
+        '</div>'+
         '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'+
-        '<div class="tpl-actions">'+
+        '<div class="tpl-actions">'+exFavBtn(ex.id)+
           '<button type="button" class="tpl-adopt" data-info="'+ex.id+'">'+t("info")+'</button>'+
-          '<button type="button" class="tpl-adopt" data-adoptex="'+ex.id+'" title="'+t("adoptBlockTitle")+'">'+ICON_PLUS+' '+t("adoptBlock")+'</button>'+
         '</div></div>';
     });
   } else if(tab === "mine"){
@@ -3456,29 +3798,28 @@ function renderLibrary(){
         '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
         '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
         (cats.length ? '<div class="cat-tags">'+catTags(cats)+levelHTML(woLevel(exs))+'</div>' : '')+
-        (exs.length ? '<div class="tpl-desc">'+esc(exs.map(function(ex){ return tplText(ex.name); }).join(" \u00b7 "))+'</div>' : '')+
+
         '</div>'+favBtn("my:"+mw.id)+'</div>';
     }).join("");
     if(!mine.length) list += '<div class="empty" style="padding:30px 20px;">'+t("myEmpty")+'</div>';
   } else {
-    if(cat==="stretch") cat = "all";
-    controls = catChipsHTML(cat, "data-libcat", ["stretch"]) + filtersHTML(equip, level, "l") + sortRowHTML(sort, "data-libsort");
-    EXERCISES.forEach(function(ex){ if(libHidden("ex:"+ex.id) && ex.cats.indexOf("stretch") < 0 && (cat==="all" || ex.cats.indexOf(cat) > -1)) hiddenCount++; });
-    sortedExercises(cat, sort, equip, level).filter(function(ex){ return ex.cats.indexOf("stretch") < 0; }).forEach(function(ex){
-      list += '<div class="list-item entry tpl-item" style="--cat:'+catVar(ex.cats[0])+'">'+
+    cat = cat.filter(function(c){ return c!=="stretch"; });
+    controls = searchHTML(libQuery, "l") + filterBarHTML(cat, equip, "l", ["stretch"]) + sortRowHTML(sort, "data-libsort");
+    EXERCISES.forEach(function(ex){ if(libHidden("ex:"+ex.id) && ex.cats.indexOf("stretch") < 0 && catMatch(cat, ex.cats)) hiddenCount++; });
+    sortedExercises(cat, sort, equip).filter(function(ex){ return ex.cats.indexOf("stretch") < 0; }).forEach(function(ex){
+      list += '<div class="list-item entry tpl-item'+(isExFav(ex.id)?' ex-fav-on':'')+'" style="--cat:'+catVar(ex.cats[0])+'" data-q="'+esc(exSearchText(ex))+'">'+
         '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
         '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
-        '<div class="sub">'+levelHTML(ex.level)+SEP+esc(exEquipText(ex))+'</div>'+
+        '<div class="sub">'+svgIcon(EQUIP_ICON[ex.equip[0]] || "", "ico sub-ico")+esc(exEquipText(ex))+'</div>'+
         '<div class="cat-tags">'+catTags(ex.cats)+'</div>'+
         '<div class="tpl-mus">'+esc(musclesLabel(ex))+': '+esc(musclesMain(ex))+'</div>'+
-        '<div class="tpl-desc">'+esc(tplText(ex.hint))+'</div></div>'+
+        '</div>'+
         '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'+
-        '<div class="tpl-actions">'+
+        '<div class="tpl-actions">'+exFavBtn(ex.id)+
           '<button type="button" class="tpl-adopt" data-info="'+ex.id+'">'+t("info")+'</button>'+
-          '<button type="button" class="tpl-adopt" data-adoptex="'+ex.id+'" title="'+t("adoptBlockTitle")+'">'+ICON_PLUS+' '+t("adoptBlock")+'</button>'+
-          '<button type="button" class="tpl-hide" data-hide="ex:'+ex.id+'">'+t("hide")+'</button>'+
         '</div></div>';
     });
+    list += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>';
   }
   if(!list) list = '<div class="empty" style="padding:40px 20px;">'+t("libEmpty")+'</div>';
 
@@ -3488,6 +3829,7 @@ function renderLibrary(){
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("libReady")+'</button>'+
       '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("libMine")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
+      '<button data-libtab="calis" class="'+(tab==="calis"?"active":"")+'">'+t("libCalis")+'</button>'+
       '<button data-libtab="stretch" class="'+(tab==="stretch"?"active":"")+'">'+t("libStretch")+'</button>'+
     '</div></div>'+
     controls + list +
@@ -3498,12 +3840,23 @@ function renderLibrary(){
   function neu(){ var y = window.scrollY; renderLibrary(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   on("[data-libtab]", function(el){ s.libTab = el.getAttribute("data-libtab"); save(); renderLibrary(); window.scrollTo(0,0); });
-  on("[data-libcat]", function(el){ s.libCat = el.getAttribute("data-libcat"); save(); neu(); });
-  on("[data-libsort]", function(el){ s.libSort = el.getAttribute("data-libsort"); save(); neu(); });
-  ["equip","level"].forEach(function(k){
-    var sel = app.querySelector("#l-"+k);
-    if(sel) sel.addEventListener("change", function(){ s[k==="equip"?"libEquip":"libLevel"] = sel.value; save(); neu(); });
+  on("[data-libcat]", function(el){ s.libCats = chipToggle(cat, el.getAttribute("data-libcat")); save(); neu(); });
+  on("[data-lequip]", function(el){ s.libEquips = selToggle(equip, el.getAttribute("data-lequip")); save(); neu(); });
+  on("[data-ldd]", function(el){
+    var art = el.getAttribute("data-ldd"), ohne = (el.getAttribute("data-ohne") || "").split(",");
+    openFilterSheet(art, art==="cat" ? cat : equip, ohne, function(nsel){
+      if(art==="cat") s.libCats = nsel; else s.libEquips = nsel;
+      save(); neu();
+    });
   });
+  on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
+  var lq = app.querySelector("#l-q");
+  if(lq){
+    applySearch(app, libQuery);
+    lq.addEventListener("input", function(){ libQuery = lq.value; applySearch(app, libQuery); });
+  }
+  on("[data-libsort]", function(el){ s.libSort = el.getAttribute("data-libsort"); save(); neu(); });
+
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
   on("[data-mynew]", function(){ go("#mybuild/"+createMy().id); });
@@ -3515,7 +3868,7 @@ function renderLibrary(){
     adoptExercise(ex);
     showToast(t("adoptedBlock", { n:tplText(ex.name) }));
   });
-  on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false); });
+  on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   on("[data-hide]", function(el){ libHide(el.getAttribute("data-hide")); neu(); });
   on("[data-unhide]", function(){
@@ -3546,8 +3899,8 @@ function renderCover(kind, id){
 /* cfg.cover: Deckblatt (Änderungen nur für dieses Training) - sonst Baukasten (speichert sofort) */
 function renderDraftPage(d, cfg){
   var s = state.db.settings;
-  var cat = s.buildCat || "all", sort = s.libSort === "az" ? "az" : "std";
-  var equip = s.buildEquip || "all", level = s.buildLevel || "all";
+  var cat = selArr(s.buildCats || s.buildCat), sort = s.libSort === "az" ? "az" : "std";
+  var equip = selArr(s.buildEquips), level = "all";
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
   var cats = [];
@@ -3575,10 +3928,11 @@ function renderDraftPage(d, cfg){
     return row(ex, 'data-src="list" data-idx="'+i+'"', sub, right, true);
   }).join("");
   var palOpen = !cfg.cover || d._pal;
-  var palHTML = palOpen ? sortedExercises(cat, sort, equip, level).map(function(ex){
-    return row(ex, 'data-src="pal" data-ex="'+ex.id+'"', levelHTML(ex.level)+' '+catTags(ex.cats),
-      '<button type="button" class="dz-btn add" data-add="'+ex.id+'" aria-label="'+t("myAdd")+'">+</button>');
-  }).join("") || '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>' : "";
+  var palHTML = palOpen ? (sortedExercises(cat, sort, equip).map(function(ex){
+    return row(ex, 'data-src="pal" data-ex="'+ex.id+'" data-q="'+esc(exSearchText(ex))+'"', catTags(ex.cats),
+      exFavBtn(ex.id)+'<button type="button" class="dz-btn add" data-add="'+ex.id+'" aria-label="'+t("myAdd")+'">+</button>');
+  }).join("") || '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>') +
+    '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>' : "";
   var rests = [0,15,30,45,60,90,120];
   if(rests.indexOf(d.blockRest) < 0) rests.push(d.blockRest);
   var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : "kindMy";
@@ -3626,6 +3980,7 @@ function renderDraftPage(d, cfg){
         (d.src==="surprise" ? '<button class="btn btn-secondary" data-reroll>'+t("reroll")+'</button>' : '')+
         '<button class="btn btn-secondary" data-savemy '+(exs.length?'':'disabled')+'>'+t(d.src==="my" ? "saveAsNewMy" : "saveAsMy")+'</button>'+
         '<div class="cover-note">'+t(d._dirty ? "coverDirty" : "coverHint")+'</div>'+
+        (d.src==="lib" ? '<button type="button" class="tpl-hide cover-hide" data-coverhide>'+t("hideWo")+'</button>' : '')+
       '</div>'
     : '<div class="card"><label for="m-name">'+t("name")+'</label>'+
         '<input type="text" id="m-name" value="'+esc(d.name)+'" maxlength="40"></div>';
@@ -3641,7 +3996,7 @@ function renderDraftPage(d, cfg){
     '</div>'+
     (palOpen
       ? '<div class="section-title">'+t("myAdd")+'</div>'+
-        catChipsHTML(cat, "data-bcat") + filtersHTML(equip, level, "b") + sortRowHTML(sort, "data-bsort") +
+        searchHTML(buildQuery, "b") + filterBarHTML(cat, equip, "b") + sortRowHTML(sort, "data-bsort") +
         '<div class="dz-pal" id="dz-pal">'+palHTML+'</div>'
       : '<button type="button" class="my-new" data-palopen>'+ICON_PLUS+' '+t("myAdd")+'</button>')+
     (cfg.cover ? '' : '<button class="btn btn-danger" data-mydel>'+ICON_TRASH+' '+t("myDelete")+'</button>')+
@@ -3681,12 +4036,23 @@ function renderDraftPage(d, cfg){
     showToast(t("addedToWorkout", { n:tplText(ex.name) }));
   });
   on("[data-exinfo]", function(el){ openExInfo(el.getAttribute("data-exinfo"), false); });
-  on("[data-bcat]", function(el){ s.buildCat = el.getAttribute("data-bcat"); save(); neu(); });
-  on("[data-bsort]", function(el){ s.libSort = el.getAttribute("data-bsort"); save(); neu(); });
-  ["equip","level"].forEach(function(k){
-    var sel = app.querySelector("#b-"+k);
-    if(sel) sel.addEventListener("change", function(){ s[k==="equip"?"buildEquip":"buildLevel"] = sel.value; save(); neu(); });
+  on("[data-bcat]", function(el){ s.buildCats = chipToggle(cat, el.getAttribute("data-bcat")); save(); neu(); });
+  on("[data-bequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bequip")); save(); neu(); });
+  on("[data-bdd]", function(el){
+    var art = el.getAttribute("data-bdd");
+    openFilterSheet(art, art==="cat" ? cat : equip, null, function(nsel){
+      if(art==="cat") s.buildCats = nsel; else s.buildEquips = nsel;
+      save(); neu();
+    });
   });
+  on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
+  var bq = app.querySelector("#b-q");
+  if(bq){
+    applySearch(app.querySelector("#dz-pal") || app, buildQuery);
+    bq.addEventListener("input", function(){ buildQuery = bq.value; applySearch(app.querySelector("#dz-pal") || app, buildQuery); });
+  }
+  on("[data-bsort]", function(el){ s.libSort = el.getAttribute("data-bsort"); save(); neu(); });
+
   on("[data-palopen]", function(){ d._pal = true; neu(); });
   on("[data-tocover]", function(){ if(d.items.length){ coverDraft = null; go("#cover/my/"+cfg.id); } });
   on("[data-mydel]", function(){
@@ -3704,6 +4070,7 @@ function renderDraftPage(d, cfg){
       optT.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); optUm(); } });
     }
     on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
+    on("[data-coverhide]", function(){ libHide("wo:"+d.key.slice(4)); showToast(t("hiddenToast")); go("#library"); });
     on("[data-go]", function(){
       if(!d.items.length) return;
       // Sprachausgabe im Tipp freischalten (iOS erlaubt sie sonst nicht)
@@ -3855,13 +4222,9 @@ function buildSurprise(p){
   var n = Math.max(2, Math.round((p.dur*60 + tm.blockRest) / (block + tm.blockRest)));
   var pools = p.cats.map(function(c){
     var fit = EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && ex.cats.indexOf(c) > -1 && ex.level <= p.level &&
-        (p.equip==="all" || ex.equip.indexOf("none") > -1 || ex.equip.indexOf(p.equip) > -1);
+      return !libHidden("ex:"+ex.id) && ex.cats.indexOf(c) > -1 && equipMatch(p.equips || p.equip, ex);
     });
-    // passende Stufe zuerst, leichtere als Ergänzung
-    var top = shuffle(fit.filter(function(ex){ return ex.level === p.level; }));
-    var rest = shuffle(fit.filter(function(ex){ return ex.level !== p.level; }));
-    return top.concat(rest);
+    return shuffle(fit);
   });
   var picked = [], guard = 0;
   while(picked.length < n && guard < 400){
@@ -3876,21 +4239,20 @@ function buildSurprise(p){
 }
 function openSurprise(){
   var s = state.db.settings;
-  var p = s.surprise || { dur:20, cats:["legs","core"], level:2, equip:"none" };
+  var p = s.surprise || { dur:20, cats:["legs","core"], level:2, equips:["none"] };
+  if(!p.equips) p.equips = selArr(p.equip && p.equip!=="all" ? [p.equip] : ["none"]);
   var root = document.getElementById("overlayRoot");
   function draw(){
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet">'+
       '<h3>\u2728 '+t("surprise")+'</h3>'+
-      '<label>'+t("spDur")+'</label><div class="sp-chips">'+[10,15,20,30,45].map(function(v){
+      '<label>'+t("spDur")+'</label><div class="sp-chips">'+[10,15,20,30,45,60].map(function(v){
         return '<button type="button" class="lib-chip nodot'+(p.dur===v?' active':'')+'" style="--cat:var(--tp-color)" data-spdur="'+v+'">'+v+' Min</button>'; }).join("")+'</div>'+
       '<label>'+t("spAreas")+'</label><div class="sp-chips">'+LIB_CATS.filter(function(c){ return c.id!=="stretch"; }).map(function(c){
-        return '<button type="button" class="lib-chip'+(p.cats.indexOf(c.id)>-1?' active':'')+'" style="--cat:'+catVar(c.id)+'" data-spcat="'+c.id+'">'+esc(tplText(c))+'</button>'; }).join("")+'</div>'+
+        return '<button type="button" class="lib-chip'+(p.cats.indexOf(c.id)>-1?' active':'')+'" data-spcat="'+c.id+'">'+catIcon(c.id)+esc(tplText(c))+'</button>'; }).join("")+'</div>'+
       '<label>'+t("spLevel")+'</label><div class="seg-row">'+[1,2,3].map(function(l){
-        return '<button type="button" class="'+(p.level===l?'active':'')+'" data-splevel="'+l+'">'+esc(t("lvl"+l))+'</button>'; }).join("")+'</div>'+
-      '<label>'+t("equipLabel")+'</label><select id="sp-equip">'+
-        '<option value="all">'+esc(t("equipAll"))+'</option>'+
-        EQUIPS.map(function(e){ return '<option value="'+e.id+'"'+(p.equip===e.id?' selected':'')+'>'+esc(tplText(e))+'</option>'; }).join("")+
-      '</select>'+
+        return '<button type="button" class="'+(p.level===l?'active':'')+'" data-splevel="'+l+'">'+esc(t("int"+l))+'</button>'; }).join("")+'</div>'+
+      '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.map(function(e){
+        return '<button type="button" class="lib-chip'+(p.equips.indexOf(e.id)>-1?' active':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>'+
       '<div class="btn-row" style="margin-top:18px;"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
       '<button class="btn btn-primary" data-spgo '+(p.cats.length?'':'disabled')+'>'+t("spGo")+'</button></div>'+
     '</div></div>';
@@ -3901,7 +4263,7 @@ function openSurprise(){
       draw();
     }); });
     root.querySelectorAll("[data-splevel]").forEach(function(b){ b.addEventListener("click", function(){ p.level = parseInt(b.getAttribute("data-splevel")); draw(); }); });
-    root.querySelector("#sp-equip").addEventListener("change", function(){ p.equip = this.value; });
+    root.querySelectorAll("[data-spequip]").forEach(function(b){ b.addEventListener("click", function(){ p.equips = selToggle(p.equips, b.getAttribute("data-spequip")); draw(); }); });
     root.querySelector("[data-cancel]").addEventListener("click", function(){ root.innerHTML = ""; });
     root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) root.innerHTML = ""; });
     root.querySelector("[data-spgo]").addEventListener("click", function(){
@@ -3952,6 +4314,8 @@ function announceStep(idx){
 }
 
 /* ============ Settings ============ *//* ============ Settings ============ */
+/* Adresse der App ohne # und Parameter - die Seite, die man weitergeben kann */
+function appUrl(){ return location.origin + location.pathname.replace(/index\.html$/, ""); }
 function renderSettings(){
   var s = state.db.settings;
   app.innerHTML =
@@ -3967,6 +4331,11 @@ function renderSettings(){
     '<div class="card"><div class="theme-pick lang-pick">'+
       langBtn("de","Deutsch")+langBtn("en","English")+
     '</div></div>'+
+    '<div class="section-title">'+t("shareTitle")+'</div>'+
+    '<div class="card share-card">'+
+      '<div class="share-url" id="share-url">'+esc(appUrl())+'</div>'+
+      '<button type="button" class="btn btn-secondary" data-sharecopy>'+t("shareCopy")+'</button>'+
+    '</div>'+
     '<div class="section-title">'+t("installation")+'</div>'+
     '<div class="list-item" data-nav="#install">'+
       '<div class="meta"><div class="name">'+t("installRow")+'</div>'+
@@ -4020,6 +4389,20 @@ function renderSettings(){
     });
   });
 
+  /* App teilen: Link kopieren, per WhatsApp oder über das Teilen-Menü des Handys */
+  app.querySelector("[data-sharecopy]").addEventListener("click", function(){
+    function ok(){ showToast(t("shareCopied")); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(appUrl()).then(ok, function(){ kopierFallback(); });
+    } else kopierFallback();
+    function kopierFallback(){
+      var ta = document.createElement("textarea");
+      ta.value = appUrl(); ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); ok(); }catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
   app.querySelector("[data-opensounds]").addEventListener("click", function(){
     openSoundSheet(function(){ renderSettings(); });
   });
