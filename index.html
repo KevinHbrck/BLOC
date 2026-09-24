@@ -2,8 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Sport Timer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BLOC – Modular Training Builder</title>
 <meta name="description" content="Minimalistischer Intervall-Timer für Workouts aus wiederverwendbaren Blöcken.">
 <meta name="theme-color" content="#121214">
 <link rel="manifest" href="./manifest.json">
@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="./icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Timer">
+<meta name="apple-mobile-web-app-title" content="BLOC">
 <!-- Schriften für die Vintage-Designs (werden nur geladen, wenn sie tatsächlich verwendet werden;
      der Service Worker speichert sie für die Offline-Nutzung) -->
 <style>
@@ -402,8 +402,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .sp-chips{ display:flex; flex-wrap:wrap; gap:8px; }
 .lib-chip.nodot::before{ display:none; }
 .lib-tabs{ grid-template-columns:repeat(6,1fr) !important; gap:6px !important; }
-.lib-tabs button{ grid-column:span 2 !important; }
-.lib-tabs button:nth-child(n+4){ grid-column:span 3 !important; }
+.lib-tabs button{ grid-column:span 3 !important; }
 .lib-tabs button{ padding-left:2px !important; padding-right:2px !important; }
 .fav-btn{ border:none; background:none; color:var(--text-dim); font-size:24px; line-height:1; cursor:pointer; padding:4px 6px; flex-shrink:0; }
 .fav-btn.on{ color:#f0b400; }
@@ -506,6 +505,50 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .share-card > .btn{ margin-top:8px; }
 :root[data-vintage] body{ font-variant-numeric:tabular-nums; }
 .lib-hidden{ text-align:center; color:var(--text-dim); font-size:13px; padding:14px 0 90px; }
+.hid-head{ display:flex; align-items:center; gap:10px; margin-top:34px; }
+.hid-head .ico{ width:18px; height:18px; }
+.hid-note{ font-size:13px; color:var(--text-dim); margin:-4px 2px 10px; }
+.tpl-item.is-hidden{ opacity:.6; }
+.lbl-hint{ font-weight:400; color:var(--text-dim); font-size:12px; }
+.sp-avoid{ margin-top:14px; }
+.sp-avoid .toggle-row{ padding:6px 0; border:none; }
+/* Verlauf & Statistik */
+.stat-row{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; }
+.stat-row .card.stat{ margin:0; padding:14px 10px; text-align:center; }
+.stat-v{ font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.15; color:var(--accent); }
+.stat-l{ font-size:13px; font-weight:600; margin-top:4px; line-height:1.25; }
+.stat-l small{ font-weight:400; color:var(--text-dim); }
+.streak-note{ font-size:13px; color:var(--text-dim); text-align:center; margin:10px 0 4px; }
+.cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.cal-head b{ font-size:16px; text-transform:capitalize; }
+.cal-head .iconbtn{ font-size:26px; line-height:1; }
+.cal-grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; }
+.cal-wd{ text-align:center; font-size:12px; color:var(--text-dim); padding:2px 0 4px; }
+.cal-day{
+  aspect-ratio:1; min-height:38px; border:none; border-radius:10px; background:var(--surface-2); color:var(--text);
+  font:inherit; font-size:14px; font-variant-numeric:tabular-nums; cursor:pointer; padding:0;
+}
+.cal-day.on{ background:var(--accent); color:var(--accent-text); font-weight:700; }
+.cal-day.today{ box-shadow:inset 0 0 0 2px var(--text); }
+.cal-day.sel{ outline:3px solid var(--accent); outline-offset:1px; }
+.wk-bars{ display:grid; grid-template-columns:repeat(8, 1fr); gap:6px; align-items:end; }
+.wk-col{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; }
+.wk-val{ font-size:11px; color:var(--text-dim); min-height:14px; font-variant-numeric:tabular-nums; }
+.wk-bar{ width:100%; height:90px; display:flex; align-items:flex-end; background:var(--surface-2); border-radius:6px; overflow:hidden; }
+.wk-bar i{ display:block; width:100%; background:var(--accent); opacity:.55; border-radius:6px 6px 0 0; }
+.wk-col.now .wk-bar i{ opacity:1; }
+.wk-lbl{ font-size:10px; color:var(--text-dim); white-space:nowrap; }
+.hist-row .meta .name{ white-space:normal; }
+.hist-del{ width:44px; height:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--danger); }
+.tpl-item.is-hidden .playbtn{ filter:grayscale(1); }
+.tpl-adopt .ico{ width:16px; height:16px; }
+.tpl-item{ position:relative; }
+.tpl-adopt.hide-btn{ color:var(--text-dim); width:40px; height:40px; padding:0; justify-content:center; border-radius:50%; }
+.tpl-adopt.hide-btn.corner{ position:absolute; top:8px; right:8px; margin:0; background:none; border-color:transparent; }
+.tpl-item:has(.hide-btn.corner) > .meta{ padding-right:34px; }
+.custom-ico{ display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:12px; background:var(--surface-2); color:var(--text-dim); }
+.custom-ico .ico{ width:28px; height:28px; }
+.cat-tag.own{ font-style:italic; }
 .toast{
   position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translateX(-50%);
   background:var(--text); color:var(--bg); padding:11px 18px; border-radius:100px; font-size:14px;
@@ -769,6 +812,31 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .ctrl-btn.main{ width:92px; height:92px; font-size:32px; background:currentColor; }
 .ctrl-btn.main span{ color:var(--phase-bg,var(--bg)); }
 .ctrl-btn:active{ transform:scale(.92); }
+.pl-a, .pl-b{ display:contents; }
+/* Querformat (Handy gedreht): Uhr links, alles andere rechts - nichts muss scrollen */
+@media (orientation: landscape) and (max-height: 560px){
+  .player-top{ padding:8px 16px 0; }
+  .player-top .exit{ width:42px; height:42px; }
+  .progressbar{ margin-top:8px; }
+  .player-mid{ display:grid; grid-template-columns:auto minmax(0, 1fr); grid-template-rows:auto auto; align-content:center; align-items:center; column-gap:clamp(20px, 5vw, 56px); padding:4px 24px; }
+  .player-mid > .ring-wrap, .player-mid > .time{ grid-column:1; grid-row:1 / 3; }
+  .player-mid .pl-a, .player-mid .pl-b{ display:flex; flex-direction:column; align-items:center; grid-column:2; min-width:0; }
+  .player-mid .pl-a{ grid-row:1; align-self:end; }
+  .player-mid .pl-b{ grid-row:2; align-self:start; }
+  .ring-wrap{ width:min(58vh, 240px); height:min(58vh, 240px); }
+  .ring-wrap .time{ font-size:min(12vh, 56px); }
+  .tc{ font-size:min(19vh, 84px); }
+  .phase-label{ font-size:20px; margin-bottom:2px; }
+  .block-label{ font-size:17px; margin-bottom:8px; }
+  .player-mid .pl-illu{ display:none; }   /* Platz sparen - die Übung steht ja daneben */
+  .ex-hint{ font-size:14px; margin:2px 0 6px; }
+  .block-label + .ex-hint{ margin-top:-4px; }
+  .rep-dots{ margin-top:6px; }
+  .next-up{ margin-top:10px; font-size:16px; }
+  .player-controls{ padding:8px 0 calc(6px + env(safe-area-inset-bottom)); gap:18px; }
+  .ctrl-btn{ width:56px; height:56px; font-size:21px; }
+  .ctrl-btn.main{ width:74px; height:74px; font-size:28px; }
+}
 .done-screen{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; padding:24px; }
 .done-screen h2{ font-size:26px; margin-bottom:6px; }
 .done-screen p{ color:inherit; opacity:.7; margin:0 0 24px; }
@@ -1186,6 +1254,13 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-vintage]:not([data-theme="kodak"]) .topbar.home h1 .ttl{ color:var(--section-color) !important; }
 :root[data-theme="tapedeck"] .topbar.home h1 .ttl{ text-shadow:0 0 14px rgba(255,170,50,.35); }
 .topbar.home h1 .ttl-sub{ margin-top:6px; }
+/* Querformat in den Vintage-Designs: Etikett/Bandsorten-Anzeige ausblenden, Tasten kompakter */
+@media (orientation: landscape) and (max-height: 560px){
+  :root[data-vintage] .player .kodak-badge, :root[data-vintage] .player .deck-badge{ display:none; }
+  :root[data-vintage] .player-controls{ padding-bottom:calc(8px + env(safe-area-inset-bottom)); }
+  :root[data-vintage] .ctrl-btn{ width:54px; height:54px; font-size:21px; }
+  :root[data-vintage] .ctrl-btn.main{ width:70px; height:70px; font-size:28px; }
+}
 </style>
 </head>
 <body>
@@ -1207,6 +1282,8 @@ function defaultDB(){
     blocks: [],
     workouts: [],
     myWorkouts: [],   // eigene Workouts aus Bibliotheksübungen - getrennt von den Timer-Workouts
+    customEx: [],     // selbst angelegte Übungen
+    history: [],      // erledigte Trainings { at, name, sec, ex:[ids], partial }
     settings: { theme:"system", sound:true, soundStyle:"classic", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6 }
   };
 }
@@ -1237,9 +1314,10 @@ var ICON_CHEV = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" s
 var ICON_BOOK = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg>';
 var ICON_PLUS = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>';
 /* Workout = mehrere gestapelte Blöcke, Block = einzelne Stoppuhr */
+var ICON_SHARE = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg>';
 var ICON_WORKOUT = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12l9 4.5 9-4.5"/><path d="M3 16.5l9 4.5 9-4.5"/></svg>';
 var ICON_BLOCK = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7.5"/><path d="M12 14v-4"/><path d="M9.5 2.5h5"/><path d="M12 2.5v4"/></svg>';
-/* Kassetten-Etikett für das Kodak-Design: rotes K-Signet und Bandtyp */
+/* Kassetten-Etikett für das C60-Design (intern "kodak"): rotes C-Signet und Bandtyp - bewusst ohne fremde Marken */
 var KODAK_BADGE = '<div class="kodak-badge" aria-hidden="true">'+
   '<svg viewBox="0 0 44 40"><rect width="44" height="40" rx="2.5" fill="#e1251b"/>'+
   '<path d="M24.5 9.5A11 11 0 1 0 24.5 30.5" fill="none" stroke="#fff" stroke-width="6.5"/>'+
@@ -1508,6 +1586,8 @@ function loadDB(){
     db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
     db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
     db.myWorkouts = Array.isArray(parsed.myWorkouts) ? parsed.myWorkouts : [];
+    db.customEx = Array.isArray(parsed.customEx) ? parsed.customEx : [];
+    db.history = Array.isArray(parsed.history) ? parsed.history : [];
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
     db.settings.theme = migrateTheme(db.settings.theme);
     db.settings.soundStyle = migrateSound(db.settings.soundStyle);
@@ -1544,7 +1624,7 @@ var I18N = {
     sortLabel:"Sortieren", sortStd:"Standard", posture:"Haltung", avoid:"Vermeiden",
     shareTitle:"App teilen", shareCopy:"Link kopieren", shareWa:"Per WhatsApp", shareMore:"Weitere Möglichkeiten …",
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
-    fCat:"Körperbereich", equipAny:"Alles", fCatHint:"Mehrere möglich. Nichts gewählt = alle.",
+    fCat:"Fokus", equipAny:"Alles", fCatHint:"Mehrere möglich. Nichts gewählt = alle.",
     fEquipHint:"Was hast du da? Mehrere möglich. Nichts gewählt = alles.", hideEx:"In der Bibliothek ausblenden",
     hideWo:"Dieses Workout in der Bibliothek ausblenden", hiddenToast:"Ausgeblendet – unten in der Liste wieder einblendbar.",
     libCalis:"Calisthenics", calisRoutines:"Calisthenics-Programme", calisExercises:"Calisthenics-Übungen",
@@ -1569,7 +1649,7 @@ var I18N = {
     repsBothSides:"Die Runden zählen beide Seiten zusammen, z. B. 6 = 3 je Seite.",
     recommended:"Empfohlen", timeDone:"Fertig",
     voice:"Sprachansagen (Englisch)", voiceDesc:"Kündigt in den Pausen die nächste Übung an – bei fertigen und eigenen Workouts",
-    surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Körperbereiche", spLevel:"Intensität", spGo:"Zusammenstellen",
+    surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
     spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
     info:"Info", howTo:"So geht's", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
     infoPause:"Pause", infoResume:"Weiter",
@@ -1591,7 +1671,7 @@ var I18N = {
     addBlock:"Block hinzufügen", noBlocksAvail:"Keine Blöcke vorhanden.", createBlockFirst:"Erst einen Block anlegen",
     deleteWorkout:"Workout löschen", deleteWorkoutQ:"Workout löschen?", cantUndo:"Diese Aktion kann nicht rückgängig gemacht werden.",
     appearance:"Darstellung", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thRetro:"Retro", thKodak:"C60", thDeck:"Tapedeck",
-    themeInfo:"„Retro“ mit rot-blauen Zierstreifen im Sportlook der 70er/80er, „Kodak“ im Stil alter Kodak-Kassetten (C60 Low Noise), „Tapedeck“ als dunkles Nachtdesign wie ein altes Hi-Fi-Kassettendeck. Alle drei mit rollendem Walzenzähler statt Fortschrittsring.",
+    themeInfo:"„Retro“ mit rot-blauen Zierstreifen im Sportlook der 70er/80er, „C60“ im Stil alter Kompaktkassetten (Low Noise), „Tapedeck“ als dunkles Nachtdesign wie ein altes Hi-Fi-Kassettendeck. Alle drei mit rollendem Walzenzähler statt Fortschrittsring.",
     language:"Sprache",
     installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
     timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Signaltöne bei Phasenwechsel", soundStyle:"Klang",
@@ -1627,7 +1707,26 @@ var I18N = {
     doneTitle:"Workout geschafft!", again:"Nochmal", finish:"Fertig",
     endQ:"Workout beenden?", endText:"Der Fortschritt geht verloren.", endBtn:"Beenden",
     skip:"Weiter", pause:"Pause", restartPhase:"Phase neu",
-    unitH:"Std", unitMin:"Min", unitSec:"Sek"
+    unitH:"Std", unitMin:"Min", unitSec:"Sek",
+    hideShort:"Ausblenden", unhide:"Einblenden", hiddenSection:"Ausgeblendet ({n})",
+    hiddenSectionHint:"Ausgeblendete Einträge nutzt „Überrasch mich“ nicht.",
+    exNew:"Eigene Übung anlegen", exEditTitle:"Eigene Übung", exNewTitle:"Neue Übung", exName:"Name der Übung",
+    exFocus:"Fokus", exFocusHint:"Mehrere möglich.", exEquip:"Ausrüstung", exPerSide:"Je Seite",
+    exPerSideDesc:"Links und rechts im Wechsel – Runden gelten pro Seite", exReco:"Empfohlene Zeiten",
+    exHint:"Hinweis (optional)", exHintPh:"z. B. Rücken gerade halten", exSave:"Übung speichern", exDelete:"Übung löschen",
+    exDeleteQ:"Übung löschen?", exDeleteText:"Sie verschwindet auch aus eigenen Workouts, in denen sie vorkommt.",
+    exSaved:"Übung gespeichert", exNameMissing:"Bitte gib der Übung einen Namen.", customTag:"Eigene Übung", edit:"Bearbeiten",
+    history:"Verlauf", htHistory:"Kalender, Streak und Trainingszeit", streak:"Streak", streakUnit:"Tage in Folge", streakUnit1:"Tag in Folge",
+    weekTime:"Diese Woche", weekWorkouts:"{n} Trainings", weekWorkouts1:"1 Training", totalTime:"Insgesamt",
+    last8:"Trainingszeit der letzten 8 Wochen", histList:"Letzte Trainings", histEmpty:"Noch keine Trainings. Nach jedem Workout erscheint es hier – mit Datum und Dauer.",
+    histPartial:"vorzeitig beendet", histDeleteQ:"Eintrag löschen?", histDeleteText:"Das Training verschwindet aus Verlauf und Statistik.",
+    histDayN:"{n} Training(s) an diesem Tag", histMore:"Mehr anzeigen", streakHint:"Trainiere heute, um die Serie zu halten.", streakToday:"Heute schon trainiert – stark!",
+    share:"Teilen", shareWo:"Workout teilen", shareLinkCopied:"Link kopiert – einfach verschicken.", kindShared:"Geteiltes Workout",
+    shareBad:"Dieser Link ist leider ungültig oder unvollständig.", shareMsg:"Probier mein Workout „{n}“ in BLOC aus:",
+    sharedMissing:"{n} Übung(en) aus dem Link kennt diese Fassung der App nicht – sie wurden weggelassen.",
+    spAvoid:"Übungen der letzten 7 Tage meiden", spAvoidDesc:"Nur wenn genug andere passen.",
+    spRules:"Die App wechselt Muskelgruppen ab, gleicht Drücken und Ziehen aus und startet mit leichteren Übungen.",
+    privacy:"Datenschutz", privacyRow:"Datenschutzerklärung", privacyRowSub:"Keine Konten, kein Tracking, alles bleibt auf dem Gerät"
   },
   en: {
     back:"Back", settings:"Settings", workouts:"Workouts", untitled:"Untitled",
@@ -1652,7 +1751,7 @@ var I18N = {
     sortLabel:"Sort", sortStd:"Default", posture:"Posture", avoid:"Avoid",
     shareTitle:"Share the app", shareCopy:"Copy link", shareWa:"Via WhatsApp", shareMore:"More options …",
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
-    fCat:"Body area", equipAny:"Anything", fCatHint:"Pick several. None selected = all.",
+    fCat:"Focus", equipAny:"Anything", fCatHint:"Pick several. None selected = all.",
     fEquipHint:"What do you have? Pick several. None selected = anything.", hideEx:"Hide in library",
     hideWo:"Hide this workout in the library", hiddenToast:"Hidden – you can show it again at the bottom of the list.",
     libCalis:"Calisthenics", calisRoutines:"Calisthenics routines", calisExercises:"Calisthenics exercises",
@@ -1677,7 +1776,7 @@ var I18N = {
     repsBothSides:"Rounds count both sides together, e.g. 6 = 3 per side.",
     recommended:"Recommended", timeDone:"Done",
     voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests – for ready-made and own workouts",
-    surprise:"Surprise me", spDur:"Duration", spAreas:"Body areas", spLevel:"Intensity", spGo:"Build it",
+    surprise:"Surprise me", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
     spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
     info:"Info", howTo:"How to", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
     infoPause:"Pause", infoResume:"Resume",
@@ -1699,7 +1798,7 @@ var I18N = {
     addBlock:"Add block", noBlocksAvail:"No blocks available.", createBlockFirst:"Create a block first",
     deleteWorkout:"Delete workout", deleteWorkoutQ:"Delete workout?", cantUndo:"This can't be undone.",
     appearance:"Appearance", thSystem:"System", thLight:"Light", thDark:"Dark", thRetro:"Retro", thKodak:"C60", thDeck:"Tape deck",
-    themeInfo:"“Retro” with red and blue racing stripes in 70s/80s sports style, “Kodak” in the style of old Kodak cassettes (C60 Low Noise), “Tape deck” as a dark night design like an old hi-fi cassette deck. All three with a rolling drum counter instead of a progress ring.",
+    themeInfo:"“Retro” with red and blue racing stripes in 70s/80s sports style, “C60” in the style of old compact cassettes (Low Noise), “Tape deck” as a dark night design like an old hi-fi cassette deck. All three with a rolling drum counter instead of a progress ring.",
     language:"Language",
     installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
     timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Signals when the phase changes", soundStyle:"Sound style",
@@ -1735,7 +1834,26 @@ var I18N = {
     doneTitle:"Workout complete!", again:"Again", finish:"Done",
     endQ:"End workout?", endText:"Your progress will be lost.", endBtn:"End",
     skip:"Skip", pause:"Pause", restartPhase:"Restart phase",
-    unitH:"h", unitMin:"min", unitSec:"s"
+    unitH:"h", unitMin:"min", unitSec:"s",
+    hideShort:"Hide", unhide:"Show", hiddenSection:"Hidden ({n})",
+    hiddenSectionHint:"“Surprise me” doesn't use hidden entries.",
+    exNew:"Create your own exercise", exEditTitle:"Own exercise", exNewTitle:"New exercise", exName:"Exercise name",
+    exFocus:"Focus", exFocusHint:"Pick several.", exEquip:"Equipment", exPerSide:"Per side",
+    exPerSideDesc:"Alternates left and right – rounds count per side", exReco:"Recommended times",
+    exHint:"Cue (optional)", exHintPh:"e.g. keep your back straight", exSave:"Save exercise", exDelete:"Delete exercise",
+    exDeleteQ:"Delete exercise?", exDeleteText:"It will also be removed from your own workouts that use it.",
+    exSaved:"Exercise saved", exNameMissing:"Please give the exercise a name.", customTag:"Own exercise", edit:"Edit",
+    history:"History", htHistory:"Calendar, streak and training time", streak:"Streak", streakUnit:"days in a row", streakUnit1:"day in a row",
+    weekTime:"This week", weekWorkouts:"{n} workouts", weekWorkouts1:"1 workout", totalTime:"All time",
+    last8:"Training time over the last 8 weeks", histList:"Recent workouts", histEmpty:"No workouts yet. Each finished workout shows up here – with date and duration.",
+    histPartial:"stopped early", histDeleteQ:"Delete entry?", histDeleteText:"The workout will be removed from history and stats.",
+    histDayN:"{n} workout(s) on this day", histMore:"Show more", streakHint:"Train today to keep your streak.", streakToday:"Already trained today – nice!",
+    share:"Share", shareWo:"Share workout", shareLinkCopied:"Link copied – just send it.", kindShared:"Shared workout",
+    shareBad:"Sorry, this link is invalid or incomplete.", shareMsg:"Try my workout “{n}” in BLOC:",
+    sharedMissing:"This version of the app doesn't know {n} exercise(s) from the link – they were left out.",
+    spAvoid:"Avoid exercises from the last 7 days", spAvoidDesc:"Only if enough others fit.",
+    spRules:"The app alternates muscle groups, balances pushing and pulling and starts with easier exercises.",
+    privacy:"Privacy", privacyRow:"Privacy policy", privacyRowSub:"No accounts, no tracking, everything stays on your device"
   }
 };
 var SOUND_LABELS_EN = {
@@ -2095,6 +2213,27 @@ var EX_EQUIP = {
   "muscle-ups":"bar","monkey-bar-traverse":"bar","bar-traverse":"bar","human-flag":"bar","skin-the-cat":"bar"
 };
 EXERCISES.forEach(function(ex){ ex.level = EX_LEVEL[ex.id] || 2; ex.equip = (EX_EQUIP[ex.id] || "none").split(" "); });
+
+/* Eigene Übungen (state.db.customEx) laufen überall mit, wo Bibliotheksübungen vorkommen:
+   Sie werden als ganz normale Einträge an EXERCISES angehängt (custom:true).
+   Gespeichert: { id, name, cats[], equip[], perSide, reps (pro Seite), work, rest, hint } */
+function customToEx(c){
+  var cats = c.cats && c.cats.length ? c.cats.slice() : ["bw"];
+  var equip = c.equip && c.equip.length ? c.equip.slice() : ["none"];
+  return { id:c.id, custom:true, name:{ de:c.name, en:c.name }, cats:cats, perSide:!!c.perSide,
+           setReps:c.reps, reps: c.perSide ? c.reps*2 : c.reps, workSec:c.work, restSec:c.rest,
+           hint:{ de:c.hint||"", en:c.hint||"" }, level:2, equip:equip };
+}
+function syncCustomEx(){
+  for(var i=EXERCISES.length-1;i>=0;i--) if(EXERCISES[i].custom) EXERCISES.splice(i, 1);
+  (state.db.customEx || []).forEach(function(c){ if(c && c.id && c.name) EXERCISES.push(customToEx(c)); });
+}
+function findCustom(id){
+  var l = state.db.customEx || [];
+  for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i];
+  return null;
+}
+syncCustomEx();
 var EQUIPS = [
   { id:"none", de:"Ohne Geräte", en:"No equipment" },
   { id:"db",   de:"Kurzhantel",  en:"Dumbbell" },
@@ -2125,6 +2264,15 @@ function woLevel(exs){
 function selArr(v){ return Array.isArray(v) ? v.slice() : (v && v!=="all" ? [v] : []); }
 function selToggle(arr, id){ var a = selArr(arr), i = a.indexOf(id); if(i > -1) a.splice(i, 1); else a.push(id); return a; }
 function catMatch(sel, cats){ sel = selArr(sel); return !sel.length || cats.some(function(c){ return sel.indexOf(c) > -1; }); }
+/* Übungen, die nur an Stange oder Barren gehen, tauchen bei einem anderen Fokus (z. B. Rücken,
+   Bauch) nur auf, wenn man Stange/Barren bei der Ausrüstung ausgewählt hat - oder Calisthenics
+   im Fokus ist. Sonst rutschen bei „Rücken“ lauter Klimmzug-Varianten in die Liste. */
+function needsBar(ex){ return ex.equip.every(function(e){ return e==="bar" || e==="dip"; }); }
+function gearOk(ex, cat, equip){
+  cat = selArr(cat); equip = selArr(equip);
+  if(!needsBar(ex) || !cat.length || cat.indexOf("calis") > -1) return true;
+  return ex.equip.some(function(e){ return equip.indexOf(e) > -1; });
+}
 function equipMatch(sel, ex){ sel = selArr(sel); return !sel.length || ex.equip.some(function(e){ return sel.indexOf(e) > -1; }); }
 /* Workout geht mit der gewählten Ausrüstung, wenn jede Übung mit einem der gewählten Dinge machbar ist */
 function woFits(exs, equip){
@@ -2268,14 +2416,15 @@ var libQuery = "", buildQuery = "";
 /* Übungen gefiltert und sortiert (Standard = Reihenfolge der Liste, A–Z = alphabetisch) */
 function sortedExercises(cat, sort, equip){
   var list = EXERCISES.filter(function(ex){
-    return !libHidden("ex:"+ex.id) && catMatch(cat, ex.cats) && equipMatch(equip, ex);
+    return !libHidden("ex:"+ex.id) && catMatch(cat, ex.cats) && equipMatch(equip, ex) && gearOk(ex, cat, equip);
   });
   if(sort==="az") list = list.slice().sort(function(a, b){
     return tplText(a.name).localeCompare(tplText(b.name), currentLang());
   });
-  // markierte Übungen immer oben, Reihenfolge sonst unverändert
+  // markierte Übungen immer oben, danach die eigenen, Reihenfolge sonst unverändert
   var fav = list.filter(function(ex){ return isExFav(ex.id); });
-  return fav.concat(list.filter(function(ex){ return !isExFav(ex.id); }));
+  var own = list.filter(function(ex){ return !isExFav(ex.id) && ex.custom; });
+  return fav.concat(own, list.filter(function(ex){ return !isExFav(ex.id) && !ex.custom; }));
 }
 /* Ausrüstung als Mehrfachauswahl: „Ich habe …“ */
 function filtersHTML(equip, level, pre){
@@ -3077,43 +3226,89 @@ function openExInfo(exId, live, lib){
 /* ============ Router ============ */
 /* Eigener Navigations-Stack (rein im Speicher): "Zurück" geht immer zur tatsächlich
    zuvor besuchten Seite zurück, egal von wo man eine Ansicht geöffnet hat.
-   Navigation nutzt history.replaceState statt location.hash= , damit der echte
-   Browser-Verlauf flach bleibt - sonst muss die Android-Zurück-Geste/der System-Button
-   erst durch die komplette In-App-Historie, bevor die App tatsächlich verlassen wird. */
+   Im echten Browser-Verlauf liegt dabei höchstens EIN zusätzlicher Eintrag ("Wächter"),
+   solange man nicht auf der Startseite ist. Die Android-Zurück-Taste/-Geste landet so
+   in unserem popstate-Handler und geht eine Seite zurück (bzw. schließt erst ein offenes
+   Fenster); erst auf der Startseite verlässt sie die App. */
 var navStack = ["#home"];
+var navGuard = false;     // liegt gerade ein Wächter-Eintrag im Verlauf?
+var navSkipPop = 0;       // selbst ausgelöste history.back()-Aufrufe, die popstate ignorieren soll
 
+function navTop(){ return navStack[navStack.length-1]; }
+function setUrl(hash){ try{ history.replaceState(history.state, "", hash); }catch(e){} }
+function syncGuard(){
+  if(navStack.length > 1 && !navGuard){
+    try{ history.pushState({ bloc:1 }, "", navTop()); navGuard = true; }catch(e){ setUrl(navTop()); }
+  } else if(navStack.length <= 1 && navGuard){
+    navGuard = false; navSkipPop++;
+    history.back();   // Wächter entfernen - popstate setzt danach die Adresse
+  } else {
+    setUrl(navTop());
+  }
+}
 function go(hash){
-  if(navStack[navStack.length-1] !== hash) navStack.push(hash);
-  try{ history.replaceState(null, "", hash); }catch(e){ location.hash = hash; }
+  if(hash === "#home") navStack = ["#home"];
+  else if(navTop() !== hash) navStack.push(hash);
+  syncGuard();
   render();
 }
 function goBack(fallback){
   if(navStack.length > 1){
     navStack.pop();
-    var prev = navStack[navStack.length-1];
-    try{ history.replaceState(null, "", prev); }catch(e){ location.hash = prev; }
+    syncGuard();
     render();
   } else {
     go(fallback);
   }
 }
+/* Die aktuelle Seite kommt aus dem Stack, nicht aus location.hash: nach history.back()
+   hinkt die Adresse kurz hinterher. */
 function parseHash(){
-  var h = location.hash.replace(/^#\/?/, "");
+  var h = navTop().replace(/^#\/?/, "");
   var parts = h.split("/").filter(Boolean);
   return parts;
 }
 
+/* System-Zurück (Android-Taste/-Geste, Browser-Zurück) */
+window.addEventListener("popstate", function(){
+  if(navSkipPop > 0){ navSkipPop--; setUrl(navTop()); return; }
+  navGuard = false;
+  // 1. offenes Einblendfenster schließen (so, als hätte man daneben getippt)
+  var ov = document.getElementById("overlayRoot");
+  if(ov && ov.innerHTML){
+    var bg = ov.querySelector(".confirm-overlay");
+    if(bg) bg.click();
+    if(ov.innerHTML) ov.innerHTML = "";
+    if(infoTimer){ clearInterval(infoTimer); infoTimer = null; }
+    syncGuard();
+    return;
+  }
+  // 2. laufender Timer: nicht einfach weg - erst nachfragen
+  if(document.getElementById("playerRoot").innerHTML && playerState){
+    var st = playerState.steps[playerState.idx];
+    if(st && st.phase === "done") exitPlayer();
+    else { confirmSheet(t("endQ"), t("endText"), t("endBtn"), exitPlayer); syncGuard(); }
+    return;
+  }
+  // 3. eine Seite zurück; auf der Startseite bleibt kein Wächter übrig -> nächstes Zurück verlässt die App
+  if(navStack.length > 1) navStack.pop();
+  syncGuard();
+  render();
+});
 /* Fallback: falls sich der Hash doch einmal außerhalb von go()/goBack() ändert
-   (z.B. ein zurückgebliebener echter Verlaufseintrag). */
+   (z.B. ein von Hand geänderter Link). */
 window.addEventListener("hashchange", function(){
   var h = location.hash || "#home";
-  if(navStack[navStack.length-1] !== h) navStack.push(h);
+  if(navTop() === h) return;
+  if(h === "#home") navStack = ["#home"]; else navStack.push(h);
+  syncGuard();
   render();
 });
 window.addEventListener("load", function(){
   var initial = location.hash || "#home";
-  navStack = [initial];
-  try{ history.replaceState(null, "", initial); }catch(e){ location.hash = initial; }
+  navStack = initial === "#home" ? ["#home"] : ["#home", initial];
+  setUrl("#home");
+  syncGuard();
   applyTheme();
   render();
   registerSW();
@@ -3173,10 +3368,13 @@ function render(){
   if(route==="play") return startPlayer(parts[1]);
   if(route==="playblock") return startBlockPlayer(parts[1]);
   if(route==="library") return renderLibrary();
+  if(route==="exedit") return renderExEdit(parts[1]);
+  if(route==="history") return renderHistory();
+  if(route==="import") return renderImport(parts[1]);
   if(route==="mybuild") return renderMyBuild(parts[1]);
   if(route==="playmy") return launchFromSource({ type:"mine", id:parts[1] });
-  if(route==="cover") return parts[1]==="surprise"
-    ? (coverDraft && coverDraft.src==="surprise" ? renderDraftPage(coverDraft, { cover:true, back:"#library" }) : go("#library"))
+  if(route==="cover") return parts[1]==="surprise" || parts[1]==="shared"
+    ? (coverDraft && coverDraft.src===parts[1] ? renderDraftPage(coverDraft, { cover:true, back:"#library" }) : go("#library"))
     : renderCover(parts[1], parts[2]);
   if(route==="playdraft") return launchFromSource({ type:"draft" });
   if(route==="playlib") return launchFromSource({ type:"libworkout", id:parts[1] });
@@ -3205,11 +3403,13 @@ var HOME_ICON = {
   fav:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
   timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 3h5M18 7l1.5-1.5"/>',
   blocks:'<rect x="4" y="4" width="16" height="5" rx="1.5"/><rect x="4" y="11" width="16" height="4" rx="1.5"/><rect x="4" y="17" width="16" height="3" rx="1.5"/>',
-  lib:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>'
+  lib:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>',
+  history:'<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8.5 15l2.3 2.2 4.7-4.7"/>'
 };
+var HOME_LINKS = { lib:"#library", history:"#history" };
 function sektion(key, titel, anzahl, inhalt, unter){
-  var auf = homeOpen(key), link = key==="lib";
-  return '<div class="home-tile'+(auf && !link ? ' offen' : '')+'" '+(link ? 'data-nav="#library"' : 'data-sec="'+key+'"')+
+  var auf = homeOpen(key), link = !!HOME_LINKS[key];
+  return '<div class="home-tile'+(auf && !link ? ' offen' : '')+'" '+(link ? 'data-nav="'+HOME_LINKS[key]+'"' : 'data-sec="'+key+'"')+
       ' role="button" tabindex="0"'+(link ? '' : ' aria-expanded="'+auf+'"')+'>'+
       '<span class="ht-ico">'+svgIcon(HOME_ICON[key])+'</span>'+
       '<span class="ht-txt"><b>'+esc(titel)+'</b><small>'+esc(unter||"")+'</small></span>'+
@@ -3257,6 +3457,11 @@ function renderHome(){
     sektion("blocks", t("singleBlocks"), bs.length, blockItems, t("htBlocks")) +
     sektion("lib", t("library"), EXERCISES.length + LIB_WORKOUTS.length, "",
       t("libEntrySub", { e:EXERCISES.length, w:LIB_WORKOUTS.length, m:(state.db.myWorkouts||[]).length })) +
+    (function(){
+      var st = histStats();
+      var sub = st.totalN ? t("streak")+" "+st.streak+" · "+t("weekTime")+" "+fmtStat(st.weekSec) : t("htHistory");
+      return sektion("history", t("history"), st.totalN, "", sub);
+    })() +
     '</div>' +
     KODAK_BADGE + DECK_BADGE +
     '<div class="fab-backdrop hidden" data-fabclose></div>' +
@@ -3736,65 +3941,95 @@ function showToast(text){
   setTimeout(function(){ el.classList.add("weg"); }, 2600);
   setTimeout(function(){ el.remove(); }, 3000);
 }
+var ICON_EYE_OFF = '<path d="M3 3l18 18"/><path d="M10.6 5.1A9.8 9.8 0 0 1 12 5c5.5 0 9 5.5 9.5 7-.3.8-1.2 2.4-2.7 3.9M6.6 6.6C4.5 8 3 10.3 2.5 12c.5 1.5 4 7 9.5 7 1.8 0 3.4-.6 4.8-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
+var ICON_EYE = '<path d="M2.5 12c.5-1.5 4-7 9.5-7s9 5.5 9.5 7c-.5 1.5-4 7-9.5 7s-9-5.5-9.5-7z"/><circle cx="12" cy="12" r="3"/>';
+var ICON_EDIT = '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>';
+/* Ausblenden/Einblenden direkt auf der Karte - ausgeblendete Einträge stehen unten */
+/* corner: oben rechts in der Karte (Workout-Karten - in deren Aktionszeile ist kein Platz mehr) */
+function hideBtnHTML(key, hidden, corner){
+  if(hidden) return '<button type="button" class="tpl-adopt" data-unhideone="'+key+'">'+svgIcon(ICON_EYE)+' '+t("unhide")+'</button>';
+  return '<button type="button" class="tpl-adopt hide-btn'+(corner?' corner':'')+'" data-hide="'+key+'" title="'+t("hideShort")+'" aria-label="'+t("hideShort")+'">'+svgIcon(ICON_EYE_OFF)+'</button>';
+}
+function hiddenBlockHTML(n, cards){
+  if(!n) return "";
+  return '<div class="section-title hid-head">'+svgIcon(ICON_EYE_OFF)+t("hiddenSection", { n:n })+'</div>'+
+    '<div class="hid-note">'+esc(t("hiddenSectionHint"))+'</div>'+cards;
+}
+/* Fertige Workouts, die Stangenübungen brauchen, erscheinen bei einem anderen Fokus nur mit passender Ausrüstung */
+function woGearOk(exs, cat, equip){ return exs.every(function(ex){ return gearOk(ex, cat, equip); }); }
+
 function renderLibrary(){
   var s = state.db.settings;
-  var tab = ["exercises","mine","calis","stretch"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
+  if(s.libTab === "calis") s.libTab = "workouts";   // früherer Reiter „Calisthenics“ ist jetzt ein Fokus
+  var tab = ["exercises","mine","stretch"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
   var cat = selArr(s.libCats || s.libCat);
   var sort = s.libSort === "az" ? "az" : "std";
-  var equip = selArr(s.libEquips), level = "all";
-  var hiddenCount = 0, list = "", controls = "";
-  var surpriseBtn = '<button type="button" class="my-new surprise" data-surprise>\u2728 '+t("surprise")+'</button>';
+  var equip = selArr(s.libEquips);
+  var hiddenCount = 0, hiddenCards = "", list = "", controls = "";
+  var surpriseBtn = '<button type="button" class="my-new surprise" data-surprise>✨ '+t("surprise")+'</button>';
+
+  function woCard(lw, exs, hidden, tags){
+    var run = libWorkoutRun(lw);
+    return '<div class="list-item entry tpl-item'+(hidden?' is-hidden':'')+'" style="--cat:'+(tags ? catVar(lw.focus) : 'var(--tp-color)')+'" data-cover="lib/'+lw.id+'">'+
+      '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
+      '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
+      '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
+      (tags ? '<div class="cat-tags">'+catTags([lw.focus])+'</div>' : '')+
+      '</div>'+
+      '<div class="tpl-actions">'+
+        (hidden ? '' : favBtn("lib:"+lw.id))+
+        (hidden ? '' : '<button type="button" class="tpl-adopt" data-adoptlib="'+lw.id+'" title="'+t("adoptTitle")+'">'+ICON_PLUS+' '+t("adoptMine")+'</button>')+
+        hideBtnHTML("wo:"+lw.id, hidden, true)+
+      '</div></div>';
+  }
+  function exCard(ex, hidden, sub){
+    var bild = ILLU[ex.id]
+      ? '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'
+      : (ex.custom ? '<button type="button" class="illu-btn" data-exedit="'+ex.id+'" aria-label="'+t("edit")+'"><span class="custom-ico">'+catIcon(ex.cats[0])+'</span></button>' : '');
+    var mus = musclesMain(ex);
+    return '<div class="list-item entry tpl-item'+(isExFav(ex.id)?' ex-fav-on':'')+(hidden?' is-hidden':'')+'" style="--cat:'+catVar(ex.cats[0])+'" data-q="'+esc(exSearchText(ex))+'">'+
+      '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
+      '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
+      '<div class="sub">'+sub+'</div>'+
+      '<div class="cat-tags">'+(ex.custom ? '<span class="cat-tag own">'+esc(t("customTag"))+'</span>' : '')+catTags(ex.cats)+'</div>'+
+      (mus ? '<div class="tpl-mus">'+esc(musclesLabel(ex))+': '+esc(mus)+'</div>' : '')+
+      '</div>'+bild+
+      '<div class="tpl-actions">'+(hidden ? '' : exFavBtn(ex.id))+
+        (ex.custom
+          ? '<button type="button" class="tpl-adopt" data-exedit="'+ex.id+'">'+svgIcon(ICON_EDIT)+' '+t("edit")+'</button>'
+          : '<button type="button" class="tpl-adopt" data-info="'+ex.id+'">'+t("info")+'</button>')+
+        hideBtnHTML("ex:"+ex.id, hidden)+
+      '</div></div>';
+  }
+  function equipSub(ex){ return svgIcon(EQUIP_ICON[ex.equip[0]] || "", "ico sub-ico")+esc(exEquipText(ex)); }
 
   if(tab === "workouts"){
-    controls = surpriseBtn + filterBarHTML(cat, equip, "l", ["stretch","calis"]);
+    controls = surpriseBtn + filterBarHTML(cat, equip, "l", ["stretch"]);
     LIB_WORKOUTS.forEach(function(lw){
       var exs = lw.exercises.map(findExercise).filter(Boolean);
-      if(lw.focus==="stretch" || lw.focus==="calis") return;
+      if(lw.focus==="stretch") return;
       if(cat.length && cat.indexOf(lw.focus) < 0 && !(lw.focus==="mix" && exs.some(function(ex){ return catMatch(cat, ex.cats); }))) return;
-      if(!woFits(exs, equip)) return;
-      if(libHidden("wo:"+lw.id)){ hiddenCount++; return; }
-      var run = libWorkoutRun(lw);
-      list += '<div class="list-item entry tpl-item" style="--cat:'+catVar(lw.focus)+'" data-cover="lib/'+lw.id+'">'+
-        '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
-        '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
-        '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
-        '<div class="cat-tags">'+catTags([lw.focus])+levelHTML(woLevel(exs))+'</div>'+
-        '</div>'+
-        '<div class="tpl-actions">'+
-          favBtn("lib:"+lw.id)+
-          '<button type="button" class="tpl-adopt" data-adoptlib="'+lw.id+'" title="'+t("adoptTitle")+'">'+ICON_PLUS+' '+t("adoptMine")+'</button>'+
-
-        '</div></div>';
+      if(!woFits(exs, equip) || !woGearOk(exs, cat, equip)) return;
+      if(libHidden("wo:"+lw.id)){ hiddenCount++; hiddenCards += woCard(lw, exs, true, true); return; }
+      list += woCard(lw, exs, false, true);
     });
-  } else if(tab === "stretch" || tab === "calis"){
-    list = '<div class="section-title">'+t(tab==="calis" ? "calisRoutines" : "stretchRoutines")+'</div>';
+  } else if(tab === "stretch"){
+    list = '<div class="section-title">'+t("stretchRoutines")+'</div>';
     LIB_WORKOUTS.forEach(function(lw){
-      if(lw.focus!==tab) return;
-      var exs = lw.exercises.map(findExercise).filter(Boolean), run = libWorkoutRun(lw);
-      list += '<div class="list-item entry tpl-item" style="--cat:var(--tp-color)" data-cover="lib/'+lw.id+'">'+
-        '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
-        '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
-        '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
-        '</div>'+
-        '<div class="tpl-actions">'+favBtn("lib:"+lw.id)+
-          '<button type="button" class="tpl-adopt" data-adoptlib="'+lw.id+'" title="'+t("adoptTitle")+'">'+ICON_PLUS+' '+t("adoptMine")+'</button>'+
-        '</div></div>';
+      if(lw.focus!=="stretch") return;
+      var exs = lw.exercises.map(findExercise).filter(Boolean);
+      if(libHidden("wo:"+lw.id)){ hiddenCount++; hiddenCards += woCard(lw, exs, true, false); return; }
+      list += woCard(lw, exs, false, false);
     });
-    list += '<div class="section-title" style="margin-top:28px;">'+t(tab==="calis" ? "calisExercises" : "stretchExercises")+'</div>' + sortRowHTML(sort, "data-libsort");
-    sortedExercises(tab, sort, "all").forEach(function(ex){
-      var hold = tab==="calis" ? blockSpec(exBlock(ex))+SEP+esc(exEquipText(ex)) : ex.perSide
+    list += '<div class="section-title" style="margin-top:28px;">'+t("stretchExercises")+'</div>' + sortRowHTML(sort, "data-libsort");
+    function holdSub(ex){
+      return ex.perSide
         ? (ex.setReps > 1 ? t("holdSideN", { n:ex.setReps, s:ex.workSec }) : t("holdSide", { s:ex.workSec }))
         : (ex.reps > 1 ? t("holdN", { n:ex.reps, s:ex.workSec }) : t("hold1", { s:ex.workSec }));
-      list += '<div class="list-item entry tpl-item" style="--cat:var(--tp-color)">'+
-        '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
-        '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
-        '<div class="sub">'+hold+'</div>'+
-        '<div class="tpl-mus">'+esc(musclesLabel(ex))+': '+esc(musclesMain(ex))+'</div>'+
-        '</div>'+
-        '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'+
-        '<div class="tpl-actions">'+exFavBtn(ex.id)+
-          '<button type="button" class="tpl-adopt" data-info="'+ex.id+'">'+t("info")+'</button>'+
-        '</div></div>';
+    }
+    sortedExercises("stretch", sort, "all").forEach(function(ex){ list += exCard(ex, false, holdSub(ex)); });
+    EXERCISES.forEach(function(ex){
+      if(ex.cats.indexOf("stretch") > -1 && libHidden("ex:"+ex.id)){ hiddenCount++; hiddenCards += exCard(ex, true, holdSub(ex)); }
     });
   } else if(tab === "mine"){
     var mine = (state.db.myWorkouts || []).map(normMy).slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
@@ -3808,29 +4043,23 @@ function renderLibrary(){
         '<button class="playbtn tp" data-cover="my/'+mw.id+'" '+(exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
         '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
         '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
-        (cats.length ? '<div class="cat-tags">'+catTags(cats)+levelHTML(woLevel(exs))+'</div>' : '')+
-
+        (cats.length ? '<div class="cat-tags">'+catTags(cats)+'</div>' : '')+
         '</div>'+favBtn("my:"+mw.id)+'</div>';
     }).join("");
     if(!mine.length) list += '<div class="empty" style="padding:30px 20px;">'+t("myEmpty")+'</div>';
   } else {
     cat = cat.filter(function(c){ return c!=="stretch"; });
-    controls = searchHTML(libQuery, "l") + filterBarHTML(cat, equip, "l", ["stretch"]) + sortRowHTML(sort, "data-libsort");
-    EXERCISES.forEach(function(ex){ if(libHidden("ex:"+ex.id) && ex.cats.indexOf("stretch") < 0 && catMatch(cat, ex.cats)) hiddenCount++; });
+    controls = '<button type="button" class="my-new" data-exnew>'+ICON_PLUS+' '+t("exNew")+'</button>'+
+      searchHTML(libQuery, "l") + filterBarHTML(cat, equip, "l", ["stretch"]) + sortRowHTML(sort, "data-libsort");
     sortedExercises(cat, sort, equip).filter(function(ex){ return ex.cats.indexOf("stretch") < 0; }).forEach(function(ex){
-      list += '<div class="list-item entry tpl-item'+(isExFav(ex.id)?' ex-fav-on':'')+'" style="--cat:'+catVar(ex.cats[0])+'" data-q="'+esc(exSearchText(ex))+'">'+
-        '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
-        '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
-        '<div class="sub">'+svgIcon(EQUIP_ICON[ex.equip[0]] || "", "ico sub-ico")+esc(exEquipText(ex))+'</div>'+
-        '<div class="cat-tags">'+catTags(ex.cats)+'</div>'+
-        '<div class="tpl-mus">'+esc(musclesLabel(ex))+': '+esc(musclesMain(ex))+'</div>'+
-        '</div>'+
-        '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'+
-        '<div class="tpl-actions">'+exFavBtn(ex.id)+
-          '<button type="button" class="tpl-adopt" data-info="'+ex.id+'">'+t("info")+'</button>'+
-        '</div></div>';
+      list += exCard(ex, false, equipSub(ex));
     });
     list += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>';
+    EXERCISES.forEach(function(ex){
+      if(libHidden("ex:"+ex.id) && ex.cats.indexOf("stretch") < 0 && catMatch(cat, ex.cats) && equipMatch(equip, ex)){
+        hiddenCount++; hiddenCards += exCard(ex, true, equipSub(ex));
+      }
+    });
   }
   if(!list) list = '<div class="empty" style="padding:40px 20px;">'+t("libEmpty")+'</div>';
 
@@ -3840,12 +4069,10 @@ function renderLibrary(){
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("libReady")+'</button>'+
       '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("libMine")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
-      '<button data-libtab="calis" class="'+(tab==="calis"?"active":"")+'">'+t("libCalis")+'</button>'+
       '<button data-libtab="stretch" class="'+(tab==="stretch"?"active":"")+'">'+t("libStretch")+'</button>'+
     '</div></div>'+
-    controls + list +
-    (hiddenCount ? '<div class="lib-hidden">'+t("hiddenN", { n:hiddenCount })+
-      ' <button type="button" class="tpl-hide" data-unhide>'+t("showAgain")+'</button></div>' : '<div style="height:80px"></div>');
+    controls + list + hiddenBlockHTML(hiddenCount, hiddenCards) +
+    '<div style="height:80px"></div>';
   bindCommon();
 
   function neu(){ var y = window.scrollY; renderLibrary(); window.scrollTo(0, y); }
@@ -3871,22 +4098,365 @@ function renderLibrary(){
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
   on("[data-mynew]", function(){ go("#mybuild/"+createMy().id); });
+  on("[data-exnew]", function(){ go("#exedit/new"); });
+  on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
   on("[data-surprise]", function(){ openSurprise(); });
   on("[data-adoptlib]", function(el){ var lw = findLibWorkout(el.getAttribute("data-adoptlib")); if(lw) adoptLibWorkout(lw); });
-  on("[data-adoptex]", function(el){
-    var ex = findExercise(el.getAttribute("data-adoptex"));
-    if(!ex) return;
-    adoptExercise(ex);
-    showToast(t("adoptedBlock", { n:tplText(ex.name) }));
-  });
   on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
-  on("[data-hide]", function(el){ libHide(el.getAttribute("data-hide")); neu(); });
-  on("[data-unhide]", function(){
-    var pre = tab==="workouts" ? "wo:" : "ex:";
-    s.hiddenLib = (s.hiddenLib||[]).filter(function(k){ return k.indexOf(pre) !== 0; });
+  on("[data-hide]", function(el){ libHide(el.getAttribute("data-hide")); showToast(t("hiddenToast")); neu(); });
+  on("[data-unhideone]", function(el){
+    var k = el.getAttribute("data-unhideone");
+    s.hiddenLib = (s.hiddenLib||[]).filter(function(x){ return x !== k; });
     save(); neu();
   });
+}
+
+/* ============ Eigene Übung anlegen / bearbeiten ============ */
+function renderExEdit(id){
+  var isNew = id === "new";
+  var c = isNew ? null : findCustom(id);
+  if(!isNew && !c){ goBack("#library"); return; }
+  // Entwurf nur im Speicher, bis „Speichern“ getippt wird
+  var d = c ? JSON.parse(JSON.stringify(c)) : { name:"", cats:[], equip:["none"], perSide:false, reps:4, work:30, rest:15, hint:"" };
+  function draw(){
+    app.innerHTML =
+      topbar(t(isNew ? "exNewTitle" : "exEditTitle"), { back:"#library" }) +
+      '<div class="card">'+
+        '<label for="x-name">'+t("exName")+'</label>'+
+        '<input type="text" id="x-name" value="'+esc(d.name)+'" maxlength="40" placeholder="'+esc(t("exName"))+'">'+
+        '<label>'+t("exFocus")+' <span class="lbl-hint">'+esc(t("exFocusHint"))+'</span></label>'+
+        '<div class="sp-chips">'+LIB_CATS.map(function(cc){
+          return '<button type="button" class="lib-chip'+(d.cats.indexOf(cc.id)>-1?' active':'')+'" data-xcat="'+cc.id+'" aria-pressed="'+(d.cats.indexOf(cc.id)>-1)+'">'+catIcon(cc.id)+esc(tplText(cc))+'</button>';
+        }).join("")+'</div>'+
+        '<label>'+t("exEquip")+'</label>'+
+        '<div class="sp-chips">'+EQUIPS.map(function(e){
+          return '<button type="button" class="lib-chip'+(d.equip.indexOf(e.id)>-1?' active':'')+'" data-xequip="'+e.id+'" aria-pressed="'+(d.equip.indexOf(e.id)>-1)+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>';
+        }).join("")+'</div>'+
+      '</div>'+
+      '<div class="card">'+
+        toggleRow("x-side", t("exPerSide"), t("exPerSideDesc"), d.perSide)+
+        '<label>'+t("exReco")+'</label>'+
+        '<div class="tm-grid"><div><label>'+t("tmReps")+'</label>'+stepperHTML("x-reps", d.reps, 1, 30, 1)+'</div>'+
+        '<div><label>'+t("tmWork")+'</label>'+stepperHTML("x-work", d.work, 5, 600, 5)+'</div>'+
+        '<div><label>'+t("tmRest")+'</label>'+stepperHTML("x-rest", d.rest, 0, 300, 5)+'</div></div>'+
+        '<label for="x-hint">'+t("exHint")+'</label>'+
+        '<input type="text" id="x-hint" value="'+esc(d.hint||"")+'" maxlength="80" placeholder="'+esc(t("exHintPh"))+'">'+
+      '</div>'+
+      '<button class="btn btn-primary" data-xsave>'+ICON_SAVE+' '+t("exSave")+'</button>'+
+      (isNew ? '' : '<button class="btn btn-danger" data-xdel>'+ICON_TRASH+' '+t("exDelete")+'</button>')+
+      '<div style="height:60px"></div>';
+    bindCommon();
+    var nameIn = app.querySelector("#x-name"), hintIn = app.querySelector("#x-hint");
+    nameIn.addEventListener("input", function(){ d.name = nameIn.value; });
+    hintIn.addEventListener("input", function(){ d.hint = hintIn.value; });
+    function lesen(){
+      d.reps = parseInt(app.querySelector("#x-reps").value)||1;
+      d.work = parseInt(app.querySelector("#x-work").value)||5;
+      d.rest = parseInt(app.querySelector("#x-rest").value)||0;
+    }
+    bindSteppers(app.querySelector(".tm-grid"), lesen);
+    bindToggle("x-side", function(v){ d.perSide = v; });
+    app.querySelectorAll("[data-xcat]").forEach(function(b){ b.addEventListener("click", function(){
+      lesen(); d.cats = selToggle(d.cats, b.getAttribute("data-xcat")); var y = window.scrollY; draw(); window.scrollTo(0, y);
+    }); });
+    app.querySelectorAll("[data-xequip]").forEach(function(b){ b.addEventListener("click", function(){
+      lesen(); d.equip = selToggle(d.equip, b.getAttribute("data-xequip")); var y = window.scrollY; draw(); window.scrollTo(0, y);
+    }); });
+    app.querySelector("[data-xsave]").addEventListener("click", function(){
+      lesen();
+      d.name = (d.name || "").trim();
+      if(!d.name){ showToast(t("exNameMissing")); nameIn.focus(); return; }
+      d.hint = (d.hint || "").trim();
+      if(!state.db.customEx) state.db.customEx = [];
+      if(isNew){ d.id = "my-"+uid(); state.db.customEx.push(d); }
+      else {
+        for(var i=0;i<state.db.customEx.length;i++) if(state.db.customEx[i].id===id) state.db.customEx[i] = d;
+      }
+      save(); syncCustomEx();
+      showToast(t("exSaved"));
+      goBack("#library");
+    });
+    var del = app.querySelector("[data-xdel]");
+    if(del) del.addEventListener("click", function(){
+      confirmSheet(t("exDeleteQ"), t("exDeleteText"), t("del"), function(){
+        state.db.customEx = state.db.customEx.filter(function(x){ return x.id !== id; });
+        (state.db.myWorkouts || []).forEach(function(mw){
+          if(Array.isArray(mw.items)) mw.items = mw.items.filter(function(it){ return (it && it.ex || it) !== id; });
+        });
+        state.db.settings.exFavs = (state.db.settings.exFavs || []).filter(function(x){ return x !== id; });
+        save(); syncCustomEx();
+        goBack("#library");
+      });
+    });
+  }
+  draw();
+}
+
+/* ============ Verlauf & Statistik ============ */
+/* Jedes beendete Training landet in state.db.history: { at, name, sec, ex:[Übungs-IDs], partial }.
+   Vorzeitig beendete zählen ab einer Minute mit (partial:true). */
+function logHistory(partial){
+  if(!playerState || playerState.logged) return;
+  var steps = playerState.steps, idx = playerState.idx, sec = 0;
+  for(var i=0;i<idx && i<steps.length;i++) if(steps[i].phase!=="prep") sec += steps[i].duration;
+  var cur = steps[idx];
+  if(partial && cur && cur.phase!=="done" && cur.phase!=="prep"){
+    var rem = playerState.paused ? playerState.remainingMs : playerState.endAt - Date.now();
+    sec += Math.max(0, Math.round((cur.duration*1000 - Math.max(0, rem))/1000));
+  }
+  if(partial && sec < 60) return;
+  var ex = [];
+  steps.slice(0, idx+1).forEach(function(st){ if(st.phase==="work" && st.ex && ex.indexOf(st.ex) < 0) ex.push(st.ex); });
+  playerState.logged = true;
+  if(!state.db.history) state.db.history = [];
+  var e = { at:Date.now(), name:playerState.workout.name || "", sec:sec, ex:ex };
+  if(partial) e.partial = true;
+  state.db.history.push(e);
+  if(state.db.history.length > 3000) state.db.history.splice(0, state.db.history.length - 3000);
+  save();
+}
+function dayKey(ts){ var d = new Date(ts); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function dayStart(ts){ var d = new Date(ts); d.setHours(0,0,0,0); return d.getTime(); }
+function addDays(ts, n){ var d = new Date(ts); d.setDate(d.getDate()+n); return d.getTime(); }
+function weekStart(ts){ var d = new Date(dayStart(ts)); var wd = (d.getDay()+6)%7; d.setDate(d.getDate()-wd); return d.getTime(); }
+function histStats(){
+  var h = state.db.history || [], days = {}, now = Date.now();
+  h.forEach(function(e){ days[dayKey(e.at)] = (days[dayKey(e.at)]||0) + 1; });
+  // Serie: aufeinanderfolgende Tage bis heute (oder bis gestern, wenn heute noch nichts war)
+  var d = dayStart(now), streak = 0, today = !!days[dayKey(d)];
+  if(!today) d = addDays(d, -1);
+  while(days[dayKey(d)]){ streak++; d = addDays(d, -1); }
+  var ws = weekStart(now), weekSec = 0, weekN = 0, totalSec = 0;
+  h.forEach(function(e){ totalSec += e.sec||0; if(e.at >= ws){ weekSec += e.sec||0; weekN++; } });
+  var weeks = [];
+  for(var w=7; w>=0; w--){
+    var a = addDays(ws, -7*w), b = addDays(a, 7), sum = 0;
+    h.forEach(function(e){ if(e.at >= a && e.at < b) sum += e.sec||0; });
+    weeks.push({ start:a, sec:sum });
+  }
+  return { days:days, streak:streak, today:today, weekSec:weekSec, weekN:weekN, totalSec:totalSec, totalN:h.length, weeks:weeks };
+}
+/* Übungen der letzten n Tage (für den Generator) */
+function recentExercises(days){
+  var since = Date.now() - days*86400000, out = {};
+  (state.db.history || []).forEach(function(e){ if(e.at >= since) (e.ex||[]).forEach(function(id){ out[id] = true; }); });
+  return out;
+}
+function fmtHistDur(sec){ return fmtDuration(Math.max(60, sec)); }
+/* kurz für die Statistik-Kacheln: „45 Min“ bzw. „2:05 Std“ */
+function fmtStat(sec){
+  var m = Math.round((sec||0)/60), h = Math.floor(m/60);
+  return h ? h+":"+("0"+(m%60)).slice(-2)+" "+t("unitH") : m+" "+t("unitMin");
+}
+
+var histMonth = null;   // angezeigter Monat im Kalender (Zeitstempel des Monatsersten)
+var histDay = null;     // angetippter Tag
+var histShowAll = false;
+function renderHistory(){
+  var st = histStats(), lang = currentLang()==="en" ? "en-GB" : "de-DE";
+  var now = new Date();
+  if(histMonth == null) histMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  var m = new Date(histMonth), year = m.getFullYear(), month = m.getMonth();
+  var first = new Date(year, month, 1), lead = (first.getDay()+6)%7, nDays = new Date(year, month+1, 0).getDate();
+  var wdNames = [];
+  for(var i=0;i<7;i++) wdNames.push(new Date(2024, 0, 1+i).toLocaleDateString(lang, { weekday:"narrow" }));   // 1.1.2024 = Montag
+  var cal = '<div class="cal-grid">'+wdNames.map(function(w){ return '<span class="cal-wd">'+esc(w)+'</span>'; }).join("");
+  for(i=0;i<lead;i++) cal += '<span></span>';
+  var todayKey = dayKey(Date.now());
+  for(var dd=1; dd<=nDays; dd++){
+    var ts = new Date(year, month, dd).getTime(), k = dayKey(ts), n = st.days[k] || 0;
+    cal += '<button type="button" class="cal-day'+(n?' on':'')+(k===todayKey?' today':'')+(histDay===k?' sel':'')+'" data-day="'+k+'"'+
+      ' aria-label="'+esc(new Date(ts).toLocaleDateString(lang))+(n ? ' – '+esc(t("histDayN", { n:n })) : '')+'">'+dd+'</button>';
+  }
+  cal += '</div>';
+
+  var maxW = Math.max.apply(null, st.weeks.map(function(w){ return w.sec; }).concat([1]));
+  var bars = '<div class="wk-bars">'+st.weeks.map(function(w, i){
+    var h = Math.round(w.sec/maxW*100), last = i===st.weeks.length-1;
+    return '<div class="wk-col'+(last?' now':'')+'"><div class="wk-val">'+(w.sec ? Math.round(w.sec/60) : '')+'</div>'+
+      '<div class="wk-bar"><i style="height:'+Math.max(w.sec?4:0, h)+'%"></i></div>'+
+      '<div class="wk-lbl">'+esc(new Date(w.start).toLocaleDateString(lang, { day:"numeric", month:"numeric" }))+'</div></div>';
+  }).join("")+'</div>';
+
+  var h = (state.db.history || []).map(function(e, i){ return { e:e, i:i }; }).reverse();
+  if(histDay) h = h.filter(function(x){ return dayKey(x.e.at) === histDay; });
+  var shown = histShowAll || histDay ? h : h.slice(0, 15);
+  var rows = shown.map(function(x){
+    var e = x.e, d = new Date(e.at);
+    return '<div class="list-item hist-row">'+
+      '<div class="meta"><div class="name">'+esc(e.name || t("untitled"))+'</div>'+
+      '<div class="sub">'+esc(d.toLocaleDateString(lang, { weekday:"short", day:"numeric", month:"short" }))+', '+
+        esc(d.toLocaleTimeString(lang, { hour:"2-digit", minute:"2-digit" }))+SEP+fmtHistDur(e.sec)+
+        (e.partial ? SEP+esc(t("histPartial")) : '')+'</div></div>'+
+      '<button type="button" class="dz-btn hist-del" data-hdel="'+x.i+'" aria-label="'+t("del")+'" title="'+t("del")+'">'+ICON_TRASH+'</button>'+
+    '</div>';
+  }).join("");
+
+  app.innerHTML =
+    topbar(t("history"), { back:"#home" }) +
+    '<div class="stat-row">'+
+      '<div class="card stat"><div class="stat-v">'+st.streak+'</div><div class="stat-l">'+t("streak")+'<br><small>'+t(st.streak===1 ? "streakUnit1" : "streakUnit")+'</small></div></div>'+
+      '<div class="card stat"><div class="stat-v">'+fmtStat(st.weekSec)+'</div><div class="stat-l">'+t("weekTime")+'<br><small>'+t(st.weekN===1 ? "weekWorkouts1" : "weekWorkouts", { n:st.weekN })+'</small></div></div>'+
+      '<div class="card stat"><div class="stat-v">'+fmtStat(st.totalSec)+'</div><div class="stat-l">'+t("totalTime")+'<br><small>'+t(st.totalN===1 ? "weekWorkouts1" : "weekWorkouts", { n:st.totalN })+'</small></div></div>'+
+    '</div>'+
+    (st.totalN ? '<div class="streak-note">'+esc(t(st.today ? "streakToday" : "streakHint"))+'</div>' : '')+
+    '<div class="card">'+
+      '<div class="cal-head"><button type="button" class="iconbtn" data-mon="-1" aria-label="&lsaquo;">&lsaquo;</button>'+
+      '<b>'+esc(m.toLocaleDateString(lang, { month:"long", year:"numeric" }))+'</b>'+
+      '<button type="button" class="iconbtn" data-mon="1" aria-label="&rsaquo;">&rsaquo;</button></div>'+
+      cal+
+    '</div>'+
+    '<div class="section-title">'+t("last8")+' <small>(Min)</small></div>'+
+    '<div class="card">'+bars+'</div>'+
+    '<div class="section-title">'+(histDay ? esc(new Date(histDay.split("-")[0], histDay.split("-")[1]-1, histDay.split("-")[2]).toLocaleDateString(lang, { weekday:"long", day:"numeric", month:"long" })) : t("histList"))+'</div>'+
+    (rows || '<div class="empty" style="padding:24px 16px;">'+t("histEmpty")+'</div>')+
+    (!histShowAll && !histDay && h.length > shown.length ? '<button type="button" class="my-new" data-hmore>'+t("histMore")+'</button>' : '')+
+    '<div style="height:60px"></div>';
+  bindCommon();
+  function neu(){ var y = window.scrollY; renderHistory(); window.scrollTo(0, y); }
+  app.querySelectorAll("[data-mon]").forEach(function(b){ b.addEventListener("click", function(){
+    var mm = new Date(histMonth); mm.setMonth(mm.getMonth() + parseInt(b.getAttribute("data-mon"))); histMonth = mm.getTime(); histDay = null; neu();
+  }); });
+  app.querySelectorAll("[data-day]").forEach(function(b){ b.addEventListener("click", function(){
+    var k = b.getAttribute("data-day"); histDay = histDay === k ? null : k; neu();
+  }); });
+  var more = app.querySelector("[data-hmore]");
+  if(more) more.addEventListener("click", function(){ histShowAll = true; neu(); });
+  app.querySelectorAll("[data-hdel]").forEach(function(b){ b.addEventListener("click", function(){
+    var i = parseInt(b.getAttribute("data-hdel"));
+    confirmSheet(t("histDeleteQ"), t("histDeleteText"), t("del"), function(){
+      state.db.history.splice(i, 1); save(); neu();
+    });
+  }); });
+}
+
+/* ============ Workouts per Link teilen ============ */
+/* Das Workout steckt komprimiert in der Adresse (#import/…): kein Server, kein Konto.
+   Erstes Zeichen: "z" = deflate-komprimiert, "j" = reines JSON (Fallback für alte Browser). */
+function b64urlFromBytes(bytes){
+  var bin = "";
+  for(var i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function bytesFromB64url(str){
+  str = str.replace(/-/g, "+").replace(/_/g, "/");
+  while(str.length % 4) str += "=";
+  var bin = atob(str), out = new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+function pipeBytes(bytes, stream){
+  return new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(function(b){ return new Uint8Array(b); });
+}
+function encodeShare(obj){
+  var raw = new TextEncoder().encode(JSON.stringify(obj));
+  if(window.CompressionStream){
+    return pipeBytes(raw, new CompressionStream("deflate-raw"))
+      .then(function(b){ return "z"+b64urlFromBytes(b); })
+      .catch(function(){ return "j"+b64urlFromBytes(raw); });
+  }
+  return Promise.resolve("j"+b64urlFromBytes(raw));
+}
+function decodeShare(str){
+  try{
+    var kind = str.charAt(0), bytes = bytesFromB64url(str.slice(1));
+    var p = kind==="z"
+      ? (window.DecompressionStream ? pipeBytes(bytes, new DecompressionStream("deflate-raw")) : Promise.reject(new Error("no-inflate")))
+      : Promise.resolve(bytes);
+    return p.then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
+  }catch(e){ return Promise.reject(e); }
+}
+function customDefOf(ex){
+  var c = findCustom(ex.id);
+  if(c) return { id:c.id, name:c.name, cats:c.cats, equip:c.equip, perSide:!!c.perSide, reps:c.reps, work:c.work, rest:c.rest, hint:c.hint||"" };
+  return { id:ex.id, name:tplText(ex.name), cats:ex.cats, equip:ex.equip, perSide:ex.perSide, reps:ex.setReps, work:ex.workSec, rest:ex.restSec, hint:tplText(ex.hint) };
+}
+function sharePayload(d){
+  var custom = [];
+  d.items.forEach(function(it){
+    var ex = findExercise(it.ex);
+    if(ex && ex.custom && !custom.some(function(c){ return c.id===ex.id; })) custom.push(customDefOf(ex));
+  });
+  var p = { v:1, n:d.name, b:d.blockRest||0 };
+  if(d.mode==="uniform"){ p.u = [d.reps, d.work, d.rest]; p.i = d.items.map(function(it){ return it.ex; }); }
+  else p.i = d.items.map(function(it){ return [it.ex, it.reps, it.work, it.rest]; });
+  if(custom.length) p.c = custom;
+  return p;
+}
+function copyText(text, okMsg){
+  function ok(){ showToast(okMsg); }
+  function fallback(){
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); ok(); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fallback);
+  else fallback();
+}
+function shareDraft(d){
+  if(!d || !d.items.length) return;
+  encodeShare(sharePayload(d)).then(function(code){
+    var url = appUrl()+"#import/"+code, msg = t("shareMsg", { n:d.name });
+    if(navigator.share){
+      navigator.share({ title:d.name, text:msg, url:url }).catch(function(err){
+        if(!err || err.name !== "AbortError") copyText(url, t("shareLinkCopied"));
+      });
+    } else copyText(msg+" "+url, t("shareLinkCopied"));
+  });
+}
+/* Link öffnen: Workout auf dem Deckblatt zeigen - speichern erst mit „Als Eigenes speichern“ */
+function draftFromShare(p){
+  if(!p || !Array.isArray(p.i)) return null;
+  (p.c || []).forEach(function(c){
+    if(c && c.id && c.name && !findExercise(c.id)){
+      var ex = customToEx(c); ex.sharedDef = c; EXERCISES.push(ex);
+    }
+  });
+  var uni = Array.isArray(p.u);
+  var items = [], missing = 0;
+  p.i.forEach(function(x){
+    var id = uni ? x : (x && x[0]);
+    var ex = typeof id === "string" && findExercise(id);
+    if(!ex){ missing++; return; }
+    items.push(uni ? itemFromEx(id) : { ex:id, reps:clamp(parseInt(x[1])||ex.reps, 1, 60), work:clamp(parseInt(x[2])||ex.workSec, 5, 600), rest:clamp(parseInt(x[3])||0, 0, 300) });
+  });
+  if(!items.length) return null;
+  return { key:"shared:", src:"shared", name:String(p.n || t("myDefaultName")).slice(0, 40),
+           mode: uni ? "uniform" : "individual",
+           reps: uni ? clamp(parseInt(p.u[0])||6, 1, 60) : 6, work: uni ? clamp(parseInt(p.u[1])||30, 5, 600) : 30,
+           rest: uni ? clamp(parseInt(p.u[2])||0, 0, 300) : 10, blockRest: clamp(parseInt(p.b)||0, 0, 600),
+           items:items, _missing:missing };
+}
+function renderImport(code){
+  app.innerHTML = topbar(t("kindShared"), { back:"#home" })+'<div class="empty" style="padding:40px 20px;">…</div>';
+  bindCommon();
+  decodeShare(code || "").then(function(p){
+    var d = draftFromShare(p);
+    if(!d) throw new Error("empty");
+    coverDraft = d;
+    if(navTop().indexOf("#import/") === 0){ navStack[navStack.length-1] = "#cover/shared"; setUrl("#cover/shared"); }
+    render();
+    if(d._missing) showToast(t("sharedMissing", { n:d._missing }));
+  }).catch(function(){
+    if(navTop().indexOf("#import/") !== 0) return;
+    app.innerHTML = topbar(t("kindShared"), { back:"#home" })+'<div class="empty" style="padding:40px 20px;">'+t("shareBad")+'</div>';
+    bindCommon();
+  });
+}
+/* Eigene Übungen aus einem geteilten Link werden erst beim Speichern übernommen */
+function adoptSharedCustoms(d){
+  var changed = false;
+  d.items.forEach(function(it){
+    var ex = findExercise(it.ex);
+    if(ex && ex.sharedDef && !findCustom(ex.id)){
+      if(!state.db.customEx) state.db.customEx = [];
+      state.db.customEx.push(ex.sharedDef); changed = true;
+    }
+  });
+  if(changed){ save(); syncCustomEx(); }
 }
 
 /* ============ Eigenes Workout und Deckblatt: gemeinsamer Editor mit Drag & Drop ============ */
@@ -3946,7 +4516,7 @@ function renderDraftPage(d, cfg){
     '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>' : "";
   var rests = [0,15,30,45,60,90,120];
   if(rests.indexOf(d.blockRest) < 0) rests.push(d.blockRest);
-  var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : "kindMy";
+  var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : d.src==="shared" ? "kindShared" : "kindMy";
 
   // Zeiten (und auf dem Deckblatt die Sprachansagen) - auf dem Deckblatt zugeklappt mit Kurzfassung
   var optInner =
@@ -3981,7 +4551,7 @@ function renderDraftPage(d, cfg){
 
   var head = cfg.cover
     ? '<div class="card cover-hero">'+
-        (d.src!=="surprise" ? '<div class="cover-fav">'+favBtn(d.key)+'</div>' : '')+
+        (d.src!=="surprise" && d.src!=="shared" ? '<div class="cover-fav">'+favBtn(d.key)+'</div>' : '')+
         '<div class="cover-kicker">'+t(kind)+'</div>'+
         '<h2 class="cover-name">'+esc(d.name)+'</h2>'+
         '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
@@ -3990,6 +4560,7 @@ function renderDraftPage(d, cfg){
         '<button class="btn btn-primary" data-go '+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
         (d.src==="surprise" ? '<button class="btn btn-secondary" data-reroll>'+t("reroll")+'</button>' : '')+
         '<button class="btn btn-secondary" data-savemy '+(exs.length?'':'disabled')+'>'+t(d.src==="my" ? "saveAsNewMy" : "saveAsMy")+'</button>'+
+        '<button class="btn btn-secondary" data-share '+(exs.length?'':'disabled')+'>'+ICON_SHARE+' '+t("shareWo")+'</button>'+
         '<div class="cover-note">'+t(d._dirty ? "coverDirty" : "coverHint")+'</div>'+
         (d.src==="lib" ? '<button type="button" class="tpl-hide cover-hide" data-coverhide>'+t("hideWo")+'</button>' : '')+
       '</div>'
@@ -3998,6 +4569,7 @@ function renderDraftPage(d, cfg){
 
   app.innerHTML =
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: cfg.cover ? "" :
+      '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>'+
       '<button class="iconbtn" data-tocover title="'+t("start")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_PLAY+'</button>' }) +
     head +
     optionsHTML +
@@ -4065,6 +4637,7 @@ function renderDraftPage(d, cfg){
   on("[data-bsort]", function(el){ s.libSort = el.getAttribute("data-bsort"); save(); neu(); });
 
   on("[data-palopen]", function(){ d._pal = true; neu(); });
+  on("[data-share]", function(){ shareDraft(d); });
   on("[data-tocover]", function(){ if(d.items.length){ coverDraft = null; go("#cover/my/"+cfg.id); } });
   on("[data-mydel]", function(){
     confirmSheet(t("myDeleteQ"), t("cantUndo"), t("del"), function(){
@@ -4092,6 +4665,7 @@ function renderDraftPage(d, cfg){
     });
     on("[data-savemy]", function(){
       if(!d.items.length) return;
+      if(d.src==="shared") adoptSharedCustoms(d);
       createMyFromDraft(d);
       showToast(t("savedMy"));
     });
@@ -4227,22 +4801,76 @@ var SP_TIMING = {
   3: { reps:6, work:40, rest:10, blockRest:30 }
 };
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j = Math.floor(Math.random()*(i+1)); var x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+/* Einordnung jeder Übung für den Generator, abgeleitet aus den Hauptmuskeln (EX_MUSCLES):
+   Bereich "lower" / "upper" / "core" / "full" und Bewegungsmuster "push" / "pull" / "". */
+var EX_PROFILE = {};
+function exProfile(ex){
+  if(EX_PROFILE[ex.id]) return EX_PROFILE[ex.id];
+  var m = ((EX_MUSCLES[ex.id] || [])[0] || "").toLowerCase(), region = "", first = 999;
+  [["lower", /gesäß|oberschenkel|waden|adduktor/], ["core", /bauch|rumpf/],
+   ["upper", /brust|trizeps|schulter|rücken|bizeps|trapez|rauten|unterarm|nacken/]].forEach(function(r){
+    var i = m.search(r[1]);
+    if(i > -1 && i < first){ first = i; region = r[0]; }
+  });
+  if(!region){
+    region = ex.cats.indexOf("legs") > -1 ? "lower" : ex.cats.indexOf("core") > -1 ? "core"
+      : (ex.cats.indexOf("back") > -1 || ex.cats.indexOf("arms") > -1) ? "upper" : "full";
+  }
+  if(ex.cats.indexOf("cardio") > -1 && region !== "lower") region = "full";
+  var pull = /breiter rückenmuskel|oberer rücken|bizeps|rauten|trapez|hintere schulter|unterarme \(griff\)/.test(m) ||
+             (!m && ex.cats.indexOf("back") > -1);
+  var push = /brust|trizeps|vordere schulter|^schultern/.test(m);
+  var prof = { region:region, pattern: pull && !push ? "pull" : push && !pull ? "push" : "" };
+  if(!ex.custom) EX_PROFILE[ex.id] = prof;
+  return prof;
+}
+/* „Überrasch mich“ mit Regeln statt reinem Würfeln:
+   - alle gewählten Fokus-Bereiche kommen reihum vor
+   - direkt aufeinander folgende Übungen trainieren möglichst verschiedene Bereiche
+   - Drücken und Ziehen halten sich die Waage
+   - Übungen aus den Trainings der letzten 7 Tage kommen nur, wenn sonst zu wenig passt
+   - zum Einstieg lieber etwas Leichteres */
 function buildSurprise(p){
   var tm = SP_TIMING[p.level] || SP_TIMING[2];
   var block = tm.reps*tm.work + (tm.reps-1)*tm.rest;
   var n = Math.max(2, Math.round((p.dur*60 + tm.blockRest) / (block + tm.blockRest)));
-  var pools = p.cats.map(function(c){
-    var fit = EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && ex.cats.indexOf(c) > -1 && equipMatch(p.equips || p.equip, ex);
-    });
-    return shuffle(fit);
+  var equips = p.equips || p.equip;
+  var pool = EXERCISES.filter(function(ex){
+    return !libHidden("ex:"+ex.id) && ex.cats.indexOf("stretch") < 0 && catMatch(p.cats, ex.cats) &&
+      equipMatch(equips, ex) && gearOk(ex, p.cats, equips);
   });
-  var picked = [], guard = 0;
-  while(picked.length < n && guard < 400){
-    var pool = pools[guard % pools.length]; guard++;
-    for(var k=0;k<pool.length;k++){ if(picked.indexOf(pool[k].id) < 0){ picked.push(pool[k].id); break; } }
-    if(pools.every(function(pl){ return pl.every(function(ex){ return picked.indexOf(ex.id) > -1; }); })) break;
+  if(!pool.length) return null;
+  var recent = p.avoid === false ? {} : recentExercises(7);
+  var fresh = pool.filter(function(ex){ return !recent[ex.id]; }).length;
+  var avoidRecent = fresh >= Math.min(n, pool.length);   // nur meiden, wenn genug andere da sind
+  var picked = [], push = 0, pull = 0, covered = {};
+  shuffle(pool);
+  while(picked.length < n && picked.length < pool.length){
+    var prev = picked.length ? exProfile(picked[picked.length-1]) : null;
+    var prev2 = picked.length > 1 ? exProfile(picked[picked.length-2]) : null;
+    var best = null, bestScore = -Infinity;
+    pool.forEach(function(ex){
+      if(picked.indexOf(ex) > -1) return;
+      var pr = exProfile(ex), sc = Math.random()*1.5;
+      if(prev && pr.region === prev.region && pr.region !== "full") sc -= 3;
+      if(prev2 && pr.region === prev2.region && pr.region !== "full") sc -= 1;
+      if(pr.pattern === "push") sc += push > pull ? -2 : push < pull ? 1.5 : 0;
+      if(pr.pattern === "pull") sc += pull > push ? -2 : pull < push ? 1.5 : 0;
+      if(avoidRecent && recent[ex.id]) sc -= 5;
+      if(p.cats.length > 1 && ex.cats.some(function(c){ return p.cats.indexOf(c) > -1 && !covered[c]; })) sc += 2;
+      if(!picked.length) sc += ex.level === 1 ? 1 : ex.level === 3 ? -1.5 : 0;
+      if(isExFav(ex.id)) sc += .5;
+      if(sc > bestScore){ bestScore = sc; best = ex; }
+    });
+    if(!best) break;
+    picked.push(best);
+    var bp = exProfile(best);
+    if(bp.pattern === "push") push++;
+    if(bp.pattern === "pull") pull++;
+    best.cats.forEach(function(c){ covered[c] = true; });
+    if(p.cats.every(function(c){ return covered[c]; })) covered = {};   // nächste Runde reihum
   }
+  picked = picked.map(function(ex){ return ex.id; });
   if(!picked.length) return null;
   return { key:"surprise:", src:"surprise", name:t("spName", { n:p.dur }), mode:"uniform",
            reps:tm.reps, work:tm.work, rest:tm.rest, blockRest:tm.blockRest,
@@ -4264,6 +4892,8 @@ function openSurprise(){
         return '<button type="button" class="'+(p.level===l?'active':'')+'" data-splevel="'+l+'">'+esc(t("int"+l))+'</button>'; }).join("")+'</div>'+
       '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.map(function(e){
         return '<button type="button" class="lib-chip'+(p.equips.indexOf(e.id)>-1?' active':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>'+
+      '<div class="sp-avoid">'+toggleRow("sp-avoid", t("spAvoid"), t("spAvoidDesc"), p.avoid !== false)+'</div>'+
+      '<div class="tm-hint">'+esc(t("spRules"))+'</div>'+
       '<div class="btn-row" style="margin-top:18px;"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
       '<button class="btn btn-primary" data-spgo '+(p.cats.length?'':'disabled')+'>'+t("spGo")+'</button></div>'+
     '</div></div>';
@@ -4275,6 +4905,7 @@ function openSurprise(){
     }); });
     root.querySelectorAll("[data-splevel]").forEach(function(b){ b.addEventListener("click", function(){ p.level = parseInt(b.getAttribute("data-splevel")); draw(); }); });
     root.querySelectorAll("[data-spequip]").forEach(function(b){ b.addEventListener("click", function(){ p.equips = selToggle(p.equips, b.getAttribute("data-spequip")); draw(); }); });
+    root.querySelector("#sp-avoid").addEventListener("change", function(e){ p.avoid = e.target.checked; });
     root.querySelector("[data-cancel]").addEventListener("click", function(){ root.innerHTML = ""; });
     root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) root.innerHTML = ""; });
     root.querySelector("[data-spgo]").addEventListener("click", function(){
@@ -4347,6 +4978,12 @@ function renderSettings(){
       '<div class="share-url" id="share-url">'+esc(appUrl())+'</div>'+
       '<button type="button" class="btn btn-secondary" data-sharecopy>'+t("shareCopy")+'</button>'+
     '</div>'+
+    '<div class="section-title">'+t("privacy")+'</div>'+
+    '<a class="list-item" href="privacy.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
+      '<div class="meta"><div class="name">'+t("privacyRow")+'</div>'+
+      '<div class="sub">'+t("privacyRowSub")+'</div></div>'+
+      '<span class="chip chev">'+ICON_CHEV+'</span>'+
+    '</a>'+
     '<div class="section-title">'+t("installation")+'</div>'+
     '<div class="list-item" data-nav="#install">'+
       '<div class="meta"><div class="name">'+t("installRow")+'</div>'+
@@ -4401,19 +5038,7 @@ function renderSettings(){
   });
 
   /* App teilen: Link kopieren, per WhatsApp oder über das Teilen-Menü des Handys */
-  app.querySelector("[data-sharecopy]").addEventListener("click", function(){
-    function ok(){ showToast(t("shareCopied")); }
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(appUrl()).then(ok, function(){ kopierFallback(); });
-    } else kopierFallback();
-    function kopierFallback(){
-      var ta = document.createElement("textarea");
-      ta.value = appUrl(); ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.select();
-      try{ document.execCommand("copy"); ok(); }catch(e){}
-      document.body.removeChild(ta);
-    }
-  });
+  app.querySelector("[data-sharecopy]").addEventListener("click", function(){ copyText(appUrl(), t("shareCopied")); });
   app.querySelector("[data-opensounds]").addEventListener("click", function(){
     openSoundSheet(function(){ renderSettings(); });
   });
@@ -4459,10 +5084,12 @@ function renderSettings(){
           db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
           db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
           db.myWorkouts = Array.isArray(parsed.myWorkouts) ? parsed.myWorkouts : [];
+          db.customEx = Array.isArray(parsed.customEx) ? parsed.customEx : [];
+          db.history = Array.isArray(parsed.history) ? parsed.history : [];
           if(parsed.settings) Object.assign(db.settings, parsed.settings);
           db.settings.theme = migrateTheme(db.settings.theme);
           db.settings.soundStyle = migrateSound(db.settings.soundStyle);
-          state.db = db; save(); applyTheme(); applyLang(); applySpace();
+          state.db = db; save(); syncCustomEx(); applyTheme(); applyLang(); applySpace();
           go("#home");
         });
       }catch(e){ alert(t("fileError")); }
@@ -4471,7 +5098,7 @@ function renderSettings(){
   });
   app.querySelector("[data-reset]").addEventListener("click", function(){
     confirmSheet(t("deleteAllQ"), t("deleteAllText"), t("deleteAllBtn"), function(){
-      state.db = defaultDB(); save(); applyTheme(); applyLang(); applySpace();
+      state.db = defaultDB(); save(); syncCustomEx(); applyTheme(); applyLang(); applySpace();
       go("#home");
     });
   });
@@ -4675,15 +5302,17 @@ function noiseBurst(ctx, gain, n, now){
    mallet (weicher Schlegel-Anschlag), att (Anschlagzeit ms), hold (Ton halten ms),
    trill (Flattern/Vibrato), breath (Atemrauschen), lp (Tiefpass gegen Schärfe),
    bursts (mehrere schnelle Rauschstöße, z.B. Klatschen), wave (Soundchip-Wellenform),
-   pan (Position im Stereobild) */
-function tone(n){
-  if(!state.db.settings.sound) return;
+   pan (Position im Stereobild).
+   at: Startzeit im Audio-Takt (ctx.currentTime-Skala) - so lassen sich Töne im Voraus einplanen.
+   Rückgabe: der Ausgangsregler des Tons; disconnect() darauf bringt einen geplanten Ton zum Schweigen. */
+function tone(n, at){
+  if(!state.db.settings.sound) return null;
   var ctx = audioCtx();
-  if(!ctx) return;
+  if(!ctx) return null;
   if(ctx.state==="suspended") ctx.resume();
   var level = (n.v==null?0.7:n.v) * (state.db.settings.volume!=null ? state.db.settings.volume : 1);
-  if(level<=0) return;
-  var now = ctx.currentTime, durS = n.dur/1000, att = (n.att||8)/1000, end = now + durS;
+  if(level<=0) return null;
+  var now = at != null ? Math.max(at, ctx.currentTime) : ctx.currentTime, durS = n.dur/1000, att = (n.att||8)/1000, end = now + durS;
   var gain = ctx.createGain();
   gain.connect(withPan(ctx, soundOut(ctx), n.pan));
 
@@ -4697,7 +5326,7 @@ function tone(n){
       var spread = i ? (i%2 ? -1 : 1) * Math.min(.3, .1*i) : 0;
       addPartial(ctx, gain, n.f*p[0], p[1]*1.4/sum, att, durS*p[2], now, n.beat||0, spread);
     });
-    return;
+    return gain;
   }
 
   if(n.bursts){
@@ -4711,7 +5340,7 @@ function tone(n){
       g.connect(gain);
       noiseBurst(ctx, g, { f:n.f, q:n.q, filterType:n.filterType, dur:len*1000 }, t0);
     });
-    return;
+    return gain;
   }
 
   gain.gain.setValueAtTime(0, now);
@@ -4721,7 +5350,7 @@ function tone(n){
 
   if(n.noise){
     noiseBurst(ctx, gain, n, now);
-    return;
+    return gain;
   }
   var osc = ctx.createOscillator();
   if(n.wave) osc.setPeriodicWave(chipWave(ctx, n.wave));
@@ -4751,6 +5380,7 @@ function tone(n){
     air.connect(gain);
     noiseBurst(ctx, air, { f:n.f, dur:n.dur, filterType:"bandpass", q:2.5 }, now);
   }
+  return gain;
 }
 function currentSoundStyle(){
   return SOUND_STYLES[state.db.settings.soundStyle] || SOUND_STYLES.classic;
@@ -4766,6 +5396,65 @@ function phaseBeep(kind){ playNotes(currentSoundStyle()[kind]); }
 function vibrate(pattern){
   if(!state.db.settings.vibration) return;
   if(navigator.vibrate) try{ navigator.vibrate(pattern); }catch(e){}
+}
+
+/* ============ Vorausgeplante Signaltöne ============
+   Browser drosseln Timer, sobald die App im Hintergrund ist oder der Bildschirm aus geht -
+   ein Signalton per setTimeout käme dann zu spät oder gar nicht. Deshalb werden alle Töne
+   der nächsten Minuten (Phasenwechsel + Countdown-Piepsen) direkt im Audio-Takt eingeplant.
+   Die Audio-Engine spielt sie pünktlich ab, auch wenn die Seite selbst gerade nicht rechnet.
+   Pause, Weiter, "Phase neu", Lautstärke: Plan verwerfen und neu erstellen. */
+var AUDIO_HORIZON_MS = 10*60*1000;
+var sched = { list:[], upto:-1 };   // list: { at, node }; upto: letzter eingeplanter Schritt
+function schedCancel(){
+  var now = actx ? actx.currentTime : 0;
+  sched.list.forEach(function(x){ if(x.at > now + 0.02) try{ x.node.disconnect(); }catch(e){} });
+  sched.list = [];
+  sched.upto = -1;
+}
+function schedNotes(notes, wallMs){
+  var ctx = audioCtx();
+  if(!ctx || !notes) return;
+  var base = ctx.currentTime + (wallMs - Date.now())/1000;
+  notes.forEach(function(n){
+    var at = base + (n.d||0)/1000;
+    if(at < ctx.currentTime - 0.08) return;   // schon vorbei
+    var g = tone(n, at);
+    if(g) sched.list.push({ at:at, node:g });
+  });
+}
+function schedCountdown(endMs, step){
+  if(!state.db.settings.countIn || step.phase==="done") return;
+  for(var k=3;k>=1;k--){
+    var at = endMs - k*1000;
+    if(step.duration > k && at >= Date.now() - 50) schedNotes(currentSoundStyle().tick, at);
+  }
+}
+/* full=true: alles Künftige neu planen (Countdown des laufenden Schritts inklusive);
+   full=false: nur hinten anhängen, wenn der Plan zur Neige geht */
+function planAudio(full){
+  if(!playerState || playerState.paused) return;
+  if(!state.db.settings.sound || !audioCtx()) return;
+  var steps = playerState.steps, i = playerState.idx;
+  if(full) schedCancel();
+  else if(sched.upto > -1 && sched.upto - i >= 4) return;
+  var style = currentSoundStyle(), horizon = Date.now() + AUDIO_HORIZON_MS;
+  if(full) schedCountdown(playerState.endAt, steps[i]);
+  var tEnd = playerState.endAt;
+  for(var j=i+1; j<steps.length; j++){
+    var st = steps[j];
+    if(j > sched.upto){
+      schedNotes(style[st.phase], tEnd);
+      schedCountdown(tEnd + st.duration*1000, st);
+      sched.upto = j;
+    }
+    if(st.phase==="done") break;
+    tEnd += st.duration*1000;
+    if(tEnd > horizon && j > i+4) break;
+  }
+  // abgespielte Einträge vergessen
+  var now = actx.currentTime;
+  sched.list = sched.list.filter(function(x){ return x.at > now - 5; });
 }
 
 /* ============ Wake Lock ============ */
@@ -4855,8 +5544,12 @@ function launchPlayer(w, source){
   document.getElementById("playerRoot").innerHTML = playerTemplate();
   bindPlayerControls();
   odo = null; // Walzen drehen beim Start von 0:00 auf die erste Phase
-  enterStep(0);
+  var ctx = audioCtx();   // noch im Tipp freischalten (iOS)
+  if(ctx && ctx.state==="suspended") try{ ctx.resume(); }catch(e){}
+  schedCancel();
+  enterStep(0, { manual:true });
   requestWakeLock();
+  startBgTicker();
 }
 
 function phaseVars(phase){
@@ -4909,19 +5602,21 @@ function stepBodyHTML(step){
     if(step.phase==="work") phLabel = t("phHold");
     else if(step.phase==="rest") phLabel = t(step.side ? "phSwitch" : "phRelax");
   }
-  return '<div class="phase-label">'+phLabel+'</div>'+
+  /* pl-a / pl-b sind im Hochformat unsichtbar (display:contents) - im Querformat
+     steht die Uhr links, Beschriftung und Tasten rechts daneben */
+  return '<div class="pl-a"><div class="phase-label">'+phLabel+'</div>'+
     '<div class="block-label">'+esc(step.blockName||"")+(step.totalReps? SEP+step.rep+"/"+step.totalReps : "")+
       (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+'</div>'+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+
-    (step.phase==="work" && step.hint ? '<div class="ex-hint">'+esc(step.hint)+'</div>' : "")+
+    (step.phase==="work" && step.hint ? '<div class="ex-hint">'+esc(step.hint)+'</div>' : "")+'</div>'+
     timeHTML+
-    repInfo+
+    '<div class="pl-b">'+repInfo+
     '<div class="next-up" id="pl-next"></div>'+
     '<div class="player-controls">'+
       '<button class="ctrl-btn" data-skip title="'+t("skip")+'">'+ICON_SKIP+'</button>'+
       '<button class="ctrl-btn main" id="pl-playpause" title="'+t("pause")+'"><span>'+ICON_PAUSE+'</span></button>'+
       '<button class="ctrl-btn" data-restart title="'+t("restartPhase")+'">'+ICON_RESTART+'</button>'+
-    '</div>';
+    '</div></div>';
 }
 
 function nextStepPreview(idx){
@@ -4935,7 +5630,13 @@ function nextStepPreview(idx){
   return t("upNext")+" "+phaseVars(n.phase).label+(n.blockName? SEP+esc(n.blockName):"")+time;
 }
 
-function enterStep(idx){
+/* opt.manual: Start/Weiter - Signalton sofort spielen und Tonplan neu erstellen.
+   Sonst (Zeit abgelaufen) kam der Signalton schon aus dem Tonplan.
+   opt.startAt: wann der Schritt eigentlich begann (Date.now()-Skala) - beim Aufholen
+   nach dem Hintergrund liegt das in der Vergangenheit, die Restzeit stimmt trotzdem.
+   opt.quiet: keine Vibration/Ansage (übersprungene Schritte im Hintergrund) */
+function enterStep(idx, opt){
+  opt = opt || {};
   var steps = playerState.steps;
   if(idx >= steps.length) idx = steps.length-1;
   playerState.idx = idx;
@@ -4952,23 +5653,24 @@ function enterStep(idx){
   document.getElementById("pl-counter").textContent = (idx+1)+" / "+steps.length;
 
   if(step.phase!=="done"){
-    playerState.remainingMs = step.duration*1000;
-    playerState.endAt = Date.now() + playerState.remainingMs;
+    playerState.endAt = (opt.startAt || Date.now()) + step.duration*1000;
+    playerState.remainingMs = playerState.endAt - Date.now();
     playerState.paused = false;
-    playerState.beepedAt = {};
     document.getElementById("pl-next").innerHTML = nextStepPreview(idx);
     updateDots(step);
-    if(step.phase==="work") phaseBeep("work");
-    else if(step.phase==="rest") phaseBeep("rest");
-    else if(step.phase==="blockrest") phaseBeep("blockrest");
-    else if(step.phase==="prep") phaseBeep("prep");
-    vibrate(step.phase==="work" ? [40] : [20,60,20]);
-    if(step.phase!=="work") announceStep(idx);
+    if(opt.manual){ phaseBeep(step.phase); planAudio(true); }
+    else planAudio(false);
+    if(!opt.quiet){
+      vibrate(step.phase==="work" ? [40] : [20,60,20]);
+      if(step.phase!=="work") announceStep(idx);
+    }
     bindPlayPause();
     tickLoop();
   } else {
     releaseWakeLock();
-    phaseBeep("done");
+    stopBgTicker();
+    if(opt.manual) phaseBeep("done");
+    logHistory(false);
     announceStep(idx);
     vibrate([60,80,60,80,120]);
     var doneBody = document.getElementById("pl-body");
@@ -4989,7 +5691,8 @@ function updateDots(step){
   if(!wrap) return;
   /* So groß wie der Platz erlaubt (bis 34 px); bei vielen Wiederholungen kleiner, notfalls zweireihig */
   var n = step.totalReps, gap = n > 12 ? 6 : 10;
-  var avail = Math.min(wrap.parentNode.clientWidth - 70, 340);
+  var host = wrap.parentNode.clientWidth ? wrap.parentNode : wrap.closest(".player-mid");   // pl-b ist im Hochformat display:contents
+  var avail = Math.min(host.clientWidth - 70, 340);
   var size = Math.max(14, Math.min(34, Math.floor((avail - (n-1)*gap)/n)));
   wrap.style.gap = gap+"px";
   var html = "";
@@ -5146,17 +5849,52 @@ function odoSettle(){
   if(odoUpdate(playerState.remainingMs)) requestAnimationFrame(odoSettle);
 }
 
+/* Abgelaufene Schritte nachholen. War die App länger im Hintergrund, können mehrere
+   Schritte vorbei sein - dann direkt zum richtigen springen (nicht nur einen weiter).
+   Gibt true zurück, wenn gewechselt wurde. */
+function advanceIfDue(){
+  if(!playerState || playerState.paused) return false;
+  var steps = playerState.steps, now = Date.now();
+  if(!steps[playerState.idx] || steps[playerState.idx].phase==="done" || playerState.endAt > now) return false;
+  var idx = playerState.idx + 1, startAt = playerState.endAt, skipped = 0;
+  while(steps[idx] && steps[idx].phase!=="done" && startAt + steps[idx].duration*1000 <= now){
+    startAt += steps[idx].duration*1000; idx++; skipped++;
+  }
+  if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
+  enterStep(idx, { startAt:startAt, quiet: skipped > 0 });
+  if(skipped > 0 && playerState && !playerState.paused) planAudio(true);   // Tonplan an die echte Position anpassen
+  return true;
+}
+/* Im Hintergrund läuft requestAnimationFrame nicht - ein Intervall hält die Logik
+   (Schrittwechsel, Vibration, Ansagen, Tonplan verlängern) trotzdem am Laufen. */
+var bgTicker = null;
+function startBgTicker(){
+  stopBgTicker();
+  bgTicker = setInterval(function(){
+    if(!playerState){ stopBgTicker(); return; }
+    if(document.hidden) advanceIfDue();
+  }, 500);
+}
+function stopBgTicker(){ if(bgTicker){ clearInterval(bgTicker); bgTicker = null; } }
+/* Beim Drehen des Handys die Wiederholungs-Quadrate an die neue Breite anpassen */
+window.addEventListener("resize", function(){
+  if(playerState && playerState.steps[playerState.idx]) updateDots(playerState.steps[playerState.idx]);
+});
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState!=="visible" || !playerState || playerState.paused) return;
+  var ctx = audioCtx();
+  if(ctx && ctx.state!=="running") try{ ctx.resume(); }catch(e){}
+  if(!advanceIfDue()) planAudio(true);   // Uhr und Audio-Takt neu abgleichen
+});
+
 function tickLoop(){
   if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
   function frame(){
     if(!playerState || playerState.paused){ return; }
     var step = playerState.steps[playerState.idx];
     if(!step || step.phase==="done") return;
+    if(advanceIfDue()) return;
     var remaining = playerState.endAt - Date.now();
-    if(remaining <= 0){
-      enterStep(playerState.idx+1);
-      return;
-    }
     playerState.remainingMs = remaining;
     var remSec = Math.ceil(remaining/1000);
     if(isVintageTheme()){
@@ -5169,10 +5907,6 @@ function tickLoop(){
     if(ring){
       var frac = remaining / (step.duration*1000);
       ring.setAttribute("stroke-dashoffset", (circleCirc()*(1-frac)).toFixed(1));
-    }
-    if(state.db.settings.countIn && remSec<=3 && remSec>=1 && playerState.beepedAt[remSec]!==true){
-      playerState.beepedAt[remSec] = true;
-      tick();
     }
     updateProgress();
     playerState.rafId = requestAnimationFrame(frame);
@@ -5189,9 +5923,12 @@ function bindPlayPause(){
       playerState.endAt = Date.now() + playerState.remainingMs;
       btn.querySelector("span").innerHTML = ICON_PAUSE;
       requestWakeLock();
+      planAudio(true);
       tickLoop();
     } else {
+      playerState.remainingMs = Math.max(0, playerState.endAt - Date.now());
       playerState.paused = true;
+      schedCancel();
       btn.querySelector("span").innerHTML = ICON_PLAY;
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
       odoSettle();
@@ -5207,7 +5944,7 @@ function bindPlayerControls(){
     }
     if(e.target.closest("[data-skip]")){
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
-      enterStep(playerState.idx+1);
+      enterStep(playerState.idx+1, { manual:true });
     }
     if(e.target.closest("[data-restart]")){
       var step = playerState.steps[playerState.idx];
@@ -5217,6 +5954,7 @@ function bindPlayerControls(){
       var ppBtn = document.getElementById("pl-playpause");
       if(ppBtn) ppBtn.querySelector("span").innerHTML = ICON_PAUSE;
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
+      planAudio(true);
       tickLoop();
     }
     if(e.target.closest("[data-vol-toggle]")){
@@ -5232,11 +5970,15 @@ function bindPlayerControls(){
   });
   volRange.addEventListener("change", function(){
     phaseBeep(playerState.steps[playerState.idx].phase==="done" ? "done" : "work");
+    planAudio(true);   // eingeplante Töne mit der neuen Lautstärke
   });
 }
 
 function exitPlayer(){
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+  schedCancel();
+  stopBgTicker();
+  if(playerState && playerState.steps[playerState.idx].phase!=="done") logHistory(true);
   if(playerState && playerState.rafId) cancelAnimationFrame(playerState.rafId);
   playerState = null;
   odo = null;

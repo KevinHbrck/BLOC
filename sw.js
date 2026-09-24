@@ -6,9 +6,9 @@
  * Die App nutzt nur Systemschriften und laedt nichts von fremden Servern.
  */
 
-var FASSUNG = "2026-09-25-7";
+var FASSUNG = "2026-09-25-8";
 var SPEICHER = "sporttimer-" + FASSUNG;
-var GRUNDGERUEST = ["./", "./index.html", "./manifest.json", "./icon.png"];
+var GRUNDGERUEST = ["./", "./index.html", "./manifest.json", "./icon.png", "./privacy.html"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
