@@ -38,7 +38,7 @@
   --tp-color:#1f9d6b;
   --tp-text:#ffffff;
   /* Kategorien der Bibliothek */
-  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
 }
@@ -168,7 +168,7 @@
   --stripes:linear-gradient(90deg,#e1251b 0 9px,#f07c16 9px 18px,#f8b31c 18px 27px);
 }
 /* Tapedeck: dunkles Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er - gebürstetes Metall,
-   links eine Rack-Leiste mit Schraublöchern, bernsteinfarben beleuchtetes Zählwerk und
+   bernsteinfarben beleuchtetes Zählwerk und
    Anzeigen, die wie Kontrolllampen leuchten */
 :root[data-theme="tapedeck"]{
   color-scheme: dark;
@@ -206,13 +206,11 @@
   /* Gehäuse glatt; gebürstet (feine waagerechte Schliffspuren) sind nur die Frontplatten */
   --paper:none;
   --brushed:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='300' height='160' filter='url(%23b)'/%3E%3C/svg%3E");
-  --stripes-w:22px;
-  /* Rack-Leiste aus Aluminium mit Langlöchern für die Schrauben */
-  --stripes:
-    radial-gradient(ellipse 4px 8px at 50% 50%, #060606 0 62%, rgba(0,0,0,0) 76%) center 40px / 100% 240px repeat-y,
-    linear-gradient(90deg, rgba(0,0,0,0) calc(100% - 1px), rgba(0,0,0,.7) 0),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, rgba(0,0,0,.05) 1px 2px),
-    linear-gradient(90deg, #4b4e52, #9a9da2 24%, #6e7176 55%, #a5a8ad 78%, #4f5256);
+  /* keine Zierleiste am linken Rand (früher: Rack-Leiste aus Aluminium);
+     --stripe-left so, dass der Timer links denselben Rand hat wie rechts */
+  --stripes-w:0px;
+  --stripe-left:2px;
+  --stripes:none;
 }
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body{ height:100%; }
@@ -312,13 +310,13 @@ h1,h2,h3{ margin:0 0 4px; }
 .info-steps li{ margin-bottom:6px; }
 .info-tip{ font-size:14px; background:var(--surface-2); border-radius:10px; padding:10px 12px; margin-bottom:14px; }
 :root[data-theme="dark"], :root[data-theme="tapedeck"]{
-  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme]){
-  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
 } }
 :root[data-theme="retro"], :root[data-theme="kodak"]{
-  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-stretch:var(--tp-color);
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
 }
 .playbtn.cat{ background:var(--cat); color:var(--tp-text); }
 :root[data-theme="tapedeck"] .playbtn.cat{ color:#101010; box-shadow:0 0 12px color-mix(in srgb, var(--cat) 45%, transparent), inset 0 -2px 3px rgba(0,0,0,.2); }
@@ -876,6 +874,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   background:var(--stripes); pointer-events:none; z-index:1;
 }
 :root[data-vintage] #app{ padding-left:calc(var(--stripes-w) + 24px); }
+:root[data-theme="tapedeck"] #app{ padding-left:16px; }   /* ohne Zierleiste: links so viel Rand wie rechts */
 
 /* Kopfzeile: kursive Condensed-Überschrift mit doppelter Unterstreichung */
 /* Papierstruktur auch in der mitlaufenden Kopfzeile, sonst hebt sie sich als glatter Streifen ab */
@@ -1278,6 +1277,13 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 
 /* ============ Storage ============ */
 var DB_KEY = "sporttimer-data-v1";
+/* Zusammengelegte Dubletten: alte Übungs-ID -> Übung, die bleibt. Gespeicherte Workouts,
+   Favoriten und geteilte Links mit alten IDs funktionieren so weiter. */
+var EX_ALIAS = {
+  "archer-row":"inverted-rows", "straight-bar-dips":"parallel-bar-dips", "korean-dips":"parallel-bar-dips",
+  "bar-traverse":"monkey-bar-traverse", "slow-mountain-climbers":"mountain-climbers",
+  "hip-hinge":"good-mornings", "leg-levers":"leg-raises"
+};
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
@@ -1595,6 +1601,7 @@ function loadDB(){
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
     db.settings.theme = migrateTheme(db.settings.theme);
     db.settings.soundStyle = migrateSound(db.settings.soundStyle);
+    migrateExIds(db);
     return db;
   }catch(e){ return defaultDB(); }
 }
@@ -1602,6 +1609,21 @@ function loadDB(){
 var state = { db: loadDB() };
 
 function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state.db)); }
+/* IDs zusammengelegter Übungen (EX_ALIAS) in Favoriten, Ausblendungen, eigenen Workouts und Blöcken umschreiben */
+function migrateExIds(db){
+  function neu(id){ return EX_ALIAS[id] || id; }
+  function uniq(a){ return a.filter(function(x, i){ return a.indexOf(x) === i; }); }
+  var st = db.settings;
+  if(Array.isArray(st.exFavs)) st.exFavs = uniq(st.exFavs.map(neu));
+  if(Array.isArray(st.hiddenLib)) st.hiddenLib = uniq(st.hiddenLib.map(function(k){ return k.indexOf("ex:")===0 ? "ex:"+neu(k.slice(3)) : k; }));
+  (db.myWorkouts || []).forEach(function(mw){
+    (mw.items || []).forEach(function(it, i){
+      if(typeof it === "string") mw.items[i] = neu(it);
+      else if(it && it.ex) it.ex = neu(it.ex);
+    });
+  });
+  (db.blocks || []).forEach(function(b){ if(b.ex) b.ex = neu(b.ex); });
+}
 
 /* ============ Sprache (Deutsch / Englisch) ============ */
 var I18N = {
@@ -2002,7 +2024,6 @@ var EXERCISE_ROWS = [
   ["bird-dog","Bird Dog","Bird Dog","back",6,30,0,"Diagonal, langsam","Diagonal, slow"],
   ["prone-y-raise","Prone Y-Raise","Prone Y-Raise","back",6,20,0,"Daumen nach oben","Thumbs up"],
   ["prone-t-raise","Prone T-Raise","Prone T-Raise","back",6,20,0,"Schulterblätter aktiv","Engage your shoulder blades"],
-  ["hip-hinge","Hip Hinge ohne Gewicht","Bodyweight Hip Hinge","back",6,30,0,"Bewegungsmuster üben","Practise the movement pattern"],
   ["good-mornings","Good Mornings","Good Mornings","back",6,30,0,"Rücken neutral","Neutral back"],
   ["swimmers","Swimmers","Swimmers","back",6,30,0,"Kleine Wechselbewegung","Small alternating movement"],
   ["cobra-lift","Cobra Lift","Cobra Lift","back",6,20,0,"Nicht ins Hohlkreuz drücken","Don't overarch your lower back"],
@@ -2021,7 +2042,6 @@ var EXERCISE_ROWS = [
   ["side-plank","Side Plank","Side Plank","core",3,30,1,"Hüfte oben halten","Keep your hips up"],
   ["dead-bug","Dead Bug","Dead Bug","core",6,30,0,"Lendenwirbelsäule stabil","Keep your lower back stable"],
   ["bicycle-crunches","Bicycle Crunches","Bicycle Crunches","core",6,30,0,"Nicht am Nacken ziehen","Don't pull on your neck"],
-  ["leg-levers","Leg Levers","Leg Levers","core",6,30,0,"Beine kontrolliert senken","Lower your legs with control"],
   ["leg-raises","Leg Raises","Leg Raises","core",6,30,0,"Bei Bedarf Knie beugen","Bend your knees if needed"],
   ["jackknives","V-Ups (Jackknives)","V-Ups (Jackknives)","core",5,30,0,"Arme und Beine gleichzeitig zusammenführen","Bring arms and legs together at the same time"],
   ["reverse-crunch","Reverse Crunch","Reverse Crunch","core",6,30,0,"Knie zur Brust ziehen und Becken anheben","Pull your knees in and lift your pelvis"],
@@ -2031,7 +2051,6 @@ var EXERCISE_ROWS = [
   ["sit-ups","Sit-ups","Sit-ups","core",6,30,0,"Kontrolliertes Tempo","Controlled pace"],
   ["toe-touches","Toe Touches","Toe Touches","core",6,30,0,"Schultern aktiv anheben","Actively lift your shoulders"],
   ["plank-shoulder-taps","Plank Shoulder Taps","Plank Shoulder Taps","core",6,30,0,"Becken ruhig","Keep your pelvis still"],
-  ["slow-mountain-climbers","Mountain Climbers langsam","Slow Mountain Climbers","core",6,30,0,"Core statt Geschwindigkeit","Core over speed"],
   ["toes-to-bar","Toes-to-Bar","Toes-to-Bar","core calis",4,20,0,"Nur an sicherer Stange","Only on a secure bar"],
 
   /* Arme ohne Gewicht */
@@ -2069,13 +2088,10 @@ var EXERCISE_ROWS = [
   ["worlds-greatest","World's Greatest Stretch","World's Greatest Stretch","stretch",2,20,1,"Aus der Brust aufdrehen","Rotate open through your chest",5],
 
   /* Calisthenics (Stange, Barren) - längere Pausen, weil die Übungen schwer sind */
-  ["archer-row","Archer Row","Archer Row","calis back",3,20,1,"Zu einer Seite ziehen, der andere Arm bleibt länger","Pull to one side, the other arm stays longer",20],
   ["chin-ups","Chin-Up","Chin-Up","calis back arms",5,20,0,"Klimmzug im Untergriff","Pull-up with an underhand grip",20],
   ["commando-pull-ups","Commando Pull-Up","Commando Pull-Up","calis back",3,20,1,"Seitlich an der Stange hochziehen","Pull up beside the bar",20],
   ["parallel-bar-dips","Parallel Bar Dips","Parallel Bar Dips","calis arms",5,20,0,"Zwischen den Holmen absenken und hochdrücken","Lower between the bars and press up",20],
-  ["straight-bar-dips","Straight Bar Dip","Straight Bar Dip","calis arms",5,15,0,"Dip an einer einzelnen Stange","Dip on a single bar",20],
   ["support-hold","Support Hold","Support Hold","calis arms",5,20,0,"Mit gestreckten Armen im Stütz halten","Hold the support with straight arms",15],
-  ["korean-dips","Korean Dip","Korean Dip","calis arms",4,15,0,"Dip-Variante hinter der Stange","Dip variation behind the bar",25],
   ["hanging-knee-raise","Hanging Knee Raise","Hanging Knee Raise","calis core",5,20,0,"Knie kontrolliert zur Brust ziehen","Draw your knees to your chest with control",15],
   ["hanging-leg-raise","Hanging Leg Raise","Hanging Leg Raise","calis core",5,20,0,"Gestreckte Beine anheben","Raise your straight legs",20],
   ["hanging-l-sit","Hanging L-Sit","Hanging L-Sit","calis core",5,10,0,"Beine waagerecht halten","Hold your legs horizontal",20],
@@ -2083,7 +2099,6 @@ var EXERCISE_ROWS = [
   ["windshield-wipers","Windshield Wipers","Windshield Wipers","calis core",4,20,0,"Beine im Hang von Seite zu Seite","Legs side to side while hanging",20],
   ["muscle-ups","Muscle-Up","Muscle-Up","calis back arms",5,15,0,"Kombination aus Klimmzug und Dip","A pull-up flowing into a dip",30],
   ["monkey-bar-traverse","Monkey Bar Traverse","Monkey Bar Traverse","calis back",4,30,0,"Von Sprosse zu Sprosse hangeln","Swing from rung to rung",30],
-  ["bar-traverse","Bar Traverse","Bar Traverse","calis back",4,30,0,"Seitlich an der Stange entlanghangeln","Traverse sideways along the bar",30],
   ["human-flag","Human Flag Progression","Human Flag Progression","calis core",3,10,1,"Seitlich an der senkrechten Stange halten","Hold sideways on a vertical pole",30],
   ["skin-the-cat","Skin The Cat","Skin The Cat","calis back",4,20,0,"Aus dem Hang durch die Schultern rotieren","Rotate through your shoulders from the hang",30],
 
@@ -2106,13 +2121,13 @@ var LIB_WORKOUT_ROWS = [
   ["kb-conditioning","Kettlebell Conditioning","Kettlebell Conditioning","weight","kb-swing goblet-squat push-press weighted-reverse-lunge",60],
   ["bw-basic","Bodyweight Basic","Bodyweight Basic","bw","air-squats push-ups reverse-lunges glute-bridge plank-steps",45],
   ["bw-advanced","Bodyweight Advanced","Bodyweight Advanced","bw","pike-push-ups cossack-squats bear-crawl pistol-assist burpee-squat-jumps",60],
-  ["back-basic","Rücken Basis","Back Basics","back","bird-dog reverse-snow-angels prone-y-raise hip-hinge superman-hold",45],
+  ["back-basic","Rücken Basis","Back Basics","back","bird-dog reverse-snow-angels prone-y-raise good-mornings superman-hold",45],
   ["back-pull","Rücken Zugkraft","Back Pulling Strength","back","pull-ups negative-pull-ups inverted-rows scapular-pull-ups dead-hang",90],
   ["leg-day","Leg Day","Leg Day","legs","air-squats reverse-lunges split-squats glute-bridge calf-raises",60],
   ["leg-power","Leg Power","Leg Power","legs","jump-squats bulgarian-split-squats side-lunges wall-sit lateral-lunge-pulses",60],
   ["core-basic","Core Basic","Core Basic","core","dead-bug plank side-plank bicycle-crunches leg-raises",45],
   ["core-advanced","Core Advanced","Core Advanced","core","hollow-hold jackknives side-jackknives plank-shoulder-taps toes-to-bar",60],
-  ["core-complete","Bauch komplett","Complete Core","core","russian-twists leg-levers dead-bug bicycle-crunches reverse-crunch jackknives hollow-hold plank l-sit mountain-climbers",45],
+  ["core-complete","Bauch komplett","Complete Core","core","russian-twists leg-raises dead-bug bicycle-crunches reverse-crunch jackknives hollow-hold plank l-sit mountain-climbers",45],
   ["full-body-mix","Full Body Mix","Full Body Mix","mix","kb-swing push-ups walking-lunges bent-over-row mountain-climbers plank",60],
   ["arms-bw","Arme ohne Geräte","Arms Without Equipment","arms","wall-push-ups self-resistance-curls close-grip-push-ups towel-curls triceps-dips backpack-curls",45],
   ["stretch-full","Ganzkörper-Dehnen","Full Body Stretch","stretch","neck-stretch shoulder-stretch chest-stretch cat-cow downward-dog hip-flexor-stretch hamstring-stretch figure-four spinal-twist childs-pose",10],
@@ -2121,11 +2136,11 @@ var LIB_WORKOUT_ROWS = [
   ["stretch-back-hips","Rücken & Hüfte","Back & Hips","stretch","cat-cow childs-pose sphinx-stretch hip-flexor-stretch pigeon-stretch spinal-twist",10],
   ["stretch-office","Schultern & Nacken (Büro)","Shoulders & Neck (Office)","stretch","neck-stretch shoulder-stretch triceps-stretch chest-stretch side-bend wrist-stretch",10],
   ["stretch-morning","Morgen-Mobility","Morning Mobility","stretch","cat-cow worlds-greatest downward-dog side-bend forward-fold",5],
-  ["calis-pull","Calisthenics Zug","Calisthenics Pull","calis","scapular-pull-ups inverted-rows archer-row chin-ups pull-ups dead-hang",90],
-  ["calis-push","Calisthenics Druck","Calisthenics Push","calis","support-hold parallel-bar-dips straight-bar-dips pike-push-ups diamond-push-ups",90],
+  ["calis-pull","Calisthenics Zug","Calisthenics Pull","calis","scapular-pull-ups inverted-rows commando-pull-ups chin-ups pull-ups dead-hang",90],
+  ["calis-push","Calisthenics Druck","Calisthenics Push","calis","support-hold parallel-bar-dips archer-push-ups pike-push-ups diamond-push-ups",90],
   ["calis-core","Calisthenics Core","Calisthenics Core","calis","hanging-knee-raise hanging-leg-raise windshield-wipers hanging-l-sit l-sit toes-to-bar",60],
-  ["calis-skills","Calisthenics Skills","Calisthenics Skills","calis","skin-the-cat bar-traverse monkey-bar-traverse human-flag muscle-ups",120],
-  ["calis-60","Calisthenics 60","Calisthenics 60","calis","scapular-pull-ups pull-ups support-hold parallel-bar-dips inverted-rows chin-ups straight-bar-dips hanging-knee-raise archer-row l-sit windshield-wipers commando-pull-ups hanging-leg-raise dead-hang",100],
+  ["calis-skills","Calisthenics Skills","Calisthenics Skills","calis","skin-the-cat l-sit monkey-bar-traverse human-flag muscle-ups",120],
+  ["calis-60","Calisthenics 60","Calisthenics 60","calis","scapular-pull-ups pull-ups support-hold parallel-bar-dips inverted-rows chin-ups toes-to-bar hanging-knee-raise negative-pull-ups l-sit windshield-wipers commando-pull-ups hanging-leg-raise dead-hang",100],
   ["full-body-60","Full Body 60","Full Body 60","mix","burpees goblet-squat push-ups kb-swing bent-over-row walking-lunges mountain-climbers romanian-deadlift shoulder-press jump-squats plank russian-twists",85],
   ["bodyweight-60","Bodyweight 60 (ohne Geräte)","Bodyweight 60 (no equipment)","bw","jumping-jacks air-squats push-ups reverse-lunges plank high-knees glute-bridge pike-push-ups side-lunges bicycle-crunches burpees wall-sit superman-hold mountain-climbers",45],
   ["advanced-60","Advanced 60","Advanced 60","mix","burpee-squat-jumps pistol-squats archer-push-ups tuck-jumps dragon-flags clap-push-ups bulgarian-split-squats pike-push-ups frogs hollow-hold cossack-squats jackknives",120]
@@ -2136,6 +2151,7 @@ var LIB_WORKOUTS = LIB_WORKOUT_ROWS.map(function(x){
 
 function tplText(obj){ return obj ? (obj[currentLang()] || obj.de || "") : ""; }
 function findExercise(id){
+  if(EX_ALIAS[id]) id = EX_ALIAS[id];
   for(var i=0;i<EXERCISES.length;i++) if(EXERCISES[i].id===id) return EXERCISES[i];
   return null;
 }
@@ -2201,10 +2217,10 @@ var EX_LEVEL = {
   "push-ups":2,"pike-push-ups":3,"triceps-dips":2,"squat-hold":1,"walking-lunges":2,"reverse-lunges":1,"side-lunges":2,"cossack-squats":3,
   "deep-squats":1,"pistol-assist":3,"plank-steps":2,"bear-crawl":2,"wall-sit":1,"calf-raises":1,"glute-bridge":1,
   "pull-ups":3,"negative-pull-ups":2,"inverted-rows":2,"superman-hold":1,"reverse-snow-angels":1,"bird-dog":1,"prone-y-raise":1,
-  "prone-t-raise":1,"hip-hinge":1,"good-mornings":1,"swimmers":1,"cobra-lift":1,"scapular-push-ups":1,"scapular-pull-ups":2,"dead-hang":1,
+  "prone-t-raise":1,"good-mornings":1,"swimmers":1,"cobra-lift":1,"scapular-push-ups":1,"scapular-pull-ups":2,"dead-hang":1,
   "air-squats":1,"split-squats":2,"bulgarian-split-squats":3,"forward-lunges":2,"single-leg-glute-bridge":2,"lateral-lunge-pulses":2,
-  "plank":1,"side-plank":2,"dead-bug":1,"bicycle-crunches":1,"leg-levers":3,"leg-raises":2,"jackknives":3,"side-jackknives":3,
-  "hollow-hold":3,"reverse-crunch":2,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"slow-mountain-climbers":1,"toes-to-bar":3,
+  "plank":1,"side-plank":2,"dead-bug":1,"bicycle-crunches":1,"leg-raises":2,"jackknives":3,"side-jackknives":3,
+  "hollow-hold":3,"reverse-crunch":2,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"toes-to-bar":3,
   "wall-push-ups":1,"close-grip-push-ups":2,"diamond-push-ups":3,"sphinx-push-ups":3,"towel-curls":1,"self-resistance-curls":1,
   "backpack-curls":1,"backpack-triceps":2,"arm-circles":1,
   "neck-stretch":1,"shoulder-stretch":1,"triceps-stretch":1,"biceps-stretch":1,"chest-stretch":1,"wrist-stretch":1,"side-bend":1,
@@ -2216,9 +2232,9 @@ var EX_EQUIP = {
   "one-arm-row":"db","floor-press":"db","shoulder-press":"db","push-press":"db","weighted-reverse-lunge":"db kb","front-rack-carry":"kb db",
   "farmer-carry":"db kb","kb-clean":"kb","renegade-row":"db",
   "pull-ups":"bar","negative-pull-ups":"bar","inverted-rows":"bar","scapular-pull-ups":"bar","dead-hang":"bar","toes-to-bar":"bar",
-  "archer-row":"bar","chin-ups":"bar","commando-pull-ups":"bar","parallel-bar-dips":"dip","straight-bar-dips":"bar","support-hold":"dip",
-  "korean-dips":"bar","hanging-knee-raise":"bar","hanging-leg-raise":"bar","hanging-l-sit":"bar","l-sit":"dip","windshield-wipers":"bar",
-  "muscle-ups":"bar","monkey-bar-traverse":"bar","bar-traverse":"bar","human-flag":"bar","skin-the-cat":"bar"
+  "chin-ups":"bar","commando-pull-ups":"bar","parallel-bar-dips":"dip","support-hold":"dip",
+  "hanging-knee-raise":"bar","hanging-leg-raise":"bar","hanging-l-sit":"bar","l-sit":"dip","windshield-wipers":"bar",
+  "muscle-ups":"bar","monkey-bar-traverse":"bar","human-flag":"bar","skin-the-cat":"bar"
 };
 EXERCISES.forEach(function(ex){ ex.level = EX_LEVEL[ex.id] || 2; ex.equip = (EX_EQUIP[ex.id] || "none").split(" "); });
 
@@ -2591,7 +2607,6 @@ var ILLU_POSES = {
   "bird-dog":           [P_Q4, Q(null,[66,66],[40,66],[[24,64,8,62],[40,88,22,88,18,89]],[[80,60,92,56],[67,78,68,89]])],
   "prone-y-raise":      [P_LF, qWith(P_LF,{ a:[[15,76,5,70]] })],
   "prone-t-raise":      [qWith(P_LF,{ a:[[29,87,33,89]] }), qWith(P_LF,{ a:[[29,72,31,62]] })],
-  "hip-hinge":          [P_STH, qWith(P_HG,{ a:[[54,52,46,50]] })],
   "good-mornings":      [qWith(P_ST,{ a:[[58,18,49,12]] }), qWith(P_HG,{ a:[[62,30,71,31]] })],
   "swimmers":           [Q(null,[26,80],[52,84],[[70,82,88,77,92,78],[70,86,88,87,92,89]],[[16,74,6,70],[14,88,4,88]]),
                          Q(null,[26,80],[52,84],[[70,86,88,87,92,89],[70,82,88,77,92,78]],[[14,88,4,88],[16,74,6,70]])],
@@ -2619,7 +2634,6 @@ var ILLU_POSES = {
                          qWith(P_LB,{ l:[[68,82,88,80],[52,66,68,66]], a:[[12,76,4,72],[26,70,26,58]] })],
   "bicycle-crunches":   [Q(null,[26,78],[50,84],[[56,66,66,70],[68,80,88,78]],[[24,68,16,70]]),
                          Q(null,[26,78],[50,84],[[68,80,88,78],[56,66,66,70]],[[24,68,16,70]])],
-  "leg-levers":         [qWith(P_LB,{ l:[[54,66,58,48,64,46]] }), qWith(P_LB,{ l:[[68,80,86,76,90,72]] })],
   "leg-raises":         [P_LB, qWith(P_LB,{ l:[[54,66,58,48,64,46]] })],
   "jackknives":         [qWith(P_LB,{ a:[[12,84,2,84]] }), Q(null,[34,64],[44,86],[[56,66,66,48,70,46]],[[48,56,62,46]])],
   "side-jackknives":    [qWith(P_LB,{ a:[[22,74,14,76]] }), Q(null,[28,72],[50,84],[[66,74,84,68,88,66]],[[24,64,16,66]])],
@@ -2628,7 +2642,6 @@ var ILLU_POSES = {
   "sit-ups":            [qWith(P_LBK,{ a:[[30,80,36,78]] }), Q(null,[42,58],[46,86],[[60,70,70,89,78,89]],[[48,68,56,70]])],
   "toe-touches":        [qWith(P_LB,{ l:[[52,66,54,48,58,46]], a:[[22,72,22,62]] }), Q(null,[30,74],[50,84],[[52,66,54,48,58,46]],[[42,64,52,52]])],
   "plank-shoulder-taps":[P_PH, qWith(P_PH,{ a:[[69,75,70,89],[62,70,70,64]] })],
-  "slow-mountain-climbers": [qWith(P_PH,{ l:[[28,78,12,86,9,89],[58,76,48,86,46,89]] }), qWith(P_PH,{ l:[[58,76,48,86,46,89],[28,78,12,86,9,89]] })],
   "toes-to-bar":        [Q([57,24],[50,30],[50,58],[[50,72,50,86]],[[47,19,46,6]], gBar(6,30,70)),
                          Q([57,24],[50,30],[50,58],[[66,56,66,72,72,72]],[[47,19,46,6]], gBar(6,30,70))]
 };
@@ -2678,13 +2691,10 @@ var G_PT = gBar(80,40,62)+'<path class="ip" d="M44 80V89M58 80V89"/>';
 var G_POLE = '<path class="ip" d="M20 6V89"/>';
 var G_MONKEY = gBar(6,8,92)+'<path class="ip" d="M20 3v6M40 3v6M60 3v6M80 3v6"/>';
 Object.assign(ILLU_POSES, {
-  "archer-row":         [Q(null,[38,76],[62,82],[[76,85,88,87,90,81]],[[40,66,44,57]], G_ROW), Q(null,[40,63],[62,74],[[76,80,88,87,90,81]],[[34,58,44,57],[48,64,56,57]], G_ROW)],
   "chin-ups":           [P_HANG, P_PULL],
   "commando-pull-ups":  [P_HANGS, Q([60,8],[50,16],[50,44],[[50,60,50,74]],[[44,14,46,6]], gBar(6,30,70))],
   "parallel-bar-dips":  [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), Q(null,[54,38],[52,64],[[50,76,40,84,42,86]],[[44,40,56,50]], G_PB)],
-  "straight-bar-dips":  [Q(null,[50,24],[52,52],[[54,70,52,86]],[[54,38,56,50]], G_SB), Q(null,[60,40],[50,60],[[54,76,50,88]],[[50,42,56,50]], G_SB)],
   "support-hold":       [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), null],
-  "korean-dips":        [Q(null,[54,24],[54,52],[[62,68,66,86,72,88]],[[48,38,44,50]], G_KB), Q(null,[58,38],[58,64],[[66,76,72,88,78,89]],[[48,34,44,50]], G_KB)],
   "hanging-knee-raise": [P_HANGS, qWith(P_HANGS,{ l:[[66,56,66,72,72,72]] })],
   "hanging-leg-raise":  [P_HANGS, qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] })],
   "hanging-l-sit":      [qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] }), null],
@@ -2692,7 +2702,6 @@ Object.assign(ILLU_POSES, {
   "windshield-wipers":  [qWith(P_HANG,{ l:[[38,50,26,40],[40,54,28,44]] }), qWith(P_HANG,{ l:[[62,50,74,40],[60,54,72,44]] })],
   "muscle-ups":         [Q([56,36],[50,44],[50,70],[[50,82,50,88]],[[40,48,46,40]], gBar(40,28,72)), Q(null,[50,18],[50,46],[[50,62,50,76]],[[53,31,54,40]], gBar(40,28,72))],
   "monkey-bar-traverse":[Q([56,24],[50,30],[50,58],[[50,72,48,86]],[[42,18,38,6],[56,18,62,6]], G_MONKEY), Q([62,24],[56,30],[56,58],[[56,72,54,86]],[[62,18,68,6],[48,18,44,6]], G_MONKEY)],
-  "bar-traverse":       [qShift(P_HANG,-8,0), qShift(P_HANG,8,0)],
   "human-flag":         [Q([28,32],[30,40],[54,42],[[62,30,70,40]],[[24,34,20,30],[26,48,20,58]], G_POLE), Q([28,32],[30,40],[58,40],[[74,40,90,40]],[[24,34,20,30],[26,48,20,58]], G_POLE)],
   "skin-the-cat":       [P_HANGS, Q([46,34],[50,24],[58,42],[[64,24,72,12]],[[48,15,46,6]], gBar(6,30,70))],
   "archer-push-ups":    [P_PH, qWith(P_PL,{ a:[[60,71,70,89],[74,82,86,88]] })],
@@ -2781,7 +2790,6 @@ var EX_INFO = {
   "bird-dog":["Vierfüßlerstand, Hände unter den Schultern, Knie unter der Hüfte.|Einen Arm und das gegenüberliegende Bein langsam strecken.|Kurz halten, zurückführen und die Seite wechseln, Hüfte bleibt gerade.","On all fours, hands under your shoulders, knees under your hips.|Slowly extend one arm and the opposite leg.|Hold briefly, return and switch sides, keep your hips level."],
   "prone-y-raise":["Auf dem Bauch liegen, Arme schräg nach vorn in Y-Form.|Daumen zeigen nach oben.|Arme über die Schulterblätter anheben, kurz halten und senken.","Lie face down, arms forward in a Y shape.|Thumbs point up.|Lift your arms by squeezing your shoulder blades, hold briefly, lower."],
   "prone-t-raise":["Auf dem Bauch liegen, Arme seitlich in T-Form.|Daumen zeigen nach oben.|Arme über die Schulterblätter anheben, kurz halten und senken.","Lie face down, arms out to the sides in a T shape.|Thumbs point up.|Lift your arms by squeezing your shoulder blades, hold briefly, lower."],
-  "hip-hinge":["Aufrecht stehen, Hände an der Hüfte, Knie leicht gebeugt.|Hüfte nach hinten schieben, der Oberkörper neigt sich mit geradem Rücken nach vorn.|Über die Hüfte wieder aufrichten und das Gesäß anspannen.","Stand tall, hands on your hips, knees soft.|Push your hips back so your torso tips forward with a flat back.|Drive your hips forward to stand up and squeeze your glutes."],
   "good-mornings":["Hüftbreit stehen, Hände hinter dem Kopf.|Mit geradem Rücken aus der Hüfte nach vorn beugen, Knie leicht gebeugt.|Bis etwa waagerecht beugen und über die Hüfte aufrichten.","Stand hip-width, hands behind your head.|Hinge forward from your hips with a flat back, knees soft.|Bend to about horizontal and stand back up through your hips."],
   "swimmers":["Auf dem Bauch liegen, Arme nach vorn gestreckt.|Arme und Beine leicht abheben.|Gegengleich Arm und Bein im Wechsel auf und ab bewegen, wie beim Kraulen.","Lie on your stomach, arms extended forward.|Lift your arms and legs slightly.|Flutter the opposite arm and leg up and down, like swimming crawl."],
   "cobra-lift":["Auf dem Bauch liegen, Hände neben der Brust.|Brust langsam anheben, die Hüfte bleibt am Boden.|Nur so weit, wie der untere Rücken entspannt bleibt, dann langsam senken.","Lie on your stomach, hands beside your chest.|Slowly lift your chest while your hips stay down.|Only go as high as your lower back stays relaxed, then lower slowly."],
@@ -2800,7 +2808,6 @@ var EX_INFO = {
   "side-plank":["Seitlich auf einen Unterarm stützen, Ellbogen unter der Schulter.|Hüfte anheben, bis der Körper eine gerade Linie bildet.|Halten, Seite nach jedem Intervall wechseln.","Lie on your side and prop up on one forearm, elbow under your shoulder.|Lift your hips until your body forms a straight line.|Hold, switch sides after each interval."],
   "dead-bug":["Auf dem Rücken, Arme zur Decke, Knie über der Hüfte angewinkelt.|Gegengleich einen Arm nach hinten und ein Bein nach vorn strecken.|Unterer Rücken bleibt am Boden, zurückführen und Seite wechseln.","Lie on your back, arms to the ceiling, knees bent over your hips.|Extend one arm back and the opposite leg forward.|Keep your lower back down, return and switch sides."],
   "bicycle-crunches":["Rückenlage, Hände locker am Kopf, Schultern leicht angehoben.|Ein Knie zur Brust ziehen, das andere Bein strecken.|Den gegenüberliegenden Ellbogen zum Knie drehen und im Wechsel radeln.","Lie on your back, hands lightly at your head, shoulders lifted.|Pull one knee in while extending the other leg.|Rotate the opposite elbow towards the knee and pedal alternately."],
-  "leg-levers":["Rückenlage, Hände neben dem Körper oder unter dem Gesäß.|Gestreckte Beine senkrecht nach oben.|Beine langsam bis knapp über den Boden senken und wieder anheben, der untere Rücken bleibt unten.","Lie on your back, hands by your sides or under your hips.|Raise your straight legs to vertical.|Slowly lower them to just above the floor and lift again, lower back stays down."],
   "leg-raises":["Rückenlage, Beine gestreckt, Hände neben dem Körper.|Die gestreckten Beine bis senkrecht anheben.|Kontrolliert absenken, bei Bedarf mit gebeugten Knien.","Lie on your back, legs straight, hands by your sides.|Lift your straight legs to vertical.|Lower with control, bend your knees if needed."],
   "jackknives":["Rückenlage, Arme über dem Kopf, Beine gestreckt.|Gleichzeitig Oberkörper und Beine anheben und mit den Händen Richtung Füße greifen.|Kontrolliert zurück in die gestreckte Lage.","Lie on your back, arms overhead, legs straight.|Lift your torso and legs at the same time and reach for your feet.|Return with control to the stretched position."],
   "side-jackknives":["Auf der Seite liegen, die obere Hand am Kopf.|Oberkörper und gestreckte Beine gleichzeitig seitlich anheben.|Langsam absenken, Seite nach jedem Intervall wechseln.","Lie on your side, top hand at your head.|Lift your torso and straight legs sideways at the same time.|Lower slowly, switch sides after each interval."],
@@ -2809,7 +2816,6 @@ var EX_INFO = {
   "sit-ups":["Rückenlage, Knie angewinkelt, Füße am Boden.|Oberkörper kontrolliert bis zum Sitzen aufrollen.|Langsam Wirbel für Wirbel zurückrollen, ohne Schwung.","Lie on your back, knees bent, feet flat.|Roll your torso up to sitting with control.|Roll back down slowly, one vertebra at a time, no momentum."],
   "toe-touches":["Rückenlage, Beine senkrecht nach oben gestreckt.|Schultern anheben und mit den Händen Richtung Zehen greifen.|Langsam zurück, die Beine bleiben oben.","Lie on your back, legs straight up.|Lift your shoulders and reach for your toes.|Lower slowly, legs stay up."],
   "plank-shoulder-taps":["Hoher Liegestütz, Füße etwas breiter.|Mit einer Hand die gegenüberliegende Schulter antippen.|Hand zurück, Seite wechseln, das Becken nicht kippen lassen.","High plank, feet a little wider.|Tap the opposite shoulder with one hand.|Return the hand and switch, don't let your hips rock."],
-  "slow-mountain-climbers":["Hoher Liegestütz, Hände unter den Schultern.|Ein Knie langsam und kontrolliert zur Brust ziehen, kurz halten.|Zurückführen und Seite wechseln, Bauch die ganze Zeit fest.","High plank, hands under your shoulders.|Slowly draw one knee to your chest and hold briefly.|Return and switch sides, abs tight throughout."],
   "toes-to-bar":["An einer sicheren Stange hängen, Arme gestreckt.|Die Füße bis zur Stange bringen (leichter: Knie zur Brust).|Kontrolliert senken, ohne zu schwingen.","Hang from a secure bar, arms straight.|Pull your knees to your chest or bring your feet to the bar.|Lower with control, without swinging."]
 };
 
@@ -2873,7 +2879,6 @@ var EX_POSTURE = {
   "bird-dog":["Rücken flach, Becken bleibt waagerecht.|Arm und Bein nur bis zur Körperlinie heben.","Das Bein zu hoch heben und ins Hohlkreuz gehen.","Flat back, pelvis stays level.|Lift arm and leg only to body height.","Lifting the leg too high and arching your back."],
   "prone-y-raise":["Stirn knapp über dem Boden, Nacken lang.|Schulterblätter nach hinten unten ziehen.","Mit dem unteren Rücken statt den Schultern heben.","Forehead just off the floor, long neck.|Draw your shoulder blades back and down.","Lifting with your lower back instead of your shoulders."],
   "prone-t-raise":["Nacken lang, Blick zum Boden.|Arme auf Schulterhöhe, Schulterblätter zusammen.","Die Schultern hochziehen.","Long neck, eyes down.|Arms at shoulder height, blades squeezed together.","Shrugging your shoulders up."],
-  "hip-hinge":["Rücken lang und gerade, Kopf in Verlängerung.|Knie leicht gebeugt, Schienbeine fast senkrecht.","Den Rücken rund machen statt die Hüfte zu beugen.","Long, flat spine, head in line.|Knees soft, shins nearly vertical.","Rounding your back instead of hinging at the hips."],
   "good-mornings":["Rücken neutral, Ellbogen offen.|Knie leicht gebeugt, Gewicht auf den Fersen.","Tiefer beugen, als der Rücken gerade bleibt.","Neutral spine, elbows open.|Knees soft, weight in your heels.","Bending lower than your back can stay flat."],
   "swimmers":["Blick zum Boden, Nacken lang.|Bauch leicht angespannt, Becken bleibt am Boden.","Den Kopf hochreißen.","Look down, long neck.|Abs lightly braced, pelvis on the floor.","Jerking your head up."],
   "cobra-lift":["Schultern weg von den Ohren, Blick schräg nach vorn unten.|Becken bleibt am Boden, Gesäß locker.","Sich mit den Armen weit hochdrücken und den unteren Rücken stauchen.","Shoulders away from your ears, eyes down and forward.|Pelvis stays down, glutes relaxed.","Pushing up high with your arms and crunching your lower back."],
@@ -2892,7 +2897,6 @@ var EX_POSTURE = {
   "side-plank":["Ellbogen unter der Schulter, Körper in einer Linie.|Hüfte nach vorn schieben, nicht nach hinten knicken.","Die Hüfte absinken lassen.","Elbow under your shoulder, body in one line.|Push your hips forward, don't bend back.","Letting your hips drop."],
   "dead-bug":["Unterer Rücken bleibt flach am Boden (Becken leicht einrollen).|Langsam und kontrolliert ausatmen beim Strecken.","Ins Hohlkreuz gehen, sobald Arm und Bein sich strecken.","Lower back stays flat on the floor (tuck your pelvis slightly).|Exhale slowly as you extend.","Arching your back as your arm and leg extend."],
   "bicycle-crunches":["Unterer Rücken am Boden, Schultern angehoben.|Drehen aus dem Oberkörper, Ellbogen offen.","Mit den Händen am Nacken ziehen.","Lower back down, shoulders lifted.|Rotate through your upper back, elbows open.","Pulling on your neck with your hands."],
-  "leg-levers":["Becken leicht eingerollt, unterer Rücken bleibt am Boden.|Nur so tief senken, wie der Rücken unten bleibt.","Ins Hohlkreuz gehen, wenn die Beine tief sind.","Pelvis slightly tucked, lower back stays down.|Lower only as far as your back stays flat.","Arching your back when your legs get low."],
   "leg-raises":["Unterer Rücken am Boden, Becken leicht eingerollt.|Beine langsam senken, ohne Schwung.","Die Beine fallen lassen und ins Hohlkreuz gehen.","Lower back down, pelvis slightly tucked.|Lower your legs slowly, no swinging.","Dropping your legs and arching your back."],
   "jackknives":["Bauch fest, Rücken rollt kontrolliert ab.|Arme und Beine gleichzeitig bewegen.","Mit Schwung hochreißen.","Abs tight, roll your spine with control.|Move arms and legs together.","Yanking up with momentum."],
   "side-jackknives":["Körper in einer Linie auf der Seite, nicht nach hinten kippen.|Aus der seitlichen Bauchmuskulatur heben.","Mit Kopf und Nacken ziehen.","Body in one line on your side, don't roll back.|Lift with your side abs.","Pulling with your head and neck."],
@@ -2901,19 +2905,15 @@ var EX_POSTURE = {
   "sit-ups":["Kinn leicht zur Brust, Nacken locker.|Füße bleiben am Boden, Bauch führt die Bewegung.","Sich mit den Händen am Kopf hochziehen.","Chin slightly tucked, relaxed neck.|Feet stay down, your abs lead.","Yanking yourself up by your head."],
   "toe-touches":["Unterer Rücken am Boden.|Schulterblätter abheben, Nacken lang.","Mit dem Kopf nach vorn nicken.","Lower back down.|Lift your shoulder blades, long neck.","Jerking your head forward."],
   "plank-shoulder-taps":["Hüfte parallel zum Boden, Füße etwas breiter.|Gesäß und Bauch fest.","Mit der Hüfte hin und her schaukeln.","Hips parallel to the floor, feet a bit wider.|Glutes and abs tight.","Rocking your hips side to side."],
-  "slow-mountain-climbers":["Schultern über den Händen, Rücken gerade.|Knie langsam ziehen, Becken bleibt ruhig.","Die Hüfte hochschieben.","Shoulders over your hands, back flat.|Draw the knee slowly, pelvis stays still.","Piking your hips up."],
   "toes-to-bar":["Schultern aktiv, Rumpf fest.|Becken zum Heben einrollen.","Mit großem Schwung arbeiten.","Active shoulders, braced core.|Tuck your pelvis to lift.","Using big swings."]
 };
 
 Object.assign(EX_INFO, {
   "reverse-crunch":["Rückenlage, Arme neben dem Körper, Knie über der Hüfte angewinkelt.|Knie Richtung Brust ziehen und das Becken ein Stück vom Boden abrollen.|Langsam Wirbel für Wirbel zurück, ohne Schwung.","Lie on your back, arms by your sides, knees bent over your hips.|Pull your knees towards your chest and curl your pelvis off the floor.|Lower slowly one vertebra at a time, no momentum."],
-  "archer-row":["Unter eine niedrige Stange legen, breiter Griff.|Zu einer Hand hochziehen, der andere Arm streckt sich seitlich.|Absenken, Seite nach jedem Intervall wechseln.","Lie under a low bar with a wide grip.|Pull up towards one hand while the other arm straightens to the side.|Lower, switch sides after each interval."],
   "chin-ups":["Im Untergriff an der Stange hängen, Hände schulterbreit.|Schultern nach unten ziehen und das Kinn über die Stange ziehen.|Kontrolliert in den gestreckten Hang absenken.","Hang with an underhand grip, hands shoulder-width.|Pull your shoulders down and your chin over the bar.|Lower with control to a full hang."],
   "commando-pull-ups":["Die Stange längs vor dir greifen, Hände dicht hintereinander.|Den Kopf auf eine Seite der Stange hochziehen.|Absenken, im nächsten Intervall zur anderen Seite.","Grip the bar lengthwise, hands close one behind the other.|Pull your head up to one side of the bar.|Lower, pull to the other side next interval."],
   "parallel-bar-dips":["Im Stütz zwischen zwei Holmen beginnen, Arme gestreckt.|Absenken, bis die Oberarme etwa waagerecht sind.|Kraftvoll hochdrücken.","Start in a support between two bars, arms straight.|Lower until your upper arms are about horizontal.|Press back up."],
-  "straight-bar-dips":["Über der Stange in den Stütz, Stange vor der Hüfte.|Nach vorn neigen und absenken, bis die Brust nah an der Stange ist.|Wieder hochdrücken.","Support yourself above the bar, bar in front of your hips.|Lean forward and lower until your chest is near the bar.|Press back up."],
   "support-hold":["Auf Barren oder Parallettes in den Stütz drücken.|Arme gestreckt, Schultern nach unten gedrückt.|Ruhig halten und atmen.","Press up into a support on dip bars or parallettes.|Arms straight, shoulders pushed down.|Hold steadily and breathe."],
-  "korean-dips":["Mit dem Rücken zur Stange, Stange hinter der Hüfte greifen.|Füße nach vorn, absenken, bis die Stange am Rücken ist.|Kontrolliert wieder hochdrücken.","Back to the bar, grip it behind your hips.|Walk your feet forward and lower until the bar is at your back.|Press back up with control."],
   "hanging-knee-raise":["An der Stange hängen, Arme gestreckt.|Knie kontrolliert zur Brust ziehen.|Langsam senken, ohne zu schwingen.","Hang from the bar, arms straight.|Draw your knees to your chest with control.|Lower slowly without swinging."],
   "hanging-leg-raise":["An der Stange hängen, Beine gestreckt.|Gestreckte Beine bis auf Hüfthöhe oder höher heben.|Kontrolliert senken.","Hang from the bar, legs straight.|Raise your straight legs to hip height or higher.|Lower with control."],
   "hanging-l-sit":["An der Stange hängen.|Gestreckte Beine waagerecht nach vorn heben.|Halten, ruhig atmen.","Hang from the bar.|Raise your straight legs forward to horizontal.|Hold and breathe calmly."],
@@ -2921,7 +2921,6 @@ Object.assign(EX_INFO, {
   "windshield-wipers":["Im Hang die gestreckten Beine hoch zur Stange bringen.|Beine kontrolliert zur einen Seite kippen.|Über die Mitte zur anderen Seite führen.","In the hang, bring your straight legs up to the bar.|Tilt your legs to one side with control.|Move through the middle to the other side."],
   "muscle-ups":["Im Hang beginnen, leicht falscher Griff.|Explosiv zur Brust ziehen und die Handgelenke über die Stange bringen.|In den Stütz drücken, kontrolliert zurück.","Start in a hang with a slight false grip.|Pull explosively and bring your wrists over the bar.|Press into the support, return with control."],
   "monkey-bar-traverse":["An der Hangelleiter hängen.|Mit einer Hand zur nächsten Sprosse greifen.|Im Wechsel weiterhangeln.","Hang from the monkey bars.|Reach to the next rung with one hand.|Keep traversing, alternating hands."],
-  "bar-traverse":["An einer langen Stange hängen.|Hände abwechselnd seitlich versetzen.|Entlang und zurück hangeln.","Hang from a long bar.|Shift your hands sideways one after the other.|Traverse along and back."],
   "human-flag":["Senkrechte Stange greifen: obere Hand Untergriff, untere Obergriff.|Unten wegdrücken, oben ziehen, Beine anheben (erst angewinkelt).|Seitlich halten, Seite nach jedem Intervall wechseln.","Grip a vertical pole: top hand underhand, bottom hand overhand.|Push with the bottom arm, pull with the top, lift your legs (tucked at first).|Hold sideways, switch sides after each interval."],
   "skin-the-cat":["Im Hang die Knie zur Brust ziehen.|Beine zwischen den Armen durchführen und kontrolliert durch die Schultern drehen.|Nur so weit wie angenehm, dann zurück.","From the hang, pull your knees to your chest.|Pass your legs through your arms and rotate through your shoulders with control.|Only as far as comfortable, then return."],
   "archer-push-ups":["Sehr breiter Liegestütz.|Zu einer Hand absenken, der andere Arm streckt sich seitlich.|Hochdrücken, Seite nach jedem Intervall wechseln.","Very wide push-up position.|Lower towards one hand while the other arm straightens.|Press up, switch sides after each interval."],
@@ -2962,13 +2961,10 @@ Object.assign(EX_INFO, {
 });
 Object.assign(EX_POSTURE, {
   "reverse-crunch":["Kopf und Schultern bleiben entspannt am Boden.|Die Bewegung kommt aus dem Bauch, nicht aus dem Schwung der Beine.","Die Beine nach hinten schleudern.","Head and shoulders stay relaxed on the floor.|The movement comes from your abs, not from swinging your legs.","Flinging your legs back."],
-  "archer-row":["Körper steif wie ein Brett.|Schulterblatt der Zugseite nach hinten unten.","Die Hüfte durchhängen lassen.","Body rigid like a plank.|Draw the working shoulder blade back and down.","Letting your hips sag."],
   "chin-ups":["Rumpf fest, Beine ruhig.|Ellbogen zeigen nach unten.","Mit Schwung aus den Beinen ziehen.","Core braced, legs still.|Elbows point down.","Kicking with your legs for momentum."],
   "commando-pull-ups":["Rumpf fest, nicht ins Drehen geraten.|Schultern tief.","Mit dem Oberkörper schwingen.","Core tight, don't spin.|Shoulders down.","Swinging your torso."],
   "parallel-bar-dips":["Schultern tief, Oberkörper leicht nach vorn.|Ellbogen nach hinten, nicht nach außen.","Tiefer gehen als schmerzfrei möglich.","Shoulders down, torso slightly forward.|Elbows back, not out.","Going deeper than is pain-free."],
-  "straight-bar-dips":["Beine leicht nach vorn als Gegengewicht.|Schultern weg von den Ohren.","Die Schultern nach vorn einrollen lassen.","Legs slightly forward as a counterweight.|Shoulders away from your ears.","Letting your shoulders roll forward."],
   "support-hold":["Ellbogen gestreckt, Brust offen.|Rumpf fest, Beine ruhig.","Die Schultern zu den Ohren sinken lassen.","Elbows locked, chest open.|Core braced, legs still.","Letting your shoulders sink to your ears."],
-  "korean-dips":["Schultern aktiv, nicht in die Endposition fallen.|Nur mit guter Schulterbeweglichkeit üben.","Ruckartig tief fallen lassen.","Shoulders active, don't collapse at the bottom.|Only with good shoulder mobility.","Dropping down abruptly."],
   "hanging-knee-raise":["Schultern aktiv, Becken oben leicht einrollen.|Oberkörper ruhig.","Mit Schwung aus dem Rücken arbeiten.","Active shoulders, tuck your pelvis at the top.|Upper body still.","Swinging from your back."],
   "hanging-leg-raise":["Beine zusammen, Knie gestreckt.|Kein Schwung.","Die Beine fallen lassen.","Legs together, knees straight.|No swinging.","Dropping your legs."],
   "hanging-l-sit":["Schultern aktiv, Beine zusammen.|Zehen gestreckt.","Knie beugen, wenn es schwer wird – lieber kürzer halten.","Active shoulders, legs together.|Toes pointed.","Bending your knees when it gets hard – hold shorter instead."],
@@ -2976,7 +2972,6 @@ Object.assign(EX_POSTURE, {
   "windshield-wipers":["Schultern aktiv, Oberkörper ruhig.|Bewegung aus der Körpermitte.","Die Beine von Seite zu Seite schleudern.","Active shoulders, steady upper body.|Move from your core.","Flinging your legs side to side."],
   "muscle-ups":["Stange nah am Körper halten.|Erst sichere Klimmzüge und Dips beherrschen.","Mit einem Arm zuerst hochkommen.","Keep the bar close to your body.|Master solid pull-ups and dips first.","Getting one arm over first."],
   "monkey-bar-traverse":["Schultern aktiv, Rumpf fest.|Ruhig und kontrolliert greifen.","Unkontrolliert schwingen.","Active shoulders, core braced.|Reach calmly and with control.","Swinging uncontrolled."],
-  "bar-traverse":["Schultern aktiv, Körper ruhig.|Kleine Schritte mit den Händen.","Mit den Beinen Schwung holen.","Active shoulders, still body.|Small hand steps.","Using your legs for momentum."],
   "human-flag":["Unterer Arm gestreckt und gesperrt.|Seitlicher Rumpf fest angespannt.","Ohne sichere Grundkraft ganz gestreckt versuchen.","Bottom arm straight and locked.|Side core tightly braced.","Trying the full flag without solid base strength."],
   "skin-the-cat":["Langsam, ohne Schwung.|Schultern aktiv halten.","In die Endposition fallen lassen.","Slowly, no momentum.|Keep your shoulders active.","Dropping into the end position."],
   "archer-push-ups":["Körper eine Linie.|Ellbogen des Arbeitsarms nah am Körper.","Die Hüfte verdrehen.","Body in one line.|Working elbow close to your body.","Twisting your hips."],
@@ -3021,13 +3016,10 @@ Object.assign(EX_POSTURE, {
    Beinheben z. B. vor allem Hüftbeuger, der Bauch stabilisiert. */
 var EX_MUSCLES = {
   "reverse-crunch":["Gerader Bauch (unterer Anteil)","Hüftbeuger, schräge Bauchmuskeln","Abs (lower part)","Hip flexors, obliques"],
-  "archer-row":["Breiter Rückenmuskel, oberer Rücken, Bizeps","Hintere Schulter, Rumpf","Lats, upper back, biceps","Rear delts, core"],
   "chin-ups":["Bizeps, breiter Rückenmuskel","Oberer Rücken, Unterarme","Biceps, lats","Upper back, forearms"],
   "commando-pull-ups":["Breiter Rückenmuskel, Bizeps","Rumpf, Unterarme (Griff)","Lats, biceps","Core, forearms (grip)"],
   "parallel-bar-dips":["Trizeps, Brust","Vordere Schulter","Triceps, chest","Front delts"],
-  "straight-bar-dips":["Brust, Trizeps","Schultern, Rumpf","Chest, triceps","Shoulders, core"],
   "support-hold":["Schulterstabilität, Trizeps","Rumpf","Shoulder stability, triceps","Core"],
-  "korean-dips":["Trizeps, Brust, Schultern","Oberer Rücken, Rumpf","Triceps, chest, shoulders","Upper back, core"],
   "hanging-knee-raise":["Hüftbeuger, gerader Bauch","Unterarme (Griff), Schultern","Hip flexors, abs","Forearms (grip), shoulders"],
   "hanging-leg-raise":["Hüftbeuger, gerader Bauch","Unterarme (Griff), Schultern","Hip flexors, abs","Forearms (grip), shoulders"],
   "hanging-l-sit":["Gerader Bauch, Hüftbeuger","Unterarme (Griff), Oberschenkel vorn","Abs, hip flexors","Forearms (grip), quads"],
@@ -3035,7 +3027,6 @@ var EX_MUSCLES = {
   "windshield-wipers":["Schräge Bauchmuskeln, Rumpf","Hüftbeuger, Unterarme (Griff)","Obliques, core","Hip flexors, forearms (grip)"],
   "muscle-ups":["Breiter Rückenmuskel, Brust, Trizeps","Schultern, Bizeps, Rumpf","Lats, chest, triceps","Shoulders, biceps, core"],
   "monkey-bar-traverse":["Unterarme (Griff), breiter Rückenmuskel","Schultern, Rumpf","Forearms (grip), lats","Shoulders, core"],
-  "bar-traverse":["Unterarme (Griff), breiter Rückenmuskel","Schultern, Rumpf","Forearms (grip), lats","Shoulders, core"],
   "human-flag":["Schultern, seitlicher Rumpf","Unterarme (Griff), breiter Rückenmuskel","Shoulders, lateral core","Forearms (grip), lats"],
   "skin-the-cat":["Schultern, Rücken, Rumpf","Schulterbeweglichkeit, Unterarme","Shoulders, back, core","Shoulder mobility, forearms"],
   "archer-push-ups":["Brust, Trizeps (Arbeitsarm)","Schultern, Rumpf","Chest, triceps (working arm)","Shoulders, core"],
@@ -3099,7 +3090,6 @@ var EX_MUSCLES = {
   "bird-dog":["Rückenstrecker, Gesäß, tiefe Bauchmuskeln","Schultern, Oberschenkel hinten","Lower back, glutes, deep core","Shoulders, hamstrings"],
   "prone-y-raise":["Unterer Trapez, hintere Schulter","Oberer Rücken, Rückenstrecker","Lower traps, rear delts","Upper back, lower back"],
   "prone-t-raise":["Mittlerer Trapez, Rautenmuskeln, hintere Schulter","Rückenstrecker","Mid traps, rhomboids, rear delts","Lower back"],
-  "hip-hinge":["Oberschenkel hinten, Gesäß","Rückenstrecker (Haltearbeit)","Hamstrings, glutes","Lower back (holding)"],
   "good-mornings":["Oberschenkel hinten, Gesäß, Rückenstrecker","Rumpf","Hamstrings, glutes, lower back","Core"],
   "swimmers":["Rückenstrecker, Gesäß, Schultern","Oberer Rücken, Oberschenkel hinten","Lower back, glutes, shoulders","Upper back, hamstrings"],
   "cobra-lift":["Rückenstrecker","Gesäß, oberer Rücken","Lower back","Glutes, upper back"],
@@ -3118,7 +3108,6 @@ var EX_MUSCLES = {
   "side-plank":["Schräge Bauchmuskeln, seitliches Gesäß","Schultern, tiefe Bauchmuskeln","Obliques, side glutes","Shoulders, deep core"],
   "dead-bug":["Tiefe Bauchmuskeln, gerader Bauch","Hüftbeuger, Schultern","Deep core, abs","Hip flexors, shoulders"],
   "bicycle-crunches":["Schräge Bauchmuskeln, gerader Bauch","Hüftbeuger","Obliques, abs","Hip flexors"],
-  "leg-levers":["Hüftbeuger, gerader Bauch (stabilisiert)","Tiefe Bauchmuskeln, schräge Bauchmuskeln","Hip flexors, abs (stabilising)","Deep core, obliques"],
   "leg-raises":["Hüftbeuger, gerader Bauch (stabilisiert)","Tiefe Bauchmuskeln, schräge Bauchmuskeln","Hip flexors, abs (stabilising)","Deep core, obliques"],
   "jackknives":["Gerader Bauch, Hüftbeuger","Schultern, Oberschenkel vorn","Abs, hip flexors","Shoulders, quads"],
   "side-jackknives":["Schräge Bauchmuskeln","Seitliches Gesäß, Hüftbeuger","Obliques","Side glutes, hip flexors"],
@@ -3127,7 +3116,6 @@ var EX_MUSCLES = {
   "sit-ups":["Gerader Bauch, Hüftbeuger","Schräge Bauchmuskeln","Abs, hip flexors","Obliques"],
   "toe-touches":["Gerader Bauch","Schultern, Hüftbeuger (Haltearbeit)","Abs","Shoulders, hip flexors (holding)"],
   "plank-shoulder-taps":["Tiefe und schräge Bauchmuskeln, Schultern","Gesäß, Brust","Deep core, obliques, shoulders","Glutes, chest"],
-  "slow-mountain-climbers":["Rumpf, Hüftbeuger","Schultern, Oberschenkel vorn","Core, hip flexors","Shoulders, quads"],
   "toes-to-bar":["Hüftbeuger, gerader Bauch","Breiter Rückenmuskel, Unterarme (Griff)","Hip flexors, abs","Lats, forearms (grip)"],
 
   "wall-push-ups":["Brust, Trizeps","Vordere Schulter, Rumpf","Chest, triceps","Front delts, core"],
@@ -4971,7 +4959,12 @@ function announceStep(idx){
 
 /* ============ Settings ============ *//* ============ Settings ============ */
 /* Adresse der App ohne # und Parameter - die Seite, die man weitergeben kann */
-function appUrl(){ return location.origin + location.pathname.replace(/index\.html$/, ""); }
+/* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
+var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
+function appUrl(){
+  if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
+  return location.origin + location.pathname.replace(/index\.html$/, "");
+}
 function renderSettings(){
   var s = state.db.settings;
   app.innerHTML =
@@ -5105,6 +5098,7 @@ function renderSettings(){
           if(parsed.settings) Object.assign(db.settings, parsed.settings);
           db.settings.theme = migrateTheme(db.settings.theme);
           db.settings.soundStyle = migrateSound(db.settings.soundStyle);
+          migrateExIds(db);
           state.db = db; save(); syncCustomEx(); applyTheme(); applyLang(); applySpace();
           go("#home");
         });

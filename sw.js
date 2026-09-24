@@ -6,7 +6,7 @@
  * Die App nutzt nur Systemschriften und laedt nichts von fremden Servern.
  */
 
-var FASSUNG = "2026-09-25-10";
+var FASSUNG = "2026-09-25-11";
 var SPEICHER = "sporttimer-" + FASSUNG;
 var GRUNDGERUEST = ["./", "./index.html", "./manifest.json", "./icon.png", "./privacy.html"];
 
@@ -38,8 +38,14 @@ self.addEventListener("fetch", function (e) {
   try { ziel = new URL(anfrage.url); } catch (err) { return; }
   if (ziel.origin !== self.location.origin) return;
 
+  // "no-cache": immer beim Server nachfragen (GitHub Pages erlaubt Browsern sonst 10 Minuten
+  // lang die alte Fassung aus dem HTTP-Zwischenspeicher). Unverändertes kommt trotzdem schnell (304).
+  var frisch = anfrage.mode === "navigate"
+    ? new Request(anfrage.url, { cache: "no-cache", credentials: "same-origin" })
+    : new Request(anfrage, { cache: "no-cache" });
+
   e.respondWith(
-    fetch(anfrage).then(function (antwort) {
+    fetch(frisch).then(function (antwort) {
       if (antwort && antwort.status === 200 && antwort.type === "basic") {
         var kopie = antwort.clone();
         caches.open(SPEICHER).then(function (c) { c.put(anfrage, kopie); });
