@@ -36,7 +36,7 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - 60-Minuten-Workouts (Full Body 60, Bodyweight 60, Advanced 60, Calisthenics 60) und 60 Min bei „Überrasch mich“
 - Filter als zwei Auswahlknöpfe „Fokus“ (früher „Körperbereich“) und „Ausrüstung“ mit Liste zum Abhaken (Mehrfachauswahl); schlankere Karten – Hinweise, „Als Block“ und „Ausblenden“ stehen in der Info bzw. auf dem Deckblatt
 - Startseite mit Titel „BLOC – Modular Training Builder“; in den Einstellungen „App teilen“ (Link kopieren)
-- Design „Kodak“ heißt jetzt „C60“ (Schriftzug C60 mit „Modular Training Timer“, Logo mit C)
+- Design „Kodak“ heißt jetzt „C60“ (Schriftzug C60 mit „Modular Training Builder“, Logo mit C)
 - Startseite mit aufklappbaren Kacheln (Icon, Titel, Kurzbeschreibung, Anzahl); die Bibliothek-Kachel öffnet direkt die Bibliothek. Frühere Fassung: Startseite mit aufklappbaren Bereichen (Favoriten, Timer-Workouts, Blöcke einzeln starten, Bibliothek), jeweils mit Anzahl; beim ersten Start sind nur die Favoriten offen, danach merkt sich die App den Zustand
 - Im Baukasten bleibt die Workout-Liste beim Scrollen oben stehen, damit man Übungen auch von weit unten kurz hineinziehen kann
 - Beim Bearbeiten eines Timer-Workouts lassen sich Übungen direkt aus der Bibliothek hinzufügen (mit Kategorie-Filter)
@@ -49,6 +49,8 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - Zurück-Button auf jeder Unterseite (ein eigener Home-Button ist nicht mehr nötig, da fast alles direkt von der Startseite aus erreichbar ist); „Zurück" führt immer zur tatsächlich zuvor besuchten Seite (nicht zu einem festen Ziel)
 - Android-Zurück-Taste/-Geste: geht wie der Zurück-Button eine Seite zurück, schließt zuerst ein offenes Fenster und fragt im laufenden Timer nach, ob das Workout beendet werden soll; erst auf der Startseite verlässt sie die App (technisch liegt dafür höchstens ein zusätzlicher Eintrag im Browser-Verlauf)
 - Timer im Hintergrund: alle Signaltöne (Phasenwechsel und Countdown) der nächsten ~10 Minuten werden direkt im Audio-Takt vorausgeplant, damit sie auch pünktlich kommen, wenn der Browser die Seite drosselt; kommt man zurück, springt der Timer direkt auf den richtigen Schritt statt nur einen weiter. Grenze: Ist das Handy gesperrt und hält das Betriebssystem die Seite ganz an (v. a. iOS), hilft nur eine native Hülle (z. B. Capacitor mit Foreground-Service)
+- **Nochmal wie letztes Mal**: Karte ganz oben auf der Startseite startet das zuletzt gemachte Training direkt – bei Deckblatt-Workouts mit allen Anpassungen von damals (`settings.lastRun`)
+- **Anzeige auf dem Sperrbildschirm** (Einstellungen, standardmäßig aus): Übung, Phase, Restzeit und Pause/Weiter/Phase neu in der Benachrichtigung bzw. auf dem Sperrbildschirm (Media Session). Dafür läuft während des Trainings ein stummer Audio-Loop, der die Seite zugleich im Hintergrund wach hält – er kann allerdings Musik aus anderen Apps anhalten
 - Bildschirm drehbar: im Querformat steht die Uhr links, Übung, Wiederholungen und Tasten rechts daneben
 - **Verlauf** (Kachel auf der Startseite): Kalender mit Trainingstagen, Streak (Tage in Folge), Trainingszeit dieser Woche und insgesamt, Balken für die letzten 8 Wochen, Liste der letzten Trainings (einzeln löschbar); vorzeitig beendete Trainings zählen ab einer Minute mit
 - **Workouts teilen**: auf dem Deckblatt und im Baukasten – das Workout steckt komprimiert im Link (`#import/…`), kein Server, kein Konto; wer den Link öffnet, sieht es auf dem Deckblatt und kann es als Eigenes speichern (eigene Übungen reisen mit)
@@ -91,12 +93,12 @@ und dann `http://localhost:8080` öffnen.
 
 ## Auf GitHub Pages veröffentlichen
 
-Das Repository liegt bereits unter [github.com/KevinHbrck/Timer](https://github.com/KevinHbrck/Timer). Es fehlt nur noch, GitHub Pages dafür einzuschalten:
+Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.com/KevinHbrck/BLOC). Es fehlt nur noch, GitHub Pages dafür einzuschalten:
 
-1. Auf [github.com/KevinHbrck/Timer/settings/pages](https://github.com/KevinHbrck/Timer/settings/pages) gehen.
+1. Auf [github.com/KevinHbrck/BLOC/settings/pages](https://github.com/KevinHbrck/BLOC/settings/pages) gehen.
 2. Unter **Build and deployment → Source** die Option **„Deploy from a branch"** wählen.
 3. Als Branch **`main`** und als Ordner **`/ (root)`** auswählen, dann **Save**.
-4. Nach ein bis zwei Minuten ist die App unter `https://kevinhbrck.github.io/Timer/` erreichbar.
+4. Nach ein bis zwei Minuten ist die App unter `https://kevinhbrck.github.io/BLOC/` erreichbar.
 5. Auf dem iPhone die Seite in Safari öffnen → Teilen-Symbol → **„Zum Home-Bildschirm"**. Ab dann läuft sie wie eine echte App mit dauerhaftem Speicher.
 
 ## Dateien
@@ -106,5 +108,6 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/Timer](https://github.
 | `index.html` | Die komplette App (HTML, CSS, JS) |
 | `manifest.json` | PWA-Metadaten (Name, Icons, Startseite) |
 | `sw.js` | Service Worker für Offline-Nutzung |
-| `privacy.html` | Datenschutzerklärung (für App-Stores: `https://kevinhbrck.github.io/Timer/privacy.html`) |
-| `icon.png`, `icon-180.png` | App-Icons |
+| `privacy.html` | Datenschutzerklärung (für App-Stores: `https://kevinhbrck.github.io/BLOC/privacy.html`) |
+| `icon.png`, `icon-180.png` | App-Icons (Stoppuhr mit drei Blöcken) |
+| `icon.svg` | Vorlage der Icons – bei Änderungen daraus neu erzeugen |

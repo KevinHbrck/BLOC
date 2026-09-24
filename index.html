@@ -509,6 +509,10 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .hid-head .ico{ width:18px; height:18px; }
 .hid-note{ font-size:13px; color:var(--text-dim); margin:-4px 2px 10px; }
 .tpl-item.is-hidden{ opacity:.6; }
+.again-card{ margin:0 0 12px; cursor:pointer; align-items:center; }
+.again-card .playbtn{ width:52px; height:52px; font-size:22px; }
+.again-kicker{ display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--tp-color); margin-bottom:2px; }
+.again-kicker .ico{ width:14px; height:14px; }
 .lbl-hint{ font-weight:400; color:var(--text-dim); font-size:12px; }
 .sp-avoid{ margin-top:14px; }
 .sp-avoid .toggle-row{ padding:6px 0; border:none; }
@@ -1679,6 +1683,8 @@ var I18N = {
     countIn:"Countdown-Piepsen", countInDesc:"Kurze Töne in den letzten 3 Sekunden",
     vibration:"Vibration", vibrationDesc:"Haptisches Feedback (falls unterstützt)",
     keepAwake:"Bildschirm an lassen", keepAwakeDesc:"Verhindert, dass der Bildschirm während des Workouts ausgeht",
+    lockScreen:"Anzeige auf dem Sperrbildschirm", lockScreenDesc:"Übung, Restzeit und Pause/Weiter in der Benachrichtigung bzw. auf dem Sperrbildschirm; hält den Timer im Hintergrund wach. Achtung: kann Musik aus anderen Apps anhalten.",
+    lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     data:"Daten", exportBackup:"Backup exportieren (JSON)", importBackup:"Backup importieren", deleteAll:"Alle Daten löschen",
     localNote:"Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.",
     importQ:"Backup importieren?", importText:"Bestehende Blöcke und Workouts werden überschrieben.", importBtn:"Importieren",
@@ -1806,6 +1812,8 @@ var I18N = {
     countIn:"Countdown beeps", countInDesc:"Short beeps in the last 3 seconds",
     vibration:"Vibration", vibrationDesc:"Haptic feedback (if supported)",
     keepAwake:"Keep screen on", keepAwakeDesc:"Keeps the screen from turning off during a workout",
+    lockScreen:"Show on lock screen", lockScreenDesc:"Exercise, time left and pause/skip in the notification or on the lock screen; keeps the timer awake in the background. Note: may pause music from other apps.",
+    lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     data:"Data", exportBackup:"Export backup (JSON)", importBackup:"Import backup", deleteAll:"Delete all data",
     localNote:"All data stays on this device. For permanent storage on iOS, add the app to your home screen.",
     importQ:"Import backup?", importText:"Your current blocks and workouts will be replaced.", importBtn:"Import",
@@ -3386,7 +3394,7 @@ function topbar(title, opts){
   opts = opts || {};
   var back = opts.back ? '<button class="iconbtn back" data-back="'+opts.back+'" title="'+t("back")+'">'+ICON_BACK+'</button>' : "";
   var right = opts.right || "";
-  var brand = opts.home ? '<span class="kodak-word">C60<small>Modular Training Timer</small></span><span class="deck-word">Stereo Cassette Deck</span>' : "";
+  var brand = opts.home ? '<span class="kodak-word">C60<small>Modular Training Builder</small></span><span class="deck-word">Stereo Cassette Deck</span>' : "";
   return '<div class="topbar'+(opts.home?' home':'')+'">'+back+'<h1>'+brand+'<span class="ttl">'+esc(title)+'</span>'+
     (opts.sub ? '<span class="ttl-sub">'+esc(opts.sub)+'</span>' : '')+'</h1>'+right+'</div>';
 }
@@ -3451,6 +3459,7 @@ function renderHome(){
       '<button class="iconbtn" data-nav="#settings" title="'+t("settings")+'">'+ICON_SETTINGS+'</button>'
     }) +
     installTipHTML() +
+    lastRunHTML() +
     '<div class="home-tiles">'+
     (favCount ? sektion("fav", t("favorites"), favCount, favHTML, t("htFav")) : '') +
     sektion("timer", t("timerWorkouts"), ws.length, items, t("htTimer")) +
@@ -3503,6 +3512,11 @@ function renderHome(){
     el.addEventListener("click", umschalten);
     el.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); umschalten(); } });
   });
+  var again = app.querySelector("[data-lastrun]");
+  if(again){
+    again.addEventListener("click", startLastRun);
+    again.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); startLastRun(); } });
+  }
   app.querySelectorAll("[data-favgo]").forEach(function(el){
     el.addEventListener("click", function(e){
       e.stopPropagation();
@@ -5004,6 +5018,7 @@ function renderSettings(){
       toggleRow("f-countin",t("countIn"), t("countInDesc"), s.countIn)+
       toggleRow("f-vibration",t("vibration"), t("vibrationDesc"), s.vibration)+
       toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake)+
+      ("mediaSession" in navigator ? toggleRow("f-lockscreen", t("lockScreen"), t("lockScreenDesc"), !!s.lockScreen) : "")+
       toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
     '</div>'+
     '<div class="section-title">'+t("data")+'</div>'+
@@ -5048,6 +5063,7 @@ function renderSettings(){
   bindToggle("f-countin", function(v){ s.countIn=v; save(); });
   bindToggle("f-vibration", function(v){ s.vibration=v; save(); });
   bindToggle("f-keepawake", function(v){ s.keepAwake=v; save(); });
+  if(app.querySelector("#f-lockscreen")) bindToggle("f-lockscreen", function(v){ s.lockScreen=v; save(); });
   bindToggle("f-voice", function(v){ s.voice=v; save(); });
 
   var volEl = app.querySelector("#f-volume");
@@ -5547,9 +5563,120 @@ function launchPlayer(w, source){
   var ctx = audioCtx();   // noch im Tipp freischalten (iOS)
   if(ctx && ctx.state==="suspended") try{ ctx.resume(); }catch(e){}
   schedCancel();
+  rememberLastRun(w, source);
+  lockStart();   // noch im Tipp, sonst darf das Audio nicht starten
   enterStep(0, { manual:true });
   requestWakeLock();
   startBgTicker();
+}
+
+/* ============ Sperrbildschirm / Benachrichtigung (Media Session) ============
+   Android und iOS zeigen Titel und Tasten nur, solange die Seite Medien abspielt.
+   Dafür läuft ein stummer Audio-Loop - er hält die Seite zugleich im Hintergrund wach.
+   Weil das Handy ihn wie normale Wiedergabe behandelt, kann er Musik anderer Apps
+   anhalten - deshalb nur mit Schalter in den Einstellungen (settings.lockScreen). */
+var lockAudio = null;
+function silentWavUrl(){
+  var rate = 8000, n = rate*10, buf = new ArrayBuffer(44+n), v = new DataView(buf);   // 10 s Stille, 8 bit mono
+  function str(o, s){ for(var i=0;i<s.length;i++) v.setUint8(o+i, s.charCodeAt(i)); }
+  str(0, "RIFF"); v.setUint32(4, 36+n, true); str(8, "WAVE"); str(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+  str(36, "data"); v.setUint32(40, n, true);
+  for(var i=0;i<n;i++) v.setUint8(44+i, 128);
+  return URL.createObjectURL(new Blob([buf], { type:"audio/wav" }));
+}
+function lockOn(){ return "mediaSession" in navigator && !!state.db.settings.lockScreen; }
+function lockStart(){
+  if(!lockOn()) return;
+  var ms = navigator.mediaSession;
+  function act(a, fn){ try{ ms.setActionHandler(a, fn); }catch(e){} }
+  function klick(sel){ var el = document.querySelector(sel); if(el) el.click(); }
+  act("play", function(){ if(playerState && playerState.paused) klick("#pl-playpause"); });
+  act("pause", function(){ if(playerState && !playerState.paused) klick("#pl-playpause"); });
+  act("nexttrack", function(){ klick("#playerRoot [data-skip]"); });
+  act("previoustrack", function(){ klick("#playerRoot [data-restart]"); });
+  try{
+    if(!lockAudio){ lockAudio = new Audio(silentWavUrl()); lockAudio.loop = true; }
+    lockAudio.play().catch(function(){});
+  }catch(e){}
+}
+function lockUpdate(){
+  if(!lockOn() || !playerState) return;
+  var st = playerState.steps[playerState.idx], ms = navigator.mediaSession;
+  var done = st.phase === "done";
+  try{
+    ms.metadata = new MediaMetadata({
+      title: done ? t("doneTitle") : (st.blockName || phaseVars(st.phase).label),
+      artist: done ? "" : phaseVars(st.phase).label + (st.totalReps ? " · "+st.rep+"/"+st.totalReps : ""),
+      album: playerState.workout.name || "BLOC",
+      artwork: [{ src:"icon.png", sizes:"512x512", type:"image/png" }, { src:"icon-180.png", sizes:"180x180", type:"image/png" }]
+    });
+    ms.playbackState = done || playerState.paused ? "paused" : "playing";
+    if(ms.setPositionState){
+      if(done || !st.duration) ms.setPositionState();
+      else {
+        var rem = playerState.paused ? playerState.remainingMs : playerState.endAt - Date.now();
+        ms.setPositionState({ duration:st.duration, playbackRate:1, position:clamp(st.duration - Math.max(0, rem)/1000, 0, st.duration) });
+      }
+    }
+  }catch(e){}
+  if(lockAudio){
+    if(done || playerState.paused) try{ lockAudio.pause(); }catch(e){}
+    else lockAudio.play().catch(function(){});
+  }
+}
+function lockStop(){
+  if(lockAudio) try{ lockAudio.pause(); }catch(e){}
+  if("mediaSession" in navigator) try{
+    navigator.mediaSession.metadata = null;
+    navigator.mediaSession.playbackState = "none";
+    if(navigator.mediaSession.setPositionState) navigator.mediaSession.setPositionState();
+  }catch(e){}
+}
+
+/* ============ „Nochmal wie letztes Mal“ ============
+   Merkt sich das zuletzt gestartete Training; Deckblatt-Entwürfe (mit allen Anpassungen)
+   werden als Kopie gespeichert, alles andere als Verweis. */
+function rememberLastRun(w, source){
+  if(!source) return;
+  var lr = { src:{ type:source.type, id:source.id }, name:w.name || "", at:Date.now() };
+  if(source.type === "draft"){
+    if(!coverDraft) return;
+    lr.draft = draftCopy(coverDraft);
+    delete lr.draft._dirty; delete lr.draft._pal; delete lr.draft._params; delete lr.draft._missing;
+  }
+  state.db.settings.lastRun = lr; save();
+}
+function lastRunWorkout(){
+  var lr = state.db.settings.lastRun;
+  if(!lr || !lr.src) return null;
+  var w = lr.src.type === "draft" ? (lr.draft && lr.draft.items && lr.draft.items.length ? draftRun(lr.draft) : null) : workoutForSource(lr.src);
+  return w && w.items.length ? w : null;
+}
+function startLastRun(){
+  var lr = state.db.settings.lastRun;
+  if(!lr || !lastRunWorkout()) return;
+  var ty = lr.src.type, id = lr.src.id;
+  if(ty === "draft"){ coverDraft = draftCopy(lr.draft); go("#playdraft"); return; }
+  var route = { workout:"#play/", block:"#playblock/", mine:"#playmy/", libworkout:"#playlib/", exercise:"#playex/" }[ty];
+  if(route) go(route+id);
+}
+function relDay(ts){
+  var d0 = dayStart(Date.now()), d = dayStart(ts);
+  if(d === d0) return t("lastToday");
+  if(d === addDays(d0, -1)) return t("lastYesterday");
+  return new Date(ts).toLocaleDateString(currentLang()==="en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" });
+}
+function lastRunHTML(){
+  var w = lastRunWorkout(), lr = state.db.settings.lastRun;
+  if(!w) return "";
+  return '<div class="list-item entry again-card" data-lastrun role="button" tabindex="0">'+
+    '<span class="playbtn tp" aria-hidden="true">'+ICON_PLAY+'</span>'+
+    '<div class="meta"><div class="again-kicker">'+svgIcon('<path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/>')+esc(t("lastRun"))+'</div>'+
+    '<div class="name">'+esc(lr.name || w.name || t("untitled"))+'</div>'+
+    '<div class="sub">'+fmtDuration(workoutDuration(w))+SEP+esc(relDay(lr.at))+'</div></div>'+
+  '</div>';
 }
 
 function phaseVars(phase){
@@ -5666,9 +5793,11 @@ function enterStep(idx, opt){
     }
     bindPlayPause();
     tickLoop();
+    lockUpdate();
   } else {
     releaseWakeLock();
     stopBgTicker();
+    lockUpdate();
     if(opt.manual) phaseBeep("done");
     logHistory(false);
     announceStep(idx);
@@ -5925,10 +6054,12 @@ function bindPlayPause(){
       requestWakeLock();
       planAudio(true);
       tickLoop();
+      lockUpdate();
     } else {
       playerState.remainingMs = Math.max(0, playerState.endAt - Date.now());
       playerState.paused = true;
       schedCancel();
+      lockUpdate();
       btn.querySelector("span").innerHTML = ICON_PLAY;
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
       odoSettle();
@@ -5956,6 +6087,7 @@ function bindPlayerControls(){
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
       planAudio(true);
       tickLoop();
+      lockUpdate();
     }
     if(e.target.closest("[data-vol-toggle]")){
       document.getElementById("pl-vol-pop").classList.toggle("hidden");
@@ -5978,6 +6110,7 @@ function exitPlayer(){
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
   schedCancel();
   stopBgTicker();
+  lockStop();
   if(playerState && playerState.steps[playerState.idx].phase!=="done") logHistory(true);
   if(playerState && playerState.rafId) cancelAnimationFrame(playerState.rafId);
   playerState = null;
