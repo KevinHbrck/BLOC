@@ -758,6 +758,7 @@ input:focus, select:focus{ border-color:var(--accent); }
 .range-row .label span{ color:var(--text-dim); font-variant-numeric:tabular-nums; }
 input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor:pointer; }
 .range-scale{ display:none; }
+.range-hint{ font-size:12.5px; color:var(--text-dim); line-height:1.4; margin-top:6px; }
 
 /* Oben die drei schlichten Designs, darunter die beiden Vintage-Designs */
 .theme-pick{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
@@ -1778,6 +1779,7 @@ var I18N = {
     countIn:"Countdown-Piepsen", countInDesc:"Kurze Töne in den letzten 3 Sekunden",
     vibration:"Vibration", vibrationDesc:"Haptisches Feedback (falls unterstützt)",
     keepAwake:"Bildschirm an lassen", keepAwakeDesc:"Verhindert, dass der Bildschirm während des Workouts ausgeht",
+    volMusicHint:"Deine Musik läuft weiter, die Töne kommen dazu. iPhone: Steht es auf lautlos, bleiben die Töne stumm – dann auf laut stellen.",
     lockScreen:"Anzeige auf dem Sperrbildschirm", lockScreenDesc:"Übung, Restzeit und Pause/Weiter in der Benachrichtigung bzw. auf dem Sperrbildschirm; hält den Timer im Hintergrund wach. Achtung: hält dabei Musik aus anderen Apps (z. B. Spotify) an – ohne diese Option läuft deine Musik weiter.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger anzeigen",
@@ -1918,6 +1920,7 @@ var I18N = {
     countIn:"Countdown beeps", countInDesc:"Short beeps in the last 3 seconds",
     vibration:"Vibration", vibrationDesc:"Haptic feedback (if supported)",
     keepAwake:"Keep screen on", keepAwakeDesc:"Keeps the screen from turning off during a workout",
+    volMusicHint:"Your music keeps playing, the sounds play on top. iPhone: in silent mode the sounds stay muted – switch the ringer on.",
     lockScreen:"Show on lock screen", lockScreenDesc:"Exercise, time left and pause/skip in the notification or on the lock screen; keeps the timer awake in the background. Note: this pauses music from other apps (e.g. Spotify) – without it your music keeps playing.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Show fewer",
@@ -5182,7 +5185,8 @@ function renderSettings(){
     '<div class="card">'+
       '<div class="range-row"><div class="label">'+t("volume")+' <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
       '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'">'+
-      '<div class="range-scale"><span>0</span><span>100</span></div></div>'+
+      '<div class="range-scale"><span>0</span><span>100</span></div>'+
+      '<div class="range-hint">'+t("volMusicHint")+'</div></div>'+
       toggleRow("f-sound",t("sound"), t("soundDesc"), s.sound)+
       '<div class="range-row" data-opensounds style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
         '<div><div class="label" style="margin:0 0 2px;">'+t("soundStyle")+'</div><div style="font-size:13px;color:var(--text-dim);">'+esc(soundLabel(s.soundStyle))+'</div></div>'+
