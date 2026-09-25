@@ -66,7 +66,7 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - Ausblenden direkt auf jeder Karte (Workouts und Übungen): ausgeblendete Einträge stehen unten unter „Ausgeblendet“ und lassen sich dort einzeln wieder einblenden; „Überrasch mich“ nutzt sie nicht
 - Übungen, die nur an Stange oder Barren gehen, erscheinen bei einem anderen Fokus (z. B. Rücken) nur, wenn Stange/Barren bei der Ausrüstung gewählt ist oder Calisthenics im Fokus steht
 - „Überrasch mich“ mit Regeln: alle gewählten Fokus-Bereiche kommen reihum vor, aufeinanderfolgende Übungen trainieren verschiedene Bereiche, Drücken und Ziehen halten sich die Waage, Übungen der letzten 7 Tage werden gemieden (abschaltbar), zum Einstieg lieber etwas Leichteres
-- Datenschutzerklärung (`privacy.html`, Deutsch/Englisch), verlinkt in den Einstellungen; Zoomen ist wieder erlaubt
+- Datenschutz & Haftungsausschluss (`privacy.html`, Deutsch/Englisch), verlinkt in den Einstellungen und – als kurzer Hinweis – in jeder Übungsanleitung; Zoomen ist wieder erlaubt
 - Lautstärke jederzeit einstellbar (bis 100 %, unverzerrt) – auch direkt während der Timer läuft (Lautsprecher-Symbol im Player)
 - 20 auswählbare Klänge über ein Kachel-Menü in zwei Gruppen:
   - **Natürlich** (Boxring-Glocke, Trillerpfeife, Klangschale, Holzblock, Küchenwecker, Marimba, Triangel, Kuhglocke, Klatschen) – ohne Audiodateien nachgebaut wie echte Klangquellen: unharmonische Obertöne, die unterschiedlich schnell ausklingen, Hammer- bzw. Schlegel-Anschlag, Schwebung, flatternde Pfeifenkugel mit Atemrauschen, mehrstufige Klatsch-Geräusche; zum Workout-Ende je nach Klang Triangel-Wirbel, geschüttelte Kuhglocke oder Applaus
@@ -116,6 +116,6 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.c
 | `index.html` | Die komplette App (HTML, CSS, JS) |
 | `manifest.json` | PWA-Metadaten (Name, Icons, Startseite) |
 | `sw.js` | Service Worker für Offline-Nutzung |
-| `privacy.html` | Datenschutzerklärung (für App-Stores: `https://kevinhbrck.github.io/BLOC/privacy.html`) |
+| `privacy.html` | Datenschutz & Haftungsausschluss (Training auf eigene Verantwortung) |
 | `icon.png`, `icon-180.png` | App-Icons (Stoppuhr mit drei Blöcken) |
 | `icon.svg` | Vorlage der Icons – bei Änderungen daraus neu erzeugen |

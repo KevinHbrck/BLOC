@@ -309,6 +309,8 @@ h1,h2,h3{ margin:0 0 4px; }
 .info-steps{ margin:0 0 12px; padding-left:22px; font-size:15px; line-height:1.45; }
 .info-steps li{ margin-bottom:6px; }
 .info-tip{ font-size:14px; background:var(--surface-2); border-radius:10px; padding:10px 12px; margin-bottom:14px; }
+.info-risk{ font-size:12.5px; color:var(--text-dim); line-height:1.4; margin:0 2px 12px; }
+.info-risk a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
 :root[data-theme="dark"], :root[data-theme="tapedeck"]{
   --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
 }
@@ -1826,7 +1828,8 @@ var I18N = {
     sharedMissing:"{n} Übung(en) aus dem Link kennt diese Fassung der App nicht – sie wurden weggelassen.",
     spAvoid:"Übungen der letzten 7 Tage meiden", spAvoidDesc:"Nur wenn genug andere passen.",
     spRules:"Die App wechselt Muskelgruppen ab, gleicht Drücken und Ziehen aus und startet mit leichteren Übungen.",
-    privacy:"Datenschutz", privacyRow:"Datenschutzerklärung", privacyRowSub:"Keine Konten, kein Tracking, alles bleibt auf dem Gerät"
+    privacy:"Datenschutz & Haftung", privacyRow:"Datenschutz & Haftungsausschluss", privacyRowSub:"Keine Datensammlung · Training auf eigene Verantwortung",
+    ownRisk:"Training auf eigene Verantwortung. Kennst du die Übung nicht, informiere dich vorher über die richtige Ausführung.", ownRiskMore:"Haftungsausschluss"
   },
   en: {
     back:"Back", settings:"Settings", workouts:"Workouts", untitled:"Untitled",
@@ -1965,7 +1968,8 @@ var I18N = {
     sharedMissing:"This version of the app doesn't know {n} exercise(s) from the link – they were left out.",
     spAvoid:"Avoid exercises from the last 7 days", spAvoidDesc:"Only if enough others fit.",
     spRules:"The app alternates muscle groups, balances pushing and pulling and starts with easier exercises.",
-    privacy:"Privacy", privacyRow:"Privacy policy", privacyRowSub:"No accounts, no tracking, everything stays on your device"
+    privacy:"Privacy & disclaimer", privacyRow:"Privacy & disclaimer", privacyRowSub:"No data collection · train at your own risk",
+    ownRisk:"Train at your own risk. If you don't know this exercise, learn how to do it properly first.", ownRiskMore:"Disclaimer"
   }
 };
 var SOUND_LABELS_EN = {
@@ -3251,6 +3255,7 @@ function openExInfo(exId, live, lib){
     (lib ? '<div class="info-lib">'+
       '<button type="button" class="tpl-adopt" data-infoblock>'+ICON_PLUS+' '+t("adoptBlock")+'</button>'+
       '<button type="button" class="tpl-hide" data-infohide>'+t("hideEx")+'</button></div>' : '')+
+    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a></p>'+
     '<button class="btn btn-secondary" data-close>'+t("close")+'</button>'+
   '</div></div>';
   if(lib){
