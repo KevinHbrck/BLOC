@@ -1773,12 +1773,12 @@ var I18N = {
     themeInfo:"„Retro“ mit rot-blauen Zierstreifen im Sportlook der 70er/80er, „C60“ im Stil alter Kompaktkassetten (Low Noise), „Tapedeck“ als dunkles Nachtdesign wie ein altes Hi-Fi-Kassettendeck. Alle drei mit rollendem Walzenzähler statt Fortschrittsring.",
     language:"Sprache",
     installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
-    timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Signaltöne bei Phasenwechsel", soundStyle:"Klang",
+    timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Signaltöne bei Phasenwechsel – laufen über deine Musik, ohne sie anzuhalten", soundStyle:"Klang",
     space:"Raumklang", spaceDesc:"Hall und Stereo-Tiefe für alle Klänge",
     countIn:"Countdown-Piepsen", countInDesc:"Kurze Töne in den letzten 3 Sekunden",
     vibration:"Vibration", vibrationDesc:"Haptisches Feedback (falls unterstützt)",
     keepAwake:"Bildschirm an lassen", keepAwakeDesc:"Verhindert, dass der Bildschirm während des Workouts ausgeht",
-    lockScreen:"Anzeige auf dem Sperrbildschirm", lockScreenDesc:"Übung, Restzeit und Pause/Weiter in der Benachrichtigung bzw. auf dem Sperrbildschirm; hält den Timer im Hintergrund wach. Achtung: kann Musik aus anderen Apps anhalten.",
+    lockScreen:"Anzeige auf dem Sperrbildschirm", lockScreenDesc:"Übung, Restzeit und Pause/Weiter in der Benachrichtigung bzw. auf dem Sperrbildschirm; hält den Timer im Hintergrund wach. Achtung: hält dabei Musik aus anderen Apps (z. B. Spotify) an – ohne diese Option läuft deine Musik weiter.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger anzeigen",
     data:"Daten", exportBackup:"Backup exportieren (JSON)", importBackup:"Backup importieren", deleteAll:"Alle Daten löschen",
@@ -1913,12 +1913,12 @@ var I18N = {
     themeInfo:"“Retro” with red and blue racing stripes in 70s/80s sports style, “C60” in the style of old compact cassettes (Low Noise), “Tape deck” as a dark night design like an old hi-fi cassette deck. All three with a rolling drum counter instead of a progress ring.",
     language:"Language",
     installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
-    timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Signals when the phase changes", soundStyle:"Sound style",
+    timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Signals when the phase changes – play over your music without stopping it", soundStyle:"Sound style",
     space:"Room sound", spaceDesc:"Reverb and stereo depth for all sounds",
     countIn:"Countdown beeps", countInDesc:"Short beeps in the last 3 seconds",
     vibration:"Vibration", vibrationDesc:"Haptic feedback (if supported)",
     keepAwake:"Keep screen on", keepAwakeDesc:"Keeps the screen from turning off during a workout",
-    lockScreen:"Show on lock screen", lockScreenDesc:"Exercise, time left and pause/skip in the notification or on the lock screen; keeps the timer awake in the background. Note: may pause music from other apps.",
+    lockScreen:"Show on lock screen", lockScreenDesc:"Exercise, time left and pause/skip in the notification or on the lock screen; keeps the timer awake in the background. Note: this pauses music from other apps (e.g. Spotify) – without it your music keeps playing.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Show fewer",
     data:"Data", exportBackup:"Export backup (JSON)", importBackup:"Import backup", deleteAll:"Delete all data",
@@ -5372,8 +5372,16 @@ function openSoundSheet(onClose){
 /* ============ Audio & Haptics ============ */
 var actx = null, audioBus = null;
 function audioCtx(){
-  if(!actx){ var AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
+  if(!actx){ tonMischen(!lockOn()); var AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
   return actx;
+}
+/* Musik anderer Apps (Spotify & Co.) soll weiterlaufen: Signaltöne und Ansagen mischen sich dazu.
+   iPhone/iPad (Safari 16.4+): Audio-Sitzung "ambient" statt Wiedergabe, die andere Apps anhält.
+   Nachteil dort: Bei eingeschaltetem Stumm-Schalter bleiben die Töne stumm.
+   Nur mit „Anzeige auf dem Sperrbildschirm“ läuft eine echte Wiedergabe ("playback") -
+   die hält die App im Hintergrund wach, stoppt aber andere Musik. */
+function tonMischen(mischen){
+  try{ if(navigator.audioSession) navigator.audioSession.type = mischen ? "ambient" : "playback"; }catch(e){}
 }
 /* Gemeinsamer Ausgang aller Klänge: trockenes Signal + Raumhall, am Ende ein Begrenzer,
    der nur kurz vor Übersteuern eingreift (normale Lautstärke bleibt unverändert) */
@@ -5771,6 +5779,7 @@ function lockStart(){
   act("pause", function(){ if(playerState && !playerState.paused) klick("#pl-playpause"); });
   act("nexttrack", function(){ klick("#playerRoot [data-skip]"); });
   act("previoustrack", function(){ klick("#playerRoot [data-restart]"); });
+  tonMischen(false);
   try{
     if(!lockAudio){ lockAudio = new Audio(silentWavUrl()); lockAudio.loop = true; }
     lockAudio.play().catch(function(){});
@@ -5803,6 +5812,7 @@ function lockUpdate(){
 }
 function lockStop(){
   if(lockAudio) try{ lockAudio.pause(); }catch(e){}
+  tonMischen(true);
   if("mediaSession" in navigator) try{
     navigator.mediaSession.metadata = null;
     navigator.mediaSession.playbackState = "none";
