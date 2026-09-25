@@ -13,6 +13,13 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 - **Workout**: mehrere Blöcke hintereinander, mit einstellbarer Pause zwischen den Blöcken.
 - Blöcke werden einmal angelegt und können in beliebig vielen Workouts wiederverwendet werden.
 
+## Aufbau der App
+
+- **Startseite**: „Nochmal wie letztes Mal“, darunter alle Favoriten (☆ – fertige und eigene Workouts, Timer-Workouts und Blöcke), dann drei Bereiche mit einheitlichem Pfeil: **Timer**, **Bibliothek**, **Verlauf**. Das + unten rechts legt ein Workout aus Übungen, ein Timer-Workout aus Blöcken oder einen einzelnen Block an.
+- **Timer**: Timer-Workouts und Blöcke (Intervall-Timer mit fest gespeicherten Zeiten) auf einer Seite mit zwei Reitern; ☆ holt einen Eintrag auf die Startseite.
+- **Bibliothek**: Reiter Fertige · Eigene · Übungen · Dehnen in einer Leiste; Suche mit Filter-Symbol (Fokus, Ausrüstung, Sortierung im Einblendfenster, aktive Filter als Zeile mit „Zurücksetzen“); schlanke Karten mit ☆ und ⋯-Menü für Nebenaktionen (Info, als Block speichern, in Eigene übernehmen, bearbeiten, ausblenden); + unten legt je nach Reiter eine eigene Übung bzw. ein eigenes Workout an.
+- **Übersicht** vor dem Start: nur „Los geht's“ groß, darunter beschriftete Symbole (Favorit, Speichern, Teilen, Neu mischen, Ausblenden); die Übungsliste zeigt nur Namen und Zeiten.
+
 ## Funktionen
 
 - Blöcke & Workouts anlegen, bearbeiten, neu anordnen, löschen – beides direkt über das Plus-Menü auf der Startseite („Neues Workout" / „Neuer Block"); jeder Block ist auch einzeln von der Startseite aus startbar

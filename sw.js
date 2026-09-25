@@ -6,7 +6,7 @@
  * Die App nutzt nur Systemschriften und laedt nichts von fremden Servern.
  */
 
-var FASSUNG = "2026-09-25-11";
+var FASSUNG = "2026-09-25-12";
 var SPEICHER = "sporttimer-" + FASSUNG;
 var GRUNDGERUEST = ["./", "./index.html", "./manifest.json", "./icon.png", "./privacy.html"];
 
