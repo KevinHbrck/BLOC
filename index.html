@@ -509,6 +509,19 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .hid-note{ font-size:13px; color:var(--text-dim); margin:-4px 2px 10px; }
 .tpl-item.is-hidden{ opacity:.6; }
 /* Startseite */
+/* Favoriten-Kacheln: zwei nebeneinander, die ganze Kachel startet (Stern entfernen: in der
+   Übersicht bzw. auf der Timer-Seite - so tippt man hier nicht aus Versehen daneben) */
+.fav-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-bottom:8px; }
+:root .list-item.fav-tile{ display:flex; align-items:center; gap:8px !important; margin:0; padding:10px !important; min-height:66px; }   /* !important: die Designs setzen eigene Abstände für .list-item */
+.fav-tile[aria-disabled]{ opacity:.45; }
+:root .list-item.fav-tile .ft-play{ width:34px; height:34px; font-size:13px; }   /* Vorrang vor den Design-eigenen Knopfgrößen */
+.ft-text{ flex:1; min-width:0; }
+.ft-name{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:15px; font-weight:600; line-height:1.25; overflow-wrap:break-word; -webkit-hyphens:auto; hyphens:auto; }
+.ft-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:3px; }
+:root[data-vintage] .ft-name{ font-family:var(--f-mono); font-weight:500; text-transform:uppercase; font-size:12.5px; letter-spacing:0; }
+:root[data-vintage] .ft-sub{ font-family:var(--f-body); color:var(--text-sub); }
+.fav-more{ display:block; width:100%; border:none; background:none; color:var(--tp-color); font:inherit; font-size:14px; font-weight:600; padding:10px; margin:0 0 4px; cursor:pointer; }
+:root[data-vintage] .fav-more{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; font-size:12.5px; }
 .fav-empty{ font-size:13px; color:var(--text-dim); padding:12px 14px; border:1px dashed var(--border); border-radius:var(--radius); margin-bottom:6px; }
 .page-hint{ font-size:13px; color:var(--text-dim); margin:0 4px 12px; }
 .fab-opt .ico.tp{ background:var(--tp-color); color:var(--tp-text); }
@@ -1765,6 +1778,7 @@ var I18N = {
     keepAwake:"Bildschirm an lassen", keepAwakeDesc:"Verhindert, dass der Bildschirm während des Workouts ausgeht",
     lockScreen:"Anzeige auf dem Sperrbildschirm", lockScreenDesc:"Übung, Restzeit und Pause/Weiter in der Benachrichtigung bzw. auf dem Sperrbildschirm; hält den Timer im Hintergrund wach. Achtung: kann Musik aus anderen Apps anhalten.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
+    favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger anzeigen",
     data:"Daten", exportBackup:"Backup exportieren (JSON)", importBackup:"Backup importieren", deleteAll:"Alle Daten löschen",
     localNote:"Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.",
     importQ:"Backup importieren?", importText:"Bestehende Blöcke und Workouts werden überschrieben.", importBtn:"Importieren",
@@ -1903,6 +1917,7 @@ var I18N = {
     keepAwake:"Keep screen on", keepAwakeDesc:"Keeps the screen from turning off during a workout",
     lockScreen:"Show on lock screen", lockScreenDesc:"Exercise, time left and pause/skip in the notification or on the lock screen; keeps the timer awake in the background. Note: may pause music from other apps.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
+    favAll:"Show all favourites ({n})", favLess:"Show fewer",
     data:"Data", exportBackup:"Export backup (JSON)", importBackup:"Import backup", deleteAll:"Delete all data",
     localNote:"All data stays on this device. For permanent storage on iOS, add the app to your home screen.",
     importQ:"Import backup?", importText:"Your current blocks and workouts will be replaced.", importBtn:"Import",
@@ -3592,6 +3607,13 @@ function renderTimers(){
 }
 /* Play- und Stern-Knöpfe in Listen (Startseite, Timer-Seite) */
 function bindFavItems(refresh){
+  app.querySelectorAll("[data-favstart]").forEach(function(el){
+    function los(){ if(el.getAttribute("aria-disabled")) return; go(el.getAttribute("data-favstart")); }
+    el.addEventListener("click", los);
+    el.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); los(); } });
+  });
+  var more = app.querySelector("[data-favall]");
+  if(more) more.addEventListener("click", function(){ favShowAll = !favShowAll; var y = window.scrollY; refresh(); window.scrollTo(0, y); });
   app.querySelectorAll("[data-favgo]").forEach(function(el){
     el.addEventListener("click", function(e){
       e.stopPropagation();
@@ -3927,26 +3949,60 @@ function favBtn(k){
   var on = isFav(k);
   return '<button type="button" class="fav-btn'+(on?' on':'')+'" data-fav="'+k+'" aria-pressed="'+on+'" title="'+t("favorite")+'" aria-label="'+t("favorite")+'">'+(on?'\u2605':'\u2606')+'</button>';
 }
-function favItemsHTML(){
-  var out = "";
-  (state.db.settings.favs || []).forEach(function(k){
-    var kind = k.split(":")[0], id = k.slice(kind.length+1), name, run, exs, color;
-    if(kind==="tw"){ var tw = findWorkout(id); if(tw) out += timerWorkoutRow(tw); return; }
-    if(kind==="bl"){ var bl = findBlock(id); if(bl && state.db.blocks.indexOf(bl) > -1) out += blockRow(bl); return; }
-    if(kind==="lib"){
-      var lw = findLibWorkout(id); if(!lw) return;
-      name = tplText(lw.name); run = libWorkoutRun(lw); exs = lw.exercises.map(findExercise).filter(Boolean); color = catVar(lw.focus);
-    } else {
-      var mw = findMy(id); if(!mw) return;
-      name = mw.name; run = myRun(mw); exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean); color = "var(--tp-color)";
+/* Favoriten auf der Startseite als kompakte Kacheln (zwei nebeneinander).
+   Reihenfolge: zuletzt gestartete zuerst (settings.favUsed), nie gestartete in der Reihenfolge
+   des Markierens. Sichtbar sind höchstens FAV_LIMIT, der Rest per „Alle anzeigen“. */
+var FAV_LIMIT = 6;
+var favShowAll = false;
+function favEntries(){
+  var used = state.db.settings.favUsed || {}, out = [];
+  (state.db.settings.favs || []).forEach(function(k, order){
+    var kind = k.split(":")[0], id = k.slice(kind.length+1), e = null;
+    if(kind==="tw"){
+      var tw = findWorkout(id);
+      if(tw) e = { name:tw.name || t("untitled"), sub:fmtDuration(workoutDuration(tw)), cls:"wo", go:"#play/"+id, ok:tw.items.length > 0 };
+    } else if(kind==="bl"){
+      var bl = findBlock(id);
+      if(bl && state.db.blocks.indexOf(bl) > -1) e = { name:bl.name, sub:blockSpec(bl), cls:"bl", go:"#playblock/"+id, ok:true };
+    } else if(kind==="lib"){
+      var lw = findLibWorkout(id);
+      if(lw) e = { name:tplText(lw.name), sub:fmtDuration(workoutDuration(libWorkoutRun(lw))), cls:"cat", cat:catVar(lw.focus), cover:"lib/"+id, ok:true };
+    } else if(kind==="my"){
+      var mw = findMy(id);
+      if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:"tp", cover:"my/"+id, ok:mw.items.length > 0 };
     }
-    out += '<div class="list-item entry fav-item" style="--cat:'+color+'" data-favgo="'+kind+'/'+id+'">'+
-      '<button class="playbtn cat" data-favgo="'+kind+'/'+id+'" title="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
-      '<div class="meta"><div class="name">'+esc(name)+'</div>'+
-      '<div class="sub">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div></div>'+
-      favBtn(k)+'</div>';
+    if(e){ e.key = k; e.used = used[k] || 0; e.order = order; out.push(e); }
   });
+  out.sort(function(a, b){ return (b.used - a.used) || (a.order - b.order); });
   return out;
+}
+function favItemsHTML(){
+  var list = favEntries();
+  if(!list.length) return "";
+  var shown = favShowAll ? list : list.slice(0, FAV_LIMIT);
+  return '<div class="fav-grid">'+shown.map(function(e){
+    return '<div class="list-item fav-tile" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+
+        (e.cat ? ' style="--cat:'+e.cat+'"' : '')+(e.ok ? '' : ' aria-disabled="true"')+'>'+
+      '<span class="playbtn '+e.cls+' ft-play" aria-hidden="true">'+ICON_PLAY+'</span>'+
+      '<span class="ft-text"><b class="ft-name">'+esc(e.name)+'</b><small class="ft-sub">'+e.sub+'</small></span>'+
+    '</div>';
+  }).join("")+'</div>'+
+  (list.length > FAV_LIMIT
+    ? '<button type="button" class="fav-more" data-favall>'+(favShowAll ? t("favLess") : t("favAll", { n:list.length }))+'</button>'
+    : '');
+}
+/* merkt sich, wann ein Favorit zuletzt gestartet wurde (für die Reihenfolge auf der Startseite) */
+function markFavUsed(source){
+  var k = null;
+  if(source.type==="workout") k = "tw:"+source.id;
+  else if(source.type==="block") k = "bl:"+source.id;
+  else if(source.type==="libworkout") k = "lib:"+source.id;
+  else if(source.type==="mine") k = "my:"+source.id;
+  else if(source.type==="draft" && coverDraft && /^(lib|my):/.test(coverDraft.key || "")) k = coverDraft.key;
+  if(!k) return;
+  var u = state.db.settings.favUsed || {};
+  u[k] = Date.now();
+  state.db.settings.favUsed = u;
 }
 
 /* ============ Bibliothek-Seite ============ */
@@ -5754,6 +5810,7 @@ function lockStop(){
    werden als Kopie gespeichert, alles andere als Verweis. */
 function rememberLastRun(w, source){
   if(!source) return;
+  markFavUsed(source);
   var lr = { src:{ type:source.type, id:source.id }, name:w.name || "", at:Date.now() };
   if(source.type === "draft"){
     if(!coverDraft) return;

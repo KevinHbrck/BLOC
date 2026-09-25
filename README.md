@@ -15,7 +15,7 @@ Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und En
 
 ## Aufbau der App
 
-- **Startseite**: „Nochmal wie letztes Mal“, darunter alle Favoriten (☆ – fertige und eigene Workouts, Timer-Workouts und Blöcke), dann drei Bereiche mit einheitlichem Pfeil: **Timer**, **Bibliothek**, **Verlauf**. Das + unten rechts legt ein Workout aus Übungen, ein Timer-Workout aus Blöcken oder einen einzelnen Block an.
+- **Startseite**: „Nochmal wie letztes Mal“, darunter die Favoriten (☆ – fertige und eigene Workouts, Timer-Workouts und Blöcke) als kompakte Kacheln zu zweit nebeneinander: zuletzt gestartete zuerst, höchstens sechs sichtbar, der Rest über „Alle Favoriten anzeigen“; ein Tipp auf die Kachel startet (Stern entfernen in der Übersicht bzw. auf der Timer-Seite), dann drei Bereiche mit einheitlichem Pfeil: **Timer**, **Bibliothek**, **Verlauf**. Das + unten rechts legt ein Workout aus Übungen, ein Timer-Workout aus Blöcken oder einen einzelnen Block an.
 - **Timer**: Timer-Workouts und Blöcke (Intervall-Timer mit fest gespeicherten Zeiten) auf einer Seite mit zwei Reitern; ☆ holt einen Eintrag auf die Startseite.
 - **Bibliothek**: Reiter Fertige · Eigene · Übungen · Dehnen in einer Leiste; Suche mit Filter-Symbol (Fokus, Ausrüstung, Sortierung im Einblendfenster, aktive Filter als Zeile mit „Zurücksetzen“); schlanke Karten mit ☆ und ⋯-Menü für Nebenaktionen (Info, als Block speichern, in Eigene übernehmen, bearbeiten, ausblenden); + unten legt je nach Reiter eine eigene Übung bzw. ein eigenes Workout an.
 - **Übersicht** vor dem Start: nur „Los geht's“ groß, darunter beschriftete Symbole (Favorit, Speichern, Teilen, Neu mischen, Ausblenden); die Übungsliste zeigt nur Namen und Zeiten.
