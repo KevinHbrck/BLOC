@@ -1451,7 +1451,7 @@ function defaultDB(){
     myWorkouts: [],   // eigene Workouts aus Bibliotheksübungen - getrennt von den Timer-Workouts
     customEx: [],     // selbst angelegte Übungen
     history: [],      // nur Übungen der letzten 14 Tage { at, ex:[ids] } - für „Überrasch mich“
-    settings: { theme:"system", sound:true, soundStyle:"sanft", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6 }
+    settings: { theme:"system", sound:true, soundStyle:"sanft", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:false, voiceMix:true }
   };
 }
 /* Frühere Versionen hatten „Retro Hell" und „Retro Dunkel" - beide gehen im neuen Retro-Design auf. */
@@ -1608,6 +1608,9 @@ function loadDB(){
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
     db.settings.theme = migrateTheme(db.settings.theme);
     db.settings.soundStyle = migrateSound(db.settings.soundStyle);
+    /* Sprachansagen halten auf den meisten Handys Musik anderer Apps (Spotify) an -
+       deshalb einmalig aus; wer sie will, schaltet sie bewusst wieder ein */
+    if(!db.settings.voiceMix){ db.settings.voice = false; db.settings.voiceMix = true; }
     migrateExIds(db);
     return db;
   }catch(e){ return defaultDB(); }
@@ -1690,7 +1693,7 @@ var I18N = {
     sidesNote:"Übungen „je Seite“ wechseln nach jedem Intervall die Seite; die Runden zählen beide Seiten.",
     repsBothSides:"Die Runden zählen beide Seiten zusammen, z. B. 6 = 3 je Seite.",
     recommended:"Empfohlen", timeDone:"Fertig",
-    voice:"Sprachansagen (Englisch)", voiceDesc:"Kündigt in den Pausen die nächste Übung an – bei fertigen und eigenen Workouts",
+    voice:"Sprachansagen (Englisch)", voiceDesc:"Kündigt in den Pausen die nächste Übung an. Achtung: Dabei hält das Handy meist deine Musik (z. B. Spotify) an – deshalb standardmäßig aus.",
     surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
     spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
     info:"Info", howTo:"So geht's", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
@@ -1831,7 +1834,7 @@ var I18N = {
     sidesNote:"Per-side exercises switch sides after every interval; rounds count both sides.",
     repsBothSides:"Rounds count both sides together, e.g. 6 = 3 per side.",
     recommended:"Recommended", timeDone:"Done",
-    voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests – for ready-made and own workouts",
+    voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests. Note: most phones pause your music (e.g. Spotify) while it speaks – that's why it's off by default.",
     surprise:"Surprise me", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
     spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
     info:"Info", howTo:"How to", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
