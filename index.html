@@ -5349,6 +5349,8 @@ function announceStep(idx){
 /* Adresse der App ohne # und Parameter - die Seite, die man weitergeben kann */
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
 var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
+/* Versionsnummer (wie in sw.js) - steht unten in den Einstellungen, damit man sieht, ob die neue Fassung geladen ist */
+var APP_FASSUNG = "2026-09-26-5";
 function appUrl(){
   if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
   return location.origin + location.pathname.replace(/index\.html$/, "");
@@ -5410,7 +5412,7 @@ function renderSettings(){
       '<input type="file" id="import-file" accept="application/json" style="display:none">'+
       '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>'+
     '</div>'+
-    '<div class="empty" style="padding:20px 8px;">'+t("localNote")+'</div>';
+    '<div class="empty" style="padding:20px 8px;">'+t("localNote")+'<br><small class="app-version">Version '+APP_FASSUNG+'</small></div>';
 
   bindCommon();
 
@@ -6010,7 +6012,7 @@ function lockStart(){
   tonMischen(false);
   try{
     if(!lockAudio){ lockAudio = new Audio(silentWavUrl()); lockAudio.loop = true; }
-    lockAudio.play().catch(function(){});
+    if(lockAudio.paused) lockAudio.play().catch(function(){});
   }catch(e){}
 }
 function lockUpdate(){
@@ -6035,7 +6037,8 @@ function lockUpdate(){
   }catch(e){}
   if(lockAudio){
     if(done || playerState.paused) try{ lockAudio.pause(); }catch(e){}
-    else lockAudio.play().catch(function(){});
+    // nur starten, wenn er wirklich steht: jedes play() holt sich auf Android erneut die Wiedergabe
+    else if(lockAudio.paused) lockAudio.play().catch(function(){});
   }
 }
 function lockStop(){
