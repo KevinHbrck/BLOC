@@ -1368,11 +1368,18 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .fc-seg{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .fc-seg button{ padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font:inherit; font-size:14px; cursor:pointer; }
 .fc-seg button.on{ background:var(--accent); border-color:var(--accent); color:var(--accent-text); font-weight:700; }
-/* Ukraine Twist: Karte dezent in Blau und Gelb */
+/* Ukraine Twist: geschwungene Ukraine-Flagge (wie eine wehende Fahne aus der Nähe) auf der Kachel,
+   im Baukasten und im Timer. Links liegt ein heller Schleier über der Flagge, damit Name und Text lesbar bleiben. */
+:root{ --ua-flag:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"%3E%3Cdefs%3E%3ClinearGradient id="f" x1="0" y1="0" x2="1" y2=".32"%3E%3Cstop offset="0" stop-color="%23000" stop-opacity=".30"/%3E%3Cstop offset=".14" stop-color="%23fff" stop-opacity=".20"/%3E%3Cstop offset=".28" stop-color="%23000" stop-opacity=".26"/%3E%3Cstop offset=".45" stop-color="%23fff" stop-opacity=".24"/%3E%3Cstop offset=".62" stop-color="%23000" stop-opacity=".30"/%3E%3Cstop offset=".78" stop-color="%23fff" stop-opacity=".18"/%3E%3Cstop offset=".92" stop-color="%23000" stop-opacity=".24"/%3E%3Cstop offset="1" stop-color="%23fff" stop-opacity=".10"/%3E%3C/linearGradient%3E%3CradialGradient id="v" cx=".5" cy=".45" r=".75"%3E%3Cstop offset=".55" stop-color="%23000" stop-opacity="0"/%3E%3Cstop offset="1" stop-color="%23000" stop-opacity=".28"/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width="400" height="300" fill="%23ffd500"/%3E%3Cpath fill="%230057b7" d="M0 0H400V118C352 168 300 92 244 136S130 196 72 150C44 128 20 132 0 146Z"/%3E%3Crect width="400" height="300" fill="url%28%23f%29"/%3E%3Crect width="400" height="300" fill="url%28%23v%29"/%3E%3C/svg%3E'); }
 .lib-card.ua, .dz-row.ua{ overflow:hidden;
-  background:linear-gradient(180deg, color-mix(in srgb, #0057b7 10%, var(--surface)) 0 50%, color-mix(in srgb, #ffd700 8%, var(--surface)) 50% 100%) !important; }
-.lib-card.ua::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:linear-gradient(#0057b7 0 50%, #ffd700 50% 100%); }
+  background:linear-gradient(90deg, color-mix(in srgb, var(--surface) 90%, transparent) 0, color-mix(in srgb, var(--surface) 80%, transparent) 45%, color-mix(in srgb, var(--surface) 25%, transparent) 100%),
+    var(--ua-flag) center / cover no-repeat !important; }
 .dz-row.ua{ border-left-color:#0057b7; }
+.lib-card.ua .lib-illu{ background:color-mix(in srgb, var(--surface) 82%, transparent); }
+/* im Timer: Flagge als Hintergrund der ganzen Übung (Arbeit und Pausen), Schrift weiß */
+.player.ua{ color:#fff !important; }
+.player.ua .phase-label, .player.ua .block-label, .player.ua .next-up, .player.ua #pl-counter{ color:#fff !important; text-shadow:0 1px 3px rgba(0,0,0,.45); }
+:root[data-vintage] .player.ua #pl-bgs{ display:block; }
 /* Vintage-Designs */
 :root[data-vintage] .surprise-card{ border-radius:10px; box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 2px 4px rgba(0,0,0,.18); color:var(--on-accent); }
 :root[data-vintage] .sc-txt b, :root[data-vintage] .at-name{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; font-size:15px; }
@@ -3571,6 +3578,7 @@ function applyTheme(){
 }
 applyTheme();
 applyLang();
+tonMischen(true);   // von Anfang an: Musik anderer Apps läuft weiter
 
 /* ============ Render dispatch ============ */
 var app = document.getElementById("app");
@@ -4987,6 +4995,7 @@ function renderDraftPage(d, cfg){
       if(!d.items.length) return;
       // Sprachausgabe im Tipp freischalten (iOS erlaubt sie sonst nicht)
       if(window.speechSynthesis && s.voice !== false){
+        tonMischen(true);   // erst mischen, dann sprechen - sonst hält iOS die Musik an
         try{ var u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); }catch(e){}
       }
       go("#playdraft");
@@ -5313,7 +5322,7 @@ function sayEN(text){
             voices.filter(function(x){ return /^en/i.test(x.lang) && x.localService; })[0] ||
             voices.filter(function(x){ return /^en/i.test(x.lang); })[0];
     if(v) u.voice = v;
-    setTimeout(function(){ if(playerState) speechSynthesis.speak(u); }, 650);   // nach dem Signalton
+    setTimeout(function(){ if(playerState){ tonStandard(); speechSynthesis.speak(u); } }, 650);   // nach dem Signalton
   }catch(e){}
 }
 function announceStep(idx){
@@ -5569,7 +5578,8 @@ function openSoundSheet(onClose){
 /* ============ Audio & Haptics ============ */
 var actx = null, audioBus = null;
 function audioCtx(){
-  if(!actx){ tonMischen(!lockOn()); var AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
+  tonStandard();
+  if(!actx){ var AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
   return actx;
 }
 /* Musik anderer Apps (Spotify & Co.) soll weiterlaufen: Signaltöne und Ansagen mischen sich dazu.
@@ -5578,8 +5588,15 @@ function audioCtx(){
    Nur mit „Anzeige auf dem Sperrbildschirm“ läuft eine echte Wiedergabe ("playback") -
    die hält die App im Hintergrund wach, stoppt aber andere Musik. */
 function tonMischen(mischen){
-  try{ if(navigator.audioSession) navigator.audioSession.type = mischen ? "ambient" : "playback"; }catch(e){}
+  try{
+    var soll = mischen ? "ambient" : "playback";
+    if(navigator.audioSession && navigator.audioSession.type !== soll) navigator.audioSession.type = soll;
+  }catch(e){}
 }
+/* Vor JEDEM Ton und jeder Ansage: mischen, außer der Sperrbildschirm-Modus läuft gerade.
+   Wichtig: auch vor der stummen Freischalt-Ansage beim Tipp auf „Los geht's“ - die kam früher
+   vor dem Einstellen der Audio-Sitzung und hielt dadurch Spotify an. */
+function tonStandard(){ tonMischen(!(lockOn() && playerState)); }
 /* Gemeinsamer Ausgang aller Klänge: trockenes Signal + Raumhall, am Ende ein Begrenzer,
    der nur kurz vor Übersteuern eingreift (normale Lautstärke bleibt unverändert) */
 function soundOut(ctx){
@@ -5782,6 +5799,7 @@ function currentSoundStyle(){
   return SOUND_STYLES[state.db.settings.soundStyle] || SOUND_STYLES.sanft;
 }
 function playNotes(notes){
+  tonStandard();
   if(!notes) return;
   notes.forEach(function(n){
     setTimeout(function(){ tone(n); }, n.d);
@@ -6090,6 +6108,7 @@ function ringSet(frac){
   c1.style.opacity = sichtbar; document.getElementById("pl-ring-c0").style.opacity = sichtbar;
   document.getElementById("pl-ring-c2").style.opacity = a > 181 ? "1" : "0";
 }
+var UA_FLAG_BG = "linear-gradient(rgba(0,0,0,.2), rgba(0,0,0,.2)), var(--ua-flag) center / cover no-repeat";
 /* Phasenfarbe weich überblenden: neue Farbfläche blendet über der alten ein (nur opacity) */
 function phaseBg(color){
   var host = document.getElementById("pl-bgs");
@@ -6166,7 +6185,11 @@ function enterStep(idx, opt){
   el.style.setProperty("--phase-bg", pv.bg);
   el.style.setProperty("--phase-text", pv.text);
   el.setAttribute("data-phase", step.phase);
-  phaseBg(pv.bg);
+  // Ukraine Twist: während der ganzen Übung die wehende Flagge als Hintergrund
+  var ua = step.ex === "russian-twists" && (step.phase === "work" || step.phase === "rest");
+  el.classList.toggle("ua", ua);
+  if(ua) el.style.setProperty("--phase-text", "#ffffff");
+  phaseBg(ua ? UA_FLAG_BG : pv.bg);
   var body = document.getElementById("pl-body");
   body.innerHTML = stepBodyHTML(step);
   body.classList.remove("step-in"); void body.offsetWidth; body.classList.add("step-in");   // neuer Schritt blendet ein
