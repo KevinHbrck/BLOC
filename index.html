@@ -1405,6 +1405,13 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 @media (prefers-reduced-motion: reduce){
   .pl-bg, .ring-wrap.pulse, .ring-wrap.pulse .ring-bg, .player-mid.step-in{ animation:none; }
 }
+/* Mülleimer direkt in der Liste (eigene Workouts, Timer-Workouts, Blöcke) */
+.trash-btn{ width:44px; height:44px; flex-shrink:0; border:none; border-radius:50%; background:none; color:var(--danger);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+.trash-btn svg{ width:19px; height:19px; }
+.trash-btn:active{ background:color-mix(in srgb, var(--danger) 14%, transparent); transform:scale(.92); }
+.list-item .fav-btn + .trash-btn{ margin-left:-6px; }
+.card-acts .trash-btn{ width:40px; height:40px; }
 </style>
 </head>
 <body>
@@ -1639,7 +1646,7 @@ var I18N = {
     myEmpty:"Noch kein eigenes Workout. Stell dir eins aus den Übungen zusammen.",
     myInWorkout:"Übungen im Workout ({n}) · {d}", myAdd:"Übungen hinzufügen", myRest:"Pause zwischen den Übungen",
     dropHere:"Übungen am Griff ⠿ hierher ziehen oder unten auf + tippen.", dropToRemove:"Hier ablegen zum Entfernen",
-    myDelete:"Eigenes Workout löschen", myDeleteQ:"Eigenes Workout löschen?",
+    myDelete:"Eigenes Workout löschen", myDeleteQ:"Eigenes Workout löschen?", deletedToast:"„{n}“ gelöscht.",
     sortLabel:"Sortieren", sortStd:"Standard", posture:"Haltung", avoid:"Vermeiden",
     shareTitle:"App teilen", shareCopy:"Link kopieren", shareWa:"Per WhatsApp", shareMore:"Weitere Möglichkeiten …",
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
@@ -1780,7 +1787,7 @@ var I18N = {
     myEmpty:"No own workout yet. Put one together from the exercises.",
     myInWorkout:"Exercises in workout ({n}) · {d}", myAdd:"Add exercises", myRest:"Rest between exercises",
     dropHere:"Drag exercises here by the ⠿ handle or tap + below.", dropToRemove:"Drop here to remove",
-    myDelete:"Delete own workout", myDeleteQ:"Delete own workout?",
+    myDelete:"Delete own workout", myDeleteQ:"Delete own workout?", deletedToast:"“{n}” deleted.",
     sortLabel:"Sort", sortStd:"Default", posture:"Posture", avoid:"Avoid",
     shareTitle:"Share the app", shareCopy:"Copy link", shareWa:"Via WhatsApp", shareMore:"More options …",
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
@@ -3694,20 +3701,73 @@ function createTimerWorkout(){
   state.db.workouts.push(w); save();
   return w;
 }
+/* ---------- Löschen: eigene Blöcke, Timer-Workouts und eigene Workouts ----------
+   Direkt in der Liste über den Mülleimer (mit Rückfrage) oder wie bisher auf der Bearbeiten-Seite. */
+function unfav(k){ state.db.settings.favs = (state.db.settings.favs || []).filter(function(x){ return x !== k; }); }
+function deleteBlockNow(id){
+  state.db.blocks = state.db.blocks.filter(function(x){ return x.id!==id; });
+  unfav("bl:"+id);
+  state.db.workouts.forEach(function(w){ w.items = w.items.filter(function(it){ return it.blockId!==id; }); });
+  save();
+}
+function deleteTimerWorkoutNow(id){
+  state.db.workouts = state.db.workouts.filter(function(x){ return x.id!==id; });
+  unfav("tw:"+id);
+  save();
+}
+function deleteMyNow(id){
+  state.db.myWorkouts = (state.db.myWorkouts || []).filter(function(x){ return x.id!==id; });
+  unfav("my:"+id);
+  save();
+}
+function deleteCustomExNow(id){
+  state.db.customEx = (state.db.customEx || []).filter(function(x){ return x.id !== id; });
+  (state.db.myWorkouts || []).forEach(function(mw){
+    if(Array.isArray(mw.items)) mw.items = mw.items.filter(function(it){ return (it && it.ex || it) !== id; });
+  });
+  state.db.settings.exFavs = (state.db.settings.exFavs || []).filter(function(x){ return x !== id; });
+  save(); syncCustomEx();
+}
+function trashBtn(kind, id, name){
+  var label = t("del")+": "+(name || t("untitled"));
+  return '<button type="button" class="trash-btn" data-del="'+kind+':'+id+'" title="'+esc(t("del"))+'" aria-label="'+esc(label)+'">'+ICON_TRASH+'</button>';
+}
+/* Mülleimer in einer Liste: fragt nach, löscht und zeichnet die Liste neu */
+function bindTrash(refresh){
+  app.querySelectorAll("[data-del]").forEach(function(el){
+    el.addEventListener("click", function(e){
+      e.stopPropagation();
+      var v = el.getAttribute("data-del"), kind = v.split(":")[0], id = v.slice(kind.length+1);
+      if(kind === "bl"){
+        var b = findBlock(id); if(!b) return;
+        confirmSheet(t("deleteBlockQ"), t("deleteBlockText", { name:b.name }), t("del"), function(){ deleteBlockNow(id); refresh(); showToast(t("deletedToast", { n:b.name })); });
+      } else if(kind === "tw"){
+        var w = findWorkout(id); if(!w) return;
+        confirmSheet(t("deleteWorkoutQ"), "„"+(w.name || t("untitled"))+"“ – "+t("cantUndo"), t("del"), function(){ deleteTimerWorkoutNow(id); refresh(); showToast(t("deletedToast", { n:w.name || t("untitled") })); });
+      } else if(kind === "ex"){
+        var c = findCustom(id); if(!c) return;
+        confirmSheet(t("exDeleteQ"), "„"+c.name+"“ – "+t("exDeleteText"), t("del"), function(){ deleteCustomExNow(id); refresh(); showToast(t("deletedToast", { n:c.name })); });
+      } else if(kind === "my"){
+        var mw = findMy(id); if(!mw) return;
+        confirmSheet(t("myDeleteQ"), "„"+mw.name+"“ – "+t("cantUndo"), t("del"), function(){ deleteMyNow(id); refresh(); showToast(t("deletedToast", { n:mw.name })); });
+      }
+    });
+  });
+}
 function timerWorkoutRow(w){
   var count = w.items.length;
   return '<div class="list-item entry" data-nav="#workout/'+w.id+'">'+
     '<button class="playbtn wo" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+' title="'+t("start")+'" aria-label="'+t("start")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(w.name||t("untitled"))+'</div>'+
     '<div class="sub">'+count+' '+(count===1?t("blockOne"):t("blockMany"))+SEP+fmtDuration(workoutDuration(w))+'</div></div>'+
-    favBtn("tw:"+w.id)+'</div>';
+    favBtn("tw:"+w.id)+trashBtn("tw", w.id, w.name)+'</div>';
 }
 function blockRow(b){
   return '<div class="list-item entry" data-nav="#block/'+b.id+'">'+
     '<button class="playbtn bl" data-playblock="'+b.id+'" title="'+t("startBlock")+'" aria-label="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(b.name)+'</div>'+
     '<div class="sub">'+blockSpec(b)+SEP+fmtDuration(blockDuration(b))+'</div></div>'+
-    favBtn("bl:"+b.id)+'</div>';
+    favBtn("bl:"+b.id)+trashBtn("bl", b.id, b.name)+'</div>';
 }
 function renderTimers(){
   var s = state.db.settings, tab = s.timerTab === "blocks" ? "blocks" : "workouts";
@@ -3740,6 +3800,7 @@ function renderTimers(){
     else go("#block/"+createBlock().id);
   } });
   bindFavItems(function(){ var y = window.scrollY; renderTimers(); window.scrollTo(0, y); });
+  bindTrash(function(){ var y = window.scrollY; renderTimers(); window.scrollTo(0, y); });
 }
 /* Play- und Stern-Knöpfe in Listen (Startseite, Timer-Seite) */
 function bindFavItems(refresh){
@@ -3804,7 +3865,7 @@ function maybeShowInstallTip(){}
 function bindCommon(){
   app.querySelectorAll("[data-nav]").forEach(function(el){
     el.addEventListener("click", function(ev){
-      if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]")) return;
+      if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]") || ev.target.closest("[data-del]")) return;
       go(el.getAttribute("data-nav"));
     });
   });
@@ -3890,12 +3951,7 @@ function renderBlockEdit(id){
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
     confirmSheet(t("deleteBlockQ"), t("deleteBlockText", { name:b.name }), t("del"), function(){
-      state.db.blocks = state.db.blocks.filter(function(x){ return x.id!==id; });
-      state.db.settings.favs = (state.db.settings.favs || []).filter(function(k){ return k !== "bl:"+id; });
-      state.db.workouts.forEach(function(w){
-        w.items = w.items.filter(function(it){ return it.blockId!==id; });
-      });
-      save();
+      deleteBlockNow(id);
       goBack("#home");
     });
   });
@@ -4064,9 +4120,7 @@ function renderWorkoutEdit(id){
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
     confirmSheet(t("deleteWorkoutQ"), t("cantUndo"), t("del"), function(){
-      state.db.workouts = state.db.workouts.filter(function(x){ return x.id!==id; });
-      state.db.settings.favs = (state.db.settings.favs || []).filter(function(k){ return k !== "tw:"+id; });
-      save();
+      deleteTimerWorkoutNow(id);
       goBack("#timers");
     });
   });
@@ -4283,7 +4337,7 @@ function libExCard(ex, hidden, sub){
     '</div>'+
     '<div class="card-aside">'+bild+'<div class="card-acts">'+
       (hidden ? '<button type="button" class="tpl-adopt" data-unhideone="ex:'+ex.id+'">'+svgIcon(ICON_EYE)+' '+t("unhide")+'</button>'
-              : exFavBtn(ex.id)+moreBtn("data-exmore", ex.id))+
+              : exFavBtn(ex.id)+(ex.custom ? trashBtn("ex", ex.id, tplText(ex.name)) : '')+moreBtn("data-exmore", ex.id))+
     '</div></div></div>';
 }
 function exSubText(ex){
@@ -4388,7 +4442,7 @@ function renderLibrary(){
           '<button class="playbtn tp" data-cover="my/'+mw.id+'" '+(r.exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
           '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
           '<div class="sub">'+mainTagsHTML(r.mains)+t("exCount", { n:r.exs.length })+SEP+fmtDuration(r.dur)+'</div>'+
-          '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+'</div></div></div>';
+          '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';
       }
     });
     if(tab === "mine"){
@@ -4440,6 +4494,7 @@ function renderLibrary(){
   on("[data-lfsort]", function(el){ if(tab==="exercises") s.libSort = el.getAttribute("data-lfsort"); else s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
   on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; s.libMains = []; save(); neu(); });
   on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
+  bindTrash(neu);
   var lq = app.querySelector("#l-q");
   if(lq){
     applySearch(app, libQuery);
@@ -4546,12 +4601,7 @@ function renderExEdit(id){
     var del = app.querySelector("[data-xdel]");
     if(del) del.addEventListener("click", function(){
       confirmSheet(t("exDeleteQ"), t("exDeleteText"), t("del"), function(){
-        state.db.customEx = state.db.customEx.filter(function(x){ return x.id !== id; });
-        (state.db.myWorkouts || []).forEach(function(mw){
-          if(Array.isArray(mw.items)) mw.items = mw.items.filter(function(it){ return (it && it.ex || it) !== id; });
-        });
-        state.db.settings.exFavs = (state.db.settings.exFavs || []).filter(function(x){ return x !== id; });
-        save(); syncCustomEx();
+        deleteCustomExNow(id);
         goBack("#library");
       });
     });
@@ -4920,8 +4970,7 @@ function renderDraftPage(d, cfg){
   on("[data-tocover]", function(){ if(d.items.length){ coverDraft = null; go("#cover/my/"+cfg.id); } });
   on("[data-mydel]", function(){
     confirmSheet(t("myDeleteQ"), t("cantUndo"), t("del"), function(){
-      state.db.myWorkouts = state.db.myWorkouts.filter(function(x){ return x.id!==cfg.id; });
-      save(); go("#library");
+      deleteMyNow(cfg.id); go("#library");
     });
   });
   if(cfg.cover){
