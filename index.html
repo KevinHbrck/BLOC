@@ -1419,6 +1419,11 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .trash-btn:active{ background:color-mix(in srgb, var(--danger) 14%, transparent); transform:scale(.92); }
 .list-item .fav-btn + .trash-btn{ margin-left:-6px; }
 .card-acts .trash-btn{ width:40px; height:40px; }
+/* + am Timer-Workout: per „Überrasch mich“ Übungen hinzufügen */
+.plus-btn{ width:44px; height:44px; flex-shrink:0; border:1.5px solid var(--border); border-radius:12px; background:var(--surface-2); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer; padding:0; }
+.plus-btn:active{ transform:scale(.92); }
+:root[data-vintage] .plus-btn{ border-radius:6px; }
 </style>
 </head>
 <body>
@@ -1451,7 +1456,7 @@ function defaultDB(){
     myWorkouts: [],   // eigene Workouts aus Bibliotheksübungen - getrennt von den Timer-Workouts
     customEx: [],     // selbst angelegte Übungen
     history: [],      // nur Übungen der letzten 14 Tage { at, ex:[ids] } - für „Überrasch mich“
-    settings: { theme:"system", sound:true, soundStyle:"sanft", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:false, voiceMix:true }
+    settings: { theme:"system", sound:true, soundStyle:"sanft", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
   };
 }
 /* Frühere Versionen hatten „Retro Hell" und „Retro Dunkel" - beide gehen im neuen Retro-Design auf. */
@@ -1611,6 +1616,7 @@ function loadDB(){
     /* Sprachansagen halten auf den meisten Handys Musik anderer Apps (Spotify) an -
        deshalb einmalig aus; wer sie will, schaltet sie bewusst wieder ein */
     if(!db.settings.voiceMix){ db.settings.voice = false; db.settings.voiceMix = true; }
+    delete db.settings.lockScreen;   // „Anzeige auf dem Sperrbildschirm“ gibt es nicht mehr
     migrateExIds(db);
     return db;
   }catch(e){ return defaultDB(); }
@@ -1657,6 +1663,8 @@ var I18N = {
     myInWorkout:"Übungen im Workout ({n}) · {d}", myAdd:"Übungen hinzufügen", myRest:"Pause zwischen den Übungen",
     dropHere:"Übungen am Griff ⠿ hierher ziehen oder unten auf + tippen.", dropToRemove:"Hier ablegen zum Entfernen",
     myDelete:"Eigenes Workout löschen", myDeleteQ:"Eigenes Workout löschen?", deletedToast:"„{n}“ gelöscht.",
+    spFill:"Überrasch mich: Übungen hinzufügen", spFillHint:"Die Übungen kommen als Blöcke hinten in „{n}“.", spCount:"Anzahl Übungen", spCountUnit:"Übungen",
+    spFilled:"{n} Übungen zu „{w}“ hinzugefügt.",
     sortLabel:"Sortieren", sortStd:"Standard", posture:"Haltung", avoid:"Vermeiden",
     shareTitle:"App teilen", shareCopy:"Link kopieren", shareWa:"Per WhatsApp", shareMore:"Weitere Möglichkeiten …",
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
@@ -1693,7 +1701,7 @@ var I18N = {
     sidesNote:"Übungen „je Seite“ wechseln nach jedem Intervall die Seite; die Runden zählen beide Seiten.",
     repsBothSides:"Die Runden zählen beide Seiten zusammen, z. B. 6 = 3 je Seite.",
     recommended:"Empfohlen", timeDone:"Fertig",
-    voice:"Sprachansagen (Englisch)", voiceDesc:"Kündigt in den Pausen die nächste Übung an. Achtung: Dabei hält das Handy meist deine Musik (z. B. Spotify) an – deshalb standardmäßig aus.",
+    voice:"Sprachansagen (Englisch)", voiceDesc:"Kündigt in den Pausen die nächste Übung an – bei fertigen und eigenen Workouts",
     surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
     spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
     info:"Info", howTo:"So geht's", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
@@ -1725,7 +1733,6 @@ var I18N = {
     vibration:"Vibration", vibrationDesc:"Haptisches Feedback (falls unterstützt)",
     keepAwake:"Bildschirm an lassen", keepAwakeDesc:"Verhindert, dass der Bildschirm während des Workouts ausgeht",
     volMusicHint:"Deine Musik läuft weiter, die Töne kommen dazu. iPhone: Steht es auf lautlos, bleiben die Töne stumm – dann auf laut stellen.",
-    lockScreen:"Anzeige auf dem Sperrbildschirm", lockScreenDesc:"Übung, Restzeit und Pause/Weiter in der Benachrichtigung bzw. auf dem Sperrbildschirm; hält den Timer im Hintergrund wach. Achtung: hält dabei Musik aus anderen Apps (z. B. Spotify) an – ohne diese Option läuft deine Musik weiter.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
     htLib:"Workouts, Übungen und eigene Inhalte", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
@@ -1798,6 +1805,8 @@ var I18N = {
     myInWorkout:"Exercises in workout ({n}) · {d}", myAdd:"Add exercises", myRest:"Rest between exercises",
     dropHere:"Drag exercises here by the ⠿ handle or tap + below.", dropToRemove:"Drop here to remove",
     myDelete:"Delete own workout", myDeleteQ:"Delete own workout?", deletedToast:"“{n}” deleted.",
+    spFill:"Surprise me: add exercises", spFillHint:"The exercises are added as blocks at the end of “{n}”.", spCount:"Number of exercises", spCountUnit:"exercises",
+    spFilled:"{n} exercises added to “{w}”.",
     sortLabel:"Sort", sortStd:"Default", posture:"Posture", avoid:"Avoid",
     shareTitle:"Share the app", shareCopy:"Copy link", shareWa:"Via WhatsApp", shareMore:"More options …",
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
@@ -1834,7 +1843,7 @@ var I18N = {
     sidesNote:"Per-side exercises switch sides after every interval; rounds count both sides.",
     repsBothSides:"Rounds count both sides together, e.g. 6 = 3 per side.",
     recommended:"Recommended", timeDone:"Done",
-    voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests. Note: most phones pause your music (e.g. Spotify) while it speaks – that's why it's off by default.",
+    voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests – for ready-made and own workouts",
     surprise:"Surprise me", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
     spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
     info:"Info", howTo:"How to", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
@@ -1866,7 +1875,6 @@ var I18N = {
     vibration:"Vibration", vibrationDesc:"Haptic feedback (if supported)",
     keepAwake:"Keep screen on", keepAwakeDesc:"Keeps the screen from turning off during a workout",
     volMusicHint:"Your music keeps playing, the sounds play on top. iPhone: in silent mode the sounds stay muted – switch the ringer on.",
-    lockScreen:"Show on lock screen", lockScreenDesc:"Exercise, time left and pause/skip in the notification or on the lock screen; keeps the timer awake in the background. Note: this pauses music from other apps (e.g. Spotify) – without it your music keeps playing.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
     htLib:"Workouts, exercises and your own content", spSub:"A random session based on your picks",
@@ -2144,16 +2152,16 @@ var LIB_WORKOUT_ROWS = [
   ["cardio-express","Cardio Express","Cardio Express","cardio","jumping-jacks high-knees mountain-climbers skater-jumps",45],
   ["cardio-power","Cardio Power","Cardio Power","cardio","burpees jump-squats fast-feet plank-burpees",60],
   ["full-body-weights","Full Body mit Gewicht","Full Body with Weights","weight","goblet-squat bent-over-row floor-press romanian-deadlift farmer-carry",60],
-  ["kb-conditioning","Kettlebell Conditioning","Kettlebell Conditioning","weight","kb-swing goblet-squat push-press weighted-reverse-lunge",60],
+  ["kb-conditioning","Kettlebell Conditioning","Kettlebell Conditioning","weight","kb-swing goblet-squat kb-clean weighted-reverse-lunge",60],
   ["bw-basic","Bodyweight Basic","Bodyweight Basic","bw","air-squats push-ups reverse-lunges glute-bridge plank-steps",45],
   ["bw-advanced","Bodyweight Advanced","Bodyweight Advanced","bw","pike-push-ups cossack-squats bear-crawl pistol-assist burpee-squat-jumps",60],
   ["back-basic","Rücken Basis","Back Basics","back","bird-dog reverse-snow-angels prone-y-raise good-mornings superman-hold",45],
   ["back-pull","Rücken Zugkraft","Back Pulling Strength","back","pull-ups negative-pull-ups inverted-rows scapular-pull-ups dead-hang",90],
-  ["leg-day","Leg Day","Leg Day","legs","air-squats reverse-lunges split-squats glute-bridge calf-raises",60],
-  ["leg-power","Leg Power","Leg Power","legs","jump-squats bulgarian-split-squats side-lunges wall-sit lateral-lunge-pulses",60],
-  ["core-basic","Core Basic","Core Basic","core","dead-bug plank side-plank bicycle-crunches leg-raises",45],
-  ["core-advanced","Core Advanced","Core Advanced","core","hollow-hold jackknives side-jackknives plank-shoulder-taps toes-to-bar",60],
-  ["core-complete","Bauch komplett","Complete Core","core","russian-twists leg-raises dead-bug bicycle-crunches reverse-crunch jackknives hollow-hold plank l-sit mountain-climbers",45],
+  ["leg-day","Beine Basis","Leg Day","legs","air-squats reverse-lunges split-squats glute-bridge calf-raises",60],
+  ["leg-power","Beine Power","Leg Power","legs","jump-squats bulgarian-split-squats side-lunges wall-sit lateral-lunge-pulses",60],
+  ["core-basic","Bauch & Core Basis","Core Basic","core","dead-bug plank side-plank bicycle-crunches leg-raises",45],
+  ["core-advanced","Bauch & Core Advanced","Core Advanced","core","hollow-hold jackknives side-jackknives plank-shoulder-taps dragon-flags",60],
+  ["core-complete","Bauch komplett","Complete Core","core","russian-twists leg-raises dead-bug bicycle-crunches reverse-crunch jackknives hollow-hold plank side-plank mountain-climbers",45],
   ["full-body-mix","Full Body Mix","Full Body Mix","mix","kb-swing push-ups walking-lunges bent-over-row mountain-climbers plank",60],
   ["arms-bw","Arme ohne Geräte","Arms Without Equipment","arms","close-grip-push-ups diamond-push-ups triceps-dips sphinx-push-ups pike-push-ups plank-shoulder-taps",45],
   ["stretch-full","Ganzkörper-Dehnen","Full Body Stretch","stretch","neck-stretch shoulder-stretch chest-stretch cat-cow downward-dog hip-flexor-stretch hamstring-stretch figure-four spinal-twist childs-pose",10],
@@ -2169,10 +2177,33 @@ var LIB_WORKOUT_ROWS = [
   ["calis-60","Calisthenics 60","Calisthenics 60","calis","scapular-pull-ups pull-ups support-hold parallel-bar-dips inverted-rows chin-ups toes-to-bar hanging-knee-raise negative-pull-ups l-sit windshield-wipers commando-pull-ups hanging-leg-raise dead-hang",100],
   ["full-body-60","Full Body 60","Full Body 60","mix","burpees goblet-squat push-ups kb-swing bent-over-row walking-lunges mountain-climbers romanian-deadlift shoulder-press jump-squats plank russian-twists",85],
   ["bodyweight-60","Bodyweight 60 (ohne Geräte)","Bodyweight 60 (no equipment)","bw","jumping-jacks air-squats push-ups reverse-lunges plank high-knees glute-bridge pike-push-ups side-lunges bicycle-crunches burpees wall-sit superman-hold mountain-climbers",45],
+  /* 2026-09: neue Programme, aufgebaut nach gängigen Trainingsempfehlungen:
+     Brust = Liegestütz-Varianten im Zirkel, vorher Schulterblätter aktivieren;
+     Beine & Po = alle Bewegungsmuster (Kniebeuge, einbeinig, Hüftstreckung, seitlich);
+     High Pulse = 40 s Arbeit / 20 s Pause; Dehnen kurz = große Muskelgruppen, je 30 s */
+  ["stretch-quick","Dehnen kurz · Ganzkörper","Quick Full Body Stretch","stretch","quad-stretch chest-stretch shoulder-stretch hip-flexor-stretch hamstring-stretch childs-pose",5],
+  ["chest-bw","Brust (ohne Geräte)","Chest (no equipment)","bw","scapular-push-ups push-ups archer-push-ups clap-push-ups close-grip-push-ups diamond-push-ups chest-stretch",45],
+  ["chest-db","Brust & Schultern mit Kurzhantel","Chest & Shoulders with Dumbbells","weight","floor-press push-ups shoulder-press push-press triceps-curls chest-stretch",60],
+  ["legs-glutes","Beine & Po","Legs & Glutes","legs","air-squats bulgarian-split-squats glute-bridge side-lunges single-leg-glute-bridge wall-sit calf-raises quad-stretch figure-four",45],
+  ["hiit-full","Ganzkörper High Pulse","Full Body High Pulse","cardio","jumping-jacks high-knees burpees jump-squats mountain-climbers skater-jumps plank-burpees tuck-jumps frogs",30,"3/40/20"],
+  ["back-office","Rücken & Haltung (Büro)","Back & Posture (Office)","back","bird-dog prone-y-raise prone-t-raise reverse-snow-angels swimmers superman-hold childs-pose",20,"3/30/10"],
+  ["arms-db","Schultern & Arme mit Kurzhantel","Shoulders & Arms with Dumbbells","weight","shoulder-press bent-over-row triceps-curls one-arm-row push-press shoulder-stretch triceps-stretch",45],
+  /* weitere Programme mit klarem Zweck */
+  ["warmup-5","Aufwärmen 5 Min","5-Minute Warm-up","cardio","jumping-jacks air-squats high-knees plank-steps fast-feet",10,"2/25/5"],
+  ["tabata-full","Tabata Ganzkörper","Full Body Tabata","cardio","burpees mountain-climbers jump-squats high-knees",60,"8/20/10"],
+  ["beginner-full","Einsteiger Ganzkörper (ohne Geräte)","Beginner Full Body (no equipment)","bw","air-squats push-ups glute-bridge reverse-lunges bird-dog plank",45,"3/30/15"],
+  ["glutes-bw","Po-Fokus (ohne Geräte)","Glute Focus (no equipment)","legs","glute-bridge reverse-lunges single-leg-glute-bridge side-lunges squat-hold lateral-lunge-pulses figure-four pigeon-stretch",40],
+  ["db-full-30","Kurzhantel Ganzkörper","Dumbbell Full Body","weight","goblet-squat bent-over-row floor-press romanian-deadlift db-thruster renegade-row shoulder-press",60],
+  ["core-stable","Rumpfstabilität (rückenschonend)","Core Stability (back-friendly)","core","dead-bug bird-dog plank side-plank glute-bridge hollow-hold childs-pose",30],
+  ["runner-strength","Kraft für Läufer","Strength for Runners","legs","split-squats calf-raises single-leg-glute-bridge lateral-lunge-pulses side-plank plank hip-flexor-stretch calf-stretch",40],
+  ["stretch-hips","Hüfte mobil","Hip Mobility","stretch","worlds-greatest hip-flexor-stretch pigeon-stretch butterfly-stretch figure-four",5],
+  ["stretch-evening","Entspannt dehnen am Abend","Relaxing Evening Stretch","stretch","forward-fold childs-pose sphinx-stretch spinal-twist butterfly-stretch figure-four",5],
   ["advanced-60","Advanced 60","Advanced 60","mix","burpee-squat-jumps pistol-squats archer-push-ups tuck-jumps dragon-flags clap-push-ups bulgarian-split-squats pike-push-ups frogs hollow-hold cossack-squats jackknives",120]
 ];
 var LIB_WORKOUTS = LIB_WORKOUT_ROWS.map(function(x){
-  return { id:x[0], name:{ de:x[1], en:x[2] }, focus:x[3], exercises:x[4].split(" "), restAfterSec:x[5] };
+  var tm = x[6] ? x[6].split("/").map(Number) : null;   // einheitliche Zeiten, z. B. 3×40 s / 20 s
+  return { id:x[0], name:{ de:x[1], en:x[2] }, focus:x[3], exercises:x[4].split(" "), restAfterSec:x[5],
+           tm: tm ? { reps:tm[0], work:tm[1], rest:tm[2] } : null };
 });
 
 function tplText(obj){ return obj ? (obj[currentLang()] || obj.de || "") : ""; }
@@ -2203,7 +2234,12 @@ function libQuickWorkout(blocks, rest, name, id){
   }) };
 }
 function libWorkoutRun(lw){
-  var bl = lw.exercises.map(findExercise).filter(Boolean).map(exBlock);
+  var bl = lw.exercises.map(findExercise).filter(Boolean).map(function(ex){
+    var b = exBlock(ex);
+    // eigene Zeiten des Programms (z. B. High Pulse 40/20) - Dehnübungen behalten ihre Haltezeiten
+    if(lw.tm && ex.cats.indexOf("stretch") < 0){ b.reps = lw.tm.reps; b.workSec = lw.tm.work; b.restSec = lw.tm.rest; }
+    return b;
+  });
   return libQuickWorkout(bl, lw.restAfterSec, tplText(lw.name), "lib-"+lw.id);
 }
 function exerciseRun(ex){ return libQuickWorkout([exBlock(ex)], 0, tplText(ex.name), "libex-"+ex.id); }
@@ -2423,6 +2459,8 @@ function draftBlocks(d){
 function draftRun(d){ return libQuickWorkout(draftBlocks(d), d.blockRest||0, d.name, "draft"); }
 function draftCopy(d){ return JSON.parse(JSON.stringify(d)); }
 function draftFromLib(lw){
+  if(lw.tm) return { key:"lib:"+lw.id, src:"lib", name:tplText(lw.name), mode:"uniform", reps:lw.tm.reps, work:lw.tm.work, rest:lw.tm.rest,
+           blockRest:lw.restAfterSec, items:lw.exercises.filter(findExercise).map(itemFromEx) };
   return { key:"lib:"+lw.id, src:"lib", name:tplText(lw.name), mode:"individual", reps:6, work:30, rest:10,
            blockRest:lw.restAfterSec, items:lw.exercises.filter(findExercise).map(itemFromEx) };
 }
@@ -3712,6 +3750,34 @@ function createTimerWorkout(){
   state.db.workouts.push(w); save();
   return w;
 }
+/* Timer-Workout per „Überrasch mich“ füllen: jede Übung wird ein Block (vorhandene gleiche Blöcke
+   werden wiederverwendet) und hinten angehängt, mit der Blockpause der gewählten Intensität */
+function blockAusItem(it){
+  var ex = findExercise(it.ex);
+  if(!ex) return null;
+  for(var i=0;i<state.db.blocks.length;i++){
+    var b = state.db.blocks[i];
+    if(b.ex===ex.id && b.reps===it.reps && b.workSec===it.work && b.restSec===it.rest) return b;
+  }
+  var nb = { id:uid(), ex:ex.id, name:tplText(ex.name), reps:it.reps, workSec:it.work, restSec:it.rest,
+             sides:ex.perSide, hint:tplText(ex.hint), updatedAt:Date.now() };
+  state.db.blocks.push(nb);
+  return nb;
+}
+function timerWorkoutFuellen(w, d){
+  var items = stretchLast(d.items, function(it){ return it.ex; }), n = 0;
+  if(w.items.length && !w.items[w.items.length-1].restAfterSec) w.items[w.items.length-1].restAfterSec = d.blockRest;
+  items.forEach(function(it){
+    var b = blockAusItem(it);
+    if(!b) return;
+    w.items.push({ blockId:b.id, restAfterSec: it.after != null ? it.after : d.blockRest });
+    n++;
+  });
+  w.updatedAt = Date.now();
+  save();
+  showToast(t("spFilled", { n:n, w:w.name || t("untitled") }));
+  var y = window.scrollY; render(); window.scrollTo(0, y);
+}
 /* ---------- Löschen: eigene Blöcke, Timer-Workouts und eigene Workouts ----------
    Direkt in der Liste über den Mülleimer (mit Rückfrage) oder wie bisher auf der Bearbeiten-Seite. */
 function unfav(k){ state.db.settings.favs = (state.db.settings.favs || []).filter(function(x){ return x !== k; }); }
@@ -3771,6 +3837,7 @@ function timerWorkoutRow(w){
     '<button class="playbtn wo" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+' title="'+t("start")+'" aria-label="'+t("start")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(w.name||t("untitled"))+'</div>'+
     '<div class="sub">'+count+' '+(count===1?t("blockOne"):t("blockMany"))+SEP+fmtDuration(workoutDuration(w))+'</div></div>'+
+    '<button type="button" class="plus-btn" data-twplus="'+w.id+'" title="'+esc(t("spFill"))+'" aria-label="'+esc(t("spFill")+": "+(w.name || t("untitled")))+'">'+ICON_PLUS+'</button>'+
     favBtn("tw:"+w.id)+trashBtn("tw", w.id, w.name)+'</div>';
 }
 function blockRow(b){
@@ -3812,6 +3879,9 @@ function renderTimers(){
   } });
   bindFavItems(function(){ var y = window.scrollY; renderTimers(); window.scrollTo(0, y); });
   bindTrash(function(){ var y = window.scrollY; renderTimers(); window.scrollTo(0, y); });
+  app.querySelectorAll("[data-twplus]").forEach(function(el){
+    el.addEventListener("click", function(e){ e.stopPropagation(); openSurprise(el.getAttribute("data-twplus")); });
+  });
 }
 /* Play- und Stern-Knöpfe in Listen (Startseite, Timer-Seite) */
 function bindFavItems(refresh){
@@ -3876,7 +3946,7 @@ function maybeShowInstallTip(){}
 function bindCommon(){
   app.querySelectorAll("[data-nav]").forEach(function(el){
     el.addEventListener("click", function(ev){
-      if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]") || ev.target.closest("[data-del]")) return;
+      if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]") || ev.target.closest("[data-del]") || ev.target.closest("[data-twplus]")) return;
       go(el.getAttribute("data-nav"));
     });
   });
@@ -4439,6 +4509,7 @@ function renderLibrary(){
     // erst Fokus und Ausrüstung (bestimmt die Zahlen auf den Kacheln), dann die Kacheln selbst
     rows = rows.filter(function(r){
       r.mains = woMains(r.exs);
+      if(tab === "mine") return true;   // eigene Programme: ungefiltert
       if(!woFocusOk(r.focus, r.exs, cat) || !woFits(r.exs, equip) || !woGearOk(r.exs, cat, equip, mains)) return false;
       if(!r.hidden) r.mains.forEach(function(m){ counts[m]++; });
       return !mains.length || r.mains.some(function(m){ return mains.indexOf(m) > -1; });
@@ -4483,13 +4554,14 @@ function renderLibrary(){
       '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
     '</div></div>'+
+    (tab === "mine" ? '' :
     '<div class="search-row">'+searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
       '<button type="button" class="filter-btn'+(nf || open ?' on':'')+'" data-ltoggle aria-expanded="'+open+'" title="'+t("filter")+'" aria-label="'+t("filter")+(nf?' ('+nf+')':'')+'">'+
       svgIcon(ICON_FILTER)+(nf ? '<span class="filter-n">'+nf+'</span>' : '')+'</button></div>'+
     mainTilesHTML(mains, counts, "data-lmain")+
     (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
               tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]])
-          : activeFiltersHTML(cat, equip, "l"))+
+          : activeFiltersHTML(cat, equip, "l")))+
     surpriseCardHTML()+
     list + hiddenBlockHTML(hiddenCount, hiddenCards) +
     '<div style="height:90px"></div>' + fab;
@@ -5198,12 +5270,15 @@ function buildSurprise(p){
   /* Dehnteil: nur Stretch gewählt = das ganze Training, sonst etwa ein Sechstel (mindestens zwei Übungen) */
   var stretchPool = !wantStretch ? [] : EXERCISES.filter(function(ex){ return ex.main === "stretch" && !libHidden("ex:"+ex.id); });
   var stretchBudget = !stretchPool.length ? 0 : (trainMains.length ? Math.max(140, Math.round(total/6)) : total);
+  // feste Anzahl (Timer-Workout füllen): Dehnübungen zählen mit, etwa jede fünfte
+  var anzahl = p.anzahl > 0 ? p.anzahl : 0;
+  var stretchAnzahl = !anzahl || !stretchPool.length ? 0 : (trainMains.length ? Math.max(2, Math.round(anzahl/5)) : anzahl);
 
   var picked = [];
   if(trainMains.length){
     var block = tm.reps*tm.work + (tm.reps-1)*tm.rest;
     var trainSec = Math.max(block, total - stretchBudget);
-    var n = Math.max(2, Math.round((trainSec + tm.blockRest) / (block + tm.blockRest)));
+    var n = anzahl ? Math.max(1, anzahl - stretchAnzahl) : Math.max(2, Math.round((trainSec + tm.blockRest) / (block + tm.blockRest)));
     var pool = EXERCISES.filter(function(ex){
       return !libHidden("ex:"+ex.id) && ex.main !== "stretch" && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
         equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains);
@@ -5255,7 +5330,7 @@ function buildSurprise(p){
     });
     for(var i=0;i<sp.length;i++){
       var it = itemFromEx(sp[i].id), d = spDuration(it) + 10;
-      if(sItems.length >= 2 && used + d > stretchBudget) break;
+      if(anzahl ? sItems.length >= stretchAnzahl : (sItems.length >= 2 && used + d > stretchBudget)) break;
       it.after = 10;
       sItems.push(it); used += d;
     }
@@ -5266,15 +5341,19 @@ function buildSurprise(p){
            reps:tm.reps, work:tm.work, rest:tm.rest, blockRest:tm.blockRest,
            items:items, _params:p };
 }
-function openSurprise(){
-  var s = state.db.settings;
+function openSurprise(twId){
+  var s = state.db.settings, tw = twId ? findWorkout(twId) : null;
   var p = spNormalize(JSON.parse(JSON.stringify(s.surprise || { dur:20, mains:["kraft","rumpf"], cats:[], level:2, equips:["none"] })));
+  if(tw) p.anzahl = s.surpriseAnzahl || 8; else delete p.anzahl;
   var root = document.getElementById("overlayRoot");
   function draw(){
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet">'+
       '<h3>'+svgIcon(ICON_SPARK, "ico sp-h-ico")+' '+t("surprise")+'</h3>'+
-      '<label>'+t("spDur")+'</label><div class="sp-chips">'+[10,15,20,30,45,60].map(function(v){
-        return '<button type="button" class="fc-chip'+(p.dur===v?' on':'')+'" data-spdur="'+v+'">'+v+' Min</button>'; }).join("")+'</div>'+
+      (tw ? '<div class="tm-hint" style="margin-top:0">'+esc(t("spFillHint", { n:tw.name || t("untitled") }))+'</div>'+
+            '<label>'+t("spCount")+'</label><div class="sp-chips">'+[4,6,8,10,12,15].map(function(v){
+        return '<button type="button" class="fc-chip'+(p.anzahl===v?' on':'')+'" data-spanz="'+v+'">'+v+' '+t("spCountUnit")+'</button>'; }).join("")+'</div>'
+          : '<label>'+t("spDur")+'</label><div class="sp-chips">'+[10,15,20,30,45,60].map(function(v){
+        return '<button type="button" class="fc-chip'+(p.dur===v?' on':'')+'" data-spdur="'+v+'">'+v+' Min</button>'; }).join("")+'</div>')+
       '<label>'+t("mainCat")+' <span class="lbl-hint">'+esc(t("multiOk"))+'</span></label>'+
       mainTilesHTML(p.mains, null, "data-spmain")+
       '<div class="tm-hint" style="margin-top:-4px;">'+esc(t("spMainHint"))+'</div>'+
@@ -5292,6 +5371,7 @@ function openSurprise(){
     '</div></div>';
     function on(sel, fn){ root.querySelectorAll(sel).forEach(function(b){ b.addEventListener("click", function(){ fn(b); draw(); }); }); }
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
+    on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
     on("[data-spmain]", function(b){ p.mains = selToggle(p.mains, b.getAttribute("data-spmain")); });
     on("[data-spcat]", function(b){ p.cats = selToggle(p.cats, b.getAttribute("data-spcat")); });
     on("[data-splevel]", function(b){ p.level = parseInt(b.getAttribute("data-splevel")); });
@@ -5300,9 +5380,12 @@ function openSurprise(){
     root.querySelector("[data-cancel]").addEventListener("click", function(){ root.innerHTML = ""; });
     root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) root.innerHTML = ""; });
     root.querySelector("[data-spgo]").addEventListener("click", function(){
-      s.surprise = p; save();
+      if(tw){ s.surpriseAnzahl = p.anzahl; var q = JSON.parse(JSON.stringify(p)); delete q.anzahl; s.surprise = q; }
+      else s.surprise = p;
+      save();
       var d = buildSurprise(p);
       if(!d){ showToast(t("spNone")); return; }
+      if(tw){ root.innerHTML = ""; timerWorkoutFuellen(tw, d); return; }
       root.innerHTML = "";
       coverDraft = d;
       go("#cover/surprise");
@@ -5350,7 +5433,7 @@ function announceStep(idx){
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
 var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
 /* Versionsnummer (wie in sw.js) - steht unten in den Einstellungen, damit man sieht, ob die neue Fassung geladen ist */
-var APP_FASSUNG = "2026-09-26-5";
+var APP_FASSUNG = "2026-09-27-1";
 function appUrl(){
   if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
   return location.origin + location.pathname.replace(/index\.html$/, "");
@@ -5402,7 +5485,6 @@ function renderSettings(){
       toggleRow("f-countin",t("countIn"), t("countInDesc"), s.countIn)+
       toggleRow("f-vibration",t("vibration"), t("vibrationDesc"), s.vibration)+
       toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake)+
-      ("mediaSession" in navigator ? toggleRow("f-lockscreen", t("lockScreen"), t("lockScreenDesc"), !!s.lockScreen) : "")+
       toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
     '</div>'+
     '<div class="section-title">'+t("data")+'</div>'+
@@ -5447,7 +5529,6 @@ function renderSettings(){
   bindToggle("f-countin", function(v){ s.countIn=v; save(); });
   bindToggle("f-vibration", function(v){ s.vibration=v; save(); });
   bindToggle("f-keepawake", function(v){ s.keepAwake=v; save(); });
-  if(app.querySelector("#f-lockscreen")) bindToggle("f-lockscreen", function(v){ s.lockScreen=v; save(); });
   bindToggle("f-voice", function(v){ s.voice=v; save(); });
 
   var volEl = app.querySelector("#f-volume");
@@ -5590,18 +5671,18 @@ function audioCtx(){
 /* Musik anderer Apps (Spotify & Co.) soll weiterlaufen: Signaltöne und Ansagen mischen sich dazu.
    iPhone/iPad (Safari 16.4+): Audio-Sitzung "ambient" statt Wiedergabe, die andere Apps anhält.
    Nachteil dort: Bei eingeschaltetem Stumm-Schalter bleiben die Töne stumm.
-   Nur mit „Anzeige auf dem Sperrbildschirm“ läuft eine echte Wiedergabe ("playback") -
-   die hält die App im Hintergrund wach, stoppt aber andere Musik. */
+   (Die frühere „Anzeige auf dem Sperrbildschirm“ spielte dafür eine stumme Endlosschleife ab -
+   die hielt Spotify an und wurde deshalb 2026-09 ganz entfernt.) */
 function tonMischen(mischen){
   try{
     var soll = mischen ? "ambient" : "playback";
     if(navigator.audioSession && navigator.audioSession.type !== soll) navigator.audioSession.type = soll;
   }catch(e){}
 }
-/* Vor JEDEM Ton und jeder Ansage: mischen, außer der Sperrbildschirm-Modus läuft gerade.
+/* Vor JEDEM Ton und jeder Ansage: mischen.
    Wichtig: auch vor der stummen Freischalt-Ansage beim Tipp auf „Los geht's“ - die kam früher
    vor dem Einstellen der Audio-Sitzung und hielt dadurch Spotify an. */
-function tonStandard(){ tonMischen(!(lockOn() && playerState)); }
+function tonStandard(){ tonMischen(true); }
 /* Gemeinsamer Ausgang aller Klänge: trockenes Signal + Raumhall, am Ende ein Begrenzer,
    der nur kurz vor Übersteuern eingreift (normale Lautstärke bleibt unverändert) */
 function soundOut(ctx){
@@ -5977,79 +6058,11 @@ function launchPlayer(w, source){
   if(ctx && ctx.state==="suspended") try{ ctx.resume(); }catch(e){}
   schedCancel();
   rememberLastRun(w, source);
-  lockStart();   // noch im Tipp, sonst darf das Audio nicht starten
   enterStep(0, { manual:true });
   requestWakeLock();
   startBgTicker();
 }
 
-/* ============ Sperrbildschirm / Benachrichtigung (Media Session) ============
-   Android und iOS zeigen Titel und Tasten nur, solange die Seite Medien abspielt.
-   Dafür läuft ein stummer Audio-Loop - er hält die Seite zugleich im Hintergrund wach.
-   Weil das Handy ihn wie normale Wiedergabe behandelt, kann er Musik anderer Apps
-   anhalten - deshalb nur mit Schalter in den Einstellungen (settings.lockScreen). */
-var lockAudio = null;
-function silentWavUrl(){
-  var rate = 8000, n = rate*10, buf = new ArrayBuffer(44+n), v = new DataView(buf);   // 10 s Stille, 8 bit mono
-  function str(o, s){ for(var i=0;i<s.length;i++) v.setUint8(o+i, s.charCodeAt(i)); }
-  str(0, "RIFF"); v.setUint32(4, 36+n, true); str(8, "WAVE"); str(12, "fmt ");
-  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-  v.setUint32(24, rate, true); v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
-  str(36, "data"); v.setUint32(40, n, true);
-  for(var i=0;i<n;i++) v.setUint8(44+i, 128);
-  return URL.createObjectURL(new Blob([buf], { type:"audio/wav" }));
-}
-function lockOn(){ return "mediaSession" in navigator && !!state.db.settings.lockScreen; }
-function lockStart(){
-  if(!lockOn()) return;
-  var ms = navigator.mediaSession;
-  function act(a, fn){ try{ ms.setActionHandler(a, fn); }catch(e){} }
-  function klick(sel){ var el = document.querySelector(sel); if(el) el.click(); }
-  act("play", function(){ if(playerState && playerState.paused) klick("#pl-playpause"); });
-  act("pause", function(){ if(playerState && !playerState.paused) klick("#pl-playpause"); });
-  act("nexttrack", function(){ klick("#playerRoot [data-skip]"); });
-  act("previoustrack", function(){ klick("#playerRoot [data-restart]"); });
-  tonMischen(false);
-  try{
-    if(!lockAudio){ lockAudio = new Audio(silentWavUrl()); lockAudio.loop = true; }
-    if(lockAudio.paused) lockAudio.play().catch(function(){});
-  }catch(e){}
-}
-function lockUpdate(){
-  if(!lockOn() || !playerState) return;
-  var st = playerState.steps[playerState.idx], ms = navigator.mediaSession;
-  var done = st.phase === "done";
-  try{
-    ms.metadata = new MediaMetadata({
-      title: done ? t("doneTitle") : (st.blockName || phaseVars(st.phase).label),
-      artist: done ? "" : phaseVars(st.phase).label + (st.totalReps ? " · "+st.rep+"/"+st.totalReps : ""),
-      album: playerState.workout.name || "BLOC",
-      artwork: [{ src:"icon.png", sizes:"512x512", type:"image/png" }, { src:"icon-180.png", sizes:"180x180", type:"image/png" }]
-    });
-    ms.playbackState = done || playerState.paused ? "paused" : "playing";
-    if(ms.setPositionState){
-      if(done || !st.duration) ms.setPositionState();
-      else {
-        var rem = playerState.paused ? playerState.remainingMs : playerState.endAt - Date.now();
-        ms.setPositionState({ duration:st.duration, playbackRate:1, position:clamp(st.duration - Math.max(0, rem)/1000, 0, st.duration) });
-      }
-    }
-  }catch(e){}
-  if(lockAudio){
-    if(done || playerState.paused) try{ lockAudio.pause(); }catch(e){}
-    // nur starten, wenn er wirklich steht: jedes play() holt sich auf Android erneut die Wiedergabe
-    else if(lockAudio.paused) lockAudio.play().catch(function(){});
-  }
-}
-function lockStop(){
-  if(lockAudio) try{ lockAudio.pause(); }catch(e){}
-  tonMischen(true);
-  if("mediaSession" in navigator) try{
-    navigator.mediaSession.metadata = null;
-    navigator.mediaSession.playbackState = "none";
-    if(navigator.mediaSession.setPositionState) navigator.mediaSession.setPositionState();
-  }catch(e){}
-}
 
 /* Zuletzt gestartet: bestimmt die Reihenfolge der Favoriten auf der Startseite.
    (Die frühere Karte „Nochmal wie letztes Mal“ gibt es auf der neuen Startseite nicht mehr.) */
@@ -6221,11 +6234,9 @@ function enterStep(idx, opt){
     }
     bindPlayPause();
     tickLoop();
-    lockUpdate();
   } else {
     releaseWakeLock();
     stopBgTicker();
-    lockUpdate();
     if(opt.manual) phaseBeep("done");
     logHistory(false);
     announceStep(idx);
@@ -6481,12 +6492,10 @@ function bindPlayPause(){
       requestWakeLock();
       planAudio(true);
       tickLoop();
-      lockUpdate();
     } else {
       playerState.remainingMs = Math.max(0, playerState.endAt - Date.now());
       playerState.paused = true;
       schedCancel();
-      lockUpdate();
       btn.querySelector("span").innerHTML = ICON_PLAY;
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
       odoSettle();
@@ -6514,7 +6523,6 @@ function bindPlayerControls(){
       if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
       planAudio(true);
       tickLoop();
-      lockUpdate();
     }
     if(e.target.closest("[data-vol-toggle]")){
       document.getElementById("pl-vol-pop").classList.toggle("hidden");
@@ -6537,7 +6545,6 @@ function exitPlayer(){
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
   schedCancel();
   stopBgTicker();
-  lockStop();
   if(playerState && playerState.steps[playerState.idx].phase!=="done") logHistory(true);
   if(playerState && playerState.rafId) cancelAnimationFrame(playerState.rafId);
   playerState = null;
