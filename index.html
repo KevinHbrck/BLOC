@@ -1444,7 +1444,7 @@ var EX_ALIAS = {
   "bar-traverse":"monkey-bar-traverse", "slow-mountain-climbers":"mountain-climbers",
   "hip-hinge":"good-mornings", "leg-levers":"leg-raises",
   /* aussortiert (2026-09): die nächstliegende verbliebene Übung übernimmt */
-  "wall-push-ups":"push-ups", "backpack-triceps":"triceps-curls"
+  "wall-push-ups":"push-ups", "backpack-triceps":"triceps-curls", "human-flag":"hanging-l-sit"
 };
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -2133,7 +2133,6 @@ var EXERCISE_ROWS = [
   ["windshield-wipers","Windshield Wipers","Windshield Wipers","calis core",4,20,0,"Beine im Hang von Seite zu Seite","Legs side to side while hanging",20],
   ["muscle-ups","Muscle-Up","Muscle-Up","calis back arms",5,15,0,"Kombination aus Klimmzug und Dip","A pull-up flowing into a dip",30],
   ["monkey-bar-traverse","Monkey Bar Traverse","Monkey Bar Traverse","calis back",4,30,0,"Von Sprosse zu Sprosse hangeln","Swing from rung to rung",30],
-  ["human-flag","Human Flag Progression","Human Flag Progression","calis core",3,10,1,"Seitlich an der senkrechten Stange halten","Hold sideways on a vertical pole",30],
   ["skin-the-cat","Skin The Cat","Skin The Cat","calis back",4,20,0,"Aus dem Hang durch die Schultern rotieren","Rotate through your shoulders from the hang",30],
 
   /* Weitere schwere Übungen */
@@ -2173,7 +2172,11 @@ var LIB_WORKOUT_ROWS = [
   ["calis-pull","Calisthenics Zug","Calisthenics Pull","calis","scapular-pull-ups inverted-rows commando-pull-ups chin-ups pull-ups dead-hang",90],
   ["calis-push","Calisthenics Druck","Calisthenics Push","calis","support-hold parallel-bar-dips archer-push-ups pike-push-ups diamond-push-ups",90],
   ["calis-core","Calisthenics Core","Calisthenics Core","calis","hanging-knee-raise hanging-leg-raise windshield-wipers hanging-l-sit l-sit toes-to-bar",60],
-  ["calis-skills","Calisthenics Skills","Calisthenics Skills","calis","skin-the-cat l-sit monkey-bar-traverse human-flag muscle-ups",120],
+  ["calis-skills","Calisthenics Skills","Calisthenics Skills","calis","skin-the-cat l-sit monkey-bar-traverse hanging-l-sit muscle-ups",120],
+  /* Calisthenics für Einsteiger: Progression statt gleich Klimmzug/Dip, längere Pausen */
+  ["calis-start","Calisthenics Einsteiger","Calisthenics for Beginners","calis","dead-hang scapular-pull-ups inverted-rows support-hold hanging-knee-raise negative-pull-ups",60,"3/20/40"],
+  ["pullup-progress","Klimmzug-Aufbau","Pull-up Progression","calis","dead-hang scapular-pull-ups inverted-rows negative-pull-ups chin-ups",75,"3/20/40"],
+  ["dip-progress","Dip-Aufbau","Dip Progression","calis","support-hold triceps-dips close-grip-push-ups parallel-bar-dips",60,"3/20/40"],
   ["calis-60","Calisthenics 60","Calisthenics 60","calis","scapular-pull-ups pull-ups support-hold parallel-bar-dips inverted-rows chin-ups toes-to-bar hanging-knee-raise negative-pull-ups l-sit windshield-wipers commando-pull-ups hanging-leg-raise dead-hang",100],
   ["full-body-60","Full Body 60","Full Body 60","mix","burpees goblet-squat push-ups kb-swing bent-over-row walking-lunges mountain-climbers romanian-deadlift shoulder-press jump-squats plank russian-twists",85],
   ["bodyweight-60","Bodyweight 60 (ohne Geräte)","Bodyweight 60 (no equipment)","bw","jumping-jacks air-squats push-ups reverse-lunges plank high-knees glute-bridge pike-push-ups side-lunges bicycle-crunches burpees wall-sit superman-hold mountain-climbers",45],
@@ -2191,7 +2194,15 @@ var LIB_WORKOUT_ROWS = [
   /* weitere Programme mit klarem Zweck */
   ["warmup-5","Aufwärmen 5 Min","5-Minute Warm-up","cardio","jumping-jacks air-squats high-knees plank-steps fast-feet",10,"2/25/5"],
   ["tabata-full","Tabata Ganzkörper","Full Body Tabata","cardio","burpees mountain-climbers jump-squats high-knees",60,"8/20/10"],
-  ["beginner-full","Einsteiger Ganzkörper (ohne Geräte)","Beginner Full Body (no equipment)","bw","air-squats push-ups glute-bridge reverse-lunges bird-dog plank",45,"3/30/15"],
+  /* hochintensiv: kurze Pausen, explosive und zusammengesetzte Übungen */
+  ["hiit-legs","Beine explosiv (HIIT)","Explosive Legs (HIIT)","legs","jump-squats skater-jumps tuck-jumps lateral-hops frogs cossack-squats quad-stretch",30,"4/40/20"],
+  ["tabata-legs","Tabata Beine","Legs Tabata","legs","jump-squats skater-jumps lateral-hops tuck-jumps",60,"8/20/10"],
+  ["burpee-challenge","Burpee-Challenge","Burpee Challenge","cardio","burpees plank-burpees burpee-squat-jumps stand-up-jumps burpees",30,"3/40/20"],
+  ["upper-power","Oberkörper Power (ohne Geräte)","Upper Body Power (no equipment)","bw","clap-push-ups archer-push-ups pike-push-ups diamond-push-ups bear-crawl plank-shoulder-taps chest-stretch",40,"4/30/15"],
+  ["core-burner","Core Burner","Core Burner","core","jackknives dragon-flags mountain-climbers hollow-hold side-jackknives bicycle-crunches",20,"4/40/20"],
+  ["kb-hiit","Kettlebell HIIT","Kettlebell HIIT","weight","kb-swing goblet-squat kb-clean front-rack-carry kb-swing weighted-reverse-lunge",30,"4/40/20"],
+  ["db-complex","Kurzhantel-Komplex (schwer)","Heavy Dumbbell Complex","weight","db-thruster renegade-row romanian-deadlift push-press weighted-reverse-lunge",45,"4/45/15"],
+  ["metcon-db","Metcon mit Kurzhantel","Dumbbell Metcon","mix","db-thruster burpees renegade-row jump-squats mountain-climbers push-press",30,"4/40/20"],
   ["glutes-bw","Po-Fokus (ohne Geräte)","Glute Focus (no equipment)","legs","glute-bridge reverse-lunges single-leg-glute-bridge side-lunges squat-hold lateral-lunge-pulses figure-four pigeon-stretch",40],
   ["db-full-30","Kurzhantel Ganzkörper","Dumbbell Full Body","weight","goblet-squat bent-over-row floor-press romanian-deadlift db-thruster renegade-row shoulder-press",60],
   ["core-stable","Rumpfstabilität (rückenschonend)","Core Stability (back-friendly)","core","dead-bug bird-dog plank side-plank glute-bridge hollow-hold childs-pose",30],
@@ -2295,7 +2306,7 @@ var EX_EQUIP = {
   "pull-ups":"bar","negative-pull-ups":"bar","inverted-rows":"bar","scapular-pull-ups":"bar","dead-hang":"bar","toes-to-bar":"bar",
   "chin-ups":"bar","commando-pull-ups":"bar","parallel-bar-dips":"dip","support-hold":"dip",
   "hanging-knee-raise":"bar","hanging-leg-raise":"bar","hanging-l-sit":"bar","l-sit":"dip","windshield-wipers":"bar",
-  "muscle-ups":"bar","monkey-bar-traverse":"bar","human-flag":"bar","skin-the-cat":"bar"
+  "muscle-ups":"bar","monkey-bar-traverse":"bar","skin-the-cat":"bar"
 };
 EXERCISES.forEach(function(ex){ ex.level = EX_LEVEL[ex.id] || 2; ex.equip = (EX_EQUIP[ex.id] || "none").split(" "); });
 
@@ -2317,7 +2328,7 @@ var MAIN_CATS = [
 var EX_MAIN_ROWS = {
   ausdauer:"box-step-ups burpee-squat-jumps burpees fast-feet frogs high-knees jump-squats jumping-jacks lateral-hops mountain-climbers plank-burpees skater-jumps sprint-in-place stand-up-jumps tuck-jumps",
   rumpf:"bicycle-crunches dead-bug dragon-flags hollow-hold leg-raises plank plank-shoulder-taps reverse-crunch russian-twists side-jackknives side-plank sit-ups toe-touches jackknives",
-  stange:"chin-ups commando-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise human-flag inverted-rows l-sit monkey-bar-traverse muscle-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
+  stange:"chin-ups commando-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
   stretch:"hamstring-stretch biceps-stretch chest-stretch spinal-twist figure-four wrist-stretch downward-dog hip-flexor-stretch cat-cow childs-pose neck-stretch quad-stretch butterfly-stretch shoulder-stretch side-bend sphinx-stretch pigeon-stretch triceps-stretch forward-fold calf-stretch worlds-greatest arm-circles"
 };
 var EX_MAIN = {};
@@ -2797,7 +2808,6 @@ var G_PB = gBar(50,40,70)+'<path class="ip" d="M44 50V89M66 50V89"/>';
 var G_SB = gBar(50,44,70)+'<path class="ip" d="M46 50V89"/>';
 var G_KB = gBar(50,30,50)+'<path class="ip" d="M34 50V89"/>';
 var G_PT = gBar(80,40,62)+'<path class="ip" d="M44 80V89M58 80V89"/>';
-var G_POLE = '<path class="ip" d="M20 6V89"/>';
 var G_MONKEY = gBar(6,8,92)+'<path class="ip" d="M20 3v6M40 3v6M60 3v6M80 3v6"/>';
 Object.assign(ILLU_POSES, {
   "chin-ups":           [P_HANG, P_PULL],
@@ -2811,7 +2821,6 @@ Object.assign(ILLU_POSES, {
   "windshield-wipers":  [qWith(P_HANG,{ l:[[38,50,26,40],[40,54,28,44]] }), qWith(P_HANG,{ l:[[62,50,74,40],[60,54,72,44]] })],
   "muscle-ups":         [Q([56,36],[50,44],[50,70],[[50,82,50,88]],[[40,48,46,40]], gBar(40,28,72)), Q(null,[50,18],[50,46],[[50,62,50,76]],[[53,31,54,40]], gBar(40,28,72))],
   "monkey-bar-traverse":[Q([56,24],[50,30],[50,58],[[50,72,48,86]],[[42,18,38,6],[56,18,62,6]], G_MONKEY), Q([62,24],[56,30],[56,58],[[56,72,54,86]],[[62,18,68,6],[48,18,44,6]], G_MONKEY)],
-  "human-flag":         [Q([28,32],[30,40],[54,42],[[62,30,70,40]],[[24,34,20,30],[26,48,20,58]], G_POLE), Q([28,32],[30,40],[58,40],[[74,40,90,40]],[[24,34,20,30],[26,48,20,58]], G_POLE)],
   "skin-the-cat":       [P_HANGS, Q([46,34],[50,24],[58,42],[[64,24,72,12]],[[48,15,46,6]], gBar(6,30,70))],
   "archer-push-ups":    [P_PH, qWith(P_PL,{ a:[[60,71,70,89],[74,82,86,88]] })],
   "pistol-squats":      [qWith(P_ST,{ l:[[50,70,50,89,58,89],[62,62,68,78,74,76]], a:[[63,25,76,25]] }), Q(null,[48,46],[40,72],[[56,66,50,89,58,89],[58,74,76,74,80,70]],[[62,48,76,48]])],
@@ -3205,7 +3214,6 @@ Object.assign(EX_INFO, {
   "windshield-wipers":["Im Hang die gestreckten Beine hoch zur Stange bringen.|Beine kontrolliert zur einen Seite kippen.|Über die Mitte zur anderen Seite führen.","In the hang, bring your straight legs up to the bar.|Tilt your legs to one side with control.|Move through the middle to the other side."],
   "muscle-ups":["Im Hang beginnen, leicht falscher Griff.|Explosiv zur Brust ziehen und die Handgelenke über die Stange bringen.|In den Stütz drücken, kontrolliert zurück.","Start in a hang with a slight false grip.|Pull explosively and bring your wrists over the bar.|Press into the support, return with control."],
   "monkey-bar-traverse":["An der Hangelleiter hängen.|Mit einer Hand zur nächsten Sprosse greifen.|Im Wechsel weiterhangeln.","Hang from the monkey bars.|Reach to the next rung with one hand.|Keep traversing, alternating hands."],
-  "human-flag":["Senkrechte Stange greifen: obere Hand Untergriff, untere Obergriff.|Unten wegdrücken, oben ziehen, Beine anheben (erst angewinkelt).|Seitlich halten, Seite nach jedem Intervall wechseln.","Grip a vertical pole: top hand underhand, bottom hand overhand.|Push with the bottom arm, pull with the top, lift your legs (tucked at first).|Hold sideways, switch sides after each interval."],
   "skin-the-cat":["Im Hang die Knie zur Brust ziehen.|Beine zwischen den Armen durchführen und kontrolliert durch die Schultern drehen.|Nur so weit wie angenehm, dann zurück.","From the hang, pull your knees to your chest.|Pass your legs through your arms and rotate through your shoulders with control.|Only as far as comfortable, then return."],
   "archer-push-ups":["Sehr breiter Liegestütz.|Zu einer Hand absenken, der andere Arm streckt sich seitlich.|Hochdrücken, Seite nach jedem Intervall wechseln.","Very wide push-up position.|Lower towards one hand while the other arm straightens.|Press up, switch sides after each interval."],
   "pistol-squats":["Auf einem Bein stehen, das andere Bein nach vorn gestreckt.|Langsam tief auf dem Standbein absenken, Arme nach vorn.|Hochdrücken, Seite nach jedem Intervall wechseln.","Stand on one leg, the other leg straight in front.|Lower slowly and deep on the standing leg, arms forward.|Push up, switch sides after each interval."],
@@ -3252,7 +3260,6 @@ Object.assign(EX_POSTURE, {
   "windshield-wipers":["Schultern aktiv, Oberkörper ruhig.|Bewegung aus der Körpermitte.","Die Beine von Seite zu Seite schleudern.","Active shoulders, steady upper body.|Move from your core.","Flinging your legs side to side."],
   "muscle-ups":["Stange nah am Körper halten.|Erst sichere Klimmzüge und Dips beherrschen.","Mit einem Arm zuerst hochkommen.","Keep the bar close to your body.|Master solid pull-ups and dips first.","Getting one arm over first."],
   "monkey-bar-traverse":["Schultern aktiv, Rumpf fest.|Ruhig und kontrolliert greifen.","Unkontrolliert schwingen.","Active shoulders, core braced.|Reach calmly and with control.","Swinging uncontrolled."],
-  "human-flag":["Unterer Arm gestreckt und gesperrt.|Seitlicher Rumpf fest angespannt.","Ohne sichere Grundkraft ganz gestreckt versuchen.","Bottom arm straight and locked.|Side core tightly braced.","Trying the full flag without solid base strength."],
   "skin-the-cat":["Langsam, ohne Schwung.|Schultern aktiv halten.","In die Endposition fallen lassen.","Slowly, no momentum.|Keep your shoulders active.","Dropping into the end position."],
   "archer-push-ups":["Körper eine Linie.|Ellbogen des Arbeitsarms nah am Körper.","Die Hüfte verdrehen.","Body in one line.|Working elbow close to your body.","Twisting your hips."],
   "pistol-squats":["Standknie in Fußrichtung, Ferse unten.|Rücken lang.","Das Knie nach innen fallen lassen.","Standing knee over your toes, heel down.|Long back.","Letting the knee cave in."],
@@ -3303,7 +3310,6 @@ var EX_MUSCLES = {
   "windshield-wipers":["Schräge Bauchmuskeln, Rumpf","Hüftbeuger, Unterarme (Griff)","Obliques, core","Hip flexors, forearms (grip)"],
   "muscle-ups":["Breiter Rückenmuskel, Brust, Trizeps","Schultern, Bizeps, Rumpf","Lats, chest, triceps","Shoulders, biceps, core"],
   "monkey-bar-traverse":["Unterarme (Griff), breiter Rückenmuskel","Schultern, Rumpf","Forearms (grip), lats","Shoulders, core"],
-  "human-flag":["Schultern, seitlicher Rumpf","Unterarme (Griff), breiter Rückenmuskel","Shoulders, lateral core","Forearms (grip), lats"],
   "skin-the-cat":["Schultern, Rücken, Rumpf","Schulterbeweglichkeit, Unterarme","Shoulders, back, core","Shoulder mobility, forearms"],
   "archer-push-ups":["Brust, Trizeps (Arbeitsarm)","Schultern, Rumpf","Chest, triceps (working arm)","Shoulders, core"],
   "pistol-squats":["Oberschenkel vorn, Gesäß","Seitliches Gesäß, Rumpf, Gleichgewicht","Quads, glutes","Side glutes, core, balance"],
@@ -5433,7 +5439,7 @@ function announceStep(idx){
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
 var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
 /* Versionsnummer (wie in sw.js) - steht unten in den Einstellungen, damit man sieht, ob die neue Fassung geladen ist */
-var APP_FASSUNG = "2026-09-27-1";
+var APP_FASSUNG = "2026-09-27-3";
 function appUrl(){
   if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
   return location.origin + location.pathname.replace(/index\.html$/, "");
