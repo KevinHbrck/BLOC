@@ -305,6 +305,10 @@ h1,h2,h3{ margin:0 0 4px; }
 .info-live{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; padding:8px 8px 8px 12px; border-radius:12px; background:var(--surface-2); font-size:14px; }
 .info-live .tpl-adopt{ margin:0; }
 .info-illu{ display:block; width:150px; height:150px; margin:10px auto 4px; color:var(--tp-color); }
+.info-views{ display:flex; justify-content:center; gap:10px; margin:10px 0 4px; }
+.info-views figure{ margin:0; flex:1; max-width:170px; text-align:center; }
+.info-views .info-illu{ width:100%; height:auto; aspect-ratio:1; margin:0 auto 2px; background:var(--surface-2); border-radius:14px; }
+.info-views figcaption{ font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-dim); }
 .info-title{ font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); margin:8px 0 6px; }
 .info-steps{ margin:0 0 12px; padding-left:22px; font-size:15px; line-height:1.45; }
 .info-steps li{ margin-bottom:6px; }
@@ -587,6 +591,9 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .illu .illu-floor{ stroke-width:2; opacity:.35; }
 .illu .pose-b{ opacity:0; }
 .illu .lb{ opacity:.45; }
+.illu .tr{ stroke-width:9.5; }
+.illu .illu-matte{ fill:currentColor; stroke:none; opacity:.1; }
+.illu .nk{ stroke-width:5; }
 .illu .ip{ stroke-width:4; }
 .illu .ipf{ fill:currentColor; stroke:none; }
 .illu.still .pose-a, .illu.illu-anim .pose-a{ animation:none; opacity:1; }
@@ -1704,7 +1711,7 @@ var I18N = {
     voice:"Sprachansagen (Englisch)", voiceDesc:"Kündigt in den Pausen die nächste Übung an – bei fertigen und eigenen Workouts",
     surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
     spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
-    info:"Info", howTo:"So geht's", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
+    info:"Info", howTo:"So geht's", viewSide:"Seitlich", viewFront:"Von vorn", viewTop:"Von oben", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
     infoPause:"Pause", infoResume:"Weiter",
     noBlocksHome:"Noch kein Block angelegt.<br>Tippe unten rechts auf + und wähle <b>Neuer Block</b>.",
     startBlock:"Block einzeln starten", newWorkout:"Neues Workout", newBlock:"Neuer Block", create:"Neu anlegen",
@@ -1846,7 +1853,7 @@ var I18N = {
     voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests – for ready-made and own workouts",
     surprise:"Surprise me", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
     spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
-    info:"Info", howTo:"How to", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
+    info:"Info", howTo:"How to", viewSide:"Side", viewFront:"Front", viewTop:"From above", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
     infoPause:"Pause", infoResume:"Resume",
     noBlocksHome:"No blocks yet.<br>Tap + at the bottom right and choose <b>New block</b>.",
     startBlock:"Start this block", newWorkout:"New workout", newBlock:"New block", create:"Create",
@@ -2552,9 +2559,11 @@ function exFavBtn(id){
   return '<button type="button" class="fav-btn ex-fav'+(on?' on':'')+'" data-exfav="'+id+'" aria-pressed="'+on+'" title="'+t("favorite")+'" aria-label="'+t("favorite")+'">'+(on?'\u2605':'\u2606')+'</button>';
 }
 /* Suche: Name (de/en), Muskeln, Hinweis - gefiltert wird im DOM, damit die Tastatur offen bleibt */
+/* weitere Suchbegriffe, z. B. der frühere Name */
+var EX_SUCH_ALIAS = { "russian-twists":"russian twist twists russische drehung russischer" };
 function exSearchText(ex){
   var m = EX_MUSCLES[ex.id] || [];
-  return [ex.name.de, ex.name.en, m[0], m[1], m[2], m[3], ex.hint.de, ex.hint.en, ex.id==="russian-twists" ? "russian twists" : ""].join(" ").toLowerCase();
+  return [ex.name.de, ex.name.en, m[0], m[1], m[2], m[3], ex.hint.de, ex.hint.en, EX_SUCH_ALIAS[ex.id] || ""].join(" ").toLowerCase();
 }
 function searchHTML(q, pre, ph){
   ph = ph || t("searchPh");
@@ -2617,6 +2626,10 @@ function gWall(x){ return '<path class="ip" d="M'+x+' 6V89"/>'; }
 function gPole(x){ return '<path class="ip" d="M'+x+' 24V89"/>'; }
 function gBench(x1, x2, y){ return '<path class="ip" d="M'+x1+' '+y+'H'+x2+'M'+(x1+3)+' '+y+'V89M'+(x2-3)+' '+y+'V89"/>'; }
 
+/* Figur zeichnen: Rumpf kräftiger als die Glieder, schmaler Hals, Hände als Punkte.
+   Der vordere Arm bekommt eine Maske (schmale Lücke im Körper dahinter) - so bleibt er
+   auch vor dem Rumpf erkennbar, egal auf welchem Hintergrund. "@M@" wird pro Bild durch eine eindeutige Id ersetzt. */
+function haloStart(s, e){ return [ +(s[0] + (e[0]-s[0])*.45).toFixed(1), +(s[1] + (e[1]-s[1])*.45).toFixed(1) ]; }
 function qSVG(q){
   var n = q.n, p = q.p;
   var dx = n[0]-p[0], dy = n[1]-p[1], len = Math.sqrt(dx*dx+dy*dy) || 1;
@@ -2627,15 +2640,22 @@ function qSVG(q){
     for(var i=0;i<pts.length;i+=2) d += "L"+pts[i]+" "+pts[i+1];
     return '<path'+(hinten ? ' class="lb"' : '')+' d="'+d+'"/>';
   }
-  var out = q.x;
-  q.l.forEach(function(l, i){ if(i>0) out += limb(p, l, !q.f); });
-  q.a.forEach(function(a, i){ if(i>0) out += limb(s, a, !q.f); });
-  out += '<path d="M'+n[0]+' '+n[1]+'L'+p[0]+' '+p[1]+'"/>';
-  if(q.l[0]) out += limb(p, q.l[0], false);
-  if(q.a[0]) out += limb(s, q.a[0], false);
-  out += '<circle cx="'+h[0]+'" cy="'+h[1]+'" r="7"/>';
-  return out;
+  function hand(a, hinten){ return '<circle class="hd'+(hinten ? ' lb' : '')+'" cx="'+a[a.length-2]+'" cy="'+a[a.length-1]+'" r="3.3"/>'; }
+  var koerper = "";
+  q.l.forEach(function(l, i){ if(i>0) koerper += limb(p, l, !q.f); });
+  q.a.forEach(function(a, i){ if(i>0) koerper += limb(s, a, !q.f) + hand(a, !q.f); });
+  koerper += '<path class="tr" d="M'+p[0]+' '+p[1]+'L'+s[0]+' '+s[1]+'"/><path class="nk" d="M'+s[0]+' '+s[1]+'L'+n[0]+' '+n[1]+'"/>';
+  if(q.l[0]) koerper += limb(p, q.l[0], false);
+  koerper += '<circle cx="'+h[0]+'" cy="'+h[1]+'" r="7"/>';
+  var a0 = q.a[0];
+  if(!a0) return q.x + koerper;
+  var hs = haloStart(s, a0), halo = "M"+hs[0]+" "+hs[1];
+  for(var i=0;i<a0.length;i+=2) halo += "L"+a0[i]+" "+a0[i+1];
+  return q.x + '<mask id="@M@" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
+    '<path d="'+halo+'" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#@M@)">'+koerper+'</g>'+limb(s, a0, false)+hand(a0, false);
 }
+var illuMaskSeq = 0;
+function illuIds(svg){ var id = "im"+(illuMaskSeq++); return svg.replace(/@M@/g, id); }
 
 /* Grundposen */
 var P_ST    = Q(null,[50,20],[50,50],[[50,70,50,89,58,89]],[[52,34,53,47]]);
@@ -2831,26 +2851,49 @@ Object.assign(ILLU_POSES, {
 Object.assign(ILLU_POSES, {
   "reverse-crunch": [qWith(P_LB,{ l:[[52,66,68,66]] }), Q(null,[22,84],[44,80],[[42,62,56,56]],[[32,87,44,87]])]
 });
-var ILLU = {};
+/* Zweite Ansicht fürs Info-Fenster - dort, wo die Seitenansicht die Bewegung nicht zeigt.
+   typ "front" = von vorn, "top" = von oben (ohne Bodenlinie, Kopf oben). Pose B ist meist das Spiegelbild. */
+function qSide(q){ return qSwap(qMirror(q)); }   // gespiegelt, linke/rechte Glieder behalten ihre Seite
+/* Drehbewegung: Beine wie qSide (jedes Bein bleibt auf seiner Seite), Arme nur gespiegelt -
+   so bleibt der vordere Arm vorn und schwingt über den Körper zur anderen Seite */
+function qTwist(q){ return qWith(qMirror(q), { l:qSide(q).l }); }
+function gBall(x, y){ return gHand(x, y, '<circle class="ipf" cx="'+x+'" cy="'+y+'" r="5.5"/>'); }   // kleiner Ball zwischen den Händen
+var V_RT = Q(null,[46,50],[50,80],[[38,66,35,84],[62,66,65,84]],[[38,62,28,70],[36,58,27,67]], gBall(25,69), true);
+var V_ARCH = Q(null,[50,32],[50,64],[[48,79,47,94],[52,79,53,94]],[[64,36,78,38],[36,36,22,38]],"",true);
+var V_SNOW = Q([50,11],[50,21],[50,56],[[47,72,47,90],[53,72,53,90]],[[38,40,40,54],[62,40,60,54]],"",true);
+var ILLU_VIEW2 = {
+  "russian-twists":   { typ:"front", p:[V_RT, qWith(qTwist(V_RT), { x:gBall(75,69) })] },
+  "archer-push-ups":  { typ:"top",   p:[V_ARCH, Q(null,[60,33],[55,64],[[52,79,50,94],[57,79,56,94]],[[70,46,78,38],[41,37,22,38]],"",true)] },
+  "shoulder-press":   { typ:"front", p:[Q(null,[50,28],[50,58],[[46,74,45,89,39,89],[54,74,55,89,61,89]],[[37,36,37,24],[63,36,63,24]], gDB(37,23)+gDB(63,23), true),
+                                        Q(null,[50,28],[50,58],[[46,74,45,89,39,89],[54,74,55,89,61,89]],[[40,17,42,5],[60,17,58,5]], gDB(42,5)+gDB(58,5), true)] },
+  "reverse-snow-angels": { typ:"top", p:[V_SNOW, qWith(V_SNOW,{ a:[[38,14,44,4],[62,14,56,4]] })] },
+  "spinal-twist":     { typ:"top",   p:[Q([44,15],[50,24],[50,56],[[66,58,62,74],[68,66,64,82]],[[36,27,20,27],[64,27,80,27]],"",true), null] }
+};
+var ILLU_MATTE = '<rect class="illu-matte" x="14" y="3" width="72" height="94" rx="8"/>';
+var ILLU = {}, ILLU2 = {};
 Object.keys(ILLU_POSES).forEach(function(id){
   var pp = ILLU_POSES[id];
   ILLU[id] = [ qSVG(pp[0]), pp[1] ? qSVG(pp[1]) : null ];
+});
+Object.keys(ILLU_VIEW2).forEach(function(id){
+  var v = ILLU_VIEW2[id];
+  ILLU2[id] = [ qSVG(v.p[0]), v.p[1] ? qSVG(v.p[1]) : null ];
 });
 function illuStillHTML(exId, cls){
   var p = ILLU[exId];
   if(!p) return "";
   return '<svg class="illu still '+(cls||"")+'" viewBox="0 0 100 100" aria-hidden="true">'+
-    '<path class="illu-floor" d="M6 91h88"/><g class="pose-a">'+p[0]+'</g></svg>';
+    '<path class="illu-floor" d="M6 91h88"/><g class="pose-a">'+illuIds(p[0])+'</g></svg>';
 }
 /* Bewegte Figur: zunächst Pose A als Standbild; sobald das SVG im Dokument hängt, baut
    illuSetup() daraus ein Skelett, das zwischen den Posen nur die Gelenkwinkel dreht. */
 var illuReduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-function illuHTML(exId, cls){
-  var p = ILLU[exId];
+function illuHTML(exId, cls, view2){
+  var p = view2 ? ILLU2[exId] : ILLU[exId];
   if(!p) return "";
-  var anim = p[1] && !illuReduced;
-  return '<svg class="illu '+(cls||"")+(anim ? " illu-anim" : " still")+'"'+(anim ? ' data-ex="'+exId+'"' : '')+' viewBox="0 0 100 100" aria-hidden="true">'+
-    '<path class="illu-floor" d="M6 91h88"/><g class="pose-a">'+p[0]+'</g></svg>';
+  var anim = p[1] && !illuReduced, oben = view2 && ILLU_VIEW2[exId].typ === "top";
+  return '<svg class="illu '+(cls||"")+(anim ? " illu-anim" : " still")+'"'+(anim ? ' data-ex="'+exId+'"'+(view2 ? ' data-view="2"' : '') : '')+' viewBox="0 0 100 100" aria-hidden="true">'+
+    (oben ? ILLU_MATTE : '<path class="illu-floor" d="M6 91h88"/>')+'<g class="pose-a">'+illuIds(p[0])+'</g></svg>';
 }
 
 /* ---------- Skelett-Animation ----------
@@ -2933,7 +2976,8 @@ function ptsD(start, pts){
 var illuFigs = [], illuRaf = 0, illuIO = null, illuSeq = 0;
 function illuSetup(svg){
   svg.setAttribute("data-rig", "1");
-  var id = svg.getAttribute("data-ex"), pp = ILLU_POSES[id];
+  var id = svg.getAttribute("data-ex"), view2 = svg.getAttribute("data-view") === "2";
+  var pp = view2 ? (ILLU_VIEW2[id] || {}).p : ILLU_POSES[id];
   if(!pp || !pp[1]) return;
   var qa = pp[0], qb = pp[1];
   var A = rigFromPose(qa), B = rigFromPose(qb);
@@ -2955,25 +2999,31 @@ function illuSetup(svg){
     return { arm:arm, at:g.at, oa:oa, ob:ob, svg:g.svg };
   });
   var frontal = !!qa.f;
-  var html = '<path class="illu-floor" d="M6 91h88"/>';
+  var html = view2 && ILLU_VIEW2[id].typ === "top" ? ILLU_MATTE : '<path class="illu-floor" d="M6 91h88"/>';
   if(ga.fest === gb.fest) html += ga.fest;
   else html += '<g class="gx-a">'+ga.fest+'</g><g class="gx-b" style="opacity:0">'+gb.fest+'</g>';
   gears.forEach(function(g, i){ html += '<g class="gear" data-g="'+i+'">'+g.svg+'</g>'; });
-  var hinten = frontal ? '' : ' class="lb"';
-  A.legs.forEach(function(k, i){ if(i>0) html += '<path'+hinten+' data-leg="'+i+'"/>'; });
-  A.arms.forEach(function(k, i){ if(i>0) html += '<path'+hinten+' data-arm="'+i+'"/>'; });
-  html += '<path data-spine="1"/>';
-  if(A.legs.length) html += '<path data-leg="0"/>';
-  if(A.arms.length) html += '<path data-arm="0"/>';
-  html += '<circle data-head="1" r="7"/>';
+  var hinten = frontal ? '' : ' class="lb"', hintenHand = frontal ? ' class="hd"' : ' class="hd lb"';
+  var mid = "im"+(illuMaskSeq++), koerper = "";
+  A.legs.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-leg="'+i+'"/>'; });
+  A.arms.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-arm="'+i+'"/><circle'+hintenHand+' r="3.3" data-hand="'+i+'"/>'; });
+  koerper += '<path class="tr" data-spine="1"/><path class="nk" data-neck="1"/>';
+  if(A.legs.length) koerper += '<path data-leg="0"/>';
+  koerper += '<circle data-head="1" r="7"/>';
+  if(A.arms.length){
+    html += '<mask id="'+mid+'" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
+      '<path data-halo="1" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#'+mid+')">'+koerper+'</g>'+
+      '<path data-arm="0"/><circle class="hd" r="3.3" data-hand="0"/>';
+  } else html += koerper;
   svg.innerHTML = html;
   var fig = { svg:svg, A:A, B:B, gears:gears, vis:true, seq:illuSeq++,
               speed: (findExercise(id) || {}).main === "ausdauer" ? .7 : 1,
               legs:[], arms:[], gearEls:[],
               spine:svg.querySelector("[data-spine]"), head:svg.querySelector("[data-head]"),
+              neck:svg.querySelector("[data-neck]"), halo:svg.querySelector("[data-halo]"), hands:[],
               gxa:svg.querySelector(".gx-a"), gxb:svg.querySelector(".gx-b") };
   A.legs.forEach(function(k, i){ fig.legs[i] = svg.querySelector('[data-leg="'+i+'"]'); });
-  A.arms.forEach(function(k, i){ fig.arms[i] = svg.querySelector('[data-arm="'+i+'"]'); });
+  A.arms.forEach(function(k, i){ fig.arms[i] = svg.querySelector('[data-arm="'+i+'"]'); fig.hands[i] = svg.querySelector('[data-hand="'+i+'"]'); });
   gears.forEach(function(g, i){ fig.gearEls[i] = svg.querySelector('[data-g="'+i+'"]'); });
   illuDraw(fig, 0);
   illuFigs.push(fig);
@@ -2982,10 +3032,16 @@ function illuSetup(svg){
 }
 function illuDraw(f, t){
   var P = rigPoints(f.A, f.B, t);
-  f.spine.setAttribute("d", ptsD(P.n, [P.p]));
+  f.spine.setAttribute("d", ptsD(P.p, [P.s]));
+  f.neck.setAttribute("d", ptsD(P.s, [P.n]));
   f.head.setAttribute("cx", P.h[0].toFixed(1)); f.head.setAttribute("cy", P.h[1].toFixed(1));
   P.legs.forEach(function(k, i){ f.legs[i].setAttribute("d", ptsD(P.p, k)); });
-  P.arms.forEach(function(k, i){ f.arms[i].setAttribute("d", ptsD(P.s, k)); });
+  P.arms.forEach(function(k, i){
+    f.arms[i].setAttribute("d", ptsD(P.s, k));
+    var e = k[k.length-1];
+    if(f.hands[i]){ f.hands[i].setAttribute("cx", e[0].toFixed(1)); f.hands[i].setAttribute("cy", e[1].toFixed(1)); }
+  });
+  if(f.halo && P.arms[0]) f.halo.setAttribute("d", ptsD(haloStart(P.s, P.arms[0][0]), P.arms[0]));
   f.gears.forEach(function(g, i){
     var hand = P.arms[g.arm][P.arms[g.arm].length-1];
     var ox = g.oa[0] + (g.ob[0]-g.oa[0])*t, oy = g.oa[1] + (g.ob[1]-g.oa[1])*t;
@@ -3444,7 +3500,10 @@ function openExInfo(exId, live, lib){
       '<div class="info-sub">'+blockSpec(exBlock(ex))+SEP+esc(ex.cats.map(catName).join(" · "))+'</div></div>'+
       '<button type="button" class="info-x" data-close aria-label="'+t("close")+'">&times;</button></div>'+
     (live ? '<div class="info-live"><span id="info-live-text"></span><button type="button" class="tpl-adopt" data-infopause></button></div>' : '')+
-    illuHTML(exId, "info-illu")+
+    (ILLU2[exId]
+      ? '<div class="info-views"><figure>'+illuHTML(exId, "info-illu")+'<figcaption>'+t("viewSide")+'</figcaption></figure>'+
+        '<figure>'+illuHTML(exId, "info-illu", true)+'<figcaption>'+t(ILLU_VIEW2[exId].typ === "top" ? "viewTop" : "viewFront")+'</figcaption></figure></div>'
+      : illuHTML(exId, "info-illu"))+
     (EX_MUSCLES[exId] ? '<div class="info-mus"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
       (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>' : '')+
     '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+steps+'</ol>'+
@@ -4395,7 +4454,7 @@ function woGearOk(exs, cat, equip, mains){ return exs.every(function(ex){ return
 /* Schlanke Karten: links Start, in der Mitte Name + eine Infozeile (+ Muskeln klein),
    rechts Bild, ☆ und ⋯ (alle Nebenaktionen). Ausgeblendete: nur „Einblenden“. */
 function woSearchText(name, exs){
-  return [name].concat(exs.map(function(ex){ return ex.name.de+" "+ex.name.en; })).join(" ").toLowerCase();
+  return [name].concat(exs.map(function(ex){ return ex.name.de+" "+ex.name.en+" "+(EX_SUCH_ALIAS[ex.id] || ""); })).join(" ").toLowerCase();
 }
 function mainTagsHTML(mains){
   return mains.map(function(m){ var c = mainCat(m); return '<span class="main-dot" style="--mc:'+c.color+'" title="'+esc(tplText(c))+'"></span>'; }).join("");
@@ -5439,7 +5498,7 @@ function announceStep(idx){
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
 var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
 /* Versionsnummer (wie in sw.js) - steht unten in den Einstellungen, damit man sieht, ob die neue Fassung geladen ist */
-var APP_FASSUNG = "2026-09-27-3";
+var APP_FASSUNG = "2026-09-27-4";
 function appUrl(){
   if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
   return location.origin + location.pathname.replace(/index\.html$/, "");
