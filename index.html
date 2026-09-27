@@ -2644,10 +2644,11 @@ function qSVG(q){
     return '<path'+(hinten ? ' class="lb"' : '')+' d="'+d+'"/>';
   }
   function hand(a, hinten){ return '<circle class="hd'+(hinten ? ' lb' : '')+'" cx="'+a[a.length-2]+'" cy="'+a[a.length-1]+'" r="3.3"/>'; }
-  var koerper = "";
+  var rumpf = '<path class="tr" d="M'+p[0]+' '+p[1]+'L'+s[0]+' '+s[1]+'"/><path class="nk" d="M'+s[0]+' '+s[1]+'L'+n[0]+' '+n[1]+'"/>';
+  var koerper = q.f ? rumpf : "";
   q.l.forEach(function(l, i){ if(i>0) koerper += limb(p, l, !q.f); });
   q.a.forEach(function(a, i){ if(i>0) koerper += limb(s, a, !q.f) + hand(a, !q.f); });
-  koerper += '<path class="tr" d="M'+p[0]+' '+p[1]+'L'+s[0]+' '+s[1]+'"/><path class="nk" d="M'+s[0]+' '+s[1]+'L'+n[0]+' '+n[1]+'"/>';
+  if(!q.f) koerper += rumpf;
   if(q.l[0]) koerper += limb(p, q.l[0], false);
   var kopf = '<circle cx="'+h[0]+'" cy="'+h[1]+'" r="7"/>';
   var a0 = q.a[0];
@@ -2904,11 +2905,23 @@ function qSide(q){ return qSwap(qMirror(q)); }   // gespiegelt, linke/rechte Gli
    so bleibt der vordere Arm vorn und schwingt über den Körper zur anderen Seite */
 function qTwist(q){ return qWith(qMirror(q), { l:qSide(q).l }); }
 function gBall(x, y){ return gHand(x, y, '<circle class="ipf" cx="'+x+'" cy="'+y+'" r="5.5"/>'); }   // kleiner Ball zwischen den Händen
-var V_RT = Q(null,[46,50],[50,80],[[38,66,35,84],[62,66,65,84]],[[38,62,28,70],[36,58,27,67]], gBall(25,69), true);
+/* Ukraine Twist. Seitlich (Hauptbild): zurückgelehnt, Füße in der Luft, Ball vor der Brust ↔ neben der Hüfte am Boden.
+   Von vorn (zweite Ansicht): die Drehung als Bogen - Ball links neben der Hüfte → vor der Brust über den Knien → rechts. */
+var RT_SC = Q(null,[26,62],[44,84],[[60,70,76,76,82,74]],[[38,70,47,68]], gBall(51,68));
+var RT_ST = Q(null,[27,62],[44,84],[[60,70,76,76,82,74]],[[34,75,39,85]], gBall(41,86));
+var RT_BEINE = [[34,63,40,79],[66,63,60,79]];
+var RT_FL = Q(null,[46,50],[50,84],RT_BEINE,[[36,66,27,78],[38,61,25,74]], gBall(26,80), true);
+var RT_FC = Q(null,[50,49],[50,84],RT_BEINE,[[39,64,46,62],[61,64,54,62]], gBall(50,62), true);
+var RT_FR = qWith(qMirror(RT_FL), { l:RT_BEINE, x:gBall(74,80) });
+var RT_FLC = Q(null,[48,49.5],[50,84],RT_BEINE,[[40,63,33,64],[41,58,31,62]], gBall(34,66), true);   // Zwischenpunkte auf dem Bogen
+var RT_FRC = qWith(qMirror(RT_FLC), { l:RT_BEINE, x:gBall(66,66) });
+ILLU_SEQ["russian-twists"] = { k:[RT_SC, RT_ST], t:[[.12,.45],[.12,.45]] };
+ILLU_POSES["russian-twists"] = [RT_SC, RT_ST];
 var V_ARCH = Q(null,[50,32],[50,64],[[48,79,47,94],[52,79,53,94]],[[64,36,78,38],[36,36,22,38]],"",true);
 var V_SNOW = Q([50,11],[50,21],[50,56],[[47,72,47,90],[53,72,53,90]],[[38,40,40,54],[62,40,60,54]],"",true);
 var ILLU_VIEW2 = {
-  "russian-twists":   { typ:"front", p:[V_RT, qWith(qTwist(V_RT), { x:gBall(75,69) })] },
+  "russian-twists":   { typ:"front", p:[RT_FL, RT_FR], seq:{ k:[RT_FL, RT_FLC, RT_FC, RT_FRC, RT_FR, RT_FRC, RT_FC, RT_FLC],
+                         t:[[.14,.2,"i"],[0,.18,"l"],[0,.18,"l"],[0,.2,"o"],[.14,.2,"i"],[0,.18,"l"],[0,.18,"l"],[0,.2,"o"]] } },
   "archer-push-ups":  { typ:"top",   p:[V_ARCH, Q(null,[60,33],[55,64],[[52,79,50,94],[57,79,56,94]],[[70,46,78,38],[41,37,22,38]],"",true)] },
   "shoulder-press":   { typ:"front", p:[Q(null,[50,28],[50,58],[[46,74,45,89,39,89],[54,74,55,89,61,89]],[[37,36,37,24],[63,36,63,24]], gDB(37,23)+gDB(63,23), true),
                                         Q(null,[50,28],[50,58],[[46,74,45,89,39,89],[54,74,55,89,61,89]],[[40,17,42,5],[60,17,58,5]], gDB(42,5)+gDB(58,5), true)] },
@@ -3023,7 +3036,7 @@ var illuFigs = [], illuRaf = 0, illuIO = null, illuSeq = 0;
 function illuSetup(svg){
   svg.setAttribute("data-rig", "1");
   var id = svg.getAttribute("data-ex"), view2 = svg.getAttribute("data-view") === "2";
-  var seq = !view2 && ILLU_SEQ[id];
+  var seq = view2 ? (ILLU_VIEW2[id] || {}).seq : ILLU_SEQ[id];
   var pp = view2 ? (ILLU_VIEW2[id] || {}).p : ILLU_POSES[id];
   if(!seq && (!pp || !pp[1])) return;
   /* Phasen: zwei Posen pendeln hin und her; Abläufe (ILLU_SEQ) laufen reihum durch */
@@ -3055,20 +3068,25 @@ function illuSetup(svg){
   var gleich = gs.every(function(g){ return g.fest === gs[0].fest; });
   if(gleich || gs.length > 2) html += gs[0].fest;
   else html += '<g class="gx-a">'+gs[0].fest+'</g><g class="gx-b" style="opacity:0">'+gs[1].fest+'</g>';
-  gears.forEach(function(g, i){ html += '<g class="gear" data-g="'+i+'">'+g.svg+'</g>'; });
+  var vorn = "";
+  gears.forEach(function(g, i){
+    var el = '<g class="gear" data-g="'+i+'">'+g.svg+'</g>';
+    if(g.arm === 0) vorn += el; else html += el;
+  });
   var A = R[0];
   var hinten = frontal ? '' : ' class="lb"', hintenHand = frontal ? ' class="hd"' : ' class="hd lb"';
-  var mid = "im"+(illuMaskSeq++), koerper = "";
+  var mid = "im"+(illuMaskSeq++), rumpf = '<path class="tr" data-spine="1"/><path class="nk" data-neck="1"/>';
+  var koerper = frontal ? rumpf : "";
   A.legs.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-leg="'+i+'"/>'; });
   A.arms.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-arm="'+i+'"/><circle'+hintenHand+' r="3.3" data-hand="'+i+'"/>'; });
-  koerper += '<path class="tr" data-spine="1"/><path class="nk" data-neck="1"/>';
+  if(!frontal) koerper += rumpf;
   if(A.legs.length) koerper += '<path data-leg="0"/>';
   var kopf = '<circle data-head="1" r="7"/>';
   if(A.arms.length){
     html += '<mask id="'+mid+'" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
       '<path data-halo="1" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#'+mid+')">'+koerper+'</g>'+kopf+
-      '<path data-arm="0"/><circle class="hd" r="3.3" data-hand="0"/>';
-  } else html += koerper + kopf;
+      '<path data-arm="0"/><circle class="hd" r="3.3" data-hand="0"/>' + vorn;
+  } else html += koerper + kopf + vorn;
   svg.innerHTML = html;
   var fig = { svg:svg, R:R, times:times, gears:gears, vis:true, seq:illuSeq++,
               speed: seq ? 1 : (findExercise(id) || {}).main === "ausdauer" ? .7 : 1,
@@ -3106,7 +3124,7 @@ function illuDraw(f, b){
 }
 /* Ablauf: jede Phase kurz halten, dann weiter zur nächsten. Zwei Posen: A halten, nach B, B halten, zurück.
    Ausdauerübungen etwas flotter. Easing je Übergang: "o" = abbremsen (Absprung nach oben),
-   "i" = beschleunigen (Fallen/Landen), sonst weich an beiden Enden. */
+   "i" = beschleunigen (Fallen/Landen), "l" = gleichmäßig (Zwischenpunkte), sonst weich an beiden Enden. */
 var ILLU_HOLD_A = .38, ILLU_MOVE = .78, ILLU_HOLD_B = .26;
 function illuBlend(now, f){
   var total = 0, K = f.times.length;
@@ -3116,7 +3134,7 @@ function illuBlend(now, f){
     var h = f.times[k][0], m = f.times[k][1], e = f.times[k][2], j = (k+1) % K;
     if(x < h) return { i:k, j:j, t:0 };
     x -= h;
-    if(x < m){ var u = x/m; return { i:k, j:j, t: e === "o" ? 1-(1-u)*(1-u) : e === "i" ? u*u : easeInOutCubic(u) }; }
+    if(x < m){ var u = x/m; return { i:k, j:j, t: e === "o" ? 1-(1-u)*(1-u) : e === "i" ? u*u : e === "l" ? u : easeInOutCubic(u) }; }
     x -= m;
   }
   return { i:0, j:1 % K, t:0 };
@@ -3566,8 +3584,8 @@ function openExInfo(exId, live, lib){
       '<button type="button" class="info-x" data-close aria-label="'+t("close")+'">&times;</button></div>'+
     (live ? '<div class="info-live"><span id="info-live-text"></span><button type="button" class="tpl-adopt" data-infopause></button></div>' : '')+
     (ILLU2[exId]
-      ? '<div class="info-views"><figure>'+illuHTML(exId, "info-illu")+'<figcaption>'+t("viewSide")+'</figcaption></figure>'+
-        '<figure>'+illuHTML(exId, "info-illu", true)+'<figcaption>'+t(ILLU_VIEW2[exId].typ === "top" ? "viewTop" : "viewFront")+'</figcaption></figure></div>'
+      ? '<div class="info-views"><figure>'+illuHTML(exId, "info-illu")+'<figcaption>'+t(ILLU_VIEW2[exId].haupt === "front" ? "viewFront" : "viewSide")+'</figcaption></figure>'+
+        '<figure>'+illuHTML(exId, "info-illu", true)+'<figcaption>'+t({ top:"viewTop", side:"viewSide" }[ILLU_VIEW2[exId].typ] || "viewFront")+'</figcaption></figure></div>'
       : illuHTML(exId, "info-illu"))+
     (EX_MUSCLES[exId] ? '<div class="info-mus"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
       (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>' : '')+
@@ -5563,7 +5581,7 @@ function announceStep(idx){
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
 var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
 /* Versionsnummer (wie in sw.js) - steht unten in den Einstellungen, damit man sieht, ob die neue Fassung geladen ist */
-var APP_FASSUNG = "2026-09-27-6";
+var APP_FASSUNG = "2026-09-27-7";
 function appUrl(){
   if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
   return location.origin + location.pathname.replace(/index\.html$/, "");
