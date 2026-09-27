@@ -138,3 +138,4 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.c
 - 2026-09-27: neue Übung **Jump Lunges** (Ausdauer, mit Sprung-Animation); **Cobra Lift** heißt jetzt **Kobra** und ist eine Dehnübung (ID `cobra-lift` bleibt)
 - 2026-09-27 (nach dem ersten Training): Countdown-Töne 3-2-1 so laut wie der Signalton danach (`tickNotes`, je Klangstil hochgerechnet); in der Pause blinkt der kommende Satz; in Vorbereitung und Blockpause steht die Figur der nächsten Übung groß im Ring, die Zeit darunter; oben im Timer ein Kreis je Übung (erledigt / aktuell / kommend, in der Pause vor einer neuen Übung pulsiert sie)
 - Timer aufgeräumt: oben nur noch die Übungs-Kreise (größer, der Zähler „1 / 27“ entfällt); keine Satzzahl mehr hinter dem Namen (steht in den Kästchen); „Als nächstes“ nur noch, wenn etwas Neues kommt (andere Übung, Blockpause, Ende)
+- Timer: kein Hinweistext mehr unter der Figur (steht in der Übungsinfo ⓘ)

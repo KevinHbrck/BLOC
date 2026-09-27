@@ -6265,7 +6265,7 @@ function stepBodyHTML(step){
       (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+'</div>'+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+
     (vorschau && isVintageTheme() ? illuHTML(step.ex, "pl-illu pl-vorschau-v") : "")+
-    (step.phase==="work" && step.hint ? '<div class="ex-hint">'+esc(step.hint)+'</div>' : "")+'</div>'+
+    '</div>'+   // Hinweis zur Übung steht in der Info (ⓘ), im Timer bleibt es ruhig
     timeHTML+
     '<div class="pl-b">'+repInfo+
     '<div class="next-up" id="pl-next"></div>'+
