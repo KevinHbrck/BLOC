@@ -520,6 +520,18 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 :root[data-vintage] .ft-name{ font-family:var(--f-mono); font-weight:500; text-transform:uppercase; font-size:12.5px; letter-spacing:0; }
 :root[data-vintage] .ft-sub{ font-family:var(--f-body); color:var(--text-sub); }
 .empty-btn{ width:auto; display:inline-flex; margin:16px auto 0; padding:13px 20px; font-size:15px; }
+/* Wochenzeile: schlank, nur ein Blick - Titel, sieben Tage als Punkte, Anzahl und Dauer */
+.woche{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; margin:0 0 14px; background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); }
+.wo-links{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.wo-titel{ font-size:13.5px; font-weight:700; white-space:nowrap; }
+.wo-tage{ display:flex; gap:6px; flex:0 0 auto; }
+.wo-tag{ display:flex; flex-direction:column; align-items:center; gap:3px; }
+.wo-tag i{ display:block; width:12px; height:12px; border-radius:50%; background:var(--surface-2); box-shadow:inset 0 0 0 1.5px var(--border); }
+.wo-tag.an i{ background:var(--accent); box-shadow:none; }
+.wo-tag small{ font-size:9.5px; line-height:1; color:var(--text-dim); }
+.wo-tag.heute small{ color:var(--text); font-weight:700; }
+.wo-summe{ font-size:12.5px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+@media (max-width:340px){ .wo-tage{ gap:4px; } }
 .fav-empty{ font-size:12.5px; color:var(--text-dim); padding:8px 12px; border:1px dashed var(--border); border-radius:12px; margin-bottom:4px; line-height:1.4; }
 .page-hint{ font-size:13px; color:var(--text-dim); margin:0 4px 12px; }
 .fab-opt .ico.tp{ background:var(--tp-color); color:var(--tp-text); }
@@ -1864,7 +1876,9 @@ var I18N = {
     snapText:"Deine aktuellen Daten werden durch den Stand vom {d} ersetzt.", snapBtn:"Wiederherstellen",
     snapInfo:"Die App legt alle 7 Tage automatisch eine Kopie deiner Daten auf diesem Gerät ab.",
     backupTipTitle:"Lange nicht gesichert", backupTipText:"Sichere deine eigenen Workouts, Blöcke und Übungen als Datei – falls das Handy einmal Daten verliert.",
-    backupNow:"Jetzt sichern",
+    backupNow:"Jetzt sichern", shareBackup:"Sicherung teilen (z. B. Drive, Mail)", backupShared:"Sicherung übergeben",
+    weekTitle:"Diese Woche", weekNone:"noch kein Training", weekDays:"M D M D F S S",
+    weekOne:"1 Training", weekN:"{n} Trainings",
     tabWorkouts:"Workouts", tabMine:"Meine", mainCat:"Kategorie", multiOk:"Mehrere möglich",
     spMainHint:"Nichts gewählt = Kraft, Ausdauer und Rumpf.",
     spFocusHint:"Optional – grenzt innerhalb der Kategorie weiter ein.",
@@ -2034,7 +2048,9 @@ var I18N = {
     snapText:"Your current data will be replaced with the state from {d}.", snapBtn:"Restore",
     snapInfo:"Every 7 days the app automatically keeps a copy of your data on this device.",
     backupTipTitle:"No recent backup", backupTipText:"Save your own workouts, blocks and exercises to a file – in case your phone ever loses data.",
-    backupNow:"Back up now",
+    backupNow:"Back up now", shareBackup:"Share backup (e.g. Drive, mail)", backupShared:"Backup handed over",
+    weekTitle:"This week", weekNone:"no workout yet", weekDays:"M T W T F S S",
+    weekOne:"1 workout", weekN:"{n} workouts",
     tabWorkouts:"Workouts", tabMine:"Mine", mainCat:"Category", multiOk:"Pick several",
     spMainHint:"None picked = strength, cardio and core.",
     spFocusHint:"Optional – narrows things down within the category.",
@@ -3052,7 +3068,7 @@ function renderHome(){
     topbar("BLOC", { home:true, sub:"Modular Training Builder", right:
       '<button class="iconbtn" data-nav="#settings" title="'+t("settings")+'">'+ICON_SETTINGS+'</button>'
     }) +
-    installTipHTML() + backupTipHTML() +
+    installTipHTML() + backupTipHTML() + wocheHTML() +
     '<div class="sec-head"><div class="section-title">'+t("favorites")+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
@@ -4071,18 +4087,22 @@ function renderExEdit(id){
 
 /* ============ Kurzes Trainings-Gedächtnis ============ */
 /* Kein Verlauf und keine Statistik mehr (Kalender, Streak & Co. wurden entfernt). Gemerkt werden
-   nur die Übungen der letzten Tage, damit „Überrasch mich“ sie meiden kann:
-   state.db.history = [{ at, ex:[Übungs-IDs] }], ältere Einträge als 14 Tage fallen weg. */
-var HIST_KEEP_DAYS = 14;
+   nur die Übungen der letzten Tage, damit „Überrasch mich“ sie meiden kann, und die Dauer für die
+   schlanke Wochenzeile auf der Startseite:
+   state.db.history = [{ at, ex:[Übungs-IDs], dur:Sekunden }], ältere Einträge als 14 Tage fallen weg. */
+/* Achtung: pruneHistory läuft schon in loadDB, also bevor diese Zeile ausgeführt wird - deshalb eine Funktion
+   statt einer Variablen (eine var wäre dann noch undefined, und der ganze Verlauf fiele beim Laden weg) */
+function histKeepDays(){ return 14; }
 function pruneHistory(db){
-  var since = Date.now() - HIST_KEEP_DAYS*86400000;
+  var since = Date.now() - histKeepDays()*86400000;
   db.history = (db.history || []).filter(function(e){ return e && e.at >= since; })
-    .map(function(e){ return { at:e.at, ex:e.ex || [] }; });
+    .map(function(e){ return { at:e.at, ex:e.ex || [], dur:+e.dur || 0 }; });
 }
 function logHistory(partial){
   if(!playerState || playerState.logged) return;
-  var steps = playerState.steps, idx = playerState.idx, ex = [], work = 0;
-  steps.slice(0, idx+1).forEach(function(st){
+  var steps = playerState.steps, idx = playerState.idx, ex = [], work = 0, dur = 0;
+  steps.slice(0, idx+1).forEach(function(st, i){
+    if(i < idx || st.phase === "done") dur += st.duration || 0;
     if(st.phase!=="work" || !st.ex) return;
     work += st.duration;
     if(ex.indexOf(st.ex) < 0) ex.push(st.ex);
@@ -4090,10 +4110,33 @@ function logHistory(partial){
   if(partial && work < 60) return;   // kurz reingeschnuppert zählt nicht
   playerState.logged = true;
   pruneHistory(state.db);
-  state.db.history.push({ at:Date.now(), ex:ex });
+  state.db.history.push({ at:Date.now(), ex:ex, dur:dur });
   save();
 }
 /* Übungen der letzten n Tage (für den Generator) */
+/* Wochenzeile: welche Tage (Mo–So) trainiert, wie oft und wie lange - ohne Statistik, nur ein Blick */
+function wocheDaten(){
+  var d = new Date(); d.setHours(0, 0, 0, 0);
+  var start = d.getTime() - ((d.getDay() + 6) % 7)*86400000;   // Montag 0:00
+  var tage = [0,0,0,0,0,0,0], n = 0, sek = 0;
+  (state.db.history || []).forEach(function(e){
+    if(!e || e.at < start) return;
+    var tag = Math.floor((e.at - start)/86400000);
+    if(tag > 6) return;
+    tage[tag] = 1; n++; sek += +e.dur || 0;
+  });
+  return { tage:tage, n:n, sek:sek, heute:(d.getDay() + 6) % 7 };
+}
+function wocheHTML(){
+  var w = wocheDaten(), namen = t("weekDays").split(" ");
+  var dauer = w.sek >= 60 ? " · "+fmtDuration(Math.round(w.sek/60)*60) : "";   // unter einer Minute keine Zeitangabe
+  return '<div class="woche" aria-label="'+esc(t("weekTitle")+": "+(w.n ? (w.n === 1 ? t("weekOne") : t("weekN", { n:w.n }))+dauer : t("weekNone")))+'">'+
+    '<span class="wo-links" aria-hidden="true"><b class="wo-titel">'+esc(t("weekTitle"))+'</b>'+
+      '<span class="wo-summe">'+esc(w.n ? (w.n === 1 ? t("weekOne") : t("weekN", { n:w.n }))+dauer : t("weekNone"))+'</span></span>'+
+    '<span class="wo-tage" aria-hidden="true">'+w.tage.map(function(an, i){
+      return '<span class="wo-tag'+(an ? ' an' : '')+(i === w.heute ? ' heute' : '')+'"><i></i><small>'+esc(namen[i] || "")+'</small></span>'; }).join("")+'</span>'+
+  '</div>';
+}
 function recentExercises(days){
   var since = Date.now() - days*86400000, out = {};
   (state.db.history || []).forEach(function(e){ if(e.at >= since) (e.ex||[]).forEach(function(id){ out[id] = true; }); });
@@ -4812,6 +4855,32 @@ function announceStep(idx){
 
 /* ============ Datensicherung: Export, Schnappschuss, Erinnerung ============ */
 /* Export als Datei; der Zeitpunkt wird für die Erinnerung auf der Startseite gemerkt */
+/* Teilen: die Sicherungsdatei direkt an Drive, Mail, Messenger … übergeben (Android/iOS-Teilen-Menü).
+   Chrome teilt nicht jede Dateiart - geht JSON nicht, dieselbe Datei als .txt (Import liest beides). */
+function backupTeilDatei(){
+  var name = "bloc-sicherung-"+new Date().toISOString().slice(0,10), inhalt = JSON.stringify(state.db,null,2);
+  try{
+    var f = new File([inhalt], name+".json", { type:"application/json" });
+    if(navigator.canShare && navigator.canShare({ files:[f] })) return f;
+    f = new File([inhalt], name+".txt", { type:"text/plain" });
+    if(navigator.canShare && navigator.canShare({ files:[f] })) return f;
+  }catch(e){}
+  return null;
+}
+function kannBackupTeilen(){ return !!(navigator.share && backupTeilDatei()); }
+function shareBackup(danach){
+  var f = backupTeilDatei();
+  if(!f || !navigator.share){ exportBackup(); if(danach) danach(); return; }
+  navigator.share({ files:[f], title:"BLOC" }).then(function(){
+    state.db.settings.lastExport = Date.now();
+    save();
+    showToast(t("backupShared"));
+    if(danach) danach();
+  }).catch(function(e){
+    if(e && e.name === "AbortError") return;   // im Teilen-Menü abgebrochen
+    exportBackup(); if(danach) danach();
+  });
+}
 function exportBackup(){
   var blob = new Blob([JSON.stringify(state.db,null,2)], {type:"application/json"});
   var url = URL.createObjectURL(blob);
@@ -4840,7 +4909,7 @@ function backupTipHTML(){
 }
 function bindBackupTip(){
   var jetzt = app.querySelector("[data-backup-now]");
-  if(jetzt) jetzt.addEventListener("click", function(){ exportBackup(); render(); });
+  if(jetzt) jetzt.addEventListener("click", function(){ if(kannBackupTeilen()) shareBackup(render); else { exportBackup(); render(); } });
   var weg = app.querySelector("[data-hidebackup]");
   if(weg) weg.addEventListener("click", function(){
     try{ sessionStorage.setItem("bloc-backup-tip-weg", "1"); }catch(e){}
@@ -5448,6 +5517,10 @@ function repFertig(){
   var alt = alle[r.id];
   r.neueBest = !!alt && zeit < alt.best;
   alle[r.id] = { best: alt ? Math.min(alt.best, zeit) : zeit, last: zeit, n: (alt ? alt.n : 0) + 1, at: Date.now() };
+  // für die Wochenzeile und „Überrasch mich“ (Übungen der letzten Tage)
+  pruneHistory(state.db);
+  state.db.history.push({ at:Date.now(), dur:Math.round(zeit/1000),
+    ex:r.steps.map(function(x){ return x.ex; }).filter(function(id, i, a){ return !REP_PSEUDO[id] && a.indexOf(id) === i; }) });
   save();
   phaseBeep("done");
   releaseWakeLock();
@@ -5595,9 +5668,10 @@ function renderSettings(){
     '<div class="section-title">'+t("data")+'</div>'+
     '<div class="card">'+
       '<div class="snap-zeile" id="snap-zeile">'+snapZeileHTML()+'</div>'+
+      (kannBackupTeilen() ? '<button class="btn btn-secondary" data-sharebackup>'+ICON_SHARE+' '+t("shareBackup")+'</button>' : '')+
       '<button class="btn btn-secondary" data-export>'+t("exportBackup")+'</button>'+
       '<button class="btn btn-secondary" data-import>'+t("importBackup")+'</button>'+
-      '<input type="file" id="import-file" accept="application/json" style="display:none">'+
+      '<input type="file" id="import-file" accept="application/json,.json,text/plain,.txt" style="display:none">'+
       '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>'+
     '</div>'+
     '<div class="empty" style="padding:20px 8px;">'+t("localNote")+'<br><small class="app-version" id="app-version"></small></div>';
@@ -5649,6 +5723,8 @@ function renderSettings(){
   });
 
   app.querySelector("[data-export]").addEventListener("click", exportBackup);
+  var teilBtn = app.querySelector("[data-sharebackup]");
+  if(teilBtn) teilBtn.addEventListener("click", function(){ shareBackup(); });
   bindSnapZeile();
   fassungZeigen();
   app.querySelector("[data-import]").addEventListener("click", function(){

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOC Schnelltest</title>
+<style>
+  :root { --bg:#f5f5f2; --text:#1d1d1f; --dim:#6b6b70; --ok:#1f9d63; --fail:#d6453d; --card:#fff; --rule:#e2e2dd; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#121214; --text:#f2f2f2; --dim:#a0a0a6; --card:#1d1d20; --rule:#2e2e33; } }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { display:flex; gap:20px; padding:16px; flex-wrap:wrap; }
+  .links { flex:1 1 320px; min-width:0; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p { color:var(--dim); margin:0 0 12px; }
+  button { font:inherit; padding:10px 16px; border-radius:10px; border:0; background:#ff5a36; color:#fff; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; }
+  #summe { font-weight:700; margin:12px 0; }
+  #summe.ok { color:var(--ok); } #summe.fail { color:var(--fail); }
+  ol { padding-left:22px; margin:0; }
+  li { margin:4px 0; }
+  li.ok::marker { color:var(--ok); } li.fail { color:var(--fail); }
+  li small { display:block; color:var(--dim); }
+  iframe { width:390px; height:780px; border:1px solid var(--rule); border-radius:14px; background:#fff; flex:0 0 auto; max-width:100%; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="links">
+    <h1>BLOC Schnelltest</h1>
+    <p>Klickt sich einmal durch die wichtigsten Wege der App. Läuft nur lokal (localhost). Dein gespeicherter Stand wird vorher
+      beiseitegelegt und danach wiederhergestellt.</p>
+    <button id="los" type="button">Test starten</button>
+    <div id="summe"></div>
+    <ol id="liste"></ol>
+  </div>
+  <iframe id="app" title="App im Test"></iframe>
+</div>
+<script>
+(function () {
+  "use strict";
+  var KEY = "sporttimer-data-v1";
+  var iframe = document.getElementById("app"), liste = document.getElementById("liste"), summe = document.getElementById("summe");
+  var W = null, D = null, fehler = [];
+  var lokal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
+
+  function warte(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  async function bis(fn, ms, was) {
+    var t0 = Date.now();
+    while (Date.now() - t0 < (ms || 4000)) {
+      try { var v = fn(); if (v) return v; } catch (e) {}
+      await warte(50);
+    }
+    throw new Error("Zeitüberschreitung: " + (was || "Bedingung"));
+  }
+  function $(s) { return D.querySelector(s); }
+  function $$(s) { return Array.prototype.slice.call(D.querySelectorAll(s)); }
+  function klick(s) { var el = typeof s === "string" ? $(s) : s; if (!el) throw new Error("nicht gefunden: " + s); el.click(); return el; }
+  function pruefe(b, text) { if (!b) throw new Error(text); }
+  function sichtbar(el) { return el && el.style.display !== "none" && !el.hidden && el.offsetParent !== null; }
+  function eingeben(el, wert) { el.value = wert; el.dispatchEvent(new W.Event("input", { bubbles: true })); el.dispatchEvent(new W.Event("change", { bubbles: true })); }
+
+  function laden() {
+    return new Promise(function (ok) {
+      iframe.onload = function () {
+        W = iframe.contentWindow; D = W.document;
+        W.addEventListener("error", function (e) { fehler.push(String(e.message || e)); });
+        var alt = W.console.error;
+        W.console.error = function () { fehler.push(Array.prototype.join.call(arguments, " ")); return alt.apply(W.console, arguments); };
+        setTimeout(ok, 400);
+      };
+      iframe.src = "index.html?schnelltest=" + Date.now() + "#home";
+    });
+  }
+  async function heim() { await laden(); await bis(function () { return $(".area-tile"); }, 5000, "Startseite"); }
+
+  var TESTS = [
+    ["Startseite: vier Bereiche, Überrasch mich, Wochenzeile", async function () {
+      await heim();
+      pruefe($$(".area-tile").length === 4, "erwartet 4 Bereichs-Kacheln, gefunden " + $$(".area-tile").length);
+      pruefe($("[data-surprise]"), "Karte Überrasch mich fehlt");
+      pruefe($(".woche"), "Wochenzeile fehlt");
+    }],
+    ["Bibliothek: Reiter Workouts · Übungen · Meine, Workouts vorhanden", async function () {
+      klick('[data-nav="#library"]');
+      await bis(function () { return $$("[data-libtab]").length === 3; }, 3000, "Reiter");
+      var tabs = $$("[data-libtab]").map(function (b) { return b.textContent.trim(); }).join(" · ");
+      pruefe(tabs === "Workouts · Übungen · Meine", "Reihenfolge ist " + tabs);
+      klick('[data-libtab="workouts"]');
+      pruefe($$(".lib-card").length >= 20, "zu wenige Workouts: " + $$(".lib-card").length);
+    }],
+    ["Suche: „pull ups“, „klimmzug“, „liegestutz“", async function () {
+      klick('[data-libtab="exercises"]');
+      var q = await bis(function () { return $("#l-q"); }, 3000, "Suchfeld");
+      function namen(x) { eingeben(q, x); return $$(".lib-card").filter(sichtbar).map(function (c) { return (c.querySelector(".name") || {}).textContent || ""; }); }
+      pruefe(namen("pull ups").indexOf("Pull-ups") > -1, "„pull ups“ findet Pull-ups nicht");
+      pruefe(namen("klimmzug").length >= 5, "„klimmzug“ findet zu wenig");
+      pruefe(namen("liegestutz").indexOf("Push-ups") > -1, "„liegestutz“ findet Push-ups nicht");
+      pruefe(namen("").length > 80, "ohne Suche zu wenige Übungen");
+    }],
+    ["Übungsinfo: Pull-ups mit zwei Ansichten", async function () {
+      klick('[data-info="pull-ups"]');
+      await bis(function () { return $$(".info-views figure").length === 2; }, 3000, "zwei Ansichten");
+      klick("[data-close]");
+    }],
+    ["Überrasch mich: ohne Stretch, erzeugt ein Workout", async function () {
+      klick("[data-surprise]");
+      await bis(function () { return $("[data-spgo]"); }, 3000, "Einstellungen");
+      pruefe(!$('[data-spmain="stretch"]'), "Stretch-Kachel ist noch da");
+      pruefe($$("[data-spmain]").length === 4, "erwartet 4 Kategorie-Kacheln");
+      klick("[data-spgo]");
+      await bis(function () { return $$(".dz-row").length >= 2; }, 3000, "Übungen im Deckblatt");
+    }],
+    ["Timer: Übungs-Kreise, Satz blinkt in der Pause, Figur in der Blockpause", async function () {
+      await heim();
+      klick('[data-nav="#library"]');
+      klick('[data-libtab="workouts"]');
+      klick(await bis(function () { return $("[data-cover]"); }, 3000, "Workout"));
+      klick(await bis(function () { return $("[data-go]"); }, 3000, "Los geht's"));
+      await bis(function () { return $("#playerEl"); }, 3000, "Timer");
+      pruefe($$("#pl-exdots span").length >= 2, "Übungs-Kreise fehlen");
+      pruefe(!$("#pl-counter"), "alter Zähler „1 / 27“ ist wieder da");
+      function phase() { return $("#playerEl").getAttribute("data-phase"); }
+      var n = 0;
+      while (phase() !== "work" && n++ < 5) klick("[data-skip]");
+      klick("[data-skip]");
+      pruefe(phase() === "rest", "nach dem ersten Satz keine Pause, sondern " + phase());
+      var cls = $$("#pl-dots span").map(function (s) { return s.className; });
+      pruefe(cls[0] === "done" && cls[1] === "now", "in der Pause sollte Satz 2 blinken: " + cls.join(","));
+      n = 0;
+      while (phase() !== "blockrest" && phase() !== "done" && n++ < 60) klick("[data-skip]");
+      pruefe(phase() === "blockrest", "keine Blockpause gefunden");
+      pruefe($(".ring-wrap.mit-figur .pl-vorschau"), "in der Blockpause fehlt die Figur im Ring");
+      pruefe($('#pl-exdots span.now.bald'), "kommende Übung pulsiert nicht");
+      klick("[data-exit]");
+      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Beenden bestätigen"));
+      await bis(function () { return !$("#playerEl"); }, 3000, "Timer schließt");
+    }],
+    ["Challenges: Reiter, Mengen auf den Karten", async function () {
+      await heim();
+      klick('[data-nav="#reps"]');
+      await bis(function () { return $$("[data-repf^='tab:']").length === 3; }, 3000, "drei Reiter");
+      klick('[data-repf="tab:einheiten"]');
+      pruefe($$(".rep-karte .rep-plan").length >= 10, "Karten zeigen keine Mengen");
+    }],
+    ["Eigene Challenge: anlegen, Übung wählen, durchspielen, löschen", async function () {
+      klick('[data-repf="tab:meine"]');
+      klick(await bis(function () { return $("[data-repnew]"); }, 3000, "Neue Challenge"));
+      klick(await bis(function () { return $("[data-readd]"); }, 3000, "Editor"));
+      klick(await bis(function () { return $('[data-repick="burpees"]'); }, 3000, "Übungsauswahl"));
+      var f0 = await bis(function () { return $('[data-rem="0:0"]'); }, 3000, "Mengenfelder");
+      f0.value = "5"; f0.dispatchEvent(new W.Event("change"));
+      pruefe($('[data-rem="0:2"]').value === "5", "Runde 1 überträgt sich nicht auf Runde 3");
+      klick("[data-refertig]");
+      await bis(function () { return $(".rep-tab"); }, 3000, "Übersicht mit Tabelle");
+      klick("[data-repstart]");
+      klick(await bis(function () { return $("[data-repgo]"); }, 3000, "Start"));
+      await bis(function () { var b = $("[data-repgo]"); return b && !b.disabled && /Geschafft|Überspringen/.test(b.textContent); }, 6000, "Stoppuhr läuft");
+      for (var i = 0; i < 10 && $("[data-repgo]"); i++) klick("[data-repgo]");
+      await bis(function () { return $("[data-repagain]"); }, 3000, "Ergebnis");
+      klick("[data-repend]");
+      klick(await bis(function () { return $('.topbar [data-nav^="#repedit"]'); }, 3000, "Bearbeiten"));
+      klick(await bis(function () { return $("[data-redel]"); }, 3000, "Löschen"));
+      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Löschen bestätigen"));
+      await bis(function () { return $("[data-repnew]"); }, 3000, "zurück in der Liste");
+      pruefe(!$(".rep-karte"), "Challenge wurde nicht gelöscht");
+    }],
+    ["Wochenzeile zählt die Challenge (auch nach Neuladen)", async function () {
+      await heim();
+      pruefe($$(".woche .wo-tag.an").length >= 1, "kein Trainingstag markiert");
+      pruefe(/\d+ Training/.test($(".woche").textContent), "Anzahl fehlt: " + $(".woche").textContent);
+    }],
+    ["Aufwärmen & Dehnen: Kobra unter Dehnen", async function () {
+      klick('[data-nav="#warmstretch"]');
+      klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Reiter Dehnen"));
+      klick('[data-wstab="uebungen"]');
+      pruefe(/Kobra/.test(D.body.textContent), "Kobra fehlt");
+    }],
+    ["Timer-Seite und Einstellungen öffnen", async function () {
+      await heim();
+      klick('[data-nav="#timers"]');
+      await bis(function () { return $('[data-fabopt="new"]'); }, 3000, "Knopf bei leerer Liste");
+      await heim();
+      klick('[data-nav="#settings"]');
+      await bis(function () { return $("[data-export]"); }, 3000, "Sicherung in den Einstellungen");
+    }],
+    ["Keine Skriptfehler", async function () {
+      pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
+    }]
+  ];
+
+  function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
+
+  document.getElementById("los").addEventListener("click", async function () {
+    var knopf = this;
+    if (!lokal) { summe.className = "fail"; summe.textContent = "Nur lokal ausführen (localhost) – sonst würde der Test deinen echten Stand anfassen."; return; }
+    knopf.disabled = true; liste.innerHTML = ""; summe.textContent = ""; fehler = [];
+    var gesichert = localStorage.getItem(KEY), ss = {};
+    for (var i = 0; i < sessionStorage.length; i++) { var k = sessionStorage.key(i); ss[k] = sessionStorage.getItem(k); }
+    localStorage.removeItem(KEY);   // frischer Stand, damit der Test immer gleich läuft
+    var ok = 0, schlecht = 0;
+    try {
+      for (var t = 0; t < TESTS.length; t++) {
+        var li = eintrag(TESTS[t][0]);
+        try { await TESTS[t][1](); li.className = "ok"; li.textContent = "✓ " + TESTS[t][0]; ok++; }
+        catch (e) {
+          li.className = "fail"; li.textContent = "✗ " + TESTS[t][0];
+          var sm = document.createElement("small"); sm.textContent = e && e.message ? e.message : String(e); li.appendChild(sm);
+          schlecht++;
+        }
+      }
+    } finally {
+      iframe.src = "about:blank";
+      await warte(200);
+      if (gesichert === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, gesichert);
+      sessionStorage.clear(); Object.keys(ss).forEach(function (k) { sessionStorage.setItem(k, ss[k]); });
+      summe.className = schlecht ? "fail" : "ok";
+      summe.textContent = schlecht ? schlecht + " von " + TESTS.length + " Prüfungen fehlgeschlagen" : "Alles in Ordnung: " + ok + " von " + TESTS.length + " Prüfungen bestanden";
+      document.title = (schlecht ? "✗ " : "✓ ") + "BLOC Schnelltest";
+      knopf.disabled = false;
+    }
+  });
+  if (/[?&]auto\b/.test(location.search)) document.getElementById("los").click();
+})();
+</script>
+</body>
+</html>
