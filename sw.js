@@ -6,9 +6,10 @@
  * Die App nutzt nur Systemschriften und laedt nichts von fremden Servern.
  */
 
-var FASSUNG = "2026-09-27-7";
+/* Einzige Stelle für die Versionsnummer - die App fragt sie per postMessage ab (Einstellungen, ganz unten) */
+var FASSUNG = "2026-09-27-8";
 var SPEICHER = "sporttimer-" + FASSUNG;
-var GRUNDGERUEST = ["./", "./index.html", "./manifest.json", "./icon.png", "./privacy.html"];
+var GRUNDGERUEST = ["./", "./index.html", "./daten.js", "./manifest.json", "./icon.png", "./privacy.html"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
@@ -28,6 +29,14 @@ self.addEventListener("activate", function (e) {
       }));
     }).then(function () { return self.clients.claim(); })
   );
+});
+
+/* Anfrage der App nach der Fassung: Antwort über den mitgeschickten Kanal (sonst an den Absender) */
+self.addEventListener("message", function (e) {
+  if (!e.data || e.data.frage !== "fassung") return;
+  var antwort = { fassung: FASSUNG };
+  if (e.ports && e.ports[0]) e.ports[0].postMessage(antwort);
+  else if (e.source) e.source.postMessage(antwort);
 });
 
 self.addEventListener("fetch", function (e) {
