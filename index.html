@@ -783,11 +783,11 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .rep-dots span.now{ opacity:1; animation:repPulse 1.4s ease-in-out infinite; }
 @keyframes repPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
 /* Übungen als Kreise oben in der Mitte, über dem Zähler */
-.pl-mitte{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:5px; padding:0 10px; }
-.ex-dots{ display:flex; align-items:center; justify-content:center; flex-wrap:nowrap; max-width:100%; min-height:14px; }
+.pl-mitte{ flex:1; min-width:0; display:flex; align-items:center; justify-content:center; padding:0 10px; }
+.ex-dots{ display:flex; align-items:center; justify-content:center; flex-wrap:nowrap; max-width:100%; min-height:20px; }
 .ex-dots span{ flex:0 0 auto; border-radius:50%; background:currentColor; opacity:.25; transition:transform .3s ease, opacity .3s ease; }
 .ex-dots span.done{ opacity:.7; }
-.ex-dots span.now{ opacity:1; transform:scale(1.4); }
+.ex-dots span.now{ opacity:1; transform:scale(1.3); }
 .ex-dots span.now.bald{ animation:repPulse 1.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce){ .ex-dots span.now.bald{ animation:none; } }
 @media (prefers-reduced-motion: reduce){ .rep-dots span.now{ animation:none; } }
@@ -1867,7 +1867,7 @@ var I18N = {
     tabWorkouts:"Workouts", tabMine:"Meine", mainCat:"Kategorie", multiOk:"Mehrere möglich",
     spMainHint:"Nichts gewählt = Kraft, Ausdauer und Rumpf.",
     spFocusHint:"Optional – grenzt innerhalb der Kategorie weiter ein.",
-    sortDur:"Dauer", searchWoPh:"Workouts suchen …", unitsOf:"Einheit {i} von {n}",
+    sortDur:"Dauer", searchWoPh:"Workouts suchen …", unitsOf:"Einheit {i} von {n}", exOf:"Übung {i} von {n}",
     data:"Daten", exportBackup:"Backup exportieren (JSON)", importBackup:"Backup importieren", deleteAll:"Alle Daten löschen",
     localNote:"Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.",
     importQ:"Backup importieren?", importText:"Bestehende Blöcke und Workouts werden überschrieben.", importBtn:"Importieren",
@@ -2037,7 +2037,7 @@ var I18N = {
     tabWorkouts:"Workouts", tabMine:"Mine", mainCat:"Category", multiOk:"Pick several",
     spMainHint:"None picked = strength, cardio and core.",
     spFocusHint:"Optional – narrows things down within the category.",
-    sortDur:"Duration", searchWoPh:"Search workouts …", unitsOf:"Unit {i} of {n}",
+    sortDur:"Duration", searchWoPh:"Search workouts …", unitsOf:"Unit {i} of {n}", exOf:"Exercise {i} of {n}",
     data:"Data", exportBackup:"Export backup (JSON)", importBackup:"Import backup", deleteAll:"Delete all data",
     localNote:"All data stays on this device. For permanent storage on iOS, add the app to your home screen.",
     importQ:"Import backup?", importText:"Your current blocks and workouts will be replaced.", importBtn:"Import",
@@ -6182,7 +6182,7 @@ function playerTemplate(){
     '<div id="pl-bgs" aria-hidden="true"></div>'+
     '<div class="player-top">'+
       '<button class="exit" data-exit title="'+t("endBtn")+'">&times;</button>'+
-      '<div class="pl-mitte"><div class="ex-dots" id="pl-exdots" aria-hidden="true"></div><div style="font-size:13px;opacity:.7" id="pl-counter"></div></div>'+
+      '<div class="pl-mitte"><div class="ex-dots" id="pl-exdots" role="img"></div></div>'+
       '<button class="exit" data-vol-toggle title="'+t("volume")+'">'+ICON_VOLUME+'</button>'+
     '</div>'+
     '<div class="vol-popover hidden" id="pl-vol-pop">'+ICON_VOLUME+
@@ -6261,7 +6261,7 @@ function stepBodyHTML(step){
   /* pl-a / pl-b sind im Hochformat unsichtbar (display:contents) - im Querformat
      steht die Uhr links, Beschriftung und Tasten rechts daneben */
   return '<div class="pl-a"><div class="phase-label">'+phLabel+'</div>'+
-    '<div class="block-label">'+esc(step.blockName||"")+(step.totalReps? SEP+step.rep+"/"+step.totalReps : "")+
+    '<div class="block-label">'+esc(step.blockName||"")+
       (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+'</div>'+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+
     (vorschau && isVintageTheme() ? illuHTML(step.ex, "pl-illu pl-vorschau-v") : "")+
@@ -6281,6 +6281,8 @@ function nextStepPreview(idx){
   if(idx+1 >= steps.length) return "";
   var n = steps[idx+1];
   if(n.phase==="done") return t("thenDone");
+  function welche(st){ return st.phase==="prep" || st.phase==="blockrest" ? st.blockName : st.label; }
+  if(welche(n) === welche(steps[idx])) return "";
   var time = " ("+fmtTime(n.duration)+")";
   /* Bei Arbeitsphasen nur der Blockname - „Als nächstes: Los!“ klänge holprig */
   if(n.phase==="work") return t("upNext")+" "+esc(n.blockName||"")+time;
@@ -6315,9 +6317,6 @@ function enterStep(idx, opt){
   var infoBtn = document.querySelector("#pl-body [data-plinfo]");
   if(infoBtn) infoBtn.addEventListener("click", function(){ openExInfo(infoBtn.getAttribute("data-plinfo"), true); });
   if(step.phase!=="done" && isVintageTheme()) odoInit(document.getElementById("pl-time"), step.duration);
-  var cnt = document.getElementById("pl-counter");
-  cnt.textContent = step.unit+" / "+steps.units;
-  cnt.setAttribute("aria-label", t("unitsOf", { i:step.unit, n:steps.units }));
   updateExDots(step);
 
   if(step.phase!=="done"){
@@ -6381,8 +6380,9 @@ function updateExDots(step){
   if(n < 2 || n > 30){ wrap.innerHTML = ""; wrap.style.display = "none"; return; }
   wrap.style.display = "";
   var cur = step.exNr || 1, bald = step.phase === "blockrest" || step.phase === "prep";
-  var avail = Math.max(60, (wrap.parentNode.clientWidth || 220) - 4), gap = n > 16 ? 4 : 6;
-  var size = Math.max(5, Math.min(10, Math.floor((avail - (n-1)*gap)/n)));
+  var avail = Math.max(60, (wrap.parentNode.clientWidth || 220) - 4), gap = n > 12 ? 5 : 8;
+  var size = Math.max(6, Math.min(14, Math.floor((avail - (n-1)*gap)/n)));
+  wrap.setAttribute("aria-label", t("exOf", { i:Math.min(cur, n), n:n }));
   wrap.style.gap = gap+"px";
   var html = "";
   for(var i=1;i<=n;i++){
