@@ -1334,12 +1334,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .at-name{ display:block; font-size:17px; margin-top:18px; }
 .at-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:4px; line-height:1.35; padding-right:18px; }
 .at-chev{ position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; font-size:18px; color:var(--text-dim); }
-/* breite Bereichs-Kachel (Rep-Workouts) über die ganze Zeile */
-.area-tile:not(.wide) .at-chev{ top:41px; }
-.area-tile.wide{ grid-column:1 / -1; min-height:0; flex-direction:row; align-items:center; gap:14px; padding:16px; }
-.area-tile.wide .at-ico{ margin-bottom:0; flex-shrink:0; }
-.area-tile.wide .at-txt{ flex:1; min-width:0; padding-right:18px; }
-.area-tile.wide .at-name{ margin-top:0; }
+.area-tile .at-chev{ top:41px; }
 /* Rep-Workouts */
 .rep-intro{ font-size:14px; color:var(--text-dim); margin:4px 4px 12px; line-height:1.45; }
 .rep-pick{ display:flex; flex-wrap:wrap; margin-bottom:8px; }
@@ -1486,7 +1481,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 
 /* Inhaltsdaten (Übungen, Workouts, Posen) stehen in daten.js - hier unter den gewohnten Namen */
 var BLOC_DATEN = window.BLOC_DATEN;
-var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_PSEUDO;
+var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_PSEUDO, AUFWAERM_IDS = BLOC_DATEN.AUFWAERM_IDS;
 var EX_ALIAS = BLOC_DATEN.EX_ALIAS, LIB_CATS = BLOC_DATEN.LIB_CATS, EXERCISE_ROWS = BLOC_DATEN.EXERCISE_ROWS,
     LIB_WORKOUT_ROWS = BLOC_DATEN.LIB_WORKOUT_ROWS, EX_LEVEL = BLOC_DATEN.EX_LEVEL, EX_EQUIP = BLOC_DATEN.EX_EQUIP, MAIN_CATS = BLOC_DATEN.MAIN_CATS,
     EX_MAIN_ROWS = BLOC_DATEN.EX_MAIN_ROWS, EQUIPS = BLOC_DATEN.EQUIPS, EX_SUCH_ALIAS = BLOC_DATEN.EX_SUCH_ALIAS, Q = BLOC_DATEN.Q,
@@ -1710,7 +1705,7 @@ var I18N = {
     blockOne:"Block", blockMany:"Blöcke",
     noWorkouts:"Noch kein Workout angelegt.<br>Tippe unten rechts auf +, um loszulegen.",
     singleBlocks:"Blöcke einzeln starten",
-    library:"HIIT Timer Bibliothek", libEntry:"Übungen & Workouts", libEntrySub:"{e} Übungen · {w} fertige · {m} eigene Workouts",
+    library:"Workouts", libEntry:"Übungen & Workouts", libEntrySub:"{e} Übungen · {w} fertige · {m} eigene Workouts",
     libWorkouts:"Workouts", libExercises:"Übungen", catAll:"Alle", catMix:"Gemischt",
     adopt:"Übernehmen", adoptTitle:"Als eigenes Workout kopieren und anpassen",
     adoptBlock:"Als Block", adoptBlockTitle:"Als eigenen Block speichern",
@@ -1797,8 +1792,10 @@ var I18N = {
     volMusicHint:"Deine Musik läuft weiter, die Töne kommen dazu. iPhone: Steht es auf lautlos, bleiben die Töne stumm – dann auf laut stellen.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
-    htLib:"Zeitgesteuerte Workouts, Übungen und eigene Inhalte", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
-    repTitle:"HIIT Challenge Bibliothek", htReps:"Wiederholungen in Bestzeit – ohne Intervalle, die Uhr läuft mit",
+    htLib:"Intervall-Programme, Übungen und eigene Workouts", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
+    repTitle:"Challenges", htReps:"Alle Wiederholungen auf Bestzeit",
+    warmTitle:"Aufwärmen & Dehnen", htWarm:"Vor und nach dem Training", warmSec:"Aufwärmen · vor dem Training", stretchSec:"Dehnen · nach dem Training",
+    warmIntro:"Passt zu Workouts und Challenges: vorher kurz aufwärmen, danach dehnen.",
     repIntro:"Alle Wiederholungen so schnell wie möglich, aber sauber ausgeführt. Die Zeit läuft mit, deine Bestzeit wird gespeichert.",
     repAll:"Alle", repAllEquip:"Alle Geräte", repNoBar:"Ohne Stange", repNone:"Keine Programme für diese Auswahl.",
     repRound1:"1 Runde", repRoundsN:"{n} Runden", repReps:"{n} Wdh.", repBar:"Stange", repRound:"Runde",
@@ -1867,7 +1864,7 @@ var I18N = {
     blockOne:"block", blockMany:"blocks",
     noWorkouts:"No workouts yet.<br>Tap + at the bottom right to get started.",
     singleBlocks:"Start single blocks",
-    library:"HIIT timer library", libEntry:"Exercises & workouts", libEntrySub:"{e} exercises · {w} ready-made · {m} own workouts",
+    library:"Workouts", libEntry:"Exercises & workouts", libEntrySub:"{e} exercises · {w} ready-made · {m} own workouts",
     libWorkouts:"Workouts", libExercises:"Exercises", catAll:"All", catMix:"Mixed",
     adopt:"Copy", adoptTitle:"Copy as your own workout to adjust it",
     adoptBlock:"As block", adoptBlockTitle:"Save as your own block",
@@ -1954,8 +1951,10 @@ var I18N = {
     volMusicHint:"Your music keeps playing, the sounds play on top. iPhone: in silent mode the sounds stay muted – switch the ringer on.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
-    htLib:"Timed workouts, exercises and your own content", spSub:"A random session based on your picks",
-    repTitle:"HIIT challenge library", htReps:"All reps as fast as you can – no intervals, the clock keeps running",
+    htLib:"Interval programs, exercises and your own workouts", spSub:"A random session based on your picks",
+    repTitle:"Challenges", htReps:"Every rep as fast as you can",
+    warmTitle:"Warm-up & stretch", htWarm:"Before and after training", warmSec:"Warm-up · before training", stretchSec:"Stretch · after training",
+    warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
     repIntro:"Do every rep as fast as you can, with clean form. The clock keeps running and your best time is saved.",
     repAll:"All", repAllEquip:"Any equipment", repNoBar:"No bar", repNone:"No programs match this selection.",
     repRound1:"1 round", repRoundsN:"{n} rounds", repReps:"{n} reps", repBar:"Bar", repRound:"Round",
@@ -2905,6 +2904,7 @@ function render(){
   if(repRun && route !== "repplay") repStop();   // Rep-Workout verlassen: Stoppuhr aus
   if(route==="home") return renderHome();
   if(route==="reps") return renderReps();
+  if(route==="warmstretch") return renderWarmStretch();
   if(route==="rep") return renderRepDetail(parts[1]);
   if(route==="repplay") return renderRepPlayer(parts[1]);
   if(route==="timers") return renderTimers();
@@ -2942,8 +2942,9 @@ var SEP = ' <span class="sep-dot">&middot;</span> ';
 /* ============ Startseite ============ */
 var HOME_ICON = {
   timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 3h5M18 7l1.5-1.5"/>',
-  lib:'<path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/>',
-  reps:'<path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/>'
+  lib:'<path d="M2.5 12.5h4l2.2-6 4.3 12 2.4-6h6.1"/>',
+  reps:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5.5h2.5v1.5a3 3 0 0 1-3 3M7 5.5H4.5v1.5a3 3 0 0 0 3 3M12 14v4M8.5 20.5h7"/>',
+  warm:'<path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19l8-8"/>'
 };
 var ICON_SPARK = '<path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/>';
 var ICON_STAR = '<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>';
@@ -2980,9 +2981,11 @@ function renderHome(){
     surpriseCardHTML() +
     '<div class="section-title">'+t("areas")+'</div>'+
     '<div class="area-grid">'+
-      areaTile("timer", "#timers", t("timers"), t("htTimers"), "var(--tp-color)") +
-      areaTile("lib", "#library", t("library"), t("htLib"), "var(--bl-color)") +
-      repTileHTML() +
+      /* Farben wie in Favoriten und Listen: Timer/Blöcke blau, Bibliotheks-Workouts grün */
+      areaTile("timer", "#timers", t("timers"), t("htTimers"), "var(--bl-color)") +
+      areaTile("lib", "#library", t("library"), t("htLib"), "var(--tp-color)") +
+      areaTile("reps", "#reps", t("repTitle"), t("htReps"), "#f5b82e") +
+      areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm"), "#22b3c4") +
     '</div>' +
     KODAK_BADGE + DECK_BADGE;
   bindCommon();
@@ -4881,12 +4884,49 @@ function repSchritte(row){
   return st;
 }
 function repBestOf(id){ var b = state.db.settings.repBest; return b && b[id] ? b[id] : null; }
-function repTileHTML(){
-  return '<div class="area-tile wide" data-nav="#reps" role="button" tabindex="0" style="--c:#f5b82e">'+
-      '<span class="at-ico">'+svgIcon(HOME_ICON.reps)+'</span>'+
-      '<span class="at-txt"><b class="at-name">'+esc(t("repTitle"))+'</b><small class="at-sub">'+esc(t("htReps"))+'</small></span>'+
-      '<span class="at-chev">'+ICON_CHEV+'</span>'+
-    '</div>';
+
+/* ============ Aufwärmen & Dehnen ============
+   Eigene Kachel, weil beides zu Workouts und Challenges passt. Zeigt die vorhandenen Bibliotheks-Programme
+   (Aufwärmen: AUFWAERM_IDS, Dehnen: übrige Dehnprogramme) mit denselben Karten wie die Bibliothek. */
+function renderWarmStretch(){
+  function karten(liste){
+    return liste.filter(function(lw){ return !libHidden("wo:"+lw.id); }).map(function(lw){
+      var exs = lw.exercises.map(findExercise).filter(Boolean);
+      return { lw:lw, exs:exs, dur:workoutDuration(libWorkoutRun(lw)) };
+    }).sort(function(a, b){ return a.dur - b.dur; }).map(function(r){
+      return libWoCard(r.lw, r.exs, false, r.dur, woMains(r.exs));
+    }).join("");
+  }
+  var warm = AUFWAERM_IDS.map(findLibWorkout).filter(Boolean);
+  var dehn = LIB_WORKOUTS.filter(function(lw){ return lw.focus === "stretch" && AUFWAERM_IDS.indexOf(lw.id) < 0; });
+  app.innerHTML =
+    topbar(t("warmTitle"), { back:"#home" }) +
+    '<div class="rep-intro">'+esc(t("warmIntro"))+'</div>'+
+    '<div class="section-title">'+esc(t("warmSec"))+'</div>'+ karten(warm) +
+    '<div class="section-title">'+esc(t("stretchSec"))+'</div>'+ karten(dehn);
+  bindCommon();
+  function neu(){ renderWarmStretch(); }
+  app.querySelectorAll("[data-cover]").forEach(function(el){
+    el.addEventListener("click", function(ev){
+      if(ev.target.closest("[data-fav]") || ev.target.closest("[data-womore]")) return;
+      ev.stopPropagation();
+      coverDraft = null; go("#cover/"+el.getAttribute("data-cover"));
+    });
+  });
+  app.querySelectorAll("[data-fav]").forEach(function(el){
+    el.addEventListener("click", function(ev){ ev.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neu(); });
+  });
+  app.querySelectorAll("[data-womore]").forEach(function(el){
+    el.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      var lw = findLibWorkout(el.getAttribute("data-womore"));
+      if(!lw) return;
+      openActionSheet(tplText(lw.name), [
+        { ico:ICON_COPY, label:t("adoptMine"), fn:function(){ adoptLibWorkout(lw); } },
+        { ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("wo:"+lw.id); showToast(t("hiddenToast")); neu(); } }
+      ]);
+    });
+  });
 }
 
 /* Liste: nach Stufe gefiltert, optional ohne Stange */

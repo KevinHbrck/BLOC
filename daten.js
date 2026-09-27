@@ -232,7 +232,10 @@ var LIB_WORKOUT_ROWS = [
   ["runner-strength","Kraft für Läufer","Strength for Runners","legs","split-squats calf-raises single-leg-glute-bridge lateral-lunge-pulses side-plank plank hip-flexor-stretch calf-stretch",40],
   ["stretch-hips","Hüfte mobil","Hip Mobility","stretch","worlds-greatest hip-flexor-stretch pigeon-stretch butterfly-stretch figure-four",5],
   ["stretch-evening","Entspannt dehnen am Abend","Relaxing Evening Stretch","stretch","forward-fold childs-pose sphinx-stretch spinal-twist butterfly-stretch figure-four",5],
-  ["advanced-60","Advanced 60","Advanced 60","mix","burpee-squat-jumps pistol-squats archer-push-ups tuck-jumps dragon-flags clap-push-ups bulgarian-split-squats pike-push-ups frogs hollow-hold cossack-squats jackknives",120]
+  ["advanced-60","Advanced 60","Advanced 60","mix","burpee-squat-jumps pistol-squats archer-push-ups tuck-jumps dragon-flags clap-push-ups bulgarian-split-squats pike-push-ups frogs hollow-hold cossack-squats jackknives",120],
+  ["warmup-ganz","Aufwärmen Ganzkörper","Full-Body Warm-up","mix","jumping-jacks air-squats good-mornings bird-dog reverse-lunges high-knees",20,"1/40/10"],
+  ["warmup-kraft","Aufwärmen vor Kraft","Warm-up before Strength","mix","scapular-push-ups glute-bridge air-squats good-mornings reverse-lunges plank",20,"1/40/10"],
+  ["warmup-hiit","Aufwärmen vor HIIT","Warm-up before HIIT","cardio","jumping-jacks high-knees fast-feet air-squats lateral-hops skater-jumps",20,"2/20/10"]
 ];
 
 /* Schwierigkeit (1 Einsteiger, 2 Mittel, 3 Fortgeschritten) und Ausrüstung je Übung.
@@ -1022,6 +1025,8 @@ var EX_MUSCLES = {
    [id, Name DE, Name EN, Stufe 1-3, [[Übung, [Menge je Runde ...]], ...]]
    Menge: Zahl = Wiederholungen, "400m"/"1km" = Strecke, "30s" = Sekunden (Halten und Pause laufen
    als Countdown), 0 = in dieser Runde nicht. Übung "lauf"/"sprint"/"pause" siehe REP_PSEUDO. */
+/* Kachel „Aufwärmen & Dehnen“: diese Programme stehen unter Aufwärmen, alle übrigen Dehnprogramme unter Dehnen */
+var AUFWAERM_IDS = ["warmup-5","warmup-ganz","warmup-kraft","warmup-hiit","stretch-morning"];
 var REP_PSEUDO = {
   lauf:   { de:"Laufen", en:"Run",    illu:"sprint-in-place" },
   sprint: { de:"Sprint", en:"Sprint", illu:"sprint-in-place" },
@@ -1180,6 +1185,7 @@ window.BLOC_DATEN = {
   EX_POSTURE:EX_POSTURE,
   EX_MUSCLES:EX_MUSCLES,
   REP_PSEUDO:REP_PSEUDO,
+  AUFWAERM_IDS:AUFWAERM_IDS,
   REP_WORKOUT_ROWS:REP_WORKOUT_ROWS
 };
 })();
