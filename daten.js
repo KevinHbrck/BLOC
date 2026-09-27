@@ -558,10 +558,19 @@ var SK_AIR = Q(null,[50,20],[50,46],[[55,63,56,80,60,83],[45,63,44,80,40,83]],[[
 /* Lateral Hops: seitlich hin und her, jedes Mal kurz abheben und landen */
 var LH_BODEN = qScale(qWith(P_F, { l:[[47,71,46,89,40,89],[53,71,54,89,60,89]], a:[[42,36,38,48],[58,36,62,48]] }), .86);
 var LH_LUFT  = qShift(qScale(qWith(P_F, { l:[[47,68,46,84,40,86],[53,68,54,84,60,86]], a:[[42,36,38,48],[58,36,62,48]] }), .86), 0, -8);
+var BS_BODEN  = Q(null,[40,22],[40,52],[[41,71,40,89,48,89],[39,71,40,89,47,89]],[[42,36,43,49]], gBox(54,76,86));
+var BS_AUF    = Q(null,[42,22],[40,52],[[56,58,60,74,68,74],[40,71,40,89,48,89]],[[48,34,52,44]], gBox(54,76,86));
+var BS_HOCH   = Q(null,[62,19],[62,47],[[62,62,62,76,70,76],[52,61,48,73,52,75]],[[64,32,65,44]], gBox(54,76,86));
+var BS_OBEN   = Q(null,[62,19],[62,47],[[62,62,62,76,70,76],[60,62,60,76,68,76]],[[63,33,64,45]], gBox(54,76,86));
+var BS_RUNTER = Q(null,[51,21],[50,50],[[62,60,62,76,70,76],[45,69,42,89,49,89]],[[50,36,50,48]], gBox(54,76,86));
 var ILLU_SEQ = {
   "jumping-jacks": { k:[JJ_ZU, JJ_LUFT, JJ_AUF, JJ_LUFT], t:[[.1,.2,"o"],[.03,.2,"i"],[.1,.2,"o"],[.03,.2,"i"]] },
-  "skater-jumps":  { k:[SK_L, SK_AIR, qMirror(SK_L), SK_AIR], t:[[.14,.22,"o"],[.03,.22,"i"],[.14,.22,"o"],[.03,.22,"i"]] },
-  "lateral-hops":  { k:[qShift(LH_BODEN,-12,0), LH_LUFT, qShift(LH_BODEN,12,0), LH_LUFT], t:[[.06,.16,"o"],[.02,.16,"i"],[.06,.16,"o"],[.02,.16,"i"]] },
+  "skater-jumps":  { k:[SK_L, SK_AIR, qMirror(SK_L), SK_AIR], t:[[.1,.18,"o"],[.02,.18,"i"],[.1,.18,"o"],[.02,.18,"i"]] },
+  "lateral-hops":  { k:[qShift(LH_BODEN,-12,0), LH_LUFT, qShift(LH_BODEN,12,0), LH_LUFT], t:[[.03,.12,"o"],[.01,.12,"i"],[.03,.12,"o"],[.01,.12,"i"]] },
+  /* Fast Feet: flottes Trippeln */
+  "fast-feet":     { k:[ILLU_POSES["fast-feet"][0], ILLU_POSES["fast-feet"][1]], t:[[.02,.11],[.02,.11]] },
+  /* Box Step-ups: ganzer Zyklus - Führungsbein auf die Box, hochdrücken, zweites Bein nach, zweites Bein zuerst wieder runter */
+  "box-step-ups":  { k:[BS_BODEN, BS_AUF, BS_HOCH, BS_OBEN, BS_RUNTER], t:[[.05,.22],[.02,.18],[.02,.16],[.05,.2],[.02,.2]] },
   "jump-squats":  { k:jSeq([J_SQB, J_AIR, J_SQF]), t:[[.22,.32,"o"],[.06,.36,"i"],[.18,.3]] },
   "tuck-jumps":   { k:jSeq([J_SQB, J_TUCK, J_SQF]), t:[[.2,.3,"o"],[.08,.34,"i"],[.16,.3]] },
   "burpees":      { k:jSeq([J_ST, B_SQH, B_PL, B_PUL, B_PL, B_SQH, J_AIR]), t:[[.2,.38],[.04,.28],[.06,.3],[.08,.3],[.04,.28],[.04,.3,"o"],[.06,.36,"i"]] },
@@ -1027,6 +1036,27 @@ var EX_MUSCLES = {
    als Countdown), 0 = in dieser Runde nicht. Übung "lauf"/"sprint"/"pause" siehe REP_PSEUDO. */
 /* Kachel „Aufwärmen & Dehnen“: diese Programme stehen unter Aufwärmen, alle übrigen Dehnprogramme unter Dehnen */
 var AUFWAERM_IDS = ["warmup-5","warmup-ganz","warmup-kraft","warmup-hiit","stretch-morning"];
+/* Übungen im Reiter „Aufwärmen · Übungen“ (Dehnen · Übungen = alle Übungen der Hauptkategorie Stretch) */
+var AUFWAERM_UEBUNGEN = ["jumping-jacks","high-knees","fast-feet","air-squats","lateral-hops","skater-jumps","good-mornings","bird-dog",
+  "reverse-lunges","glute-bridge","scapular-push-ups","plank-steps","arm-circles","cat-cow","worlds-greatest","downward-dog"];
+/* Challenges · Einheiten: 12 Trainingseinheiten nach einem klassischen 12-Einheiten-Plan, je Stufe
+   [Leicht, Standard, Fortgeschritten]. Pro Stufe eine oder mehrere Varianten („A oder B“ im Plan), jede Variante
+   = Programme, die nacheinander gemacht werden. Eintrag: Programm-ID, optional ":2-4" = nur diese Runden,
+   "*0.5" = halbe Wiederholungen/Strecken. */
+var REP_EINHEITEN = [
+  ["e1",  [["wasserkuppe-basis"],["wasserkuppe"]], [["wasserkuppe","kampenwand-basis"],["wasserkuppe","rigi"]], [["wasserkuppe","moench","jungfrau"]]],
+  ["e2",  [["tegelberg"]], [["tegelberg","kampenwand","herzogstand"],["tegelberg","kampenwand-basis","herzogstand"]], [["grossglockner-basis","herzogstand","tegelberg"]]],
+  ["e3",  [["zugspitze"],["belchen"],["eiger"],["nebelhorn"]], [["zugspitze","belchen"],["zugspitze","eiger"],["zugspitze","nebelhorn"]], [["belchen","eiger","zugspitze","nebelhorn"]]],
+  ["e4",  [["moench"]], [["moench","tegelberg"],["moench","jungfrau-sturm"]], [["piz-palue-kraft","rigi-sprung","jungfrau-sturm"]]],
+  ["e5",  [["saentis-basis"]], [["saentis","rigi:1-3"]], [["saentis","rigi"],["saentis","nebelhorn"],["matterhorn","rigi"],["matterhorn","nebelhorn"]]],
+  ["e6",  [["bernina:2-4"]], [["bernina"]], [["ortler","nebelhorn","rigi-sprung"]]],
+  ["e7",  [["pilatus-basis"]], [["pilatus"]], [["pilatus","herzogstand"],["pilatus","belchen"]]],
+  ["e8",  [["mont-blanc-basis:1-2","jungfrau-sturm:1-1"]], [["mont-blanc-basis"]], [["mont-blanc-basis","bernina:2-3"],["mont-blanc-basis","jungfrau-sturm"]]],
+  ["e9",  [["brocken-basis"]], [["brocken"]], [["brocken","kampenwand"],["brocken","rigi"]]],
+  ["e10", [["matterhorn*0.5"]], [["matterhorn"]], [["watzmann"]]],
+  ["e11", [["fichtelberg*0.5"]], [["fichtelberg"]], [["hochkoenig","fichtelberg:2-2"]]],
+  ["e12", [["watzmann-basis"]], [["watzmann"]], [["dachstein"]]]
+];
 var REP_PSEUDO = {
   lauf:   { de:"Laufen", en:"Run",    illu:"sprint-in-place" },
   sprint: { de:"Sprint", en:"Sprint", illu:"sprint-in-place" },
@@ -1186,6 +1216,8 @@ window.BLOC_DATEN = {
   EX_MUSCLES:EX_MUSCLES,
   REP_PSEUDO:REP_PSEUDO,
   AUFWAERM_IDS:AUFWAERM_IDS,
+  AUFWAERM_UEBUNGEN:AUFWAERM_UEBUNGEN,
+  REP_EINHEITEN:REP_EINHEITEN,
   REP_WORKOUT_ROWS:REP_WORKOUT_ROWS
 };
 })();

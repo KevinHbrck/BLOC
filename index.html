@@ -1336,6 +1336,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .at-chev{ position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; font-size:18px; color:var(--text-dim); }
 .area-tile .at-chev{ top:41px; }
 /* Rep-Workouts */
+.rep-teile{ color:var(--text); font-weight:500; white-space:normal; }
 .rep-intro{ font-size:14px; color:var(--text-dim); margin:4px 4px 12px; line-height:1.45; }
 .rep-pick{ display:flex; flex-wrap:wrap; margin-bottom:8px; }
 .rep-pick.zwei{ margin-bottom:14px; }
@@ -1481,7 +1482,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 
 /* Inhaltsdaten (Übungen, Workouts, Posen) stehen in daten.js - hier unter den gewohnten Namen */
 var BLOC_DATEN = window.BLOC_DATEN;
-var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_PSEUDO, AUFWAERM_IDS = BLOC_DATEN.AUFWAERM_IDS;
+var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_PSEUDO, AUFWAERM_IDS = BLOC_DATEN.AUFWAERM_IDS,
+    AUFWAERM_UEBUNGEN = BLOC_DATEN.AUFWAERM_UEBUNGEN, REP_EINHEITEN = BLOC_DATEN.REP_EINHEITEN;
 var EX_ALIAS = BLOC_DATEN.EX_ALIAS, LIB_CATS = BLOC_DATEN.LIB_CATS, EXERCISE_ROWS = BLOC_DATEN.EXERCISE_ROWS,
     LIB_WORKOUT_ROWS = BLOC_DATEN.LIB_WORKOUT_ROWS, EX_LEVEL = BLOC_DATEN.EX_LEVEL, EX_EQUIP = BLOC_DATEN.EX_EQUIP, MAIN_CATS = BLOC_DATEN.MAIN_CATS,
     EX_MAIN_ROWS = BLOC_DATEN.EX_MAIN_ROWS, EQUIPS = BLOC_DATEN.EQUIPS, EX_SUCH_ALIAS = BLOC_DATEN.EX_SUCH_ALIAS, Q = BLOC_DATEN.Q,
@@ -1796,6 +1798,12 @@ var I18N = {
     repTitle:"Challenges", htReps:"Alle Wiederholungen auf Bestzeit",
     warmTitle:"Aufwärmen & Dehnen", htWarm:"Vor und nach dem Training", warmSec:"Aufwärmen · vor dem Training", stretchSec:"Dehnen · nach dem Training",
     warmIntro:"Passt zu Workouts und Challenges: vorher kurz aufwärmen, danach dehnen.",
+    wsWarm:"Aufwärmen", wsDehn:"Dehnen", wsIntroWarm:"Vor dem Training: Puls hoch und Gelenke mobil – passt vor Workouts und Challenges.",
+    wsIntroDehn:"Nach dem Training: ruhig dehnen und jede Position entspannt halten.",
+    repTabUnits:"Einheiten", repTabProgs:"Programme A–Z",
+    repUnitsIntro:"12 Einheiten, jede in drei Stufen. Eine Einheit verbindet mehrere Programme, die du nacheinander machst – die Uhr läuft durch, bis alle geschafft sind.",
+    stufe_leicht:"Leicht", stufe_standard:"Standard", stufe_fortgeschritten:"Fortgeschritten", unitN:"Einheit {n}", variant:"Variante {n}",
+    rundenTeil:"Runden {a}–{b}", runde1Teil:"Runde {a}", halb:"halbe Menge",
     repIntro:"Alle Wiederholungen so schnell wie möglich, aber sauber ausgeführt. Die Zeit läuft mit, deine Bestzeit wird gespeichert.",
     repAll:"Alle", repAllEquip:"Alle Geräte", repNoBar:"Ohne Stange", repNone:"Keine Programme für diese Auswahl.",
     repRound1:"1 Runde", repRoundsN:"{n} Runden", repReps:"{n} Wdh.", repBar:"Stange", repRound:"Runde",
@@ -1955,6 +1963,12 @@ var I18N = {
     repTitle:"Challenges", htReps:"Every rep as fast as you can",
     warmTitle:"Warm-up & stretch", htWarm:"Before and after training", warmSec:"Warm-up · before training", stretchSec:"Stretch · after training",
     warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
+    wsWarm:"Warm-up", wsDehn:"Stretch", wsIntroWarm:"Before training: raise your pulse and loosen your joints – works before workouts and challenges.",
+    wsIntroDehn:"After training: stretch calmly and hold each position relaxed.",
+    repTabUnits:"Sessions", repTabProgs:"Programs A–Z",
+    repUnitsIntro:"12 sessions, each in three levels. A session chains several programs you do back to back – the clock runs until all are done.",
+    stufe_leicht:"Light", stufe_standard:"Standard", stufe_fortgeschritten:"Advanced", unitN:"Session {n}", variant:"Option {n}",
+    rundenTeil:"rounds {a}–{b}", runde1Teil:"round {a}", halb:"half volume",
     repIntro:"Do every rep as fast as you can, with clean form. The clock keeps running and your best time is saved.",
     repAll:"All", repAllEquip:"Any equipment", repNoBar:"No bar", repNone:"No programs match this selection.",
     repRound1:"1 round", repRoundsN:"{n} rounds", repReps:"{n} reps", repBar:"Bar", repRound:"Round",
@@ -3718,9 +3732,10 @@ function stretchSubText(ex){
 }
 
 /* Kacheln der Hauptkategorien (Mehrfachauswahl, nichts gewählt = alle) */
-function mainTilesHTML(sel, counts, attr){
+function mainTilesHTML(sel, counts, attr, ohne){
   sel = selArr(sel);
-  return '<div class="main-tiles">'+MAIN_CATS.map(function(c){
+  var kats = ohne ? MAIN_CATS.filter(function(c){ return ohne.indexOf(c.id) < 0; }) : MAIN_CATS;
+  return '<div class="main-tiles"'+(ohne ? ' style="grid-template-columns:repeat('+kats.length+', minmax(0, 1fr))"' : '')+'>'+kats.map(function(c){
     var on = sel.indexOf(c.id) > -1;
     return '<button type="button" class="main-tile'+(on?' on':'')+(sel.length && !on ? ' off':'')+'" '+attr+'="'+c.id+'" aria-pressed="'+on+'" style="--mc:'+c.color+'">'+
       '<span class="mt-ico">'+svgIcon(c.ico)+'</span><span class="mt-name">'+esc(tplText(c))+'</span>'+
@@ -3729,12 +3744,12 @@ function mainTilesHTML(sel, counts, attr){
 }
 var ICON_RESET = '<path d="M4 4v5h5"/><path d="M4.6 14a8 8 0 1 0 1.9-7.9L4 9"/>';
 /* Filterfeld direkt auf der Seite (Fokus, Ausrüstung, Sortierung) - auf- und zuklappbar über den Filter-Knopf */
-function filterCardHTML(pre, cat, equip, sort, sortOpts){
+function filterCardHTML(pre, cat, equip, sort, sortOpts, ohneCats){
   cat = selArr(cat); equip = selArr(equip);
   return '<div class="card filter-card">'+
     '<div class="fc-head"><b>'+t("filter")+'</b><button type="button" class="fc-reset" data-'+pre+'freset>'+svgIcon(ICON_RESET)+t("filterReset")+'</button></div>'+
     '<div class="fc-lbl">'+t("fCat")+' <span>'+t("multiOk")+'</span></div>'+
-    '<div class="fc-chips">'+LIB_CATS.map(function(c){
+    '<div class="fc-chips">'+LIB_CATS.filter(function(c){ return !ohneCats || ohneCats.indexOf(c.id) < 0; }).map(function(c){
       var on = cat.indexOf(c.id) > -1;
       return '<button type="button" class="fc-chip'+(on?' on':'')+'" data-'+pre+'fcat="'+c.id+'" aria-pressed="'+on+'">'+catIcon(c.id)+esc(tplText(c))+'</button>';
     }).join("")+'</div>'+
@@ -3768,9 +3783,11 @@ function renderLibrary(){
   var s = state.db.settings;
   if(s.libTab === "calis" || s.libTab === "stretch") s.libTab = "workouts";   // frühere Reiter Calisthenics und Dehnen
   var tab = ["exercises","mine"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
-  var cat = selArr(s.libCats || s.libCat);
+  /* Dehnen und Aufwärmen stehen seit 2026-09 unter „Aufwärmen & Dehnen“ - hier nicht mehr */
+  function ohneStretch(x){ return x !== "stretch"; }
+  var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
   var equip = selArr(s.libEquips);
-  var mains = selArr(s.libMains);
+  var mains = selArr(s.libMains).filter(ohneStretch);
   var exSort = s.libSort === "az" ? "az" : "std";
   var woSort = s.libWoSort === "az" ? "az" : "dur";
   var open = !!s.libFilterOpen;
@@ -3781,6 +3798,7 @@ function renderLibrary(){
     var rows = [];
     if(tab === "workouts"){
       LIB_WORKOUTS.forEach(function(lw){
+        if(lw.focus === "stretch" || AUFWAERM_IDS.indexOf(lw.id) > -1) return;
         var exs = lw.exercises.map(findExercise).filter(Boolean);
         rows.push({ lw:lw, exs:exs, name:tplText(lw.name), focus:lw.focus, dur:workoutDuration(libWorkoutRun(lw)), hidden:libHidden("wo:"+lw.id) });
       });
@@ -3817,6 +3835,7 @@ function renderLibrary(){
     }
   } else {
     EXERCISES.forEach(function(ex){
+      if(ex.main === "stretch") return;
       if(!exPasses(ex, cat, equip, [])) return;
       if(libHidden("ex:"+ex.id)){
         if(mainMatch(mains, ex.main)){ hiddenCount++; hiddenCards += libExCard(ex, true, exSubText(ex)); }
@@ -3824,7 +3843,7 @@ function renderLibrary(){
       }
       counts[ex.main]++;
     });
-    sortedExercises(cat, exSort, equip, mains).forEach(function(ex){ list += libExCard(ex, false, exSubText(ex)); });
+    sortedExercises(cat, exSort, equip, mains).forEach(function(ex){ if(ex.main !== "stretch") list += libExCard(ex, false, exSubText(ex)); });
     fab = fabMenuHTML([{ key:"new", label:t("exNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
   if(!list) list = '<div class="empty" style="padding:40px 20px;">'+t("libEmpty")+'</div>';
@@ -3842,9 +3861,9 @@ function renderLibrary(){
     '<div class="search-row">'+searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
       '<button type="button" class="filter-btn'+(nf || open ?' on':'')+'" data-ltoggle aria-expanded="'+open+'" title="'+t("filter")+'" aria-label="'+t("filter")+(nf?' ('+nf+')':'')+'">'+
       svgIcon(ICON_FILTER)+(nf ? '<span class="filter-n">'+nf+'</span>' : '')+'</button></div>'+
-    mainTilesHTML(mains, counts, "data-lmain")+
+    mainTilesHTML(mains, counts, "data-lmain", ["stretch"])+
     (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
-              tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]])
+              tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], ["stretch"])
           : activeFiltersHTML(cat, equip, "l")))+
     surpriseCardHTML()+
     list + hiddenBlockHTML(hiddenCount, hiddenCards) +
@@ -4856,7 +4875,7 @@ function bindSnapZeile(){
    Ohne Intervalle: alle Wiederholungen so schnell wie möglich, eine Stoppuhr läuft mit. Eigener, schlichter
    Ablauf in der Seite - der Intervall-Timer bleibt unberührt. Programme stehen in daten.js (REP_WORKOUT_ROWS).
    Bestzeiten: settings.repBest[id] = { best, last, n, at } (Millisekunden). */
-var repFilter = { lvl:"all", bar:"all" };
+var repFilter = { lvl:"all", bar:"all", tab:"einheiten", stufe:"standard" };
 var repRun = null;
 function repRow(id){ for(var i=0;i<REP_WORKOUT_ROWS.length;i++) if(REP_WORKOUT_ROWS[i][0]===id) return REP_WORKOUT_ROWS[i]; return null; }
 function repName(row){ return currentLang()==="en" ? row[2] : row[1]; }
@@ -4878,80 +4897,174 @@ function repMenge(m){
   if(sek) return repUhr(sek*1000);
   return String(m).replace(/(\d)(k?m)$/, "$1 $2").replace("×", " × ");
 }
-function repSchritte(row){
-  var st = [], R = repRunden(row);
-  for(var r=0;r<R;r++) row[4].forEach(function(x){ var m = x[1][r]; if(m) st.push({ ex:x[0], m:m, r:r }); });
+/* Quelle eines Ablaufs: ein Programm („saentis“) oder eine Einheit aus mehreren Programmen („e1-standard-2“).
+   teile = [{ row, von, bis, f }] - Runden von..bis, f = Faktor für Wiederholungen/Strecken */
+var REP_STUFEN = ["leicht", "standard", "fortgeschritten"];
+function repTeilParse(e){
+  var m = /^([a-z0-9-]+)(?::(\d+)-(\d+))?(?:\*([\d.]+))?$/.exec(e) || [];
+  var row = repRow(m[1]);
+  if(!row) return null;
+  var R = repRunden(row);
+  return { row:row, von:m[2] ? +m[2] : 1, bis:Math.min(m[3] ? +m[3] : R, R), f:m[4] ? +m[4] : 1 };
+}
+function repEinheit(eid){ for(var i=0;i<REP_EINHEITEN.length;i++) if(REP_EINHEITEN[i][0]===eid) return REP_EINHEITEN[i]; return null; }
+function repQuelle(id){
+  var row = repRow(id);
+  if(row) return { id:id, name:repName(row), einzel:true, lvl:row[3], teile:[{ row:row, von:1, bis:repRunden(row), f:1 }] };
+  var m = /^(e\d+)-(leicht|standard|fortgeschritten)-(\d+)$/.exec(id || "");
+  var e = m && repEinheit(m[1]);
+  if(!e) return null;
+  var varianten = e[1 + REP_STUFEN.indexOf(m[2])], v = varianten[+m[3] - 1];
+  if(!v) return null;
+  return { id:id, einzel:false, stufe:m[2], nr:m[1].slice(1), variante:+m[3], varianten:varianten.length,
+           name:t("unitN", { n:m[1].slice(1) })+" · "+t("stufe_"+m[2])+(varianten.length > 1 ? " · "+t("variant", { n:m[3] }) : ""),
+           teile:v.map(repTeilParse).filter(Boolean) };
+}
+function repMengeMal(m, f){
+  if(f === 1) return m;
+  if(typeof m === "number") return Math.max(1, Math.round(m*f));
+  var d = /^(\d+(?:\.\d+)?)(m|km)$/.exec(m);
+  if(!d) return m;
+  var v = +d[1]*f;
+  if(d[2] === "km" && v < 1) return Math.round(v*1000)+"m";
+  return (Math.round(v*10)/10)+d[2];
+}
+function repTeilName(tl){
+  var n = repName(tl.row), R = repRunden(tl.row);
+  if(tl.von > 1 || tl.bis < R) n += " ("+(tl.von === tl.bis ? t("runde1Teil", { a:tl.von }) : t("rundenTeil", { a:tl.von, b:tl.bis }))+")";
+  if(tl.f !== 1) n += " ("+t("halb")+")";
+  return n;
+}
+function repQSchritte(q){
+  var st = [];
+  q.teile.forEach(function(tl){
+    for(var r=tl.von-1; r<tl.bis; r++) tl.row[4].forEach(function(x){
+      var m = x[1][r];
+      if(m) st.push({ ex:x[0], m:repMengeMal(m, tl.f), r:r-(tl.von-1), R:tl.bis-tl.von+1, prog:q.einzel ? "" : repName(tl.row) });
+    });
+  });
   return st;
 }
+function repQWdh(q){ var n = 0; repQSchritte(q).forEach(function(x){ if(typeof x.m === "number") n += x.m; }); return n; }
+function repQRunden(q){ var n = 0; q.teile.forEach(function(tl){ n += tl.bis - tl.von + 1; }); return n; }
+function repQStange(q){ return q.teile.some(function(tl){ return repBrauchtStange(tl.row); }); }
 function repBestOf(id){ var b = state.db.settings.repBest; return b && b[id] ? b[id] : null; }
 
 /* ============ Aufwärmen & Dehnen ============
-   Eigene Kachel, weil beides zu Workouts und Challenges passt. Zeigt die vorhandenen Bibliotheks-Programme
-   (Aufwärmen: AUFWAERM_IDS, Dehnen: übrige Dehnprogramme) mit denselben Karten wie die Bibliothek. */
+   Eigene Kachel, weil beides zu Workouts und Challenges passt. Oben Aufwärmen | Dehnen, darunter wie in der
+   Bibliothek Workouts | Übungen. Aufwärmen: AUFWAERM_IDS bzw. AUFWAERM_UEBUNGEN, Dehnen: übrige Dehnprogramme
+   bzw. alle Übungen der Hauptkategorie Stretch. Karten und Knöpfe wie in der Bibliothek. */
 function renderWarmStretch(){
-  function karten(liste){
-    return liste.filter(function(lw){ return !libHidden("wo:"+lw.id); }).map(function(lw){
+  var s = state.db.settings;
+  var art = s.wsArt === "dehn" ? "dehn" : "warm", tab = s.wsTab === "uebungen" ? "uebungen" : "workouts";
+  var liste;
+  if(tab === "workouts"){
+    var wos = art === "warm" ? AUFWAERM_IDS.map(findLibWorkout).filter(Boolean)
+                             : LIB_WORKOUTS.filter(function(lw){ return lw.focus === "stretch" && AUFWAERM_IDS.indexOf(lw.id) < 0; });
+    liste = wos.filter(function(lw){ return !libHidden("wo:"+lw.id); }).map(function(lw){
       var exs = lw.exercises.map(findExercise).filter(Boolean);
       return { lw:lw, exs:exs, dur:workoutDuration(libWorkoutRun(lw)) };
     }).sort(function(a, b){ return a.dur - b.dur; }).map(function(r){
       return libWoCard(r.lw, r.exs, false, r.dur, woMains(r.exs));
     }).join("");
+  } else {
+    var exs = art === "warm" ? AUFWAERM_UEBUNGEN.map(findExercise).filter(Boolean)
+                             : EXERCISES.filter(function(ex){ return ex.main === "stretch"; });
+    liste = exs.filter(function(ex){ return !libHidden("ex:"+ex.id); }).map(function(ex){ return libExCard(ex, false, exSubText(ex)); }).join("");
   }
-  var warm = AUFWAERM_IDS.map(findLibWorkout).filter(Boolean);
-  var dehn = LIB_WORKOUTS.filter(function(lw){ return lw.focus === "stretch" && AUFWAERM_IDS.indexOf(lw.id) < 0; });
+  function knopf(attr, wert, aktiv, text){ return '<button data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
   app.innerHTML =
     topbar(t("warmTitle"), { back:"#home" }) +
-    '<div class="rep-intro">'+esc(t("warmIntro"))+'</div>'+
-    '<div class="section-title">'+esc(t("warmSec"))+'</div>'+ karten(warm) +
-    '<div class="section-title">'+esc(t("stretchSec"))+'</div>'+ karten(dehn);
+    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
+      knopf("wsart", "warm", art === "warm", t("wsWarm"))+knopf("wsart", "dehn", art === "dehn", t("wsDehn"))+
+    '</div><div class="theme-pick lib-tabs seg-2" style="margin-top:8px">'+
+      knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+
+    '</div></div>'+
+    '<div class="rep-intro">'+esc(t(art === "warm" ? "wsIntroWarm" : "wsIntroDehn"))+'</div>'+
+    (liste || '<div class="empty">'+t("libEmpty")+'</div>') +
+    '<div style="height:40px"></div>';
   bindCommon();
-  function neu(){ renderWarmStretch(); }
-  app.querySelectorAll("[data-cover]").forEach(function(el){
-    el.addEventListener("click", function(ev){
-      if(ev.target.closest("[data-fav]") || ev.target.closest("[data-womore]")) return;
-      ev.stopPropagation();
-      coverDraft = null; go("#cover/"+el.getAttribute("data-cover"));
-    });
+  function neu(){ var y = window.scrollY; renderWarmStretch(); window.scrollTo(0, y); }
+  function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
+  on("[data-wsart]", function(el){ s.wsArt = el.getAttribute("data-wsart"); save(); renderWarmStretch(); window.scrollTo(0, 0); });
+  on("[data-wstab]", function(el){ s.wsTab = el.getAttribute("data-wstab"); save(); renderWarmStretch(); window.scrollTo(0, 0); });
+  on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
+  on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
+  on("[data-womore]", function(el){
+    var lw = findLibWorkout(el.getAttribute("data-womore"));
+    if(!lw) return;
+    openActionSheet(tplText(lw.name), [
+      { ico:ICON_COPY, label:t("adoptMine"), fn:function(){ adoptLibWorkout(lw); } },
+      { ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("wo:"+lw.id); showToast(t("hiddenToast")); neu(); } }
+    ]);
   });
-  app.querySelectorAll("[data-fav]").forEach(function(el){
-    el.addEventListener("click", function(ev){ ev.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neu(); });
+  on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
+  on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
+  on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
+  on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
+  on("[data-exmore]", function(el){
+    var ex = findExercise(el.getAttribute("data-exmore"));
+    if(!ex) return;
+    var acts = [];
+    if(ex.custom) acts.push({ ico:ICON_EDIT, label:t("edit"), fn:function(){ go("#exedit/"+ex.id); } });
+    if(EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false, { onChange:neu }); } });
+    acts.push({ ico:ICON_TIMERBLOCK, label:t("adoptBlockTitle"), fn:function(){ adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) })); } });
+    acts.push({ ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("ex:"+ex.id); showToast(t("hiddenToast")); neu(); } });
+    openActionSheet(tplText(ex.name), acts);
   });
-  app.querySelectorAll("[data-womore]").forEach(function(el){
-    el.addEventListener("click", function(ev){
-      ev.stopPropagation();
-      var lw = findLibWorkout(el.getAttribute("data-womore"));
-      if(!lw) return;
-      openActionSheet(tplText(lw.name), [
-        { ico:ICON_COPY, label:t("adoptMine"), fn:function(){ adoptLibWorkout(lw); } },
-        { ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("wo:"+lw.id); showToast(t("hiddenToast")); neu(); } }
-      ]);
-    });
-  });
+  bindTrash(neu);
 }
 
-/* Liste: nach Stufe gefiltert, optional ohne Stange */
+/* Liste: Reiter Einheiten (Stufe Leicht/Standard/Fortgeschritten) und Programme A–Z (Stufe 1-3), beide optional ohne Stange */
 function renderReps(){
-  var rows = REP_WORKOUT_ROWS.filter(function(r){
-    if(repFilter.lvl !== "all" && r[3] !== +repFilter.lvl) return false;
-    if(repFilter.bar === "none" && repBrauchtStange(r)) return false;
-    return true;
-  }).map(function(r, i){ return { r:r, i:i }; }).sort(function(a, b){ return a.r[3] - b.r[3] || a.i - b.i; });
   function knopf(art, wert, text){
     return '<button type="button" data-repf="'+art+':'+wert+'" class="'+(String(repFilter[art])===String(wert) ? "active" : "")+'">'+esc(text)+'</button>';
   }
-  app.innerHTML =
-    topbar(t("repTitle"), { back:"#home" }) +
-    '<div class="rep-intro">'+esc(t("repIntro"))+'</div>'+
-    '<div class="theme-pick rep-pick">'+knopf("lvl","all",t("repAll"))+knopf("lvl",1,t("lvl1"))+knopf("lvl",2,t("lvl2"))+knopf("lvl",3,t("lvl3"))+'</div>'+
-    '<div class="theme-pick rep-pick zwei">'+knopf("bar","all",t("repAllEquip"))+knopf("bar","none",t("repNoBar"))+'</div>'+
-    (rows.length ? rows.map(function(o){
-      var r = o.r, R = repRunden(r), best = repBestOf(r[0]);
-      return '<div class="list-item" data-nav="#rep/'+r[0]+'"><div class="meta"><div class="name">'+esc(repName(r))+'</div>'+
-        '<div class="sub">'+esc(t("lvl"+r[3]))+SEP+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repWdh(r) }))+
-        (repBrauchtStange(r) ? SEP+esc(t("repBar")) : "")+'</div></div>'+
-        (best ? '<span class="chip">'+repUhr(best.best)+'</span>' : '')+
-        '<span class="chip chev">'+ICON_CHEV+'</span></div>';
-    }).join("") : '<div class="empty">'+esc(t("repNone"))+'</div>');
+  function karte(id, name, zeile1, zeile2){
+    var best = repBestOf(id);
+    return '<div class="list-item" data-nav="#rep/'+id+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
+      (zeile1 ? '<div class="sub rep-teile">'+zeile1+'</div>' : '')+'<div class="sub">'+zeile2+'</div></div>'+
+      (best ? '<span class="chip">'+repUhr(best.best)+'</span>' : '')+
+      '<span class="chip chev">'+ICON_CHEV+'</span></div>';
+  }
+  var html = topbar(t("repTitle"), { back:"#home" }) +
+    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
+      '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+
+      '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
+    '</div></div>';
+  var liste = "";
+  if(repFilter.tab === "einheiten"){
+    var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
+    html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>'+
+      '<div class="theme-pick rep-pick">'+knopf("stufe","leicht",t("stufe_leicht"))+knopf("stufe","standard",t("stufe_standard"))+knopf("stufe","fortgeschritten",t("stufe_fortgeschritten"))+'</div>';
+    REP_EINHEITEN.forEach(function(e){
+      var varianten = e[1 + REP_STUFEN.indexOf(stufe)];
+      varianten.forEach(function(v, k){
+        var q = repQuelle(e[0]+"-"+stufe+"-"+(k+1));
+        if(!q || !q.teile.length) return;
+        if(repFilter.bar === "none" && repQStange(q)) return;
+        var R = repQRunden(q);
+        liste += karte(q.id, t("unitN", { n:q.nr })+(varianten.length > 1 ? " · "+t("variant", { n:k+1 }) : ""),
+          esc(q.teile.map(repTeilName).join(" + ")),
+          esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+(repQStange(q) ? SEP+esc(t("repBar")) : ""));
+      });
+    });
+  } else {
+    html += '<div class="rep-intro">'+esc(t("repIntro"))+'</div>'+
+      '<div class="theme-pick rep-pick">'+knopf("lvl","all",t("repAll"))+knopf("lvl",1,t("lvl1"))+knopf("lvl",2,t("lvl2"))+knopf("lvl",3,t("lvl3"))+'</div>';
+    REP_WORKOUT_ROWS.filter(function(r){
+      if(repFilter.lvl !== "all" && r[3] !== +repFilter.lvl) return false;
+      if(repFilter.bar === "none" && repBrauchtStange(r)) return false;
+      return true;
+    }).map(function(r, i){ return { r:r, i:i }; }).sort(function(a, b){ return a.r[3] - b.r[3] || a.i - b.i; }).forEach(function(o){
+      var r = o.r, R = repRunden(r);
+      liste += karte(r[0], repName(r), "",
+        esc(t("lvl"+r[3]))+SEP+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repWdh(r) }))+(repBrauchtStange(r) ? SEP+esc(t("repBar")) : ""));
+    });
+  }
+  html += '<div class="theme-pick rep-pick zwei">'+knopf("bar","all",t("repAllEquip"))+knopf("bar","none",t("repNoBar"))+'</div>' +
+    (liste || '<div class="empty">'+esc(t("repNone"))+'</div>');
+  app.innerHTML = html;
   bindCommon();
   app.querySelectorAll("[data-repf]").forEach(function(b){
     b.addEventListener("click", function(){
@@ -4962,24 +5075,30 @@ function renderReps(){
   });
 }
 
-/* Detail: Tabelle Übungen × Runden, Bestzeit, Start */
+/* Detail: je Programm eine Tabelle Übungen × Runden, Bestzeit, Start */
 function renderRepDetail(id){
-  var r = repRow(id);
-  if(!r) return go("#reps");
-  var R = repRunden(r), best = repBestOf(id);
-  var kopf = '<tr><th></th>'+Array.apply(null, Array(R)).map(function(x, i){ return '<th>'+(i+1)+'</th>'; }).join("")+'</tr>';
-  var zeilen = r[4].map(function(x){
-    var bild = repIllu(x[0]) ? illuStillHTML(repIllu(x[0]), "") : "";
-    return '<tr><td class="rep-ex"><div class="rep-ex-in">'+(bild || '<span class="rep-leer"></span>')+'<span>'+esc(repExName(x[0]))+'</span></div></td>'+
-      Array.apply(null, Array(R)).map(function(y, i){ var m = x[1][i]; return '<td>'+(m ? esc(repMenge(m)) : '–')+'</td>'; }).join("")+'</tr>';
-  }).join("");
+  var q = repQuelle(id);
+  if(!q) return go("#reps");
+  var R = repQRunden(q), best = repBestOf(id);
+  function tabelle(tl){
+    var runden = [];
+    for(var r=tl.von; r<=tl.bis; r++) runden.push(r);
+    var kopf = '<tr><th></th>'+runden.map(function(r){ return '<th>'+r+'</th>'; }).join("")+'</tr>';
+    var zeilen = tl.row[4].filter(function(x){ return runden.some(function(r){ return x[1][r-1]; }); }).map(function(x){
+      var bild = repIllu(x[0]) ? illuStillHTML(repIllu(x[0]), "") : "";
+      return '<tr><td class="rep-ex"><div class="rep-ex-in">'+(bild || '<span class="rep-leer"></span>')+'<span>'+esc(repExName(x[0]))+'</span></div></td>'+
+        runden.map(function(r){ var m = x[1][r-1]; return '<td>'+(m ? esc(repMenge(repMengeMal(m, tl.f))) : '–')+'</td>'; }).join("")+'</tr>';
+    }).join("");
+    return '<div class="card"><div class="rep-tab-wrap"><table class="rep-tab">'+kopf+zeilen+'</table></div></div>';
+  }
   app.innerHTML =
-    topbar(repName(r), { back:"#reps" }) +
-    '<div class="rep-meta">'+esc(t("lvl"+r[3]))+SEP+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repWdh(r) }))+
-      (repBrauchtStange(r) ? SEP+esc(t("repBar")) : "")+
+    topbar(q.name, { back:"#reps" }) +
+    '<div class="rep-meta">'+(q.einzel ? esc(t("lvl"+q.lvl))+SEP : '')+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+
+      (repQStange(q) ? SEP+esc(t("repBar")) : "")+
       (best ? SEP+esc(t("repBestIs", { z:repUhr(best.best) }))+(best.n > 1 ? ', '+esc(t("repLastIs", { z:repUhr(best.last) })) : '') : '')+'</div>'+
-    '<div class="section-title">'+esc(t("repTable"))+'</div>'+
-    '<div class="card"><div class="rep-tab-wrap"><table class="rep-tab">'+kopf+zeilen+'</table></div></div>'+
+    q.teile.map(function(tl, i){
+      return '<div class="section-title">'+esc(q.einzel ? t("repTable") : (i+1)+". "+repTeilName(tl))+'</div>'+tabelle(tl);
+    }).join("")+
     '<div class="rep-intro">'+esc(t("repHint"))+'</div>'+
     '<button type="button" class="btn btn-primary" data-repstart>'+ICON_PLAY+' '+esc(t("repStart"))+'</button>';
   bindCommon();
@@ -4994,11 +5113,11 @@ function repVerstrichen(){
   return (r.ende || r.pauseAb || Date.now()) - r.start - r.pausenMs;
 }
 function renderRepPlayer(id){
-  var row = repRow(id);
-  if(!row) return go("#reps");
+  var q = repQuelle(id);
+  if(!q) return go("#reps");
   if(!repRun || repRun.id !== id){
     repStop();
-    repRun = { id:id, row:row, steps:repSchritte(row), i:-1, start:0, pausenMs:0, pauseAb:0, ende:0, zaehlt:0, stepEnde:0, uhr:null, zaehler:null };
+    repRun = { id:id, q:q, steps:repQSchritte(q), i:-1, start:0, pausenMs:0, pauseAb:0, ende:0, zaehlt:0, stepEnde:0, uhr:null, zaehler:null };
   }
   repZeichnen();
 }
@@ -5105,8 +5224,8 @@ function repBeenden(){
 function repZeichnen(){
   var r = repRun;
   if(!r) return;
-  var R = repRunden(r.row), n = r.steps.length;
-  var html = topbar(repName(r.row), { back:"#reps" });
+  var n = r.steps.length;
+  var html = topbar(r.q.name, { back:"#reps" });
   if(r.ende){
     var best = repBestOf(r.id);
     html += '<div class="rp-karte" style="margin-top:8px;"><div class="rp-name">'+esc(t("repFinish"))+'</div>'+
@@ -5123,7 +5242,7 @@ function repZeichnen(){
     var goText = !laeuft ? (r.zaehlt ? String(r.zaehlt) : t("repStart")) : r.pauseAb ? t("repResume") : sek ? t("repSkip") : t("repDone");
     html +=
       '<div class="rp-uhr" id="rp-uhr">'+repUhr(repVerstrichen())+'</div>'+
-      '<div class="rp-runde">'+(laeuft ? esc(t("repRound"))+' '+(st.r+1)+' / '+R : esc(r.zaehlt ? t("repReady") : t("repHint")))+'</div>'+
+      '<div class="rp-runde">'+(laeuft ? esc((st.prog ? st.prog+" · " : "")+t("repRound")+" "+(st.r+1)+" / "+st.R) : esc(r.zaehlt ? t("repReady") : t("repHint")))+'</div>'+
       '<div class="rp-fort"><i style="width:'+Math.round((laeuft ? r.i : 0)/n*100)+'%"></i></div>'+
       '<div class="rp-karte">'+(illu ? illuHTML(illu, "") : '<div class="rp-leer"></div>')+
         '<div class="rp-menge">'+menge+'</div><div class="rp-name">'+esc(repExName(st.ex))+'</div></div>'+
