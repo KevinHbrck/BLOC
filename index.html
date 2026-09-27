@@ -519,7 +519,8 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .ft-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:3px; }
 :root[data-vintage] .ft-name{ font-family:var(--f-mono); font-weight:500; text-transform:uppercase; font-size:12.5px; letter-spacing:0; }
 :root[data-vintage] .ft-sub{ font-family:var(--f-body); color:var(--text-sub); }
-.fav-empty{ font-size:13px; color:var(--text-dim); padding:12px 14px; border:1px dashed var(--border); border-radius:var(--radius); margin-bottom:6px; }
+.empty-btn{ width:auto; display:inline-flex; margin:16px auto 0; padding:13px 20px; font-size:15px; }
+.fav-empty{ font-size:12.5px; color:var(--text-dim); padding:8px 12px; border:1px dashed var(--border); border-radius:12px; margin-bottom:4px; line-height:1.4; }
 .page-hint{ font-size:13px; color:var(--text-dim); margin:0 4px 12px; }
 .fab-opt .ico.tp{ background:var(--tp-color); color:var(--tp-text); }
 .fab-opt:nth-child(3){ animation-delay:.08s; }
@@ -550,7 +551,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .more-btn{ width:40px; height:40px; border:none; background:none; color:var(--text-dim); font-size:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:50%; }
 .more-btn:active{ background:var(--surface-2); }
 /* Karten ohne Bild (Workouts): ☆ und ⋯ untereinander - lässt dem Namen mehr Breite */
-.lib-card:not(:has(.illu-btn)) .card-acts{ flex-direction:column; }
+.lib-card:not(:has(.illu-btn)) .card-acts{ flex-direction:row; }
 .lib-card .name{ overflow-wrap:anywhere; -webkit-hyphens:auto; hyphens:auto; }
 :root[data-vintage] .list-item.lib-card{ padding:12px 6px 12px 12px; gap:10px; }
 :root[data-vintage] .list-item.entry.lib-card .name{ font-size:15.5px; letter-spacing:.02em; }
@@ -604,6 +605,8 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 @keyframes poseB{ 0%{ opacity:0; } 50%{ opacity:1; } }
 .lib-illu{ width:76px; height:76px; flex-shrink:0; color:var(--tp-color); align-self:flex-start; background:var(--surface-2); border-radius:12px; padding:4px; }
 .pl-illu{ width:96px; height:96px; margin:-14px 0 0; opacity:.9; }
+/* genug Höhe: Figur in der Übungsphase größer - auf kleinen Handys bleibt sie kompakt, damit die Knöpfe Platz haben */
+@media (min-height:740px){ .pl-illu{ width:124px; height:124px; margin:-16px 0 -4px; opacity:.92; } }
 .ex-hint{ font-size:15px; opacity:.75; margin:6px 0 18px; }
 .block-label + .ex-hint{ margin-top:-14px; }
 @media (prefers-reduced-motion: reduce){ .illu .pose-a, .illu .pose-b{ animation:none; } .illu .pose-b{ opacity:0; } }
@@ -1323,15 +1326,15 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 /* Bereiche: zwei Kacheln nebeneinander */
 .area-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
 .area-tile{
-  position:relative; display:flex; flex-direction:column; align-items:flex-start; min-height:150px; padding:16px 16px 18px;
+  position:relative; display:flex; flex-direction:column; align-items:flex-start; min-height:128px; padding:16px 16px 16px;
   background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); cursor:pointer;
   user-select:none; -webkit-user-select:none;
 }
 .area-tile:active{ transform:scale(.98); }
 .at-ico{ width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-  background:color-mix(in srgb, var(--c) 16%, transparent); color:var(--c); margin-bottom:auto; }
+  background:color-mix(in srgb, var(--c) 16%, transparent); color:var(--c); margin-bottom:14px; }
 .at-ico .ico{ width:27px; height:27px; }
-.at-name{ display:block; font-size:17px; margin-top:18px; }
+.at-name{ display:block; font-size:17px; margin-top:0; line-height:1.25; }
 .at-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:4px; line-height:1.35; padding-right:18px; }
 .at-chev{ position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; font-size:18px; color:var(--text-dim); }
 .area-tile .at-chev{ top:41px; }
@@ -1371,6 +1374,11 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .snap-zeile{ font-size:14px; color:var(--text-dim); line-height:1.4; }
 .snap-zeile small{ display:block; font-size:12px; margin-top:4px; }
 /* Bibliothek: drei Reiter */
+/* Unter-Reiter: dezenter als die Hauptwahl darüber - Text mit Unterstrich statt gefüllter Fläche */
+.lib-tabs.unter-tabs{ margin-top:6px; }
+.lib-tabs.unter-tabs button{ background:transparent !important; border:none !important; border-radius:0 !important; box-shadow:none !important;
+  border-bottom:2px solid transparent !important; color:var(--text-dim) !important; font-weight:600; padding-top:9px !important; padding-bottom:7px !important; }
+.lib-tabs.unter-tabs button.active{ color:var(--text) !important; border-bottom-color:var(--accent) !important; }
 .lib-tabs.seg-3{ grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
 /* Kacheln der Hauptkategorien */
 .main-tiles{ display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:5px; margin:0 0 12px; }
@@ -1729,7 +1737,7 @@ var I18N = {
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
     fCat:"Fokus", equipAny:"Alles", fEquipHintShort:"Was hast du da?",
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche",
-    timers:"Timer", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Freie Timer, Blöcke und Timer-Workouts",
+    timers:"Timer", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Eigene Timer und Blöcke",
     fabMy:"Workout aus Übungen", fabTimerWo:"Timer-Workout aus Blöcken", fabBlock:"Einzelner Block",
     tabTimerWo:"Workouts", tabBlocks:"Blöcke",
     timerWoHint:"Mehrere Blöcke hintereinander, mit Pause dazwischen.",
@@ -1794,8 +1802,8 @@ var I18N = {
     volMusicHint:"Deine Musik läuft weiter, die Töne kommen dazu. iPhone: Steht es auf lautlos, bleiben die Töne stumm – dann auf laut stellen.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
-    htLib:"Intervall-Programme, Übungen und eigene Workouts", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
-    repTitle:"Challenges", htReps:"Alle Wiederholungen auf Bestzeit",
+    htLib:"Intervall-Programme und Übungen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
+    repTitle:"Challenges", htReps:"Wiederholungen auf Bestzeit",
     warmTitle:"Aufwärmen & Dehnen", htWarm:"Vor und nach dem Training", warmSec:"Aufwärmen · vor dem Training", stretchSec:"Dehnen · nach dem Training",
     warmIntro:"Passt zu Workouts und Challenges: vorher kurz aufwärmen, danach dehnen.",
     wsWarm:"Aufwärmen", wsDehn:"Dehnen", wsIntroWarm:"Vor dem Training: Puls hoch und Gelenke mobil – passt vor Workouts und Challenges.",
@@ -1894,7 +1902,7 @@ var I18N = {
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
     fCat:"Focus", equipAny:"Anything", fEquipHintShort:"What do you have?",
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections",
-    timers:"Timers", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Free timers, blocks and timer workouts",
+    timers:"Timers", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Your own timers and blocks",
     fabMy:"Workout from exercises", fabTimerWo:"Timer workout from blocks", fabBlock:"Single block",
     tabTimerWo:"Workouts", tabBlocks:"Blocks",
     timerWoHint:"Several blocks in a row, with a rest in between.",
@@ -1959,8 +1967,8 @@ var I18N = {
     volMusicHint:"Your music keeps playing, the sounds play on top. iPhone: in silent mode the sounds stay muted – switch the ringer on.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
-    htLib:"Interval programs, exercises and your own workouts", spSub:"A random session based on your picks",
-    repTitle:"Challenges", htReps:"Every rep as fast as you can",
+    htLib:"Interval programs and exercises", spSub:"A random session based on your picks",
+    repTitle:"Challenges", htReps:"Reps against the clock",
     warmTitle:"Warm-up & stretch", htWarm:"Before and after training", warmSec:"Warm-up · before training", stretchSec:"Stretch · after training",
     warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
     wsWarm:"Warm-up", wsDehn:"Stretch", wsIntroWarm:"Before training: raise your pulse and loosen your joints – works before workouts and challenges.",
@@ -3150,10 +3158,12 @@ function renderTimers(){
   var list;
   if(tab === "workouts"){
     var ws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
-    list = ws.map(timerWorkoutRow).join("") || '<div class="empty">'+t("noTimerWorkouts")+'</div>';
+    list = ws.map(timerWorkoutRow).join("") || '<div class="empty">'+t("noTimerWorkouts")+
+      '<div><button type="button" class="btn btn-primary empty-btn" data-fabopt="new">'+ICON_PLUS+' '+t("fabTimerWo")+'</button></div></div>';
   } else {
     var bs = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
-    list = bs.map(blockRow).join("") || '<div class="empty">'+t("noBlocksList")+'</div>';
+    list = bs.map(blockRow).join("") || '<div class="empty">'+t("noBlocksList")+
+      '<div><button type="button" class="btn btn-primary empty-btn" data-fabopt="new">'+ICON_PLUS+' '+t("fabBlock")+'</button></div></div>';
   }
   app.innerHTML =
     topbar(t("timers"), { back:"#home" }) +
@@ -4977,7 +4987,7 @@ function renderWarmStretch(){
     topbar(t("warmTitle"), { back:"#home" }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
       knopf("wsart", "warm", art === "warm", t("wsWarm"))+knopf("wsart", "dehn", art === "dehn", t("wsDehn"))+
-    '</div><div class="theme-pick lib-tabs seg-2" style="margin-top:8px">'+
+    '</div><div class="theme-pick lib-tabs seg-2 unter-tabs">'+
       knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+
     '</div></div>'+
     '<div class="rep-intro">'+esc(t(art === "warm" ? "wsIntroWarm" : "wsIntroDehn"))+'</div>'+
