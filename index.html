@@ -2147,7 +2147,8 @@ var EXERCISE_ROWS = [
   ["pistol-squats","Pistol Squat","Pistol Squat","bw legs",3,20,1,"Einbeinige Kniebeuge ohne Hilfe","Single-leg squat without support",15],
   ["dragon-flags","Dragon Flag","Dragon Flag","core",4,15,0,"Körper wie ein Brett absenken","Lower your body like a plank",25],
   ["clap-push-ups","Klatsch-Liegestütz","Clap Push-ups","bw arms",5,20,0,"Explosiv hochdrücken und klatschen","Push up explosively and clap",20],
-  ["tuck-jumps","Tuck Jumps","Tuck Jumps","cardio legs",5,20,0,"Knie im Sprung zur Brust","Knees to chest in the air",20]
+  ["tuck-jumps","Tuck Jumps","Tuck Jumps","cardio legs",5,20,0,"Knie im Sprung zur Brust","Knees to chest in the air",20],
+  ["burpee-pull-ups","Burpee-Klimmzug","Burpee Pull-up","calis core back",5,30,0,"Liegestütz, hochspringen, Klimmzug","Push-up, jump up, pull-up",30]
 ];
 var EXERCISES = EXERCISE_ROWS.map(function(x){
   return { id:x[0], name:{ de:x[1], en:x[2] }, cats:x[3].split(" "), perSide:!!x[6],
@@ -2304,7 +2305,8 @@ var EX_LEVEL = {
   "hollow-hold":3,"reverse-crunch":2,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"toes-to-bar":3,
   "neck-stretch":1,"shoulder-stretch":1,"triceps-stretch":1,"biceps-stretch":1,"chest-stretch":1,"wrist-stretch":1,"side-bend":1,
   "cat-cow":1,"childs-pose":1,"sphinx-stretch":1,"downward-dog":1,"spinal-twist":1,"forward-fold":1,"hip-flexor-stretch":1,
-  "quad-stretch":1,"hamstring-stretch":1,"calf-stretch":1,"figure-four":1,"pigeon-stretch":2,"butterfly-stretch":1,"worlds-greatest":2
+  "quad-stretch":1,"hamstring-stretch":1,"calf-stretch":1,"figure-four":1,"pigeon-stretch":2,"butterfly-stretch":1,"worlds-greatest":2,
+  "burpee-pull-ups":3
 };
 var EX_EQUIP = {
   "goblet-squat":"kb db","kb-swing":"kb","db-thruster":"db","romanian-deadlift":"db kb","db-deadlift":"db kb","bent-over-row":"db",
@@ -2313,7 +2315,7 @@ var EX_EQUIP = {
   "pull-ups":"bar","negative-pull-ups":"bar","inverted-rows":"bar","scapular-pull-ups":"bar","dead-hang":"bar","toes-to-bar":"bar",
   "chin-ups":"bar","commando-pull-ups":"bar","parallel-bar-dips":"dip","support-hold":"dip",
   "hanging-knee-raise":"bar","hanging-leg-raise":"bar","hanging-l-sit":"bar","l-sit":"dip","windshield-wipers":"bar",
-  "muscle-ups":"bar","monkey-bar-traverse":"bar","skin-the-cat":"bar"
+  "muscle-ups":"bar","monkey-bar-traverse":"bar","skin-the-cat":"bar","burpee-pull-ups":"bar"
 };
 EXERCISES.forEach(function(ex){ ex.level = EX_LEVEL[ex.id] || 2; ex.equip = (EX_EQUIP[ex.id] || "none").split(" "); });
 
@@ -2335,7 +2337,7 @@ var MAIN_CATS = [
 var EX_MAIN_ROWS = {
   ausdauer:"box-step-ups burpee-squat-jumps burpees fast-feet frogs high-knees jump-squats jumping-jacks lateral-hops mountain-climbers plank-burpees skater-jumps sprint-in-place stand-up-jumps tuck-jumps",
   rumpf:"bicycle-crunches dead-bug dragon-flags hollow-hold leg-raises plank plank-shoulder-taps reverse-crunch russian-twists side-jackknives side-plank sit-ups toe-touches jackknives",
-  stange:"chin-ups commando-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
+  stange:"chin-ups commando-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups burpee-pull-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
   stretch:"hamstring-stretch biceps-stretch chest-stretch spinal-twist figure-four wrist-stretch downward-dog hip-flexor-stretch cat-cow childs-pose neck-stretch quad-stretch butterfly-stretch shoulder-stretch side-bend sphinx-stretch pigeon-stretch triceps-stretch forward-fold calf-stretch worlds-greatest arm-circles"
 };
 var EX_MAIN = {};
@@ -2646,13 +2648,13 @@ function qSVG(q){
   q.a.forEach(function(a, i){ if(i>0) koerper += limb(s, a, !q.f) + hand(a, !q.f); });
   koerper += '<path class="tr" d="M'+p[0]+' '+p[1]+'L'+s[0]+' '+s[1]+'"/><path class="nk" d="M'+s[0]+' '+s[1]+'L'+n[0]+' '+n[1]+'"/>';
   if(q.l[0]) koerper += limb(p, q.l[0], false);
-  koerper += '<circle cx="'+h[0]+'" cy="'+h[1]+'" r="7"/>';
+  var kopf = '<circle cx="'+h[0]+'" cy="'+h[1]+'" r="7"/>';
   var a0 = q.a[0];
-  if(!a0) return q.x + koerper;
+  if(!a0) return q.x + koerper + kopf;
   var hs = haloStart(s, a0), halo = "M"+hs[0]+" "+hs[1];
   for(var i=0;i<a0.length;i+=2) halo += "L"+a0[i]+" "+a0[i+1];
   return q.x + '<mask id="@M@" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
-    '<path d="'+halo+'" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#@M@)">'+koerper+'</g>'+limb(s, a0, false)+hand(a0, false);
+    '<path d="'+halo+'" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#@M@)">'+koerper+'</g>'+kopf+limb(s, a0, false)+hand(a0, false);
 }
 var illuMaskSeq = 0;
 function illuIds(svg){ var id = "im"+(illuMaskSeq++); return svg.replace(/@M@/g, id); }
@@ -2851,6 +2853,49 @@ Object.assign(ILLU_POSES, {
 Object.assign(ILLU_POSES, {
   "reverse-crunch": [qWith(P_LB,{ l:[[52,66,68,66]] }), Q(null,[22,84],[44,80],[[42,62,56,56]],[[32,87,44,87]])]
 });
+/* ---------- Sprünge und Burpees ----------
+   Einheitliche Proportionen (Rumpf 30, Oberschenkel 21, Unterschenkel 19, Fuß 7, Ober-/Unterarm je 12),
+   damit beim Übergang nichts „wächst“. Für Sprünge wird die Figur verkleinert (qScale, Fixpunkt Boden-Mitte),
+   damit Kopf und Arme in der Luft im Bild bleiben. Abläufe mit mehreren Phasen stehen in ILLU_SEQ:
+   k = Posen der Reihe nach (danach wieder von vorn), t = je Phase [halten s, Übergang s, Easing]. */
+function qScale(q, k){
+  function sc(arr){ return arr.map(function(v, i){ return i%2===0 ? +(50+(v-50)*k).toFixed(1) : +(89-(89-v)*k).toFixed(1); }); }
+  return Q(q.h ? sc(q.h) : null, sc(q.n), sc(q.p), q.l.map(sc), q.a.map(sc), q.x, q.f);
+}
+var J_ST   = Q(null,[50,19],[50,49],[[50,70,50,89,57,89]],[[52,35,54,47]]);          // Stand, Arme locker
+var J_SQB  = Q(null,[57,45],[36,66],[[57,71,52,89,59,89]],[[44,54,35,61]]);          // Hocke, Arme hinten (Ausholen)
+var J_SQF  = Q(null,[57,45],[36,66],[[57,71,52,89,59,89]],[[66,47,78,45]]);          // Hocke, Arme vorn (Landung)
+var J_AIR  = Q(null,[49,4],[50,34],[[53,55,50,74,54,80]],[[58,1,66,-8]]);           // in der Luft, gestreckt, Arme schräg hoch
+var J_TUCK = Q(null,[50,6],[50,36],[[70,31,66,50,72,53]],[[61,15,70,22]]);           // Knie zur Brust
+var B_SQH  = Q(null,[68,64],[40,74],[[60,72,52,89,59,89]],[[68,77,70,89]]);          // tiefe Hocke, Hände am Boden
+var B_PL   = Q(null,[74,63.5],[46,74],[[26,81,9,87,13,89.5]],[[70.5,77,70,89]]);     // hoher Stütz
+var B_PUL  = Q(null,[77,79],[47,82.5],[[27,85.5,9,88,13,89.5]],[[61,81,70,89]]);     // Liegestütz unten
+var BP_HANG = Q(null,[50,4],[50,34],[[50,55,50,74,53,80]],[[50,-3.5,50,-15]]);       // an der Stange (Stange bei y = -15)
+var BP_PULL = Q(null,[50,-8.5],[50,21.5],[[50,42.5,50,61.5,53,68]],[[61,-10,50,-15]]); // Kinn über der Stange
+function jSeq(k, faktor){ return k.map(function(q){ return qScale(q, faktor || .76); }); }
+var ILLU_SEQ = {
+  "jump-squats":  { k:jSeq([J_SQB, J_AIR, J_SQF]), t:[[.22,.32,"o"],[.06,.36,"i"],[.18,.3]] },
+  "tuck-jumps":   { k:jSeq([J_SQB, J_TUCK, J_SQF]), t:[[.2,.3,"o"],[.08,.34,"i"],[.16,.3]] },
+  "burpees":      { k:jSeq([J_ST, B_SQH, B_PL, B_SQH, J_AIR]), t:[[.2,.38],[.04,.28],[.22,.28],[.04,.3,"o"],[.06,.36,"i"]] },
+  "plank-burpees":{ k:[J_ST, B_SQH, B_PL, B_SQH], t:[[.25,.45],[.06,.4],[.3,.4],[.06,.45]] },
+  "burpee-squat-jumps": { k:jSeq([J_ST, B_SQH, B_PL, B_SQH, J_SQB, J_AIR]), t:[[.2,.38],[.04,.28],[.2,.28],[.04,.26],[.06,.3,"o"],[.06,.38,"i"]] },
+  "frogs":        { k:jSeq([B_SQH, J_AIR]), t:[[.26,.34,"o"],[.06,.42,"i"]] },
+  "stand-up-jumps": { k:jSeq([P_LBK, J_SQF, J_AIR, J_SQF]), t:[[.25,.5],[.04,.3,"o"],[.06,.36,"i"],[.1,.5]] },
+  "burpee-pull-ups": { k:jSeq([J_ST, B_SQH, B_PL, B_PUL, B_PL, B_SQH, BP_HANG, BP_PULL, BP_HANG], .78).map(function(q){ return qWith(q, { x:gBar(8,26,74) }); }),
+                       t:[[.18,.34],[.03,.26],[.06,.3],[.08,.3],[.03,.26],[.03,.32,"o"],[.1,.45],[.16,.45],[.06,.4,"i"]] }
+};
+/* Standbilder (Listen) zeigen eine typische Phase */
+Object.assign(ILLU_POSES, {
+  "jump-squats": [ILLU_SEQ["jump-squats"].k[0], ILLU_SEQ["jump-squats"].k[1]],
+  "tuck-jumps":  [ILLU_SEQ["tuck-jumps"].k[1], ILLU_SEQ["tuck-jumps"].k[0]],
+  "burpees":     [ILLU_SEQ["burpees"].k[2], ILLU_SEQ["burpees"].k[4]],
+  "plank-burpees": [B_SQH, B_PL],
+  "burpee-squat-jumps": [ILLU_SEQ["burpee-squat-jumps"].k[5], ILLU_SEQ["burpee-squat-jumps"].k[2]],
+  "frogs":       [ILLU_SEQ["frogs"].k[0], ILLU_SEQ["frogs"].k[1]],
+  "stand-up-jumps": [ILLU_SEQ["stand-up-jumps"].k[0], ILLU_SEQ["stand-up-jumps"].k[2]],
+  "burpee-pull-ups": [ILLU_SEQ["burpee-pull-ups"].k[7], ILLU_SEQ["burpee-pull-ups"].k[2]]
+});
+
 /* Zweite Ansicht fürs Info-Fenster - dort, wo die Seitenansicht die Bewegung nicht zeigt.
    typ "front" = von vorn, "top" = von oben (ohne Bodenlinie, Kopf oben). Pose B ist meist das Spiegelbild. */
 function qSide(q){ return qSwap(qMirror(q)); }   // gespiegelt, linke/rechte Glieder behalten ihre Seite
@@ -2977,13 +3022,16 @@ var illuFigs = [], illuRaf = 0, illuIO = null, illuSeq = 0;
 function illuSetup(svg){
   svg.setAttribute("data-rig", "1");
   var id = svg.getAttribute("data-ex"), view2 = svg.getAttribute("data-view") === "2";
+  var seq = !view2 && ILLU_SEQ[id];
   var pp = view2 ? (ILLU_VIEW2[id] || {}).p : ILLU_POSES[id];
-  if(!pp || !pp[1]) return;
-  var qa = pp[0], qb = pp[1];
-  var A = rigFromPose(qa), B = rigFromPose(qb);
-  rigAlign(A, B);
-  var ga = gearSplit(qa.x), gb = gearSplit(qb.x);
-  var pa = rigPoints(A, B, 0), pb = rigPoints(A, B, 1);
+  if(!seq && (!pp || !pp[1])) return;
+  /* Phasen: zwei Posen pendeln hin und her; Abläufe (ILLU_SEQ) laufen reihum durch */
+  var qs = seq ? seq.k : [pp[0], pp[1]];
+  var times = seq ? seq.t : [[ILLU_HOLD_A, ILLU_MOVE], [ILLU_HOLD_B, ILLU_MOVE]];
+  var R = qs.map(rigFromPose);
+  for(var pass=0; pass<2; pass++) for(var k=1; k<R.length; k++) rigAlign(R[0], R[k]);
+  var gs = qs.map(function(q){ return gearSplit(q.x); });
+  var P = R.map(function(r){ return rigPoints(r, r, 0); });
   function naechsteHand(pts, at){
     var best = 0, bd = Infinity;
     pts.arms.forEach(function(k, i){
@@ -2992,32 +3040,37 @@ function illuSetup(svg){
     });
     return best;
   }
-  var gears = ga.hand.map(function(g, i){
-    var arm = naechsteHand(pa, g.at), ha = pa.arms[arm], hb = pb.arms[arm];
-    var ea = ha[ha.length-1], eb = hb[hb.length-1], gbAt = gb.hand[i] ? gb.hand[i].at : null;
-    var oa = [ g.at[0]-ea[0], g.at[1]-ea[1] ], ob = gbAt ? [ gbAt[0]-eb[0], gbAt[1]-eb[1] ] : oa;
-    return { arm:arm, at:g.at, oa:oa, ob:ob, svg:g.svg };
+  var gears = gs[0].hand.map(function(g, i){
+    var arm = naechsteHand(P[0], g.at);
+    var o = P.map(function(pt, k){
+      var hk = pt.arms[arm], e = hk[hk.length-1], at = gs[k].hand[i] ? gs[k].hand[i].at : null;
+      return at ? [ at[0]-e[0], at[1]-e[1] ] : null;
+    });
+    o = o.map(function(v){ return v || o[0]; });
+    return { arm:arm, at:g.at, o:o, svg:g.svg };
   });
-  var frontal = !!qa.f;
+  var frontal = !!qs[0].f;
   var html = view2 && ILLU_VIEW2[id].typ === "top" ? ILLU_MATTE : '<path class="illu-floor" d="M6 91h88"/>';
-  if(ga.fest === gb.fest) html += ga.fest;
-  else html += '<g class="gx-a">'+ga.fest+'</g><g class="gx-b" style="opacity:0">'+gb.fest+'</g>';
+  var gleich = gs.every(function(g){ return g.fest === gs[0].fest; });
+  if(gleich || gs.length > 2) html += gs[0].fest;
+  else html += '<g class="gx-a">'+gs[0].fest+'</g><g class="gx-b" style="opacity:0">'+gs[1].fest+'</g>';
   gears.forEach(function(g, i){ html += '<g class="gear" data-g="'+i+'">'+g.svg+'</g>'; });
+  var A = R[0];
   var hinten = frontal ? '' : ' class="lb"', hintenHand = frontal ? ' class="hd"' : ' class="hd lb"';
   var mid = "im"+(illuMaskSeq++), koerper = "";
   A.legs.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-leg="'+i+'"/>'; });
   A.arms.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-arm="'+i+'"/><circle'+hintenHand+' r="3.3" data-hand="'+i+'"/>'; });
   koerper += '<path class="tr" data-spine="1"/><path class="nk" data-neck="1"/>';
   if(A.legs.length) koerper += '<path data-leg="0"/>';
-  koerper += '<circle data-head="1" r="7"/>';
+  var kopf = '<circle data-head="1" r="7"/>';
   if(A.arms.length){
     html += '<mask id="'+mid+'" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
-      '<path data-halo="1" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#'+mid+')">'+koerper+'</g>'+
+      '<path data-halo="1" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#'+mid+')">'+koerper+'</g>'+kopf+
       '<path data-arm="0"/><circle class="hd" r="3.3" data-hand="0"/>';
-  } else html += koerper;
+  } else html += koerper + kopf;
   svg.innerHTML = html;
-  var fig = { svg:svg, A:A, B:B, gears:gears, vis:true, seq:illuSeq++,
-              speed: (findExercise(id) || {}).main === "ausdauer" ? .7 : 1,
+  var fig = { svg:svg, R:R, times:times, gears:gears, vis:true, seq:illuSeq++,
+              speed: seq ? 1 : (findExercise(id) || {}).main === "ausdauer" ? .7 : 1,
               legs:[], arms:[], gearEls:[],
               spine:svg.querySelector("[data-spine]"), head:svg.querySelector("[data-head]"),
               neck:svg.querySelector("[data-neck]"), halo:svg.querySelector("[data-halo]"), hands:[],
@@ -3025,13 +3078,14 @@ function illuSetup(svg){
   A.legs.forEach(function(k, i){ fig.legs[i] = svg.querySelector('[data-leg="'+i+'"]'); });
   A.arms.forEach(function(k, i){ fig.arms[i] = svg.querySelector('[data-arm="'+i+'"]'); fig.hands[i] = svg.querySelector('[data-hand="'+i+'"]'); });
   gears.forEach(function(g, i){ fig.gearEls[i] = svg.querySelector('[data-g="'+i+'"]'); });
-  illuDraw(fig, 0);
+  illuDraw(fig, { i:0, j:1 % R.length, t:0 });
   illuFigs.push(fig);
   if(illuIO) illuIO.observe(svg);
   if(!illuRaf) illuRaf = requestAnimationFrame(illuFrame);
 }
-function illuDraw(f, t){
-  var P = rigPoints(f.A, f.B, t);
+/* b = { i: Phase, j: nächste Phase, t: 0..1 dazwischen } */
+function illuDraw(f, b){
+  var t = b.t, P = rigPoints(f.R[b.i], f.R[b.j], t);
   f.spine.setAttribute("d", ptsD(P.p, [P.s]));
   f.neck.setAttribute("d", ptsD(P.s, [P.n]));
   f.head.setAttribute("cx", P.h[0].toFixed(1)); f.head.setAttribute("cy", P.h[1].toFixed(1));
@@ -3043,21 +3097,28 @@ function illuDraw(f, t){
   });
   if(f.halo && P.arms[0]) f.halo.setAttribute("d", ptsD(haloStart(P.s, P.arms[0][0]), P.arms[0]));
   f.gears.forEach(function(g, i){
-    var hand = P.arms[g.arm][P.arms[g.arm].length-1];
-    var ox = g.oa[0] + (g.ob[0]-g.oa[0])*t, oy = g.oa[1] + (g.ob[1]-g.oa[1])*t;
+    var hand = P.arms[g.arm][P.arms[g.arm].length-1], oa = g.o[b.i], ob = g.o[b.j];
+    var ox = oa[0] + (ob[0]-oa[0])*t, oy = oa[1] + (ob[1]-oa[1])*t;
     f.gearEls[i].setAttribute("transform", "translate("+(hand[0]+ox-g.at[0]).toFixed(1)+" "+(hand[1]+oy-g.at[1]).toFixed(1)+")");
   });
-  if(f.gxa){ f.gxa.style.opacity = (1-t).toFixed(2); f.gxb.style.opacity = t.toFixed(2); }
+  if(f.gxa){ var x = b.i === 0 ? t : 1-t; f.gxa.style.opacity = (1-x).toFixed(2); f.gxb.style.opacity = x.toFixed(2); }
 }
-/* Ablauf: kurz in Pose A halten, mit Easing nach B, kurz halten, zurück. Ausdauerübungen etwas flotter. */
+/* Ablauf: jede Phase kurz halten, dann weiter zur nächsten. Zwei Posen: A halten, nach B, B halten, zurück.
+   Ausdauerübungen etwas flotter. Easing je Übergang: "o" = abbremsen (Absprung nach oben),
+   "i" = beschleunigen (Fallen/Landen), sonst weich an beiden Enden. */
 var ILLU_HOLD_A = .38, ILLU_MOVE = .78, ILLU_HOLD_B = .26;
 function illuBlend(now, f){
-  var total = (ILLU_HOLD_A + ILLU_MOVE + ILLU_HOLD_B + ILLU_MOVE)*f.speed;
-  var x = ((now/1000 + f.seq*.37) % total)/f.speed;
-  if(x < ILLU_HOLD_A) return 0; x -= ILLU_HOLD_A;
-  if(x < ILLU_MOVE) return easeInOutCubic(x/ILLU_MOVE); x -= ILLU_MOVE;
-  if(x < ILLU_HOLD_B) return 1; x -= ILLU_HOLD_B;
-  return 1 - easeInOutCubic(Math.min(1, x/ILLU_MOVE));
+  var total = 0, K = f.times.length;
+  f.times.forEach(function(x){ total += x[0] + x[1]; });
+  var x = ((now/1000 + f.seq*.37) % (total*f.speed))/f.speed;
+  for(var k=0; k<K; k++){
+    var h = f.times[k][0], m = f.times[k][1], e = f.times[k][2], j = (k+1) % K;
+    if(x < h) return { i:k, j:j, t:0 };
+    x -= h;
+    if(x < m){ var u = x/m; return { i:k, j:j, t: e === "o" ? 1-(1-u)*(1-u) : e === "i" ? u*u : easeInOutCubic(u) }; }
+    x -= m;
+  }
+  return { i:0, j:1 % K, t:0 };
 }
 function illuFrame(now){
   illuRaf = 0;
@@ -3269,6 +3330,7 @@ Object.assign(EX_INFO, {
   "l-sit":["Auf Barren oder Parallettes stützen.|Gestreckte Beine waagerecht nach vorn heben.|Halten, Schultern nach unten drücken.","Support yourself on dip bars or parallettes.|Raise your straight legs to horizontal.|Hold, pushing your shoulders down."],
   "windshield-wipers":["Im Hang die gestreckten Beine hoch zur Stange bringen.|Beine kontrolliert zur einen Seite kippen.|Über die Mitte zur anderen Seite führen.","In the hang, bring your straight legs up to the bar.|Tilt your legs to one side with control.|Move through the middle to the other side."],
   "muscle-ups":["Im Hang beginnen, leicht falscher Griff.|Explosiv zur Brust ziehen und die Handgelenke über die Stange bringen.|In den Stütz drücken, kontrolliert zurück.","Start in a hang with a slight false grip.|Pull explosively and bring your wrists over the bar.|Press into the support, return with control."],
+  "burpee-pull-ups":["Unter die Klimmzugstange stellen.|In die Hocke gehen, Hände aufsetzen, die Beine in den Liegestütz springen und einen Liegestütz machen.|Füße zurück zu den Händen springen und aus der Hocke zur Stange hochspringen.|Einen Klimmzug machen, kontrolliert in den Hang absenken und zurück auf den Boden.","Stand under the pull-up bar.|Squat down, place your hands, jump your feet back into a plank and do a push-up.|Jump your feet back to your hands and jump up to the bar from the squat.|Do a pull-up, lower with control into the hang and drop back to the floor."],
   "monkey-bar-traverse":["An der Hangelleiter hängen.|Mit einer Hand zur nächsten Sprosse greifen.|Im Wechsel weiterhangeln.","Hang from the monkey bars.|Reach to the next rung with one hand.|Keep traversing, alternating hands."],
   "skin-the-cat":["Im Hang die Knie zur Brust ziehen.|Beine zwischen den Armen durchführen und kontrolliert durch die Schultern drehen.|Nur so weit wie angenehm, dann zurück.","From the hang, pull your knees to your chest.|Pass your legs through your arms and rotate through your shoulders with control.|Only as far as comfortable, then return."],
   "archer-push-ups":["Sehr breiter Liegestütz.|Zu einer Hand absenken, der andere Arm streckt sich seitlich.|Hochdrücken, Seite nach jedem Intervall wechseln.","Very wide push-up position.|Lower towards one hand while the other arm straightens.|Press up, switch sides after each interval."],
@@ -3315,6 +3377,7 @@ Object.assign(EX_POSTURE, {
   "l-sit":["Arme gestreckt, Schultern tief.|Beine zusammen (leichter: Knie angewinkelt).","Mit rundem Rücken zusammensacken.","Arms straight, shoulders down.|Legs together (easier: knees bent).","Slumping with a rounded back."],
   "windshield-wipers":["Schultern aktiv, Oberkörper ruhig.|Bewegung aus der Körpermitte.","Die Beine von Seite zu Seite schleudern.","Active shoulders, steady upper body.|Move from your core.","Flinging your legs side to side."],
   "muscle-ups":["Stange nah am Körper halten.|Erst sichere Klimmzüge und Dips beherrschen.","Mit einem Arm zuerst hochkommen.","Keep the bar close to your body.|Master solid pull-ups and dips first.","Getting one arm over first."],
+  "burpee-pull-ups":["Im Stütz eine Linie von Kopf bis Ferse.|An der Stange Schultern aktiv, Kinn über die Stange.|Weich landen, Knie leicht gebeugt.","Aus dem Sprung unkontrolliert in die Stange schwingen.","In the plank, one line from head to heels.|On the bar, active shoulders, chin over the bar.|Land softly with slightly bent knees.","Swinging into the bar out of the jump."],
   "monkey-bar-traverse":["Schultern aktiv, Rumpf fest.|Ruhig und kontrolliert greifen.","Unkontrolliert schwingen.","Active shoulders, core braced.|Reach calmly and with control.","Swinging uncontrolled."],
   "skin-the-cat":["Langsam, ohne Schwung.|Schultern aktiv halten.","In die Endposition fallen lassen.","Slowly, no momentum.|Keep your shoulders active.","Dropping into the end position."],
   "archer-push-ups":["Körper eine Linie.|Ellbogen des Arbeitsarms nah am Körper.","Die Hüfte verdrehen.","Body in one line.|Working elbow close to your body.","Twisting your hips."],
@@ -3365,6 +3428,7 @@ var EX_MUSCLES = {
   "l-sit":["Gerader Bauch, Hüftbeuger, Trizeps","Schultern, Oberschenkel vorn","Abs, hip flexors, triceps","Shoulders, quads"],
   "windshield-wipers":["Schräge Bauchmuskeln, Rumpf","Hüftbeuger, Unterarme (Griff)","Obliques, core","Hip flexors, forearms (grip)"],
   "muscle-ups":["Breiter Rückenmuskel, Brust, Trizeps","Schultern, Bizeps, Rumpf","Lats, chest, triceps","Shoulders, biceps, core"],
+  "burpee-pull-ups":["Breiter Rückenmuskel, Brust, Oberschenkel vorn","Bizeps, Trizeps, Rumpf, Ausdauer","Lats, chest, quads","Biceps, triceps, core, endurance"],
   "monkey-bar-traverse":["Unterarme (Griff), breiter Rückenmuskel","Schultern, Rumpf","Forearms (grip), lats","Shoulders, core"],
   "skin-the-cat":["Schultern, Rücken, Rumpf","Schulterbeweglichkeit, Unterarme","Shoulders, back, core","Shoulder mobility, forearms"],
   "archer-push-ups":["Brust, Trizeps (Arbeitsarm)","Schultern, Rumpf","Chest, triceps (working arm)","Shoulders, core"],
@@ -5498,7 +5562,7 @@ function announceStep(idx){
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
 var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
 /* Versionsnummer (wie in sw.js) - steht unten in den Einstellungen, damit man sieht, ob die neue Fassung geladen ist */
-var APP_FASSUNG = "2026-09-27-4";
+var APP_FASSUNG = "2026-09-27-5";
 function appUrl(){
   if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
   return location.origin + location.pathname.replace(/index\.html$/, "");
