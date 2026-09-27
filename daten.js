@@ -316,6 +316,8 @@ var EQUIPS = [
 
 /* weitere Suchbegriffe, z. B. der frühere Name */
 var EX_SUCH_ALIAS = { "russian-twists":"russian twist twists russische drehung russischer",
+  "pull-ups":"klimmzug klimmzuge", "chin-ups":"klimmzug untergriff", "negative-pull-ups":"klimmzug negativ",
+  "scapular-pull-ups":"schulterblatt klimmzug", "commando-pull-ups":"klimmzug", "push-ups":"liegestutz liegestutze",
   "jump-lunges":"sprungausfallschritt ausfallschritt sprung split jumps lunge jumps", "cobra-lift":"cobra lift kobra" };
 
 /* ---------- Piktogramme ----------
@@ -448,7 +450,9 @@ var ILLU_POSES = {
                          Q(null,[26,80],[52,84],[[70,86,88,87,92,89],[70,82,88,77,92,78]],[[14,88,4,88],[16,74,6,70]])],
   "cobra-lift":         [qWith(P_LF,{ a:[[32,88,36,89]] }), Q(null,[24,66],[50,84],[[70,86,88,87,92,89]],[[26,77,28,89]])],
   "scapular-push-ups":  [P_PH, qShift(P_PH,0,3)],
-  "scapular-pull-ups":  [P_HANG, qWith(P_HANG,{ n:[50,26], p:[50,54], l:[[48,68,48,80],[52,68,52,80]] })],
+  /* Scapular Pull-ups von vorn: Arme bleiben gestreckt, der ganze Körper hebt sich nur ein Stück (die Hände rutschen minimal nach außen) */
+  "scapular-pull-ups":  [Q(null,[50,31],[50,59],[[48,73,48,85],[52,73,52,85]],[[43,19,36,7],[57,19,64,7]], gBar(7,24,76), true),
+                         Q(null,[50,27],[50,55],[[48,69,48,81],[52,69,52,81]],[[41,17,32,7],[59,17,68,7]], gBar(7,24,76), true)],
   "dead-hang":          [P_HANG, null],
 
   /* Beine */
@@ -522,7 +526,6 @@ var G_PT = gBar(80,40,62)+'<path class="ip" d="M44 80V89M58 80V89"/>';
 var G_MONKEY = gBar(6,8,92)+'<path class="ip" d="M20 3v6M40 3v6M60 3v6M80 3v6"/>';
 Object.assign(ILLU_POSES, {
   "chin-ups":           [P_HANG, P_PULL],
-  "commando-pull-ups":  [P_HANGS, Q([60,8],[50,16],[50,44],[[50,60,50,74]],[[44,14,46,6]], gBar(6,30,70))],
   "parallel-bar-dips":  [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), Q(null,[54,38],[52,64],[[50,76,40,84,42,86]],[[44,40,56,50]], G_PB)],
   "support-hold":       [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), null],
   "hanging-knee-raise": [P_HANGS, qWith(P_HANGS,{ l:[[66,56,66,72,72,72]] })],
@@ -638,7 +641,28 @@ ILLU_SEQ["russian-twists"] = { k:[RT_SC, RT_ST], t:[[.12,.45],[.12,.45]] };
 ILLU_POSES["russian-twists"] = [RT_SC, RT_ST];
 var V_ARCH = Q(null,[50,32],[50,64],[[48,79,47,94],[52,79,53,94]],[[64,36,78,38],[36,36,22,38]],"",true);
 var V_SNOW = Q([50,11],[50,21],[50,56],[[47,72,47,90],[53,72,53,90]],[[38,40,40,54],[62,40,60,54]],"",true);
+/* Commando Pull-Up. Hauptbild von vorn: die Stange zeigt auf den Betrachter (nur ihr Ende ist zu sehen), beide Hände
+   greifen dicht hintereinander - der Kopf kommt abwechselnd links und rechts an der Stange vorbei.
+   Zweite Ansicht von der Seite: die lange Stange, eine Hand vor der anderen. */
+var CP_BAR = '<circle class="ip" cx="50" cy="5.5" r="4.6"/>';   // Stangenende als Ring, die Hände greifen direkt darunter
+var CP_H = Q(null,[50,31],[50,59],[[48,73,48,86],[52,73,52,86]],[[46,20,48,9],[54,20,52,9]], CP_BAR, true);
+var CP_L = Q([37,8],[42,17],[46,46],[[45,62,45,76],[49,62,49,76]],[[36,10,48,9],[54,19,52,9]], CP_BAR, true);
+var CP_R = qMirror(CP_L);
+var CS_H = Q(null,[50,30],[50,58],[[50,72,50,86]],[[46,19,45,6],[54,19,56,6]], gBar(6,18,82));
+var CS_P = Q([51,5],[50,15],[50,44],[[50,60,50,74]],[[39,15,45,6],[62,16,56,6]], gBar(6,18,82));
+ILLU_POSES["commando-pull-ups"] = [CP_L, CP_H];
+ILLU_SEQ["commando-pull-ups"] = { k:[CP_H, CP_L, CP_H, CP_R], t:[[.35,.7],[.3,.7],[.35,.7],[.3,.7]] };
+/* Seitenansicht für Klimmzug-Varianten: die Stange von der Seite als Punkt (Ring), eine Hand daran.
+   Pull-up: Ellbogen beugen und nach unten ziehen, Kinn über die Stange.
+   Scapular Pull-up: Arme gestreckt, nur Brust auf und Schultern weg von den Ohren - der Kopf kommt aus dem „Einsinken“ heraus. */
+var PS_BAR = '<circle class="ip" cx="50" cy="8" r="4.4"/>';
+var PS_HANG = Q([53,29],[50,37],[50,65],[[52,79,44,86]],[[50,25.5,50,14]], PS_BAR);
+var PS_TOP  = Q([56,8],[52,18],[47,46],[[50,60,42,67]],[[44,26,50,14]], PS_BAR);
+var SS_AKT  = Q([47,26],[46,35],[50,63],[[54,76,47,84]],[[48,24.5,50,14]], PS_BAR);
 var ILLU_VIEW2 = {
+  "pull-ups":          { typ:"side", haupt:"front", p:[PS_HANG, PS_TOP] },
+  "scapular-pull-ups": { typ:"side", haupt:"front", p:[PS_HANG, SS_AKT] },
+  "commando-pull-ups": { typ:"side", haupt:"front", p:[CS_H, CS_P] },
   "russian-twists":   { typ:"front", p:[RT_FL, RT_FR], seq:{ k:[RT_FL, RT_FLC, RT_FC, RT_FRC, RT_FR, RT_FRC, RT_FC, RT_FLC],
                          t:[[.14,.2,"i"],[0,.18,"l"],[0,.18,"l"],[0,.2,"o"],[.14,.2,"i"],[0,.18,"l"],[0,.18,"l"],[0,.2,"o"]] } },
   "archer-push-ups":  { typ:"top",   p:[V_ARCH, Q(null,[60,33],[55,64],[[52,79,50,94],[57,79,56,94]],[[70,46,78,38],[41,37,22,38]],"",true)] },

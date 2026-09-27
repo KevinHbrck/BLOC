@@ -140,3 +140,5 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.c
 - Timer aufgeräumt: oben nur noch die Übungs-Kreise (größer, der Zähler „1 / 27“ entfällt); keine Satzzahl mehr hinter dem Namen (steht in den Kästchen); „Als nächstes“ nur noch, wenn etwas Neues kommt (andere Übung, Blockpause, Ende)
 - Timer: kein Hinweistext mehr unter der Figur (steht in der Übungsinfo ⓘ)
 - Fokus-Filter: „Brust (ohne Geräte)“ und „Oberkörper Power (ohne Geräte)“ stehen unter „Bauch / Core“ statt unter „Arme“ (`LIB_FOKUS_TAUSCH` in daten.js)
+- Figuren: Commando Pull-Up von vorn (Stange zeigt auf den Betrachter, Kopf abwechselnd links/rechts) plus Seitenansicht; Pull-ups und Scapular Pull-ups mit zweiter Ansicht von der Seite (Pull-up: Ellbogen beugen, Kinn über die Stange; Scapular: Arme gestreckt, nur Brust auf)
+- Suche tolerant (`suchPasst`): Groß/klein, Bindestriche, Leerzeichen, Umlaute und Mehrzahl-s egal, jedes Wort für sich; deutsche Suchwörter für Klimmzug-/Liegestütz-Varianten
