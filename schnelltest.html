@@ -183,6 +183,20 @@
       klick('[data-nav="#settings"]');
       await bis(function () { return $("[data-export]"); }, 3000, "Sicherung in den Einstellungen");
     }],
+    ["Figuren prüfen: Seite, markieren, Notiz, Filter", async function () {
+      await heim();
+      klick('[data-nav="#settings"]');
+      klick(await bis(function () { return $('[data-nav="#figuren"]'); }, 3000, "Eintrag in den Einstellungen"));
+      await bis(function () { return $$(".fig-karte").length > 100; }, 3000, "Figuren");
+      klick('[data-figflag="pull-ups"]');
+      var f = await bis(function () { return $('[data-fignotiz="pull-ups"]'); }, 2000, "Notizfeld");
+      eingeben(f, "Test");
+      pruefe(/\(1\)/.test($("[data-figshare]").textContent), "Teilen-Knopf zählt nicht mit");
+      klick('[data-figfilter="markiert"]');
+      pruefe($$(".fig-karte").length === 1, "Filter „Markierte“ zeigt " + $$(".fig-karte").length);
+      klick('[data-figflag="pull-ups"]');
+      pruefe($$(".fig-karte").length > 100, "nach dem Entmarkieren nicht zurück bei allen");
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

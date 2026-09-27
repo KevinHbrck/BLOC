@@ -520,6 +520,20 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 :root[data-vintage] .ft-name{ font-family:var(--f-mono); font-weight:500; text-transform:uppercase; font-size:12.5px; letter-spacing:0; }
 :root[data-vintage] .ft-sub{ font-family:var(--f-body); color:var(--text-sub); }
 .empty-btn{ width:auto; display:inline-flex; margin:16px auto 0; padding:13px 20px; font-size:15px; }
+/* Figuren prüfen */
+.fig-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(104px, 1fr)); gap:10px; margin-bottom:6px; }
+.fig-karte{ display:flex; flex-direction:column; align-items:stretch; gap:6px; padding:8px; background:var(--surface); border-radius:14px; box-shadow:var(--shadow); }
+.fig-karte.an{ box-shadow:0 0 0 2px var(--accent), var(--shadow); grid-column:span 2; }   /* markiert: mehr Platz für die Notiz */
+.fig-bild{ position:relative; display:block; padding:0; border:0; border-radius:10px; cursor:pointer; aspect-ratio:1;
+  background:color-mix(in srgb, var(--cat) 12%, transparent); color:var(--cat); }
+.fig-illu{ width:100%; height:100%; }
+.fig-2{ position:absolute; right:5px; top:5px; font-size:10px; font-weight:700; line-height:16px; width:16px; border-radius:50%; background:var(--surface); color:var(--text-dim); }
+.fig-name{ font-size:12.5px; font-weight:600; line-height:1.25; min-height:2.5em; }
+.fig-flag{ border:1px solid var(--border); background:transparent; color:var(--text-dim); border-radius:999px; padding:7px 8px; font-size:12.5px; font-weight:600; cursor:pointer; }
+.fig-flag.an{ background:var(--accent); border-color:var(--accent); color:var(--accent-text, #fff); }
+.fig-notiz{ font-size:13px; padding:8px 9px; margin:0; }
+.fig-leiste{ position:fixed; left:0; right:0; bottom:0; padding:10px 16px calc(12px + env(safe-area-inset-bottom)); background:linear-gradient(transparent, var(--bg) 30%); z-index:5; }
+.fig-leiste .btn{ max-width:560px; margin:0 auto; display:flex; }
 /* Wochenzeile: schlank, nur ein Blick - Titel, sieben Tage als Punkte, Anzahl und Dauer */
 .woche{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; margin:0 0 14px; background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); }
 .wo-links{ display:flex; flex-direction:column; gap:2px; min-width:0; }
@@ -1877,6 +1891,10 @@ var I18N = {
     snapInfo:"Die App legt alle 7 Tage automatisch eine Kopie deiner Daten auf diesem Gerät ab.",
     backupTipTitle:"Lange nicht gesichert", backupTipText:"Sichere deine eigenen Workouts, Blöcke und Übungen als Datei – falls das Handy einmal Daten verliert.",
     backupNow:"Jetzt sichern", shareBackup:"Sicherung teilen (z. B. Drive, Mail)", backupShared:"Sicherung übergeben",
+    figTitle:"Figuren prüfen", figSub:"Alle Figuren auf einen Blick – Unklares markieren und teilen",
+    figIntro:"Tipp auf eine Figur, dann siehst du sie bewegt (mit zweiter Ansicht, wo es eine gibt). Ist etwas unklar, markiere es und schreib kurz dazu, was – am Ende teilst du die Liste.",
+    figAll:"Alle", figMarked:"Markierte ({n})", figFlag:"Unklar", figNotePh:"Was ist unklar? (optional)",
+    figShare:"Markierte teilen ({n})", figNone:"Noch nichts markiert.", figCopied:"Liste kopiert", figShareHead:"BLOC – unklare Figuren",
     weekTitle:"Diese Woche", weekNone:"noch kein Training", weekDays:"M D M D F S S",
     weekOne:"1 Training", weekN:"{n} Trainings",
     tabWorkouts:"Workouts", tabMine:"Meine", mainCat:"Kategorie", multiOk:"Mehrere möglich",
@@ -2049,6 +2067,10 @@ var I18N = {
     snapInfo:"Every 7 days the app automatically keeps a copy of your data on this device.",
     backupTipTitle:"No recent backup", backupTipText:"Save your own workouts, blocks and exercises to a file – in case your phone ever loses data.",
     backupNow:"Back up now", shareBackup:"Share backup (e.g. Drive, mail)", backupShared:"Backup handed over",
+    figTitle:"Review figures", figSub:"All figures at a glance – mark and share unclear ones",
+    figIntro:"Tap a figure to see it move (with a second view where there is one). If something is unclear, mark it and add a short note – then share the list.",
+    figAll:"All", figMarked:"Marked ({n})", figFlag:"Unclear", figNotePh:"What is unclear? (optional)",
+    figShare:"Share marked ({n})", figNone:"Nothing marked yet.", figCopied:"List copied", figShareHead:"BLOC – unclear figures",
     weekTitle:"This week", weekNone:"no workout yet", weekDays:"M T W T F S S",
     weekOne:"1 workout", weekN:"{n} workouts",
     tabWorkouts:"Workouts", tabMine:"Mine", mainCat:"Category", multiOk:"Pick several",
@@ -3008,6 +3030,7 @@ function render(){
   if(route==="block") return renderBlockEdit(parts[1]);
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
+  if(route==="figuren") return renderFiguren();
   if(route==="install") return renderInstallGuide();
   if(route==="play") return startPlayer(parts[1]);
   if(route==="playblock") return startBlockPlayer(parts[1]);
@@ -5591,6 +5614,59 @@ document.addEventListener("visibilitychange", function(){
 });
 
 /* ============ Settings ============ *//* ============ Settings ============ */
+/* ============ Figuren prüfen ============
+   Alle Übungen mit Figur, nach Hauptkategorie. Tippen öffnet die Übungsinfo (bewegt, ggf. zweite Ansicht).
+   „Unklar“ markiert eine Figur, optional mit Notiz: settings.figurNotiz = { Übungs-ID: "Notiz" }.
+   „Markierte teilen“ gibt die Liste als Text weiter (Teilen-Menü, sonst Zwischenablage). */
+var figNurMarkierte = false;
+function renderFiguren(){
+  var s = state.db.settings, notiz = s.figurNotiz || (s.figurNotiz = {});
+  var n = Object.keys(notiz).length;
+  if(!n) figNurMarkierte = false;
+  var html = "";
+  MAIN_CATS.forEach(function(c){
+    var exs = EXERCISES.filter(function(ex){ return ex.main === c.id && ILLU[ex.id] && (!figNurMarkierte || ex.id in notiz); });
+    if(!exs.length) return;
+    html += '<div class="section-title">'+esc(tplText(c))+' <span class="lbl-hint">'+exs.length+'</span></div><div class="fig-grid">'+
+      exs.map(function(ex){
+        var an = ex.id in notiz;
+        return '<div class="fig-karte'+(an ? ' an' : '')+'" style="--cat:'+c.color+'">'+
+          '<button type="button" class="fig-bild" data-figinfo="'+ex.id+'" aria-label="'+esc(tplText(ex.name))+'">'+illuStillHTML(ex.id, "fig-illu")+
+            (ILLU2[ex.id] ? '<span class="fig-2" aria-hidden="true">2</span>' : '')+'</button>'+
+          '<div class="fig-name">'+esc(tplText(ex.name))+'</div>'+
+          '<button type="button" class="fig-flag'+(an ? ' an' : '')+'" data-figflag="'+ex.id+'" aria-pressed="'+an+'">'+(an ? '⚑ ' : '')+esc(t("figFlag"))+'</button>'+
+          (an ? '<input type="text" class="fig-notiz" data-fignotiz="'+ex.id+'" value="'+esc(notiz[ex.id] || "")+'" placeholder="'+esc(t("figNotePh"))+'" maxlength="140">' : '')+
+        '</div>';
+      }).join("")+'</div>';
+  });
+  app.innerHTML =
+    topbar(t("figTitle"), { back:"#settings" }) +
+    '<div class="rep-intro">'+esc(t("figIntro"))+'</div>'+
+    '<div class="theme-pick rep-pick zwei"><button type="button" class="'+(figNurMarkierte ? '' : 'active')+'" data-figfilter="alle">'+esc(t("figAll"))+'</button>'+
+      '<button type="button" class="'+(figNurMarkierte ? 'active' : '')+'" data-figfilter="markiert"'+(n ? '' : ' disabled')+'>'+esc(t("figMarked", { n:n }))+'</button></div>'+
+    (html || '<div class="empty">'+esc(t("figNone"))+'</div>')+
+    '<div style="height:90px"></div>'+
+    '<div class="fig-leiste"><button type="button" class="btn btn-primary" data-figshare'+(n ? '' : ' disabled')+'>'+ICON_SHARE+' '+esc(t("figShare", { n:n }))+'</button></div>';
+  bindCommon();
+  function neu(){ var y = window.scrollY; renderFiguren(); window.scrollTo(0, y); }
+  app.querySelectorAll("[data-figinfo]").forEach(function(b){ b.addEventListener("click", function(){ openExInfo(b.getAttribute("data-figinfo"), false); }); });
+  app.querySelectorAll("[data-figflag]").forEach(function(b){ b.addEventListener("click", function(){
+    var id = b.getAttribute("data-figflag");
+    if(id in notiz) delete notiz[id]; else notiz[id] = "";
+    save(); neu();
+    if(id in notiz){ var f = app.querySelector('[data-fignotiz="'+id+'"]'); if(f) f.focus(); }
+  }); });
+  app.querySelectorAll("[data-fignotiz]").forEach(function(f){ f.addEventListener("input", function(){ notiz[f.getAttribute("data-fignotiz")] = f.value.trim(); save(); }); });
+  app.querySelectorAll("[data-figfilter]").forEach(function(b){ b.addEventListener("click", function(){ figNurMarkierte = b.getAttribute("data-figfilter") === "markiert"; renderFiguren(); window.scrollTo(0, 0); }); });
+  var teilen = app.querySelector("[data-figshare]");
+  teilen.addEventListener("click", function(){
+    var zeilen = Object.keys(notiz).map(function(id){ var ex = findExercise(id); return "- "+(ex ? tplText(ex.name) : id)+" ("+id+")"+(notiz[id] ? ": "+notiz[id] : ""); });
+    var text = t("figShareHead")+"\n"+zeilen.join("\n");
+    if(navigator.share) navigator.share({ title:t("figShareHead"), text:text }).catch(function(e){ if(!e || e.name !== "AbortError") copyText(text, t("figCopied")); });
+    else copyText(text, t("figCopied"));
+  });
+}
+
 /* Adresse der App ohne # und Parameter - die Seite, die man weitergeben kann */
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
 var APP_PUBLIC_URL = "https://kevinhbrck.github.io/BLOC/";
@@ -5665,6 +5741,8 @@ function renderSettings(){
       toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake)+
       toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
     '</div>'+
+    '<div class="list-item" data-nav="#figuren" style="margin-top:14px"><div class="meta"><div class="name">'+esc(t("figTitle"))+'</div>'+
+      '<div class="sub">'+esc(t("figSub"))+'</div></div><span class="chip chev">'+ICON_CHEV+'</span></div>'+
     '<div class="section-title">'+t("data")+'</div>'+
     '<div class="card">'+
       '<div class="snap-zeile" id="snap-zeile">'+snapZeileHTML()+'</div>'+
