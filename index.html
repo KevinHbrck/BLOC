@@ -1524,7 +1524,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 /* Inhaltsdaten (Übungen, Workouts, Posen) stehen in daten.js - hier unter den gewohnten Namen */
 var BLOC_DATEN = window.BLOC_DATEN;
 var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_PSEUDO, AUFWAERM_IDS = BLOC_DATEN.AUFWAERM_IDS,
-    AUFWAERM_UEBUNGEN = BLOC_DATEN.AUFWAERM_UEBUNGEN, REP_EINHEITEN = BLOC_DATEN.REP_EINHEITEN, EX_INT = BLOC_DATEN.EX_INT || {};
+    AUFWAERM_UEBUNGEN = BLOC_DATEN.AUFWAERM_UEBUNGEN, REP_EINHEITEN = BLOC_DATEN.REP_EINHEITEN, EX_INT = BLOC_DATEN.EX_INT || {},
+    LIB_FOKUS_TAUSCH = BLOC_DATEN.LIB_FOKUS_TAUSCH || {};
 var EX_ALIAS = BLOC_DATEN.EX_ALIAS, LIB_CATS = BLOC_DATEN.LIB_CATS, EXERCISE_ROWS = BLOC_DATEN.EXERCISE_ROWS,
     LIB_WORKOUT_ROWS = BLOC_DATEN.LIB_WORKOUT_ROWS, EX_LEVEL = BLOC_DATEN.EX_LEVEL, EX_EQUIP = BLOC_DATEN.EX_EQUIP, MAIN_CATS = BLOC_DATEN.MAIN_CATS,
     EX_MAIN_ROWS = BLOC_DATEN.EX_MAIN_ROWS, EQUIPS = BLOC_DATEN.EQUIPS, EX_SUCH_ALIAS = BLOC_DATEN.EX_SUCH_ALIAS, Q = BLOC_DATEN.Q,
@@ -3818,8 +3819,14 @@ function filterCardHTML(pre, cat, equip, sort, sortOpts, ohneCats){
   '</div>';
 }
 /* Fokus eines Workouts: passt, wenn der Workout-Fokus gewählt ist oder mindestens ein Drittel der Übungen passt */
-function woFocusOk(focus, exs, cat){
+function woFocusOk(focus, exs, cat, id){
   cat = selArr(cat);
+  var tausch = id && LIB_FOKUS_TAUSCH[id];   // einzelne Workouts gezielt umsortiert (daten.js)
+  if(tausch && cat.length){
+    if(cat.indexOf(tausch.dazu) > -1) return true;
+    cat = cat.filter(function(c){ return c !== tausch.weg; });
+    if(!cat.length) return false;
+  }
   if(!cat.length || cat.indexOf(focus) > -1) return true;
   var n = exs.filter(function(ex){ return catMatch(cat, ex.cats); }).length;
   return n > 0 && n >= exs.length/3;
@@ -3866,7 +3873,7 @@ function renderLibrary(){
     rows = rows.filter(function(r){
       r.mains = woMains(r.exs);
       if(tab === "mine") return true;   // eigene Programme: ungefiltert
-      if(!woFocusOk(r.focus, r.exs, cat) || !woFits(r.exs, equip) || !woGearOk(r.exs, cat, equip, mains)) return false;
+      if(!woFocusOk(r.focus, r.exs, cat, r.lw && r.lw.id) || !woFits(r.exs, equip) || !woGearOk(r.exs, cat, equip, mains)) return false;
       if(!r.hidden) r.mains.forEach(function(m){ counts[m]++; });
       return !mains.length || r.mains.some(function(m){ return mains.indexOf(m) > -1; });
     });

@@ -1061,6 +1061,12 @@ var EX_MUSCLES = {
    Menge: Zahl = Wiederholungen, "400m"/"1km" = Strecke, "30s" = Sekunden (Halten und Pause laufen
    als Countdown), 0 = in dieser Runde nicht. Übung "lauf"/"sprint"/"pause" siehe REP_PSEUDO. */
 /* Kachel „Aufwärmen & Dehnen“: diese Programme stehen unter Aufwärmen, alle übrigen Dehnprogramme unter Dehnen */
+/* Fokus-Filter der Bibliothek: diese Workouts stehen unter „Bauch / Core“ statt unter „Arme“
+   (sonst zählen die Liegestütz-Varianten sie automatisch zu den Armen) */
+var LIB_FOKUS_TAUSCH = {
+  "chest-bw":    { weg:"arms", dazu:"core" },
+  "upper-power": { weg:"arms", dazu:"core" }
+};
 var AUFWAERM_IDS = ["warmup-5","warmup-ganz","warmup-kraft","warmup-hiit","stretch-morning"];
 /* Übungen im Reiter „Aufwärmen · Übungen“ (Dehnen · Übungen = alle Übungen der Hauptkategorie Stretch) */
 var AUFWAERM_UEBUNGEN = ["jumping-jacks","high-knees","fast-feet","air-squats","lateral-hops","skater-jumps","good-mornings","bird-dog",
@@ -1245,6 +1251,7 @@ window.BLOC_DATEN = {
   AUFWAERM_UEBUNGEN:AUFWAERM_UEBUNGEN,
   REP_EINHEITEN:REP_EINHEITEN,
   REP_WORKOUT_ROWS:REP_WORKOUT_ROWS,
-  EX_INT:EX_INT
+  EX_INT:EX_INT,
+  LIB_FOKUS_TAUSCH:LIB_FOKUS_TAUSCH
 };
 })();
