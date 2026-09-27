@@ -594,6 +594,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .illu .tr{ stroke-width:9.5; }
 .illu .illu-matte{ fill:currentColor; stroke:none; opacity:.1; }
 .illu .nk{ stroke-width:5; }
+.illu .br{ stroke-width:12.5; }
 .illu .ip{ stroke-width:4; }
 .illu .ipf{ fill:currentColor; stroke:none; }
 .illu.still .pose-a, .illu.illu-anim .pose-a{ animation:none; opacity:1; }
@@ -1334,6 +1335,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .at-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:4px; line-height:1.35; padding-right:18px; }
 .at-chev{ position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; font-size:18px; color:var(--text-dim); }
 /* breite Bereichs-Kachel (Rep-Workouts) über die ganze Zeile */
+.area-tile:not(.wide) .at-chev{ top:41px; }
 .area-tile.wide{ grid-column:1 / -1; min-height:0; flex-direction:row; align-items:center; gap:14px; padding:16px; }
 .area-tile.wide .at-ico{ margin-bottom:0; flex-shrink:0; }
 .area-tile.wide .at-txt{ flex:1; min-width:0; padding-right:18px; }
@@ -2410,6 +2412,8 @@ function sortedExercises(cat, sort, equip, mains){
 /* Figur zeichnen: Rumpf kräftiger als die Glieder, schmaler Hals, Hände als Punkte.
    Der vordere Arm bekommt eine Maske (schmale Lücke im Körper dahinter) - so bleibt er
    auch vor dem Rumpf erkennbar, egal auf welchem Hintergrund. "@M@" wird pro Bild durch eine eindeutige Id ersetzt. */
+/* Brustkorb: breiteres Rumpfstück von der Schulter bis knapp unter die Mitte - Oberkörper wirkt dadurch zur Taille hin schmaler */
+function brustEnde(s, p){ return [ +(s[0] + (p[0]-s[0])*.45).toFixed(1), +(s[1] + (p[1]-s[1])*.45).toFixed(1) ]; }
 function haloStart(s, e){ return [ +(s[0] + (e[0]-s[0])*.45).toFixed(1), +(s[1] + (e[1]-s[1])*.45).toFixed(1) ]; }
 function qSVG(q){
   var n = q.n, p = q.p;
@@ -2422,7 +2426,9 @@ function qSVG(q){
     return '<path'+(hinten ? ' class="lb"' : '')+' d="'+d+'"/>';
   }
   function hand(a, hinten){ return '<circle class="hd'+(hinten ? ' lb' : '')+'" cx="'+a[a.length-2]+'" cy="'+a[a.length-1]+'" r="3.3"/>'; }
-  var rumpf = '<path class="tr" d="M'+p[0]+' '+p[1]+'L'+s[0]+' '+s[1]+'"/><path class="nk" d="M'+s[0]+' '+s[1]+'L'+n[0]+' '+n[1]+'"/>';
+  var b = brustEnde(s, p);
+  var rumpf = '<path class="tr" d="M'+p[0]+' '+p[1]+'L'+s[0]+' '+s[1]+'"/><path class="br" d="M'+s[0]+' '+s[1]+'L'+b[0]+' '+b[1]+'"/>'+
+    '<path class="nk" d="M'+s[0]+' '+s[1]+'L'+n[0]+' '+n[1]+'"/>';
   var koerper = q.f ? rumpf : "";
   q.l.forEach(function(l, i){ if(i>0) koerper += limb(p, l, !q.f); });
   q.a.forEach(function(a, i){ if(i>0) koerper += limb(s, a, !q.f) + hand(a, !q.f); });
@@ -2434,7 +2440,7 @@ function qSVG(q){
   var hs = haloStart(s, a0), halo = "M"+hs[0]+" "+hs[1];
   for(var i=0;i<a0.length;i+=2) halo += "L"+a0[i]+" "+a0[i+1];
   return q.x + '<mask id="@M@" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
-    '<path d="'+halo+'" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#@M@)">'+koerper+'</g>'+kopf+limb(s, a0, false)+hand(a0, false);
+    '<path d="'+halo+'" stroke="#000" stroke-width="9" fill="none"/></mask><g mask="url(#@M@)">'+koerper+'</g>'+kopf+limb(s, a0, false)+hand(a0, false);
 }
 var illuMaskSeq = 0;
 function illuIds(svg){ var id = "im"+(illuMaskSeq++); return svg.replace(/@M@/g, id); }
@@ -2586,7 +2592,7 @@ function illuSetup(svg){
   });
   var A = R[0];
   var hinten = frontal ? '' : ' class="lb"', hintenHand = frontal ? ' class="hd"' : ' class="hd lb"';
-  var mid = "im"+(illuMaskSeq++), rumpf = '<path class="tr" data-spine="1"/><path class="nk" data-neck="1"/>';
+  var mid = "im"+(illuMaskSeq++), rumpf = '<path class="tr" data-spine="1"/><path class="br" data-brust="1"/><path class="nk" data-neck="1"/>';
   var koerper = frontal ? rumpf : "";
   A.legs.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-leg="'+i+'"/>'; });
   A.arms.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-arm="'+i+'"/><circle'+hintenHand+' r="3.3" data-hand="'+i+'"/>'; });
@@ -2595,7 +2601,7 @@ function illuSetup(svg){
   var kopf = '<circle data-head="1" r="7"/>';
   if(A.arms.length){
     html += '<mask id="'+mid+'" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
-      '<path data-halo="1" stroke="#000" stroke-width="11" fill="none"/></mask><g mask="url(#'+mid+')">'+koerper+'</g>'+kopf+
+      '<path data-halo="1" stroke="#000" stroke-width="9" fill="none"/></mask><g mask="url(#'+mid+')">'+koerper+'</g>'+kopf+
       '<path data-arm="0"/><circle class="hd" r="3.3" data-hand="0"/>' + vorn;
   } else html += koerper + kopf + vorn;
   svg.innerHTML = html;
@@ -2603,7 +2609,7 @@ function illuSetup(svg){
               speed: seq ? 1 : (findExercise(id) || {}).main === "ausdauer" ? .7 : 1,
               legs:[], arms:[], gearEls:[],
               spine:svg.querySelector("[data-spine]"), head:svg.querySelector("[data-head]"),
-              neck:svg.querySelector("[data-neck]"), halo:svg.querySelector("[data-halo]"), hands:[],
+              neck:svg.querySelector("[data-neck]"), brust:svg.querySelector("[data-brust]"), halo:svg.querySelector("[data-halo]"), hands:[],
               gxa:svg.querySelector(".gx-a"), gxb:svg.querySelector(".gx-b") };
   A.legs.forEach(function(k, i){ fig.legs[i] = svg.querySelector('[data-leg="'+i+'"]'); });
   A.arms.forEach(function(k, i){ fig.arms[i] = svg.querySelector('[data-arm="'+i+'"]'); fig.hands[i] = svg.querySelector('[data-hand="'+i+'"]'); });
@@ -2617,6 +2623,7 @@ function illuSetup(svg){
 function illuDraw(f, b){
   var t = b.t, P = rigPoints(f.R[b.i], f.R[b.j], t);
   f.spine.setAttribute("d", ptsD(P.p, [P.s]));
+  f.brust.setAttribute("d", ptsD(P.s, [brustEnde(P.s, P.p)]));
   f.neck.setAttribute("d", ptsD(P.s, [P.n]));
   f.head.setAttribute("cx", P.h[0].toFixed(1)); f.head.setAttribute("cy", P.h[1].toFixed(1));
   P.legs.forEach(function(k, i){ f.legs[i].setAttribute("d", ptsD(P.p, k)); });
