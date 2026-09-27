@@ -782,6 +782,14 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .rep-dots span.done{ opacity:.9; }
 .rep-dots span.now{ opacity:1; animation:repPulse 1.4s ease-in-out infinite; }
 @keyframes repPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+/* Übungen als Kreise oben in der Mitte, über dem Zähler */
+.pl-mitte{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:5px; padding:0 10px; }
+.ex-dots{ display:flex; align-items:center; justify-content:center; flex-wrap:nowrap; max-width:100%; min-height:14px; }
+.ex-dots span{ flex:0 0 auto; border-radius:50%; background:currentColor; opacity:.25; transition:transform .3s ease, opacity .3s ease; }
+.ex-dots span.done{ opacity:.7; }
+.ex-dots span.now{ opacity:1; transform:scale(1.4); }
+.ex-dots span.now.bald{ animation:repPulse 1.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce){ .ex-dots span.now.bald{ animation:none; } }
 @media (prefers-reduced-motion: reduce){ .rep-dots span.now{ animation:none; } }
 
 /* Modern: kreisförmiger Fortschrittsring */
@@ -793,6 +801,11 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   font-size:min(14vw,60px); font-weight:700; font-variant-numeric:tabular-nums;
 }
+/* Pause vor einer neuen Übung: Figur groß in der Mitte des Rings, die Zeit kleiner darunter */
+.ring-wrap.mit-figur{ width:min(72vw,290px); height:min(72vw,290px); }
+.ring-wrap svg.pl-vorschau{ position:absolute; left:20%; top:10%; width:60%; height:60%; transform:none; }
+.ring-wrap.mit-figur .time{ inset:auto 0 11% 0; font-size:min(10vw,40px); }
+.pl-vorschau-v{ width:150px !important; height:150px !important; margin:-8px 0 6px !important; }
 
 /* Vintage: Walzenzähler - jede Ziffer ist eine echte 3D-Walze (Zylinder mit rundum aufgedruckten
    Ziffern), die hinter einem Sichtfenster im dunklen Gehäuse gedreht wird */
@@ -862,6 +875,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   .player-mid .pl-b{ grid-row:2; align-self:start; }
   .ring-wrap{ width:min(58vh, 240px); height:min(58vh, 240px); }
   .ring-wrap .time{ font-size:min(12vh, 56px); }
+  .ring-wrap.mit-figur{ width:min(66vh, 270px); height:min(66vh, 270px); }
+  .player-mid .pl-vorschau-v{ display:block; width:min(30vh, 120px) !important; height:min(30vh, 120px) !important; }
   .tc{ font-size:min(19vh, 84px); }
   .phase-label{ font-size:20px; margin-bottom:2px; }
   .block-label{ font-size:17px; margin-bottom:8px; }
@@ -5957,8 +5972,19 @@ function playNotes(notes){
     setTimeout(function(){ tone(n); }, n.d);
   });
 }
-function tick(){ playNotes(currentSoundStyle().tick); }
-function phaseBeep(kind){ playNotes(currentSoundStyle()[kind]); }
+/* Countdown-Töne (3, 2, 1) etwa so laut wie der Signalton danach: je Klangstil einmal hochgerechnet
+   (lauteste Note des Starttons ÷ lauteste Note des Ticks, höchstens ×3, nie leiser als vorher) */
+function tickNotes(style){
+  style = style || currentSoundStyle();
+  if(!style._tickLaut){
+    function maxV(ns){ return (ns || []).reduce(function(m, n){ return Math.max(m, n.v == null ? .7 : n.v); }, 0); }
+    var tv = maxV(style.tick), f = tv ? clamp(maxV(style.work)*.9/tv, 1, 3) : 1;
+    style._tickLaut = (style.tick || []).map(function(n){ return Object.assign({}, n, { v:(n.v == null ? .7 : n.v)*f }); });
+  }
+  return style._tickLaut;
+}
+function tick(){ playNotes(tickNotes()); }
+function phaseBeep(kind){ playNotes(kind === "tick" ? tickNotes() : currentSoundStyle()[kind]); }
 function vibrate(pattern){
   if(!state.db.settings.vibration) return;
   if(navigator.vibrate) try{ navigator.vibrate(pattern); }catch(e){}
@@ -5993,7 +6019,7 @@ function schedCountdown(endMs, step){
   if(!state.db.settings.countIn || step.phase==="done") return;
   for(var k=3;k>=1;k--){
     var at = endMs - k*1000;
-    if(step.duration > k && at >= Date.now() - 50) schedNotes(currentSoundStyle().tick, at);
+    if(step.duration > k && at >= Date.now() - 50) schedNotes(tickNotes(), at);
   }
 }
 /* full=true: alles Künftige neu planen (Countdown des laufenden Schritts inklusive);
@@ -6041,26 +6067,29 @@ document.addEventListener("visibilitychange", function(){
 function buildSteps(w){
   var steps = [];
   var b0 = findBlock(w.items[0] ? w.items[0].blockId : null);
-  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "" });
+  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", exNr:1 });
+  var exNr = 0;   // die wievielte Übung (Block) im Workout - nur für die Anzeige oben
   for(var i=0;i<w.items.length;i++){
     var it = w.items[i];
     var b = findBlock(it.blockId);
     if(!b) continue;
+    exNr++;
     for(var r=0;r<b.reps;r++){
       var bn = b.sides ? b.name+" · "+(r%2===0 ? t("left") : t("right")) : b.name;
       steps.push({ phase:"work", label:b.name, blockName:bn, duration:b.workSec, rep:r+1, totalReps:b.reps,
-                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex) });
+                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), exNr:exNr });
       if(r < b.reps-1){
         steps.push({ phase:"rest", label:b.name, blockName:b.name, duration:b.restSec, rep:r+1, totalReps:b.reps, ex:b.ex||"",
-                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex) });
+                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), exNr:exNr });
       }
     }
     if(i < w.items.length-1 && it.restAfterSec>0){
       var nb = findBlock(w.items[i+1].blockId);
-      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec, ex: nb && nb.ex || "" });
+      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec, ex: nb && nb.ex || "", exNr:exNr+1 });
     }
   }
-  steps.push({ phase:"done", label:"Fertig", duration:0 });
+  steps.push({ phase:"done", label:"Fertig", duration:0, exNr:exNr+1 });
+  steps.exCount = exNr;
   /* Zähler oben im Timer: nur Übungseinheiten (Arbeitsphasen), Pausen zählen nicht mit.
      In Vorbereitung und Pausen steht die Nummer der nächsten Einheit. */
   var units = 0;
@@ -6153,7 +6182,7 @@ function playerTemplate(){
     '<div id="pl-bgs" aria-hidden="true"></div>'+
     '<div class="player-top">'+
       '<button class="exit" data-exit title="'+t("endBtn")+'">&times;</button>'+
-      '<div style="font-size:13px;opacity:.7" id="pl-counter"></div>'+
+      '<div class="pl-mitte"><div class="ex-dots" id="pl-exdots" aria-hidden="true"></div><div style="font-size:13px;opacity:.7" id="pl-counter"></div></div>'+
       '<button class="exit" data-vol-toggle title="'+t("volume")+'">'+ICON_VOLUME+'</button>'+
     '</div>'+
     '<div class="vol-popover hidden" id="pl-vol-pop">'+ICON_VOLUME+
@@ -6218,9 +6247,12 @@ function stepBodyHTML(step){
   }
   var pv = phaseVars(step.phase);
   var repInfo = step.totalReps ? '<div class="rep-dots" id="pl-dots"></div>' : "";
+  // Vorbereitung und Blockpause: die Figur macht die kommende Übung vor und steht im Mittelpunkt
+  var vorschau = (step.phase==="blockrest" || step.phase==="prep") && step.ex && ILLU[step.ex];
   var timeHTML = isVintageTheme()
     ? '<div class="time" id="pl-time">'+odoHTML(step.duration)+'</div>'
-    : '<div class="ring-wrap" id="pl-ringwrap">'+ringHTML()+'<div class="time" id="pl-time">'+esc(fmtTime(step.duration))+'</div></div>';
+    : '<div class="ring-wrap'+(vorschau ? ' mit-figur' : '')+'" id="pl-ringwrap">'+ringHTML()+
+        (vorschau ? illuHTML(step.ex, "pl-vorschau") : '')+'<div class="time" id="pl-time">'+esc(fmtTime(step.duration))+'</div></div>';
   var phLabel = pv.label;
   if(step.stretch){
     if(step.phase==="work") phLabel = t("phHold");
@@ -6232,6 +6264,7 @@ function stepBodyHTML(step){
     '<div class="block-label">'+esc(step.blockName||"")+(step.totalReps? SEP+step.rep+"/"+step.totalReps : "")+
       (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+'</div>'+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+
+    (vorschau && isVintageTheme() ? illuHTML(step.ex, "pl-illu pl-vorschau-v") : "")+
     (step.phase==="work" && step.hint ? '<div class="ex-hint">'+esc(step.hint)+'</div>' : "")+'</div>'+
     timeHTML+
     '<div class="pl-b">'+repInfo+
@@ -6285,6 +6318,7 @@ function enterStep(idx, opt){
   var cnt = document.getElementById("pl-counter");
   cnt.textContent = step.unit+" / "+steps.units;
   cnt.setAttribute("aria-label", t("unitsOf", { i:step.unit, n:steps.units }));
+  updateExDots(step);
 
   if(step.phase!=="done"){
     playerState.endAt = (opt.startAt || Date.now()) + step.duration*1000;
@@ -6330,9 +6364,30 @@ function updateDots(step){
   var size = Math.max(14, Math.min(34, Math.floor((avail - (n-1)*gap)/n)));
   wrap.style.gap = gap+"px";
   var html = "";
+  var cur = step.phase === "rest" ? step.rep+1 : step.rep;   // Pause: der kommende Satz blinkt, der gerade geschaffte ist erledigt
   for(var i=1;i<=n;i++){
-    var cls = i<step.rep ? "done" : (i===step.rep ? "now":"");
+    var cls = i<cur ? "done" : (i===cur ? "now":"");
     html += '<span class="'+cls+'" style="width:'+size+'px;height:'+size+'px;border-radius:'+Math.max(3, Math.round(size*.15))+'px"></span>';
+  }
+  wrap.innerHTML = html;
+}
+
+/* Oben: ein Kreis je Übung - erledigte kräftig, die aktuelle größer, kommende blass.
+   In der Pause vor einer neuen Übung pulsiert deren Kreis. Nur bei Workouts mit mehreren Übungen. */
+function updateExDots(step){
+  var wrap = document.getElementById("pl-exdots");
+  if(!wrap) return;
+  var n = playerState.steps.exCount || 0;
+  if(n < 2 || n > 30){ wrap.innerHTML = ""; wrap.style.display = "none"; return; }
+  wrap.style.display = "";
+  var cur = step.exNr || 1, bald = step.phase === "blockrest" || step.phase === "prep";
+  var avail = Math.max(60, (wrap.parentNode.clientWidth || 220) - 4), gap = n > 16 ? 4 : 6;
+  var size = Math.max(5, Math.min(10, Math.floor((avail - (n-1)*gap)/n)));
+  wrap.style.gap = gap+"px";
+  var html = "";
+  for(var i=1;i<=n;i++){
+    var cls = i < cur ? "done" : i === cur ? "now"+(bald ? " bald" : "") : "";
+    html += '<span class="'+cls+'" style="width:'+size+'px;height:'+size+'px"></span>';
   }
   wrap.innerHTML = html;
 }
