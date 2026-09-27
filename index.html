@@ -2414,6 +2414,13 @@ function sortedExercises(cat, sort, equip, mains){
    auch vor dem Rumpf erkennbar, egal auf welchem Hintergrund. "@M@" wird pro Bild durch eine eindeutige Id ersetzt. */
 /* Brustkorb: breiteres Rumpfstück von der Schulter bis knapp unter die Mitte - Oberkörper wirkt dadurch zur Taille hin schmaler */
 function brustEnde(s, p){ return [ +(s[0] + (p[0]-s[0])*.45).toFixed(1), +(s[1] + (p[1]-s[1])*.45).toFixed(1) ]; }
+/* Nase: kleiner Punkt am Kopf in Blickrichtung (senkrecht zur Wirbelsäule, zur Vorderseite) - nicht bei Ansichten von vorn/oben */
+function nasePunkt(h, n, p, b){
+  var dx = n[0]-p[0], dy = n[1]-p[1], len = Math.sqrt(dx*dx+dy*dy) || 1;
+  return [ +(h[0] - dy/len*6.4*(b||1)).toFixed(1), +(h[1] + dx/len*6.4*(b||1)).toFixed(1) ];
+}
+/* Ferse: kurzes Stück hinter dem Knöchel, entgegen der Fußspitze */
+function fersePunkt(ankle, toe){ return [ +(ankle[0] + (ankle[0]-toe[0])*.55).toFixed(1), +(ankle[1] + (ankle[1]-toe[1])*.55).toFixed(1) ]; }
 function haloStart(s, e){ return [ +(s[0] + (e[0]-s[0])*.45).toFixed(1), +(s[1] + (e[1]-s[1])*.45).toFixed(1) ]; }
 function qSVG(q){
   var n = q.n, p = q.p;
@@ -2423,7 +2430,12 @@ function qSVG(q){
   function limb(start, pts, hinten){
     var d = "M"+start[0]+" "+start[1];
     for(var i=0;i<pts.length;i+=2) d += "L"+pts[i]+" "+pts[i+1];
-    return '<path'+(hinten ? ' class="lb"' : '')+' d="'+d+'"/>';
+    var out = '<path'+(hinten ? ' class="lb"' : '')+' d="'+d+'"/>';
+    if(start === p && pts.length >= 6){   // Bein mit Fußspitze: Ferse ergänzen
+      var f = fersePunkt([pts[2], pts[3]], [pts[4], pts[5]]);
+      out += '<path class="fs'+(hinten ? ' lb' : '')+'" d="M'+pts[2]+' '+pts[3]+'L'+f[0]+' '+f[1]+'"/>';
+    }
+    return out;
   }
   function hand(a, hinten){ return '<circle class="hd'+(hinten ? ' lb' : '')+'" cx="'+a[a.length-2]+'" cy="'+a[a.length-1]+'" r="3.3"/>'; }
   var b = brustEnde(s, p);
@@ -2435,6 +2447,7 @@ function qSVG(q){
   if(!q.f) koerper += rumpf;
   if(q.l[0]) koerper += limb(p, q.l[0], false);
   var kopf = '<circle cx="'+h[0]+'" cy="'+h[1]+'" r="7"/>';
+  if(!q.f){ var ns = nasePunkt(h, n, p, q.b); kopf += '<circle class="ns" cx="'+ns[0]+'" cy="'+ns[1]+'" r="2.3"/>'; }
   var a0 = q.a[0];
   if(!a0) return q.x + koerper + kopf;
   var hs = haloStart(s, a0), halo = "M"+hs[0]+" "+hs[1];
@@ -2560,6 +2573,7 @@ function illuSetup(svg){
   var qs = seq ? seq.k : [pp[0], pp[1]];
   var times = seq ? seq.t : [[ILLU_HOLD_A, ILLU_MOVE], [ILLU_HOLD_B, ILLU_MOVE]];
   var R = qs.map(rigFromPose);
+  R.forEach(function(r, k){ r.b = qs[k].b || 1; });
   for(var pass=0; pass<2; pass++) for(var k=1; k<R.length; k++) rigAlign(R[0], R[k]);
   var gs = qs.map(function(q){ return gearSplit(q.x); });
   var P = R.map(function(r){ return rigPoints(r, r, 0); });
@@ -2594,11 +2608,12 @@ function illuSetup(svg){
   var hinten = frontal ? '' : ' class="lb"', hintenHand = frontal ? ' class="hd"' : ' class="hd lb"';
   var mid = "im"+(illuMaskSeq++), rumpf = '<path class="tr" data-spine="1"/><path class="br" data-brust="1"/><path class="nk" data-neck="1"/>';
   var koerper = frontal ? rumpf : "";
-  A.legs.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-leg="'+i+'"/>'; });
+  var hintenFerse = frontal ? ' class="fs"' : ' class="fs lb"';
+  A.legs.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-leg="'+i+'"/>'+(k.length >= 3 ? '<path'+hintenFerse+' data-ferse="'+i+'"/>' : ''); });
   A.arms.forEach(function(k, i){ if(i>0) koerper += '<path'+hinten+' data-arm="'+i+'"/><circle'+hintenHand+' r="3.3" data-hand="'+i+'"/>'; });
   if(!frontal) koerper += rumpf;
-  if(A.legs.length) koerper += '<path data-leg="0"/>';
-  var kopf = '<circle data-head="1" r="7"/>';
+  if(A.legs.length) koerper += '<path data-leg="0"/>'+(A.legs[0].length >= 3 ? '<path class="fs" data-ferse="0"/>' : '');
+  var kopf = '<circle data-head="1" r="7"/>'+(frontal ? '' : '<circle class="ns" data-nase="1" r="2.3"/>');
   if(A.arms.length){
     html += '<mask id="'+mid+'" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140"><rect x="-20" y="-20" width="140" height="140" fill="#fff"/>'+
       '<path data-halo="1" stroke="#000" stroke-width="9" fill="none"/></mask><g mask="url(#'+mid+')">'+koerper+'</g>'+kopf+
@@ -2609,9 +2624,9 @@ function illuSetup(svg){
               speed: seq ? 1 : (findExercise(id) || {}).main === "ausdauer" ? .7 : 1,
               legs:[], arms:[], gearEls:[],
               spine:svg.querySelector("[data-spine]"), head:svg.querySelector("[data-head]"),
-              neck:svg.querySelector("[data-neck]"), brust:svg.querySelector("[data-brust]"), halo:svg.querySelector("[data-halo]"), hands:[],
+              neck:svg.querySelector("[data-neck]"), brust:svg.querySelector("[data-brust]"), nase:svg.querySelector("[data-nase]"), fersen:[], halo:svg.querySelector("[data-halo]"), hands:[],
               gxa:svg.querySelector(".gx-a"), gxb:svg.querySelector(".gx-b") };
-  A.legs.forEach(function(k, i){ fig.legs[i] = svg.querySelector('[data-leg="'+i+'"]'); });
+  A.legs.forEach(function(k, i){ fig.legs[i] = svg.querySelector('[data-leg="'+i+'"]'); fig.fersen[i] = svg.querySelector('[data-ferse="'+i+'"]'); });
   A.arms.forEach(function(k, i){ fig.arms[i] = svg.querySelector('[data-arm="'+i+'"]'); fig.hands[i] = svg.querySelector('[data-hand="'+i+'"]'); });
   gears.forEach(function(g, i){ fig.gearEls[i] = svg.querySelector('[data-g="'+i+'"]'); });
   illuDraw(fig, { i:0, j:1 % R.length, t:0 });
@@ -2626,7 +2641,14 @@ function illuDraw(f, b){
   f.brust.setAttribute("d", ptsD(P.s, [brustEnde(P.s, P.p)]));
   f.neck.setAttribute("d", ptsD(P.s, [P.n]));
   f.head.setAttribute("cx", P.h[0].toFixed(1)); f.head.setAttribute("cy", P.h[1].toFixed(1));
-  P.legs.forEach(function(k, i){ f.legs[i].setAttribute("d", ptsD(P.p, k)); });
+  P.legs.forEach(function(k, i){
+    f.legs[i].setAttribute("d", ptsD(P.p, k));
+    if(f.fersen[i] && k.length >= 3) f.fersen[i].setAttribute("d", ptsD(k[1], [fersePunkt(k[1], k[2])]));
+  });
+  if(f.nase){
+    var ns = nasePunkt(P.h, P.n, P.p, (t < .5 ? f.R[b.i] : f.R[b.j]).b);
+    f.nase.setAttribute("cx", ns[0]); f.nase.setAttribute("cy", ns[1]);
+  }
   P.arms.forEach(function(k, i){
     f.arms[i].setAttribute("d", ptsD(P.s, k));
     var e = k[k.length-1];
