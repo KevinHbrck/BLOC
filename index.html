@@ -6260,7 +6260,7 @@ function renderSettings(){
       (kannBackupTeilen() ? '<button class="btn btn-secondary" data-sharebackup>'+ICON_SHARE+' '+t("shareBackup")+'</button>' : '')+
       '<button class="btn btn-secondary" data-export>'+t("exportBackup")+'</button>'+
       '<button class="btn btn-secondary" data-import>'+t("importBackup")+'</button>'+
-      '<input type="file" id="import-file" accept="application/json,.json,text/plain,.txt" style="display:none">'+
+      '<input type="file" id="import-file" style="display:none">'+
       '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>'+
     '</div>'+
     '<div class="empty" style="padding:20px 8px;">'+t("localNote")+'<br><small class="app-version" id="app-version"></small></div>';
@@ -6326,6 +6326,10 @@ function renderSettings(){
     reader.onload = function(){
       try{
         var parsed = JSON.parse(reader.result);
+        // nur echte BLOC-Sicherungen (z. B. nicht versehentlich die Sicherung des Vokabelkastens) - sonst wäre alles weg
+        var istBloc = parsed && typeof parsed === "object" && !Array.isArray(parsed.cards) &&
+          (Array.isArray(parsed.blocks) || Array.isArray(parsed.workouts) || Array.isArray(parsed.myWorkouts) || (parsed.settings && typeof parsed.settings === "object"));
+        if(!istBloc){ alert(t("fileError")); return; }
         confirmSheet(t("importQ"), t("importText"), t("importBtn"), function(){
           var db = defaultDB();
           db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
