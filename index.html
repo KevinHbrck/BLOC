@@ -543,7 +543,8 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
   background:color-mix(in srgb, var(--bg) 92%, transparent); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-top:1px solid var(--border); }
 .wb-leiste-in{ max-width:560px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; color:var(--text-dim); line-height:1.3; }
 .wb-leiste-in b{ color:var(--text); font-size:14px; }
-.wb-leiste .btn{ width:auto; margin:0; padding:12px 22px; }
+.wb-leiste .btn{ width:auto; margin:0; padding:12px 16px; white-space:nowrap; }
+.wb-knoepfe{ display:flex; gap:8px; flex-shrink:0; }
 .wb-mischen{ margin-top:8px; }
 /* Studio */
 .st-kachel{ border:0; text-align:left; font:inherit; color:inherit; cursor:pointer; }
@@ -1978,7 +1979,8 @@ var I18N = {
     wbAblauf:"Dein Ablauf", wbWaehlen:"Übungen wählen", wbTippen:"Antippen = dazu, nochmal antippen = raus.",
     wbLeer:"Noch leer – tippe unten Übungen an.", wbOrdnen:"Sinnvoll ordnen", wbGeordnet:"Geordnet: große Übungen zuerst, Wechsel der Muskelgruppen, Dehnen am Ende",
     wbAblaufHint:"Tipp auf eine Übung: Zeiten, verschieben, tauschen, entfernen.", wbZeiten:"Zeiten anpassen", wbNachVorn:"Nach vorn",
-    wbNachHinten:"Nach hinten", wbTauschen:"Andere Übung", wbKeinTausch:"Keine passende andere Übung gefunden", wbMischen:"Nochmal mischen",
+    wbNachHinten:"Nach hinten", wbTauschen:"Andere Übung", wbKeinTausch:"Keine passende andere Übung gefunden", wbMischen:"Nochmal mischen", wbGespeichert:"Gespeichert", wbVerwerfenQ:"Änderungen verwerfen?",
+    wbVerwerfenText:"Das Workout ist noch nicht gespeichert.", wbVerwerfen:"Verwerfen",
     figTitle:"Figuren prüfen", figSub:"Alle Figuren auf einen Blick – Unklares markieren und teilen",
     figIntro:"Antippen zeigt die Figur bewegt. Unklares markieren, kurz notieren, am Ende teilen.",
     figAll:"Alle", figMarked:"Markierte ({n})", figFlag:"Unklar", figNotePh:"Was ist unklar? (optional)",
@@ -2165,7 +2167,8 @@ var I18N = {
     wbAblauf:"Your sequence", wbWaehlen:"Pick exercises", wbTippen:"Tap = add, tap again = remove.",
     wbLeer:"Still empty – tap exercises below.", wbOrdnen:"Smart order", wbGeordnet:"Ordered: big lifts first, alternating muscle groups, stretches last",
     wbAblaufHint:"Tap an exercise: times, move, swap, remove.", wbZeiten:"Adjust times", wbNachVorn:"Move up",
-    wbNachHinten:"Move down", wbTauschen:"Swap exercise", wbKeinTausch:"No suitable alternative found", wbMischen:"Shuffle again",
+    wbNachHinten:"Move down", wbTauschen:"Swap exercise", wbKeinTausch:"No suitable alternative found", wbMischen:"Shuffle again", wbGespeichert:"Saved", wbVerwerfenQ:"Discard changes?",
+    wbVerwerfenText:"This workout isn't saved yet.", wbVerwerfen:"Discard",
     figTitle:"Review figures", figSub:"All figures at a glance – mark and share unclear ones",
     figIntro:"Tap to see a figure move. Mark what's unclear, add a note, then share.",
     figAll:"All", figMarked:"Marked ({n})", figFlag:"Unclear", figNotePh:"What is unclear? (optional)",
@@ -2374,6 +2377,10 @@ EXERCISES.forEach(function(ex){ ex.main = EX_MAIN[ex.id] || "kraft"; });
 function mainCat(id){ for(var i=0;i<MAIN_CATS.length;i++) if(MAIN_CATS[i].id===id) return MAIN_CATS[i]; return MAIN_CATS[0]; }
 function mainMatch(sel, main){ sel = selArr(sel); return !sel.length || sel.indexOf(main) > -1; }
 /* Dehn- und Mobility-Übungen stehen in gemischten Workouts immer am Ende (Reihenfolge sonst unverändert) */
+/* Workouts bauen: ohne Übungen aus dem Freien Training (Studio - dort trägt man Gewicht ein) und ohne Dehnen */
+var STUDIO_NUR = {};
+STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){ STUDIO_NUR[id] = true; }); });
+function fuerWorkout(ex){ return !STUDIO_NUR[ex.id] && ex.main !== "stretch"; }
 function exIsMobility(id){ var ex = id && findExercise(id); return !!(ex && ex.main === "stretch"); }
 function stretchLast(items, idOf){
   var a = [], b = [];
@@ -3169,6 +3176,7 @@ function render(){
   if(route==="exedit") return renderExEdit(parts[1]);
   if(route==="import") return renderImport(parts[1]);
   if(route==="mybuild") return renderMyBuild(parts[1]);
+  bauEntwurf = null;   // Baukasten verlassen: nicht gespeicherte Änderungen verwerfen
   if(route==="playmy") return launchFromSource({ type:"mine", id:parts[1] });
   if(route==="cover") return parts[1]==="surprise" || parts[1]==="shared"
     ? (coverDraft && coverDraft.src===parts[1] ? renderDraftPage(coverDraft, { cover:true, back:"#library" }) : go("#library"))
@@ -3889,11 +3897,12 @@ function renderWorkoutEdit(id){
   }).join("") || '<div class="empty">'+t("noBlocksAvail")+' <br><a href="#blocks" style="color:var(--accent)">'+t("createBlockFirst")+'</a></div>';
 
   var pickCat = state.db.settings.libPickCat || "all";
+  if(pickCat === "stretch") pickCat = "all";
   var exPos = {};
   w.items.forEach(function(it, i){ var b = findBlock(it.blockId); if(b && b.ex) (exPos[b.ex] = exPos[b.ex] || []).push(i+1); });
-  var libPickHTML = catChipsHTML(pickCat, "data-pickcat") +
+  var libPickHTML = catChipsHTML(pickCat, "data-pickcat", ["stretch"]) +
     '<div class="fig-grid">'+EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && (pickCat==="all" || ex.cats.indexOf(pickCat) > -1);
+      return fuerWorkout(ex) && !libHidden("ex:"+ex.id) && (pickCat==="all" || ex.cats.indexOf(pickCat) > -1);
     }).map(function(ex){
       return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-addex="'+ex.id+'"', cat:catVar(ex.cats[0]), nr:exPos[ex.id] || [],
         unter:'<span class="st-sub">'+blockSpec(exBlock(ex))+'</span>' });
@@ -4145,7 +4154,7 @@ function openFilterPanel(opts, onDone){
         return '<button type="button" class="lib-chip'+(on?' active':'')+'" data-fcat="'+c.id+'" aria-pressed="'+on+'">'+catIcon(c.id)+esc(tplText(c))+'</button>';
       }).join("")+'</div>'+
       '<label>'+t("equipHave")+' <span class="lbl-hint">'+esc(t("fEquipHintShort"))+'</span></label>'+
-      '<div class="sp-chips">'+EQUIPS.map(function(e){
+      '<div class="sp-chips">'+EQUIPS.filter(function(e){ return !opts.ohneEquip || opts.ohneEquip.indexOf(e.id) < 0; }).map(function(e){
         var on = equip.indexOf(e.id) > -1;
         return '<button type="button" class="lib-chip'+(on?' active':'')+'" data-fequip="'+e.id+'" aria-pressed="'+on+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>';
       }).join("")+'</div>'+
@@ -4382,7 +4391,7 @@ function renderLibrary(){
     applySearch(app, libQuery);
     lq.addEventListener("input", function(){ libQuery = lq.value; applySearch(app, libQuery); });
   }
-  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/"+createMy().id); else go("#exedit/new"); } });
+  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/new"); else go("#exedit/new"); } });
 
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
@@ -4682,10 +4691,28 @@ function adoptSharedCustoms(d){
 /* ============ Eigenes Workout und Deckblatt: gemeinsamer Editor mit Drag & Drop ============ */
 var ICON_GRIP = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg>';
 
+/* Baukasten: Arbeitskopie - erst „Speichern“ (oder Start) legt das Workout an bzw. überschreibt es.
+   Zurück ohne Speichern verwirft die Änderungen; neu = noch nicht in der Liste. */
+var bauEntwurf = null;
 function renderMyBuild(id){
-  var mw = findMy(id);
-  if(!mw){ go("#library"); return; }
-  renderDraftPage(mw, { cover:false, back:"#library", id:id });
+  if(!bauEntwurf || bauEntwurf.key !== id){
+    if(id === "new") bauEntwurf = { key:id, neu:true, d:{ id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[] } };
+    else { var mw = findMy(id); if(!mw){ go("#library"); return; } bauEntwurf = { key:id, d:draftCopy(mw) }; }
+  }
+  renderDraftPage(bauEntwurf.d, { cover:false, back:"#library", id:bauEntwurf.d.id, bau:bauEntwurf });
+}
+function bauSpeichern(b){
+  var d = b.d, l = state.db.myWorkouts || (state.db.myWorkouts = []), mw = null;
+  for(var i=0;i<l.length;i++) if(l[i].id === d.id) mw = l[i];
+  if(!mw){ mw = { id:d.id }; l.push(mw); }
+  mw.name = d.name; mw.mode = d.mode; mw.reps = d.reps; mw.work = d.work; mw.rest = d.rest; mw.blockRest = d.blockRest;
+  mw.items = draftCopy(d.items); mw.updatedAt = Date.now();
+  save();
+  if(b.neu){   // ab jetzt ein normales Workout: Adresse und Zurück-Verlauf zeigen darauf
+    b.neu = false; b.key = d.id;
+    navStack[navStack.length-1] = "#mybuild/"+d.id; setUrl(navTop());
+  }
+  b.dirty = false;
 }
 function renderCover(kind, id){
   var key = kind+":"+(id||"");
@@ -4725,7 +4752,7 @@ function wbTauschKandidat(d, i){
   var drin = {}; d.items.forEach(function(it){ drin[it.ex] = true; });
   var p = d._params, equips = p && p.equips ? p.equips : null, reg = exProfile(alt).region;
   var pool = EXERCISES.filter(function(ex){
-    return !drin[ex.id] && !libHidden("ex:"+ex.id) && ex.main === alt.main && (!equips || equipMatch(equips, ex));
+    return !drin[ex.id] && !STUDIO_NUR[ex.id] && !libHidden("ex:"+ex.id) && ex.main === alt.main && (!equips || equipMatch(equips, ex));
   });
   var gleich = pool.filter(function(ex){ return exProfile(ex).region === reg; });
   var wahl = gleich.length ? gleich : pool;
@@ -4737,10 +4764,10 @@ function renderDraftPage(d, cfg){
   var geordnet = stretchLast(d.items, function(it){ return it.ex; });
   if(geordnet.some(function(it, i){ return it !== d.items[i]; })){
     d.items = geordnet;
-    if(!cfg.cover){ d.updatedAt = Date.now(); save(); }
   }
-  var cat = selArr(s.buildCats || s.buildCat), sort = s.libSort === "az" ? "az" : "std";
-  var equip = selArr(s.buildEquips), bmains = selArr(s.buildMains);
+  function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
+  var cat = ohne(selArr(s.buildCats || s.buildCat), "stretch"), sort = s.libSort === "az" ? "az" : "std";
+  var equip = ohne(selArr(s.buildEquips), "gym"), bmains = ohne(selArr(s.buildMains), "stretch");
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
   var cats = [];
@@ -4806,12 +4833,12 @@ function renderDraftPage(d, cfg){
   if(palOpen){
     var palCounts = {};
     MAIN_CATS.forEach(function(c){ palCounts[c.id] = 0; });
-    EXERCISES.forEach(function(ex){ if(!libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
+    EXERCISES.forEach(function(ex){ if(fuerWorkout(ex) && !libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
       searchFilterHTML(buildQuery, "b", cat, equip)+
-      mainTilesHTML(bmains, palCounts, "data-bmain")+
-      '<div class="fig-grid" id="dz-pal">'+(sortedExercises(cat, sort, equip, bmains).map(function(ex){ return kachel(ex); }).join("") ||
+      mainTilesHTML(bmains, palCounts, "data-bmain", ["stretch"])+
+      '<div class="fig-grid" id="dz-pal">'+(sortedExercises(cat, sort, equip, bmains).filter(fuerWorkout).map(function(ex){ return kachel(ex); }).join("") ||
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   }
@@ -4858,16 +4885,34 @@ function renderDraftPage(d, cfg){
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: cfg.cover ? "" :
       '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>' }) +
     head + ablaufHTML + optionsHTML + palHTML +
-    (cfg.cover ? '' : '<button class="btn btn-danger" data-mydel style="margin-top:18px;">'+ICON_TRASH+' '+t("myDelete")+'</button>')+
+    (cfg.cover || cfg.bau.neu ? '' : '<button class="btn btn-danger" data-mydel style="margin-top:18px;">'+ICON_TRASH+' '+t("myDelete")+'</button>')+
     '<div style="height:'+(cfg.cover ? 40 : 96)+'px"></div>'+
     (cfg.cover ? '' : '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+t("exCount", { n:exs.length })+'</b><br>'+dauer+'</span>'+
-      '<button type="button" class="btn btn-primary" data-tocover'+(d.items.length ? '' : ' disabled')+'>'+ICON_PLAY+' '+t("start")+'</button></div></div>');
+      '<span class="wb-knoepfe">'+speicherKnopf()+
+      '<button type="button" class="btn '+(cfg.bau.dirty ? 'btn-secondary' : 'btn-primary')+'" data-tocover'+(d.items.length ? '' : ' disabled')+'>'+ICON_PLAY+' '+t("start")+'</button></span></div></div>');
+  function speicherKnopf(){
+    var offen = cfg.bau.dirty;
+    return '<button type="button" class="btn '+(offen ? 'btn-primary' : 'btn-secondary')+'" data-wbsave'+(offen ? '' : ' disabled')+'>'+
+      ICON_SAVE+' '+t(offen ? "save" : "wbGespeichert")+'</button>';
+  }
+  if(!cfg.cover){   // Zurück mit ungespeicherten Änderungen: erst nachfragen
+    var zur = app.querySelector("[data-back]");
+    if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
+      if(!cfg.bau.dirty) return goBack(cfg.back);
+      confirmSheet(t("wbVerwerfenQ"), t("wbVerwerfenText"), t("wbVerwerfen"), function(){ bauEntwurf = null; goBack(cfg.back); });
+    }); }
+  }
   bindCommon();
 
   function speichern(){
     if(cfg.cover) d._dirty = true;
-    else { d.updatedAt = Date.now(); save(); }
+    else {
+      cfg.bau.dirty = true;
+      var alt = app.querySelector("[data-wbsave]");   // Knopf sofort umstellen (z. B. beim Tippen des Namens)
+      if(alt && alt.disabled){ alt.outerHTML = speicherKnopf(); app.querySelector("[data-wbsave]").addEventListener("click", sichern); }
+    }
   }
+  function sichern(){ bauSpeichern(cfg.bau); showToast(t("wbGespeichert")); neu(); }
   function neu(){ var y = window.scrollY; renderDraftPage(d, cfg); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ fn(el, e); }); }); }
 
@@ -4934,7 +4979,7 @@ function renderDraftPage(d, cfg){
   on("[data-bcat]", function(el){ s.buildCats = chipToggle(cat, el.getAttribute("data-bcat")); save(); neu(); });
   on("[data-bequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bequip")); save(); neu(); });
   on("[data-bfilter]", function(){
-    openFilterPanel({ cat:cat, equip:equip, sort:sort }, function(c, e, so){
+    openFilterPanel({ cat:cat, equip:equip, sort:sort, ohne:["stretch"], ohneEquip:["gym"] }, function(c, e, so){
       s.buildCats = c; s.buildEquips = e; if(so) s.libSort = so; save(); neu();
     });
   });
@@ -4947,10 +4992,11 @@ function renderDraftPage(d, cfg){
   }
   on("[data-palopen]", function(){ d._pal = true; neu(); });
   on("[data-share]", function(){ shareDraft(d); });
-  on("[data-tocover]", function(){ if(d.items.length){ coverDraft = null; go("#cover/my/"+cfg.id); } });
+  on("[data-wbsave]", sichern);
+  on("[data-tocover]", function(){ if(d.items.length){ if(cfg.bau.dirty || cfg.bau.neu) bauSpeichern(cfg.bau); coverDraft = null; go("#cover/my/"+cfg.id); } });
   on("[data-mydel]", function(){
     confirmSheet(t("myDeleteQ"), t("cantUndo"), t("del"), function(){
-      deleteMyNow(cfg.id); go("#library");
+      deleteMyNow(cfg.id); bauEntwurf = null; go("#library");
     });
   });
   if(cfg.cover){
@@ -5085,7 +5131,7 @@ function buildSurprise(p){
     var trainSec = Math.max(block, total - stretchBudget);
     var n = anzahl ? Math.max(1, anzahl - stretchAnzahl) : Math.max(2, Math.round((trainSec + tm.blockRest) / (block + tm.blockRest)));
     var pool = EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && ex.main !== "stretch" && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
+      return !libHidden("ex:"+ex.id) && fuerWorkout(ex) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
         equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains);
     });
     if(!pool.length && !stretchPool.length) return null;
@@ -5171,7 +5217,7 @@ function openSurprise(twId){
         return '<button type="button" class="fc-chip'+(p.cats.indexOf(c.id)>-1?' on':'')+'" data-spcat="'+c.id+'">'+catIcon(c.id)+esc(tplText(c))+'</button>'; }).join("")+'</div>'+
       '<label>'+t("spLevel")+'</label><div class="seg-row">'+[1,2,3].map(function(l){
         return '<button type="button" class="'+(p.level===l?'active':'')+'" data-splevel="'+l+'">'+esc(t("int"+l))+'</button>'; }).join("")+'</div>'+
-      '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.map(function(e){
+      '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
         return '<button type="button" class="fc-chip'+(p.equips.indexOf(e.id)>-1?' on':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>'+
       '<div class="sp-avoid">'+toggleRow("sp-avoid", t("spAvoid"), t("spAvoidDesc"), p.avoid !== false)+'</div>'+
       '<div class="tm-hint">'+esc(t("spRules"))+'</div>'+

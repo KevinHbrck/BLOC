@@ -254,6 +254,21 @@
       pruefe($('[data-wbex="plank"] .ex-fav.on'), "Stern lässt sich nicht setzen");
       klick('[data-wbex="plank"] [data-exfav]');
       pruefe($(".wb-leiste [data-tocover]") && !$(".wb-leiste [data-tocover]").disabled, "Start-Leiste fehlt");
+      pruefe(!$('[data-wbex="leg-press"]') && !$('[data-wbex="cobra-lift"]'), "Studio- oder Dehnübung in der Auswahl");
+      // Speichern-Knopf: erst Speichern legt das Workout an, Zurück ohne Speichern verwirft
+      var sk = $(".wb-leiste [data-wbsave]");
+      pruefe(sk && !sk.disabled, "Speichern-Knopf fehlt");
+      klick(sk);
+      pruefe($(".wb-leiste [data-wbsave]").disabled, "nach dem Speichern nicht als gespeichert markiert");
+      klick("button.back");
+      await bis(function () { return $$(".my-item").length === 1; }, 3000, "gespeichertes Workout in Meine");
+      klick('[data-fabopt="new"]');
+      await bis(function () { return $("[data-wbex]"); }, 3000, "Baukasten");
+      klick('[data-wbex="air-squats"]');
+      klick("button.back");
+      klick(await bis(function () { return $("[data-ok]"); }, 3000, "Nachfrage beim Verwerfen"));
+      await bis(function () { return $('[data-libtab="mine"]'); }, 3000, "zurück in der Bibliothek");
+      pruefe($$(".my-item").length === 1, "ungespeichertes Workout wurde angelegt: " + $$(".my-item").length);
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
