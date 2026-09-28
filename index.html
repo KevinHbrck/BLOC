@@ -3585,6 +3585,7 @@ function renderStudioKarte(id){
   var notiz = app.querySelector("#st-notiz");
   notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
   studioPauseZeigen();
+  window.scrollTo(0, 0);   // Karte öffnet oben bei der Eingabe (neu() stellt beim Nachzeichnen die Position wieder her)
 }
 /* Pause nach einem Satz: Countdown auf der Karte, Signalton über den Audio-Takt (klingt auch bei aus-
    geschaltetem Bildschirm), Countdown-Töne 3-2-1 wie im Timer */

@@ -211,8 +211,10 @@
       klick('[data-studio="butterfly"] [data-exfav]');
       pruefe($$(".st-gruppe")[0].querySelector('[data-studio="butterfly"]'), "Stern: Butterfly steht nicht oben");
       klick($$(".st-gruppe")[0].querySelector('[data-exfav]'));
+      W.scrollTo(0, 2000);
       klick('[data-studio="leg-press"]');
       var kg = await bis(function () { return $("#st-kg"); }, 3000, "Karte");
+      pruefe(W.scrollY === 0, "Karte öffnet nicht oben (scrollY " + W.scrollY + ")");
       kg.value = "50";
       klick("[data-stset]");
       await bis(function () { return !$("#st-pause").hidden; }, 2000, "Pause nach dem Satz");

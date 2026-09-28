@@ -7,7 +7,7 @@
  */
 
 /* Einzige Stelle für die Versionsnummer - die App fragt sie per postMessage ab (Einstellungen, ganz unten) */
-var FASSUNG = "2026-09-28-2";
+var FASSUNG = "2026-09-28-3";
 var SPEICHER = "sporttimer-" + FASSUNG;
 var GRUNDGERUEST = ["./", "./index.html", "./daten.js", "./manifest.json", "./icon.png", "./privacy.html"];
 
