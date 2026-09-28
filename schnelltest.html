@@ -178,6 +178,7 @@
     ["Timer-Seite und Einstellungen öffnen", async function () {
       await heim();
       klick('[data-nav="#timers"]');
+      klick(await bis(function () { return $('[data-ttab="workouts"]'); }, 3000, "Reiter Workouts"));
       await bis(function () { return $('[data-fabopt="new"]'); }, 3000, "Knopf bei leerer Liste");
       await heim();
       klick('[data-nav="#settings"]');
@@ -196,6 +197,36 @@
       pruefe($$(".fig-karte").length === 1, "Filter „Markierte“ zeigt " + $$(".fig-karte").length);
       klick('[data-figflag="pull-ups"]');
       pruefe($$(".fig-karte").length > 100, "nach dem Entmarkieren nicht zurück bei allen");
+    }],
+    ["Studio: Reiter, Karte, Satz eintragen, Pause, Steigerung", async function () {
+      await heim();
+      klick('[data-nav="#timers"]');
+      await bis(function () { return $$("[data-ttab]").length === 3; }, 3000, "drei Reiter");
+      pruefe($$("[data-ttab]")[0].textContent.trim() === "Studio", "Studio ist nicht der erste Reiter");
+      klick('[data-ttab="studio"]');
+      await bis(function () { return $$("[data-studio]").length > 60; }, 3000, "Studio-Kacheln");
+      eingeben($("#st-q"), "beinpresse");
+      pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");
+      eingeben($("#st-q"), "");
+      klick('[data-studio="leg-press"]');
+      var kg = await bis(function () { return $("#st-kg"); }, 3000, "Karte");
+      kg.value = "50";
+      klick("[data-stset]");
+      await bis(function () { return !$("#st-pause").hidden; }, 2000, "Pause nach dem Satz");
+      pruefe(/50 × 12/.test($(".st-heute").textContent), "Satz steht nicht unter „Heute“: " + $(".st-heute").textContent);
+      pruefe($("#st-kg").value === "50", "nächster Satz nicht vorausgefüllt");
+      klick("[data-stskip]");
+      // zwei frühere Einheiten mit Ziel geschafft -> Vorschlag
+      var d = JSON.parse(W.localStorage.getItem(KEY)), n = Date.now();
+      d.settings.studio["leg-press"].log.unshift({ at:n - 5*864e5, s:[[50,12],[50,12],[50,12]] }, { at:n - 2*864e5, s:[[50,12],[50,12],[50,12]] });
+      d.settings.studio["leg-press"].log = d.settings.studio["leg-press"].log.slice(0, 2);
+      W.localStorage.setItem(KEY, JSON.stringify(d));
+      await heim();
+      klick('[data-nav="#timers"]');
+      klick(await bis(function () { return $('[data-studio="leg-press"]'); }, 3000, "Kachel"));
+      var up = await bis(function () { return $("[data-stup]"); }, 3000, "Steigerungs-Vorschlag");
+      klick(up);
+      pruefe($("#st-kg").value === "55", "Gewicht nach dem Erhöhen: " + $("#st-kg").value);
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
