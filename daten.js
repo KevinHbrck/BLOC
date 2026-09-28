@@ -276,7 +276,7 @@ var LIB_WORKOUT_ROWS = [
   /* hochintensiv: kurze Pausen, explosive und zusammengesetzte Übungen */
   ["hiit-legs","Beine explosiv (HIIT)","Explosive Legs (HIIT)","legs","jump-squats skater-jumps tuck-jumps lateral-hops frogs cossack-squats quad-stretch",30,"4/40/20"],
   ["tabata-legs","Tabata Beine","Legs Tabata","legs","jump-squats skater-jumps lateral-hops tuck-jumps",60,"8/20/10"],
-  ["burpee-challenge","Burpee-Intervalle","Burpee Intervals","cardio","burpees plank-burpees burpee-squat-jumps stand-up-jumps burpees",30,"3/40/20"],
+  ["burpee-challenge","Burpee-Intervalle","Burpee Intervals","cardio","burpees plank-burpees burpee-squat-jumps stand-up-jumps jump-forward-burpees",30,"3/40/20"],
   ["upper-power","Oberkörper Power (ohne Geräte)","Upper Body Power (no equipment)","bw","clap-push-ups archer-push-ups pike-push-ups diamond-push-ups bear-crawl plank-shoulder-taps chest-stretch",40,"4/30/15"],
   ["core-burner","Core Burner","Core Burner","core","jackknives dragon-flags mountain-climbers hollow-hold side-jackknives bicycle-crunches",20,"4/40/20"],
   ["kb-hiit","Kettlebell HIIT","Kettlebell HIIT","weight","kb-swing goblet-squat kb-clean front-rack-carry kb-swing weighted-reverse-lunge",30,"4/40/20"],
@@ -1489,6 +1489,15 @@ var REP_EINHEITEN = [
   ["e11", [["fichtelberg*0.5"]], [["fichtelberg"]], [["hochkoenig","fichtelberg:2-2"]]],
   ["e12", [["watzmann-basis"]], [["watzmann"]], [["dachstein"]]]
 ];
+/* Namen der Einheiten (Bergwander-Thema wie die Programme), beschreiben den Charakter:
+   Auf und ab = 10-25-10, Stufenweg = Leitern, Durchs Tal = 30-20-10-20-30, Hochplateau = gleichbleibend, Abstieg = 50…10 */
+var REP_EINHEIT_NAMEN = {
+  e1:["Aufbruch","Setting Out"], e2:["Auf und ab","Up and Down"], e3:["Stufenweg","Stepped Trail"], e4:["Durchs Tal","Through the Valley"],
+  e5:["Hüttenlauf","Hut Run"], e6:["Steilwand","Steep Face"], e7:["Gratwanderung","Ridge Walk"], e8:["Hochplateau","High Plateau"],
+  e9:["Abstieg","Descent"], e10:["Langer Anstieg","Long Climb"], e11:["Höhenweg","High Trail"], e12:["Gipfeltag","Summit Day"]
+};
+/* Varianten einer Einheit = verschiedene Routen zum selben Ziel */
+var REP_ROUTEN = [["Nordroute","North Route"], ["Südroute","South Route"], ["Westroute","West Route"], ["Ostroute","East Route"]];
 var REP_PSEUDO = {
   lauf:   { de:"Laufen", en:"Run",    illu:"sprint-in-place" },
   sprint: { de:"Sprint", en:"Sprint", illu:"sprint-in-place" },
@@ -1649,7 +1658,7 @@ window.BLOC_DATEN = {
   REP_PSEUDO:REP_PSEUDO,
   AUFWAERM_IDS:AUFWAERM_IDS,
   AUFWAERM_UEBUNGEN:AUFWAERM_UEBUNGEN,
-  REP_EINHEITEN:REP_EINHEITEN,
+  REP_EINHEITEN:REP_EINHEITEN, REP_EINHEIT_NAMEN:REP_EINHEIT_NAMEN, REP_ROUTEN:REP_ROUTEN,
   REP_WORKOUT_ROWS:REP_WORKOUT_ROWS,
   EX_INT:EX_INT,
   STUDIO_GRUPPEN:STUDIO_GRUPPEN,

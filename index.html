@@ -626,6 +626,13 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 }
 .filter-btn .ico{ width:22px; height:22px; }
 .filter-btn.on{ border-color:var(--tp-color); color:var(--tp-color); box-shadow:inset 0 0 0 1px var(--tp-color); }
+.filter-zeile{ display:flex; align-items:center; gap:10px; width:100%; min-height:48px; margin:0 0 10px; padding:10px 14px;
+  border:1px solid var(--border); border-radius:12px; background:var(--surface); color:var(--text); font:inherit; font-size:14px; font-weight:600; text-align:left; cursor:pointer; }
+.filter-zeile .ico{ width:20px; height:20px; flex-shrink:0; }
+.filter-zeile .fz-text{ flex:1; }
+.filter-zeile.on{ border-color:var(--tp-color); color:var(--tp-color); box-shadow:inset 0 0 0 1px var(--tp-color); }
+.filter-zeile .filter-n{ position:static; }
+.filter-zeile .tpl-chev{ margin-left:0; }
 .filter-n{ position:absolute; top:-6px; right:-6px; min-width:20px; height:20px; padding:0 5px; border-radius:10px; background:var(--tp-color); color:var(--tp-text); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
 .active-filters{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; color:var(--text-dim); margin:-2px 4px 10px; }
 .active-filters .tpl-hide{ padding:6px 0; flex-shrink:0; }
@@ -1627,7 +1634,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 /* Inhaltsdaten (Übungen, Workouts, Posen) stehen in daten.js - hier unter den gewohnten Namen */
 var BLOC_DATEN = window.BLOC_DATEN;
 var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_PSEUDO, AUFWAERM_IDS = BLOC_DATEN.AUFWAERM_IDS,
-    AUFWAERM_UEBUNGEN = BLOC_DATEN.AUFWAERM_UEBUNGEN, REP_EINHEITEN = BLOC_DATEN.REP_EINHEITEN, EX_INT = BLOC_DATEN.EX_INT || {},
+    AUFWAERM_UEBUNGEN = BLOC_DATEN.AUFWAERM_UEBUNGEN, REP_EINHEITEN = BLOC_DATEN.REP_EINHEITEN,
+    REP_EINHEIT_NAMEN = BLOC_DATEN.REP_EINHEIT_NAMEN || {}, REP_ROUTEN = BLOC_DATEN.REP_ROUTEN || [], EX_INT = BLOC_DATEN.EX_INT || {},
     LIB_FOKUS_TAUSCH = BLOC_DATEN.LIB_FOKUS_TAUSCH || {},
     STUDIO_GRUPPEN = BLOC_DATEN.STUDIO_GRUPPEN || [], STUDIO_ZIEL = BLOC_DATEN.STUDIO_ZIEL || {};
 var EX_ALIAS = BLOC_DATEN.EX_ALIAS, LIB_CATS = BLOC_DATEN.LIB_CATS, EXERCISE_ROWS = BLOC_DATEN.EXERCISE_ROWS,
@@ -1960,7 +1968,7 @@ var I18N = {
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
     repUnitsIntro:"12 Einheiten in drei Stufen, mehrere Programme am Stück.",
-    stufe_leicht:"Leicht", stufe_standard:"Standard", stufe_fortgeschritten:"Fortgeschritten", unitN:"Einheit {n}", variant:"Variante {n}",
+    stufe_leicht:"Leicht", stufe_standard:"Standard", stufe_fortgeschritten:"Fortgeschritten", unitN:"Einheit {n}", variant:"Variante {n}", filterMehr:"Fokus, Ausrüstung & Sortierung",
     rundenTeil:"Runden {a}–{b}", runde1Teil:"Runde {a}", halb:"halbe Menge",
     repIntro:"So schnell wie möglich, aber sauber – mit Bestzeit.",
     repAll:"Alle", repAllEquip:"Alle Geräte", repNoBar:"Ohne Stange", repNone:"Keine Programme für diese Auswahl.",
@@ -2148,7 +2156,7 @@ var I18N = {
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
     repUnitsIntro:"12 sessions in three levels, several programs in a row.",
-    stufe_leicht:"Light", stufe_standard:"Standard", stufe_fortgeschritten:"Advanced", unitN:"Session {n}", variant:"Option {n}",
+    stufe_leicht:"Light", stufe_standard:"Standard", stufe_fortgeschritten:"Advanced", unitN:"Session {n}", variant:"Option {n}", filterMehr:"Focus, equipment & sort",
     rundenTeil:"rounds {a}–{b}", runde1Teil:"round {a}", halb:"half volume",
     repIntro:"As fast as possible, but clean – with best time.",
     repAll:"All", repAllEquip:"Any equipment", repNoBar:"No bar", repNone:"No programs match this selection.",
@@ -4080,7 +4088,6 @@ function catChipsHTML(active, attr, ohne){
     return '<button type="button" class="lib-chip'+(on?' active':'')+'" '+attr+'="'+c.id+'" aria-pressed="'+on+'">'+catIcon(c.id)+esc(label)+'</button>';
   }).join("")+'</div>';
 }
-function chipToggle(sel, id){ return id==="all" ? [] : selToggle(sel, id); }
 function showToast(text){
   var old = document.getElementById("toast");
   if(old) old.remove();
@@ -4124,12 +4131,11 @@ function moreBtn(attr, val, label){
 /* Suche + Filter-Knopf in einer Zeile; die Filter selbst liegen in einem Einblendfenster.
    Aktive Filter stehen als kurze Zeile darunter (mit „Zurücksetzen“). */
 function filterCount(cat, equip){ return selArr(cat).length + selArr(equip).length; }
-function filterBtnHTML(pre, n){
-  return '<button type="button" class="filter-btn'+(n?' on':'')+'" data-'+pre+'filter title="'+t("filter")+'" aria-label="'+t("filter")+(n?' ('+n+')':'')+'">'+
-    svgIcon(ICON_FILTER)+(n ? '<span class="filter-n">'+n+'</span>' : '')+'</button>';
-}
-function searchFilterHTML(q, pre, cat, equip){
-  return '<div class="search-row">'+searchHTML(q, pre)+filterBtnHTML(pre, filterCount(cat, equip))+'</div>'+activeFiltersHTML(cat, equip, pre);
+/* Filter-Zeile unter den Kategorie-Kacheln: Fokus, Ausrüstung, Sortierung - klappt direkt darunter auf */
+function filterZeileHTML(attr, n, offen){
+  return '<button type="button" class="filter-zeile'+(n || offen ? ' on' : '')+'" '+attr+' aria-expanded="'+!!offen+'">'+svgIcon(ICON_FILTER)+
+    '<span class="fz-text">'+esc(t("filterMehr"))+'</span>'+(n ? '<span class="filter-n">'+n+'</span>' : '')+
+    '<span class="tpl-chev'+(offen ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>';
 }
 function activeFiltersHTML(cat, equip, pre){
   cat = selArr(cat); equip = selArr(equip);
@@ -4139,39 +4145,6 @@ function activeFiltersHTML(cat, equip, pre){
   if(equip.length) parts.push(t("equipHave")+": "+equip.map(equipName).join(", "));
   return '<div class="active-filters"><span>'+esc(parts.join(" · "))+'</span>'+
     '<button type="button" class="tpl-hide" data-'+pre+'freset>'+t("filterReset")+'</button></div>';
-}
-/* opts: { cat, equip, sort (oder null = ohne Sortierung), ohne:[Fokus-IDs, die fehlen] } */
-function openFilterPanel(opts, onDone){
-  var cat = selArr(opts.cat), equip = selArr(opts.equip), sort = opts.sort;
-  var root = document.getElementById("overlayRoot");
-  function draw(){
-    root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet fs-sheet">'+
-      '<h3>'+t("filter")+'</h3>'+
-      '<label>'+t("fCat")+' <span class="lbl-hint">'+esc(t("fCatHint"))+'</span></label>'+
-      '<div class="sp-chips">'+LIB_CATS.filter(function(c){ return !opts.ohne || opts.ohne.indexOf(c.id) < 0; }).map(function(c){
-        var on = cat.indexOf(c.id) > -1;
-        return '<button type="button" class="lib-chip'+(on?' active':'')+'" data-fcat="'+c.id+'" aria-pressed="'+on+'">'+catIcon(c.id)+esc(tplText(c))+'</button>';
-      }).join("")+'</div>'+
-      '<label>'+t("equipHave")+' <span class="lbl-hint">'+esc(t("fEquipHintShort"))+'</span></label>'+
-      '<div class="sp-chips">'+EQUIPS.filter(function(e){ return !opts.ohneEquip || opts.ohneEquip.indexOf(e.id) < 0; }).map(function(e){
-        var on = equip.indexOf(e.id) > -1;
-        return '<button type="button" class="lib-chip'+(on?' active':'')+'" data-fequip="'+e.id+'" aria-pressed="'+on+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>';
-      }).join("")+'</div>'+
-      (sort ? '<label>'+t("sortLabel")+'</label><div class="seg-row">'+
-        '<button type="button" data-fsort="std" class="'+(sort!=="az"?"active":"")+'">'+t("sortStd")+'</button>'+
-        '<button type="button" data-fsort="az" class="'+(sort==="az"?"active":"")+'">A&ndash;Z</button></div>' : '')+
-      '<div class="btn-row" style="margin-top:18px;"><button class="btn btn-secondary" data-freset>'+t("filterReset")+'</button>'+
-      '<button class="btn btn-primary" data-fdone>'+t("timeDone")+'</button></div>'+
-    '</div></div>';
-    root.querySelectorAll("[data-fcat]").forEach(function(b){ b.addEventListener("click", function(){ cat = selToggle(cat, b.getAttribute("data-fcat")); draw(); }); });
-    root.querySelectorAll("[data-fequip]").forEach(function(b){ b.addEventListener("click", function(){ equip = selToggle(equip, b.getAttribute("data-fequip")); draw(); }); });
-    root.querySelectorAll("[data-fsort]").forEach(function(b){ b.addEventListener("click", function(){ sort = b.getAttribute("data-fsort"); draw(); }); });
-    root.querySelector("[data-freset]").addEventListener("click", function(){ cat = []; equip = []; if(sort) sort = "std"; draw(); });
-    root.querySelector("[data-fdone]").addEventListener("click", fertig);
-    root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) fertig(); });
-  }
-  function fertig(){ root.innerHTML = ""; onDone(cat, equip, sort); }
-  draw();
 }
 
 function hiddenBlockHTML(n, cards){
@@ -4242,7 +4215,7 @@ function mainTilesHTML(sel, counts, attr, ohne){
 }
 var ICON_RESET = '<path d="M4 4v5h5"/><path d="M4.6 14a8 8 0 1 0 1.9-7.9L4 9"/>';
 /* Filterfeld direkt auf der Seite (Fokus, Ausrüstung, Sortierung) - auf- und zuklappbar über den Filter-Knopf */
-function filterCardHTML(pre, cat, equip, sort, sortOpts, ohneCats){
+function filterCardHTML(pre, cat, equip, sort, sortOpts, ohneCats, ohneEquip){
   cat = selArr(cat); equip = selArr(equip);
   return '<div class="card filter-card">'+
     '<div class="fc-head"><b>'+t("filter")+'</b><button type="button" class="fc-reset" data-'+pre+'freset>'+svgIcon(ICON_RESET)+t("filterReset")+'</button></div>'+
@@ -4252,7 +4225,7 @@ function filterCardHTML(pre, cat, equip, sort, sortOpts, ohneCats){
       return '<button type="button" class="fc-chip'+(on?' on':'')+'" data-'+pre+'fcat="'+c.id+'" aria-pressed="'+on+'">'+catIcon(c.id)+esc(tplText(c))+'</button>';
     }).join("")+'</div>'+
     '<div class="fc-lbl">'+t("equipHave")+' <span>'+t("multiOk")+'</span></div>'+
-    '<div class="fc-chips">'+EQUIPS.map(function(e){
+    '<div class="fc-chips">'+EQUIPS.filter(function(e){ return !ohneEquip || ohneEquip.indexOf(e.id) < 0; }).map(function(e){
       var on = equip.indexOf(e.id) > -1;
       return '<button type="button" class="fc-chip'+(on?' on':'')+'" data-'+pre+'fequip="'+e.id+'" aria-pressed="'+on+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>';
     }).join("")+'</div>'+
@@ -4362,10 +4335,9 @@ function renderLibrary(){
       '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>'+
     '</div></div>'+
     (tab === "mine" ? '' :
-    '<div class="search-row">'+searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
-      '<button type="button" class="filter-btn'+(nf || open ?' on':'')+'" data-ltoggle aria-expanded="'+open+'" title="'+t("filter")+'" aria-label="'+t("filter")+(nf?' ('+nf+')':'')+'">'+
-      svgIcon(ICON_FILTER)+(nf ? '<span class="filter-n">'+nf+'</span>' : '')+'</button></div>'+
+    searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
     mainTilesHTML(mains, counts, "data-lmain", ["stretch"])+
+    filterZeileHTML("data-ltoggle", nf, open)+
     (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
               tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], ["stretch"])
           : activeFiltersHTML(cat, equip, "l")))+
@@ -4835,8 +4807,11 @@ function renderDraftPage(d, cfg){
     EXERCISES.forEach(function(ex){ if(fuerWorkout(ex) && !libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
-      searchFilterHTML(buildQuery, "b", cat, equip)+
+      searchHTML(buildQuery, "b")+
       mainTilesHTML(bmains, palCounts, "data-bmain", ["stretch"])+
+      filterZeileHTML("data-bfilter", filterCount(cat, equip), !!s.buildFilterOpen)+
+      (s.buildFilterOpen ? filterCardHTML("b", cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], ["stretch"], ["gym"])
+                         : activeFiltersHTML(cat, equip, "b"))+
       '<div class="fig-grid" id="dz-pal">'+(sortedExercises(cat, sort, equip, bmains).filter(fuerWorkout).map(function(ex){ return kachel(ex); }).join("") ||
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
@@ -4975,13 +4950,10 @@ function renderDraftPage(d, cfg){
   });
   on("[data-wbordnen]", function(){ d.items = wbSinnvollOrdnen(d.items); speichern(); neu(); showToast(t("wbGeordnet")); });
 
-  on("[data-bcat]", function(el){ s.buildCats = chipToggle(cat, el.getAttribute("data-bcat")); save(); neu(); });
-  on("[data-bequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bequip")); save(); neu(); });
-  on("[data-bfilter]", function(){
-    openFilterPanel({ cat:cat, equip:equip, sort:sort, ohne:["stretch"], ohneEquip:["gym"] }, function(c, e, so){
-      s.buildCats = c; s.buildEquips = e; if(so) s.libSort = so; save(); neu();
-    });
-  });
+  on("[data-bfilter]", function(){ s.buildFilterOpen = !s.buildFilterOpen; save(); neu(); });
+  on("[data-bfcat]", function(el){ s.buildCats = selToggle(cat, el.getAttribute("data-bfcat")); save(); neu(); });
+  on("[data-bfequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bfequip")); save(); neu(); });
+  on("[data-bfsort]", function(el){ s.libSort = el.getAttribute("data-bfsort"); save(); neu(); });
   on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; save(); neu(); });
   on("[data-bmain]", function(el){ s.buildMains = selToggle(bmains, el.getAttribute("data-bmain")); save(); neu(); });
   var bq = app.querySelector("#b-q");
@@ -5140,6 +5112,8 @@ function buildSurprise(p){
     var rotate = fokus.length > 1 ? fokus : trainMains.length > 1 ? trainMains : [];
     function keys(ex){ return fokus.length > 1 ? ex.cats : [ex.main]; }
     var push = 0, pull = 0, covered = {};
+    // Sternchen-Übungen: immer etwa ein Drittel des Workouts (soweit genug passende markiert sind)
+    var favZiel = Math.min(pool.filter(function(ex){ return isExFav(ex.id); }).length, Math.round(n/3)), favDrin = 0;
     shuffle(pool);
     while(picked.length < n && picked.length < pool.length){
       var prev = picked.length ? exProfile(picked[picked.length-1]) : null;
@@ -5159,11 +5133,17 @@ function buildSurprise(p){
         var bel = EX_INT[ex.id] || 2;
         if(p.level === 3) sc += bel === 3 ? .6 : bel === 1 ? -4 : 0;
         else if(p.level === 1) sc += bel === 3 ? -4 : bel === 1 ? .6 : 0;
-        if(isExFav(ex.id)) sc += .5;
+        if(favZiel){
+          // über das Workout verteilt: Bonus nur, wenn die Sternchen hinter ihrem Anteil bis zu dieser Stelle liegen
+          var favOffen = favZiel - favDrin, platzFrei = n - picked.length, favSoll = favZiel * (picked.length + 1) / n;
+          if(isExFav(ex.id)) sc += favOffen <= 0 ? -50 : favOffen >= platzFrei ? 50 : favDrin < favSoll - .5 ? 4 : 0;
+          else if(favOffen >= platzFrei) sc -= 50;   // die restlichen Plätze gehören den Sternchen
+        }
         if(sc > bestScore){ bestScore = sc; best = ex; }
       });
       if(!best) break;
       picked.push(best);
+      if(isExFav(best.id)) favDrin++;
       var bp = exProfile(best);
       if(bp.pattern === "push") push++;
       if(bp.pattern === "pull") pull++;
@@ -5185,11 +5165,11 @@ function buildSurprise(p){
       bur = frisch.length ? frisch : bur;
       if(bur.length){
         var neuB = bur[Math.floor(Math.random()*bur.length)];
-        // ersetzt am liebsten eine Ausdauer- oder Ganzkörperübung, sonst die zweite
-        var platz = -1;
-        picked.forEach(function(ex, i){ if(platz < 0 && (ex.main === "ausdauer" || exProfile(ex).region === "full")) platz = i; });
-        if(platz < 0) platz = Math.min(1, picked.length - 1);
-        picked[platz] = neuB;
+        // ersetzt am liebsten eine Ausdauer- oder Ganzkörperübung, sonst die zweite - nie eine Sternchen-Übung
+        var frei = picked.map(function(ex, i){ return isExFav(ex.id) ? -1 : i; }).filter(function(i){ return i > -1; }), platz = -1;
+        frei.forEach(function(i){ if(platz < 0 && (picked[i].main === "ausdauer" || exProfile(picked[i]).region === "full")) platz = i; });
+        if(platz < 0 && frei.length) platz = frei[Math.min(1, frei.length - 1)];
+        if(platz > -1) picked[platz] = neuB;
       }
     }
   }
@@ -5508,6 +5488,13 @@ function repTeilParse(e){
   var R = repRunden(row);
   return { row:row, von:m[2] ? +m[2] : 1, bis:Math.min(m[3] ? +m[3] : R, R), f:m[4] ? +m[4] : 1 };
 }
+/* „3 · Stufenweg“ bzw. mit Route „3 · Stufenweg · Südroute“ (ohne Namen: „Einheit 3“) */
+function repEinheitTitel(eid, variante, varianten){
+  var n = REP_EINHEIT_NAMEN[eid], en = currentLang() === "en" ? 1 : 0, nr = eid.slice(1);
+  var titel = n ? nr+" · "+n[en] : t("unitN", { n:nr });
+  if(varianten > 1) titel += " · "+(REP_ROUTEN[variante-1] ? REP_ROUTEN[variante-1][en] : t("variant", { n:variante }));
+  return titel;
+}
 function repEinheit(eid){ for(var i=0;i<REP_EINHEITEN.length;i++) if(REP_EINHEITEN[i][0]===eid) return REP_EINHEITEN[i]; return null; }
 /* Eigene Challenges: settings.myReps = [{ id:"my-…", name, runden, zeilen:[{ ex, art:"wdh"|"sek", m:[Menge je Runde] }] }].
    Sie werden zu einer Programmzeile wie in REP_WORKOUT_ROWS - Ablauf, Tabelle und Bestzeit bleiben dieselben. */
@@ -5532,7 +5519,7 @@ function repQuelle(id){
   var varianten = e[1 + REP_STUFEN.indexOf(m[2])], v = varianten[+m[3] - 1];
   if(!v) return null;
   return { id:id, einzel:false, stufe:m[2], nr:m[1].slice(1), variante:+m[3], varianten:varianten.length,
-           name:t("unitN", { n:m[1].slice(1) })+" · "+t("stufe_"+m[2])+(varianten.length > 1 ? " · "+t("variant", { n:m[3] }) : ""),
+           name:repEinheitTitel(m[1], +m[3], varianten.length)+" · "+t("stufe_"+m[2]),
            teile:v.map(repTeilParse).filter(Boolean) };
 }
 function repMengeMal(m, f){
@@ -5680,7 +5667,7 @@ function renderReps(){
         if(!q || !q.teile.length) return;
         if(repFilter.bar === "none" && repQStange(q)) return;
         var R = repQRunden(q);
-        liste += karte(q.id, t("unitN", { n:q.nr })+(varianten.length > 1 ? " · "+t("variant", { n:k+1 }) : ""),
+        liste += karte(q.id, repEinheitTitel(e[0], k+1, varianten.length),
           esc(q.teile.map(repTeilName).join(" + ")),
           esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+(repQStange(q) ? SEP+esc(t("repBar")) : ""),
           repPlanHTML(q));

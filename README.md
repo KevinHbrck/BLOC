@@ -158,3 +158,7 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.c
 - Daten dauerhaft: `datenDauerhaft()` bittet den Browser per `navigator.storage.persist()`, nichts von sich aus zu löschen. Sicherungs-Erinnerung nach 14 statt 28 Tagen und auch für Gewichte im Freien Training und eigene Challenges
 - Jedes zweite „Überrasch mich“ (Zähler `settings.spZahl`) enthält eine Burpee-Variante, passend zu Ausrüstung und Stufe
 - Neue Übungen **Jump Forward Squats** und **Jump Forward Burpees** (Weitsprung nach vorn, Figur mit nach vorn geneigter Flugphase `JF_AIR`)
+- Challenges: Einheiten mit Namen (`REP_EINHEIT_NAMEN`, z. B. „3 · Stufenweg“), Varianten als Routen (`REP_ROUTEN`: Nord-/Süd-/West-/Ostroute), Titel über `repEinheitTitel()`
+- Überrasch mich: Sternchen-Übungen immer zu etwa einem Drittel (`favZiel`), über das Workout verteilt; die Burpee-Regel ersetzt nie eine Sternchen-Übung
+- Filter in Bibliothek und Baukasten einheitlich: breite, auf- und zuklappbare Zeile „Fokus, Ausrüstung & Sortierung“ (`filterZeileHTML`) direkt unter den Kategorie-Kacheln; das alte Filter-Einblendfenster (`openFilterPanel`) entfällt
+- „Burpee-Intervalle“ enthalten jetzt Jump Forward Burpees
