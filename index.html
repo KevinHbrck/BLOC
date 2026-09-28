@@ -2524,12 +2524,6 @@ function findMy(id){
   return null;
 }
 function myRun(mw){ return draftRun(normMy(mw)); }
-function createMy(){
-  var mw = { id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[], updatedAt:Date.now() };
-  if(!state.db.myWorkouts) state.db.myWorkouts = [];
-  state.db.myWorkouts.push(mw); save();
-  return mw;
-}
 function createMyFromDraft(d){
   var mw = { id:uid(), name:d.name, mode:d.mode, reps:d.reps, work:d.work, rest:d.rest, blockRest:d.blockRest,
              items:draftCopy(d.items), updatedAt:Date.now() };
