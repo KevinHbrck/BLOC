@@ -522,6 +522,9 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .empty-btn{ width:auto; display:inline-flex; margin:16px auto 0; padding:13px 20px; font-size:15px; }
 /* Studio */
 .st-kachel{ border:0; text-align:left; font:inherit; color:inherit; cursor:pointer; }
+.st-kachel .fig-bild{ position:relative; }
+.st-kachel .ex-fav{ position:absolute; right:2px; top:2px; }
+.topbar .ex-fav{ font-size:24px; width:44px; height:44px; }
 .st-sub{ font-size:11.5px; color:var(--text-dim); line-height:1.25; margin-top:-2px; }
 .st-sub.an{ color:var(--text); font-weight:600; }
 .st-ohne{ display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-size:30px; opacity:.6; }
@@ -543,6 +546,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .st-pause{ display:flex; align-items:center; justify-content:center; gap:12px; margin-top:12px; padding:12px; border-radius:14px; background:var(--surface-2); }
 .st-pause b{ font-size:28px; font-variant-numeric:tabular-nums; }
 .st-pause .btn{ width:auto; margin:0; padding:9px 14px; }
+.st-pause[hidden]{ display:none; }
 .st-pause.vorbei{ background:color-mix(in srgb, var(--accent) 18%, transparent); }
 .st-pause.vorbei b{ font-size:16px; }
 .st-pausewahl{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; align-items:center; margin-top:12px; font-size:13px; color:var(--text-dim); }
@@ -660,6 +664,17 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .illu .br{ stroke-width:12.5; }
 .illu .ip{ stroke-width:4; }
 .illu .ipf{ fill:currentColor; stroke:none; }
+/* Studio-Geräte: blau, damit man sieht, wogegen man drückt; Ringe (Rollen, Stangenenden) hohl */
+.illu circle.ip{ fill:none; }
+.illu .gm{ stroke:var(--geraet); }
+.illu circle.ipf.gm, .illu .ipf.gm{ fill:var(--geraet); stroke:none; }
+.illu .gp{ stroke-width:7; }
+:root{ --geraet:#2b78e4; }
+:root[data-theme="dark"], :root[data-theme="tapedeck"]{ --geraet:#6aa8ff; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme]){ --geraet:#6aa8ff; } }
+/* im Timer liegt die Figur auf farbiger Fläche: Geräte dort in der Schriftfarbe, etwas zurückgenommen */
+.player .illu .gm{ stroke:currentColor; opacity:.7; }
+.player .illu circle.ipf.gm, .player .illu .ipf.gm{ fill:currentColor; }
 .illu.still .pose-a, .illu.illu-anim .pose-a{ animation:none; opacity:1; }
 .illu .pose-a{ animation:poseA 1.6s steps(1) infinite; }
 .illu .pose-b{ animation:poseB 1.6s steps(1) infinite; }
@@ -1836,7 +1851,7 @@ var I18N = {
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche",
     timers:"Freies Training", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Studio, Timer und Blöcke",
     tabStudio:"Studio", studioHint:"Tipp auf eine Übung: Gewicht eintragen, Pause läuft mit, beim nächsten Mal steht alles schon da.",
-    stRecent:"Zuletzt", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen", stOwnNew:"Eigene Übung",
+    stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen", stOwnNew:"Eigene Übung",
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
     stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
@@ -2019,7 +2034,7 @@ var I18N = {
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections",
     timers:"Free training", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Gym, timers and blocks",
     tabStudio:"Gym", studioHint:"Tap an exercise: log the weight, the rest timer runs, and next time everything is filled in.",
-    stRecent:"Recent", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises", stOwnNew:"Own exercise",
+    stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises", stOwnNew:"Own exercise",
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
     stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
@@ -2711,10 +2726,11 @@ function rigPoints(A, B, t){
            legs:A.legs.map(function(k, i){ return kette(p, k, B.legs[i]); }),
            arms:A.arms.map(function(k, i){ return kette(s, k, B.arms[i]); }) };
 }
-/* Geräte, die die Hand hält (Hantel, Kettlebell), stecken in <g class="gh" data-at="x,y"> */
+/* Geräte, die die Hand hält (Hantel, Kettlebell), stecken in <g class="gh" data-at="x,y">,
+   Polster und Platten am Fuß (Beinstrecker, Schlitten) in <g class="gf" data-at="x,y"> */
 function gearSplit(x){
-  var hand = [], fest = (x || "").replace(/<g class="gh" data-at="([\d.\-]+),([\d.\-]+)">([\s\S]*?)<\/g>/g, function(m, gx, gy, inner){
-    hand.push({ at:[+gx, +gy], svg:m });
+  var hand = [], fest = (x || "").replace(/<g class="(gh|gf)" data-at="([\d.\-]+),([\d.\-]+)">([\s\S]*?)<\/g>/g, function(m, art, gx, gy, inner){
+    hand.push({ at:[+gx, +gy], svg:m, fuss:art === "gf" });
     return "";
   });
   return { fest:fest, hand:hand };
@@ -2746,14 +2762,25 @@ function illuSetup(svg){
     });
     return best;
   }
+  function naechsterFuss(pts, at){
+    var best = [0, 0], bd = Infinity;
+    pts.legs.forEach(function(k, i){ k.forEach(function(e, j){
+      var d = Math.pow(e[0]-at[0],2) + Math.pow(e[1]-at[1],2);
+      if(d < bd){ bd = d; best = [i, j]; }
+    }); });
+    return best;
+  }
+  function anker(pt, g){ if(g.leg != null){ return pt.legs[g.leg][g.pt]; } var hk = pt.arms[g.arm]; return hk[hk.length-1]; }
   var gears = gs[0].hand.map(function(g, i){
-    var arm = naechsteHand(P[0], g.at);
+    var gg = { at:g.at, svg:g.svg };
+    if(g.fuss){ var f = naechsterFuss(P[0], g.at); gg.leg = f[0]; gg.pt = f[1]; gg.arm = -1; }
+    else gg.arm = naechsteHand(P[0], g.at);
     var o = P.map(function(pt, k){
-      var hk = pt.arms[arm], e = hk[hk.length-1], at = gs[k].hand[i] ? gs[k].hand[i].at : null;
+      var e = anker(pt, gg), at = gs[k].hand[i] ? gs[k].hand[i].at : null;
       return at ? [ at[0]-e[0], at[1]-e[1] ] : null;
     });
-    o = o.map(function(v){ return v || o[0]; });
-    return { arm:arm, at:g.at, o:o, svg:g.svg };
+    gg.o = o.map(function(v){ return v || o[0]; });
+    return gg;
   });
   var frontal = !!qs[0].f;
   var html = view2 && ILLU_VIEW2[id].typ === "top" ? ILLU_MATTE : '<path class="illu-floor" d="M6 91h88"/>';
@@ -2763,7 +2790,7 @@ function illuSetup(svg){
   var vorn = "";
   gears.forEach(function(g, i){
     var el = '<g class="gear" data-g="'+i+'">'+g.svg+'</g>';
-    if(g.arm === 0) vorn += el; else html += el;
+    if(g.arm === 0 || g.leg === 0) vorn += el; else html += el;
   });
   var A = R[0];
   var hinten = frontal ? '' : ' class="lb"', hintenHand = frontal ? ' class="hd"' : ' class="hd lb"';
@@ -2813,7 +2840,7 @@ function illuDraw(f, b){
   });
   if(f.halo && P.arms[0]) f.halo.setAttribute("d", ptsD(haloStart(P.s, P.arms[0][0]), P.arms[0]));
   f.gears.forEach(function(g, i){
-    var hand = P.arms[g.arm][P.arms[g.arm].length-1], oa = g.o[b.i], ob = g.o[b.j];
+    var hand = g.leg != null ? P.legs[g.leg][g.pt] : P.arms[g.arm][P.arms[g.arm].length-1], oa = g.o[b.i], ob = g.o[b.j];
     var ox = oa[0] + (ob[0]-oa[0])*t, oy = oa[1] + (ob[1]-oa[1])*t;
     f.gearEls[i].setAttribute("transform", "translate("+(hand[0]+ox-g.at[0]).toFixed(1)+" "+(hand[1]+oy-g.at[1]).toFixed(1)+")");
   });
@@ -3374,16 +3401,22 @@ function studioKachel(id){
   if(!ex) return "";
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
   var sub = last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
-  return '<button type="button" class="fig-karte st-kachel" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+catVar(ex.cats[0])+'">'+
-    '<span class="fig-bild">'+(ILLU[id] ? illuStillHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+'</span>'+
-    '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span></button>';
+  return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+catVar(ex.cats[0])+'">'+
+    '<span class="fig-bild">'+(ILLU[id] ? illuStillHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
+    '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span></div>';
 }
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
   var zuletzt = Object.keys(alle).filter(function(id){ return alle[id].zuletzt && findExercise(id); })
     .sort(function(a, b){ return alle[b].zuletzt - alle[a].zuletzt; }).slice(0, 6);
-  var html = (zuletzt.length ? '<div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div>' : '');
-  studioIds().forEach(function(g){
+  var gruppen = studioIds(), imStudio = {};
+  gruppen.forEach(function(g){ g.ids.forEach(function(id){ imStudio[id] = true; }); });
+  var favs = (s.exFavs || []).filter(function(id){ return imStudio[id]; });
+  zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0; });
+  var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
+      (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
+    (zuletzt.length ? '<div class="st-gruppe"><div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div></div>' : '');
+  gruppen.forEach(function(g){
     if(!g.ids.length && !g.eigene) return;
     html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+g.ids.length+'</span></div><div class="fig-grid">'+
       g.ids.map(studioKachel).join("")+
@@ -3402,11 +3435,20 @@ function renderStudio(){
   app.querySelectorAll("[data-ttab]").forEach(function(b){ b.addEventListener("click", function(){
     s.timerTab = b.getAttribute("data-ttab"); save(); renderTimers(); window.scrollTo(0, 0);
   }); });
-  app.querySelectorAll("[data-studio]").forEach(function(b){ b.addEventListener("click", function(){ go("#studio/"+b.getAttribute("data-studio")); }); });
+  app.querySelectorAll("[data-studio]").forEach(function(b){
+    function oeffnen(){ go("#studio/"+b.getAttribute("data-studio")); }
+    b.addEventListener("click", oeffnen);
+    b.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); oeffnen(); } });
+  });
+  app.querySelectorAll("[data-exfav]").forEach(function(b){ b.addEventListener("click", function(e){
+    e.stopPropagation(); toggleExFav(b.getAttribute("data-exfav"));
+    var y = window.scrollY; renderStudio(); window.scrollTo(0, y);
+  }); });
   var neu = app.querySelector("[data-stnew]");
   if(neu) neu.addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
   var q = app.querySelector("#st-q");
   function suchen(){
+    app.querySelectorAll(".fav-empty").forEach(function(x){ x.style.display = studioQuery ? "none" : ""; });
     applySearch(app, studioQuery);
     // leere Gruppen ausblenden, „Zuletzt“ nur ohne Suche
     app.querySelectorAll(".st-gruppe").forEach(function(g){
@@ -3469,7 +3511,7 @@ function renderStudioKarte(id){
       punkte.map(function(y, i){ return (i/(punkte.length-1)*100).toFixed(1)+","+(26 - (y-mn)/sp*22).toFixed(1); }).join(" ")+'"/></svg>';
   }
   app.innerHTML =
-    topbar(tplText(ex.name), { back:"#timers" }) +
+    topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
     '<div class="card st-hero" style="--cat:'+catVar(ex.cats[0])+'">'+
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+z.saetze+' × '+z.wdh+
@@ -3537,6 +3579,7 @@ function renderStudioKarte(id){
   an("[data-stup]", function(){ var en = eintrag(); en.kg = stg.kg; en.erhoeht = Date.now(); save(); showToast(t("stRaised", { kg:studioKg(stg.kg) })); neu(); });
   an("[data-stskip]", function(){ studioPauseStop(); neu(); });
   an("[data-stinfo]", function(){ openExInfo(id, false); });
+  an(".topbar [data-exfav]", function(){ toggleExFav(id); neu(); });
   an("[data-sttimer]", function(){ studioPauseStop(); go("#playex/"+id); });
   app.querySelectorAll("[data-stpause]").forEach(function(b){ b.addEventListener("click", function(){ eintrag().pause = +b.getAttribute("data-stpause"); save(); neu(); }); });
   var notiz = app.querySelector("#st-notiz");

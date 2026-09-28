@@ -208,6 +208,9 @@
       eingeben($("#st-q"), "beinpresse");
       pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");
       eingeben($("#st-q"), "");
+      klick('[data-studio="butterfly"] [data-exfav]');
+      pruefe($$(".st-gruppe")[0].querySelector('[data-studio="butterfly"]'), "Stern: Butterfly steht nicht oben");
+      klick($$(".st-gruppe")[0].querySelector('[data-exfav]'));
       klick('[data-studio="leg-press"]');
       var kg = await bis(function () { return $("#st-kg"); }, 3000, "Karte");
       kg.value = "50";
