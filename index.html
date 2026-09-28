@@ -847,6 +847,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   color:var(--text); font-size:15px; cursor:pointer;
 }
 .lang-pick button{ grid-column:span 3; }
+.theme-pick button.klar-wahl{ grid-column:span 6; font-weight:600; }
 .theme-pick button.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
 
 .installtip{
@@ -1619,6 +1620,99 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer; padding:0; }
 .plus-btn:active{ transform:scale(.92); }
 :root[data-vintage] .plus-btn{ border-radius:6px; }
+/* ============ Klar: modernes, minimalistisches Design (2026-09) ============
+   Leitlinien: ruhige Fläche, flach statt Schatten (Ebenen über Farbton und feine Linien),
+   Schrift und große Zahlen führen, Tinte als Hauptfarbe. Genau eine Signalfarbe (Limette) -
+   nur für „Los“: Start-Knöpfe, Überrasch mich und die Arbeitsphase im Timer. Folgt Hell/Dunkel des Systems. */
+:root[data-theme="klar"]{
+  color-scheme: light;
+  --bg:#f4f4f1; --surface:#ffffff; --surface-2:#ecece8; --border:#e3e3de;
+  --text:#141517; --text-dim:#6d6e72;
+  --accent:#141517; --accent-text:#ffffff;
+  --signal:#d4ff3a; --signal-text:#141517;
+  --rest:#141517; --rest-text:#f4f4f1; --blockrest:#4c63f5; --danger:#e5484d;
+  --wo-color:#141517; --wo-text:#ffffff; --bl-color:#141517; --bl-text:#ffffff; --tp-color:#141517; --tp-text:#ffffff;
+  --c-cardio:#141517; --c-weight:#141517; --c-bw:#141517; --c-back:#141517; --c-legs:#141517; --c-core:#141517; --c-arms:#141517; --c-calis:#141517; --c-stretch:#141517;
+  --geraet:#4c63f5;
+  --radius:20px; --shadow:none;
+  --f-ui:"Inter","SF Pro Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root[data-theme="klar"]{
+  color-scheme: dark;
+  --bg:#0e0f11; --surface:#17181b; --surface-2:#212226; --border:#2a2b30;
+  --text:#f3f3f0; --text-dim:#9a9ba0;
+  --accent:#f3f3f0; --accent-text:#0e0f11;
+  --rest:#212226; --rest-text:#f3f3f0; --blockrest:#6f82ff; --danger:#ff6b6f;
+  --wo-color:#f3f3f0; --wo-text:#0e0f11; --bl-color:#f3f3f0; --bl-text:#0e0f11; --tp-color:#f3f3f0; --tp-text:#0e0f11;
+  --c-cardio:#ecece8; --c-weight:#ecece8; --c-bw:#ecece8; --c-back:#ecece8; --c-legs:#ecece8; --c-core:#ecece8; --c-arms:#ecece8; --c-calis:#ecece8; --c-stretch:#ecece8;
+  --geraet:#8b9bff;
+} }
+/* Schrift: eine klare Grotesk, etwas enger laufend, Ziffern gleich breit */
+:root[data-theme="klar"] body{ font-family:var(--f-ui); -webkit-font-smoothing:antialiased; letter-spacing:-.006em; }
+:root[data-theme="klar"] .topbar h1{ font-size:26px; font-weight:700; letter-spacing:-.025em; }
+:root[data-theme="klar"] .section-title{ font-size:15px; font-weight:700; text-transform:none; letter-spacing:-.01em; color:var(--text); margin:28px 2px 10px; }
+:root[data-theme="klar"] .sec-link{ color:var(--text-dim); font-weight:600; }
+/* BLOC-Schriftzug in Tinte mit einem kleinen Signal-Block */
+:root[data-theme="klar"] .topbar.home h1 .ttl-sub{ text-transform:none; letter-spacing:-.005em; font-size:14px; font-weight:500; }
+:root[data-theme="klar"] .topbar.home h1 .ttl::after{ content:""; display:inline-block; width:.2em; height:.2em; margin-left:.07em; border-radius:.04em; background:var(--signal); vertical-align:baseline; }
+/* Flächen: flach, feine Linie statt Schatten */
+:root[data-theme="klar"] .card,
+:root[data-theme="klar"] .list-item,
+:root[data-theme="klar"] .area-tile,
+:root[data-theme="klar"] .woche,
+:root[data-theme="klar"] .fig-karte,
+:root[data-theme="klar"] .wblock,
+:root[data-theme="klar"] .block-pick{ box-shadow:none; border:1px solid var(--border); }
+:root[data-theme="klar"] .list-item:active, :root[data-theme="klar"] .area-tile:active{ background:var(--surface-2); transform:none; }
+:root[data-theme="klar"] .iconbtn{ width:52px; height:52px; border-radius:16px; box-shadow:none; border:1px solid var(--border); }
+:root[data-theme="klar"] .chip{ background:var(--surface-2); color:var(--text-dim); }
+/* Knöpfe: Pillen, Hauptknopf in Tinte */
+:root[data-theme="klar"] .btn{ border-radius:999px; font-weight:650; letter-spacing:-.01em; }
+:root[data-theme="klar"] .btn-secondary{ background:var(--surface-2); }
+:root[data-theme="klar"] .playbtn, :root[data-theme="klar"] .playbtn.wo, :root[data-theme="klar"] .playbtn.bl,
+:root[data-theme="klar"] .playbtn.tp, :root[data-theme="klar"] .playbtn.cat{ background:var(--text); color:var(--bg); box-shadow:none; }
+/* „Los geht's“: der eine Startknopf in der Signalfarbe */
+:root[data-theme="klar"] .btn-primary[data-go]{ background:var(--signal); color:var(--signal-text); }
+:root[data-theme="klar"] .fab{ box-shadow:0 8px 24px rgba(0,0,0,.18); }
+/* Überrasch mich: die eine laute Fläche der Startseite */
+:root[data-theme="klar"] .surprise-card{ background:var(--signal); color:var(--signal-text); box-shadow:none; border-radius:22px; padding:18px 16px 18px 18px; }
+:root[data-theme="klar"] .sc-txt b{ font-size:18px; letter-spacing:-.015em; }
+:root[data-theme="klar"] .sc-txt small{ opacity:.72; }
+/* Bereiche: einfarbige Symbole */
+:root[data-theme="klar"] .at-ico{ background:var(--surface-2); color:var(--text); border-radius:14px; }
+:root[data-theme="klar"] .at-name{ font-weight:700; letter-spacing:-.015em; }
+/* Reiter als Segment-Schalter */
+:root[data-theme="klar"] .lib-tabs-card{ background:var(--surface-2); border:none; padding:4px; border-radius:16px; }
+:root[data-theme="klar"] .lib-tabs-card .lib-tabs{ gap:2px !important; }
+:root[data-theme="klar"] .lib-tabs-card .lib-tabs button{ background:transparent; border:none; border-radius:12px; color:var(--text-dim); font-weight:600; }
+:root[data-theme="klar"] .lib-tabs-card .lib-tabs button.active{ background:var(--surface); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.08), 0 0 0 1px var(--border); }
+:root[data-theme="klar"] .lib-tabs.unter-tabs button.active{ box-shadow:none !important; border-bottom-color:var(--text) !important; }
+:root[data-theme="klar"] .theme-pick button{ border-radius:14px; background:var(--surface); }
+:root[data-theme="klar"] .theme-pick button.active{ background:var(--text); color:var(--bg); border-color:var(--text); }
+/* Kategorie-Kacheln: neutral, gewählt = Tinte */
+:root[data-theme="klar"] .main-tile{ border:1px solid var(--border); background:var(--surface); border-radius:14px; }
+:root[data-theme="klar"] .main-tile.on{ background:var(--text); color:var(--bg); border-color:var(--text); box-shadow:none; }
+:root[data-theme="klar"] .main-tile.on .mt-ico{ color:var(--bg); }
+:root[data-theme="klar"] .main-tile.off{ opacity:.45; }
+:root[data-theme="klar"] .lib-chip, :root[data-theme="klar"] .fc-chip{ border-radius:999px; }
+:root[data-theme="klar"] .filter-zeile, :root[data-theme="klar"] .lib-search input,
+:root[data-theme="klar"] input[type="text"], :root[data-theme="klar"] input[type="number"], :root[data-theme="klar"] select{ border-radius:14px; }
+:root[data-theme="klar"] .filter-zeile.on{ box-shadow:none; }
+:root[data-theme="klar"] input:focus, :root[data-theme="klar"] select:focus, :root[data-theme="klar"] .lib-search input:focus{ border-color:var(--text); }
+/* Figuren: Tinte auf hellem Grund, ausgewählt = blauer Rahmen */
+:root[data-theme="klar"] .fig-karte{ border-radius:18px; }
+:root[data-theme="klar"] .fig-bild{ border-radius:13px; }
+:root[data-theme="klar"] .fig-name{ font-weight:650; letter-spacing:-.01em; }
+:root[data-theme="klar"] .wb-kachel.gewaehlt{ border-color:var(--geraet); }
+/* Woche */
+:root[data-theme="klar"] .wo-tag.an i{ background:var(--text); }
+/* Einblendfenster */
+:root[data-theme="klar"] .confirm-sheet{ border-radius:26px 26px 0 0; }
+/* Timer: Arbeit = Signalfarbe, Pause = Tinte (ruhig), Blockpause und Vorbereitung = Blau */
+:root[data-theme="klar"] .player{ --accent:#d4ff3a; --accent-text:#141517; }
+:root[data-theme="klar"] .ring-wrap .time{ font-weight:650; letter-spacing:-.03em; }
+:root[data-theme="klar"] .phase-label{ font-size:16px; font-weight:700; letter-spacing:.18em; opacity:.8; }
+:root[data-theme="klar"] .block-label{ font-weight:650; letter-spacing:-.01em; }
 </style>
 </head>
 <body>
@@ -1943,8 +2037,8 @@ var I18N = {
     workoutBlocks:"Blöcke ({n}) &middot; Gesamt {d}", noBlocksInWorkout:"Noch keine Blöcke im Workout.",
     addBlock:"Block hinzufügen", noBlocksAvail:"Keine Blöcke vorhanden.", createBlockFirst:"Erst einen Block anlegen",
     deleteWorkout:"Workout löschen", deleteWorkoutQ:"Workout löschen?", cantUndo:"Diese Aktion kann nicht rückgängig gemacht werden.",
-    appearance:"Darstellung", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thRetro:"Retro", thKodak:"C60", thDeck:"Tapedeck",
-    themeInfo:"Retro, C60 und Tapedeck: mit Walzenzähler statt Ring.",
+    appearance:"Darstellung", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thRetro:"Retro", thKodak:"C60", thDeck:"Tapedeck", thKlar:"Klar · neu",
+    themeInfo:"Retro, C60 und Tapedeck: mit Walzenzähler statt Ring. Klar: modern und schlicht, folgt Hell/Dunkel des Handys.",
     language:"Sprache",
     installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
     timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Töne bei Phasenwechsel – Musik läuft weiter", soundStyle:"Klang",
@@ -2131,8 +2225,8 @@ var I18N = {
     workoutBlocks:"Blocks ({n}) &middot; Total {d}", noBlocksInWorkout:"No blocks in this workout yet.",
     addBlock:"Add block", noBlocksAvail:"No blocks available.", createBlockFirst:"Create a block first",
     deleteWorkout:"Delete workout", deleteWorkoutQ:"Delete workout?", cantUndo:"This can't be undone.",
-    appearance:"Appearance", thSystem:"System", thLight:"Light", thDark:"Dark", thRetro:"Retro", thKodak:"C60", thDeck:"Tape deck",
-    themeInfo:"Retro, C60 and Tapedeck: with a rolling counter instead of the ring.",
+    appearance:"Appearance", thSystem:"System", thLight:"Light", thDark:"Dark", thRetro:"Retro", thKodak:"C60", thDeck:"Tape deck", thKlar:"Clear · new",
+    themeInfo:"Retro, C60 and Tapedeck: with a rolling counter instead of the ring. Clear: modern and minimal, follows your phone's light/dark mode.",
     language:"Language",
     installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
     timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Beeps between phases – your music keeps playing", soundStyle:"Sound style",
@@ -3137,7 +3231,7 @@ function triggerInstall(){
 
 /* ============ Theme ============ */
 /* Farbe der Browser-/Statusleiste passend zum Seitenhintergrund */
-var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214", retro:"#f3efe5", kodak:"#f5f2ea", tapedeck:"#141517" };
+var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214", retro:"#f3efe5", kodak:"#f5f2ea", tapedeck:"#141517", klar:"#f4f4f1" };
 function applyTheme(){
   var t = state.db.settings.theme;
   var root = document.documentElement;
@@ -3145,8 +3239,9 @@ function applyTheme(){
   else root.removeAttribute("data-theme");
   if(isVintageTheme()) root.setAttribute("data-vintage", "");
   else root.removeAttribute("data-vintage");
-  var bar = THEME_BAR_COLORS[t] ||
-    (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? THEME_BAR_COLORS.dark : THEME_BAR_COLORS.light);
+  var dunkel = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  var bar = t === "klar" ? (dunkel ? "#0e0f11" : "#f4f4f1") :   // Klar folgt Hell/Dunkel des Systems
+    THEME_BAR_COLORS[t] || (dunkel ? THEME_BAR_COLORS.dark : THEME_BAR_COLORS.light);
   var meta = document.querySelector('meta[name="theme-color"]');
   if(meta) meta.setAttribute("content", bar);
 }
@@ -6115,6 +6210,7 @@ function renderSettings(){
     '<div class="card"><div class="theme-pick">'+
       themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+
       themeBtn("retro",t("thRetro"),"vintage")+themeBtn("kodak",t("thKodak"),"vintage")+themeBtn("tapedeck",t("thDeck"),"vintage")+
+      themeBtn("klar",t("thKlar"),"klar-wahl")+
     '</div>'+
     '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+t("themeInfo")+'</div>'+
     '</div>'+

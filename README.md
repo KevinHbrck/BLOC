@@ -162,3 +162,4 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.c
 - Überrasch mich: Sternchen-Übungen immer zu etwa einem Drittel (`favZiel`), über das Workout verteilt; die Burpee-Regel ersetzt nie eine Sternchen-Übung
 - Filter in Bibliothek und Baukasten einheitlich: breite, auf- und zuklappbare Zeile „Fokus, Ausrüstung & Sortierung“ (`filterZeileHTML`) direkt unter den Kategorie-Kacheln; das alte Filter-Einblendfenster (`openFilterPanel`) entfällt
 - „Burpee-Intervalle“ enthalten jetzt Jump Forward Burpees
+- Neues Design **Klar** (`data-theme="klar"`, Einstellungen → Darstellung „Klar · neu“): ruhige Fläche, flach mit feinen Linien statt Schatten, große Titel, Tinte als Hauptfarbe, Limette (`--signal`) nur für Überrasch mich, „Los geht's“ und die Arbeitsphase im Timer (Pause = Tinte, Blockpause = Blau). Folgt Hell/Dunkel des Systems (auch die Statusleiste in `applyTheme`)
