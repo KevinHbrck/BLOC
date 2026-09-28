@@ -108,7 +108,10 @@
       pruefe(!$('[data-spmain="stretch"]'), "Stretch-Kachel ist noch da");
       pruefe($$("[data-spmain]").length === 4, "erwartet 4 Kategorie-Kacheln");
       klick("[data-spgo]");
-      await bis(function () { return $$(".dz-row").length >= 2; }, 3000, "Übungen im Deckblatt");
+      await bis(function () { return $$(".wb-ablauf").length >= 2; }, 3000, "Übungen im Deckblatt");
+      var vorher = $$(".wb-ablauf .fig-name").map(function (x) { return x.textContent; }).join();
+      klick("[data-reroll]");
+      await bis(function () { return $$(".wb-ablauf .fig-name").map(function (x) { return x.textContent; }).join() !== vorher; }, 3000, "„Nochmal mischen“ ändert das Workout");
     }],
     ["Timer: Übungs-Kreise, Satz blinkt in der Pause, Figur in der Blockpause", async function () {
       await heim();
@@ -232,6 +235,25 @@
       var up = await bis(function () { return $("[data-stup]"); }, 3000, "Steigerungs-Vorschlag");
       klick(up);
       pruefe($("#st-kg").value === "55", "Gewicht nach dem Erhöhen: " + $("#st-kg").value);
+    }],
+    ["Workout bauen: Kacheln antippen, Ablauf, sinnvoll ordnen, Stern", async function () {
+      await heim();
+      klick('[data-nav="#library"]');
+      klick(await bis(function () { return $('[data-libtab="mine"]'); }, 3000, "Reiter Meine"));
+      klick(await bis(function () { return $('[data-fabopt="new"]'); }, 3000, "Neues Workout"));
+      await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
+      ["air-squats", "push-ups", "plank"].forEach(function (id) { klick('[data-wbex="' + id + '"]'); });
+      pruefe($$(".wb-kachel.gewaehlt").length === 3, "gewählte Kacheln: " + $$(".wb-kachel.gewaehlt").length);
+      pruefe($$(".wb-mini").length === 3, "Ablauf-Streifen: " + $$(".wb-mini").length);
+      klick('[data-wbex="push-ups"]');
+      pruefe($$(".wb-mini").length === 2, "zweites Antippen entfernt nicht");
+      klick('[data-wbex="burpees"]');
+      klick("[data-wbordnen]");
+      pruefe($$(".wb-mini").length === 3, "Ordnen verliert Übungen");
+      klick('[data-wbex="plank"] [data-exfav]');
+      pruefe($('[data-wbex="plank"] .ex-fav.on'), "Stern lässt sich nicht setzen");
+      klick('[data-wbex="plank"] [data-exfav]');
+      pruefe($(".wb-leiste [data-tocover]") && !$(".wb-leiste [data-tocover]").disabled, "Start-Leiste fehlt");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

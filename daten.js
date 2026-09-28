@@ -201,6 +201,7 @@ var EXERCISE_ROWS = [
   /* Calisthenics (Stange, Barren) - längere Pausen, weil die Übungen schwer sind */
   ["chin-ups","Chin-Up","Chin-Up","calis back arms",5,20,0,"Klimmzug im Untergriff","Pull-up with an underhand grip",20],
   ["commando-pull-ups","Commando Pull-Up","Commando Pull-Up","calis back",3,20,1,"Seitlich an der Stange hochziehen","Pull up beside the bar",20],
+  ["rung-pull-ups","Sprossen-Klimmzug (Hangelleiter)","Rung Pull-up (Monkey Bars)","calis back arms",5,20,0,"Je eine Hand an zwei Sprossen, Kopf dazwischen hoch","One hand on each of two rungs, head up between them",20],
   ["parallel-bar-dips","Parallel Bar Dips","Parallel Bar Dips","calis arms",5,20,0,"Zwischen den Holmen absenken und hochdrücken","Lower between the bars and press up",20],
   ["support-hold","Support Hold","Support Hold","calis arms",5,20,0,"Mit gestreckten Armen im Stütz halten","Hold the support with straight arms",15],
   ["hanging-knee-raise","Hanging Knee Raise","Hanging Knee Raise","calis core",5,20,0,"Knie kontrolliert zur Brust ziehen","Draw your knees to your chest with control",15],
@@ -301,7 +302,7 @@ var EX_LEVEL = {
   "push-ups":2,"pike-push-ups":3,"triceps-dips":2,"squat-hold":1,"walking-lunges":2,"reverse-lunges":1,"side-lunges":2,"cossack-squats":3,
   "deep-squats":1,"pistol-assist":3,"plank-steps":2,"bear-crawl":2,"wall-sit":1,"calf-raises":1,"glute-bridge":1,
   "pull-ups":3,"negative-pull-ups":2,"inverted-rows":2,"superman-hold":1,"reverse-snow-angels":1,"bird-dog":1,"prone-y-raise":1,
-  "prone-t-raise":1,"good-mornings":1,"swimmers":1,"cobra-lift":1,"scapular-push-ups":1,"scapular-pull-ups":2,"dead-hang":1,
+  "prone-t-raise":1,"good-mornings":1,"swimmers":1,"cobra-lift":1,"scapular-push-ups":1,"scapular-pull-ups":2,"dead-hang":1,"rung-pull-ups":2,
   "air-squats":1,"split-squats":2,"bulgarian-split-squats":3,"forward-lunges":2,"single-leg-glute-bridge":2,"lateral-lunge-pulses":2,
   "plank":1,"side-plank":2,"dead-bug":1,"bicycle-crunches":1,"leg-raises":2,"jackknives":3,"side-jackknives":3,
   "hollow-hold":3,"reverse-crunch":2,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"toes-to-bar":3,
@@ -325,7 +326,7 @@ var EX_INT = {
   "burpees":3,"jump-squats":3,"jump-lunges":3,"mountain-climbers":3,"high-knees":3,"skater-jumps":3,"burpee-squat-jumps":3,
   "frogs":3,"stand-up-jumps":3,"sprint-in-place":3,"tuck-jumps":3,"kb-swing":3,"db-thruster":3,"kb-clean":3,"push-press":3,
   "renegade-row":3,"burpee-pull-ups":3,"clap-push-ups":3,"muscle-ups":3,"pull-ups":3,"chin-ups":3,"commando-pull-ups":3,
-  "toes-to-bar":3,"pistol-squats":3,"bulgarian-split-squats":3,"jackknives":3,"side-jackknives":3,"bear-crawl":3,
+  "toes-to-bar":3,"rung-pull-ups":3,"pistol-squats":3,"bulgarian-split-squats":3,"jackknives":3,"side-jackknives":3,"bear-crawl":3,
   /* locker: Aktivierung, Haltung, ruhige Halte- und Rumpfübungen */
   "superman-hold":1,"reverse-snow-angels":1,"bird-dog":1,"prone-y-raise":1,"prone-t-raise":1,"good-mornings":1,"swimmers":1,
   "scapular-push-ups":1,"scapular-pull-ups":1,"dead-hang":1,"calf-raises":1,"glute-bridge":1,"deep-squats":1,"squat-hold":1,
@@ -342,7 +343,7 @@ var EX_EQUIP = {
   "one-arm-row":"db","triceps-curls":"db","floor-press":"db","shoulder-press":"db","push-press":"db","weighted-reverse-lunge":"db kb","front-rack-carry":"kb db",
   "farmer-carry":"db kb","kb-clean":"kb","renegade-row":"db",
   "pull-ups":"bar","negative-pull-ups":"bar","inverted-rows":"bar","scapular-pull-ups":"bar","dead-hang":"bar","toes-to-bar":"bar",
-  "chin-ups":"bar","commando-pull-ups":"bar","parallel-bar-dips":"dip","support-hold":"dip",
+  "chin-ups":"bar","commando-pull-ups":"bar","rung-pull-ups":"bar","parallel-bar-dips":"dip","support-hold":"dip",
   "hanging-knee-raise":"bar","hanging-leg-raise":"bar","hanging-l-sit":"bar","l-sit":"dip","windshield-wipers":"bar",
   "muscle-ups":"bar","monkey-bar-traverse":"bar","skin-the-cat":"bar","burpee-pull-ups":"bar"
 };
@@ -365,7 +366,7 @@ var MAIN_CATS = [
 var EX_MAIN_ROWS = {
   ausdauer:"box-step-ups burpee-squat-jumps burpees fast-feet frogs high-knees jump-lunges jump-squats jumping-jacks lateral-hops mountain-climbers plank-burpees skater-jumps sprint-in-place stand-up-jumps tuck-jumps",
   rumpf:"bicycle-crunches dead-bug dragon-flags hollow-hold leg-raises plank plank-shoulder-taps reverse-crunch russian-twists side-jackknives side-plank sit-ups toe-touches jackknives",
-  stange:"chin-ups commando-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups burpee-pull-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
+  stange:"chin-ups commando-pull-ups rung-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups burpee-pull-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
   stretch:"hamstring-stretch biceps-stretch chest-stretch spinal-twist figure-four wrist-stretch downward-dog hip-flexor-stretch cat-cow childs-pose neck-stretch quad-stretch butterfly-stretch shoulder-stretch side-bend sphinx-stretch cobra-lift pigeon-stretch triceps-stretch forward-fold calf-stretch worlds-greatest arm-circles"
 };
 
@@ -382,7 +383,7 @@ var EQUIPS = [
 var EX_SUCH_ALIAS = { "russian-twists":"russian twist twists russische drehung russischer",
   "pull-ups":"klimmzug klimmzuge", "chin-ups":"klimmzug untergriff", "negative-pull-ups":"klimmzug negativ",
   "scapular-pull-ups":"schulterblatt klimmzug", "commando-pull-ups":"klimmzug", "push-ups":"liegestutz liegestutze",
-  "lat-pulldown":"lat zug latziehen", "leg-press":"beinpresse", "leg-press-45":"beinpresse schlitten",
+  "rung-pull-ups":"hangelleiter sprossen klimmzug monkey bar zwischen den sprossen", "lat-pulldown":"lat zug latziehen", "leg-press":"beinpresse", "leg-press-45":"beinpresse schlitten",
   "skull-crusher":"french press trizeps liegend stirndrücken", "pullover":"überzüge ueberzug", "butterfly":"pec deck fliegende",
   "reverse-butterfly":"reverse fly hintere schulter", "biceps-machine":"scott curl bizeps", "back-extension":"hyperextension",
   "jump-lunges":"sprungausfallschritt ausfallschritt sprung split jumps lunge jumps", "cobra-lift":"cobra lift kobra" };
@@ -855,6 +856,12 @@ STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){
 /* Ziel und Steigerung je Übung (sonst 3 × 12, +2,5 kg) */
 var STUDIO_ZIEL = { "bench-press":[3,8,2.5], "barbell-squat":[3,8,5], "barbell-deadlift":[3,6,5],
   "leg-press":[3,12,5], "leg-press-45":[3,12,5], "calf-machine":[3,15,5], "back-extension":[3,15,2.5], "ab-crunch-machine":[3,15,2.5] };
+/* Sprossen-Klimmzug: je eine Hand an zwei Sprossen der Hangelleiter, der Kopf kommt zwischen den Sprossen hoch */
+var SP_LEITER = '<path class="ip" d="M18 2H82"/><circle class="ip" cx="40" cy="5" r="3.4"/><circle class="ip" cx="60" cy="5" r="3.4"/>';
+ILLU_POSES["rung-pull-ups"] = [
+  Q(null,[50,31],[50,59],[[52,74,45,85]],[[57,20,60,9],[43,20,40,9]], SP_LEITER),
+  Q(null,[50,16],[50,44],[[52,59,45,70]],[[62,20,60,9],[38,20,40,9]], SP_LEITER)
+];
 var ILLU_VIEW2 = {
   "pull-ups":          { typ:"side", haupt:"front", p:[PS_HANG, PS_TOP] },
   "scapular-pull-ups": { typ:"side", haupt:"front", p:[PS_HANG, SS_AKT] },
@@ -870,6 +877,7 @@ var ILLU_VIEW2 = {
 
 /* Ausführliche Anleitung je Übung: [Deutsch, Englisch], Schritte mit | getrennt */
 var EX_INFO = {
+  "rung-pull-ups":["Unter die Hangelleiter stellen und mit je einer Hand zwei hintereinanderliegende Sprossen greifen, Handflächen zueinander.|Schulterblätter nach unten ziehen und den Kopf zwischen den Sprossen hochziehen, bis das Kinn über den Sprossen ist.|Kontrolliert in den gestreckten Hang absenken.","Stand under the monkey bars and grip two rungs one behind the other, one hand each, palms facing.|Pull your shoulder blades down and pull your head up between the rungs until your chin clears them.|Lower with control to a full hang."],
   "hack-squat":["Rücken ans Polster, Schultern unter die Polster, Füße schulterbreit auf der Platte.|Sicherung lösen und kontrolliert in die Hocke gehen, bis die Oberschenkel etwa waagerecht sind.|Über die ganze Fußsohle hochdrücken.", "Back on the pad, shoulders under the pads, feet shoulder-width on the plate.|Release the safety and squat down with control until your thighs are about horizontal.|Drive up through your whole foot."],
   "smith-squat":["Unter die Stange stellen, Stange auf den oberen Rücken, Füße etwas nach vorn.|Stange aus den Haken drehen und in die Hocke gehen.|Hochdrücken und am Ende wieder einhaken.", "Step under the bar, rest it on your upper back, feet slightly forward.|Unhook the bar and squat down.|Drive up and hook it back at the end."],
   "leg-press-single":["Wie an der Beinpresse hinsetzen, einen Fuß mittig auf die Platte, der andere ruht.|Mit einem Bein kontrolliert beugen.|Wegdrücken, Seite nach dem Satz wechseln.", "Sit as at the leg press, one foot in the middle of the plate, the other resting.|Bend with one leg under control.|Press away, switch sides after the set."],
@@ -1009,6 +1017,7 @@ var EX_INFO = {
    Grundlage: gängige Technikhinweise (u. a. ACE, NSCA, NASM): neutrale Wirbelsäule, Knie in Fußrichtung,
    Schultern weg von den Ohren, bei Bauchübungen den unteren Rücken am Boden halten. */
 var EX_POSTURE = {
+  "rung-pull-ups":["Rumpf fest, Beine ruhig.|Ellbogen ziehen nach unten.","Mit Schwung aus den Beinen ziehen oder den Kopf gegen die Sprosse stoßen.","Core braced, legs still.|Drive your elbows down.","Kicking for momentum or bumping your head on a rung."],
   "hack-squat":["Rücken und Po am Polster.|Knie zeigen in Fußrichtung.", "Die Fersen abheben.", "Back and hips on the pad.|Knees track your toes.", "Lifting your heels."],
   "smith-squat":["Brust aufrecht, Rumpf fest.|Knie folgen den Zehen.", "Die Knie nach innen fallen lassen.", "Chest up, core braced.|Knees follow your toes.", "Letting your knees cave in."],
   "leg-press-single":["Becken bleibt gerade am Polster.|Knie zeigt in Fußrichtung.", "Mit dem Becken zur Seite kippen.", "Pelvis stays level on the pad.|Knee tracks your toes.", "Tilting your pelvis to one side."],
@@ -1243,6 +1252,7 @@ Object.assign(EX_POSTURE, {
    Bei Dehnübungen: was gedehnt wird. Grundlage: gängige Übungsbeschreibungen (u. a. ACE-Übungsbibliothek);
    Beinheben z. B. vor allem Hüftbeuger, der Bauch stabilisiert. */
 var EX_MUSCLES = {
+  "rung-pull-ups":["Breiter Rückenmuskel, Bizeps","Oberarmmuskel, Unterarme (Griff), Rumpf","Lats, biceps","Brachialis, forearms (grip), core"],
   "hack-squat":["Oberschenkel vorn, Gesäß", "Adduktoren, Waden", "Quads, glutes", "Adductors, calves"],
   "smith-squat":["Oberschenkel vorn, Gesäß", "Oberschenkel hinten, Rumpf", "Quads, glutes", "Hamstrings, core"],
   "leg-press-single":["Oberschenkel vorn, Gesäß", "Hüftstabilisatoren", "Quads, glutes", "Hip stabilisers"],

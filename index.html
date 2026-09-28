@@ -520,6 +520,31 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 :root[data-vintage] .ft-name{ font-family:var(--f-mono); font-weight:500; text-transform:uppercase; font-size:12.5px; letter-spacing:0; }
 :root[data-vintage] .ft-sub{ font-family:var(--f-body); color:var(--text-sub); }
 .empty-btn{ width:auto; display:inline-flex; margin:16px auto 0; padding:13px 20px; font-size:15px; }
+/* Workout-Baukasten: Kacheln antippen, blau = im Workout */
+.wb-kachel{ cursor:pointer; user-select:none; -webkit-user-select:none; }
+.wb-kachel .fig-bild{ position:relative; }
+.wb-kachel.gewaehlt{ box-shadow:0 0 0 3px var(--geraet, #2b78e4), var(--shadow); background:color-mix(in srgb, var(--geraet, #2b78e4) 7%, var(--surface)); }
+.wb-kachel.gewaehlt .fig-bild{ background:color-mix(in srgb, var(--geraet, #2b78e4) 16%, transparent); color:var(--geraet, #2b78e4); }
+.wb-nr{ position:absolute; left:4px; top:4px; min-width:22px; height:22px; padding:0 6px; border-radius:11px; background:var(--geraet, #2b78e4); color:#fff;
+  font-size:12px; font-weight:700; line-height:22px; text-align:center; }
+.wb-ablauf .wb-nr{ background:var(--text); color:var(--bg); }
+.wb-kachel .ex-fav{ position:absolute; right:2px; top:2px; }
+.wb-i{ position:absolute; right:4px; bottom:4px; width:24px; height:24px; border-radius:50%; border:0; background:var(--surface); color:var(--text-dim);
+  font:italic 700 13px/24px Georgia, serif; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.15); }
+.wb-kopf{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.wb-kopf .sec-link{ white-space:nowrap; flex-shrink:0; }
+.wb-streifen{ display:flex; gap:8px; overflow-x:auto; padding:2px 2px 8px; margin:0 -2px 6px; scrollbar-width:thin; }
+.wb-mini{ flex:0 0 auto; position:relative; width:74px; padding:4px 4px 6px; border:0; border-radius:12px; background:var(--surface); box-shadow:var(--shadow);
+  color:inherit; font:inherit; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.wb-mini-illu{ width:52px; height:52px; color:var(--cat); }
+.wb-mini-nr{ position:absolute; left:4px; top:4px; font-size:11px; font-weight:700; color:var(--text-dim); }
+.wb-mini-name{ font-size:10.5px; line-height:1.2; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.wb-leiste{ position:fixed; left:0; right:0; bottom:0; z-index:5; padding:8px 16px calc(10px + env(safe-area-inset-bottom));
+  background:color-mix(in srgb, var(--bg) 92%, transparent); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-top:1px solid var(--border); }
+.wb-leiste-in{ max-width:560px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; color:var(--text-dim); line-height:1.3; }
+.wb-leiste-in b{ color:var(--text); font-size:14px; }
+.wb-leiste .btn{ width:auto; margin:0; padding:12px 22px; }
+.wb-mischen{ margin-top:8px; }
 /* Studio */
 .st-kachel{ border:0; text-align:left; font:inherit; color:inherit; cursor:pointer; }
 .st-kachel .fig-bild{ position:relative; }
@@ -1950,6 +1975,10 @@ var I18N = {
     snapInfo:"Alle 7 Tage automatisch eine Kopie auf diesem Gerät.",
     backupTipTitle:"Lange nicht gesichert", backupTipText:"Sichere deine eigenen Workouts und Übungen als Datei.",
     backupNow:"Jetzt sichern", shareBackup:"Sicherung teilen (z. B. Drive, Mail)", backupShared:"Sicherung übergeben",
+    wbAblauf:"Dein Ablauf", wbWaehlen:"Übungen wählen", wbTippen:"Antippen = dazu, nochmal antippen = raus.",
+    wbLeer:"Noch leer – tippe unten Übungen an.", wbOrdnen:"Sinnvoll ordnen", wbGeordnet:"Geordnet: große Übungen zuerst, Wechsel der Muskelgruppen, Dehnen am Ende",
+    wbAblaufHint:"Tipp auf eine Übung: Zeiten, verschieben, tauschen, entfernen.", wbZeiten:"Zeiten anpassen", wbNachVorn:"Nach vorn",
+    wbNachHinten:"Nach hinten", wbTauschen:"Andere Übung", wbKeinTausch:"Keine passende andere Übung gefunden", wbMischen:"Nochmal mischen",
     figTitle:"Figuren prüfen", figSub:"Alle Figuren auf einen Blick – Unklares markieren und teilen",
     figIntro:"Antippen zeigt die Figur bewegt. Unklares markieren, kurz notieren, am Ende teilen.",
     figAll:"Alle", figMarked:"Markierte ({n})", figFlag:"Unklar", figNotePh:"Was ist unklar? (optional)",
@@ -2133,6 +2162,10 @@ var I18N = {
     snapInfo:"An automatic copy on this device every 7 days.",
     backupTipTitle:"No recent backup", backupTipText:"Back up your own workouts and exercises as a file.",
     backupNow:"Back up now", shareBackup:"Share backup (e.g. Drive, mail)", backupShared:"Backup handed over",
+    wbAblauf:"Your sequence", wbWaehlen:"Pick exercises", wbTippen:"Tap = add, tap again = remove.",
+    wbLeer:"Still empty – tap exercises below.", wbOrdnen:"Smart order", wbGeordnet:"Ordered: big lifts first, alternating muscle groups, stretches last",
+    wbAblaufHint:"Tap an exercise: times, move, swap, remove.", wbZeiten:"Adjust times", wbNachVorn:"Move up",
+    wbNachHinten:"Move down", wbTauschen:"Swap exercise", wbKeinTausch:"No suitable alternative found", wbMischen:"Shuffle again",
     figTitle:"Review figures", figSub:"All figures at a glance – mark and share unclear ones",
     figIntro:"Tap to see a figure move. Mark what's unclear, add a note, then share.",
     figAll:"All", figMarked:"Marked ({n})", figFlag:"Unclear", figNotePh:"What is unclear? (optional)",
@@ -4648,7 +4681,40 @@ function renderCover(kind, id){
   renderDraftPage(coverDraft, { cover:true, back:"#library" });
 }
 
-/* cfg.cover: Deckblatt (Änderungen nur für dieses Training) - sonst Baukasten (speichert sofort) */
+/* cfg.cover: Deckblatt (Änderungen nur für dieses Training) - sonst Baukasten (speichert sofort).
+   Aufbau (2026-09): Übungen als große Kacheln mit Figur und Namen. Antippen = hinzufügen (Kachel wird blau und
+   zeigt ihre Position), nochmal antippen = entfernen. Der Ablauf steht als schmaler Streifen oben; ein Tipp auf
+   eine Übung darin öffnet Zeiten, Verschieben, Tauschen, Entfernen. „Sinnvoll ordnen“ sortiert fachlich:
+   große Übungen zuerst, Unter- und Oberkörper und Rumpf im Wechsel, Dehnen am Ende. */
+function wbSinnvollOrdnen(items){
+  var dehn = [], topf = { full:[], lower:[], upper:[], core:[] };
+  items.forEach(function(it){
+    var ex = findExercise(it.ex);
+    if(!ex || exIsMobility(it.ex)){ dehn.push(it); return; }
+    var r = exProfile(ex).region;
+    (topf[r] || topf.full).push(it);
+  });
+  // schwere Übungen (Stufe) innerhalb jeder Gruppe zuerst - solange die Kraft noch frisch ist
+  Object.keys(topf).forEach(function(k){ topf[k].sort(function(a, b){ return (findExercise(b.ex).level||2) - (findExercise(a.ex).level||2); }); });
+  var aus = topf.full.slice(), reihe = ["lower", "upper", "core"], i = 0;
+  while(topf.lower.length || topf.upper.length || topf.core.length){
+    var k = reihe[i++ % 3];
+    if(topf[k].length) aus.push(topf[k].shift());
+  }
+  return aus.concat(dehn);
+}
+function wbTauschKandidat(d, i){
+  var alt = findExercise(d.items[i].ex);
+  if(!alt) return null;
+  var drin = {}; d.items.forEach(function(it){ drin[it.ex] = true; });
+  var p = d._params, equips = p && p.equips ? p.equips : null, reg = exProfile(alt).region;
+  var pool = EXERCISES.filter(function(ex){
+    return !drin[ex.id] && !libHidden("ex:"+ex.id) && ex.main === alt.main && (!equips || equipMatch(equips, ex));
+  });
+  var gleich = pool.filter(function(ex){ return exProfile(ex).region === reg; });
+  var wahl = gleich.length ? gleich : pool;
+  return wahl.length ? wahl[Math.floor(Math.random()*wahl.length)] : null;
+}
 function renderDraftPage(d, cfg){
   var s = state.db.settings;
   // Dehn- und Mobility-Übungen stehen immer am Ende
@@ -4658,49 +4724,47 @@ function renderDraftPage(d, cfg){
     if(!cfg.cover){ d.updatedAt = Date.now(); save(); }
   }
   var cat = selArr(s.buildCats || s.buildCat), sort = s.libSort === "az" ? "az" : "std";
-  var equip = selArr(s.buildEquips), level = "all", bmains = selArr(s.buildMains);
+  var equip = selArr(s.buildEquips), bmains = selArr(s.buildMains);
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
   var cats = [];
   exs.forEach(function(ex){ ex.cats.forEach(function(c){ if(cats.indexOf(c)<0) cats.push(c); }); });
   var hasSides = exs.some(function(ex){ return ex.perSide; });
+  var dauer = fmtDuration(workoutDuration(run));
 
-  function row(ex, attrs, sub, right, bild){
-    return '<div class="dz-row'+(bild?' mit-bild':'')+(ex.id==="russian-twists"?' ua':'')+'" style="--cat:'+catVar(ex.cats[0])+'" '+attrs+'>'+
-      '<span class="dh" aria-hidden="true">'+ICON_GRIP+'</span>'+
-      (bild ? '<span class="row-illu-wrap" data-exinfo="'+ex.id+'">'+illuStillHTML(ex.id, "row-illu")+'</span>' : '')+
-      '<div class="meta" data-exinfo="'+ex.id+'"><div class="name">'+esc(tplText(ex.name))+'</div>'+
-      '<div class="sub">'+sub+'</div></div>'+right+'</div>';
+  // Position(en) jeder Übung im Ablauf - für die blaue Markierung der Kacheln
+  var pos = {};
+  d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
+  function kachel(ex, extra){
+    var nr = pos[ex.id];
+    return '<div class="fig-karte wb-kachel'+(nr ? ' gewaehlt' : '')+'" role="button" tabindex="0" data-wbex="'+ex.id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+catVar(ex.cats[0])+'" aria-pressed="'+!!nr+'">'+
+      '<span class="fig-bild">'+(ILLU[ex.id] ? illuStillHTML(ex.id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
+        (nr ? '<span class="wb-nr">'+nr.join("·")+'</span>' : '')+
+        '<button type="button" class="wb-i" data-exinfo="'+ex.id+'" aria-label="'+esc(t("info"))+'">i</button>'+exFavBtn(ex.id)+'</span>'+
+      '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+(extra || '')+'</div>';
   }
-  var itemsHTML = d.items.map(function(it, i){
+  // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen
+  function ablaufKachel(it, i){
     var ex = findExercise(it.ex);
     if(!ex) return "";
-    var tm = timingText(itemTiming(d, it), ex.perSide);
-    // in der Liste nur Name (+ Zeiten) - die Muskeln stehen in der Info, sonst bricht jede Zeile dreifach um
-    var sub = d.mode==="uniform" ? '<span class="row-tm">'+tm+'</span>' : '';
-    var tmc = itemTiming(d, it);
-    var chip = (ex.perSide ? Math.ceil(tmc.reps/2) : tmc.reps)+'&times;'+tmc.work+'s/'+tmc.rest+'s'+
-      (ex.perSide ? '<span class="tm-side">'+t("perSide")+'</span>' : '');
-    var right = (d.mode==="individual" ? '<button type="button" class="tm-chip" data-time="'+i+'">'+chip+'</button>' : '')+
-      '<button type="button" class="dz-btn" data-rm="'+i+'" aria-label="'+t("del")+'">&times;</button>';
-    return row(ex, 'data-src="list" data-idx="'+i+'"', sub, right, true);
-  }).join("");
-  var palOpen = !cfg.cover || d._pal;
-  var palCounts = {};
-  if(palOpen){
-    MAIN_CATS.forEach(function(c){ palCounts[c.id] = 0; });
-    EXERCISES.forEach(function(ex){ if(!libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
+    var tm = itemTiming(d, it);
+    return '<div class="fig-karte wb-kachel wb-ablauf" role="button" tabindex="0" data-wbitem="'+i+'" style="--cat:'+catVar(ex.cats[0])+'">'+
+      '<span class="fig-bild">'+(ILLU[ex.id] ? illuStillHTML(ex.id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
+        '<span class="wb-nr">'+(i+1)+'</span></span>'+
+      '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+
+      '<span class="st-sub">'+timingText(tm, ex.perSide)+'</span></div>';
   }
-  var palHTML = palOpen ? (sortedExercises(cat, sort, equip, bmains).map(function(ex){
-    return row(ex, 'data-src="pal" data-ex="'+ex.id+'" data-q="'+esc(exSearchText(ex))+'"', mainTagsHTML([ex.main])+catTags(ex.cats),
-      exFavBtn(ex.id)+'<button type="button" class="dz-btn add" data-add="'+ex.id+'" aria-label="'+t("myAdd")+'">+</button>');
-  }).join("") || '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>') +
-    '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>' : "";
+  var streifen = d.items.map(function(it, i){
+    var ex = findExercise(it.ex);
+    if(!ex) return "";
+    return '<button type="button" class="wb-mini" data-wbitem="'+i+'" style="--cat:'+catVar(ex.cats[0])+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
+      (ILLU[ex.id] ? illuStillHTML(ex.id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span>'+
+      '<span class="wb-mini-name">'+esc(tplText(ex.name))+'</span></button>';
+  }).join("");
+
+  // Zeiten: Vorlagen, einheitlich/individuell, Pause zwischen Übungen (auf dem Deckblatt zugeklappt)
   var rests = [0,15,30,45,60,90,120];
   if(rests.indexOf(d.blockRest) < 0) rests.push(d.blockRest);
-  var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : d.src==="shared" ? "kindShared" : "kindMy";
-
-  // Zeiten (und auf dem Deckblatt die Sprachansagen) - auf dem Deckblatt zugeklappt mit Kurzfassung
   var optInner =
     '<label>'+t("timesLabel")+'</label>'+
     '<div class="seg-row">'+
@@ -4717,99 +4781,150 @@ function renderDraftPage(d, cfg){
     '<select id="d-br">'+rests.sort(function(a,b){return a-b;}).map(function(v){
       return '<option value="'+v+'"'+(v===d.blockRest?' selected':'')+'>'+v+' s</option>'; }).join("")+'</select>'+
     (cfg.cover ? '<div class="opt-sep"></div>'+toggleRow("c-voice", t("voice"), t("voiceDesc"), s.voice !== false) : '');
-  var optOpen = !cfg.cover || !!s.coverOpts;
-  var optSummary = (d.mode==="uniform"
-      ? t("modeUniform")+' '+timingText({ reps:d.reps, work:d.work, rest:d.rest }, false)
-      : t("modeIndividual"))+
-    SEP+t("optRestShort", { n:d.blockRest })+SEP+t(s.voice !== false ? "optVoiceOn" : "optVoiceOff");
-  var optionsHTML = cfg.cover
-    ? '<div class="card opt-card">'+
-        '<div class="opt-head" data-opttoggle role="button" tabindex="0" aria-expanded="'+optOpen+'">'+
-          '<div><div class="opt-title">'+t("optTitle")+'</div><div class="opt-sum">'+optSummary+'</div></div>'+
-          '<span class="tpl-chev'+(optOpen?'':' zu')+'" aria-hidden="true">&#9662;</span></div>'+
-        (optOpen ? '<div class="opt-body">'+optInner+'</div>' : '')+
-      '</div>'
-    : '<div class="card">'+optInner+'</div>';
+  var optOpen = !!s.coverOpts;
+  var optSummary = (d.mode==="uniform" ? t("modeUniform")+' '+timingText({ reps:d.reps, work:d.work, rest:d.rest }, false) : t("modeIndividual"))+
+    SEP+t("optRestShort", { n:d.blockRest })+(cfg.cover ? SEP+t(s.voice !== false ? "optVoiceOn" : "optVoiceOff") : '');
+  var optionsHTML = '<div class="card opt-card">'+
+      '<div class="opt-head" data-opttoggle role="button" tabindex="0" aria-expanded="'+optOpen+'">'+
+        '<div><div class="opt-title">'+t("optTitle")+'</div><div class="opt-sum">'+optSummary+'</div></div>'+
+        '<span class="tpl-chev'+(optOpen?'':' zu')+'" aria-hidden="true">&#9662;</span></div>'+
+      (optOpen ? '<div class="opt-body">'+optInner+'</div>' : '')+
+    '</div>';
 
-  /* Übersicht: nur „Los geht's“ ist groß, alles andere sind beschriftete Symbole darunter */
+  // Übungsauswahl: große Kacheln, gefiltert wie in der Bibliothek
+  var palOpen = !cfg.cover || d._pal;
+  var palHTML = "";
+  if(palOpen){
+    var palCounts = {};
+    MAIN_CATS.forEach(function(c){ palCounts[c.id] = 0; });
+    EXERCISES.forEach(function(ex){ if(!libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
+    palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
+      '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
+      searchFilterHTML(buildQuery, "b", cat, equip)+
+      mainTilesHTML(bmains, palCounts, "data-bmain")+
+      '<div class="fig-grid" id="dz-pal">'+(sortedExercises(cat, sort, equip, bmains).map(function(ex){ return kachel(ex); }).join("") ||
+        '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
+      '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
+  }
+
+  /* Deckblatt-Aktionen: nur „Los geht's“ ist groß; bei „Überrasch mich“ zusätzlich groß „Nochmal mischen“ */
   function coverAct(attrs, ico, label, cls){
     return '<button type="button" class="cover-act'+(cls?' '+cls:'')+'" '+attrs+(exs.length?'':' disabled')+'><span class="ca-ico">'+ico+'</span><span>'+esc(label)+'</span></button>';
   }
+  var ICON_MISCHEN = svgIcon('<path d="M3 7h3c2.6 0 4 1.6 5.2 3.9l1.6 3C14 16.3 15.5 17 18 17h3M3 17h3c1.5 0 2.6-.5 3.4-1.5M14.3 7.9C15.2 7.3 16.4 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3"/>');
   var favOn = isFav(d.key);
   var coverActs = '<div class="cover-acts">'+
     (d.src!=="surprise" && d.src!=="shared" ? coverAct('data-fav="'+d.key+'" aria-pressed="'+favOn+'"', favOn ? '★' : '☆', t("favorite"), favOn ? 'on' : '') : '')+
-    (d.src==="surprise" ? coverAct('data-reroll', svgIcon('<path d="M3 7h3c2.6 0 4 1.6 5.2 3.9l1.6 3C14 16.3 15.5 17 18 17h3M3 17h3c1.5 0 2.6-.5 3.4-1.5M14.3 7.9C15.2 7.3 16.4 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3"/>'), t("reroll")) : '')+
     coverAct('data-savemy', svgIcon(ICON_COPY), t(d.src==="my" ? "actCopy" : "actSave"))+
     coverAct('data-share', ICON_SHARE, t("share"))+
     (d.src==="lib" ? coverAct('data-coverhide', svgIcon(ICON_EYE_OFF), t("hideShort")) : '')+
   '</div>';
+  var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : d.src==="shared" ? "kindShared" : "kindMy";
   var head = cfg.cover
     ? '<div class="card cover-hero">'+
         '<div class="cover-kicker">'+t(kind)+'</div>'+
         '<h2 class="cover-name">'+esc(d.name)+'</h2>'+
-        '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+fmtDuration(workoutDuration(run))+'</div>'+
-        (exs.length ? '<div class="cat-tags">'+catTags(cats)+levelHTML(woLevel(exs))+'</div>' : '')+
+        '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+dauer+'</div>'+
+        (exs.length ? '<div class="cat-tags">'+catTags(cats)+'</div>' : '')+
         (exs.length ? '<div class="cover-equip">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div>' : '')+
         '<button class="btn btn-primary" data-go '+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
+        (d.src==="surprise" ? '<button class="btn btn-secondary wb-mischen" data-reroll>'+ICON_MISCHEN+' '+t("wbMischen")+'</button>' : '')+
         coverActs+
         '<div class="cover-note">'+t(d._dirty ? "coverDirty" : "coverHint")+'</div>'+
       '</div>'
     : '<div class="card"><label for="m-name">'+t("name")+'</label>'+
         '<input type="text" id="m-name" value="'+esc(d.name)+'" maxlength="40"></div>';
 
+  var ablaufHTML = cfg.cover
+    ? '<div class="section-title wb-kopf"><span>'+t("myInWorkout", { n:exs.length, d:dauer })+'</span>'+
+        (exs.length > 2 ? '<button type="button" class="sec-link" data-wbordnen>'+esc(t("wbOrdnen"))+'</button>' : '')+'</div>'+
+      '<div class="page-hint">'+esc(t("wbAblaufHint"))+'</div>'+
+      '<div class="fig-grid">'+d.items.map(ablaufKachel).join("")+'</div>'+
+      (palOpen ? '' : '<button type="button" class="my-new" data-palopen>'+ICON_PLUS+' '+t("myAdd")+'</button>')
+    : '<div class="section-title wb-kopf"><span>'+t("wbAblauf")+'</span>'+
+        (exs.length > 2 ? '<button type="button" class="sec-link" data-wbordnen>'+esc(t("wbOrdnen"))+'</button>' : '')+'</div>'+
+      (d.items.length ? '<div class="wb-streifen">'+streifen+'</div>' : '<div class="fav-empty">'+esc(t("wbLeer"))+'</div>');
+
   app.innerHTML =
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: cfg.cover ? "" :
-      '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>'+
-      '<button class="iconbtn" data-tocover title="'+t("start")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_PLAY+'</button>' }) +
-    head +
-    optionsHTML +
-    '<div class="dz-sticky" id="dz-sticky">'+
-      '<div class="section-title">'+t("myInWorkout", { n:exs.length, d:fmtDuration(workoutDuration(run)) })+'</div>'+
-      '<div class="dz-list" id="dz-list">'+(itemsHTML || '<div class="dz-empty">'+t("dropHere")+'</div>')+'</div>'+
-    '</div>'+
-    (palOpen
-      ? '<div class="section-title">'+t("myAdd")+'</div>'+
-        searchFilterHTML(buildQuery, "b", cat, equip) +
-        mainTilesHTML(bmains, palCounts, "data-bmain") +
-        '<div class="dz-pal" id="dz-pal">'+palHTML+'</div>'
-      : '<button type="button" class="my-new" data-palopen>'+ICON_PLUS+' '+t("myAdd")+'</button>')+
-    (cfg.cover ? '' : '<button class="btn btn-danger" data-mydel>'+ICON_TRASH+' '+t("myDelete")+'</button>')+
-    '<div style="height:60px"></div>'+
-    '<div class="dz-trash" id="dz-trash">'+ICON_TRASH+' '+t("dropToRemove")+'</div>';
+      '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>' }) +
+    head + ablaufHTML + optionsHTML + palHTML +
+    (cfg.cover ? '' : '<button class="btn btn-danger" data-mydel style="margin-top:18px;">'+ICON_TRASH+' '+t("myDelete")+'</button>')+
+    '<div style="height:'+(cfg.cover ? 40 : 96)+'px"></div>'+
+    (cfg.cover ? '' : '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+t("exCount", { n:exs.length })+'</b><br>'+dauer+'</span>'+
+      '<button type="button" class="btn btn-primary" data-tocover'+(d.items.length ? '' : ' disabled')+'>'+ICON_PLAY+' '+t("start")+'</button></div></div>');
   bindCommon();
 
   function speichern(){
     if(cfg.cover) d._dirty = true;
     else { d.updatedAt = Date.now(); save(); }
   }
-  function neu(){
-    var y = window.scrollY, ls = document.getElementById("dz-sticky");
-    var lsy = ls ? ls.scrollTop : 0;
-    renderDraftPage(d, cfg);
-    window.scrollTo(0, y);
-    var ls2 = document.getElementById("dz-sticky"); if(ls2) ls2.scrollTop = lsy;
-  }
+  function neu(){ var y = window.scrollY; renderDraftPage(d, cfg); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ fn(el, e); }); }); }
 
   var nameIn = app.querySelector("#m-name");
   if(nameIn) nameIn.addEventListener("input", function(){ d.name = nameIn.value.trim() || t("myDefaultName"); speichern(); });
   on("[data-mode]", function(el){ d.mode = el.getAttribute("data-mode"); speichern(); neu(); });
-  bindSteppers(app.querySelector(".tm-grid") || document.createElement("div"), function(){
-    d.reps = parseInt(app.querySelector("#d-reps").value)||1;
-    d.work = parseInt(app.querySelector("#d-work").value)||5;
-    d.rest = parseInt(app.querySelector("#d-rest").value)||0;
+  bindSteppers(app, function(){
+    var r = app.querySelector("#d-reps"), w = app.querySelector("#d-work"), rs = app.querySelector("#d-rest");
+    if(r) d.reps = parseInt(r.value)||d.reps;
+    if(w) d.work = parseInt(w.value)||d.work;
+    if(rs) d.rest = parseInt(rs.value)||0;
     speichern(); neu();
   });
   var brSel = app.querySelector("#d-br");
   if(brSel) brSel.addEventListener("change", function(){ d.blockRest = parseInt(this.value)||0; speichern(); neu(); });
-  on("[data-time]", function(el){ openTimingSheet(d, parseInt(el.getAttribute("data-time")), function(){ speichern(); neu(); }); });
-  on("[data-rm]", function(el){ d.items.splice(parseInt(el.getAttribute("data-rm")), 1); speichern(); neu(); });
-  on("[data-add]", function(el){
-    var ex = findExercise(el.getAttribute("data-add"));
-    d.items.push(itemFromEx(ex.id)); speichern(); neu();
-    showToast(t("addedToWorkout", { n:tplText(ex.name) }));
+  var optT = app.querySelector("[data-opttoggle]");
+  function optUm(){ s.coverOpts = !s.coverOpts; save(); neu(); }
+  if(optT){
+    optT.addEventListener("click", optUm);
+    optT.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); optUm(); } });
+  }
+  if(cfg.cover && app.querySelector("#c-voice")) bindToggle("c-voice", function(v){ s.voice = v; save(); neu(); });
+
+  // Kachel antippen: hinzufügen bzw. wieder herausnehmen
+  function kachelTipp(el){
+    var id = el.getAttribute("data-wbex");
+    if(pos[id]){ d.items = d.items.filter(function(it){ return it.ex !== id; }); }
+    else {
+      d.items.push(itemFromEx(id));
+      var neuOrd = stretchLast(d.items, function(it){ return it.ex; }); d.items = neuOrd;
+    }
+    speichern(); neu();
+  }
+  app.querySelectorAll("[data-wbex]").forEach(function(el){
+    el.addEventListener("click", function(e){ if(e.target.closest("[data-exinfo], [data-exfav]")) return; kachelTipp(el); });
+    el.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); kachelTipp(el); } });
   });
-  on("[data-exinfo]", function(el){ openExInfo(el.getAttribute("data-exinfo"), false); });
+  on("[data-exinfo]", function(el, e){ e.stopPropagation(); openExInfo(el.getAttribute("data-exinfo"), false); });
+  on("[data-exfav]", function(el, e){ e.stopPropagation(); toggleExFav(el.getAttribute("data-exfav")); neu(); });   // Stern: steht dann oben
+
+  // Übung im Ablauf: Aktionen
+  function ablaufMenue(i){
+    var it = d.items[i], ex = findExercise(it.ex);
+    if(!ex) return;
+    var acts = [];
+    if(d.mode === "individual" || exIsStretch(it.ex)) acts.push({ ico:ICON_TIMERBLOCK, label:t("wbZeiten"), fn:function(){ openTimingSheet(d, i, function(){ speichern(); neu(); }); } });
+    if(i > 0) acts.push({ ico:'<path d="M12 19V5M5 12l7-7 7 7"/>', label:t("wbNachVorn"), fn:function(){ var x = d.items.splice(i, 1)[0]; d.items.splice(i-1, 0, x); speichern(); neu(); } });
+    if(i < d.items.length-1) acts.push({ ico:'<path d="M12 5v14M5 12l7 7 7-7"/>', label:t("wbNachHinten"), fn:function(){ var x = d.items.splice(i, 1)[0]; d.items.splice(i+1, 0, x); speichern(); neu(); } });
+    if(cfg.cover) acts.push({ ico:'<path d="M3 7h3c2.6 0 4 1.6 5.2 3.9l1.6 3C14 16.3 15.5 17 18 17h3M18 14l3 3-3 3M3 17h3c1.5 0 2.6-.5 3.4-1.5M14.3 7.9C15.2 7.3 16.4 7 18 7h3M18 4l3 3-3 3"/>', label:t("wbTauschen"), fn:function(){
+      var nx = wbTauschKandidat(d, i);
+      if(!nx){ showToast(t("wbKeinTausch")); return; }
+      var alt = d.items[i], neuIt = itemFromEx(nx.id);
+      if(d.mode === "individual" && !exIsStretch(nx.id)){ neuIt.reps = alt.reps; neuIt.work = alt.work; neuIt.rest = alt.rest; }
+      d.items[i] = neuIt; speichern(); neu();
+    } });
+    if(cfg.cover && EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false); } });
+    acts.push({ ico:ICON_TRASH, label:t("del"), danger:true, fn:function(){ d.items.splice(i, 1); speichern(); neu(); } });
+    openActionSheet((i+1)+". "+tplText(ex.name), acts);
+  }
+  app.querySelectorAll("[data-wbitem]").forEach(function(el){
+    function los(){ ablaufMenue(parseInt(el.getAttribute("data-wbitem"))); }
+    el.addEventListener("click", los);
+    el.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); los(); } });
+  });
+  on("[data-wbordnen]", function(){ d.items = wbSinnvollOrdnen(d.items); speichern(); neu(); showToast(t("wbGeordnet")); });
+
   on("[data-bcat]", function(el){ s.buildCats = chipToggle(cat, el.getAttribute("data-bcat")); save(); neu(); });
   on("[data-bequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bequip")); save(); neu(); });
   on("[data-bfilter]", function(){
@@ -4819,14 +4934,11 @@ function renderDraftPage(d, cfg){
   });
   on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; save(); neu(); });
   on("[data-bmain]", function(el){ s.buildMains = selToggle(bmains, el.getAttribute("data-bmain")); save(); neu(); });
-  on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
   var bq = app.querySelector("#b-q");
   if(bq){
     applySearch(app.querySelector("#dz-pal") || app, buildQuery);
     bq.addEventListener("input", function(){ buildQuery = bq.value; applySearch(app.querySelector("#dz-pal") || app, buildQuery); });
   }
-  on("[data-bsort]", function(el){ s.libSort = el.getAttribute("data-bsort"); save(); neu(); });
-
   on("[data-palopen]", function(){ d._pal = true; neu(); });
   on("[data-share]", function(){ shareDraft(d); });
   on("[data-tocover]", function(){ if(d.items.length){ coverDraft = null; go("#cover/my/"+cfg.id); } });
@@ -4836,13 +4948,6 @@ function renderDraftPage(d, cfg){
     });
   });
   if(cfg.cover){
-    if(app.querySelector("#c-voice")) bindToggle("c-voice", function(v){ s.voice = v; save(); neu(); });
-    var optT = app.querySelector("[data-opttoggle]");
-    function optUm(){ s.coverOpts = !s.coverOpts; save(); neu(); }
-    if(optT){
-      optT.addEventListener("click", optUm);
-      optT.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); optUm(); } });
-    }
     on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
     on("[data-coverhide]", function(){ libHide("wo:"+d.key.slice(4)); showToast(t("hiddenToast")); go("#library"); });
     on("[data-go]", function(){
@@ -4864,94 +4969,6 @@ function renderDraftPage(d, cfg){
       var nd = buildSurprise(d._params);
       if(nd){ coverDraft = nd; renderDraftPage(nd, cfg); window.scrollTo(0,0); }
     });
-  }
-
-  /* Drag & Drop am Griff: aus der Übungsliste ins Workout ziehen, im Workout umsortieren,
-     an den unteren Rand ziehen zum Entfernen. Die Workout-Liste bleibt oben stehen. */
-  var list = app.querySelector("#dz-list"), sticky = app.querySelector("#dz-sticky"), trash = app.querySelector("#dz-trash");
-  // die Liste bleibt direkt unter der (ebenfalls stehenden) Kopfzeile
-  var topH = (app.querySelector(".topbar") || { offsetHeight:0 }).offsetHeight;
-  sticky.style.top = topH+"px";
-  var drag = null;
-  app.querySelectorAll(".dz-row .dh").forEach(function(h){
-    h.addEventListener("pointerdown", function(e){
-      if(e.button) return;
-      e.preventDefault();
-      var rr = h.closest(".dz-row"), rect = rr.getBoundingClientRect();
-      var ghost = rr.cloneNode(true);
-      ghost.classList.add("dz-ghost");
-      ghost.style.width = rect.width+"px"; ghost.style.left = rect.left+"px"; ghost.style.top = rect.top+"px";
-      document.body.appendChild(ghost);
-      drag = { src:rr.getAttribute("data-src"), idx:parseInt(rr.getAttribute("data-idx")), ex:rr.getAttribute("data-ex"),
-               row:rr, ghost:ghost, ox:e.clientX-rect.left, oy:e.clientY-rect.top, x:e.clientX, y:e.clientY,
-               ph:null, at:-1, trash:false, moved:false, id:e.pointerId, h:h };
-      rr.classList.add("dz-dragging");
-      document.body.classList.add("dz-mode");
-      list.classList.add("dz-active");
-      if(drag.src==="list") trash.classList.add("show");
-      try{ h.setPointerCapture(e.pointerId); }catch(err){}
-      h.addEventListener("pointermove", ziehen);
-      h.addEventListener("pointerup", loslassen);
-      h.addEventListener("pointercancel", loslassen);
-      requestAnimationFrame(rollen);
-    });
-  });
-  function ziehen(e){
-    if(!drag || e.pointerId!==drag.id) return;
-    drag.x = e.clientX; drag.y = e.clientY; drag.moved = true;
-    drag.ghost.style.left = (e.clientX-drag.ox)+"px";
-    drag.ghost.style.top = (e.clientY-drag.oy)+"px";
-    ziel();
-  }
-  function ziel(){
-    var x = drag.x, y = drag.y;
-    drag.trash = drag.src==="list" && y >= window.innerHeight - 100;
-    trash.classList.toggle("hot", drag.trash);
-    var lr = sticky.getBoundingClientRect();
-    if(!drag.trash && y >= lr.top-30 && y <= lr.bottom+40 && x >= lr.left-30 && x <= lr.right+30){
-      var rows = Array.prototype.filter.call(list.querySelectorAll(".dz-row"), function(q){ return q!==drag.row; });
-      var at = rows.length;
-      for(var i=0;i<rows.length;i++){ var rc = rows[i].getBoundingClientRect(); if(y < rc.top + rc.height/2){ at = i; break; } }
-      if(!drag.ph){ drag.ph = document.createElement("div"); drag.ph.className = "dz-ph"; }
-      var leer = list.querySelector(".dz-empty"); if(leer) leer.style.display = "none";
-      if(at < rows.length) list.insertBefore(drag.ph, rows[at]); else list.appendChild(drag.ph);
-      drag.at = at;
-    } else if(drag.ph){
-      drag.ph.remove(); drag.ph = null; drag.at = -1;
-      var leer2 = list.querySelector(".dz-empty"); if(leer2) leer2.style.display = "";
-    }
-  }
-  function rollen(){
-    if(!drag) return;
-    if(drag.moved){
-      var lr = sticky.getBoundingClientRect();
-      // innerhalb der oben stehenden Liste: die Liste selbst scrollen
-      if(drag.y >= lr.top && drag.y <= lr.bottom && sticky.scrollHeight > sticky.clientHeight){
-        if(drag.y < lr.top + 40){ sticky.scrollTop -= 8; ziel(); }
-        else if(drag.y > lr.bottom - 40){ sticky.scrollTop += 8; ziel(); }
-      } else if(drag.y < topH + 40){ window.scrollBy(0, -12); ziel(); }
-      else if(!drag.trash && drag.y > window.innerHeight - 110){ window.scrollBy(0, 12); ziel(); }
-    }
-    requestAnimationFrame(rollen);
-  }
-  function loslassen(e){
-    if(!drag || (e && e.pointerId!==drag.id)) return;
-    var dd = drag; drag = null;
-    dd.h.removeEventListener("pointermove", ziehen);
-    dd.h.removeEventListener("pointerup", loslassen);
-    dd.h.removeEventListener("pointercancel", loslassen);
-    dd.ghost.remove();
-    document.body.classList.remove("dz-mode");
-    var geaendert = false;
-    if(dd.moved && e && e.type==="pointerup"){
-      if(dd.src==="list" && dd.trash){ d.items.splice(dd.idx, 1); geaendert = true; }
-      else if(dd.at >= 0){
-        if(dd.src==="pal"){ d.items.splice(dd.at, 0, itemFromEx(dd.ex)); geaendert = true; }
-        else { var it = d.items.splice(dd.idx, 1)[0]; d.items.splice(dd.at, 0, it); geaendert = dd.at !== dd.idx; }
-      }
-    }
-    if(geaendert) speichern();
-    neu();
   }
 }
 
@@ -5008,6 +5025,8 @@ function exProfile(ex){
       : (ex.cats.indexOf("back") > -1 || ex.cats.indexOf("arms") > -1) ? "upper" : "full";
   }
   if(ex.cats.indexOf("cardio") > -1 && region !== "lower") region = "full";
+  // Hauptmuskeln aus Unter- und Oberkörper (z. B. Burpees: Beine, Brust, Schultern) = Ganzkörper
+  if(/gesäß|oberschenkel|waden/.test(m) && /brust|trizeps|schulter|rücken|bizeps/.test(m)) region = "full";
   var pull = /breiter rückenmuskel|oberer rücken|bizeps|rauten|trapez|hintere schulter|unterarme \(griff\)/.test(m) ||
              (!m && ex.cats.indexOf("back") > -1);
   var push = /brust|trizeps|vordere schulter|^schultern/.test(m);
