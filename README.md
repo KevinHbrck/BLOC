@@ -154,3 +154,4 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.c
 - Einheitliche Übungs-Kachel `uebKachel()` (mit `kachelKlick()`): Workout-Baukasten, Übungsauswahl bei eigenen Challenges und „Aus der Bibliothek“ im Timer-Workout zeigen Übungen jetzt gleich - große Figur, Name, antippen = blau mit Position (im Timer-Workout nochmal = raus)
 - Eigenes Workout: **Speichern-Knopf** statt Sofort-Speichern. Der Baukasten arbeitet auf einer Kopie (`bauEntwurf`), „Neu“ legt erst beim Speichern (oder Start) an; Zurück mit Änderungen fragt nach und verwirft sonst
 - Workout-Auswahl (Baukasten, Überrasch mich, Tausch, Timer-Workout) ohne Übungen aus dem Freien Training (`STUDIO_NUR`, `fuerWorkout`) und ohne Dehnen
+- Übungs-Kacheln (Baukasten, Challenges, Timer-Workout) und Studio-Kacheln zeigen bewegte Figuren (`illuHTML`, nur sichtbare laufen; „Bewegung reduzieren“ = Standbild)

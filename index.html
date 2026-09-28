@@ -2604,7 +2604,7 @@ function uebKachel(o){
   var gewaehlt = o.nr && o.nr.length;
   return '<div class="fig-karte wb-kachel'+(gewaehlt ? ' gewaehlt' : '')+(o.klasse ? ' '+o.klasse : '')+'" role="button" tabindex="0" '+o.attr+
       (o.q ? ' data-q="'+esc(o.q)+'"' : '')+' style="--cat:'+(o.cat || 'var(--accent)')+'"'+(o.nr ? ' aria-pressed="'+!!gewaehlt+'"' : '')+'>'+
-    '<span class="fig-bild">'+(ILLU[o.bild] ? illuStillHTML(o.bild, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
+    '<span class="fig-bild">'+(ILLU[o.bild] ? illuHTML(o.bild, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
       (gewaehlt ? '<span class="wb-nr">'+o.nr.join("·")+'</span>' : '')+(o.innen || '')+'</span>'+
     '<span class="fig-name">'+esc(o.name)+'</span>'+(o.unter || '')+'</div>';
 }
@@ -3454,7 +3454,7 @@ function studioKachel(id){
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
   var sub = last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
   return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+catVar(ex.cats[0])+'">'+
-    '<span class="fig-bild">'+(ILLU[id] ? illuStillHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
+    '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
     '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span></div>';
 }
 function renderStudio(){
