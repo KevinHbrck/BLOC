@@ -1483,7 +1483,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .re-feld{ display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text-dim); text-align:center; }
 .re-feld input{ width:100%; text-align:center; padding:10px 4px; font-size:16px; font-variant-numeric:tabular-nums; }
 .re-pick{ display:flex; flex-direction:column; max-height:86vh; overflow:hidden; }
-.re-pick-liste{ flex:1 1 auto; min-height:0; overflow-y:auto; margin:8px 0 10px; }
+.re-pick-liste{ flex:1 1 auto; min-height:0; overflow-y:auto; margin:8px 0 10px; padding:4px; }
 .re-pick-opt{ display:flex; align-items:center; gap:12px; width:100%; min-height:54px; padding:6px 4px; background:none; border:0;
   border-bottom:1px solid var(--border); color:var(--text); font-size:15px; text-align:left; cursor:pointer; }
 .re-pick-opt .illu{ width:40px; height:40px; flex-shrink:0; color:var(--tp-color); }
@@ -2596,6 +2596,23 @@ function suchPasst(text, q){
   function ohneS(x){ return x.length > 3 ? x.replace(/s$/, "") : x; }
   if(nz.indexOf(ohneS(w.replace(/ /g, ""))) > -1) return true;
   return w.split(" ").every(function(x){ return n.indexOf(x) > -1 || nz.indexOf(ohneS(x)) > -1; });
+}
+/* Übungs-Kachel für alle Auswahlen: Figur groß, Name darunter; nr = Position(en) im Ablauf -> blau markiert.
+   o: { bild (Figur-ID), name, attr, q, cat, nr, innen (im Bild), unter (unter dem Namen), klasse } */
+function uebKachel(o){
+  var gewaehlt = o.nr && o.nr.length;
+  return '<div class="fig-karte wb-kachel'+(gewaehlt ? ' gewaehlt' : '')+(o.klasse ? ' '+o.klasse : '')+'" role="button" tabindex="0" '+o.attr+
+      (o.q ? ' data-q="'+esc(o.q)+'"' : '')+' style="--cat:'+(o.cat || 'var(--accent)')+'"'+(o.nr ? ' aria-pressed="'+!!gewaehlt+'"' : '')+'>'+
+    '<span class="fig-bild">'+(ILLU[o.bild] ? illuStillHTML(o.bild, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
+      (gewaehlt ? '<span class="wb-nr">'+o.nr.join("·")+'</span>' : '')+(o.innen || '')+'</span>'+
+    '<span class="fig-name">'+esc(o.name)+'</span>'+(o.unter || '')+'</div>';
+}
+/* Antippen und Enter/Leertaste für Kacheln (Knöpfe in der Kachel, z. B. Info und Stern, zählen nicht) */
+function kachelKlick(root, sel, fn){
+  root.querySelectorAll(sel).forEach(function(el){
+    el.addEventListener("click", function(e){ if(e.target.closest("[data-exinfo], [data-exfav]")) return; fn(el); });
+    el.addEventListener("keydown", function(e){ if(e.target === el && (e.key==="Enter" || e.key===" ")){ e.preventDefault(); fn(el); } });
+  });
 }
 function applySearch(root, q){
   q = (q || "").trim().toLowerCase();
@@ -3872,14 +3889,15 @@ function renderWorkoutEdit(id){
   }).join("") || '<div class="empty">'+t("noBlocksAvail")+' <br><a href="#blocks" style="color:var(--accent)">'+t("createBlockFirst")+'</a></div>';
 
   var pickCat = state.db.settings.libPickCat || "all";
+  var exPos = {};
+  w.items.forEach(function(it, i){ var b = findBlock(it.blockId); if(b && b.ex) (exPos[b.ex] = exPos[b.ex] || []).push(i+1); });
   var libPickHTML = catChipsHTML(pickCat, "data-pickcat") +
-    EXERCISES.filter(function(ex){
+    '<div class="fig-grid">'+EXERCISES.filter(function(ex){
       return !libHidden("ex:"+ex.id) && (pickCat==="all" || ex.cats.indexOf(pickCat) > -1);
     }).map(function(ex){
-      return '<div class="block-pick" data-addex="'+ex.id+'">'+
-        '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div><div class="sub">'+blockSpec(exBlock(ex))+'</div></div>'+
-        '<span class="chip">+</span></div>';
-    }).join("");
+      return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-addex="'+ex.id+'"', cat:catVar(ex.cats[0]), nr:exPos[ex.id] || [],
+        unter:'<span class="st-sub">'+blockSpec(exBlock(ex))+'</span>' });
+    }).join("")+'</div>';
 
   app.innerHTML =
     topbar(t("workout"), { back:"#timers", right:'<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
@@ -3913,16 +3931,14 @@ function renderWorkoutEdit(id){
       window.scrollTo(0, y);
     });
   });
-  app.querySelectorAll("[data-addex]").forEach(function(el){
-    el.addEventListener("click", function(){
-      var ex = findExercise(el.getAttribute("data-addex"));
-      if(!ex) return;
-      w.items.push({ blockId: adoptExercise(ex).id, restAfterSec: 30 });
-      w.updatedAt = Date.now();
-      save();
-      renderWorkoutEdit(id);
-      showToast(t("addedToWorkout", { n:tplText(ex.name) }));
-    });
+  kachelKlick(app, "[data-addex]", function(el){
+    var ex = findExercise(el.getAttribute("data-addex"));
+    if(!ex) return;
+    if(exPos[ex.id]) w.items = w.items.filter(function(it){ var b = findBlock(it.blockId); return !(b && b.ex === ex.id); });   // nochmal = raus
+    else w.items.push({ blockId: adoptExercise(ex).id, restAfterSec: 30 });
+    w.updatedAt = Date.now();
+    save();
+    var y = window.scrollY; renderWorkoutEdit(id); window.scrollTo(0, y);
   });
   app.querySelectorAll("[data-addblock]").forEach(function(el){
     el.addEventListener("click", function(){
@@ -4735,24 +4751,17 @@ function renderDraftPage(d, cfg){
   // Position(en) jeder Übung im Ablauf - für die blaue Markierung der Kacheln
   var pos = {};
   d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
-  function kachel(ex, extra){
-    var nr = pos[ex.id];
-    return '<div class="fig-karte wb-kachel'+(nr ? ' gewaehlt' : '')+'" role="button" tabindex="0" data-wbex="'+ex.id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+catVar(ex.cats[0])+'" aria-pressed="'+!!nr+'">'+
-      '<span class="fig-bild">'+(ILLU[ex.id] ? illuStillHTML(ex.id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
-        (nr ? '<span class="wb-nr">'+nr.join("·")+'</span>' : '')+
-        '<button type="button" class="wb-i" data-exinfo="'+ex.id+'" aria-label="'+esc(t("info"))+'">i</button>'+exFavBtn(ex.id)+'</span>'+
-      '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+(extra || '')+'</div>';
+  function kachel(ex){
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:catVar(ex.cats[0]), nr:pos[ex.id] || [],
+      innen:'<button type="button" class="wb-i" data-exinfo="'+ex.id+'" aria-label="'+esc(t("info"))+'">i</button>'+exFavBtn(ex.id) });
   }
   // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen
   function ablaufKachel(it, i){
     var ex = findExercise(it.ex);
     if(!ex) return "";
     var tm = itemTiming(d, it);
-    return '<div class="fig-karte wb-kachel wb-ablauf" role="button" tabindex="0" data-wbitem="'+i+'" style="--cat:'+catVar(ex.cats[0])+'">'+
-      '<span class="fig-bild">'+(ILLU[ex.id] ? illuStillHTML(ex.id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
-        '<span class="wb-nr">'+(i+1)+'</span></span>'+
-      '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+
-      '<span class="st-sub">'+timingText(tm, ex.perSide)+'</span></div>';
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbitem="'+i+'"', cat:catVar(ex.cats[0]), klasse:"wb-ablauf",
+      innen:'<span class="wb-nr">'+(i+1)+'</span>', unter:'<span class="st-sub">'+timingText(tm, ex.perSide)+'</span>' });
   }
   var streifen = d.items.map(function(it, i){
     var ex = findExercise(it.ex);
@@ -4892,10 +4901,7 @@ function renderDraftPage(d, cfg){
     }
     speichern(); neu();
   }
-  app.querySelectorAll("[data-wbex]").forEach(function(el){
-    el.addEventListener("click", function(e){ if(e.target.closest("[data-exinfo], [data-exfav]")) return; kachelTipp(el); });
-    el.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); kachelTipp(el); } });
-  });
+  kachelKlick(app, "[data-wbex]", kachelTipp);
   on("[data-exinfo]", function(el, e){ e.stopPropagation(); openExInfo(el.getAttribute("data-exinfo"), false); });
   on("[data-exfav]", function(el, e){ e.stopPropagation(); toggleExFav(el.getAttribute("data-exfav")); neu(); });   // Stern: steht dann oben
 
@@ -5779,18 +5785,16 @@ function repExPicker(onPick){
   var liste = Object.keys(REP_PSEUDO).map(function(k){ var n = tplText(REP_PSEUDO[k]); return { id:k, name:n, q:n.toLowerCase() }; }).concat(ex);
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet re-pick" role="dialog" aria-label="'+esc(t("myAdd"))+'">'+
     '<h3>'+esc(t("myAdd"))+'</h3>'+searchHTML("", "re", t("searchPh"))+
-    '<div class="re-pick-liste">'+liste.map(function(o){
-      var b = repIllu(o.id) ? illuStillHTML(repIllu(o.id), "") : "";
-      return '<button type="button" class="re-pick-opt" data-repick="'+o.id+'" data-q="'+esc(o.q)+'">'+(b || '<span class="rep-leer"></span>')+'<span>'+esc(o.name)+'</span></button>';
-    }).join("")+'<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div></div>'+
+    '<div class="re-pick-liste"><div class="fig-grid">'+liste.map(function(o){
+      var e = findExercise(o.id);
+      return uebKachel({ bild:repIllu(o.id), name:o.name, attr:'data-repick="'+o.id+'"', q:o.q, cat:e ? catVar(e.cats[0]) : "" });
+    }).join("")+'</div><div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div></div>'+
     '<button class="btn btn-secondary" data-reclose>'+t("cancel")+'</button>'+
   '</div></div>';
   function close(){ root.innerHTML = ""; }
   var box = root.querySelector(".re-pick-liste"), q = root.querySelector("#re-q");
   q.addEventListener("input", function(){ applySearch(box, q.value); });
-  root.querySelectorAll("[data-repick]").forEach(function(b){
-    b.addEventListener("click", function(){ var id = b.getAttribute("data-repick"); close(); onPick(id); });
-  });
+  kachelKlick(root, "[data-repick]", function(b){ var id = b.getAttribute("data-repick"); close(); onPick(id); });
   root.querySelector("[data-reclose]").addEventListener("click", close);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
 }
