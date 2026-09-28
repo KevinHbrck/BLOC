@@ -1974,7 +1974,7 @@ var I18N = {
     snapDays:"vor {n} Tagen", snapRestore:"Stand vom {d} wiederherstellen", snapQ:"Schnappschuss wiederherstellen?",
     snapText:"Deine aktuellen Daten werden durch den Stand vom {d} ersetzt.", snapBtn:"Wiederherstellen",
     snapInfo:"Alle 7 Tage automatisch eine Kopie auf diesem Gerät.",
-    backupTipTitle:"Lange nicht gesichert", backupTipText:"Sichere deine eigenen Workouts und Übungen als Datei.",
+    backupTipTitle:"Lange nicht gesichert", backupTipText:"Sichere deine eigenen Workouts, Übungen und Gewichte als Datei.",
     backupNow:"Jetzt sichern", shareBackup:"Sicherung teilen (z. B. Drive, Mail)", backupShared:"Sicherung übergeben",
     wbAblauf:"Dein Ablauf", wbWaehlen:"Übungen wählen", wbTippen:"Antippen = dazu, nochmal antippen = raus.",
     wbLeer:"Noch leer – tippe unten Übungen an.", wbOrdnen:"Sinnvoll ordnen", wbGeordnet:"Geordnet: große Übungen zuerst, Wechsel der Muskelgruppen, Dehnen am Ende",
@@ -2162,7 +2162,7 @@ var I18N = {
     snapDays:"{n} days ago", snapRestore:"Restore state from {d}", snapQ:"Restore snapshot?",
     snapText:"Your current data will be replaced with the state from {d}.", snapBtn:"Restore",
     snapInfo:"An automatic copy on this device every 7 days.",
-    backupTipTitle:"No recent backup", backupTipText:"Back up your own workouts and exercises as a file.",
+    backupTipTitle:"No recent backup", backupTipText:"Back up your own workouts, exercises and weights as a file.",
     backupNow:"Back up now", shareBackup:"Share backup (e.g. Drive, mail)", backupShared:"Backup handed over",
     wbAblauf:"Your sequence", wbWaehlen:"Pick exercises", wbTippen:"Tap = add, tap again = remove.",
     wbLeer:"Still empty – tap exercises below.", wbOrdnen:"Smart order", wbGeordnet:"Ordered: big lifts first, alternating muscle groups, stretches last",
@@ -3092,6 +3092,11 @@ window.addEventListener("hashchange", function(){
   syncGuard();
   render();
 });
+/* Daten dauerhaft behalten: der Browser soll sie auch bei knappem Speicher nicht von sich aus löschen */
+function datenDauerhaft(){
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(function(ja){ if(!ja) navigator.storage.persist(); }).catch(function(){}); }catch(e){}
+}
+window.addEventListener("load", datenDauerhaft);
 window.addEventListener("load", function(){
   var initial = location.hash || "#home";
   navStack = initial === "#home" ? ["#home"] : ["#home", initial];
@@ -5166,6 +5171,28 @@ function buildSurprise(p){
       if(rotate.every(function(c){ return covered[c]; })) covered = {};   // nächste Runde reihum
     }
   }
+  /* Jedes zweite „Überrasch mich“ enthält eine Burpee-Variante (passend zu Ausrüstung und Stufe) */
+  if(picked.length && !anzahl){
+    var st = state.db.settings;
+    st.spZahl = (st.spZahl || 0) + 1; save();
+    var istBurpee = function(ex){ return /burpee/.test(ex.id); };
+    if(st.spZahl % 2 === 0 && !picked.some(istBurpee)){
+      var bur = EXERCISES.filter(function(ex){
+        return istBurpee(ex) && fuerWorkout(ex) && !libHidden("ex:"+ex.id) && equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains) &&
+          (p.level !== 1 || (EX_INT[ex.id] || 2) < 3);   // locker: nur die sanften
+      });
+      var frisch = bur.filter(function(ex){ return !recent[ex.id]; });
+      bur = frisch.length ? frisch : bur;
+      if(bur.length){
+        var neuB = bur[Math.floor(Math.random()*bur.length)];
+        // ersetzt am liebsten eine Ausdauer- oder Ganzkörperübung, sonst die zweite
+        var platz = -1;
+        picked.forEach(function(ex, i){ if(platz < 0 && (ex.main === "ausdauer" || exProfile(ex).region === "full")) platz = i; });
+        if(platz < 0) platz = Math.min(1, picked.length - 1);
+        picked[platz] = neuB;
+      }
+    }
+  }
   var items = picked.map(function(ex){ return { ex:ex.id, reps:tm.reps, work:tm.work, rest:tm.rest }; });
 
   /* Dehnübungen: passend zu den trainierten Bereichen, jede nur einmal, 10 s zum Umsetzen */
@@ -5316,11 +5343,13 @@ function exportBackup(){
   save();
 }
 function hatEigenes(db){
-  return !!(db && ((db.blocks||[]).length || (db.workouts||[]).length || (db.myWorkouts||[]).length || (db.customEx||[]).length));
+  var st = (db && db.settings) || {};
+  return !!(db && ((db.blocks||[]).length || (db.workouts||[]).length || (db.myWorkouts||[]).length || (db.customEx||[]).length ||
+    Object.keys(st.studio || {}).length || (st.myReps || []).length));   // auch Gewichte im Freien Training und eigene Challenges
 }
-/* Erinnerung: eigene Inhalte, aber seit 28 Tagen (oder nie) exportiert. Der Installations-Hinweis hat Vorrang,
+/* Erinnerung: eigene Inhalte, aber seit 14 Tagen (oder nie) exportiert. Der Installations-Hinweis hat Vorrang,
    × blendet sie nur für diese Sitzung aus. */
-var BACKUP_TAGE = 28;
+var BACKUP_TAGE = 14;
 function backupTipHTML(){
   if(installTipHTML()) return "";
   try{ if(sessionStorage.getItem("bloc-backup-tip-weg") === "1") return ""; }catch(e){}

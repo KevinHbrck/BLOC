@@ -155,3 +155,6 @@ Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.c
 - Eigenes Workout: **Speichern-Knopf** statt Sofort-Speichern. Der Baukasten arbeitet auf einer Kopie (`bauEntwurf`), „Neu“ legt erst beim Speichern (oder Start) an; Zurück mit Änderungen fragt nach und verwirft sonst
 - Workout-Auswahl (Baukasten, Überrasch mich, Tausch, Timer-Workout) ohne Übungen aus dem Freien Training (`STUDIO_NUR`, `fuerWorkout`) und ohne Dehnen
 - Übungs-Kacheln (Baukasten, Challenges, Timer-Workout) und Studio-Kacheln zeigen bewegte Figuren (`illuHTML`, nur sichtbare laufen; „Bewegung reduzieren“ = Standbild)
+- Daten dauerhaft: `datenDauerhaft()` bittet den Browser per `navigator.storage.persist()`, nichts von sich aus zu löschen. Sicherungs-Erinnerung nach 14 statt 28 Tagen und auch für Gewichte im Freien Training und eigene Challenges
+- Jedes zweite „Überrasch mich“ (Zähler `settings.spZahl`) enthält eine Burpee-Variante, passend zu Ausrüstung und Stufe
+- Neue Übungen **Jump Forward Squats** und **Jump Forward Burpees** (Weitsprung nach vorn, Figur mit nach vorn geneigter Flugphase `JF_AIR`)

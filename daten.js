@@ -40,6 +40,8 @@ var EXERCISE_ROWS = [
   ["jump-lunges","Jump Lunges","Jump Lunges","cardio legs",6,30,0,"Beinwechsel im Sprung, weich landen","Switch legs in the air, land softly"],
   ["plank-burpees","Plank Burpees","Plank Burpees","cardio",6,30,0,"Ohne Liegestütz und Sprung möglich","Can be done without push-up and jump"],
   ["burpee-squat-jumps","Burpee Squat Jumps","Burpee Squat Jumps","cardio",5,30,0,"Fortgeschritten","Advanced"],
+  ["jump-forward-squats","Jump Forward Squats","Jump Forward Squats","cardio legs",6,30,0,"Weit nach vorn springen, weich landen","Jump far forward, land softly"],
+  ["jump-forward-burpees","Jump Forward Burpees","Jump Forward Burpees","cardio",5,30,0,"Burpee, dann weit nach vorn springen","Burpee, then jump far forward"],
   ["frogs","Frogs","Frogs","cardio",6,30,0,"Aus tiefer Position explosiv","Explode from a deep position"],
   ["stand-up-jumps","Stand-up Jumps","Stand-up Jumps","cardio",5,20,0,"Fortgeschritten, sauber aufstehen","Advanced, stand up cleanly"],
   ["lateral-hops","Lateral Hops","Lateral Hops","cardio",6,30,0,"Kleine schnelle Seitensprünge","Small, quick side hops"],
@@ -296,7 +298,7 @@ var LIB_WORKOUT_ROWS = [
    Ausrüstung: "none" = ohne Geräte (Stuhl, Stufe oder Wand reichen), sonst db/kb/bar - mehrere = eins davon genügt. */
 var EX_LEVEL = {
   "burpees":2,"jump-squats":2,"mountain-climbers":2,"high-knees":1,"jumping-jacks":1,"skater-jumps":2,"jump-lunges":3,"plank-burpees":1,
-  "burpee-squat-jumps":3,"frogs":3,"stand-up-jumps":3,"lateral-hops":2,"fast-feet":1,"box-step-ups":1,"sprint-in-place":2,
+  "burpee-squat-jumps":3,"jump-forward-squats":2,"jump-forward-burpees":3,"frogs":3,"stand-up-jumps":3,"lateral-hops":2,"fast-feet":1,"box-step-ups":1,"sprint-in-place":2,
   "goblet-squat":1,"kb-swing":2,"db-thruster":2,"romanian-deadlift":2,"db-deadlift":1,"bent-over-row":1,"one-arm-row":1,"floor-press":1,
   "shoulder-press":1,"push-press":2,"weighted-reverse-lunge":2,"front-rack-carry":2,"farmer-carry":1,"kb-clean":3,"renegade-row":3,
   "push-ups":2,"pike-push-ups":3,"triceps-dips":2,"squat-hold":1,"walking-lunges":2,"reverse-lunges":1,"side-lunges":2,"cossack-squats":3,
@@ -323,7 +325,7 @@ var EX_LEVEL = {
    sind schwer, aber nicht unbedingt intensiv für den Kreislauf. Nicht aufgeführt = 2. Dehnübungen spielen hier keine Rolle. */
 var EX_INT = {
   /* intensiv: explosiv, springend, Ganzkörper mit hohem Puls */
-  "burpees":3,"jump-squats":3,"jump-lunges":3,"mountain-climbers":3,"high-knees":3,"skater-jumps":3,"burpee-squat-jumps":3,
+  "burpees":3,"jump-squats":3,"jump-lunges":3,"mountain-climbers":3,"high-knees":3,"skater-jumps":3,"burpee-squat-jumps":3,"jump-forward-squats":3,"jump-forward-burpees":3,
   "frogs":3,"stand-up-jumps":3,"sprint-in-place":3,"tuck-jumps":3,"kb-swing":3,"db-thruster":3,"kb-clean":3,"push-press":3,
   "renegade-row":3,"burpee-pull-ups":3,"clap-push-ups":3,"muscle-ups":3,"pull-ups":3,"chin-ups":3,"commando-pull-ups":3,
   "toes-to-bar":3,"rung-pull-ups":3,"pistol-squats":3,"bulgarian-split-squats":3,"jackknives":3,"side-jackknives":3,"bear-crawl":3,
@@ -364,7 +366,7 @@ var MAIN_CATS = [
     ico:'<path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19l8-8"/>' }
 ];
 var EX_MAIN_ROWS = {
-  ausdauer:"box-step-ups burpee-squat-jumps burpees fast-feet frogs high-knees jump-lunges jump-squats jumping-jacks lateral-hops mountain-climbers plank-burpees skater-jumps sprint-in-place stand-up-jumps tuck-jumps",
+  ausdauer:"box-step-ups burpee-squat-jumps jump-forward-squats jump-forward-burpees burpees fast-feet frogs high-knees jump-lunges jump-squats jumping-jacks lateral-hops mountain-climbers plank-burpees skater-jumps sprint-in-place stand-up-jumps tuck-jumps",
   rumpf:"bicycle-crunches dead-bug dragon-flags hollow-hold leg-raises plank plank-shoulder-taps reverse-crunch russian-twists side-jackknives side-plank sit-ups toe-touches jackknives",
   stange:"chin-ups commando-pull-ups rung-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups burpee-pull-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
   stretch:"hamstring-stretch biceps-stretch chest-stretch spinal-twist figure-four wrist-stretch downward-dog hip-flexor-stretch cat-cow childs-pose neck-stretch quad-stretch butterfly-stretch shoulder-stretch side-bend sphinx-stretch cobra-lift pigeon-stretch triceps-stretch forward-fold calf-stretch worlds-greatest arm-circles"
@@ -383,6 +385,7 @@ var EQUIPS = [
 var EX_SUCH_ALIAS = { "russian-twists":"russian twist twists russische drehung russischer",
   "pull-ups":"klimmzug klimmzuge", "chin-ups":"klimmzug untergriff", "negative-pull-ups":"klimmzug negativ",
   "scapular-pull-ups":"schulterblatt klimmzug", "commando-pull-ups":"klimmzug", "push-ups":"liegestutz liegestutze",
+  "jump-forward-squats":"weitsprung broad jump sprung nach vorn kniebeuge", "jump-forward-burpees":"weitsprung broad jump burpee sprung nach vorn",
   "rung-pull-ups":"hangelleiter sprossen klimmzug monkey bar zwischen den sprossen", "lat-pulldown":"lat zug latziehen", "leg-press":"beinpresse", "leg-press-45":"beinpresse schlitten",
   "skull-crusher":"french press trizeps liegend stirndrücken", "pullover":"überzüge ueberzug", "butterfly":"pec deck fliegende",
   "reverse-butterfly":"reverse fly hintere schulter", "biceps-machine":"scott curl bizeps", "back-extension":"hyperextension",
@@ -655,6 +658,7 @@ var BS_RUNTER = Q(null,[51,21],[50,50],[[62,60,62,76,70,76],[45,69,42,89,49,89]]
 /* Jump Lunges: Ausfallschritt (vorderes Bein vorn, Gegenarm vorn) -> Flug mit Beinen in der Mitte -> Ausfallschritt andersherum */
 var JL_A   = Q(null,[50,33],[48,63],[[68,70,68,89,75,89],[41,83,23,85,17,89]],[[43,43,36,52],[58,43,68,51]]);
 var JL_AIR = qShift(Q(null,[50,16],[50,46],[[56,65,53,83,60,85],[44,66,41,84,47,87]],[[56,24,62,31],[44,24,38,31]]), 0, -11);
+var JF_AIR = Q(null,[58,8],[48,34],[[44,52,34,64,36,72]],[[68,8,78,2]]);
 var ILLU_SEQ = {
   "jumping-jacks": { k:[JJ_ZU, JJ_LUFT, JJ_AUF, JJ_LUFT], t:[[.1,.2,"o"],[.03,.2,"i"],[.1,.2,"o"],[.03,.2,"i"]] },
   "skater-jumps":  { k:[SK_L, SK_AIR, qMirror(SK_L), SK_AIR], t:[[.1,.18,"o"],[.02,.18,"i"],[.1,.18,"o"],[.02,.18,"i"]] },
@@ -671,6 +675,14 @@ var ILLU_SEQ = {
   "burpee-squat-jumps": { k:jSeq([J_ST, B_SQH, B_PL, B_PUL, B_PL, B_SQH, J_SQB, J_AIR]), t:[[.2,.38],[.04,.28],[.06,.3],[.08,.3],[.04,.28],[.04,.26],[.06,.3,"o"],[.06,.38,"i"]] },
   "frogs":        { k:jSeq([B_SQH, J_AIR]), t:[[.26,.34,"o"],[.06,.42,"i"]] },
   "stand-up-jumps": { k:jSeq([P_LBK, J_SQF, J_AIR, J_SQF]), t:[[.25,.5],[.04,.3,"o"],[.06,.36,"i"],[.1,.5]] },
+  /* Flug beim Weitsprung: Oberkörper nach vorn geneigt, Arme vorn oben, Beine ziehen gebeugt hinterher */
+  /* Jump Forward Squats: Hocke hinten -> weiter Sprung nach vorn -> Landung in der Hocke -> aufrichten, zurückgehen */
+  "jump-forward-squats": { k:jSeq([qShift(J_SQB,-15,0), JF_AIR, qShift(J_SQF,15,0), qShift(J_ST,15,0), qShift(J_ST,-15,0)]),
+                           t:[[.2,.32,"o"],[.04,.36,"i"],[.16,.3],[.1,.6,"l"],[.08,.3]] },
+  /* Jump Forward Burpees: Burpee mit Liegestütz, Füße zu den Händen, dann weit nach vorn springen */
+  "jump-forward-burpees": { k:jSeq([qShift(J_ST,-15,0), qShift(B_SQH,-15,0), qShift(B_PL,-15,0), qShift(B_PUL,-15,0), qShift(B_PL,-15,0), qShift(B_SQH,-15,0),
+                                    qShift(J_SQB,-15,0), JF_AIR, qShift(J_SQF,15,0), qShift(J_ST,15,0)]),
+                            t:[[.18,.36],[.04,.28],[.06,.3],[.08,.3],[.04,.28],[.04,.24],[.04,.3,"o"],[.04,.36,"i"],[.14,.3],[.1,.6,"l"]] },
   "burpee-pull-ups": { k:jSeq([J_ST, B_SQH, B_PL, B_PUL, B_PL, B_SQH, BP_HANG, BP_PULL, BP_HANG], .78).map(function(q){ return qWith(q, { x:gBar(8,26,74) }); }),
                        t:[[.18,.34],[.03,.26],[.06,.3],[.08,.3],[.03,.26],[.03,.32,"o"],[.1,.45],[.16,.45],[.06,.4,"i"]] }
 };
@@ -685,7 +697,9 @@ Object.assign(ILLU_POSES, {
   "burpee-squat-jumps": [ILLU_SEQ["burpee-squat-jumps"].k[7], ILLU_SEQ["burpee-squat-jumps"].k[2]],
   "frogs":       [ILLU_SEQ["frogs"].k[0], ILLU_SEQ["frogs"].k[1]],
   "stand-up-jumps": [ILLU_SEQ["stand-up-jumps"].k[0], ILLU_SEQ["stand-up-jumps"].k[2]],
-  "burpee-pull-ups": [ILLU_SEQ["burpee-pull-ups"].k[7], ILLU_SEQ["burpee-pull-ups"].k[2]]
+  "burpee-pull-ups": [ILLU_SEQ["burpee-pull-ups"].k[7], ILLU_SEQ["burpee-pull-ups"].k[2]],
+  "jump-forward-squats": [ILLU_SEQ["jump-forward-squats"].k[1], ILLU_SEQ["jump-forward-squats"].k[0]],
+  "jump-forward-burpees": [ILLU_SEQ["jump-forward-burpees"].k[7], ILLU_SEQ["jump-forward-burpees"].k[2]]
 });
 
 /* Zweite Ansicht fürs Info-Fenster - dort, wo die Seitenansicht die Bewegung nicht zeigt.
@@ -936,6 +950,8 @@ var EX_INFO = {
   "jumping-jacks":["Aufrecht stehen, Füße zusammen, Arme am Körper.|Mit einem Sprung die Beine grätschen und die Arme über den Kopf führen.|Zurück in die Ausgangsposition springen, locker und rhythmisch bleiben.","Stand tall, feet together, arms at your sides.|Jump your feet out wide and raise your arms overhead.|Jump back to the start, staying light and rhythmic."],
   "skater-jumps":["Auf einem Bein stehen, Knie leicht gebeugt, das andere Bein hinten gekreuzt.|Seitlich auf das andere Bein springen, wie ein Eisschnellläufer.|Weich landen, kurz stabilisieren und zurückspringen.","Stand on one leg, knee slightly bent, other leg crossed behind.|Leap sideways onto the other leg like a speed skater.|Land softly, stabilise briefly and leap back."],
   "plank-burpees":["In die Hocke gehen und die Hände vor den Füßen aufsetzen.|Beine nach hinten in den Liegestütz springen oder steigen.|Zurück in die Hocke und aufrichten, ohne Liegestütz und ohne Sprung.","Squat down and place your hands in front of your feet.|Jump or step your feet back into a plank.|Return to the squat and stand up, no push-up and no jump."],
+  "jump-forward-squats":["Hüftbreit stehen, in die Kniebeuge gehen und die Arme nach hinten nehmen.|Mit kräftigem Armschwung schräg nach vorn oben abspringen, so weit es geht.|Weich in der Hocke landen, kurz stabilisieren, aufrichten und zurück an den Start gehen.","Stand hip-width apart, squat down and swing your arms back.|Drive your arms forward and jump up and out as far as you can.|Land softly in a squat, stabilise, stand up and walk back to the start."],
+  "jump-forward-burpees":["Wie ein Burpee: Hocke, Hände aufsetzen, Beine in den Liegestütz, ein Liegestütz.|Füße zurück zu den Händen springen und die Arme nach hinten nehmen.|Weit nach vorn springen, weich in der Hocke landen - von dort geht es direkt mit dem nächsten Burpee weiter.","Like a burpee: squat, hands down, feet back into a plank, one push-up.|Jump your feet back to your hands and swing your arms back.|Jump far forward and land softly in a squat - go straight into the next burpee from there."],
   "burpee-squat-jumps":["Wie ein Burpee: Hocke, Hände aufsetzen, Beine in den Liegestütz, ein Liegestütz.|Füße zurück zu den Händen springen.|Aus der tiefen Hocke explosiv in einen Strecksprung, weich landen.","Like a burpee: squat, hands down, feet back into a plank, one push-up.|Jump your feet back to your hands.|Explode from the deep squat into a jump and land softly."],
   "frogs":["Tiefe Hocke, Füße etwas breiter als hüftbreit, Hände am Boden.|Explosiv nach oben springen und den Körper ganz strecken.|Kontrolliert zurück in die tiefe Hocke landen, Hände wieder zum Boden.","Deep squat, feet a bit wider than hips, hands on the floor.|Jump up explosively and fully extend your body.|Land with control back into the deep squat, hands to the floor."],
   "stand-up-jumps":["Auf dem Rücken liegen, Knie angewinkelt.|Möglichst zügig aufstehen, am besten ohne die Hände.|Oben in einen Strecksprung übergehen und sich kontrolliert wieder hinlegen.","Lie on your back with your knees bent.|Get up as quickly as you can, ideally without using your hands.|Finish with a jump, then lie back down with control."],
@@ -1076,6 +1092,8 @@ var EX_POSTURE = {
   "jumping-jacks":["Rumpf aufrecht, Bauch leicht angespannt.|Weich landen, Knie leicht gebeugt und in Fußrichtung.","Mit gestreckten Knien hart landen.","Torso upright, abs lightly braced.|Land softly, knees slightly bent and over your toes.","Landing hard with locked knees."],
   "skater-jumps":["Oberkörper leicht nach vorn, Rücken gerade.|Standknie über dem Fuß, Hüfte stabil.","Das Standknie bei der Landung nach innen knicken lassen.","Lean slightly forward with a flat back.|Standing knee over your foot, hips stable.","Letting the landing knee collapse inward."],
   "plank-burpees":["Im Stütz Kopf, Rücken und Beine in einer Linie.|In der Hocke Brust nach vorn, Rücken lang.","Im Stütz ins Hohlkreuz fallen.","In the plank, head, back and legs in one line.|In the squat, chest forward, back long.","Dropping into an arched lower back in the plank."],
+  "jump-forward-squats":["Knie zeigen beim Absprung und bei der Landung in Fußrichtung.|Landung leise über den ganzen Fuß, Hüfte geht nach hinten.","Mit gestreckten Beinen landen oder nach vorn überkippen.","Knees track over your toes on take-off and landing.|Land quietly on the whole foot, hips back.","Landing stiff-legged or tipping forward."],
+  "jump-forward-burpees":["Stütz mit festem Rumpf, Hüfte auf Schulterhöhe.|Landung weich in der Hocke, Knie in Fußrichtung.","Nach der Landung mit rundem Rücken direkt in die Hände fallen.","Plank with a braced core, hips level with shoulders.|Land softly in a squat, knees over your toes.","Collapsing onto your hands with a rounded back after landing."],
   "burpee-squat-jumps":["Stütz mit festem Rumpf, Hüfte auf Schulterhöhe.|Absprung und Landung mit Knien in Fußrichtung.","Unkontrolliert mit rundem Rücken aufrichten.","Plank with a braced core, hips level with shoulders.|Take off and land with knees over your toes.","Standing up uncontrolled with a rounded back."],
   "frogs":["In der Hocke Brust hoch, Rücken lang, Fersen möglichst am Boden.|Knie zeigen nach außen in Fußrichtung.","Den Rücken in der tiefen Hocke rund machen.","In the squat, chest up, back long, heels down if you can.|Knees point out over your toes.","Rounding your back at the bottom."],
   "stand-up-jumps":["Beim Aufstehen Füße flach, Oberkörper nach vorn über die Füße bringen.|Weich landen, Knie in Fußrichtung.","Sich ruckartig mit rundem Rücken hochreißen.","As you stand, feet flat and bring your chest over your feet.|Land softly, knees over your toes.","Jerking up with a rounded back."],
@@ -1330,6 +1348,8 @@ var EX_MUSCLES = {
   "jumping-jacks":["Waden, seitliches Gesäß, Schultern","Adduktoren, Ausdauer","Calves, side glutes, shoulders","Adductors, endurance"],
   "skater-jumps":["Seitliches Gesäß, Oberschenkel vorn","Adduktoren, Waden, Rumpf","Side glutes, quads","Adductors, calves, core"],
   "plank-burpees":["Oberschenkel vorn, Rumpf","Schultern, Gesäß, Ausdauer","Quads, core","Shoulders, glutes, endurance"],
+  "jump-forward-squats":["Oberschenkel vorn, Gesäß, Waden","Oberschenkel hinten, Rumpf, Schultern (Armschwung)","Quads, glutes, calves","Hamstrings, core, shoulders (arm swing)"],
+  "jump-forward-burpees":["Oberschenkel vorn, Gesäß, Brust","Waden, Schultern, Trizeps, Rumpf, Ausdauer","Quads, glutes, chest","Calves, shoulders, triceps, core, endurance"],
   "burpee-squat-jumps":["Oberschenkel vorn, Gesäß, Waden","Brust, Schultern, Rumpf, Ausdauer","Quads, glutes, calves","Chest, shoulders, core, endurance"],
   "frogs":["Oberschenkel vorn, Gesäß, Adduktoren","Waden, Rumpf, Ausdauer","Quads, glutes, adductors","Calves, core, endurance"],
   "stand-up-jumps":["Oberschenkel vorn, Gesäß, Rumpf","Hüftbeuger, Waden, Ausdauer","Quads, glutes, core","Hip flexors, calves, endurance"],
