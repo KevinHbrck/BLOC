@@ -1,172 +1,88 @@
-# BLOC – Modular Training Builder (Sport Timer)
+# BLOC – Modular Training Builder
 
-Minimalistischer Intervall-Timer für Workouts. Läuft als PWA (Progressive Web App) direkt im
-Browser auf iOS und Android, ganz ohne App Store. Zwei Design-Welten zur Wahl: ein schlichtes,
-modernes Design (System/Hell/Dunkel) und drei Vintage-Designs – „Retro" mit rot-blauen
-Zierstreifen im Sportlook der 70er/80er und „C60" mit rot-orange-gelben Streifen im Stil alter
-Kompaktkassetten (Low Noise), beide auf cremefarbenem Papier, sowie „Tapedeck" als dunkles
-Nachtdesign wie ein Hi-Fi-Kassettendeck der 80er. Die App spricht Deutsch und Englisch.
+Trainings-App für Intervall-Workouts, Studio-Training und Challenges. Läuft als PWA direkt im Browser
+(Android und iOS), ohne App Store, ohne Konto – alle Daten bleiben auf dem Gerät. Deutsch und Englisch.
 
-## Konzept
+Dieses Dokument beschreibt den **aktuellen Stand**. Wie die App dahin gekommen ist, steht in [VERLAUF.md](VERLAUF.md).
 
-- **Block**: eine Übung mit Wiederholungen, z. B. „6 × 30 Sek. Arbeit / 10 Sek. Pause".
-- **Workout**: mehrere Blöcke hintereinander, mit einstellbarer Pause zwischen den Blöcken.
-- Blöcke werden einmal angelegt und können in beliebig vielen Workouts wiederverwendet werden.
+## Aufbau
 
-## Aufbau der App
+**Startseite:** Wochenzeile (Trainings dieser Woche), Favoriten (☆, höchstens vier sichtbar, Rest über
+„Alle anzeigen“) und die Bereiche – **Workouts** als große Karte vorn, darunter als Liste **Timer**
+(direkt zu den Timer-Workouts), **Freies Training**, **Challenges** und **Aufwärmen & Dehnen**.
+Beim allerersten Start erklärt eine kurze Einführung die Bereiche (später unter Einstellungen).
 
-- **Startseite**: Favoriten (☆ – fertige und eigene Workouts, Timer-Workouts und Blöcke) als kompakte Kacheln zu zweit nebeneinander mit Stern-Markierung, zuletzt gestartete zuerst, höchstens vier sichtbar, der Rest über „Alle anzeigen“ rechts neben der Überschrift; darunter die große Karte **Überrasch mich** und vier Bereichs-Kacheln im 2×2-Raster: **Freies Training** (Studio, Timer und Blöcke; blau, wie Blöcke in Favoriten und Listen), **Workouts** (grün, die Bibliothek; Pulskurve), **Challenges** (Rep-Workouts; Pokal) und **Aufwärmen & Dehnen** (türkis).
-- **Timer**: Timer-Workouts und Blöcke; das **+** an einem Timer-Workout füllt es per „Überrasch mich“ mit einer gewählten Anzahl Übungen (z. B. 12 × Bauch), jede Übung wird ein Block; (Intervall-Timer mit fest gespeicherten Zeiten) auf einer Seite mit zwei Reitern; ☆ holt einen Eintrag auf die Startseite.
-- **Bibliothek**: Reiter **Workouts** (alle fertigen Workouts, automatisch nach Dauer sortiert) · **Übungen** · **Meine** (eigene Workouts, nach Dauer, ohne Filter – nur „Überrasch mich“ und die Liste); Suche mit Filter-Knopf, darunter fünf **Kategorie-Kacheln** mit farbigem Symbol und Anzahl (Kraft, Ausdauer, Rumpf, Stangenpark, Stretch – Mehrfachauswahl) und – über den Filter-Knopf aufklappbar – das **Filterfeld** mit Fokus, Ausrüstung, Sortierung und „Zurücksetzen“; „Überrasch mich“ steht in jedem Reiter; schlanke Karten mit ☆ und ⋯-Menü; + unten legt je nach Reiter eine eigene Übung bzw. ein eigenes Workout an.
-- **Kategorien & Filterlogik**: Jede Übung gehört zu genau einer Hauptkategorie (`EX_MAIN_ROWS` in daten.js, nach der Liste „BLOC – Kategorien und Attribute“). Suche, Baukasten und Überrasch mich grenzen zuerst nach Kategorie ein, danach wirken Fokus (Cardio, Gewicht, Bodyweight, Rücken, Beine, Bauch / Core, Arme, Calisthenics, Dehnen) und Ausrüstung als kombinierbare Mehrfach-Filter (innerhalb einer Ebene „oder“, zwischen den Ebenen „und“). Stangen- und Barrenübungen gibt es nur im Stangenpark. Workouts stehen in jeder Kategorie, die mindestens ein Viertel ihrer Übungen stellt – ein Workout kann also in mehreren Kacheln auftauchen.
-- **Übersicht** vor dem Start: nur „Los geht's“ groß, darunter beschriftete Symbole (Favorit, Speichern, Teilen, Neu mischen, Ausblenden); die Übungsliste zeigt nur Namen und Zeiten.
+| Bereich | Inhalt |
+|---|---|
+| **Workouts** | Reiter Workouts · Übungen · Meine. Suche, Kategorie-Kacheln (Kraft, Ausdauer, Rumpf, Stangenpark), darunter die aufklappbare Filterzeile „Fokus, Ausrüstung & Sortierung“. „Überrasch mich“ oben rechts. Eigene Workouts im Baukasten: Übungs-Kacheln antippen, Ablauf-Streifen, „Sinnvoll ordnen“, Speichern-Knopf |
+| **Timer** | Timer-Workouts aus Blöcken (Block = eine Übung mit Runden, Arbeit, Pause); + füllt ein Timer-Workout per „Überrasch mich“ |
+| **Freies Training** | Reiter Studio · Workouts · Blöcke. Studio: Geräte- und Langhantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag nach doppelter Progression |
+| **Challenges** | Reiter Einheiten · Programme · Meine. 52 Programme (nach Bergen benannt) auf Zeit, 12 Einheiten mit Namen (z. B. „3 · Stufenweg“) in drei Stufen, Varianten als Routen; eigene Challenges |
+| **Aufwärmen & Dehnen** | Aufwärm- und Dehnprogramme und -übungen |
 
-## Funktionen
+**Überrasch mich:** Dauer, Kategorien, Ausrüstung, unter „Feinauswahl“ Fokus und Intensität. Regeln: Bereiche
+reihum, Drücken/Ziehen im Gleichgewicht, Übungen der letzten 7 Tage meiden, Sternchen-Übungen machen etwa ein
+Drittel aus, jedes zweite Workout enthält eine Burpee-Variante. Auf der Übersicht: „Nochmal mischen“ und je
+Übung „Andere Übung“.
 
-- **Aufwärmen & Dehnen** (eigene Kachel, weil beides zu Workouts und Challenges passt): oben Aufwärmen | Dehnen, darunter wie in der Bibliothek Workouts | Übungen. Aufwärmen: Programme `AUFWAERM_IDS`, Übungen `AUFWAERM_UEBUNGEN` (daten.js); Dehnen: übrige Dehnprogramme und alle Übungen der Hauptkategorie Stretch. Dehnen und Aufwärmen stehen seitdem nicht mehr in der Workouts-Bibliothek (dort vier Kategorie-Kacheln ohne Stretch). Karten wie in der Bibliothek (Start, Info, ☆, ⋯)
-- **Challenges · Reiter**: Einheiten · Programme · **Meine**. Jede Karte zeigt direkt, was zu tun ist: je Übung die Menge über die Runden („21 · 15 · 9“, gleichbleibend „5 × 20“, Zeiten als 0:30), höchstens sechs Zeilen (`repPlanHTML`)
-- **Eigene Challenges** (Reiter „Meine“, „Neue Challenge“): Name, 1–10 Runden, Übungen aus einer Suchliste (alle außer Dehnen, dazu Laufen, Sprint, Pause), je Übung Wiederholungen oder Sekunden und die Menge je Runde; Runde 1 überträgt sich auf die folgenden, solange sie nicht einzeln geändert wurden, 0 = Runde auslassen. Gespeichert in `settings.myReps` (IDs `my-…`, damit in Sicherung und Schnappschuss enthalten); `repQuelle` macht daraus eine Programmzeile – Detailseite, Ablauf und Bestzeit sind dieselben wie bei den fertigen
-- **Challenges · Einheiten**: 12 Einheiten nach einem klassischen 12-Einheiten-Plan, je Einsteiger / Mittel / Fortgeschritten (intern leicht/standard/fortgeschritten), bei „A oder B“ mehrere Varianten. Eine Einheit hängt mehrere Programme hintereinander (auch Teilrunden „Runden 2–4“ oder „halbe Menge“), die Uhr läuft durch; im Ablauf steht, welches Programm gerade dran ist. Daten: `REP_EINHEITEN` in daten.js, Bestzeit je Variante (z. B. `e1-standard-2`)
-- **Challenges** (Rep-Workouts, eigene Kachel auf der Startseite): 52 Programme ohne Intervalle – alle Wiederholungen so schnell wie möglich, eine Stoppuhr läuft mit. Aufbau (Runden × Übungen) nach klassischen Bodyweight-Programmen, mit eigenen Namen (Berge: Zugspitze, Watzmann, Eiger …). Liste filterbar nach Stufe und „Ohne Stange“, Detailseite mit Ablauf-Tabelle, Ablauf Schritt für Schritt mit großem „Geschafft“-Knopf, Zurück, Pause und Beenden; Halten (z. B. 30 s Plank) und Pausen laufen als Countdown, Laufen/Sprint wird abgehakt. Einzählen, Töne, Vibration und „Bildschirm anlassen“ folgen den Timer-Einstellungen. Bestzeit und letzte Zeit je Programm stehen in `settings.repBest`. Programme: `REP_WORKOUT_ROWS` in `daten.js`; die Bibliothek heißt seitdem **Workouts** (Bibliothek)
-- **Schnappschuss**: Beim Start legt die App alle 7 Tage automatisch eine vollständige Kopie der Daten in IndexedDB ab (nur einer, der alte wird überschrieben; ein leerer Stand überschreibt nie einen mit eigenen Inhalten). In den Einstellungen unter „Daten“: „Letzter Schnappschuss: vor X Tagen“ und „Stand vom … wiederherstellen“ (mit Rückfrage, wie beim Import)
-- **Sicherungs-Erinnerung**: Gibt es eigene Workouts, Blöcke oder Übungen und liegt der letzte Export mehr als 28 Tage zurück (oder gab es nie einen), erscheint auf der Startseite ein Hinweis mit „Jetzt sichern“ (startet den Export) und × (für diese Sitzung ausblenden). Der Installations-Hinweis hat Vorrang – es steht immer nur einer da
-- **Versionsnummer** nur noch in `sw.js` (`FASSUNG`): die App fragt den Service Worker per `postMessage` und zeigt sie unten in den Einstellungen; ohne aktiven Service Worker (z. B. als Datei geöffnet) bleibt die Zeile leer
-- Blöcke & Timer-Workouts anlegen, bearbeiten, neu anordnen, löschen – über das + auf der Timer-Seite; eigene Workouts und eigene Übungen über das + in der Bibliothek (Reiter „Meine“ bzw. „Übungen“); jeder Block ist auch einzeln startbar
-- **Löschen per Mülleimer** direkt in der Liste (mit Rückfrage): eigene Workouts (Bibliothek › Meine), eigene Übungen (Bibliothek › Übungen), Timer-Workouts und Blöcke (Timer-Seite); gelöschte Einträge verschwinden auch aus den Favoriten, ein gelöschter Block auch aus den Timer-Workouts, eine gelöschte Übung aus den eigenen Workouts
-- Bibliothek (eigene Seite, erreichbar über die Startseite): Übungen und fertige Workouts, filterbar nach Cardio, Gewicht, Bodyweight, Rücken, Beine und Bauch/Core; jede Übung und jedes Workout ist direkt startbar, Übungen lassen sich als eigener Block speichern, Workouts per „Übernehmen" als eigenes, bearbeitbares Workout kopieren; nicht benötigte Einträge lassen sich ausblenden und wieder einblenden (definiert in `EXERCISE_ROWS` und `LIB_WORKOUT_ROWS` in daten.js)
-- Die Bibliothek hat drei Reiter: **Fertige** Workouts, **Eigene** Workouts und **Übungen**; jede Kategorie hat ihre eigene Farbe (Filter-Chips, Start-Knopf, Kategorie-Schildchen, Piktogramm); Übungen lassen sich nach Standard-Reihenfolge oder alphabetisch (A–Z) sortieren
-- Eigene Workouts (getrennt von den Timer-Workouts der Startseite, gespeichert als `myWorkouts`): im Baukasten Übungen am Griff per Drag & Drop hineinziehen, umsortieren und auf den Papierkorb am unteren Rand ziehen zum Entfernen – alternativ per + und ×; eigene Pause zwischen den Übungen; fertige Workouts lassen sich per „In Eigene übernehmen" als Ausgangspunkt kopieren
-- Übungen haben keine festen Zeiten mehr, sondern Schwierigkeit (Einsteiger/Mittel/Fortgeschritten, `EX_LEVEL`) und Ausrüstung (Ohne Geräte/Kurzhantel/Kettlebell/Stange, `EX_EQUIP`); Filter nach beidem in der Bibliothek und im Baukasten. Die Zeiten legt man erst im Workout fest: „Für alle gleich" (Runden, Arbeit, Pause) oder „Je Übung" (Start mit der Empfehlung, einzeln anpassbar)
-- Deckblatt vor jedem fertigen, eigenen oder Überraschungs-Workout: Übersicht (Dauer, Kategorien, Level, Ausrüstung), alles anpassbar ohne zu speichern (Zeiten, Reihenfolge per Drag & Drop, Übungen hinzufügen/entfernen) und optional „Als Eigenes speichern"
-- „Überrasch mich": Dauer, Kategorie (Kacheln Kraft, Ausdauer, Rumpf, Stangenpark – Stretch gibt es hier nicht mehr, Dehnen steht unter „Aufwärmen & Dehnen“), optional Fokus, Intensität und Ausrüstung wählen – die App stellt ein passendes Workout zusammen („Neu mischen" auf dem Deckblatt). Die Intensität bestimmt die Zeiten und die Auswahl: jede Übung hat eine Belastungsstufe `EX_INT` (daten.js; 1 locker, 2 mittel, 3 intensiv, angelehnt an die MET-Werte des Compendium of Physical Activities). Intensiv meidet lockere Übungen und bevorzugt leicht die intensiven, Locker meidet die intensiven
-- Dehn- und Mobility-Übungen stehen in gemischten Workouts grundsätzlich hinten (auch im Baukasten und auf dem Deckblatt) und behalten bei „Für alle gleich“ ihre eigenen Haltezeiten
-- Sprachansagen auf Englisch in Vorbereitung und Pausen (nächste Übung, Seitenwechsel, letzte Runde) bei fertigen und eigenen Workouts, abschaltbar auf dem Deckblatt und in den Einstellungen (stören laufende Musik auf Android nicht)
-- Dehnen (früher eigener Reiter, jetzt Kategorie **Stretch**): 21 Dehnübungen plus Armkreisen mit Haltezeiten (meist 30 s je Seite, 5 s zum Umsetzen) und 6 Dehnprogramme (Ganzkörper, nach dem Training Beine bzw. Oberkörper, Rücken & Hüfte, Schultern & Nacken fürs Büro, Morgen-Mobility); im Timer heißt die Phase dann „Halten" bzw. „Seite wechseln"
-- Fokus **Arme**: u. a. Enge und Diamant-Liegestütz, Sphinx-Liegestütz, Triceps Dips und **Trizeps-Curls** (Kurzhantel über Kopf) plus fertiges Workout „Arme ohne Geräte"; aussortiert (2026-09): Liegestütz an der Wand, Handtuch-Curls, Curls gegen die eigene Hand, Rucksack-Curls, Rucksack-Trizepsdrücken und Shadow Boxing (gespeicherte Workouts mit Wand-Liegestütz bzw. Rucksack-Trizepsdrücken bekommen Push-ups bzw. Trizeps-Curls)
-- **Ukraine Twist** (früher Russian Twists; die Suche findet auch den alten Namen) – Karte, Baukasten-Zeile und der Timer während der ganzen Übung zeigen eine geschwungene Ukraine-Flagge wie eine wehende Fahne aus der Nähe
-- **Favoriten**: fertige Workouts, Dehnprogramme und eigene Workouts per ☆ markieren – sie stehen dann ganz oben auf der Startseite und starten mit dem Deckblatt
-- Muskeln je Übung (`EX_MUSCLES`): Haupt- und unterstützende Muskeln, bei Dehnübungen die gedehnten Muskeln – in der Info, auf den Bibliothekskarten und in den Übungszeilen von Deckblatt und Baukasten (dort zusammen mit einer kleinen Figur)
-- Deckblatt: „Zeiten & Sprachansagen" als zugeklappter Bereich mit Kurzfassung (z. B. „Je Übung · 45 s Pause · Ansagen an")
-- Übungen: Suche (Name, Muskeln, Hinweis), Mehrfachauswahl bei Körperbereichen und Ausrüstung („Ausrüstung: Ohne Geräte + Stange“ zeigt alles, was damit geht), Stern für einzelne Übungen – markierte stehen in Bibliothek und Baukasten immer oben; kein Schwierigkeitsgrad mehr (bei „Überrasch mich“ nur noch Intensität Locker/Mittel/Intensiv für die Zeiten)
-- Ruhigeres Design: statt vieler Kategorie-Farben eine Akzentfarbe je Design plus Icons für Körperbereiche und Ausrüstung
-- **Calisthenics** (früher eigener Reiter, jetzt ein Fokus wie Rücken oder Beine): 22 Übungen an Stange und Barren (Zug, Druck, Core, dynamische Skills) mit Programmen Zug, Druck, Core, Skills und „Calisthenics 60“; neue Ausrüstung „Dip-Barren / Parallettes“
-- **Figuren**: kräftigerer Rumpf, Hände, Arm vor dem Körper freigestellt; zweite Ansicht (von vorn / von oben) im Info-Fenster bei Ukraine Twist, Schulterdrücken, Archer-Liegestütz, Reverse Snow Angels, Spinal Twist; Sprünge und Burpees laufen als mehrphasiger Ablauf (`ILLU_SEQ`)
-- **Burpee-Klimmzug** (Stangenpark; Fokus Calisthenics, Bauch / Core, Rücken): Liegestütz, hochspringen, Klimmzug – in den Programmen Calisthenics Zug, Calisthenics Skills und dem neuen „Calisthenics HIIT“ (4×30 s/20 s); Burpees und Burpee Squat Jumps zeigen jetzt auch den Liegestütz
-- Bauchübungen ergänzt (Reverse Crunch, V-Ups; Mountain Climbers zählen auch zu Bauch/Core) und Programm „Bauch komplett“ mit 10 Übungen
-- Weitere schwere Übungen: Archer-Liegestütz, Pistol Squat, Dragon Flag, Klatsch-Liegestütz, Tuck Jumps
-- Programme (2026-09 erweitert, Aufbau nach gängigen Trainingsempfehlungen): u. a. Brust (ohne Geräte), Brust & Schultern bzw. Schultern & Arme mit Kurzhantel, Kurzhantel Ganzkörper, Beine & Po, Po-Fokus, Kraft für Läufer, Ganzkörper High Pulse (40/20), Tabata Ganzkörper (8 × 20/10), Aufwärmen 5 Min, Rumpfstabilität (rückenschonend), Rücken & Haltung (Büro), Dehnen kurz · Ganzkörper, Hüfte mobil, Entspannt dehnen am Abend; hochintensiv: Beine explosiv (HIIT), Tabata Beine, Burpee-Challenge, Oberkörper Power, Core Burner, Kettlebell HIIT, Kurzhantel-Komplex (schwer), Metcon mit Kurzhantel; Calisthenics-Aufbau: Calisthenics Einsteiger, Klimmzug-Aufbau, Dip-Aufbau; Human Flag entfernt (braucht eine senkrechte Stange, gespeicherte Workouts bekommen den Hanging L-Sit); bestehende Programme an ihren Titel angepasst (z. B. „Bauch komplett“ und „Bauch & Core Advanced“ ohne Stange/Barren); Programme können einheitliche Zeiten mitbringen (7. Spalte in `LIB_WORKOUT_ROWS`, z. B. "3/40/20")
-- 60-Minuten-Workouts (Full Body 60, Bodyweight 60, Advanced 60, Calisthenics 60) und 60 Min bei „Überrasch mich“
-- Filter als zwei Auswahlknöpfe „Fokus“ (früher „Körperbereich“) und „Ausrüstung“ mit Liste zum Abhaken (Mehrfachauswahl); schlankere Karten – Hinweise, „Als Block“ und „Ausblenden“ stehen in der Info bzw. auf dem Deckblatt
-- Startseite mit Titel „BLOC – Modular Training Builder“; in den Einstellungen „App teilen“ (Link kopieren)
-- Design „Kodak“ heißt jetzt „C60“ (Schriftzug C60 mit „Modular Training Builder“, Logo mit C)
-- Startseite mit aufklappbaren Kacheln (Icon, Titel, Kurzbeschreibung, Anzahl); die Bibliothek-Kachel öffnet direkt die Bibliothek. Frühere Fassung: Startseite mit aufklappbaren Bereichen (Favoriten, Timer-Workouts, Blöcke einzeln starten, Bibliothek), jeweils mit Anzahl; beim ersten Start sind nur die Favoriten offen, danach merkt sich die App den Zustand
-- Im Baukasten bleibt die Workout-Liste beim Scrollen oben stehen, damit man Übungen auch von weit unten kurz hineinziehen kann
-- Beim Bearbeiten eines Timer-Workouts lassen sich Übungen direkt aus der Bibliothek hinzufügen (mit Kategorie-Filter)
-- Info zu jeder Übung („So geht's"): großes animiertes Piktogramm, Anleitung in drei Schritten, Haltung (zwei konkrete Punkte) mit dem häufigsten Fehler unter „Vermeiden" (`EX_POSTURE`, angelehnt an gängige Technikhinweise u. a. von ACE, NSCA und NASM) und Tipp (Deutsch/Englisch, `EX_INFO` in daten.js); zu öffnen in der Bibliothek (Info-Knopf oder Tipp aufs Bild) und im Timer über das ⓘ neben dem Übungsnamen – auch in Vorbereitung und Pausen für die anstehende Übung; der Timer läuft dabei sichtbar weiter und lässt sich direkt im Info-Fenster pausieren
-- Übungen „je Seite" wechseln im Timer automatisch zwischen „Links" und „Rechts"; der Timer zeigt den Ausführungshinweis der Übung und, wo vorhanden, ein animiertes Piktogramm: für jede Übung eine Strichfigur (Halteübungen stehen still), mit Geräten wie Hantel, Kettlebell, Stange, Bank und Wand; die Posen stehen als Gelenkpunkte in `ILLU_POSES` (daten.js). Bewegt werden die Figuren als **Skelett mit Gelenken**: Hüfte als Wurzel, daran Wirbelsäule, Kopf, Beine und Arme – animiert werden nur die Gelenkwinkel (kürzester Weg, gleich bleibende Knochenlängen) mit Easing und kurzen Haltepunkten in beiden Posen; Hanteln und Kettlebells wandern mit der Hand; Ausdauerübungen laufen etwas flotter; nur sichtbare Figuren werden animiert
-- Workouts und Blöcke sind in jedem Design farblich unterschieden (z. B. Hell/Dunkel: Orange/Blau, Retro: Rot/Blau, C60: Orange/Gelb, Tapedeck: Bernstein/Cyan)
-- Phasen im Timer: „Los geht's" (Vorbereitung), „Los!" (Arbeit), „Pause" und „Blockpause"
-- Vollbild-Timer: im modernen Design mit Fortschrittsring (läuft per `requestAnimationFrame` flüssig und wird nur über `transform` gedreht – zwei Halbkreise hinter Halbmasken; pulsiert in den letzten 3 Sekunden, die Phasenfarbe blendet per `opacity` weich über), in den Vintage-Designs mit großem mechanischem Walzenzähler als zentralem Element – wie ein echter Kilometerzähler: jede Stelle ist eine echte 3D-Walze mit rundum aufgedruckten Ziffern hinter einem Glasfenster, gewölbt schattiert, oben und unten sieht man ein Stück der Nachbarziffern; die aktuelle Ziffer dreht nach unten weg, die nächste kommt von oben und rastet mit leichtem Überschwingen ein; höhere Stellen bahnen ihren Wechsel schon einige Sekunden vorher an (bei 1:06 lugt die „0" der Minutenwalze bereits oben ins Fenster), beim Übertrag rastet die Walze links mit leichter mechanischer Verzögerung nach, und jede Walze sitzt minimal schief (Getriebespiel); beim Start, bei „Phase neu" und beim Phasenwechsel drehen die Walzen sichtbar auf den neuen Stand; darunter große Quadrate für die Wiederholungen (erledigte leuchten, die aktuelle pulsiert), damit man den Fortschritt auch aus der Entfernung sieht; jeweils mit Rundenzähler und „Nochmal"-Neustart nach dem Workout
-- Play/Pause, Weiter (Skip), Phase neu starten, Beenden mit Bestätigung – alle Symbole sind handgezeichnete SVG-Icons statt Schriftzeichen, damit sie auf jedem Gerät exakt zentriert und klar erkennbar bleiben; die Transportsteuerung in den Vintage-Designs ist an die Tastenreihe eines alten Kassettenrekorders angelehnt (rechteckige Tasten, kräftige Symbole)
-- Zurück-Button auf jeder Unterseite (ein eigener Home-Button ist nicht mehr nötig, da fast alles direkt von der Startseite aus erreichbar ist); „Zurück" führt immer zur tatsächlich zuvor besuchten Seite (nicht zu einem festen Ziel)
-- Android-Zurück-Taste/-Geste: geht wie der Zurück-Button eine Seite zurück, schließt zuerst ein offenes Fenster und fragt im laufenden Timer nach, ob das Workout beendet werden soll; erst auf der Startseite verlässt sie die App (technisch liegt dafür höchstens ein zusätzlicher Eintrag im Browser-Verlauf)
-- Timer im Hintergrund: alle Signaltöne (Phasenwechsel und Countdown) der nächsten ~10 Minuten werden direkt im Audio-Takt vorausgeplant, damit sie auch pünktlich kommen, wenn der Browser die Seite drosselt; kommt man zurück, springt der Timer direkt auf den richtigen Schritt statt nur einen weiter. Grenze: Ist das Handy gesperrt und hält das Betriebssystem die Seite ganz an (v. a. iOS), hilft nur eine native Hülle (z. B. Capacitor mit Foreground-Service)
-- „Anzeige auf dem Sperrbildschirm“ wurde 2026-09 entfernt: ihre stumme Endlosschleife hielt Spotify an (getestet auf Android)
-- Dubletten zusammengelegt (Archer Row → Inverted Rows, Straight Bar Dip und Korean Dip → Parallel Bar Dips, Bar Traverse → Monkey Bar Traverse, Mountain Climbers langsam → Mountain Climbers, Hip Hinge → Good Mornings, Leg Levers → Leg Raises); alte IDs werden über `EX_ALIAS` weiter erkannt und in gespeicherten Daten umgeschrieben
-- Bildschirm drehbar: im Querformat steht die Uhr links, Übung, Wiederholungen und Tasten rechts daneben
-- Kein Verlauf und keine Statistik mehr (Kalender, Streak, Wochenzeit wurden entfernt); gemerkt werden nur die Übungen der letzten 14 Tage, damit „Überrasch mich“ sie meiden kann
-- **Workouts teilen**: auf dem Deckblatt und im Baukasten – das Workout steckt komprimiert im Link (`#import/…`), kein Server, kein Konto; wer den Link öffnet, sieht es auf dem Deckblatt und kann es als Eigenes speichern (eigene Übungen reisen mit)
-- **Eigene Übungen**: im Reiter „Übungen“ über „Eigene Übung anlegen“ – Name, Fokus, Ausrüstung, je Seite, empfohlene Zeiten, Hinweis; sie erscheinen überall wie Bibliotheksübungen (Baukasten, Filter, Überrasch mich), gespeichert als `customEx`
-- Ausblenden direkt auf jeder Karte (Workouts und Übungen): ausgeblendete Einträge stehen unten unter „Ausgeblendet“ und lassen sich dort einzeln wieder einblenden; „Überrasch mich“ nutzt sie nicht
-- Übungen, die nur an Stange oder Barren gehen, erscheinen bei einem anderen Fokus (z. B. Rücken) nur, wenn Stange/Barren bei der Ausrüstung gewählt ist oder Calisthenics im Fokus steht
-- „Überrasch mich“ mit Regeln: alle gewählten Fokus-Bereiche kommen reihum vor, aufeinanderfolgende Übungen trainieren verschiedene Bereiche, Drücken und Ziehen halten sich die Waage, Übungen der letzten 7 Tage werden gemieden (abschaltbar), zum Einstieg lieber etwas Leichteres
-- Datenschutz & Haftungsausschluss (`privacy.html`, Deutsch/Englisch), verlinkt in den Einstellungen und – als kurzer Hinweis – in jeder Übungsanleitung; Zoomen ist wieder erlaubt
-- Musik anderer Apps (Spotify & Co.) läuft beim Training weiter: die App stellt schon beim Start und vor jedem Ton und jeder Ansage auf „mischen statt anhalten“ (iPhone: Audio-Sitzung „ambient“) – auch vor der stummen Freischalt-Ansage bei „Los geht's“
-- Lautstärke jederzeit einstellbar (bis 100 %, unverzerrt) – auch direkt während der Timer läuft (Lautsprecher-Symbol im Player)
-- 6 auswählbare Klänge über ein Kachel-Menü in zwei Gruppen:
-  - **Natürlich** (Klangschale, Triangel, Klatschen) – ohne Audiodateien nachgebaut wie echte Klangquellen: unharmonische Obertöne, die unterschiedlich schnell ausklingen, Schwebung, mehrstufige Klatsch-Geräusche; zum Workout-Ende Triangel-Wirbel bzw. Applaus
-  - **Elektronisch** – Sanft, Arcade, Weich
-  - dazu Countdown-Piepsen in den letzten 3 Sekunden (je nach Klang z. B. als Fingerschnippen)
-  - wer einen inzwischen entfernten Klang eingestellt hatte, bekommt automatisch den ähnlichsten verbliebenen
-- Raumklang (abschaltbar): alle Klänge laufen durch einen künstlichen Raumhall mit frühen Reflexionen und Stereo-Breite; ein Begrenzer verhindert Übersteuern auch bei 100 % Lautstärke
-- Vibration bei Phasenwechsel (auf unterstützten Geräten, primär Android)
-- „Bildschirm an lassen" während des Workouts (Wake Lock)
-- Sechs Design-Optionen: **System / Hell / Dunkel** (schlicht, minimalistisch) sowie **Retro** und **C60** (Papier-Optik mit senkrechten Zierstreifen, kursiven Condensed-Überschriften, klassischer Grotesk wie auf alten Kassetten-Etiketten und Monospace-Schrift, Kippschaltern mit „ON/OFF", Fader-Schieberegler und 3D-Walzenzähler; C60 zusätzlich mit Kassetten-Etikett) und **Tapedeck** (dunkles Nachtdesign: glattes schwarzes Gehäuse mit gebürsteten Frontplatten, Beschriftung wie auf einer Hi-Fi-Frontplatte, hinterleuchtetes Zählwerk mit bernsteinfarbenen Ziffern, Anzeigen, die wie Kontrolllampen leuchten – Bernstein für „Los!", Grün für Pause, Cyan für Blockpause – und Bandsorten-Anzeige „Normal / CrO₂ / Metal")
-- Sprache Deutsch oder Englisch (in den Einstellungen; ohne eigene Wahl gilt die Sprache des Geräts)
-- Nur Systemschriften (wie im Vokabelkasten), ohne Schreibmaschinenschrift: die App lädt keine Schriften und nichts anderes von fremden Servern
-- Direkter „Jetzt installieren"-Button auf Android/Chrome, Schritt-für-Schritt-Anleitung für iOS
-- Backup als JSON exportieren/importieren
-- Funktioniert offline (Service Worker)
+**Timer:** Vollbild mit Fortschrittsring (C60: Walzenzähler), Figur der Übung, Übungs-Kreise oben, Kästchen je
+Runde, Sprachansagen, Töne im Voraus geplant (laufen auch bei gedrosselter Seite pünktlich). Musik anderer Apps
+läuft weiter.
 
-## Warum PWA statt nur HTML-Datei?
+**Figuren:** Strichfiguren als Skelett mit Gelenken (`ILLU_POSES`/`ILLU_SEQ` in daten.js); bewegt in Timer, Info
+und in allen Übungs-Kacheln (nur sichtbare laufen).
 
-Safari auf iOS löscht den lokalen Speicher (`localStorage`) von normalen Browser-Tabs nach ca. 7 Tagen Inaktivität. Eine über „Zum Home-Bildschirm hinzufügen" installierte PWA läuft als eigenständige App und ist davon nicht betroffen. Deshalb besteht das Projekt aus `index.html` + `daten.js` + `manifest.json` + `sw.js` + Icons – identisch zur Struktur von [Vokabelkasten](https://kevinhbrck.github.io/Vokabelkasten/).
+## Designs
 
-Zur Sicherheit gibt es zusätzlich Backup-Export/Import in den Einstellungen (JSON-Datei), einen automatischen Schnappschuss alle 7 Tage und eine Erinnerung, wenn lange nicht exportiert wurde.
+**System · Hell · Dunkel · Nacht · C60.** System folgt Hell/Dunkel des Handys, Nacht ist warm mit wenig Blau
+(fürs Abendtraining), C60 ist der Kassetten-Look mit Walzenzähler.
+Farben nach 60-30-10: ruhige Flächen, vier Bereichsfarben (`--bl-color` Freies Training/Timer, `--tp-color`
+Workouts, `--rep-color` Challenges, `--ws-color` Aufwärmen & Dehnen), Akzentfarbe nur für die Hauptaktion,
+das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`).
 
-## Lokal testen
+## Daten und Sicherheit
 
-Einfach `index.html` per Doppelklick öffnen, oder mit einem kleinen lokalen Server:
+- Alles liegt im `localStorage` (`sporttimer-data-v1`); die App bittet den Browser um dauerhaften Speicher
+  (`navigator.storage.persist`).
+- **Sicherung speichern/einlesen** in den Einstellungen (JSON; teilen z. B. nach Drive). Eingelesen werden nur
+  echte BLOC-Sicherungen – sie ersetzen alle Daten (mit Rückfrage).
+- **Schnappschuss** alle 7 Tage automatisch in IndexedDB, wiederherstellbar in den Einstellungen.
+- **Erinnerung** auf der Startseite, wenn es eigene Inhalte gibt und die letzte Sicherung über 14 Tage her ist.
 
-```bash
-python -m http.server 8080
-```
-
-und dann `http://localhost:8080` öffnen.
-
-## Auf GitHub Pages veröffentlichen
-
-Das Repository liegt bereits unter [github.com/KevinHbrck/BLOC](https://github.com/KevinHbrck/BLOC). Es fehlt nur noch, GitHub Pages dafür einzuschalten:
-
-1. Auf [github.com/KevinHbrck/BLOC/settings/pages](https://github.com/KevinHbrck/BLOC/settings/pages) gehen.
-2. Unter **Build and deployment → Source** die Option **„Deploy from a branch"** wählen.
-3. Als Branch **`main`** und als Ordner **`/ (root)`** auswählen, dann **Save**.
-4. Nach ein bis zwei Minuten ist die App unter `https://kevinhbrck.github.io/BLOC/` erreichbar.
-5. Auf dem iPhone die Seite in Safari öffnen → Teilen-Symbol → **„Zum Home-Bildschirm"**. Ab dann läuft sie wie eine echte App mit dauerhaftem Speicher.
-
-## Dateien
+## Technik
 
 | Datei | Zweck |
 |---|---|
-| `index.html` | Die komplette App (HTML, CSS, JS) – Logik und Oberfläche |
-| `daten.js` | Inhaltsdaten: Übungen, fertige Workouts, Rep-Workouts, Kategorien, Anleitungen, Haltung, Muskeln und die Posen der Figuren (`window.BLOC_DATEN`, von `index.html` am Anfang wieder unter den gewohnten Namen entpackt) |
-| `manifest.json` | PWA-Metadaten (Name, Icons, Startseite) |
-| `sw.js` | Service Worker für Offline-Nutzung |
-| `privacy.html` | Datenschutz & Haftungsausschluss (Training auf eigene Verantwortung) |
-| `icon.png`, `icon-180.png` | App-Icons (Stoppuhr mit drei Blöcken) |
-| `icon.svg` | Vorlage der Icons – bei Änderungen daraus neu erzeugen |
-- 2026-09-27: neue Übung **Jump Lunges** (Ausdauer, mit Sprung-Animation); **Cobra Lift** heißt jetzt **Kobra** und ist eine Dehnübung (ID `cobra-lift` bleibt)
-- 2026-09-27 (nach dem ersten Training): Countdown-Töne 3-2-1 so laut wie der Signalton danach (`tickNotes`, je Klangstil hochgerechnet); in der Pause blinkt der kommende Satz; in Vorbereitung und Blockpause steht die Figur der nächsten Übung groß im Ring, die Zeit darunter; oben im Timer ein Kreis je Übung (erledigt / aktuell / kommend, in der Pause vor einer neuen Übung pulsiert sie)
-- Timer aufgeräumt: oben nur noch die Übungs-Kreise (größer, der Zähler „1 / 27“ entfällt); keine Satzzahl mehr hinter dem Namen (steht in den Kästchen); „Als nächstes“ nur noch, wenn etwas Neues kommt (andere Übung, Blockpause, Ende)
-- Timer: kein Hinweistext mehr unter der Figur (steht in der Übungsinfo ⓘ)
-- Fokus-Filter: „Brust (ohne Geräte)“ und „Oberkörper Power (ohne Geräte)“ stehen unter „Bauch / Core“ statt unter „Arme“ (`LIB_FOKUS_TAUSCH` in daten.js)
-- Figuren: Commando Pull-Up von vorn (Stange zeigt auf den Betrachter, Kopf abwechselnd links/rechts) plus Seitenansicht; Pull-ups und Scapular Pull-ups mit zweiter Ansicht von der Seite (Pull-up: Ellbogen beugen, Kinn über die Stange; Scapular: Arme gestreckt, nur Brust auf)
-- Suche tolerant (`suchPasst`): Groß/klein, Bindestriche, Leerzeichen, Umlaute und Mehrzahl-s egal, jedes Wort für sich; deutsche Suchwörter für Klimmzug-/Liegestütz-Varianten
-- **Schnelltest** (`schnelltest.html`, nur lokal): klickt sich in einem eingebetteten Fenster durch Startseite, Bibliothek, Suche, Übungsinfo, Überrasch mich, Timer (Kreise, Blinken, Figur in der Blockpause), Challenges inkl. eigener Challenge, Wochenzeile, Aufwärmen & Dehnen, Timer-Seite und Einstellungen und meldet Skriptfehler. Aufruf z. B. `http://localhost:8788/schnelltest.html?auto`; der gespeicherte Stand wird vorher beiseitegelegt und danach wiederhergestellt. Nach jeder Änderung laufen lassen
-- **Wochenzeile** auf der Startseite: Mo–So als Punkte, Anzahl Trainings und Dauer dieser Woche (aus dem 14-Tage-Verlauf, jetzt mit `dur`; Challenges zählen mit). Dabei behoben: der Verlauf ging bisher bei jedem Laden verloren (`HIST_KEEP_DAYS` war beim Aufruf in loadDB noch undefined) - dadurch konnte auch „Überrasch mich“ zuletzt gemachte Übungen nach einem Neustart nicht meiden
-- **Sicherung teilen**: in den Einstellungen und bei der Erinnerung - die Datei geht über das Teilen-Menü direkt an Drive, Mail usw. (JSON, notfalls als .txt; Import liest beides)
-- **Figuren prüfen** (Einstellungen → Figuren prüfen, `#figuren`): alle Figuren nach Hauptkategorie, Tippen öffnet die Übungsinfo (bewegt, zweite Ansicht mit „2“ markiert); „Unklar“ markiert mit optionaler Notiz (`settings.figurNotiz`), „Markierte teilen“ gibt die Liste als Text weiter
-- **Freies Training** (früher „Timer“): Reiter **Studio** · Workouts · Blöcke. Studio: 50 Geräte- und Langhantelübungen mit Figur und Anleitung (`STUDIO_GRUPPEN`, Ausrüstung `gym` in daten.js), dazu alle Kurzhantel-/Kettlebell- und Stangen-Übungen der Bibliothek und eigene Übungen; Suche. Jede Übung hat ihre Karte (`#studio/<id>`): Gewicht × Wdh. eintragen (vorausgefüllt), danach Pause mit Countdown und Signalton (60 s–3 min wählbar), Heute-Liste, Verlauf mit Kurve, Notiz (z. B. Sitzeinstellung), Anleitung/Haltung/Muskeln, optional Intervall-Timer. Steigerung nach doppelter Progression: Ziel (meist 3 × 12, `STUDIO_ZIEL`) zweimal hintereinander geschafft -> Vorschlag +2,5 kg (Beine/Langhantel +5 kg), nur auf Tipp. Daten in `settings.studio`; ein Studio-Tag zählt einmal in der Wochenzeile
-- Studio: Stern je Übung (`settings.exFavs`, wie in der Bibliothek) - markierte stehen oben unter „★ Meine Übungen“, auch auf der Karte oben rechts. Studio-Geräte in den Figuren blau (Klasse `gm`, Farbe `--geraet`; im Timer in Schriftfarbe). Neu: Geräteteile am Fuß (`gFuss`/`gPolster`/`gPlatte` in daten.js, `<g class="gf">`) wandern in der Animation mit dem Bein mit - Polster bei Beinstrecker/-beuger, Schlitten-Platte, Knie-Polster bei Ad-/Abduktoren
-- **Workout-Baukasten neu** (eigene Workouts und Deckblätter, `renderDraftPage`): Übungen als große Kacheln mit Figur und Namen - antippen = dazu (blau mit Position), nochmal = raus; Stern je Kachel; Ablauf als schmaler Streifen (Tipp: verschieben, entfernen), „Sinnvoll ordnen“ (`wbSinnvollOrdnen`: Ganzkörper zuerst, dann Unter-/Oberkörper/Rumpf im Wechsel, schwerere zuerst, Dehnen am Ende); Zeiten zugeklappt; schmale Start-Leiste unten. Drag & Drop entfällt. Deckblatt: Übungen als Kacheln, bei „Überrasch mich“ großer Knopf „Nochmal mischen“ und je Übung „Andere Übung“ (`wbTauschKandidat`, gleiche Hauptkategorie und Region)
-- Übungen mit Haupt-Muskeln aus Unter- und Oberkörper (z. B. Burpees) gelten jetzt als Ganzkörper (`exProfile`)
-- Neue Übung **Sprossen-Klimmzug (Hangelleiter)** (`rung-pull-ups`): je eine Hand an zwei Sprossen, Kopf dazwischen hoch
-- Einheitliche Übungs-Kachel `uebKachel()` (mit `kachelKlick()`): Workout-Baukasten, Übungsauswahl bei eigenen Challenges und „Aus der Bibliothek“ im Timer-Workout zeigen Übungen jetzt gleich - große Figur, Name, antippen = blau mit Position (im Timer-Workout nochmal = raus)
-- Eigenes Workout: **Speichern-Knopf** statt Sofort-Speichern. Der Baukasten arbeitet auf einer Kopie (`bauEntwurf`), „Neu“ legt erst beim Speichern (oder Start) an; Zurück mit Änderungen fragt nach und verwirft sonst
-- Workout-Auswahl (Baukasten, Überrasch mich, Tausch, Timer-Workout) ohne Übungen aus dem Freien Training (`STUDIO_NUR`, `fuerWorkout`) und ohne Dehnen
-- Übungs-Kacheln (Baukasten, Challenges, Timer-Workout) und Studio-Kacheln zeigen bewegte Figuren (`illuHTML`, nur sichtbare laufen; „Bewegung reduzieren“ = Standbild)
-- Daten dauerhaft: `datenDauerhaft()` bittet den Browser per `navigator.storage.persist()`, nichts von sich aus zu löschen. Sicherungs-Erinnerung nach 14 statt 28 Tagen und auch für Gewichte im Freien Training und eigene Challenges
-- Jedes zweite „Überrasch mich“ (Zähler `settings.spZahl`) enthält eine Burpee-Variante, passend zu Ausrüstung und Stufe
-- Neue Übungen **Jump Forward Squats** und **Jump Forward Burpees** (Weitsprung nach vorn, Figur mit nach vorn geneigter Flugphase `JF_AIR`)
-- Challenges: Einheiten mit Namen (`REP_EINHEIT_NAMEN`, z. B. „3 · Stufenweg“), Varianten als Routen (`REP_ROUTEN`: Nord-/Süd-/West-/Ostroute), Titel über `repEinheitTitel()`
-- Überrasch mich: Sternchen-Übungen immer zu etwa einem Drittel (`favZiel`), über das Workout verteilt; die Burpee-Regel ersetzt nie eine Sternchen-Übung
-- Filter in Bibliothek und Baukasten einheitlich: breite, auf- und zuklappbare Zeile „Fokus, Ausrüstung & Sortierung“ (`filterZeileHTML`) direkt unter den Kategorie-Kacheln; das alte Filter-Einblendfenster (`openFilterPanel`) entfällt
-- „Burpee-Intervalle“ enthalten jetzt Jump Forward Burpees
-- Neues Design **Klar** (`data-theme="klar"`, Einstellungen → Darstellung „Klar · neu“): ruhige Fläche, flach mit feinen Linien statt Schatten, große Titel, Tinte als Hauptfarbe, Limette (`--signal`) nur für Überrasch mich, „Los geht's“ und die Arbeitsphase im Timer (Pause = Tinte, Blockpause = Blau). Folgt Hell/Dunkel des Systems (auch die Statusleiste in `applyTheme`)
-- 2026-09-29: **Überrasch mich** aufgeräumt: Abbrechen/Zusammenstellen bleiben unten angeheftet (`.sp-foot`), Fokus, Intensität und die Regeln stecken zugeklappt unter **Feinauswahl** (Zusammenfassung der aktuellen Wahl in der Zeile, `spFeinOffen`), Ausrüstung steht direkt unter den Kategorien; beim Antippen springt das Fenster nicht mehr nach oben. Die gewählte Dauer wird jetzt samt Pausen zwischen den Übungen getroffen (`spDauerTreffen`: einzelne Übungen ± eine Runde, höchstens zwei vom Standard), der Titel nennt die tatsächliche Dauer
-- „Ausgewählt“ sieht überall gleich aus: Kategorie-Kacheln, Umschalter (`.seg-row`) und Chips in der Akzentfarbe; Kategoriefarben nur noch im Symbol, Weltfarben (Freies Training blau, Workouts grün) nur in Symbolen und Markierungen
-- 2026-09-29 (Einheitlichkeit): **Vier Bereichsfarben** als Variablen je Design – Freies Training `--bl-color`, Workouts `--tp-color`, Challenges `--rep-color`, Aufwärmen & Dehnen `--ws-color` (hell kräftiger, dunkel leuchtender; C60 und Tapedeck mit eigenen Tönen, damit sich keine zwei Bereiche gleichen). Favoriten, Start-Knöpfe, Übersicht und Figuren tragen die Farbe ihres Bereichs: Timer-Workouts jetzt blau wie Blöcke, Aufwärm- und Dehnprogramme türkis (`libIstWarmDehn`, Seite und Übersicht über `--bereich`), Figuren bei den Challenges gold, die Übungsinfo folgt dem Bereich (`bereichsFarbe`). Auswahl überall in der Akzentfarbe, auch Filterzeile, Filter-Zähler und die Chips im Übungs-Editor
-- Texte vereinheitlicht: „Sicherung speichern/einlesen“ statt Backup (Hinweise sagen jetzt, dass alle Daten ersetzt bzw. gelöscht werden), Reiter heißt überall „Meine“, „Challenge beenden?“, Überspringen statt „Weiter“ im Timer, Runden statt Wiederholungen im Block-Editor, Stufen bei den Challenges einheitlich Einsteiger / Mittel / Fortgeschritten, Schreibweisen („z. B.“, „30 s“, Home-Bildschirm) und Punkte am Ende aller Meldungen
-- 2026-09-29: **Einführung** (`openIntro`): fünf Seiten – Willkommen und je Bereich eine Seite in dessen Farbe und mit dessen Symbol; die Anzahlen (Studio-Übungen, fertige Workouts, Übungen für Workouts, Challenge-Programme und Einheiten, Aufwärm-/Dehnprogramme und -übungen) zählt `introSeiten()` selbst. Erscheint von selbst nur beim ersten Start auf einem Gerät (`ERSTER_START`: noch keine gespeicherten Daten), danach `settings.introGesehen`; wer BLOC schon eingerichtet hat, sieht sie nur über Einstellungen → Einführung ansehen. Wischen, Überspringen, Zurück; Schnelltest prüft ersten Start, Nicht-Wiederkehren und den Weg über die Einstellungen
-- 2026-09-29: **Kategorien ohne eigene Farbe** – sie überschnitten sich mit den Bereichsfarben (Ausdauer = Challenges-Gold, Stretch = Workouts-Grün). Kategorie-Kacheln zeigen ihr Symbol neutral, auf den Karten stehen kleine graue Kategorie-Symbole statt farbiger Punkte (`mainTagsHTML`). `MAIN_CATS[].color` in daten.js wird nicht mehr benutzt. Farben in BLOC damit: vier Bereiche plus Akzent für „Los“ und „ausgewählt“
-- 2026-09-29 (Führung, nach Mockup „BLOC & Vokabelkasten Führung“): **Farben nach 60-30-10** – „ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`: Schrift- und Flächenfarbe getauscht) statt orange; Orange nur für die Hauptaktion, das Logo und die Arbeitsphase im Timer. **Startseite**: Favoriten oben, die Karte „Überrasch mich“ entfällt dort; Bereiche mit **Workouts** als großer Karte vorn (mit Anzahl Workouts und Übungen, `htLibN`), Freies Training, Challenges und Aufwärmen & Dehnen als Gruppe darunter (`areaTile(…, "gross" | "zeile")`). **Bibliothek**: „Überrasch mich“ als kleiner Knopf oben rechts (`.sp-top`), Kategorie-Kacheln und Filterzeile unverändert
+| `index.html` | Gerüst (lädt `app.css`, `daten.js`, `app.js`) |
+| `app.css` | Gestaltung aller Designs (`:root[data-theme]`, C60 zusätzlich `[data-vintage]`) |
+| `app.js` | Programmlogik (Oberfläche, Timer, Überrasch mich, Speicher) |
+| `daten.js` | Inhalte: Übungen, Workouts, Challenges, Anleitungen, Muskeln, Figuren (`window.BLOC_DATEN`) |
+| `sw.js` | Service Worker für Offline-Betrieb; **einzige Stelle der Versionsnummer** (`FASSUNG`) |
+| `manifest.json`, `icon*.png`, `icon.svg` | PWA-Angaben und Icons |
+| `privacy.html` | Datenschutz und Haftungsausschluss |
+| `schnelltest.html` | Automatischer Klicktest (nur lokal) |
+
+- **Offline:** Der Service Worker fragt zuerst das Netz, wartet aber höchstens 2,5 s, wenn eine gespeicherte
+  Fassung da ist (`NETZ_WARTEN`) – dann startet die App aus dem Speicher und die neue Fassung lädt im Hintergrund.
+- **Neue Fassung veröffentlichen:** `FASSUNG` in `sw.js` erhöhen, damit Handys neu laden.
+  Beim Hochladen über die GitHub-Webseite immer **alle geänderten Dateien** gemeinsam hochladen
+  (`index.html`, `app.js`, `app.css`, `daten.js`, `sw.js` gehören zusammen) und im Feld „Commit changes“ kurz
+  beschreiben, was sich geändert hat.
+- **Sprache:** Einstellung, sonst `?lang=de|en` in der Adresse, sonst die Sprache des Geräts.
+
+## Testen
+
+Lokal mit einem kleinen Server starten, z. B.:
+
+```bash
+python -m http.server 8788
+```
+
+Dann `http://localhost:8788/schnelltest.html?auto` öffnen: Der Test klickt sich in einem eingebetteten Fenster
+durch alle Bereiche und meldet Fehler. Er legt den gespeicherten Stand vorher beiseite und stellt ihn danach
+wieder her, und er lädt die App immer auf Deutsch (`?lang=de`), damit er auf jedem Browser gleich läuft.
+
+## Veröffentlichen
+
+GitHub Pages aus dem Zweig `main` (Ordner `/`): <https://kevinhbrck.github.io/BLOC/>. Auf dem Handy die Seite
+öffnen und „App installieren“ bzw. „Zum Home-Bildschirm“ wählen – installiert bleibt der Speicher dauerhaft.

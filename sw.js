@@ -1,15 +1,16 @@
 /* BLOC (Sport Timer) - Offline-Unterstuetzung
  *
- * Strategie: zuerst das Netz, dann der Zwischenspeicher.
+ * Strategie: zuerst das Netz (höchstens 2,5 s, wenn eine gespeicherte Fassung da ist), dann der Zwischenspeicher.
  * Online siehst du immer sofort die neueste Fassung,
  * ohne Verbindung startet die zuletzt geladene aus dem Speicher.
  * Die App nutzt nur Systemschriften und laedt nichts von fremden Servern.
  */
 
 /* Einzige Stelle für die Versionsnummer - die App fragt sie per postMessage ab (Einstellungen, ganz unten) */
-var FASSUNG = "2026-09-29-6";
+var FASSUNG = "2026-09-29-7";
+var NETZ_WARTEN = 2500;   // ms - so lange wartet der Start höchstens aufs Netz, wenn es eine gespeicherte Fassung gibt
 var SPEICHER = "sporttimer-" + FASSUNG;
-var GRUNDGERUEST = ["./", "./index.html", "./daten.js", "./manifest.json", "./icon.png", "./privacy.html"];
+var GRUNDGERUEST = ["./", "./index.html", "./daten.js", "./app.js", "./app.css", "./manifest.json", "./icon.png", "./privacy.html"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
@@ -53,19 +54,33 @@ self.addEventListener("fetch", function (e) {
     ? new Request(anfrage.url, { cache: "no-cache", credentials: "same-origin" })
     : new Request(anfrage, { cache: "no-cache" });
 
-  e.respondWith(
-    fetch(frisch).then(function (antwort) {
-      if (antwort && antwort.status === 200 && antwort.type === "basic") {
-        var kopie = antwort.clone();
-        caches.open(SPEICHER).then(function (c) { c.put(anfrage, kopie); });
-      }
-      return antwort;
-    }).catch(function () {
-      return caches.match(anfrage).then(function (treffer) {
-        if (treffer) return treffer;
-        if (anfrage.mode === "navigate") return caches.match("./index.html");
-        return new Response("", { status: 504, statusText: "offline" });
-      });
-    })
-  );
+  function speichern(antwort) {
+    return antwort && antwort.status === 200 && antwort.type === "basic";
+  }
+  // Netz zuerst - aber höchstens NETZ_WARTEN lang, wenn eine gespeicherte Fassung da ist (Keller-Gym, Funkloch):
+  // dann startet die App aus dem Speicher, und die frische Fassung landet im Hintergrund trotzdem im Speicher.
+  var ausDemNetz = fetch(frisch).then(function (antwort) {
+    if (speichern(antwort)) {
+      var kopie = antwort.clone();
+      return caches.open(SPEICHER).then(function (c) { return c.put(anfrage, kopie); }).then(function () { return antwort; }, function () { return antwort; });
+    }
+    return antwort;
+  });
+  function ausSpeicher() {
+    return caches.match(anfrage).then(function (treffer) {
+      if (treffer || anfrage.mode !== "navigate") return treffer || null;
+      return caches.match("./index.html").then(function (t) { return t || caches.match("./"); });
+    });
+  }
+  e.respondWith(new Promise(function (fertig) {
+    var erledigt = false;
+    function nimm(a) { if (!erledigt && a) { erledigt = true; fertig(a); } }
+    var uhr = setTimeout(function () { ausSpeicher().then(nimm, function () {}); }, NETZ_WARTEN);
+    ausDemNetz.then(function (a) { clearTimeout(uhr); nimm(a); }, function () {
+      clearTimeout(uhr);
+      ausSpeicher().then(function (t) { nimm(t || new Response("", { status: 504, statusText: "offline" })); },
+                         function () { nimm(new Response("", { status: 504, statusText: "offline" })); });
+    });
+  }));
+  e.waitUntil(ausDemNetz.catch(function () {}));   // Hintergrund-Aktualisierung zu Ende bringen
 });
