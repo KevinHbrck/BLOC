@@ -96,12 +96,12 @@
       klick("[data-introweg]");
       pruefe(!$("#overlayRoot .intro-sheet"), "„Überspringen“ schließt nicht");
     }],
-    ["Startseite: Workouts vorn, Timer direkt, drei weitere Bereiche, Wochenzeile", async function () {
+    ["Startseite: Workouts vorn, drei weitere Bereiche, Wochenzeile", async function () {
       await heim();
-      pruefe($$(".area-tile").length === 5, "erwartet 5 Bereichs-Kacheln, gefunden " + $$(".area-tile").length);
+      pruefe($$(".area-tile").length === 4, "erwartet 4 Bereichs-Kacheln, gefunden " + $$(".area-tile").length);
       pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#library", "Workouts steht nicht hervorgehoben vorn");
-      pruefe($$(".area-gruppe .area-tile.zeile").length === 4, "die übrigen Bereiche fehlen in der Liste");
-      pruefe($(".area-gruppe .area-tile.zeile").getAttribute("data-nav") === "#timers/workouts", "Timer steht nicht direkt unter Workouts");
+      pruefe($$(".area-gruppe .area-tile.zeile").length === 3, "die übrigen drei Bereiche fehlen in der Liste");
+      pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
     }],
@@ -203,11 +203,21 @@
       klick('[data-wstab="uebungen"]');
       pruefe(/Kobra/.test(D.body.textContent), "Kobra fehlt");
     }],
-    ["Timer-Seite und Einstellungen öffnen", async function () {
+    ["Timer-Workouts und Blöcke unter Workouts › Meine, Einstellungen öffnen", async function () {
       await heim();
-      klick('[data-nav="#timers/workouts"]');   // Startseite: Timer direkt
-      klick(await bis(function () { return $('[data-ttab="workouts"]'); }, 3000, "Reiter Workouts"));
-      await bis(function () { return $('[data-fabopt="new"]'); }, 3000, "Knopf bei leerer Liste");
+      klick('[data-nav="#library"]');
+      klick(await bis(function () { return $('[data-libtab="mine"]'); }, 3000, "Reiter Meine"));
+      klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü"));
+      pruefe($('[data-fabopt="timerwo"]') && $('[data-fabopt="block"]'), "Timer-Workout und Block fehlen im Plus-Menü");
+      klick('[data-fabopt="block"]');
+      await bis(function () { return $("#f-name"); }, 3000, "Block-Editor");
+      klick("[data-save]");
+      await bis(function () { return $$("[data-playblock]").length === 1; }, 3000, "neuer Block unter Meine");
+      klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü"));
+      klick('[data-fabopt="timerwo"]');
+      await bis(function () { return $("#w-name"); }, 3000, "Timer-Workout-Editor");
+      klick("button.back");
+      await bis(function () { return $$("[data-play]").length === 1 && $('[data-libtab="mine"].active'); }, 3000, "Timer-Workout unter Meine");
       await heim();
       klick('[data-nav="#settings"]');
       await bis(function () { return $("[data-export]"); }, 3000, "Sicherung in den Einstellungen");
@@ -226,12 +236,10 @@
       klick('[data-figflag="pull-ups"]');
       pruefe($$(".fig-karte").length > 100, "nach dem Entmarkieren nicht zurück bei allen");
     }],
-    ["Studio: Reiter, Karte, Satz eintragen, Pause, Steigerung", async function () {
+    ["Freies Training (Studio): Karte, Satz eintragen, Pause, Steigerung", async function () {
       await heim();
-      klick('[data-nav="#timers/studio"]');
-      await bis(function () { return $$("[data-ttab]").length === 3; }, 3000, "drei Reiter");
-      pruefe($$("[data-ttab]")[0].textContent.trim() === "Studio", "Studio ist nicht der erste Reiter");
-      klick('[data-ttab="studio"]');
+      klick('[data-nav="#timers"]');
+      pruefe(!$("[data-ttab]"), "Freies Training hat noch Reiter");
       await bis(function () { return $$("[data-studio]").length > 60; }, 3000, "Studio-Kacheln");
       eingeben($("#st-q"), "beinpresse");
       pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");
@@ -255,7 +263,7 @@
       d.settings.studio["leg-press"].log = d.settings.studio["leg-press"].log.slice(0, 2);
       W.localStorage.setItem(KEY, JSON.stringify(d));
       await heim();
-      klick('[data-nav="#timers/studio"]');
+      klick('[data-nav="#timers"]');
       klick(await bis(function () { return $('[data-studio="leg-press"]'); }, 3000, "Kachel"));
       var up = await bis(function () { return $("[data-stup]"); }, 3000, "Steigerungs-Vorschlag");
       klick(up);

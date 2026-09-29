@@ -8,15 +8,14 @@ Dieses Dokument beschreibt den **aktuellen Stand**. Wie die App dahin gekommen i
 ## Aufbau
 
 **Startseite:** Wochenzeile (Trainings dieser Woche), Favoriten (☆, höchstens vier sichtbar, Rest über
-„Alle anzeigen“) und die Bereiche – **Workouts** als große Karte vorn, darunter als Liste **Timer**
-(direkt zu den Timer-Workouts), **Freies Training**, **Challenges** und **Aufwärmen & Dehnen**.
+„Alle anzeigen“) und die Bereiche – **Workouts** als große Karte vorn, darunter als Liste **Freies Training**,
+**Challenges** und **Aufwärmen & Dehnen**.
 Beim allerersten Start erklärt eine kurze Einführung die Bereiche (später unter Einstellungen).
 
 | Bereich | Inhalt |
 |---|---|
-| **Workouts** | Reiter Workouts · Übungen · Meine. Suche, Kategorie-Kacheln (Kraft, Ausdauer, Rumpf, Stangenpark), darunter die aufklappbare Filterzeile „Fokus, Ausrüstung & Sortierung“. „Überrasch mich“ oben rechts. Eigene Workouts im Baukasten: Übungs-Kacheln antippen, Ablauf-Streifen, „Sinnvoll ordnen“, Speichern-Knopf |
-| **Timer** | Timer-Workouts aus Blöcken (Block = eine Übung mit Runden, Arbeit, Pause); + füllt ein Timer-Workout per „Überrasch mich“ |
-| **Freies Training** | Reiter Studio · Workouts · Blöcke. Studio: Geräte- und Langhantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag nach doppelter Progression |
+| **Workouts** | Reiter Workouts · Übungen · Meine. Suche, Kategorie-Kacheln (Kraft, Ausdauer, Rumpf, Stangenpark), darunter die aufklappbare Filterzeile „Fokus, Ausrüstung & Sortierung“. „Überrasch mich“ oben rechts. **Meine** = alles Selbstgebaute: eigene Workouts (Baukasten: Übungs-Kacheln antippen, Ablauf-Streifen, „Sinnvoll ordnen“, Speichern-Knopf), Timer-Workouts aus Blöcken und Blöcke (Block = eine Übung mit Runden, Arbeit, Pause); das + legt alle drei an |
+| **Freies Training** | Das Studio: Geräte- und Hantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag nach doppelter Progression |
 | **Challenges** | Reiter Einheiten · Programme · Meine. 52 Programme (nach Bergen benannt) auf Zeit, 12 Einheiten mit Namen (z. B. „3 · Stufenweg“) in drei Stufen, Varianten als Routen; eigene Challenges |
 | **Aufwärmen & Dehnen** | Aufwärm- und Dehnprogramme und -übungen |
 
@@ -64,7 +63,9 @@ das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/
 
 - **Offline:** Der Service Worker fragt zuerst das Netz, wartet aber höchstens 2,5 s, wenn eine gespeicherte
   Fassung da ist (`NETZ_WARTEN`) – dann startet die App aus dem Speicher und die neue Fassung lädt im Hintergrund.
-- **Neue Fassung veröffentlichen:** `FASSUNG` in `sw.js` erhöhen, damit Handys neu laden.
+- **Neue Fassung veröffentlichen:** `FASSUNG` in `sw.js` erhöhen, damit Handys neu laden – und dieselbe Nummer
+  hinten an `app.css?v=…`, `daten.js?v=…` und `app.js?v=…` in `index.html` schreiben (so lädt der Browser sicher
+  alle Dateien derselben Fassung).
   Beim Hochladen über die GitHub-Webseite immer **alle geänderten Dateien** gemeinsam hochladen
   (`index.html`, `app.js`, `app.css`, `daten.js`, `sw.js` gehören zusammen) und im Feld „Commit changes“ kurz
   beschreiben, was sich geändert hat.

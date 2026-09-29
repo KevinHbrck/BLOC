@@ -1676,3 +1676,5 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .om-inhalt .list-item{ box-shadow:none; border:1px solid var(--border); }
 :root[data-vintage] .opt-mehr{ border-radius:8px; background:var(--raised, var(--surface)); }
 :root[data-vintage] .opt-mehr > summary .name, :root[data-vintage] .opt-label{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; font-weight:500; }
+/* Timer-Workouts und Blöcke gehören jetzt zu Workouts › Meine: Start-Knöpfe in der Workouts-Farbe (2026-09-29) */
+.list-item .playbtn.wo, .list-item .playbtn.bl{ background:var(--tp-color); color:var(--tp-text); }

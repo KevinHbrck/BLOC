@@ -256,7 +256,7 @@ var I18N = {
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
     fCat:"Fokus", equipAny:"Alles", fEquipHintShort:"Was hast du da?",
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche",
-    timers:"Freies Training", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Studio, Timer und Blöcke", homeTimer:"Timer", htIntervall:"Intervall-Timer aus Blöcken", timerWoOne:"1 Timer-Workout", timerWoN:"{n} Timer-Workouts",
+    timers:"Freies Training", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Geräte, Hanteln und Gewichte", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
     tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App.",
     stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen", stOwnNew:"Eigene Übung",
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
@@ -301,7 +301,7 @@ var I18N = {
     in1T:"Willkommen bei BLOC",
     in1:"Bau dir dein Training aus Bausteinen – und schau dabei über den Tellerrand.",
     in1N:"Kein Konto, keine Community – alles bleibt auf deinem Handy.",
-    in2:"{s} Übungen fürs Studio, dazu einfache Timer. Trag deine Gewichte ein – BLOC sagt dir, wann mehr geht.",
+    in2:"{s} Übungen fürs Studio. Trag deine Gewichte ein – BLOC sagt dir, wann mehr geht.",
     in3:"{w} Workouts und {e} Übungen: fertig starten oder selbst bauen. „Überrasch mich“ mischt Neues für dich.",
     in4:"{c} Programme und {u} Einheiten: feste Wiederholungen, so schnell du kannst. Schlag deine Bestzeit.",
     in5:"{p} Programme und {d} Übungen: vorher mobilisieren, danach dehnen.",
@@ -455,7 +455,7 @@ var I18N = {
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
     fCat:"Focus", equipAny:"Anything", fEquipHintShort:"What do you have?",
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections",
-    timers:"Free training", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Gym, timers and blocks", homeTimer:"Timers", htIntervall:"Interval timers built from blocks", timerWoOne:"1 timer workout", timerWoN:"{n} timer workouts",
+    timers:"Free training", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Machines, dumbbells and weights", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
     tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest.",
     stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises", stOwnNew:"Own exercise",
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
@@ -500,7 +500,7 @@ var I18N = {
     in1T:"Welcome to BLOC",
     in1:"Build your training from blocks – and look beyond your usual routine.",
     in1N:"No account, no community – everything stays on your phone.",
-    in2:"{s} gym exercises plus simple timers. Log your weights – BLOC tells you when to add more.",
+    in2:"{s} gym exercises. Log your weights – BLOC tells you when to add more.",
     in3:"{w} workouts and {e} exercises: start one or build your own. “Surprise me” mixes something new.",
     in4:"{c} programs and {u} units: fixed reps, as fast as you can. Beat your best time.",
     in5:"{p} routines and {d} exercises: warm up before, stretch after.",
@@ -1575,10 +1575,13 @@ function render(){
   if(route==="repplay") return renderRepPlayer(parts[1]);
   if(route==="repedit") return renderRepEdit(parts[1]);
   if(route==="timers"){
-    if(["studio", "workouts", "blocks"].indexOf(parts[1]) > -1) state.db.settings.timerTab = parts[1];   // #timers/workouts = gleich dieser Reiter
+    if(parts[1] === "workouts" || parts[1] === "blocks"){   // frühere Timer-Reiter: jetzt Workouts › Meine
+      state.db.settings.libTab = "mine"; navStack[navStack.length-1] = "#library"; setUrl("#library");
+      return renderLibrary();
+    }
     return renderTimers();
   }
-  if(route==="blocks"){ state.db.settings.timerTab = "blocks"; return renderTimers(); }
+  if(route==="blocks"){ state.db.settings.libTab = "mine"; navStack[navStack.length-1] = "#library"; setUrl("#library"); return renderLibrary(); }
   if(route==="block") return renderBlockEdit(parts[1]);
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
@@ -1660,9 +1663,7 @@ function renderHome(){
         t("htLibN", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:EXERCISES.filter(function(ex){ return !ex.custom && fuerWorkout(ex); }).length }),
         "var(--tp-color)", "gross") +
       '<div class="area-gruppe">'+
-        /* direkter Weg zu den Intervall-Timern (sonst zwei Schritte über Freies Training) */
-        areaTile("intervall", "#timers/workouts", t("homeTimer"), homeTimerSub(), "var(--bl-color)", "zeile") +
-        areaTile("timer", "#timers/studio", t("timers"), t("htTimers"), "var(--bl-color)", "zeile") +
+        areaTile("timer", "#timers", t("timers"), t("htTimers"), "var(--bl-color)", "zeile") +
         areaTile("reps", "#reps", t("repTitle"), t("htReps"), "var(--rep-color)", "zeile") +
         areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm"), "var(--ws-color)", "zeile") +
       '</div>'+
@@ -1675,11 +1676,6 @@ function renderHome(){
   bindBackupTip();
 }
 
-function homeTimerSub(){
-  var w = state.db.workouts.length, b = state.db.blocks.length;
-  if(!w && !b) return t("htIntervall");
-  return (w===1 ? t("timerWoOne") : t("timerWoN", { n:w }))+" · "+(b===1 ? t("oneBlock") : t("nBlocks", { n:b }));
-}
 function timersSubText(){
   var w = state.db.workouts.length, b = state.db.blocks.length;
   return (w===1 ? t("oneTimerWo") : t("nTimerWo", { n:w }))+" · "+(b===1 ? t("oneBlock") : t("nBlocks", { n:b }));
@@ -1816,49 +1812,8 @@ function blockRow(b){
     '<div class="sub">'+blockSpec(b)+SEP+fmtDuration(blockDuration(b))+'</div></div>'+
     favBtn("bl:"+b.id)+trashBtn("bl", b.id, b.name)+'</div>';
 }
-function renderTimers(){
-  var s = state.db.settings, tab = s.timerTab === "blocks" ? "blocks" : s.timerTab === "workouts" ? "workouts" : "studio";
-  if(tab === "studio") return renderStudio();
-  var list;
-  if(tab === "workouts"){
-    var ws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
-    list = ws.map(timerWorkoutRow).join("") || '<div class="empty">'+t("noTimerWorkouts")+
-      '<div><button type="button" class="btn btn-primary empty-btn" data-fabopt="new">'+ICON_PLUS+' '+t("fabTimerWo")+'</button></div></div>';
-  } else {
-    var bs = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
-    list = bs.map(blockRow).join("") || '<div class="empty">'+t("noBlocksList")+
-      '<div><button type="button" class="btn btn-primary empty-btn" data-fabopt="new">'+ICON_PLUS+' '+t("fabBlock")+'</button></div></div>';
-  }
-  app.innerHTML =
-    topbar(t("timers"), { back:"#home" }) +
-    timerTabsHTML(tab)+
-    '<div class="page-hint">'+t(tab==="workouts" ? "timerWoHint" : "blocksHint")+'</div>'+
-    list +
-    '<div style="height:90px"></div>'+
-    fabMenuHTML([ tab==="workouts"
-      ? { key:"new", label:t("fabTimerWo"), ico:ICON_WORKOUT, cls:"wo" }
-      : { key:"new", label:t("fabBlock"), ico:ICON_BLOCK, cls:"bl" } ]);
-  bindCommon();
-  app.querySelectorAll("[data-ttab]").forEach(function(b){ b.addEventListener("click", function(){
-    s.timerTab = b.getAttribute("data-ttab"); save(); renderTimers();
-  }); });
-  bindFabMenu({ "new": function(){
-    if(tab === "workouts") go("#workout/"+createTimerWorkout().id);
-    else go("#block/"+createBlock().id);
-  } });
-  bindFavItems(function(){ var y = window.scrollY; renderTimers(); window.scrollTo(0, y); });
-  bindTrash(function(){ var y = window.scrollY; renderTimers(); window.scrollTo(0, y); });
-  app.querySelectorAll("[data-twplus]").forEach(function(el){
-    el.addEventListener("click", function(e){ e.stopPropagation(); openSurprise(el.getAttribute("data-twplus")); });
-  });
-}
-function timerTabsHTML(tab){
-  return '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
-    '<button data-ttab="studio" class="'+(tab==="studio"?"active":"")+'">'+t("tabStudio")+'</button>'+
-    '<button data-ttab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabTimerWo")+'</button>'+
-    '<button data-ttab="blocks" class="'+(tab==="blocks"?"active":"")+'">'+t("tabBlocks")+'</button>'+
-  '</div></div>';
-}
+/* Freies Training ist nur noch das Studio (2026-09-29). Timer-Workouts und Blöcke stehen unter Workouts › Meine. */
+function renderTimers(){ return renderStudio(); }
 
 /* ============ Studio ============
    Übungen an Geräten und mit freien Gewichten als Kacheln. Jede Übung hat „ihre Karte“ (#studio/<id>):
@@ -1910,16 +1865,12 @@ function renderStudio(){
   });
   app.innerHTML =
     topbar(t("timers"), { back:"#home" }) +
-    timerTabsHTML("studio") +
     '<div class="page-hint">'+esc(t("studioHint"))+'</div>'+
     searchHTML(studioQuery, "st", t("stSearch"))+
     html +
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
     '<div style="height:40px"></div>';
   bindCommon();
-  app.querySelectorAll("[data-ttab]").forEach(function(b){ b.addEventListener("click", function(){
-    s.timerTab = b.getAttribute("data-ttab"); save(); renderTimers(); window.scrollTo(0, 0);
-  }); });
   app.querySelectorAll("[data-studio]").forEach(function(b){
     function oeffnen(){ go("#studio/"+b.getAttribute("data-studio")); }
     b.addEventListener("click", oeffnen);
@@ -2207,9 +2158,9 @@ function createBlock(){
 /* ============ Block edit ============ */
 function renderBlockEdit(id){
   var b = findBlock(id);
-  if(!b){ goBack("#timers"); return; }
+  if(!b){ goBack("#library"); return; }
   app.innerHTML =
-    topbar(t("editBlock"), { back:"#timers" }) +
+    topbar(t("editBlock"), { back:"#library" }) +
     '<div class="card">'+
       '<label for="f-name">'+t("name")+'</label>'+
       '<input type="text" id="f-name" value="'+esc(b.name)+'" maxlength="40">'+
@@ -2294,7 +2245,7 @@ function bindSteppers(root, onChange){
 /* ============ Workout edit ============ */
 function renderWorkoutEdit(id){
   var w = findWorkout(id);
-  if(!w){ goBack("#timers"); return; }
+  if(!w){ goBack("#library"); return; }
 
   var itemsHTML = w.items.map(function(it, idx){
     var b = findBlock(it.blockId);
@@ -2336,7 +2287,7 @@ function renderWorkoutEdit(id){
     }).join("")+'</div>';
 
   app.innerHTML =
-    topbar(t("workout"), { back:"#timers", right:'<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
+    topbar(t("workout"), { back:"#library", right:'<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
     '<div class="card">'+
       '<label for="w-name">'+t("name")+'</label>'+
       '<input type="text" id="w-name" value="'+esc(w.name)+'" maxlength="40">'+
@@ -2420,13 +2371,13 @@ function renderWorkoutEdit(id){
     w.name = app.querySelector("#w-name").value.trim() || t("untitled");
     w.updatedAt = Date.now();
     save();
-    goBack("#timers");
+    goBack("#library");
   });
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
     confirmSheet(t("deleteWorkoutQ"), t("cantUndo"), t("del"), function(){
       deleteTimerWorkoutNow(id);
-      goBack("#timers");
+      goBack("#library");
     });
   });
 }
@@ -2731,8 +2682,17 @@ function renderLibrary(){
       }
     });
     if(tab === "mine"){
-      if(!(state.db.myWorkouts || []).length) list = '<div class="empty" style="padding:30px 20px;">'+t("myEmpty")+'</div>';
-      fab = fabMenuHTML([{ key:"new", label:t("myNew"), ico:ICON_PLUS, cls:"tp" }]);
+      var tws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
+      var bls = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
+      var eigene = list;
+      list = "";
+      if(eigene) list += (tws.length || bls.length ? '<div class="section-title">'+t("mineMy")+'</div>' : '') + eigene;
+      if(tws.length) list += '<div class="section-title">'+t("mineTimer")+'</div>'+tws.map(timerWorkoutRow).join("");
+      if(bls.length) list += '<div class="section-title">'+t("mineBlocks")+'</div>'+bls.map(blockRow).join("");
+      if(!list) list = '<div class="empty" style="padding:30px 20px;">'+t("myEmpty")+'</div>';
+      fab = fabMenuHTML([{ key:"new", label:t("myNew"), ico:ICON_PLUS, cls:"tp" },
+                         { key:"timerwo", label:t("fabTimerWo"), ico:ICON_WORKOUT, cls:"wo" },
+                         { key:"block", label:t("fabBlock"), ico:ICON_BLOCK, cls:"bl" }]);
     }
   } else {
     EXERCISES.forEach(function(ex){
@@ -2785,7 +2745,13 @@ function renderLibrary(){
     applySearch(app, libQuery);
     lq.addEventListener("input", function(){ libQuery = lq.value; applySearch(app, libQuery); });
   }
-  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/new"); else go("#exedit/new"); } });
+  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/new"); else go("#exedit/new"); },
+                "timerwo": function(){ go("#workout/"+createTimerWorkout().id); },
+                "block": function(){ go("#block/"+createBlock().id); } });
+  // Timer-Workouts und Blöcke unter „Meine“: starten und per „Überrasch mich“ füllen
+  on("[data-play]", function(el){ if(!el.disabled) go("#play/"+el.getAttribute("data-play")); });
+  on("[data-playblock]", function(el){ go("#playblock/"+el.getAttribute("data-playblock")); });
+  on("[data-twplus]", function(el){ openSurprise(el.getAttribute("data-twplus")); });
 
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
