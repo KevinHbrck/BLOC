@@ -1660,3 +1660,19 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   --geraet:#e8b27a;
   --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.4);
 }
+/* Einstellungen: „Wichtig“ offen, „Mehr“ als zugeklappte Gruppen (2026-09-29) */
+.opt-label{ font-size:13px; font-weight:700; color:var(--text-dim); margin:0 0 10px; }
+.opt-mehr{ background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:10px; overflow:hidden; }
+.opt-mehr > summary{ list-style:none; display:flex; align-items:center; gap:12px; padding:14px 16px; min-height:60px; cursor:pointer; }
+.opt-mehr > summary::-webkit-details-marker{ display:none; }
+.opt-mehr > summary .meta{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.opt-mehr > summary .name{ font-weight:600; font-size:16px; }
+.opt-mehr > summary .sub{ font-size:13px; color:var(--text-dim); }
+.om-ico{ width:36px; height:36px; border-radius:11px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; flex:none; }
+.om-ico .ico{ width:20px; height:20px; }
+.om-chev{ display:flex; color:var(--text-dim); transition:transform .2s ease; }
+.opt-mehr[open] .om-chev{ transform:rotate(90deg); }
+.om-inhalt{ padding:0 16px 14px; }
+.om-inhalt .list-item{ box-shadow:none; border:1px solid var(--border); }
+:root[data-vintage] .opt-mehr{ border-radius:8px; background:var(--raised, var(--surface)); }
+:root[data-vintage] .opt-mehr > summary .name, :root[data-vintage] .opt-label{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; font-weight:500; }

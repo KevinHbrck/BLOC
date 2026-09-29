@@ -325,7 +325,9 @@ var I18N = {
     workoutBlocks:"Blöcke ({n}) &middot; Gesamt {d}", noBlocksInWorkout:"Noch keine Blöcke im Workout.",
     addBlock:"Block hinzufügen", noBlocksAvail:"Keine Blöcke vorhanden.", createBlockFirst:"Erst einen Block anlegen",
     deleteWorkout:"Workout löschen", deleteWorkoutQ:"Workout löschen?", cantUndo:"Diese Aktion kann nicht rückgängig gemacht werden.",
-    appearance:"Darstellung", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thNacht:"Nacht", thKodak:"C60",
+    appearance:"Darstellung", optWichtig:"Wichtig", optMehr:"Mehr", optTraining:"Training",
+    mehrTimer:"Timer und Töne", mehrTimerSub:"Ton, Klang, Einzählen, Vibration, Bildschirm", mehrApp:"App", mehrAppSub:"Einführung, installieren, teilen",
+    mehrLoeschenSub:"Lässt sich nur mit einer Sicherung rückgängig machen.", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thNacht:"Nacht", thKodak:"C60",
     themeInfo:"Nacht: warme Farben mit wenig Blau, schont abends die Augen. C60: Kassetten-Look mit Walzenzähler statt Ring.",
     language:"Sprache",
     installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
@@ -522,7 +524,9 @@ var I18N = {
     workoutBlocks:"Blocks ({n}) &middot; Total {d}", noBlocksInWorkout:"No blocks in this workout yet.",
     addBlock:"Add block", noBlocksAvail:"No blocks available.", createBlockFirst:"Create a block first",
     deleteWorkout:"Delete workout", deleteWorkoutQ:"Delete workout?", cantUndo:"This can't be undone.",
-    appearance:"Appearance", thSystem:"System", thLight:"Light", thDark:"Dark", thNacht:"Night", thKodak:"C60",
+    appearance:"Appearance", optWichtig:"Essentials", optMehr:"More", optTraining:"Training",
+    mehrTimer:"Timer and sounds", mehrTimerSub:"Sound, style, count-in, vibration, screen", mehrApp:"App", mehrAppSub:"Intro, install, share",
+    mehrLoeschenSub:"Only a backup can undo this.", thSystem:"System", thLight:"Light", thDark:"Dark", thNacht:"Night", thKodak:"C60",
     themeInfo:"Night: warm colours with little blue, easy on the eyes in the evening. C60: cassette look with a rolling counter instead of the ring.",
     language:"Language",
     installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
@@ -4627,50 +4631,48 @@ function appUrl(){
   if(!/^https?:$/.test(location.protocol)) return APP_PUBLIC_URL;
   return location.origin + location.pathname.replace(/index\.html$/, "");
 }
+/* Einstellungen: oben offen, was man regelmäßig braucht („Wichtig“), darunter thematisch gruppiert und zugeklappt („Mehr“).
+   Aufgeklappte Gruppen bleiben offen, solange man auf der Seite bleibt (die Seite zeichnet sich bei jeder Änderung neu). */
+var einstOffen = {};
+function einstMehr(key, titel, unter, inhalt, ico){
+  return '<details class="opt-mehr" data-mehr="'+key+'"'+(einstOffen[key] ? ' open' : '')+'>'+
+    '<summary>'+(ico ? '<span class="om-ico">'+svgIcon(ico)+'</span>' : '')+
+      '<span class="meta"><span class="name">'+esc(titel)+'</span><span class="sub">'+esc(unter)+'</span></span>'+
+      '<span class="om-chev">'+ICON_CHEV+'</span></summary>'+
+    '<div class="om-inhalt">'+inhalt+'</div></details>';
+}
 function renderSettings(){
   var s = state.db.settings;
+  function zeile(attr, name, sub){
+    return '<div class="list-item" '+attr+'>'+
+      '<div class="meta"><div class="name">'+name+'</div><div class="sub">'+sub+'</div></div>'+
+      '<span class="chip chev">'+ICON_CHEV+'</span></div>';
+  }
   app.innerHTML =
     topbar(t("settings"), { back:"#home" }) +
-    '<div class="section-title">'+t("appearance")+'</div>'+
-    '<div class="card"><div class="theme-pick">'+
+    '<div class="section-title">'+t("optWichtig")+'</div>'+
+    '<div class="card"><div class="opt-label">'+t("appearance")+'</div><div class="theme-pick">'+
       themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+
       themeBtn("nacht",t("thNacht"),"halb")+themeBtn("kodak",t("thKodak"),"vintage halb")+
     '</div>'+
     '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+t("themeInfo")+'</div>'+
     '</div>'+
-    '<div class="section-title">'+t("language")+'</div>'+
-    '<div class="card"><div class="theme-pick lang-pick">'+
-      langBtn("de","Deutsch")+langBtn("en","English")+
-    '</div></div>'+
-    '<div class="section-title">'+t("shareTitle")+'</div>'+
-    '<div class="card share-card">'+
-      '<div class="share-url" id="share-url">'+esc(appUrl())+'</div>'+
-      '<button type="button" class="btn btn-secondary" data-sharecopy>'+t("shareCopy")+'</button>'+
-    '</div>'+
-    '<div class="section-title">'+t("privacy")+'</div>'+
-    '<a class="list-item" href="privacy.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
-      '<div class="meta"><div class="name">'+t("privacyRow")+'</div>'+
-      '<div class="sub">'+t("privacyRowSub")+'</div></div>'+
-      '<span class="chip chev">'+ICON_CHEV+'</span>'+
-    '</a>'+
-    '<div class="section-title">'+t("introTitle")+'</div>'+
-    '<div class="list-item" data-intro role="button" tabindex="0">'+
-      '<div class="meta"><div class="name">'+t("introRow")+'</div>'+
-      '<div class="sub">'+t("introRowSub")+'</div></div>'+
-      '<span class="chip chev">'+ICON_CHEV+'</span>'+
-    '</div>'+
-    '<div class="section-title">'+t("installation")+'</div>'+
-    '<div class="list-item" data-nav="#install">'+
-      '<div class="meta"><div class="name">'+t("installRow")+'</div>'+
-      '<div class="sub">'+t("installRowSub")+'</div></div>'+
-      '<span class="chip chev">'+ICON_CHEV+'</span>'+
-    '</div>'+
-    '<div class="section-title">'+t("timer")+'</div>'+
-    '<div class="card">'+
+    '<div class="card"><div class="opt-label">'+t("optTraining")+'</div>'+
       '<div class="range-row"><div class="label">'+t("volume")+' <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
       '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'">'+
       '<div class="range-scale"><span>0</span><span>100</span></div>'+
       '<div class="range-hint">'+t("volMusicHint")+'</div></div>'+
+      toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
+    '</div>'+
+    '<div class="card"><div class="opt-label">'+t("data")+'</div>'+
+      '<div class="snap-zeile" id="snap-zeile">'+snapZeileHTML()+'</div>'+
+      (kannBackupTeilen() ? '<button class="btn btn-secondary" data-sharebackup>'+ICON_SHARE+' '+t("shareBackup")+'</button>' : '')+
+      '<button class="btn btn-secondary" data-export>'+t("exportBackup")+'</button>'+
+      '<button class="btn btn-secondary" data-import>'+t("importBackup")+'</button>'+
+      '<input type="file" id="import-file" style="display:none">'+
+    '</div>'+
+    '<div class="section-title">'+t("optMehr")+'</div>'+
+    einstMehr("timer", t("mehrTimer"), t("mehrTimerSub"),
       toggleRow("f-sound",t("sound"), t("soundDesc"), s.sound)+
       '<div class="range-row" data-opensounds style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
         '<div><div class="label" style="margin:0 0 2px;">'+t("soundStyle")+'</div><div style="font-size:13px;color:var(--text-dim);">'+esc(soundLabel(s.soundStyle))+'</div></div>'+
@@ -4679,21 +4681,30 @@ function renderSettings(){
       toggleRow("f-space",t("space"), t("spaceDesc"), s.space)+
       toggleRow("f-countin",t("countIn"), t("countInDesc"), s.countIn)+
       toggleRow("f-vibration",t("vibration"), t("vibrationDesc"), s.vibration)+
-      toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake)+
-      toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
-    '</div>'+
-    '<div class="list-item" data-nav="#figuren" style="margin-top:14px"><div class="meta"><div class="name">'+esc(t("figTitle"))+'</div>'+
+      toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake), HOME_ICON.intervall)+
+    einstMehr("sprache", t("language"), currentLang() === "en" ? "English" : "Deutsch",
+      '<div class="theme-pick lang-pick">'+langBtn("de","Deutsch")+langBtn("en","English")+'</div>',
+      '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.5 5.4 3.5 8.5s-1 5.9-3.5 8.5c-2.5-2.6-3.5-5.4-3.5-8.5s1-5.9 3.5-8.5z"/>')+
+    einstMehr("app", t("mehrApp"), t("mehrAppSub"),
+      zeile('data-intro role="button" tabindex="0"', t("introRow"), t("introRowSub"))+
+      zeile('data-nav="#install"', t("installRow"), t("installRowSub"))+
+      '<div class="opt-label" style="margin-top:6px">'+t("shareTitle")+'</div>'+
+      '<div class="share-card"><div class="share-url" id="share-url">'+esc(appUrl())+'</div>'+
+      '<button type="button" class="btn btn-secondary" data-sharecopy>'+t("shareCopy")+'</button></div>',
+      '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>')+
+    '<div class="list-item" data-nav="#figuren"><div class="meta"><div class="name">'+esc(t("figTitle"))+'</div>'+
       '<div class="sub">'+esc(t("figSub"))+'</div></div><span class="chip chev">'+ICON_CHEV+'</span></div>'+
-    '<div class="section-title">'+t("data")+'</div>'+
-    '<div class="card">'+
-      '<div class="snap-zeile" id="snap-zeile">'+snapZeileHTML()+'</div>'+
-      (kannBackupTeilen() ? '<button class="btn btn-secondary" data-sharebackup>'+ICON_SHARE+' '+t("shareBackup")+'</button>' : '')+
-      '<button class="btn btn-secondary" data-export>'+t("exportBackup")+'</button>'+
-      '<button class="btn btn-secondary" data-import>'+t("importBackup")+'</button>'+
-      '<input type="file" id="import-file" style="display:none">'+
-      '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>'+
-    '</div>'+
+    '<a class="list-item" href="privacy.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
+      '<div class="meta"><div class="name">'+t("privacyRow")+'</div>'+
+      '<div class="sub">'+t("privacyRowSub")+'</div></div>'+
+      '<span class="chip chev">'+ICON_CHEV+'</span>'+
+    '</a>'+
+    einstMehr("loeschen", t("deleteAll"), t("mehrLoeschenSub"),
+      '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>', '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/>')+
     '<div class="empty" style="padding:20px 8px;">'+t("localNote")+'<br><small class="app-version" id="app-version"></small></div>';
+  app.querySelectorAll("details[data-mehr]").forEach(function(d){
+    d.addEventListener("toggle", function(){ einstOffen[d.getAttribute("data-mehr")] = d.open; });
+  });
 
   bindCommon();
 
