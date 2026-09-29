@@ -37,6 +37,11 @@
   --bl-text:#ffffff;
   --tp-color:#1f9d6b;
   --tp-text:#ffffff;
+  /* Die vier Bereiche der Startseite haben je eine Farbe - Favoriten, Start-Knöpfe und Übersicht tragen die Farbe ihres Bereichs:
+     Freies Training = --bl-color, Workouts = --tp-color, Challenges = --rep-color, Aufwärmen & Dehnen = --ws-color */
+  --rep-color:#c98a00;
+  --ws-color:#1597a6;
+  --ws-text:#ffffff;
   /* Kategorien der Bibliothek */
   --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
   --radius:18px;
@@ -60,6 +65,9 @@
   --bl-text:#0b1330;
   --tp-color:#3fcf8e;
   --tp-text:#04231b;
+  --rep-color:#f5b82e;
+  --ws-color:#22b3c4;
+  --ws-text:#04262a;
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
 }
@@ -82,6 +90,9 @@
     --bl-text:#0b1330;
     --tp-color:#3fcf8e;
     --tp-text:#04231b;
+    --rep-color:#f5b82e;
+    --ws-color:#22b3c4;
+    --ws-text:#04262a;
     --radius:18px;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
@@ -132,6 +143,7 @@
   --wo-color:#c7332b; --wo-text:#ffffff;
   --bl-color:#28537f; --bl-text:#ffffff;
   --tp-color:#3f7a4f; --tp-text:#ffffff;
+  --rep-color:#b8801a; --ws-color:#2a8c8c; --ws-text:#ffffff;   /* Senf und Petrol passend zu Rot/Blau/Grün */
   --title-color:#1f1d1a;
   --section-color:#c7332b;
   --dot-color:#c7332b;
@@ -157,6 +169,7 @@
   --wo-color:#ef7b17; --wo-text:#ffffff;
   --bl-color:#f6b01e; --bl-text:#ffffff;
   --tp-color:#b3261e; --tp-text:#ffffff;
+  --rep-color:#8a5a2b; --ws-color:#2f8f8a; --ws-text:#ffffff;   /* Gelb ist hier schon Freies Training: Challenges in Bandbraun */
   --title-color:#e1251b;
   --section-color:#e1251b;
   --dot-color:#ea5b1b;
@@ -188,6 +201,7 @@
   --wo-color:#ffa928; --wo-text:#1d1305;
   --bl-color:#3ccfd6; --bl-text:#05262a;
   --tp-color:#b6e35a; --tp-text:#1a2605;
+  --rep-color:#ff6b6b; --ws-color:#c9a0ff; --ws-text:#1a1030;   /* Kontrolllampen: Cyan ist schon Freies Training, Bernstein der Akzent */
   --title-color:#e9e7e2;
   --section-color:#ffb547;
   --dot-color:#ffb547;
@@ -271,6 +285,7 @@ h1,h2,h3{ margin:0 0 4px; }
 .playbtn.wo{ background:var(--wo-color); color:var(--wo-text); }
 .playbtn.bl{ background:var(--bl-color); color:var(--bl-text); }
 .playbtn.tp{ background:var(--tp-color); color:var(--tp-text); }
+.playbtn.ws{ background:var(--ws-color); color:var(--ws-text); }
 /* Vorlagen: fertige Programme, direkt starten oder als eigenes Workout übernehmen */
 .lib-ico{ cursor:pointer; }
 .lib-ico svg{ width:22px; height:22px; }
@@ -291,7 +306,7 @@ h1,h2,h3{ margin:0 0 4px; }
   flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text);
   border-radius:100px; padding:8px 14px; font:inherit; font-size:14px; cursor:pointer; white-space:nowrap;
 }
-.lib-chip.active{ background:var(--tp-color); color:var(--tp-text); border-color:var(--tp-color); }
+.lib-chip.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
 .illu-btn{ border:none; background:none; padding:0; margin:0; cursor:pointer; color:inherit; align-self:flex-start; }
 .info-btn{
   display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; margin-left:6px;
@@ -304,7 +319,7 @@ h1,h2,h3{ margin:0 0 4px; }
 .info-x{ border:none; background:var(--surface-2); color:var(--text); width:38px; height:38px; border-radius:50%; font-size:22px; cursor:pointer; flex-shrink:0; }
 .info-live{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; padding:8px 8px 8px 12px; border-radius:12px; background:var(--surface-2); font-size:14px; }
 .info-live .tpl-adopt{ margin:0; }
-.info-illu{ display:block; width:150px; height:150px; margin:10px auto 4px; color:var(--tp-color); }
+.info-illu{ display:block; width:150px; height:150px; margin:10px auto 4px; color:var(--bereich, var(--tp-color)); }
 .info-views{ display:flex; justify-content:center; gap:10px; margin:10px 0 4px; }
 .info-views figure{ margin:0; flex:1; max-width:170px; text-align:center; }
 .info-views .info-illu{ width:100%; height:auto; aspect-ratio:1; margin:0 auto 2px; background:var(--surface-2); border-radius:14px; }
@@ -335,7 +350,7 @@ h1,h2,h3{ margin:0 0 4px; }
 }
 .lib-chip{ display:inline-flex; align-items:center; gap:6px; }
 .lib-chip .ico{ width:16px; height:16px; flex-shrink:0; }
-.lib-chip.active{ background:var(--tp-color); border-color:var(--tp-color); color:var(--tp-text); }
+.lib-chip.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-text); }
 :root[data-theme="tapedeck"] .lib-chip.active{ color:#101010; }
 :root[data-theme="tapedeck"] .lib-chip.active::before{ background:#101010; }
 .lib-tabs{ grid-template-columns:1fr 1fr 1fr !important; }
@@ -377,7 +392,7 @@ h1,h2,h3{ margin:0 0 4px; }
 body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .info-posture{ margin:0 0 10px; padding-left:0; list-style:none; font-size:15px; line-height:1.45; }
 .info-posture li{ position:relative; padding-left:24px; margin-bottom:6px; }
-.info-posture li::before{ content:"\2713"; position:absolute; left:2px; top:0; color:var(--tp-color); font-weight:700; }
+.info-posture li::before{ content:"\2713"; position:absolute; left:2px; top:0; color:var(--bereich, var(--tp-color)); font-weight:700; }
 .info-avoid{ font-size:14px; border-radius:10px; padding:10px 12px; margin-bottom:12px; background:color-mix(in srgb, var(--danger) 10%, transparent); border:1px solid color-mix(in srgb, var(--danger) 35%, transparent); }
 .lvl{ display:inline-flex; align-items:center; gap:3px; font-size:12px; color:var(--text-dim); white-space:nowrap; vertical-align:1px; }
 .lvl i{ width:7px; height:7px; border-radius:50%; border:1.5px solid currentColor; display:inline-block; }
@@ -388,7 +403,8 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .my-new.surprise{ border-style:solid; border-color:var(--border); color:var(--text); background:var(--surface); }
 .seg-row{ display:flex; gap:6px; margin-bottom:6px; }
 .seg-row button{ flex:1; border:1px solid var(--border); background:var(--surface-2); color:var(--text); border-radius:10px; padding:10px 6px; font:inherit; font-size:14px; cursor:pointer; }
-.seg-row button.active{ background:var(--tp-color); border-color:var(--tp-color); color:var(--tp-text); font-weight:700; }
+/* „Ausgewählt“ sieht überall gleich aus (Akzentfarbe wie die Filter-Chips); Welt- und Kategoriefarben stecken nur in Symbolen und Markierungen */
+.seg-row button.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-text); font-weight:700; }
 .tm-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .tm-grid label{ font-size:12px; margin:12px 0 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tm-grid .stepper button{ width:30px; height:44px; font-size:20px; flex-shrink:0; }
@@ -397,7 +413,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .tm-chip{ flex-shrink:0; border:1px solid var(--cat); color:var(--cat); background:none; border-radius:100px; padding:6px 9px; font:inherit; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
 .dz-sticky{ position:sticky; top:0; z-index:4; max-height:44vh; overflow-y:auto; background:var(--bg); margin:0 -6px; padding:2px 6px 4px; border-bottom:1px solid var(--border); overscroll-behavior:contain; }
 .dz-sticky .section-title{ margin-top:10px; }
-.cover-hero .cover-kicker{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--tp-color); font-weight:700; }
+.cover-hero .cover-kicker{ font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--bereich, var(--tp-color)); font-weight:700; }
 .cover-hero .cover-name{ margin:4px 0 6px; font-size:26px; }
 .cover-hero .cover-meta{ font-size:14px; color:var(--text-dim); }
 .cover-hero .cover-equip{ font-size:13px; color:var(--text-dim); margin:8px 0 4px; }
@@ -630,10 +646,10 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
   border:1px solid var(--border); border-radius:12px; background:var(--surface); color:var(--text); font:inherit; font-size:14px; font-weight:600; text-align:left; cursor:pointer; }
 .filter-zeile .ico{ width:20px; height:20px; flex-shrink:0; }
 .filter-zeile .fz-text{ flex:1; }
-.filter-zeile.on{ border-color:var(--tp-color); color:var(--tp-color); box-shadow:inset 0 0 0 1px var(--tp-color); }
+.filter-zeile.on{ border-color:var(--accent); color:var(--accent-ink, var(--accent)); box-shadow:inset 0 0 0 1px var(--accent); }
 .filter-zeile .filter-n{ position:static; }
 .filter-zeile .tpl-chev{ margin-left:0; }
-.filter-n{ position:absolute; top:-6px; right:-6px; min-width:20px; height:20px; padding:0 5px; border-radius:10px; background:var(--tp-color); color:var(--tp-text); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.filter-n{ position:absolute; top:-6px; right:-6px; min-width:20px; height:20px; padding:0 5px; border-radius:10px; background:var(--accent); color:var(--accent-text); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
 .active-filters{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; color:var(--text-dim); margin:-2px 4px 10px; }
 .active-filters .tpl-hide{ padding:6px 0; flex-shrink:0; }
 /* schlanke Bibliothekskarten */
@@ -669,6 +685,28 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .lbl-hint{ font-weight:400; color:var(--text-dim); font-size:12px; }
 .sp-avoid{ margin-top:14px; }
 .sp-avoid .toggle-row{ padding:6px 0; border:none; }
+/* Überrasch mich: Abbrechen/Zusammenstellen bleiben unten sichtbar, der Rest scrollt darunter durch */
+.confirm-sheet.sp-sheet{ padding-bottom:0; }
+.sp-foot{ position:sticky; bottom:0; z-index:2; margin:18px -20px 0; padding:12px 20px calc(14px + env(safe-area-inset-bottom));
+  background:var(--surface); border-top:1px solid var(--border); }
+/* „Zusammenstellen“ ist ein langes Wort: schmalere Ränder, damit beide Knöpfe auch in Großbuchstaben (Vintage) auf schmale Handys passen */
+.sp-foot .btn{ padding-left:10px; padding-right:10px; font-size:clamp(15px, 4.6vw, 17px); }
+.sp-foot .btn-secondary{ flex:0 1 auto; width:auto; padding-left:18px; padding-right:18px; }
+.sp-foot .btn-primary{ flex:1 1 auto; }
+:root[data-vintage] .sp-foot .btn{ letter-spacing:.02em; font-size:clamp(13px, 4vw, 15.5px); padding-left:10px; padding-right:10px; }
+:root[data-vintage] .sp-foot .btn-secondary{ padding-left:14px; padding-right:14px; }
+/* Feinauswahl (Fokus, Intensität, Regeln): zugeklappt eine Zeile mit der aktuellen Wahl */
+.sp-more{ display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; margin:16px 0 0; padding:12px 14px;
+  border:1px solid var(--border); border-radius:12px; background:var(--surface-2); color:var(--text); font:inherit; text-align:left; cursor:pointer; }
+.sp-more span{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.sp-more b{ font-size:14px; }
+.sp-more small{ font-size:12.5px; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sp-more svg{ flex-shrink:0; color:var(--text-dim); transform:rotate(90deg); transition:transform .2s ease; }
+.sp-more.open svg{ transform:rotate(-90deg); }
+.sp-more-body{ padding:0 2px; }
+.sp-more-body > label:first-child{ margin-top:18px; }
+:root[data-vintage] .sp-more{ border-radius:6px; background:var(--field); }
+:root[data-vintage] .sp-more b{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; font-size:12.5px; }
 .tpl-item.is-hidden .playbtn{ filter:grayscale(1); }
 .tpl-adopt .ico{ width:16px; height:16px; }
 .tpl-item{ position:relative; }
@@ -1397,6 +1435,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-theme="tapedeck"] .playbtn.wo{ box-shadow:0 0 12px rgba(255,169,40,.4), inset 0 -2px 3px rgba(0,0,0,.2); }
 :root[data-theme="tapedeck"] .playbtn.bl{ box-shadow:0 0 12px rgba(60,207,214,.4), inset 0 -2px 3px rgba(0,0,0,.2); }
 :root[data-theme="tapedeck"] .playbtn.tp{ box-shadow:0 0 12px rgba(182,227,90,.4), inset 0 -2px 3px rgba(0,0,0,.2); }
+:root[data-theme="tapedeck"] .playbtn.ws{ box-shadow:0 0 12px rgba(201,160,255,.4), inset 0 -2px 3px rgba(0,0,0,.2); }
 /* Bandsorten-Anzeige: drei Kontrolllampen, „Metal“ leuchtet */
 :root[data-theme="tapedeck"] .deck-badge{
   display:flex; gap:16px; margin:30px 0 0 2px;
@@ -1476,7 +1515,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .rep-tab td{ padding:6px 4px; text-align:center; border-top:1px solid var(--border); font-variant-numeric:tabular-nums; white-space:nowrap; }
 .rep-tab td.rep-ex{ text-align:left; white-space:normal; min-width:118px; padding-left:0; }
 .rep-ex-in{ display:flex; align-items:center; gap:8px; }
-.rep-ex-in .illu{ width:34px; height:34px; flex-shrink:0; color:var(--tp-color); }
+.rep-ex-in .illu{ width:34px; height:34px; flex-shrink:0; color:var(--rep-color); }
 .rep-ex-in .rep-leer{ width:34px; flex-shrink:0; }
 .rep-meta{ font-size:14px; color:var(--text-dim); margin:0 4px 4px; }
 /* Karten: was zu tun ist - Übung links, Menge über die Runden rechts */
@@ -1495,14 +1534,14 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .re-pick-liste{ flex:1 1 auto; min-height:0; overflow-y:auto; margin:8px 0 10px; padding:4px; }
 .re-pick-opt{ display:flex; align-items:center; gap:12px; width:100%; min-height:54px; padding:6px 4px; background:none; border:0;
   border-bottom:1px solid var(--border); color:var(--text); font-size:15px; text-align:left; cursor:pointer; }
-.re-pick-opt .illu{ width:40px; height:40px; flex-shrink:0; color:var(--tp-color); }
+.re-pick-opt .illu{ width:40px; height:40px; flex-shrink:0; color:var(--rep-color); }
 .re-pick-opt .rep-leer{ width:40px; flex-shrink:0; }
 .rp-uhr{ font-size:60px; font-weight:800; text-align:center; font-variant-numeric:tabular-nums; line-height:1.1; margin:4px 0 2px; letter-spacing:-.01em; }
 .rp-runde{ text-align:center; color:var(--text-dim); font-size:14px; font-weight:600; }
 .rp-fort{ height:6px; background:var(--surface-2); border-radius:6px; overflow:hidden; margin:10px 0 14px; }
 .rp-fort i{ display:block; height:100%; background:var(--accent); border-radius:6px; transition:width .3s ease; }
 .rp-karte{ background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 16px 18px; text-align:center; }
-.rp-karte .illu{ display:block; width:130px; height:130px; margin:0 auto 2px; color:var(--tp-color); }
+.rp-karte .illu{ display:block; width:130px; height:130px; margin:0 auto 2px; color:var(--rep-color); }
 .rp-karte .rp-leer{ height:24px; }
 .rp-menge{ font-size:46px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
 .rp-name{ font-size:20px; font-weight:700; margin-top:2px; }
@@ -1528,8 +1567,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .main-tiles{ display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:5px; margin:0 0 12px; }
 .main-tile{
   display:flex; flex-direction:column; align-items:center; gap:3px; min-width:0; padding:10px 1px 8px;
-  border-radius:12px; border:1.5px solid color-mix(in srgb, var(--mc) 55%, transparent);
-  background:color-mix(in srgb, var(--mc) 13%, var(--surface)); color:var(--text);
+  border-radius:12px; border:1.5px solid var(--border);
+  background:var(--surface-2); color:var(--text);
   font:inherit; cursor:pointer; transition:opacity .2s ease, transform .15s ease;
 }
 .main-tile:active{ transform:scale(.95); }
@@ -1542,7 +1581,9 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .lib-search input:focus{ border-color:var(--accent); }
 :root[data-vintage] .lib-search input{ border-radius:6px; background:var(--field); font-family:var(--f-mono); }
 .mt-n{ font-size:12px; color:var(--text-dim); font-variant-numeric:tabular-nums; }
-.main-tile.on{ border-color:var(--mc); background:color-mix(in srgb, var(--mc) 30%, var(--surface)); box-shadow:inset 0 0 0 1px var(--mc); }
+/* Kategorie-Kacheln: Farbe nur im Symbol, gewählt = Akzentfarbe wie alle anderen Auswahlen */
+.main-tile.on{ border-color:var(--accent); background:var(--accent); color:var(--accent-text); }
+.main-tile.on .mt-ico, .main-tile.on .mt-n{ color:inherit; }
 .main-tile.off{ opacity:.5; }
 .main-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--mc); margin-right:6px; vertical-align:1px; }
 .main-dot + .main-dot{ margin-left:-3px; }
@@ -1586,7 +1627,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-vintage] .mt-name{ font-family:var(--f-mono); text-transform:uppercase; font-size:9.5px; letter-spacing:0; }
 :root[data-vintage] .fc-head b, :root[data-vintage] .fc-lbl{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.05em; font-size:13px; }
 :root[data-vintage] .fc-chip, :root[data-vintage] .fc-seg button{ border-radius:6px; font-family:var(--f-mono); font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; }
-:root[data-vintage] .fc-chip.on, :root[data-vintage] .fc-seg button.on{ color:var(--on-accent); }
+:root[data-vintage] .fc-chip.on, :root[data-vintage] .fc-seg button.on, :root[data-vintage] .seg-row button.active, :root[data-vintage] .main-tile.on, :root[data-vintage] .lib-chip.active, :root[data-vintage] .filter-n{ color:var(--on-accent); }
 :root[data-vintage] .sec-link{ font-family:var(--f-mono); text-transform:uppercase; font-size:12px; letter-spacing:.05em; }
 /* Timer: Ring nur über transform, Phasenfarben per Überblenden (opacity) statt Farb-Transition */
 .player{ background:var(--bg); transition:none; }
@@ -1632,6 +1673,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   --signal:#d4ff3a; --signal-text:#141517;
   --rest:#141517; --rest-text:#f4f4f1; --blockrest:#4c63f5; --danger:#e5484d;
   --wo-color:#141517; --wo-text:#ffffff; --bl-color:#141517; --bl-text:#ffffff; --tp-color:#141517; --tp-text:#ffffff;
+  --rep-color:#141517; --ws-color:#141517; --ws-text:#ffffff;
   --c-cardio:#141517; --c-weight:#141517; --c-bw:#141517; --c-back:#141517; --c-legs:#141517; --c-core:#141517; --c-arms:#141517; --c-calis:#141517; --c-stretch:#141517;
   --geraet:#4c63f5;
   --radius:20px; --shadow:none;
@@ -1644,6 +1686,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   --accent:#f3f3f0; --accent-text:#0e0f11;
   --rest:#212226; --rest-text:#f3f3f0; --blockrest:#6f82ff; --danger:#ff6b6f;
   --wo-color:#f3f3f0; --wo-text:#0e0f11; --bl-color:#f3f3f0; --bl-text:#0e0f11; --tp-color:#f3f3f0; --tp-text:#0e0f11;
+  --rep-color:#f3f3f0; --ws-color:#f3f3f0; --ws-text:#0e0f11;
   --c-cardio:#ecece8; --c-weight:#ecece8; --c-bw:#ecece8; --c-back:#ecece8; --c-legs:#ecece8; --c-core:#ecece8; --c-arms:#ecece8; --c-calis:#ecece8; --c-stretch:#ecece8;
   --geraet:#8b9bff;
 } }
@@ -1670,7 +1713,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-theme="klar"] .btn{ border-radius:999px; font-weight:650; letter-spacing:-.01em; }
 :root[data-theme="klar"] .btn-secondary{ background:var(--surface-2); }
 :root[data-theme="klar"] .playbtn, :root[data-theme="klar"] .playbtn.wo, :root[data-theme="klar"] .playbtn.bl,
-:root[data-theme="klar"] .playbtn.tp, :root[data-theme="klar"] .playbtn.cat{ background:var(--text); color:var(--bg); box-shadow:none; }
+:root[data-theme="klar"] .playbtn.tp, :root[data-theme="klar"] .playbtn.cat, :root[data-theme="klar"] .playbtn.ws{ background:var(--text); color:var(--bg); box-shadow:none; }
 /* „Los geht's“: der eine Startknopf in der Signalfarbe */
 :root[data-theme="klar"] .btn-primary[data-go]{ background:var(--signal); color:var(--signal-text); }
 :root[data-theme="klar"] .fab{ box-shadow:0 8px 24px rgba(0,0,0,.18); }
@@ -1964,7 +2007,7 @@ var I18N = {
     hide:"Ausblenden", hiddenN:"{n} ausgeblendet.", showAgain:"Wieder einblenden",
     libEmpty:"Hier ist gerade nichts zu sehen.", blockRestN:"{n} s Blockpause",
     perSide:"je Seite", left:"Links", right:"Rechts",
-    libReady:"Fertige", libMine:"Eigene", exCount:"{n} Übungen", adoptMine:"In Eigene übernehmen",
+    libReady:"Fertige", libMine:"Eigene", exCount:"{n} Übungen", adoptMine:"Unter „Meine“ speichern",
     myNew:"Eigenes Workout erstellen", myDefaultName:"Mein Workout", myWorkout:"Eigenes Workout",
     myEmpty:"Noch kein eigenes Workout. Stell dir eins aus den Übungen zusammen.",
     myInWorkout:"Übungen im Workout ({n}) · {d}", myAdd:"Übungen hinzufügen", myRest:"Pause zwischen den Übungen",
@@ -2007,7 +2050,7 @@ var I18N = {
     favAdded:"Zu den Favoriten hinzugefügt.", favRemoved:"Aus den Favoriten entfernt.",
     lvl1:"Einsteiger", lvl2:"Mittel", lvl3:"Fortgeschritten", lvlAll:"Alle Stufen", equipAll:"Jede Ausrüstung", equipLabel:"Ausrüstung",
     coverTitle:"Übersicht", kindLib:"Fertiges Workout", kindMy:"Eigenes Workout", kindSurprise:"Überraschung",
-    letsGo:"Los geht's", saveAsMy:"Als Eigenes speichern", saveAsNewMy:"Als neues Eigenes speichern", savedMy:"Unter „Eigene“ gespeichert.",
+    letsGo:"Los geht's", saveAsMy:"Als Eigenes speichern", saveAsNewMy:"Als neues Eigenes speichern", savedMy:"Unter „Meine“ gespeichert.",
     coverHint:"Änderungen gelten nur für dieses Training, bis du speicherst.",
     coverDirty:"Angepasst – gilt nur für dieses Training.", reroll:"Neu mischen",
     timesLabel:"Zeiten", tmReps:"Runden", tmWork:"Arbeit (s)", tmRest:"Pause (s)", modeUniform:"Für alle gleich", modeIndividual:"Je Übung",
@@ -2017,20 +2060,21 @@ var I18N = {
     recommended:"Empfohlen", timeDone:"Fertig",
     voice:"Sprachansagen (Englisch)", voiceDesc:"Sagt in den Pausen die nächste Übung an",
     surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
+    spMore:"Feinauswahl", spNoFocus:"ohne Fokus",
     spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
     info:"Info", howTo:"So geht's", viewSide:"Seitlich", viewFront:"Von vorn", viewTop:"Von oben", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
     infoPause:"Pause", infoResume:"Weiter",
     noBlocksHome:"Noch kein Block angelegt.<br>Tippe unten rechts auf + und wähle <b>Neuer Block</b>.",
     startBlock:"Block einzeln starten", newWorkout:"Neues Workout", newBlock:"Neuer Block", create:"Neu anlegen",
-    installTitle:"Für dauerhaften Speicher installieren", installText:"Ein Tap und die App liegt auf deinem Startbildschirm.",
+    installTitle:"Für dauerhaften Speicher installieren", installText:"Einmal antippen, und die App liegt auf deinem Startbildschirm.",
     installNow:"Jetzt installieren",
     tipIOS:"Für dauerhaften Speicher: Teile-Symbol &#8593; antippen und <b>„Zum Home-Bildschirm“</b> wählen.",
     tipAndroid:"Für dauerhaften Speicher: Menü &#8942; öffnen und <b>„App installieren“</b> wählen.",
     viewGuide:"Anleitung ansehen",
     blocks:"Blöcke", blockSub:"{reps} &times; {work}s Arbeit / {rest}s Pause",
-    noBlocksList:"Noch kein Block angelegt.<br>Ein Block ist z.B. „6&times;30s Arbeit / 10s Pause“.",
-    editBlock:"Block bearbeiten", name:"Name", reps:"Wiederholungen", workSec:"Arbeit (Sekunden)",
-    restSec:"Pause zwischen Wiederholungen (Sekunden)", total:"Gesamtdauer:",
+    noBlocksList:"Noch kein Block angelegt.<br>Ein Block ist z. B. „6 × 30 s Arbeit / 10 s Pause“.",
+    editBlock:"Block bearbeiten", name:"Name", reps:"Runden", workSec:"Arbeit (Sekunden)",
+    restSec:"Pause zwischen den Runden (Sekunden)", total:"Gesamtdauer:",
     save:"Speichern", deleteBlock:"Block löschen", deleteBlockQ:"Block löschen?",
     deleteBlockText:"„{name}“ wird auch aus allen Workouts entfernt.", del:"Löschen",
     workout:"Workout", deletedBlock:"(gelöschter Block)", restAfter:"Pause danach:", sec:"Sek", start:"Start",
@@ -2041,7 +2085,7 @@ var I18N = {
     themeInfo:"Retro, C60 und Tapedeck: mit Walzenzähler statt Ring. Klar: modern und schlicht, folgt Hell/Dunkel des Handys.",
     language:"Sprache",
     installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
-    timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Töne bei Phasenwechsel – Musik läuft weiter", soundStyle:"Klang",
+    timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Töne bei Phasenwechsel", soundStyle:"Klang",
     space:"Raumklang", spaceDesc:"Hall und Stereo-Tiefe für alle Klänge",
     countIn:"Countdown-Piepsen", countInDesc:"Kurze Töne in den letzten 3 Sekunden",
     vibration:"Vibration", vibrationDesc:"Haptisches Feedback (falls unterstützt)",
@@ -2062,7 +2106,7 @@ var I18N = {
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
     repUnitsIntro:"12 Einheiten in drei Stufen, mehrere Programme am Stück.",
-    stufe_leicht:"Leicht", stufe_standard:"Standard", stufe_fortgeschritten:"Fortgeschritten", unitN:"Einheit {n}", variant:"Variante {n}", filterMehr:"Fokus, Ausrüstung & Sortierung",
+    stufe_leicht:"Einsteiger", stufe_standard:"Mittel", stufe_fortgeschritten:"Fortgeschritten", unitN:"Einheit {n}", variant:"Variante {n}", filterMehr:"Fokus, Ausrüstung & Sortierung",
     rundenTeil:"Runden {a}–{b}", runde1Teil:"Runde {a}", halb:"halbe Menge",
     repIntro:"So schnell wie möglich, aber sauber – mit Bestzeit.",
     repAll:"Alle", repAllEquip:"Alle Geräte", repNoBar:"Ohne Stange", repNone:"Keine Programme für diese Auswahl.",
@@ -2071,13 +2115,13 @@ var I18N = {
     repHint:"Nach jeder Übung „Geschafft“ tippen.",
     repDone:"Geschafft", repSkip:"Überspringen", repUndo:"Zurück", repPause:"Pause", repResume:"Weiter", repEnd:"Beenden",
     repNext:"Danach: {x}", repLastStep:"Letzte Übung", repReady:"Gleich geht's los", repFinish:"Geschafft!", repNewBest:"Neue Bestzeit!",
-    repAgain:"Nochmal", repToList:"Fertig", repEndQ:"Workout beenden?", repEndText:"Die Zeit wird nicht gespeichert.", repEndBtn:"Beenden",
+    repAgain:"Nochmal", repToList:"Fertig", repEndQ:"Challenge beenden?", repEndText:"Die Zeit wird nicht gespeichert.", repEndBtn:"Beenden",
     snapNone:"Letzter Schnappschuss: noch keiner", snapAgo:"Letzter Schnappschuss: {x}", snapToday:"heute", snapYesterday:"gestern",
     snapDays:"vor {n} Tagen", snapRestore:"Stand vom {d} wiederherstellen", snapQ:"Schnappschuss wiederherstellen?",
     snapText:"Deine aktuellen Daten werden durch den Stand vom {d} ersetzt.", snapBtn:"Wiederherstellen",
     snapInfo:"Alle 7 Tage automatisch eine Kopie auf diesem Gerät.",
     backupTipTitle:"Lange nicht gesichert", backupTipText:"Sichere deine eigenen Workouts, Übungen und Gewichte als Datei.",
-    backupNow:"Jetzt sichern", shareBackup:"Sicherung teilen (z. B. Drive, Mail)", backupShared:"Sicherung übergeben",
+    backupNow:"Jetzt sichern", shareBackup:"Sicherung teilen (z. B. Drive, Mail)", backupShared:"Sicherung übergeben.",
     wbAblauf:"Dein Ablauf", wbWaehlen:"Übungen wählen", wbTippen:"Antippen = dazu, nochmal antippen = raus.",
     wbLeer:"Noch leer – tippe unten Übungen an.", wbOrdnen:"Sinnvoll ordnen", wbGeordnet:"Geordnet: große Übungen zuerst, Wechsel der Muskelgruppen, Dehnen am Ende",
     wbAblaufHint:"Tipp auf eine Übung: Zeiten, verschieben, tauschen, entfernen.", wbZeiten:"Zeiten anpassen", wbNachVorn:"Nach vorn",
@@ -2086,25 +2130,25 @@ var I18N = {
     figTitle:"Figuren prüfen", figSub:"Alle Figuren auf einen Blick – Unklares markieren und teilen",
     figIntro:"Antippen zeigt die Figur bewegt. Unklares markieren, kurz notieren, am Ende teilen.",
     figAll:"Alle", figMarked:"Markierte ({n})", figFlag:"Unklar", figNotePh:"Was ist unklar? (optional)",
-    figShare:"Markierte teilen ({n})", figNone:"Noch nichts markiert.", figCopied:"Liste kopiert", figShareHead:"BLOC – unklare Figuren",
+    figShare:"Markierte teilen ({n})", figNone:"Noch nichts markiert.", figCopied:"Liste kopiert.", figShareHead:"BLOC – unklare Figuren",
     weekTitle:"Diese Woche", weekNone:"noch kein Training", weekDays:"M D M D F S S",
     weekOne:"1 Training", weekN:"{n} Trainings",
     tabWorkouts:"Workouts", tabMine:"Meine", mainCat:"Kategorie", multiOk:"Mehrere möglich",
     spMainHint:"Nichts gewählt = Kraft, Ausdauer und Rumpf.",
     spFocusHint:"Optional – grenzt innerhalb der Kategorie weiter ein.",
     sortDur:"Dauer", searchWoPh:"Workouts suchen …", unitsOf:"Einheit {i} von {n}", exOf:"Übung {i} von {n}",
-    data:"Daten", exportBackup:"Backup exportieren (JSON)", importBackup:"Backup importieren", deleteAll:"Alle Daten löschen",
+    data:"Daten", exportBackup:"Sicherung als Datei speichern", importBackup:"Sicherung einlesen", deleteAll:"Alle Daten löschen",
     localNote:"Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.",
-    importQ:"Backup importieren?", importText:"Bestehende Blöcke und Workouts werden überschrieben.", importBtn:"Importieren",
+    importQ:"Sicherung einlesen?", importText:"Alle deine aktuellen Daten werden durch die Sicherung ersetzt.", importBtn:"Einlesen",
     fileError:"Datei konnte nicht gelesen werden.",
-    deleteAllQ:"Alle Daten löschen?", deleteAllText:"Alle Blöcke und Workouts werden unwiderruflich gelöscht.", deleteAllBtn:"Alles löschen",
+    deleteAllQ:"Alle Daten löschen?", deleteAllText:"Eigene Workouts, Blöcke, Übungen, Challenges, Gewichte und Einstellungen werden unwiderruflich gelöscht.", deleteAllBtn:"Alles löschen",
     installApp:"App installieren",
     iosSteps:[
       "Diese Seite in <b>Safari</b> öffnen (nicht Chrome – dort fehlt der nötige Button).",
       "Unten in der Mitte auf das Teilen-Symbol <b>&#8593;</b> tippen.",
       "Nach unten scrollen und <b>„Zum Home-Bildschirm“</b> auswählen.",
       "Oben rechts auf <b>„Hinzufügen“</b> tippen.",
-      "Fertig! Das Icon liegt jetzt auf deinem Homescreen und startet als eigene App mit dauerhaftem Speicher."
+      "Fertig! Das Icon liegt jetzt auf deinem Home-Bildschirm und startet als eigene App mit dauerhaftem Speicher."
     ],
     androidSteps:[
       "Diese Seite in <b>Chrome</b> öffnen.",
@@ -2113,14 +2157,14 @@ var I18N = {
       "Installation im Dialog bestätigen.",
       "Fertig! Die App erscheint auf dem Startbildschirm und in der App-Liste."
     ],
-    androidQuickNote:"Ein Tipp genügt. Sonst manuell:",
+    androidQuickNote:"Einmal antippen genügt. Sonst von Hand:",
     installOutro:"Danach läuft sie im Vollbild – ohne 7-Tage-Speicherlimit.",
     cancel:"Abbrechen", chooseSound:"Klang wählen", natural:"Natürlich", electronic:"Elektronisch", close:"Schließen",
     phWork:"Los!", phRest:"Pause", phBlockrest:"Blockpause", phPrep:"Los geht's",
     upNext:"Als nächstes:", thenDone:"Danach: Fertig",
     doneTitle:"Workout geschafft!", again:"Nochmal", finish:"Fertig",
     endQ:"Workout beenden?", endText:"Der Fortschritt geht verloren.", endBtn:"Beenden",
-    skip:"Weiter", pause:"Pause", restartPhase:"Phase neu",
+    skip:"Überspringen", pause:"Pause", restartPhase:"Phase neu",
     unitH:"Std", unitMin:"Min", unitSec:"Sek",
     hideShort:"Ausblenden", unhide:"Einblenden", hiddenSection:"Ausgeblendet ({n})",
     hiddenSectionHint:"Ausgeblendete Einträge nutzt „Überrasch mich“ nicht.",
@@ -2129,7 +2173,7 @@ var I18N = {
     exPerSideDesc:"Links und rechts im Wechsel – Runden gelten pro Seite", exReco:"Empfohlene Zeiten",
     exHint:"Hinweis (optional)", exHintPh:"z. B. Rücken gerade halten", exSave:"Übung speichern", exDelete:"Übung löschen",
     exDeleteQ:"Übung löschen?", exDeleteText:"Sie verschwindet auch aus eigenen Workouts, in denen sie vorkommt.",
-    exSaved:"Übung gespeichert", exNameMissing:"Bitte gib der Übung einen Namen.", customTag:"Eigene Übung", edit:"Bearbeiten",
+    exSaved:"Übung gespeichert.", exNameMissing:"Bitte gib der Übung einen Namen.", customTag:"Eigene Übung", edit:"Bearbeiten",
     share:"Teilen", shareWo:"Workout teilen", shareLinkCopied:"Link kopiert – einfach verschicken.", kindShared:"Geteiltes Workout",
     shareBad:"Dieser Link ist leider ungültig oder unvollständig.", shareMsg:"Probier mein Workout „{n}“ in BLOC aus:",
     sharedMissing:"{n} Übung(en) aus dem Link kennt diese Fassung der App nicht – sie wurden weggelassen.",
@@ -2152,7 +2196,7 @@ var I18N = {
     hide:"Hide", hiddenN:"{n} hidden.", showAgain:"Show again",
     libEmpty:"Nothing to show here.", blockRestN:"{n} s block rest",
     perSide:"per side", left:"Left", right:"Right",
-    libReady:"Ready-made", libMine:"My own", exCount:"{n} exercises", adoptMine:"Copy to my own",
+    libReady:"Ready-made", libMine:"My own", exCount:"{n} exercises", adoptMine:"Save to “Mine”",
     myNew:"Create your own workout", myDefaultName:"My workout", myWorkout:"Own workout",
     myEmpty:"No own workout yet. Put one together from the exercises.",
     myInWorkout:"Exercises in workout ({n}) · {d}", myAdd:"Add exercises", myRest:"Rest between exercises",
@@ -2195,7 +2239,7 @@ var I18N = {
     favAdded:"Added to favourites.", favRemoved:"Removed from favourites.",
     lvl1:"Beginner", lvl2:"Intermediate", lvl3:"Advanced", lvlAll:"All levels", equipAll:"Any equipment", equipLabel:"Equipment",
     coverTitle:"Overview", kindLib:"Ready-made workout", kindMy:"Own workout", kindSurprise:"Surprise",
-    letsGo:"Let's go", saveAsMy:"Save as my own", saveAsNewMy:"Save as new own workout", savedMy:"Saved to “My own”.",
+    letsGo:"Let's go", saveAsMy:"Save as my own", saveAsNewMy:"Save as new own workout", savedMy:"Saved to “Mine”.",
     coverHint:"Changes apply to this session only until you save.",
     coverDirty:"Adjusted – applies to this session only.", reroll:"Shuffle again",
     timesLabel:"Timing", tmReps:"Rounds", tmWork:"Work (s)", tmRest:"Rest (s)", modeUniform:"Same for all", modeIndividual:"Per exercise",
@@ -2205,6 +2249,7 @@ var I18N = {
     recommended:"Recommended", timeDone:"Done",
     voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests",
     surprise:"Surprise me", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
+    spMore:"Fine-tuning", spNoFocus:"no focus",
     spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
     info:"Info", howTo:"How to", viewSide:"Side", viewFront:"Front", viewTop:"From above", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
     infoPause:"Pause", infoResume:"Resume",
@@ -2216,9 +2261,9 @@ var I18N = {
     tipAndroid:"For permanent storage: open the menu &#8942; and choose <b>“Install app”</b>.",
     viewGuide:"View guide",
     blocks:"Blocks", blockSub:"{reps} &times; {work}s work / {rest}s rest",
-    noBlocksList:"No blocks yet.<br>A block is e.g. “6&times;30s work / 10s rest”.",
-    editBlock:"Edit block", name:"Name", reps:"Repetitions", workSec:"Work (seconds)",
-    restSec:"Rest between repetitions (seconds)", total:"Total:",
+    noBlocksList:"No blocks yet.<br>A block is e.g. “6 × 30 s work / 10 s rest”.",
+    editBlock:"Edit block", name:"Name", reps:"Rounds", workSec:"Work (seconds)",
+    restSec:"Rest between rounds (seconds)", total:"Total:",
     save:"Save", deleteBlock:"Delete block", deleteBlockQ:"Delete block?",
     deleteBlockText:"“{name}” will also be removed from all workouts.", del:"Delete",
     workout:"Workout", deletedBlock:"(deleted block)", restAfter:"Rest after:", sec:"s", start:"Start",
@@ -2229,7 +2274,7 @@ var I18N = {
     themeInfo:"Retro, C60 and Tapedeck: with a rolling counter instead of the ring. Clear: modern and minimal, follows your phone's light/dark mode.",
     language:"Language",
     installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
-    timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Beeps between phases – your music keeps playing", soundStyle:"Sound style",
+    timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Beeps between phases", soundStyle:"Sound style",
     space:"Room sound", spaceDesc:"Reverb and stereo depth for all sounds",
     countIn:"Countdown beeps", countInDesc:"Short beeps in the last 3 seconds",
     vibration:"Vibration", vibrationDesc:"Haptic feedback (if supported)",
@@ -2250,7 +2295,7 @@ var I18N = {
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
     repUnitsIntro:"12 sessions in three levels, several programs in a row.",
-    stufe_leicht:"Light", stufe_standard:"Standard", stufe_fortgeschritten:"Advanced", unitN:"Session {n}", variant:"Option {n}", filterMehr:"Focus, equipment & sort",
+    stufe_leicht:"Beginner", stufe_standard:"Intermediate", stufe_fortgeschritten:"Advanced", unitN:"Session {n}", variant:"Option {n}", filterMehr:"Focus, equipment & sort",
     rundenTeil:"rounds {a}–{b}", runde1Teil:"round {a}", halb:"half volume",
     repIntro:"As fast as possible, but clean – with best time.",
     repAll:"All", repAllEquip:"Any equipment", repNoBar:"No bar", repNone:"No programs match this selection.",
@@ -2259,13 +2304,13 @@ var I18N = {
     repHint:"Tap “Done” after each exercise.",
     repDone:"Done", repSkip:"Skip", repUndo:"Back", repPause:"Pause", repResume:"Resume", repEnd:"End",
     repNext:"Next: {x}", repLastStep:"Last exercise", repReady:"Get ready", repFinish:"Done!", repNewBest:"New best time!",
-    repAgain:"Again", repToList:"Finish", repEndQ:"End workout?", repEndText:"Your time won't be saved.", repEndBtn:"End",
+    repAgain:"Again", repToList:"Finish", repEndQ:"End challenge?", repEndText:"Your time won't be saved.", repEndBtn:"End",
     snapNone:"Last snapshot: none yet", snapAgo:"Last snapshot: {x}", snapToday:"today", snapYesterday:"yesterday",
     snapDays:"{n} days ago", snapRestore:"Restore state from {d}", snapQ:"Restore snapshot?",
     snapText:"Your current data will be replaced with the state from {d}.", snapBtn:"Restore",
     snapInfo:"An automatic copy on this device every 7 days.",
     backupTipTitle:"No recent backup", backupTipText:"Back up your own workouts, exercises and weights as a file.",
-    backupNow:"Back up now", shareBackup:"Share backup (e.g. Drive, mail)", backupShared:"Backup handed over",
+    backupNow:"Back up now", shareBackup:"Share backup (e.g. Drive, mail)", backupShared:"Backup shared.",
     wbAblauf:"Your sequence", wbWaehlen:"Pick exercises", wbTippen:"Tap = add, tap again = remove.",
     wbLeer:"Still empty – tap exercises below.", wbOrdnen:"Smart order", wbGeordnet:"Ordered: big lifts first, alternating muscle groups, stretches last",
     wbAblaufHint:"Tap an exercise: times, move, swap, remove.", wbZeiten:"Adjust times", wbNachVorn:"Move up",
@@ -2274,18 +2319,18 @@ var I18N = {
     figTitle:"Review figures", figSub:"All figures at a glance – mark and share unclear ones",
     figIntro:"Tap to see a figure move. Mark what's unclear, add a note, then share.",
     figAll:"All", figMarked:"Marked ({n})", figFlag:"Unclear", figNotePh:"What is unclear? (optional)",
-    figShare:"Share marked ({n})", figNone:"Nothing marked yet.", figCopied:"List copied", figShareHead:"BLOC – unclear figures",
+    figShare:"Share marked ({n})", figNone:"Nothing marked yet.", figCopied:"List copied.", figShareHead:"BLOC – unclear figures",
     weekTitle:"This week", weekNone:"no workout yet", weekDays:"M T W T F S S",
     weekOne:"1 workout", weekN:"{n} workouts",
     tabWorkouts:"Workouts", tabMine:"Mine", mainCat:"Category", multiOk:"Pick several",
     spMainHint:"None picked = strength, cardio and core.",
     spFocusHint:"Optional – narrows things down within the category.",
     sortDur:"Duration", searchWoPh:"Search workouts …", unitsOf:"Unit {i} of {n}", exOf:"Exercise {i} of {n}",
-    data:"Data", exportBackup:"Export backup (JSON)", importBackup:"Import backup", deleteAll:"Delete all data",
+    data:"Data", exportBackup:"Save backup as file", importBackup:"Load backup", deleteAll:"Delete all data",
     localNote:"All data stays on this device. For permanent storage on iOS, add the app to your home screen.",
-    importQ:"Import backup?", importText:"Your current blocks and workouts will be replaced.", importBtn:"Import",
+    importQ:"Load backup?", importText:"All your current data will be replaced by the backup.", importBtn:"Load",
     fileError:"Couldn't read the file.",
-    deleteAllQ:"Delete all data?", deleteAllText:"All blocks and workouts will be permanently deleted.", deleteAllBtn:"Delete everything",
+    deleteAllQ:"Delete all data?", deleteAllText:"Your own workouts, blocks, exercises, challenges, weights and settings will be permanently deleted.", deleteAllBtn:"Delete everything",
     installApp:"Install app",
     iosSteps:[
       "Open this page in <b>Safari</b> (not Chrome – the button you need is missing there).",
@@ -2317,7 +2362,7 @@ var I18N = {
     exPerSideDesc:"Alternates left and right – rounds count per side", exReco:"Recommended times",
     exHint:"Cue (optional)", exHintPh:"e.g. keep your back straight", exSave:"Save exercise", exDelete:"Delete exercise",
     exDeleteQ:"Delete exercise?", exDeleteText:"It will also be removed from your own workouts that use it.",
-    exSaved:"Exercise saved", exNameMissing:"Please give the exercise a name.", customTag:"Own exercise", edit:"Edit",
+    exSaved:"Exercise saved.", exNameMissing:"Please give the exercise a name.", customTag:"Own exercise", edit:"Edit",
     share:"Share", shareWo:"Share workout", shareLinkCopied:"Link copied – just send it.", kindShared:"Shared workout",
     shareBad:"Sorry, this link is invalid or incomplete.", shareMsg:"Try my workout “{n}” in BLOC:",
     sharedMissing:"This version of the app doesn't know {n} exercise(s) from the link – they were left out.",
@@ -3046,13 +3091,20 @@ function musclesLabel(ex){ return t(ex.cats.indexOf("stretch") > -1 ? "musStretc
 
 /* Info-Fenster: großes Piktogramm, Anleitung, Tipp. Im Timer läuft die Zeit sichtbar weiter. */
 var infoTimer = null;
+/* Farbe des Bereichs, in dem man gerade ist - Figuren in Einblendfenstern passen sich an */
+function bereichsFarbe(){
+  var h = navTop(), m = h.match(/^#cover\/lib\/(.+)$/);
+  if(/^#warmstretch/.test(h) || (m && libIstWarmDehn(findLibWorkout(m[1])))) return "var(--ws-color)";
+  if(/^#(reps|rep|repplay|repedit)(\/|$)/.test(h)) return "var(--rep-color)";
+  return "";
+}
 function openExInfo(exId, live, lib){
-  var ex = findExercise(exId), info = EX_INFO[exId];
+  var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe();
   if(!ex || !info) return;
   var lang = currentLang()==="en" ? 1 : 0;
   var steps = info[lang].split("|").map(function(s){ return '<li>'+esc(s)+'</li>'; }).join("");
   var root = document.getElementById("overlayRoot");
-  root.innerHTML = '<div class="confirm-overlay info-overlay"><div class="confirm-sheet info-sheet" role="dialog" aria-label="'+esc(tplText(ex.name))+'">'+
+  root.innerHTML = '<div class="confirm-overlay info-overlay"><div class="confirm-sheet info-sheet" role="dialog" aria-label="'+esc(tplText(ex.name))+'"'+(farbe ? ' style="--bereich:'+farbe+'"' : '')+'>'+
     '<div class="info-head"><div><h3>'+esc(tplText(ex.name))+'</h3>'+
       '<div class="info-sub">'+blockSpec(exBlock(ex))+SEP+esc(ex.cats.map(catName).join(" · "))+'</div></div>'+
       '<button type="button" class="info-x" data-close aria-label="'+t("close")+'">&times;</button></div>'+
@@ -3344,8 +3396,8 @@ function renderHome(){
       /* Farben wie in Favoriten und Listen: Timer/Blöcke blau, Bibliotheks-Workouts grün */
       areaTile("timer", "#timers", t("timers"), t("htTimers"), "var(--bl-color)") +
       areaTile("lib", "#library", t("library"), t("htLib"), "var(--tp-color)") +
-      areaTile("reps", "#reps", t("repTitle"), t("htReps"), "#f5b82e") +
-      areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm"), "#22b3c4") +
+      areaTile("reps", "#reps", t("repTitle"), t("htReps"), "var(--rep-color)") +
+      areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm"), "var(--ws-color)") +
     '</div>' +
     KODAK_BADGE + DECK_BADGE;
   bindCommon();
@@ -3478,7 +3530,7 @@ function bindTrash(refresh){
 function timerWorkoutRow(w){
   var count = w.items.length;
   return '<div class="list-item entry" data-nav="#workout/'+w.id+'">'+
-    '<button class="playbtn wo" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+' title="'+t("start")+'" aria-label="'+t("start")+'">'+ICON_PLAY+'</button>'+
+    '<button class="playbtn bl" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+' title="'+t("start")+'" aria-label="'+t("start")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(w.name||t("untitled"))+'</div>'+
     '<div class="sub">'+count+' '+(count===1?t("blockOne"):t("blockMany"))+SEP+fmtDuration(workoutDuration(w))+'</div></div>'+
     '<button type="button" class="plus-btn" data-twplus="'+w.id+'" title="'+esc(t("spFill"))+'" aria-label="'+esc(t("spFill")+": "+(w.name || t("untitled")))+'">'+ICON_PLUS+'</button>'+
@@ -4106,6 +4158,9 @@ function renderWorkoutEdit(id){
   });
 }
 
+/* Fertige Programme gehören zu Aufwärmen & Dehnen (Aufwärm- und Dehnprogramme) oder zur Workouts-Bibliothek */
+function libIstWarmDehn(lw){ return !!lw && (lw.focus === "stretch" || AUFWAERM_IDS.indexOf(lw.id) > -1); }
+
 /* ============ Favoriten ============ */
 /* Schlüssel "lib:<id>" (fertiges Workout oder Dehnprogramm) bzw. "my:<id>" (eigenes Workout) */
 function isFav(k){ return (state.db.settings.favs || []).indexOf(k) > -1; }
@@ -4130,13 +4185,13 @@ function favEntries(){
     var kind = k.split(":")[0], id = k.slice(kind.length+1), e = null;
     if(kind==="tw"){
       var tw = findWorkout(id);
-      if(tw) e = { name:tw.name || t("untitled"), sub:fmtDuration(workoutDuration(tw)), cls:"wo", go:"#play/"+id, ok:tw.items.length > 0 };
+      if(tw) e = { name:tw.name || t("untitled"), sub:fmtDuration(workoutDuration(tw)), cls:"bl", go:"#play/"+id, ok:tw.items.length > 0 };
     } else if(kind==="bl"){
       var bl = findBlock(id);
       if(bl && state.db.blocks.indexOf(bl) > -1) e = { name:bl.name, sub:blockSpec(bl), cls:"bl", go:"#playblock/"+id, ok:true };
     } else if(kind==="lib"){
       var lw = findLibWorkout(id);
-      if(lw) e = { name:tplText(lw.name), sub:fmtDuration(workoutDuration(libWorkoutRun(lw))), cls:"cat", cat:catVar(lw.focus), cover:"lib/"+id, ok:true };
+      if(lw) e = { name:tplText(lw.name), sub:fmtDuration(workoutDuration(libWorkoutRun(lw))), cls:libIstWarmDehn(lw) ? "ws" : "tp", cover:"lib/"+id, ok:true };
     } else if(kind==="my"){
       var mw = findMy(id);
       if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:"tp", cover:"my/"+id, ok:mw.items.length > 0 };
@@ -4259,7 +4314,8 @@ function mainTagsHTML(mains){
   return mains.map(function(m){ var c = mainCat(m); return '<span class="main-dot" style="--mc:'+c.color+'" title="'+esc(tplText(c))+'"></span>'; }).join("");
 }
 function libWoCard(lw, exs, hidden, dur, mains){
-  return '<div class="list-item entry tpl-item lib-card'+(hidden?' is-hidden':'')+'" style="--cat:var(--tp-color)" data-cover="lib/'+lw.id+'" data-q="'+esc(woSearchText(lw.name.de+" "+lw.name.en, exs))+'">'+
+  // --bereich: gesetzt auf Seiten eines anderen Bereichs (Aufwärmen & Dehnen), sonst Workouts-Grün
+  return '<div class="list-item entry tpl-item lib-card'+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, var(--tp-color))" data-cover="lib/'+lw.id+'" data-q="'+esc(woSearchText(lw.name.de+" "+lw.name.en, exs))+'">'+
     '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
     '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDuration(dur)+'</div>'+
@@ -4274,7 +4330,7 @@ function libExCard(ex, hidden, sub){
     ? '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'
     : (ex.custom ? '<button type="button" class="illu-btn" data-exedit="'+ex.id+'" aria-label="'+t("edit")+'"><span class="custom-ico">'+catIcon(ex.cats[0])+'</span></button>' : '');
   var mus = musclesMain(ex);
-  return '<div class="list-item entry tpl-item lib-card'+(ex.id==="russian-twists"?' ua':'')+(isExFav(ex.id)?' ex-fav-on':'')+(hidden?' is-hidden':'')+'" style="--cat:'+catVar(ex.cats[0])+'" data-q="'+esc(exSearchText(ex))+'">'+
+  return '<div class="list-item entry tpl-item lib-card'+(ex.id==="russian-twists"?' ua':'')+(isExFav(ex.id)?' ex-fav-on':'')+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, '+catVar(ex.cats[0])+')" data-q="'+esc(exSearchText(ex))+'">'+
     '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'" aria-label="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
     '<div class="sub">'+mainTagsHTML([ex.main])+sub+'</div>'+
@@ -4370,7 +4426,7 @@ function renderLibrary(){
     var rows = [];
     if(tab === "workouts"){
       LIB_WORKOUTS.forEach(function(lw){
-        if(lw.focus === "stretch" || AUFWAERM_IDS.indexOf(lw.id) > -1) return;
+        if(libIstWarmDehn(lw)) return;
         var exs = lw.exercises.map(findExercise).filter(Boolean);
         rows.push({ lw:lw, exs:exs, name:tplText(lw.name), focus:lw.focus, dur:workoutDuration(libWorkoutRun(lw)), hidden:libHidden("wo:"+lw.id) });
       });
@@ -4845,7 +4901,7 @@ function renderDraftPage(d, cfg){
   var pos = {};
   d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
   function kachel(ex){
-    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:catVar(ex.cats[0]), nr:pos[ex.id] || [],
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:'var(--bereich, '+catVar(ex.cats[0])+')', nr:pos[ex.id] || [],
       innen:'<button type="button" class="wb-i" data-exinfo="'+ex.id+'" aria-label="'+esc(t("info"))+'">i</button>'+exFavBtn(ex.id) });
   }
   // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen
@@ -4853,13 +4909,13 @@ function renderDraftPage(d, cfg){
     var ex = findExercise(it.ex);
     if(!ex) return "";
     var tm = itemTiming(d, it);
-    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbitem="'+i+'"', cat:catVar(ex.cats[0]), klasse:"wb-ablauf",
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbitem="'+i+'"', cat:'var(--bereich, '+catVar(ex.cats[0])+')', klasse:"wb-ablauf",
       innen:'<span class="wb-nr">'+(i+1)+'</span>', unter:'<span class="st-sub">'+timingText(tm, ex.perSide)+'</span>' });
   }
   var streifen = d.items.map(function(it, i){
     var ex = findExercise(it.ex);
     if(!ex) return "";
-    return '<button type="button" class="wb-mini" data-wbitem="'+i+'" style="--cat:'+catVar(ex.cats[0])+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
+    return '<button type="button" class="wb-mini" data-wbitem="'+i+'" style="--cat:var(--bereich, '+catVar(ex.cats[0])+')" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
       (ILLU[ex.id] ? illuStillHTML(ex.id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span>'+
       '<span class="wb-mini-name">'+esc(tplText(ex.name))+'</span></button>';
   }).join("");
@@ -4925,6 +4981,7 @@ function renderDraftPage(d, cfg){
     (d.src==="lib" ? coverAct('data-coverhide', svgIcon(ICON_EYE_OFF), t("hideShort")) : '')+
   '</div>';
   var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : d.src==="shared" ? "kindShared" : "kindMy";
+  var warmDehn = d.src==="lib" && libIstWarmDehn(findLibWorkout(d.key.slice(4)));
   var head = cfg.cover
     ? '<div class="card cover-hero">'+
         '<div class="cover-kicker">'+t(kind)+'</div>'+
@@ -4953,7 +5010,8 @@ function renderDraftPage(d, cfg){
   app.innerHTML =
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: cfg.cover ? "" :
       '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>' }) +
-    head + ablaufHTML + optionsHTML + palHTML +
+    // Aufwärm- und Dehnprogramme: Überschrift, Kacheln und Figuren in der Farbe von Aufwärmen & Dehnen
+    (warmDehn ? '<div style="--bereich:var(--ws-color)">' : '<div>') + head + ablaufHTML + optionsHTML + palHTML + '</div>' +
     (cfg.cover || cfg.bau.neu ? '' : '<button class="btn btn-danger" data-mydel style="margin-top:18px;">'+ICON_TRASH+' '+t("myDelete")+'</button>')+
     '<div style="height:'+(cfg.cover ? 40 : 96)+'px"></div>'+
     (cfg.cover ? '' : '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+t("exCount", { n:exs.length })+'</b><br>'+dauer+'</span>'+
@@ -5288,16 +5346,51 @@ function buildSurprise(p){
     items = items.concat(sItems);
   }
   if(!items.length) return null;
-  return { key:"surprise:", src:"surprise", name:t("spName", { n:p.dur }), mode:"individual",
-           reps:tm.reps, work:tm.work, rest:tm.rest, blockRest:tm.blockRest,
-           items:items, _params:p };
+  var d = { key:"surprise:", src:"surprise", name:"", mode:"individual",
+            reps:tm.reps, work:tm.work, rest:tm.rest, blockRest:tm.blockRest,
+            items:items, _params:p };
+  if(!anzahl) spDauerTreffen(d, total, tm);
+  d.name = t("spName", { n:Math.max(1, Math.round(workoutDuration(draftRun(d))/60)) });
+  return d;
 }
+/* Gesamtdauer möglichst nah an die gewählte Dauer bringen (die Pausen zwischen den Übungen zählen mit):
+   einzelne Übungen bekommen eine Runde mehr oder weniger (beidseitige zwei, damit beide Seiten gleich oft drankommen),
+   höchstens zwei vom Standard weg. Bei Gleichstand bleibt die Übung dran, die am nächsten am Standard liegt. */
+function spDauerTreffen(d, ziel, tm){
+  function abweichung(){ return Math.abs(workoutDuration(draftRun(d)) - ziel); }
+  for(var runde=0; runde<40; runde++){
+    var bestWert = abweichung(), best = null;
+    d.items.forEach(function(it){
+      var ex = findExercise(it.ex);
+      if(!ex || exIsStretch(it.ex)) return;
+      var schritt = ex.perSide ? 2 : 1;
+      [-schritt, schritt].forEach(function(s){
+        var neu = it.reps + s;
+        if(neu < Math.max(2, tm.reps-2) || neu > tm.reps+2) return;
+        it.reps = neu;
+        var wert = abweichung() + Math.abs(neu - tm.reps)*.01;
+        it.reps = neu - s;
+        if(wert < bestWert - .001){ bestWert = wert; best = { it:it, s:s }; }
+      });
+    });
+    if(!best) break;
+    best.it.reps += best.s;
+  }
+}
+var spFeinOffen = false;   // Feinauswahl in „Überrasch mich“ aufgeklappt (bleibt so, solange die App offen ist)
 function openSurprise(twId){
   var s = state.db.settings, tw = twId ? findWorkout(twId) : null;
   var p = spNormalize(JSON.parse(JSON.stringify(s.surprise || { dur:20, mains:["kraft","rumpf"], cats:[], level:2, equips:["none"] })));
   if(tw) p.anzahl = s.surpriseAnzahl || 8; else delete p.anzahl;
   var root = document.getElementById("overlayRoot");
+  var fokusCats = LIB_CATS.filter(function(c){ return c.id!=="stretch" && c.id!=="calis"; });
+  function feinText(){   // Zusammenfassung der zugeklappten Feinauswahl
+    var f = fokusCats.filter(function(c){ return p.cats.indexOf(c.id) > -1; }).map(function(c){ return tplText(c); });
+    return t("int"+p.level)+" · "+(f.length ? f.join(", ") : t("spNoFocus"));
+  }
   function draw(){
+    // Neu zeichnen ohne Springen: die Scrollposition im Fenster bleibt erhalten
+    var alt = root.querySelector(".sp-sheet"), scrollAlt = alt ? alt.scrollTop : 0;
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet">'+
       '<h3>'+svgIcon(ICON_SPARK, "ico sp-h-ico")+' '+t("surprise")+'</h3>'+
       (tw ? '<div class="tm-hint" style="margin-top:0">'+esc(t("spFillHint", { n:tw.name || t("untitled") }))+'</div>'+
@@ -5308,26 +5401,34 @@ function openSurprise(twId){
       '<label>'+t("mainCat")+' <span class="lbl-hint">'+esc(t("multiOk"))+'</span></label>'+
       mainTilesHTML(p.mains, null, "data-spmain", ["stretch"])+
       '<div class="tm-hint" style="margin-top:-4px;">'+esc(t("spMainHint"))+'</div>'+
-      '<label>'+t("spAreas")+' <span class="lbl-hint">'+esc(t("spFocusHint"))+'</span></label><div class="sp-chips">'+
-        LIB_CATS.filter(function(c){ return c.id!=="stretch" && c.id!=="calis"; }).map(function(c){
-        return '<button type="button" class="fc-chip'+(p.cats.indexOf(c.id)>-1?' on':'')+'" data-spcat="'+c.id+'">'+catIcon(c.id)+esc(tplText(c))+'</button>'; }).join("")+'</div>'+
-      '<label>'+t("spLevel")+'</label><div class="seg-row">'+[1,2,3].map(function(l){
-        return '<button type="button" class="'+(p.level===l?'active':'')+'" data-splevel="'+l+'">'+esc(t("int"+l))+'</button>'; }).join("")+'</div>'+
       '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
         return '<button type="button" class="fc-chip'+(p.equips.indexOf(e.id)>-1?' on':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>'+
-      '<div class="sp-avoid">'+toggleRow("sp-avoid", t("spAvoid"), t("spAvoidDesc"), p.avoid !== false)+'</div>'+
-      '<div class="tm-hint">'+esc(t("spRules"))+'</div>'+
-      '<div class="btn-row" style="margin-top:18px;"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
+      // Fokus, Intensität und die Regeln sind selten nötig: zugeklappt, die Zusammenfassung zeigt die aktuelle Wahl
+      '<button type="button" class="sp-more'+(spFeinOffen?' open':'')+'" data-spmore aria-expanded="'+spFeinOffen+'">'+
+        '<span><b>'+t("spMore")+'</b><small>'+esc(feinText())+'</small></span>'+ICON_CHEV+'</button>'+
+      (spFeinOffen ? '<div class="sp-more-body">'+
+        '<label>'+t("spAreas")+' <span class="lbl-hint">'+esc(t("spFocusHint"))+'</span></label><div class="sp-chips">'+
+          fokusCats.map(function(c){
+          return '<button type="button" class="fc-chip'+(p.cats.indexOf(c.id)>-1?' on':'')+'" data-spcat="'+c.id+'">'+catIcon(c.id)+esc(tplText(c))+'</button>'; }).join("")+'</div>'+
+        '<label>'+t("spLevel")+'</label><div class="seg-row">'+[1,2,3].map(function(l){
+          return '<button type="button" class="'+(p.level===l?'active':'')+'" data-splevel="'+l+'">'+esc(t("int"+l))+'</button>'; }).join("")+'</div>'+
+        '<div class="sp-avoid">'+toggleRow("sp-avoid", t("spAvoid"), t("spAvoidDesc"), p.avoid !== false)+'</div>'+
+        '<div class="tm-hint">'+esc(t("spRules"))+'</div>'+
+      '</div>' : '')+
+      '<div class="btn-row sp-foot"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
       '<button class="btn btn-primary" data-spgo>'+t("spGo")+'</button></div>'+
     '</div></div>';
+    root.querySelector(".sp-sheet").scrollTop = scrollAlt;
     function on(sel, fn){ root.querySelectorAll(sel).forEach(function(b){ b.addEventListener("click", function(){ fn(b); draw(); }); }); }
+    on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; });
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
     on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
     on("[data-spmain]", function(b){ p.mains = selToggle(p.mains, b.getAttribute("data-spmain")); });
     on("[data-spcat]", function(b){ p.cats = selToggle(p.cats, b.getAttribute("data-spcat")); });
     on("[data-splevel]", function(b){ p.level = parseInt(b.getAttribute("data-splevel")); });
     on("[data-spequip]", function(b){ p.equips = selToggle(p.equips, b.getAttribute("data-spequip")); });
-    root.querySelector("#sp-avoid").addEventListener("change", function(e){ p.avoid = e.target.checked; });
+    var avoid = root.querySelector("#sp-avoid");
+    if(avoid) avoid.addEventListener("change", function(e){ p.avoid = e.target.checked; });
     root.querySelector("[data-cancel]").addEventListener("click", function(){ root.innerHTML = ""; });
     root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) root.innerHTML = ""; });
     root.querySelector("[data-spgo]").addEventListener("click", function(){
@@ -5698,7 +5799,8 @@ function renderWarmStretch(){
       knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+
     '</div></div>'+
     '<div class="rep-intro">'+esc(t(art === "warm" ? "wsIntroWarm" : "wsIntroDehn"))+'</div>'+
-    (liste || '<div class="empty">'+t("libEmpty")+'</div>') +
+    // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
+    (liste ? '<div style="--bereich:var(--ws-color)">'+liste+'</div>' : '<div class="empty">'+t("libEmpty")+'</div>') +
     '<div style="height:40px"></div>';
   bindCommon();
   function neu(){ var y = window.scrollY; renderWarmStretch(); window.scrollTo(0, y); }
