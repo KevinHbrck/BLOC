@@ -707,6 +707,26 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .sp-more-body > label:first-child{ margin-top:18px; }
 :root[data-vintage] .sp-more{ border-radius:6px; background:var(--field); }
 :root[data-vintage] .sp-more b{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.04em; font-size:12.5px; }
+/* Einführung: eine Seite je Bereich in dessen Farbe (--intro-farbe) */
+.intro-sheet{ display:flex; flex-direction:column; min-height:min(540px, 78vh); }
+.intro-kopf{ display:flex; justify-content:space-between; align-items:center; min-height:36px; }
+.intro-punkte{ display:flex; gap:6px; align-items:center; }
+.intro-punkte i{ width:7px; height:7px; border-radius:4px; background:var(--border); transition:width .2s ease, background .2s ease; }
+.intro-punkte i.an{ width:20px; background:var(--intro-farbe); }
+.intro-weg{ border:none; background:none; color:var(--text-dim); font:inherit; font-size:14px; padding:8px 2px; cursor:pointer; }
+.intro-seite{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12px 6px 22px; }
+.intro-ico{ width:88px; height:88px; border-radius:26px; display:flex; align-items:center; justify-content:center; margin-bottom:24px;
+  background:color-mix(in srgb, var(--intro-farbe) 16%, transparent); color:var(--intro-farbe); }
+.intro-ico .ico{ width:46px; height:46px; }
+.intro-seite h2{ margin:0 0 12px; font-size:25px; line-height:1.2; letter-spacing:-.01em; }
+.intro-seite p{ margin:0; max-width:34ch; font-size:15.5px; line-height:1.55; color:var(--text); }
+.intro-seite .intro-notiz{ margin-top:16px; font-size:13.5px; color:var(--text-dim); }
+.intro-knoepfe{ display:flex; gap:10px; }
+.intro-knoepfe .btn{ margin-top:0; }
+.intro-knoepfe .btn-secondary{ flex:0 0 auto; width:auto; padding-left:22px; padding-right:22px; }
+:root[data-vintage] .intro-ico{ border-radius:8px; }
+:root[data-vintage] .intro-seite h2{ font-family:var(--f-head); font-style:italic; text-transform:uppercase; font-size:27px; }
+:root[data-theme="klar"] .intro-ico{ background:var(--surface-2); color:var(--text); }
 .tpl-item.is-hidden .playbtn{ filter:grayscale(1); }
 .tpl-adopt .ico{ width:16px; height:16px; }
 .tpl-item{ position:relative; }
@@ -1572,7 +1592,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   font:inherit; cursor:pointer; transition:opacity .2s ease, transform .15s ease;
 }
 .main-tile:active{ transform:scale(.95); }
-.main-tile .mt-ico{ display:flex; color:var(--mc); }
+/* Kategorien haben keine eigene Farbe mehr (sie überschnitten sich mit den Bereichsfarben) - erkennbar am Symbol */
+.main-tile .mt-ico{ display:flex; color:var(--text); }
 .main-tile .mt-ico .ico{ width:24px; height:24px; }
 .mt-name{ font-size:10.5px; font-weight:700; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; letter-spacing:-.03em; }
 @media (min-width:400px){ .mt-name{ font-size:11.5px; letter-spacing:-.01em; } }
@@ -1585,8 +1606,9 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .main-tile.on{ border-color:var(--accent); background:var(--accent); color:var(--accent-text); }
 .main-tile.on .mt-ico, .main-tile.on .mt-n{ color:inherit; }
 .main-tile.off{ opacity:.5; }
-.main-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--mc); margin-right:6px; vertical-align:1px; }
-.main-dot + .main-dot{ margin-left:-3px; }
+.main-dot{ display:inline-flex; margin-right:5px; vertical-align:-2px; color:var(--text-dim); }
+.main-dot .ico{ width:13px; height:13px; }
+.main-dot + .main-dot{ margin-left:-2px; }
 /* Filterfeld */
 .filter-card{ padding:14px 14px 16px; }
 .fc-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
@@ -1972,6 +1994,9 @@ function loadDB(){
   }catch(e){ return defaultDB(); }
 }
 
+/* Erster Start auf diesem Gerät = noch nichts gespeichert. Nur dann zeigt BLOC die Einführung von selbst;
+   wer die App schon eingerichtet hat, findet sie in den Einstellungen. */
+var ERSTER_START = (function(){ try{ return !localStorage.getItem(DB_KEY); }catch(e){ return false; } })();
 var state = { db: loadDB() };
 
 function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state.db)); }
@@ -2061,6 +2086,14 @@ var I18N = {
     voice:"Sprachansagen (Englisch)", voiceDesc:"Sagt in den Pausen die nächste Übung an",
     surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
     spMore:"Feinauswahl", spNoFocus:"ohne Fokus",
+    introTitle:"Einführung", introSkip:"Überspringen", introNext:"Weiter", introRow:"Einführung ansehen", introRowSub:"BLOC in fünf kurzen Schritten",
+    in1T:"Willkommen bei BLOC",
+    in1:"Bau dir dein Training aus Bausteinen – und schau dabei über den Tellerrand.",
+    in1N:"Kein Konto, keine Community – alles bleibt auf deinem Handy.",
+    in2:"{s} Übungen fürs Studio, dazu einfache Timer. Trag deine Gewichte ein – BLOC sagt dir, wann mehr geht.",
+    in3:"{w} Workouts und {e} Übungen: fertig starten oder selbst bauen. „Überrasch mich“ mischt Neues für dich.",
+    in4:"{c} Programme und {u} Einheiten: feste Wiederholungen, so schnell du kannst. Schlag deine Bestzeit.",
+    in5:"{p} Programme und {d} Übungen: vorher mobilisieren, danach dehnen.",
     spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
     info:"Info", howTo:"So geht's", viewSide:"Seitlich", viewFront:"Von vorn", viewTop:"Von oben", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
     infoPause:"Pause", infoResume:"Weiter",
@@ -2250,6 +2283,14 @@ var I18N = {
     voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests",
     surprise:"Surprise me", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
     spMore:"Fine-tuning", spNoFocus:"no focus",
+    introTitle:"Introduction", introSkip:"Skip", introNext:"Next", introRow:"View introduction", introRowSub:"BLOC in five short steps",
+    in1T:"Welcome to BLOC",
+    in1:"Build your training from blocks – and look beyond your usual routine.",
+    in1N:"No account, no community – everything stays on your phone.",
+    in2:"{s} gym exercises plus simple timers. Log your weights – BLOC tells you when to add more.",
+    in3:"{w} workouts and {e} exercises: start one or build your own. “Surprise me” mixes something new.",
+    in4:"{c} programs and {u} units: fixed reps, as fast as you can. Beat your best time.",
+    in5:"{p} routines and {d} exercises: warm up before, stretch after.",
     spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
     info:"Info", howTo:"How to", viewSide:"Side", viewFront:"Front", viewTop:"From above", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
     infoPause:"Pause", infoResume:"Resume",
@@ -3258,6 +3299,7 @@ window.addEventListener("load", function(){
   syncGuard();
   applyTheme();
   render();
+  if(ERSTER_START && initial === "#home" && !state.db.settings.introGesehen) setTimeout(openIntro, 250);
   registerSW();
   maybeShowInstallTip();
 });
@@ -4311,7 +4353,7 @@ function woSearchText(name, exs){
   return [name].concat(exs.map(function(ex){ return ex.name.de+" "+ex.name.en+" "+(EX_SUCH_ALIAS[ex.id] || ""); })).join(" ").toLowerCase();
 }
 function mainTagsHTML(mains){
-  return mains.map(function(m){ var c = mainCat(m); return '<span class="main-dot" style="--mc:'+c.color+'" title="'+esc(tplText(c))+'"></span>'; }).join("");
+  return mains.map(function(m){ var c = mainCat(m); return '<span class="main-dot" title="'+esc(tplText(c))+'">'+svgIcon(c.ico)+'</span>'; }).join("");
 }
 function libWoCard(lw, exs, hidden, dur, mains){
   // --bereich: gesetzt auf Seiten eines anderen Bereichs (Aufwärmen & Dehnen), sonst Workouts-Grün
@@ -4359,7 +4401,7 @@ function mainTilesHTML(sel, counts, attr, ohne){
   var kats = ohne ? MAIN_CATS.filter(function(c){ return ohne.indexOf(c.id) < 0; }) : MAIN_CATS;
   return '<div class="main-tiles"'+(ohne ? ' style="grid-template-columns:repeat('+kats.length+', minmax(0, 1fr))"' : '')+'>'+kats.map(function(c){
     var on = sel.indexOf(c.id) > -1;
-    return '<button type="button" class="main-tile'+(on?' on':'')+(sel.length && !on ? ' off':'')+'" '+attr+'="'+c.id+'" aria-pressed="'+on+'" style="--mc:'+c.color+'">'+
+    return '<button type="button" class="main-tile'+(on?' on':'')+(sel.length && !on ? ' off':'')+'" '+attr+'="'+c.id+'" aria-pressed="'+on+'">'+
       '<span class="mt-ico">'+svgIcon(c.ico)+'</span><span class="mt-name">'+esc(tplText(c))+'</span>'+
       (counts ? '<span class="mt-n">'+(counts[c.id] || 0)+'</span>' : '')+'</button>';
   }).join("")+'</div>';
@@ -5446,6 +5488,61 @@ function openSurprise(twId){
   draw();
 }
 
+/* ============ Einführung ============
+   Fünf Seiten: Willkommen und je Bereich eine Seite in dessen Farbe mit dessen Symbol. Die Zahlen zählt die App
+   selbst, damit sie mit neuen Übungen und Programmen stimmen. Beim ersten Start von selbst, sonst über die Einstellungen. */
+var ICON_BAUSTEINE = '<rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><rect x="8" y="3" width="8" height="8" rx="1.5"/>';
+function introSeiten(){
+  var mitgeliefert = EXERCISES.filter(function(ex){ return !ex.custom; });
+  var wsEx = {};
+  AUFWAERM_UEBUNGEN.forEach(function(id){ if(findExercise(id)) wsEx[id] = true; });
+  mitgeliefert.forEach(function(ex){ if(ex.main === "stretch") wsEx[ex.id] = true; });
+  var einheiten = Array.isArray(REP_EINHEITEN) ? REP_EINHEITEN.length : Object.keys(REP_EINHEITEN).length;
+  return [
+    { ico:ICON_BAUSTEINE, farbe:"var(--accent)", titel:t("in1T"), text:t("in1"), notiz:t("in1N") },
+    { ico:HOME_ICON.timer, farbe:"var(--bl-color)", titel:t("timers"), text:t("in2", { s:Object.keys(STUDIO_NUR).length }) },
+    { ico:HOME_ICON.lib, farbe:"var(--tp-color)", titel:t("library"),
+      text:t("in3", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:mitgeliefert.filter(fuerWorkout).length }) },
+    { ico:HOME_ICON.reps, farbe:"var(--rep-color)", titel:t("repTitle"), text:t("in4", { c:REP_WORKOUT_ROWS.length, u:einheiten }) },
+    { ico:HOME_ICON.warm, farbe:"var(--ws-color)", titel:t("warmTitle"),
+      text:t("in5", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length, d:Object.keys(wsEx).length }) }
+  ];
+}
+function openIntro(){
+  var seiten = introSeiten(), nr = 0, root = document.getElementById("overlayRoot");
+  function schliessen(){
+    root.innerHTML = "";
+    if(!state.db.settings.introGesehen){ state.db.settings.introGesehen = true; save(); }
+  }
+  function blaettern(d){ var n = nr + d; if(n < 0 || n >= seiten.length) return; nr = n; draw(); }
+  function draw(){
+    var s = seiten[nr], letzte = nr === seiten.length - 1;
+    root.innerHTML = '<div class="confirm-overlay intro-overlay"><div class="confirm-sheet intro-sheet" role="dialog" aria-label="'+esc(t("introTitle"))+'" style="--intro-farbe:'+s.farbe+'">'+
+      '<div class="intro-kopf"><div class="intro-punkte" aria-hidden="true">'+seiten.map(function(x, i){ return '<i class="'+(i === nr ? 'an' : '')+'"></i>'; }).join("")+'</div>'+
+        (letzte ? '' : '<button type="button" class="intro-weg" data-introweg>'+esc(t("introSkip"))+'</button>')+'</div>'+
+      '<div class="intro-seite"><span class="intro-ico">'+svgIcon(s.ico)+'</span>'+
+        '<h2>'+esc(s.titel)+'</h2><p>'+esc(s.text)+'</p>'+(s.notiz ? '<p class="intro-notiz">'+esc(s.notiz)+'</p>' : '')+'</div>'+
+      '<div class="intro-knoepfe">'+(nr ? '<button type="button" class="btn btn-secondary" data-introzurueck>'+esc(t("back"))+'</button>' : '')+
+        '<button type="button" class="btn btn-primary" data-introweiter>'+esc(t(letzte ? "letsGo" : "introNext"))+'</button></div>'+
+    '</div></div>';
+    var sheet = root.querySelector(".intro-sheet");
+    root.querySelector("[data-introweiter]").addEventListener("click", function(){ if(letzte) schliessen(); else blaettern(1); });
+    var z = root.querySelector("[data-introzurueck]"); if(z) z.addEventListener("click", function(){ blaettern(-1); });
+    var w = root.querySelector("[data-introweg]"); if(w) w.addEventListener("click", schliessen);
+    root.querySelector(".intro-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("intro-overlay")) schliessen(); });   // daneben tippen, Android-Zurück
+    // wischen: nach links weiter, nach rechts zurück
+    var x0 = null;
+    sheet.addEventListener("touchstart", function(e){ x0 = e.touches[0].clientX; }, { passive:true });
+    sheet.addEventListener("touchend", function(e){
+      if(x0 == null) return;
+      var dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if(Math.abs(dx) > 50) blaettern(dx < 0 ? 1 : -1);
+    });
+    root.querySelector("[data-introweiter]").focus();
+  }
+  draw();
+}
+
 /* ---------- Sprachansagen (immer Englisch) in Vorbereitung und Pausen ---------- */
 function voiceOn(){
   return !!(window.speechSynthesis && playerState && playerState.source && playerState.source.type==="draft" && state.db.settings.voice !== false);
@@ -6242,7 +6339,7 @@ function renderFiguren(){
     html += '<div class="section-title">'+esc(tplText(c))+' <span class="lbl-hint">'+exs.length+'</span></div><div class="fig-grid">'+
       exs.map(function(ex){
         var an = ex.id in notiz;
-        return '<div class="fig-karte'+(an ? ' an' : '')+'" style="--cat:'+c.color+'">'+
+        return '<div class="fig-karte'+(an ? ' an' : '')+'" style="--cat:var(--tp-color)">'+
           '<button type="button" class="fig-bild" data-figinfo="'+ex.id+'" aria-label="'+esc(tplText(ex.name))+'">'+illuStillHTML(ex.id, "fig-illu")+
             (ILLU2[ex.id] ? '<span class="fig-2" aria-hidden="true">2</span>' : '')+'</button>'+
           '<div class="fig-name">'+esc(tplText(ex.name))+'</div>'+
@@ -6331,6 +6428,12 @@ function renderSettings(){
       '<div class="sub">'+t("privacyRowSub")+'</div></div>'+
       '<span class="chip chev">'+ICON_CHEV+'</span>'+
     '</a>'+
+    '<div class="section-title">'+t("introTitle")+'</div>'+
+    '<div class="list-item" data-intro role="button" tabindex="0">'+
+      '<div class="meta"><div class="name">'+t("introRow")+'</div>'+
+      '<div class="sub">'+t("introRowSub")+'</div></div>'+
+      '<span class="chip chev">'+ICON_CHEV+'</span>'+
+    '</div>'+
     '<div class="section-title">'+t("installation")+'</div>'+
     '<div class="list-item" data-nav="#install">'+
       '<div class="meta"><div class="name">'+t("installRow")+'</div>'+
@@ -6391,6 +6494,7 @@ function renderSettings(){
 
   /* App teilen: Link kopieren, per WhatsApp oder über das Teilen-Menü des Handys */
   app.querySelector("[data-sharecopy]").addEventListener("click", function(){ copyText(appUrl(), t("shareCopied")); });
+  app.querySelector("[data-intro]").addEventListener("click", openIntro);
   app.querySelector("[data-opensounds]").addEventListener("click", function(){
     openSoundSheet(function(){ renderSettings(); });
   });
