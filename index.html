@@ -37,6 +37,10 @@
   --bl-text:#ffffff;
   --tp-color:#1f9d6b;
   --tp-text:#ffffff;
+  /* „Ausgewählt“ ist ruhig (Schrift- und Flächenfarbe getauscht); Orange (--accent) nur für die Hauptaktion,
+     das Logo und die Arbeitsphase im Timer - Faustregel 60-30-10: höchstens ein Zehntel Akzent */
+  --sel-bg:var(--text);
+  --sel-text:var(--bg);
   /* Die vier Bereiche der Startseite haben je eine Farbe - Favoriten, Start-Knöpfe und Übersicht tragen die Farbe ihres Bereichs:
      Freies Training = --bl-color, Workouts = --tp-color, Challenges = --rep-color, Aufwärmen & Dehnen = --ws-color */
   --rep-color:#c98a00;
@@ -306,7 +310,7 @@ h1,h2,h3{ margin:0 0 4px; }
   flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text);
   border-radius:100px; padding:8px 14px; font:inherit; font-size:14px; cursor:pointer; white-space:nowrap;
 }
-.lib-chip.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+.lib-chip.active{ background:var(--sel-bg); color:var(--sel-text); border-color:var(--sel-bg); }
 .illu-btn{ border:none; background:none; padding:0; margin:0; cursor:pointer; color:inherit; align-self:flex-start; }
 .info-btn{
   display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; margin-left:6px;
@@ -350,7 +354,7 @@ h1,h2,h3{ margin:0 0 4px; }
 }
 .lib-chip{ display:inline-flex; align-items:center; gap:6px; }
 .lib-chip .ico{ width:16px; height:16px; flex-shrink:0; }
-.lib-chip.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-text); }
+.lib-chip.active{ background:var(--sel-bg); border-color:var(--sel-bg); color:var(--sel-text); }
 :root[data-theme="tapedeck"] .lib-chip.active{ color:#101010; }
 :root[data-theme="tapedeck"] .lib-chip.active::before{ background:#101010; }
 .lib-tabs{ grid-template-columns:1fr 1fr 1fr !important; }
@@ -404,7 +408,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .seg-row{ display:flex; gap:6px; margin-bottom:6px; }
 .seg-row button{ flex:1; border:1px solid var(--border); background:var(--surface-2); color:var(--text); border-radius:10px; padding:10px 6px; font:inherit; font-size:14px; cursor:pointer; }
 /* „Ausgewählt“ sieht überall gleich aus (Akzentfarbe wie die Filter-Chips); Welt- und Kategoriefarben stecken nur in Symbolen und Markierungen */
-.seg-row button.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-text); font-weight:700; }
+.seg-row button.active{ background:var(--sel-bg); border-color:var(--sel-bg); color:var(--sel-text); font-weight:700; }
 .tm-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .tm-grid label{ font-size:12px; margin:12px 0 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tm-grid .stepper button{ width:30px; height:44px; font-size:20px; flex-shrink:0; }
@@ -646,10 +650,10 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
   border:1px solid var(--border); border-radius:12px; background:var(--surface); color:var(--text); font:inherit; font-size:14px; font-weight:600; text-align:left; cursor:pointer; }
 .filter-zeile .ico{ width:20px; height:20px; flex-shrink:0; }
 .filter-zeile .fz-text{ flex:1; }
-.filter-zeile.on{ border-color:var(--accent); color:var(--accent-ink, var(--accent)); box-shadow:inset 0 0 0 1px var(--accent); }
+.filter-zeile.on{ border-color:var(--text); color:var(--text); box-shadow:inset 0 0 0 1px var(--text); }
 .filter-zeile .filter-n{ position:static; }
 .filter-zeile .tpl-chev{ margin-left:0; }
-.filter-n{ position:absolute; top:-6px; right:-6px; min-width:20px; height:20px; padding:0 5px; border-radius:10px; background:var(--accent); color:var(--accent-text); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.filter-n{ position:absolute; top:-6px; right:-6px; min-width:20px; height:20px; padding:0 5px; border-radius:10px; background:var(--sel-bg); color:var(--sel-text); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
 .active-filters{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:13px; color:var(--text-dim); margin:-2px 4px 10px; }
 .active-filters .tpl-hide{ padding:6px 0; flex-shrink:0; }
 /* schlanke Bibliothekskarten */
@@ -906,7 +910,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 }
 .lang-pick button{ grid-column:span 3; }
 .theme-pick button.klar-wahl{ grid-column:span 6; font-weight:600; }
-.theme-pick button.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+.theme-pick button.active{ background:var(--sel-bg); color:var(--sel-text); border-color:var(--sel-bg); }
 
 .installtip{
   background:var(--surface-2); border-radius:var(--radius); padding:14px 16px; margin:14px 0; font-size:13px; color:var(--text-dim); display:flex; gap:10px; align-items:flex-start;
@@ -1070,7 +1074,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   padding:18px 8px; border-radius:14px; border:1px solid var(--border); background:var(--surface-2);
   color:var(--text); font-size:15px; font-weight:600; cursor:pointer;
 }
-.sound-tile.active{ background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+.sound-tile.active{ background:var(--sel-bg); color:var(--sel-text); border-color:var(--sel-bg); }
 .sound-group{ font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); margin:18px 2px 0; }
 .sound-group + .sound-tiles{ margin-top:10px; }
 .sound-tile:active{ transform:scale(.97); }
@@ -1240,7 +1244,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 }
 :root[data-vintage] .theme-pick button.vintage{ color:var(--accent-ink); font-weight:600; }
 :root[data-vintage] .theme-pick button.active{
-  background:var(--accent); color:var(--on-accent); border-color:rgba(0,0,0,.25);
+  background:var(--sel-bg); color:var(--sel-text); border-color:rgba(0,0,0,.25);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 1px 2px rgba(0,0,0,.2);
 }
 
@@ -1342,7 +1346,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   font-family:var(--f-mono); font-weight:600; font-size:14px; letter-spacing:.05em; text-transform:uppercase;
   border-radius:7px; background:var(--raised); box-shadow:var(--btn-shadow), inset 0 1px 0 var(--btn-shine);
 }
-:root[data-vintage] .sound-tile.active{ background:var(--accent); color:var(--on-accent); border-color:rgba(0,0,0,.25); }
+:root[data-vintage] .sound-tile.active{ background:var(--sel-bg); color:var(--sel-text); border-color:rgba(0,0,0,.25); }
 :root[data-vintage] .sound-group{ font-family:var(--f-mono); font-weight:700; font-size:12.5px; letter-spacing:.07em; color:var(--section-color); }
 
 /* Kassetten-Etikett (nur Kodak) */
@@ -1581,7 +1585,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .lib-tabs.unter-tabs{ margin-top:6px; }
 .lib-tabs.unter-tabs button{ background:transparent !important; border:none !important; border-radius:0 !important; box-shadow:none !important;
   border-bottom:2px solid transparent !important; color:var(--text-dim) !important; font-weight:600; padding-top:9px !important; padding-bottom:7px !important; }
-.lib-tabs.unter-tabs button.active{ color:var(--text) !important; border-bottom-color:var(--accent) !important; }
+.lib-tabs.unter-tabs button.active{ color:var(--text) !important; border-bottom-color:var(--text) !important; }
 .lib-tabs.seg-3{ grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
 /* Kacheln der Hauptkategorien */
 .main-tiles{ display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:5px; margin:0 0 12px; }
@@ -1603,7 +1607,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-vintage] .lib-search input{ border-radius:6px; background:var(--field); font-family:var(--f-mono); }
 .mt-n{ font-size:12px; color:var(--text-dim); font-variant-numeric:tabular-nums; }
 /* Kategorie-Kacheln: Farbe nur im Symbol, gewählt = Akzentfarbe wie alle anderen Auswahlen */
-.main-tile.on{ border-color:var(--accent); background:var(--accent); color:var(--accent-text); }
+.main-tile.on{ border-color:var(--sel-bg); background:var(--sel-bg); color:var(--sel-text); }
 .main-tile.on .mt-ico, .main-tile.on .mt-n{ color:inherit; }
 .main-tile.off{ opacity:.5; }
 .main-dot{ display:inline-flex; margin-right:5px; vertical-align:-2px; color:var(--text-dim); }
@@ -1623,10 +1627,10 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   border:1px solid var(--border); background:var(--surface-2); color:var(--text); font:inherit; font-size:14px; cursor:pointer;
 }
 .fc-chip .ico{ width:17px; height:17px; flex-shrink:0; }
-.fc-chip.on{ background:var(--accent); border-color:var(--accent); color:var(--accent-text); font-weight:600; }
+.fc-chip.on{ background:var(--sel-bg); border-color:var(--sel-bg); color:var(--sel-text); font-weight:600; }
 .fc-seg{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .fc-seg button{ padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font:inherit; font-size:14px; cursor:pointer; }
-.fc-seg button.on{ background:var(--accent); border-color:var(--accent); color:var(--accent-text); font-weight:700; }
+.fc-seg button.on{ background:var(--sel-bg); border-color:var(--sel-bg); color:var(--sel-text); font-weight:700; }
 /* Ukraine Twist: geschwungene Ukraine-Flagge (wie eine wehende Fahne aus der Nähe) auf der Kachel,
    im Baukasten und im Timer. Links liegt ein heller Schleier über der Flagge, damit Name und Text lesbar bleiben. */
 :root{ --ua-flag:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"%3E%3Cdefs%3E%3ClinearGradient id="f" x1="0" y1="0" x2="1" y2=".32"%3E%3Cstop offset="0" stop-color="%23000" stop-opacity=".30"/%3E%3Cstop offset=".14" stop-color="%23fff" stop-opacity=".20"/%3E%3Cstop offset=".28" stop-color="%23000" stop-opacity=".26"/%3E%3Cstop offset=".45" stop-color="%23fff" stop-opacity=".24"/%3E%3Cstop offset=".62" stop-color="%23000" stop-opacity=".30"/%3E%3Cstop offset=".78" stop-color="%23fff" stop-opacity=".18"/%3E%3Cstop offset=".92" stop-color="%23000" stop-opacity=".24"/%3E%3Cstop offset="1" stop-color="%23fff" stop-opacity=".10"/%3E%3C/linearGradient%3E%3CradialGradient id="v" cx=".5" cy=".45" r=".75"%3E%3Cstop offset=".55" stop-color="%23000" stop-opacity="0"/%3E%3Cstop offset="1" stop-color="%23000" stop-opacity=".28"/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width="400" height="300" fill="%23ffd500"/%3E%3Cpath fill="%230057b7" d="M0 0H400V118C352 168 300 92 244 136S130 196 72 150C44 128 20 132 0 146Z"/%3E%3Crect width="400" height="300" fill="url%28%23f%29"/%3E%3Crect width="400" height="300" fill="url%28%23v%29"/%3E%3C/svg%3E'); }
@@ -1649,7 +1653,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-vintage] .mt-name{ font-family:var(--f-mono); text-transform:uppercase; font-size:9.5px; letter-spacing:0; }
 :root[data-vintage] .fc-head b, :root[data-vintage] .fc-lbl{ font-family:var(--f-mono); text-transform:uppercase; letter-spacing:.05em; font-size:13px; }
 :root[data-vintage] .fc-chip, :root[data-vintage] .fc-seg button{ border-radius:6px; font-family:var(--f-mono); font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; }
-:root[data-vintage] .fc-chip.on, :root[data-vintage] .fc-seg button.on, :root[data-vintage] .seg-row button.active, :root[data-vintage] .main-tile.on, :root[data-vintage] .lib-chip.active, :root[data-vintage] .filter-n{ color:var(--on-accent); }
+:root[data-vintage] .fc-chip.on, :root[data-vintage] .fc-seg button.on, :root[data-vintage] .seg-row button.active, :root[data-vintage] .main-tile.on, :root[data-vintage] .lib-chip.active, :root[data-vintage] .filter-n{ color:var(--sel-text); }
 :root[data-vintage] .sec-link{ font-family:var(--f-mono); text-transform:uppercase; font-size:12px; letter-spacing:.05em; }
 /* Timer: Ring nur über transform, Phasenfarben per Überblenden (opacity) statt Farb-Transition */
 .player{ background:var(--bg); transition:none; }
@@ -1778,6 +1782,28 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 :root[data-theme="klar"] .ring-wrap .time{ font-weight:650; letter-spacing:-.03em; }
 :root[data-theme="klar"] .phase-label{ font-size:16px; font-weight:700; letter-spacing:.18em; opacity:.8; }
 :root[data-theme="klar"] .block-label{ font-weight:650; letter-spacing:-.01em; }
+
+/* Startseite: Workouts als große Karte, darunter die übrigen Bereiche als eine Gruppe mit Zeilen */
+.area-bereiche{ display:flex; flex-direction:column; gap:12px; }
+.area-tile.gross, .area-gruppe .area-tile.zeile{ flex-direction:row; align-items:center; min-height:0; }
+.area-tile.gross{ gap:14px; padding:18px 16px; border:1px solid color-mix(in srgb, var(--c) 40%, transparent); }
+.area-tile.gross .at-ico{ width:54px; height:54px; margin-bottom:0; flex-shrink:0; }
+.area-tile.gross .at-name{ font-size:18px; }
+.area-tile .at-text{ display:flex; flex-direction:column; flex:1; min-width:0; }
+.area-tile.gross .at-chev, .area-gruppe .area-tile .at-chev{ position:static; transform:none; margin-left:auto; }
+.area-gruppe{ background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+.area-gruppe .area-tile.zeile{ gap:12px; padding:12px 14px; background:none; box-shadow:none; border:none; border-radius:0; }
+.area-gruppe .area-tile.zeile + .area-tile.zeile{ border-top:1px solid var(--border); }
+.area-gruppe .area-tile.zeile .at-ico{ width:40px; height:40px; margin-bottom:0; flex-shrink:0; border-radius:12px; }
+.area-gruppe .area-tile.zeile .at-ico .ico{ width:22px; height:22px; }
+.area-gruppe .area-tile.zeile .at-name{ font-size:15.5px; }
+.area-gruppe .area-tile.zeile .at-sub{ margin-top:2px; padding-right:0; }
+:root[data-vintage] .area-gruppe{ border:1px solid var(--border); box-shadow:none; }
+/* „Überrasch mich“ in der Bibliothek: kleiner Knopf oben rechts */
+.sp-top{ display:inline-flex; align-items:center; gap:6px; flex-shrink:0; padding:8px 12px; border-radius:999px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text); font:inherit; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.sp-top .ico{ width:16px; height:16px; color:var(--accent); }
+:root[data-vintage] .sp-top{ border-radius:6px; font-family:var(--f-mono); font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
 </style>
 </head>
 <body>
@@ -2126,7 +2152,7 @@ var I18N = {
     volMusicHint:"Musik läuft weiter. iPhone auf lautlos = keine Töne.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
-    htLib:"Intervall-Programme und Übungen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
+    htLib:"Intervall-Programme und Übungen", htLibN:"{w} Workouts · {e} Übungen · selbst bauen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
     repTitle:"Challenges", htReps:"Wiederholungen auf Bestzeit",
     warmTitle:"Aufwärmen & Dehnen", htWarm:"Vor und nach dem Training", warmSec:"Aufwärmen · vor dem Training", stretchSec:"Dehnen · nach dem Training",
     warmIntro:"Passt zu Workouts und Challenges: vorher kurz aufwärmen, danach dehnen.",
@@ -2323,7 +2349,7 @@ var I18N = {
     volMusicHint:"Your music keeps playing. iPhone on silent = no sounds.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
-    htLib:"Interval programs and exercises", spSub:"A random session based on your picks",
+    htLib:"Interval programs and exercises", htLibN:"{w} workouts · {e} exercises · build your own", spSub:"A random session based on your picks",
     repTitle:"Challenges", htReps:"Reps against the clock",
     warmTitle:"Warm-up & stretch", htWarm:"Before and after training", warmSec:"Warm-up · before training", stretchSec:"Stretch · after training",
     warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
@@ -3403,10 +3429,11 @@ var HOME_ICON = {
 var ICON_SPARK = '<path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/>';
 var ICON_STAR = '<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>';
 /* Bereichs-Kachel (zwei nebeneinander): Symbol oben, Titel, Kurzbeschreibung, Pfeil */
-function areaTile(key, href, titel, unter, farbe){
-  return '<div class="area-tile" data-nav="'+href+'" role="button" tabindex="0" style="--c:'+farbe+'">'+
+/* art: "gross" (Workouts, der wichtigste Bereich) oder "zeile" (die übrigen, als ruhige Liste) */
+function areaTile(key, href, titel, unter, farbe, art){
+  return '<div class="area-tile'+(art ? ' '+art : '')+'" data-nav="'+href+'" role="button" tabindex="0" style="--c:'+farbe+'">'+
       '<span class="at-ico">'+svgIcon(HOME_ICON[key])+'</span>'+
-      '<b class="at-name">'+esc(titel)+'</b><small class="at-sub">'+esc(unter)+'</small>'+
+      '<span class="at-text"><b class="at-name">'+esc(titel)+'</b><small class="at-sub">'+esc(unter)+'</small></span>'+
       '<span class="at-chev">'+ICON_CHEV+'</span>'+
     '</div>';
 }
@@ -3432,14 +3459,17 @@ function renderHome(){
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
     '</div>'+
     (favHTML || '<div class="fav-empty">'+t("favEmpty")+'</div>') +
-    surpriseCardHTML() +
+    /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
     '<div class="section-title">'+t("areas")+'</div>'+
-    '<div class="area-grid">'+
-      /* Farben wie in Favoriten und Listen: Timer/Blöcke blau, Bibliotheks-Workouts grün */
-      areaTile("timer", "#timers", t("timers"), t("htTimers"), "var(--bl-color)") +
-      areaTile("lib", "#library", t("library"), t("htLib"), "var(--tp-color)") +
-      areaTile("reps", "#reps", t("repTitle"), t("htReps"), "var(--rep-color)") +
-      areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm"), "var(--ws-color)") +
+    '<div class="area-bereiche">'+
+      areaTile("lib", "#library", t("library"),
+        t("htLibN", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:EXERCISES.filter(function(ex){ return !ex.custom && fuerWorkout(ex); }).length }),
+        "var(--tp-color)", "gross") +
+      '<div class="area-gruppe">'+
+        areaTile("timer", "#timers", t("timers"), t("htTimers"), "var(--bl-color)", "zeile") +
+        areaTile("reps", "#reps", t("repTitle"), t("htReps"), "var(--rep-color)", "zeile") +
+        areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm"), "var(--ws-color)", "zeile") +
+      '</div>'+
     '</div>' +
     KODAK_BADGE + DECK_BADGE;
   bindCommon();
@@ -4521,7 +4551,7 @@ function renderLibrary(){
   var nf = filterCount(cat, equip);
 
   app.innerHTML =
-    topbar(t("library"), { back:"#home" }) +
+    topbar(t("library"), { back:"#home", right:'<button type="button" class="sp-top" data-surprise>'+svgIcon(ICON_SPARK)+esc(t("surprise"))+'</button>' }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
@@ -4534,7 +4564,6 @@ function renderLibrary(){
     (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
               tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], ["stretch"])
           : activeFiltersHTML(cat, equip, "l")))+
-    surpriseCardHTML()+
     list + hiddenBlockHTML(hiddenCount, hiddenCards) +
     '<div style="height:90px"></div>' + fab;
   bindCommon();

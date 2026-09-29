@@ -96,10 +96,12 @@
       klick("[data-introweg]");
       pruefe(!$("#overlayRoot .intro-sheet"), "„Überspringen“ schließt nicht");
     }],
-    ["Startseite: vier Bereiche, Überrasch mich, Wochenzeile", async function () {
+    ["Startseite: Workouts vorn, drei weitere Bereiche, Wochenzeile", async function () {
       await heim();
       pruefe($$(".area-tile").length === 4, "erwartet 4 Bereichs-Kacheln, gefunden " + $$(".area-tile").length);
-      pruefe($("[data-surprise]"), "Karte Überrasch mich fehlt");
+      pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#library", "Workouts steht nicht hervorgehoben vorn");
+      pruefe($$(".area-gruppe .area-tile.zeile").length === 3, "die übrigen drei Bereiche fehlen in der Liste");
+      pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
     }],
     ["Bibliothek: Reiter Workouts · Übungen · Meine, Workouts vorhanden", async function () {
