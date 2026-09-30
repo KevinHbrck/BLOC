@@ -256,7 +256,7 @@ var I18N = {
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
     fCat:"Fokus", equipAny:"Alles", fEquipHintShort:"Was hast du da?",
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche",
-    timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Geräte, Hanteln und Gewichte", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
+    timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Drinnen an Geräten · {n} Übungen · Fortschritt im Blick", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
     tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App.",
     stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
     stArt_geraet:"Gerät", stArt_kabel:"Kabel", stArt_frei:"Kurzhantel & Kettlebell", stArt_lh:"Langhantel", stArt_stange:"Stange", stOwnNew:"Eigene Übung",
@@ -342,7 +342,7 @@ var I18N = {
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
     htLib:"Intervall-Programme und Übungen", htLibN:"Draußen im Calisthenicspark · {w} Workouts · {e} Übungen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
     repTitle:"Summit", htReps:"Challenges auf Bestzeit",
-    warmTitle:"Mobility & Stretch", htWarm:"Vor und nach dem Training", warmSec:"Mobility · vor dem Training", stretchSec:"Stretch · nach dem Training",
+    warmTitle:"Mobility & Stretch", htWarm:"Vor und nach dem Training · {p} Programme", warmSec:"Mobility · vor dem Training", stretchSec:"Stretch · nach dem Training",
     warmIntro:"Passt zu allem: vorher kurz aufwärmen, danach dehnen.",
     wsWarm:"Mobility", wsDehn:"Stretch", wsIntroWarm:"Vor dem Training: Puls hoch, Gelenke mobil.",
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
@@ -456,7 +456,7 @@ var I18N = {
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
     fCat:"Focus", equipAny:"Anything", fEquipHintShort:"What do you have?",
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections",
-    timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Machines, dumbbells and weights", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
+    timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Indoors on machines · {n} exercises · track your progress", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
     tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest.",
     stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
     stArt_geraet:"Machine", stArt_kabel:"Cable", stArt_frei:"Dumbbell & kettlebell", stArt_lh:"Barbell", stArt_stange:"Bar", stOwnNew:"Own exercise",
@@ -542,7 +542,7 @@ var I18N = {
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
     htLib:"Interval programs and exercises", htLibN:"Outdoors in the calisthenics park · {w} workouts · {e} exercises", spSub:"A random session based on your picks",
     repTitle:"Summit", htReps:"Challenges against the clock",
-    warmTitle:"Mobility & Stretch", htWarm:"Before and after training", warmSec:"Mobility · before training", stretchSec:"Stretch · after training",
+    warmTitle:"Mobility & Stretch", htWarm:"Before and after training · {p} routines", warmSec:"Mobility · before training", stretchSec:"Stretch · after training",
     warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
     wsWarm:"Mobility", wsDehn:"Stretch", wsIntroWarm:"Before training: raise your pulse, loosen your joints.",
     wsIntroDehn:"After training: stretch calmly.",
@@ -1670,9 +1670,9 @@ function renderHome(){
         t("htLibN", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:EXERCISES.filter(function(ex){ return !ex.custom && fuerWorkout(ex); }).length }),
         "var(--tp-color)", "gross") +
       '<div class="area-gruppe">'+
-        areaTile("timer", "#timers", t("timers"), t("htTimers"), "var(--bl-color)", "zeile") +
+        areaTile("timer", "#timers", t("timers"), t("htTimers", { n:Object.keys(STUDIO_NUR).length }), "var(--bl-color)", "zeile") +
         areaTile("reps", "#reps", t("repTitle"), t("htReps"), "var(--rep-color)", "zeile") +
-        areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm"), "var(--ws-color)", "zeile") +
+        areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length }), "var(--ws-color)", "zeile") +
       '</div>'+
     '</div>' +
     KODAK_BADGE;
