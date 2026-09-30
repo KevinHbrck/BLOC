@@ -197,7 +197,7 @@
       pruefe($$(".woche .wo-tag.an").length >= 1, "kein Trainingstag markiert");
       pruefe(/\d+ Training/.test($(".woche").textContent), "Anzahl fehlt: " + $(".woche").textContent);
     }],
-    ["Aufwärmen & Dehnen: Kobra unter Dehnen", async function () {
+    ["Mobility & Stretch: Kobra unter Stretch", async function () {
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Reiter Dehnen"));
       klick('[data-wstab="uebungen"]');
@@ -240,7 +240,8 @@
       await heim();
       klick('[data-nav="#timers"]');
       pruefe(!$("[data-ttab]"), "Freies Training hat noch Reiter");
-      await bis(function () { return $$("[data-studio]").length > 60; }, 3000, "Studio-Kacheln");
+      await bis(function () { return $$("[data-studio]").length > 30; }, 3000, "Studio-Kacheln");
+      pruefe(!$('[data-stgr="air"]') && $("#st-air") && !$("#st-air").checked, "Air-Übungen sind im Studio nicht standardmäßig aus");
       eingeben($("#st-q"), "beinpresse");
       pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");
       eingeben($("#st-q"), "");

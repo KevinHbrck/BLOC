@@ -258,7 +258,7 @@ var I18N = {
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche",
     timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Geräte, Hanteln und Gewichte", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
     tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App.",
-    stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
+    stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
     stArt_geraet:"Gerät", stArt_kabel:"Kabel", stArt_frei:"Kurzhantel & Kettlebell", stArt_lh:"Langhantel", stArt_stange:"Stange", stOwnNew:"Eigene Übung",
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
@@ -342,9 +342,9 @@ var I18N = {
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
     htLib:"Intervall-Programme und Übungen", htLibN:"{w} Workouts · {e} Übungen · selbst bauen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
     repTitle:"Summit", htReps:"Challenges auf Bestzeit",
-    warmTitle:"Mobility & Stretch", htWarm:"Vor und nach dem Training", warmSec:"Aufwärmen · vor dem Training", stretchSec:"Dehnen · nach dem Training",
+    warmTitle:"Mobility & Stretch", htWarm:"Vor und nach dem Training", warmSec:"Mobility · vor dem Training", stretchSec:"Stretch · nach dem Training",
     warmIntro:"Passt zu allem: vorher kurz aufwärmen, danach dehnen.",
-    wsWarm:"Aufwärmen", wsDehn:"Dehnen", wsIntroWarm:"Vor dem Training: Puls hoch, Gelenke mobil.",
+    wsWarm:"Mobility", wsDehn:"Stretch", wsIntroWarm:"Vor dem Training: Puls hoch, Gelenke mobil.",
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
@@ -458,7 +458,7 @@ var I18N = {
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections",
     timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Machines, dumbbells and weights", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
     tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest.",
-    stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
+    stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
     stArt_geraet:"Machine", stArt_kabel:"Cable", stArt_frei:"Dumbbell & kettlebell", stArt_lh:"Barbell", stArt_stange:"Bar", stOwnNew:"Own exercise",
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
@@ -542,9 +542,9 @@ var I18N = {
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
     htLib:"Interval programs and exercises", htLibN:"{w} workouts · {e} exercises · build your own", spSub:"A random session based on your picks",
     repTitle:"Summit", htReps:"Challenges against the clock",
-    warmTitle:"Mobility & Stretch", htWarm:"Before and after training", warmSec:"Warm-up · before training", stretchSec:"Stretch · after training",
+    warmTitle:"Mobility & Stretch", htWarm:"Before and after training", warmSec:"Mobility · before training", stretchSec:"Stretch · after training",
     warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
-    wsWarm:"Warm-up", wsDehn:"Stretch", wsIntroWarm:"Before training: raise your pulse, loosen your joints.",
+    wsWarm:"Mobility", wsDehn:"Stretch", wsIntroWarm:"Before training: raise your pulse, loosen your joints.",
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
@@ -1621,9 +1621,9 @@ var SEP = ' <span class="sep-dot">&middot;</span> ';
 var HOME_ICON = {
   timer:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',   /* Freies Training: Hantel */
   intervall:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 3h5M18 7l1.5-1.5"/>',   /* Timer: Stoppuhr */
-  lib:'<path d="M2.5 12.5h4l2.2-6 4.3 12 2.4-6h6.1"/>',
-  reps:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5.5h2.5v1.5a3 3 0 0 1-3 3M7 5.5H4.5v1.5a3 3 0 0 0 3 3M12 14v4M8.5 20.5h7"/>',
-  warm:'<path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19l8-8"/>'
+  lib:'<path d="M3 8.5h10a3 3 0 1 0-3-3"/><path d="M3 12.5h15a3 3 0 1 1-3 3"/><path d="M3 16.5h6"/>',   /* Air: Wind */
+  reps:'<path d="M2.5 20l6.5-11.5 3.8 6.3 2.7-4.3 6 9.5z"/><path d="M9 8.5V3.5l3.5 1.5L9 6.5"/>',   /* Summit: Gipfel mit Fahne */
+  warm:'<circle cx="12" cy="4.5" r="2"/><path d="M5 8.5l7 2 7-2M12 10.5v4.5l-4.5 5.5M12 15l4.5 5.5"/>'   /* Mobility & Stretch: Figur streckt sich */
 };
 var ICON_SPARK = '<path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/>';
 var ICON_STAR = '<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>';
@@ -1833,8 +1833,13 @@ function studioIds(){
   var inGruppen = {};
   gruppen.forEach(function(g){ g.ids.forEach(function(id){ inGruppen[id] = true; }); });
   function mit(eq){ return EXERCISES.filter(function(ex){ return !ex.custom && !inGruppen[ex.id] && ex.main !== "stretch" && ex.equip.some(function(e){ return eq.indexOf(e) > -1; }); }).map(function(ex){ return ex.id; }); }
-  gruppen.push({ id:"frei", name:t("stFree"), ids:mit(["db", "kb"]) });
-  gruppen.push({ id:"stange", name:t("stBar"), ids:mit(["bar", "dip"]).filter(function(id){ return gruppen[gruppen.length-1].ids.indexOf(id) < 0; }) });
+  if(state.db.settings.stAir){   // Air-Übungen nur, wenn eingeschaltet (Standard: aus)
+    gruppen.push({ id:"frei", name:t("stFree"), ids:mit(["db", "kb"]) });
+    gruppen.push({ id:"stange", name:t("stBar"), ids:mit(["bar", "dip"]).filter(function(id){ return gruppen[gruppen.length-1].ids.indexOf(id) < 0; }) });
+    var schon = {};
+    gruppen.forEach(function(g){ g.ids.forEach(function(id){ schon[id] = true; }); });
+    gruppen.push({ id:"air", name:t("stAirGr"), ids:EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && fuerWorkout(ex); }).map(function(ex){ return ex.id; }) });
+  }
   gruppen.push({ id:"eigene", name:t("stOwn"), ids:EXERCISES.filter(function(ex){ return ex.custom; }).map(function(ex){ return ex.id; }), eigene:true });
   return gruppen;
 }
@@ -1849,7 +1854,7 @@ function studioArt(id){
 var STUDIO_ARTEN = ["geraet", "kabel", "frei", "lh", "stange"];
 var STUDIO_GRUPPEN_ICON = { beine:CAT_ICON.legs, brust:'<path d="M4 8c2.5-2 5.5-2 8 0 2.5-2 5.5-2 8 0v5c-2 3-5.5 4-8 1.5C9.5 17 6 16 4 13z"/>',
   ruecken:CAT_ICON.back, schulter:'<circle cx="12" cy="6" r="2.5"/><path d="M4 18c0-5 3.5-8.5 8-8.5s8 3.5 8 8.5"/>', arme:CAT_ICON.arms,
-  bauch:CAT_ICON.core, lh:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, eigene:'<path d="M12 5v14M5 12h14"/>' };
+  bauch:CAT_ICON.core, lh:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, air:HOME_ICON.lib, eigene:'<path d="M12 5v14M5 12h14"/>' };
 function studioKachel(id){
   var ex = findExercise(id);
   if(!ex) return "";
@@ -1871,10 +1876,18 @@ function renderStudio(){
   var inGewaehlt = {};
   gruppen.forEach(function(g){ if(!fGr.length || fGr.indexOf(g.id) > -1) g.ids.forEach(function(id){ inGewaehlt[id] = true; }); });
   function passt(id){ return inGewaehlt[id] && artOk(id); }
-  var favs = (s.exFavs || []).filter(function(id){ return imStudio[id] && passt(id); });
+  var favs = (s.exFavs || []).filter(function(id){
+    if(imStudio[id]) return passt(id);
+    var ex = findExercise(id); return !!ex && fuerWorkout(ex) && artOk(id);   // Air-Übung mit ★
+  });
   zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0 && passt(id); });
   var filterAn = fGr.length || fArt.length;
-  var kacheln = '<div class="main-tiles st-bereiche">'+gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+  var kacheln = '<details class="opt-mehr st-filter" data-stfilter'+(s.stFilterZu ? '' : ' open')+'><summary>'+
+    '<span class="om-ico">'+svgIcon(CAT_ICON.weight)+'</span><span class="meta"><span class="name">'+esc(t("stFilter"))+'</span>'+
+    (filterAn ? '<span class="sub">'+(fGr.length + fArt.length)+' aktiv</span>' : '')+'</span><span class="om-pfeil" aria-hidden="true">▾</span></summary><div class="st-filter-inhalt">'+
+    '<div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
+    '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div>'+
+    '<div class="main-tiles st-bereiche">'+gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
     var on = fGr.indexOf(g.id) > -1, n = g.ids.filter(artOk).length;
     return '<button type="button" class="main-tile'+(on ? ' on' : '')+(fGr.length && !on ? ' off' : '')+'" data-stgr="'+g.id+'" aria-pressed="'+on+'" style="--mc:var(--bl-color)">'+
       '<span class="mt-ico">'+svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight)+'</span><span class="mt-name">'+esc(g.name)+'</span><span class="mt-n">'+n+'</span></button>';
@@ -1882,7 +1895,7 @@ function renderStudio(){
   '<div class="fc-chips st-arten">'+STUDIO_ARTEN.map(function(a){
     var on = fArt.indexOf(a) > -1;
     return '<button type="button" class="fc-chip'+(on ? ' on' : '')+'" data-start="'+a+'" aria-pressed="'+on+'">'+esc(t("stArt_"+a))+'</button>';
-  }).join("")+(filterAn ? '<button type="button" class="tpl-hide" data-streset>'+t("filterReset")+'</button>' : '')+'</div>';
+  }).join("")+(filterAn ? '<button type="button" class="tpl-hide" data-streset>'+t("filterReset")+'</button>' : '')+'</div></div></details>';
   var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
       (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
     (zuletzt.length ? '<div class="st-gruppe"><div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div></div>' : '');
@@ -1917,6 +1930,13 @@ function renderStudio(){
   function neuZeichnen(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
   app.querySelectorAll("[data-stgr]").forEach(function(b){ b.addEventListener("click", function(){ s.stGruppen = selToggle(fGr, b.getAttribute("data-stgr")); save(); neuZeichnen(); }); });
   app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
+  var fk = app.querySelector("[data-stfilter]");
+  fk.addEventListener("toggle", function(){ if(!!s.stFilterZu === !fk.open) return; s.stFilterZu = !fk.open; save(); });   // „toggle“ kommt auch beim Zeichnen
+  app.querySelector("#st-air").addEventListener("change", function(e){
+    s.stAir = e.target.checked;
+    if(!s.stAir) s.stGruppen = selArr(s.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
+    save(); neuZeichnen();
+  });
   var zur = app.querySelector("[data-streset]");
   if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
   var neu = app.querySelector("[data-stnew]");
