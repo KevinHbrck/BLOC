@@ -263,7 +263,7 @@ var I18N = {
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
     stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
-    stHistory:"Verlauf", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)",
+    stHistory:"Verlauf", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
     stUndo:"Letzten Satz löschen", stInfo:"Zur Übung", stWeight:"Arbeitsgewicht", stNone:"Keine Übung gefunden.",
     fabMy:"Workout aus Übungen", fabTimerWo:"Timer-Workout aus Blöcken", fabBlock:"Einzelner Block",
     tabTimerWo:"Workouts", tabBlocks:"Blöcke",
@@ -463,7 +463,7 @@ var I18N = {
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
     stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
-    stHistory:"History", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)",
+    stHistory:"History", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
     stUndo:"Delete last set", stInfo:"About the exercise", stWeight:"Working weight", stNone:"No exercise found.",
     fabMy:"Workout from exercises", fabTimerWo:"Timer workout from blocks", fabBlock:"Single block",
     tabTimerWo:"Workouts", tabBlocks:"Blocks",
@@ -953,6 +953,8 @@ var coverDraft = null;   // das Workout auf dem Deckblatt - Änderungen gelten n
 /* Farbe einer Kategorie */
 function exIsStretch(id){ var ex = id && findExercise(id); return !!(ex && ex.cats.indexOf("stretch") > -1); }
 function catVar(id){ return id==="mix" || id==="all" ? "var(--tp-color)" : "var(--c-"+id+")"; }
+/* Farbe einer Übung im Studio: Geräte und eigene Studio-Übungen violett, Air-Übungen (z. B. mit ★) in Air-Blau */
+function studioFarbe(ex){ return STUDIO_NUR[ex.id] || (ex.custom && ex.equip.indexOf("gym") > -1) ? "var(--bl-color)" : catVar(ex.cats[0]); }
 var CAT_ICON = {
   cardio:'<path d="M3 12h4l2-5 4 10 2-5h6"/>',
   weight:'<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
@@ -1364,7 +1366,7 @@ function bereichsFarbe(){
   return "";
 }
 function openExInfo(exId, live, lib){
-  var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe();
+  var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe() || (ex && studioFarbe(ex) === "var(--bl-color)" ? "var(--bl-color)" : "");
   if(!ex || !info) return;
   var lang = currentLang()==="en" ? 1 : 0;
   var steps = info[lang].split("|").map(function(s){ return '<li>'+esc(s)+'</li>'; }).join("");
@@ -1902,8 +1904,13 @@ function studioAlle(){ return state.db.settings.studio || (state.db.settings.stu
 function studioEintrag(id){ return (state.db.settings.studio || {})[id] || null; }
 function studioZiel(id){ var z = STUDIO_ZIEL[id] || [3, 12, 2.5]; return { saetze:z[0], wdh:z[1], schritt:z[2] }; }
 function studioTag(ts){ var d = new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
+function studioNurBlock(ex){
+  return !!ex && !STUDIO_NUR[ex.id] && !ex.custom && ex.equip.every(function(q){ return ["db", "kb", "gym"].indexOf(q) < 0; });
+}
 function studioTimer(id){
-  var e = studioEintrag(id) || {}, tm = e.timer || {};
+  var e = studioEintrag(id) || {}, tm = e.timer || {}, ex = findExercise(id);
+  if(studioNurBlock(ex))   // Vorgabe wie in Air
+    return { reps:tm.reps || ex.setReps || ex.reps, work:tm.work || ex.workSec, rest:tm.rest != null ? tm.rest : ex.restSec };
   return { reps:tm.reps || 3, work:tm.work || 40, rest:tm.rest != null ? tm.rest : (e.pause || 90) };
 }
 function studioRun(ex){
@@ -1944,7 +1951,8 @@ function studioKachel(id){
   if(!ex) return "";
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
   var sub = last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
-  return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+catVar(ex.cats[0])+'">'+
+  if(studioNurBlock(ex)){ var tb = studioTimer(id); sub = tb.reps+" × "+tb.work+" s"; last = null; }
+  return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
     '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span></div>';
 }
@@ -2067,9 +2075,65 @@ function studioPauseStop(){
   schedCancel();
   studioPause = null;
 }
+function studioTimerKarte(id, titel, hinweis){
+  var tm = studioTimer(id);
+  return (titel ? '<div class="section-title">'+esc(titel)+'</div>' : '')+
+    '<div class="card st-timer"><p class="st-timer-hint">'+esc(hinweis)+'</p>'+
+      '<label>'+esc(t("stSets"))+'</label>'+stepperHTML("stt-reps", tm.reps, 1, 20, 1)+
+      '<label>'+esc(t("stWork"))+'</label>'+stepperHTML("stt-work", tm.work, 5, 600, 5)+
+      '<label>'+esc(t("stRest"))+'</label>'+stepperHTML("stt-rest", tm.rest, 0, 600, 5)+
+      '<button type="button" class="btn btn-primary" data-sttimer style="margin-top:14px;">'+ICON_PLAY+' '+esc(t("stTimerStart"))+'</button>'+
+    '</div>';
+}
+function studioTimerBinden(id, eintrag){
+  var stt = app.querySelector(".st-timer");
+  stt.querySelector("[data-sttimer]").addEventListener("click", function(){ studioPauseStop(); go("#playst/"+id); });
+  bindSteppers(stt, function(){
+    eintrag().timer = { reps:clamp(parseInt(stt.querySelector("#stt-reps").value)||3, 1, 20),
+                        work:clamp(parseInt(stt.querySelector("#stt-work").value)||40, 5, 600),
+                        rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
+    save();
+  });
+}
+function studioInfoHTML(id, ex){
+  var info = EX_INFO[id], lang = currentLang()==="en" ? 1 : 0;
+  return info ? '<div class="section-title">'+esc(t("stInfo"))+'</div><div class="card st-info">'+
+      (EX_MUSCLES[id] ? '<div class="info-mus"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
+        (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>' : '')+
+      '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+info[lang].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
+      (EX_POSTURE[id] ? '<div class="info-title">'+t("posture")+'</div><ul class="info-posture">'+EX_POSTURE[id][lang*2].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'+
+        '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(EX_POSTURE[id][lang*2+1])+'</div>' : '')+
+      (ILLU2[id] ? '<button type="button" class="btn btn-secondary" data-stinfo>'+esc(t("infoLong"))+'</button>' : '')+
+    '</div>' : '';
+}
+/* Air-Übung im Studio: kein Gewicht, nur ein Block (Runden, Arbeit, Pause) zum Starten, dazu Notiz und Anleitung */
+function renderStudioBlockKarte(id, ex){
+  var e = studioEintrag(id) || {};
+  app.innerHTML =
+    topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
+    '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
+      (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
+    '</div>'+
+    studioTimerKarte(id, t("stBlock"), t("stBlockHint"))+
+    '<div class="section-title">'+esc(t("stNote"))+'</div>'+
+    '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
+    studioInfoHTML(id, ex)+
+    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a></p>'+
+    '<div style="height:40px"></div>';
+  bindCommon();
+  function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
+  var fav = app.querySelector(".topbar [data-exfav]");
+  if(fav) fav.addEventListener("click", function(){ toggleExFav(id); var y = window.scrollY; renderStudioKarte(id); window.scrollTo(0, y); });
+  var inf = app.querySelector("[data-stinfo]");
+  if(inf) inf.addEventListener("click", function(){ openExInfo(id, false); });
+  var notiz = app.querySelector("#st-notiz");
+  notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
+  studioTimerBinden(id, eintrag);
+}
 function renderStudioKarte(id){
   var ex = findExercise(id);
   if(!ex){ go("#timers"); return; }
+  if(studioNurBlock(ex)) return renderStudioBlockKarte(id, ex);
   if(studioPause && studioPause.id !== id) studioPauseStop();
   var e = studioEintrag(id) || {}, z = studioZiel(id), log = e.log || [], heute = studioTag(Date.now());
   var h = log.length && studioTag(log[log.length-1].at) === heute ? log[log.length-1] : null;
@@ -2091,7 +2155,7 @@ function renderStudioKarte(id){
   }
   app.innerHTML =
     topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
-    '<div class="card st-hero" style="--cat:'+catVar(ex.cats[0])+'">'+
+    '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+z.saetze+' × '+z.wdh+
         (e.kg != null ? SEP+esc(t("stWeight"))+' '+studioKg(e.kg)+' kg' : '')+'</div>'+
@@ -2115,21 +2179,11 @@ function renderStudioKarte(id){
     (verlauf ? '<div class="section-title">'+esc(t("stHistory"))+'</div><div class="card st-verlauf">'+kurve+verlauf+'</div>' : '')+
     '<div class="section-title">'+esc(t("stNote"))+'</div>'+
     '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
-    (info ? '<div class="section-title">'+esc(t("stInfo"))+'</div><div class="card st-info">'+
-      (EX_MUSCLES[id] ? '<div class="info-mus"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
-        (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>' : '')+
-      '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+info[lang].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
-      (EX_POSTURE[id] ? '<div class="info-title">'+t("posture")+'</div><ul class="info-posture">'+EX_POSTURE[id][lang*2].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'+
-        '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(EX_POSTURE[id][lang*2+1])+'</div>' : '')+
-      (ILLU2[id] ? '<button type="button" class="btn btn-secondary" data-stinfo>'+esc(t("infoLong"))+'</button>' : '')+
-    '</div>' : '')+
-    '<div class="section-title">'+esc(t("stTimer"))+'</div>'+
-    '<div class="card st-timer"><p class="st-timer-hint">'+esc(t("stTimerHint"))+'</p>'+
-      '<label>'+esc(t("stSets"))+'</label>'+stepperHTML("stt-reps", studioTimer(id).reps, 1, 20, 1)+
-      '<label>'+esc(t("stWork"))+'</label>'+stepperHTML("stt-work", studioTimer(id).work, 5, 600, 5)+
-      '<label>'+esc(t("stRest"))+'</label>'+stepperHTML("stt-rest", studioTimer(id).rest, 0, 600, 5)+
-      '<button type="button" class="btn btn-primary" data-sttimer style="margin-top:14px;">'+ICON_PLAY+' '+esc(t("stTimerStart"))+'</button>'+
-    '</div>'+
+    '<details class="opt-mehr st-timer-auf"'+(state.db.settings.stTimerAuf ? ' open' : '')+'><summary>'+
+      '<span class="om-ico">'+ICON_PLAY+'</span><span class="meta"><span class="name">'+esc(t("stTimer"))+'</span>'+
+      '<span class="sub">'+studioTimer(id).reps+' × '+studioTimer(id).work+' s · '+esc(t("stRestKurz"))+' '+studioTimer(id).rest+' s</span></span>'+
+      '<span class="om-pfeil" aria-hidden="true">▾</span></summary>'+studioTimerKarte(id, "", t("stTimerHint"))+'</details>'+
+    studioInfoHTML(id, ex)+
     '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a></p>'+
     '<div style="height:40px"></div>';
   bindCommon();
@@ -2165,13 +2219,11 @@ function renderStudioKarte(id){
   an("[data-stskip]", function(){ studioPauseStop(); neu(); });
   an("[data-stinfo]", function(){ openExInfo(id, false); });
   an(".topbar [data-exfav]", function(){ toggleExFav(id); neu(); });
-  an("[data-sttimer]", function(){ studioPauseStop(); go("#playst/"+id); });
-  var stt = app.querySelector(".st-timer");
-  bindSteppers(stt, function(){
-    eintrag().timer = { reps:clamp(parseInt(stt.querySelector("#stt-reps").value)||3, 1, 20),
-                        work:clamp(parseInt(stt.querySelector("#stt-work").value)||40, 5, 600),
-                        rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
-    save();
+  studioTimerBinden(id, eintrag);
+  var auf = app.querySelector(".st-timer-auf");
+  auf.addEventListener("toggle", function(){ if(!!state.db.settings.stTimerAuf === auf.open) return; state.db.settings.stTimerAuf = auf.open; save(); });
+  auf.querySelector(".st-timer").addEventListener("click", function(){   // Kopfzeile nachführen
+    var tm = studioTimer(id); auf.querySelector("summary .sub").textContent = tm.reps+" × "+tm.work+" s · "+t("stRestKurz")+" "+tm.rest+" s";
   });
   app.querySelectorAll("[data-stpause]").forEach(function(b){ b.addEventListener("click", function(){ eintrag().pause = +b.getAttribute("data-stpause"); save(); neu(); }); });
   var notiz = app.querySelector("#st-notiz");

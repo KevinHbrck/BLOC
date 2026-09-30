@@ -35,7 +35,7 @@ und in allen Übungs-Kacheln (nur sichtbare laufen).
 
 **System · Hell · Dunkel · Nacht · C60.** System folgt Hell/Dunkel des Handys, Nacht ist warm mit wenig Blau
 (fürs Abendtraining), C60 ist der Kassetten-Look mit Walzenzähler.
-Farben nach 60-30-10: ruhige Flächen, vier Bereichsfarben (`--bl-color` Studio, `--tp-color`
+Farben nach 60-30-10: ruhige Flächen, vier Bereichsfarben (`--bl-color` Studio violett, `--tp-color` Air blau,
 Air, `--rep-color` Summit, `--ws-color` Mobility & Stretch), Akzentfarbe nur für die Hauptaktion,
 das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`).
 

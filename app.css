@@ -17,21 +17,21 @@
   /* Workouts und Blöcke bekommen je eine eigene Farbe, damit man sie auf einen Blick unterscheidet */
   --wo-color:var(--accent);
   --wo-text:var(--accent-text);
-  --bl-color:#3867e8;
+  --bl-color:#7a4fd6;
   --bl-text:#ffffff;
-  --tp-color:#1f9d6b;
+  --tp-color:#3867e8;
   --tp-text:#ffffff;
   /* „Ausgewählt“ ist ruhig (Schrift- und Flächenfarbe getauscht); Orange (--accent) nur für die Hauptaktion,
      das Logo und die Arbeitsphase im Timer - Faustregel 60-30-10: höchstens ein Zehntel Akzent */
   --sel-bg:var(--text);
   --sel-text:var(--bg);
   /* Die vier Bereiche der Startseite haben je eine Farbe - Favoriten, Start-Knöpfe und Übersicht tragen die Farbe ihres Bereichs:
-     Freies Training = --bl-color, Workouts = --tp-color, Challenges = --rep-color, Aufwärmen & Dehnen = --ws-color */
+     Studio = --bl-color (violett), Air = --tp-color (blau), Summit = --rep-color (gold), Mobility & Stretch = --ws-color (grün) */
   --rep-color:#c98a00;
-  --ws-color:#1597a6;
+  --ws-color:#1f9d6b;
   --ws-text:#ffffff;
   /* Kategorien der Bibliothek */
-  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
+  --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--ws-color);
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
 }
@@ -49,13 +49,13 @@
   --rest-text:#04231b;
   --blockrest:#6f92ff;
   --danger:#ff5c60;
-  --bl-color:#6f92ff;
-  --bl-text:#0b1330;
-  --tp-color:#3fcf8e;
-  --tp-text:#04231b;
+  --bl-color:#a98bff;
+  --bl-text:#170b33;
+  --tp-color:#6f92ff;
+  --tp-text:#0b1330;
   --rep-color:#f5b82e;
-  --ws-color:#22b3c4;
-  --ws-text:#04262a;
+  --ws-color:#3fcf8e;
+  --ws-text:#04231b;
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
 }
@@ -74,13 +74,13 @@
     --rest-text:#04231b;
     --blockrest:#6f92ff;
     --danger:#ff5c60;
-    --bl-color:#6f92ff;
-    --bl-text:#0b1330;
-    --tp-color:#3fcf8e;
-    --tp-text:#04231b;
+    --bl-color:#a98bff;
+    --bl-text:#170b33;
+    --tp-color:#6f92ff;
+    --tp-text:#0b1330;
     --rep-color:#f5b82e;
-    --ws-color:#22b3c4;
-    --ws-text:#04262a;
+    --ws-color:#3fcf8e;
+    --ws-text:#04231b;
     --radius:18px;
     --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
@@ -681,9 +681,9 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .illu .gm{ stroke:var(--geraet); }
 .illu circle.ipf.gm, .illu .ipf.gm{ fill:var(--geraet); stroke:none; }
 .illu .gp{ stroke-width:7; }
-:root{ --geraet:#2b78e4; }
-:root[data-theme="dark"], :root[data-theme="nacht"]{ --geraet:#6aa8ff; }
-@media (prefers-color-scheme: dark){ :root:not([data-theme]){ --geraet:#6aa8ff; } }
+:root{ --geraet:#5b6472; }
+:root[data-theme="dark"], :root[data-theme="nacht"]{ --geraet:#aab2bf; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme]){ --geraet:#aab2bf; } }
 /* im Timer liegt die Figur auf farbiger Fläche: Geräte dort in der Schriftfarbe, etwas zurückgenommen */
 .player .illu .gm{ stroke:currentColor; opacity:.7; }
 .player .illu circle.ipf.gm, .player .illu .ipf.gm{ fill:currentColor; }
@@ -1704,3 +1704,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .bs-hinweis{ text-transform:none; letter-spacing:0; font-weight:400; }
 /* Studio-Karte: Intervall-Timer einstellbar */
 .st-timer-hint{ margin:0 0 6px; font-size:13px; color:var(--text-dim); }
+/* Studio-Karte: Intervall-Timer zum Aufklappen */
+.st-timer-auf{ margin-bottom:12px; }
+.st-timer-auf .st-timer{ box-shadow:none; background:none; padding:0 16px 14px; margin:0; }
