@@ -1456,10 +1456,12 @@ function syncGuard(){
   }
 }
 function go(hash){
+  var neueSeite = navTop() !== hash;
   if(hash === "#home") navStack = ["#home"];
-  else if(navTop() !== hash) navStack.push(hash);
+  else if(neueSeite) navStack.push(hash);
   syncGuard();
   render();
+  if(neueSeite) window.scrollTo(0, 0);   // neue Seite beginnt immer oben
 }
 function goBack(fallback){
   if(navStack.length > 1){
