@@ -1712,9 +1712,16 @@ function bindFabMenu(actions){
 /* ============ Timer: Timer-Workouts und Blöcke ============
    Beides sind Intervall-Timer mit fest gespeicherten Zeiten - deshalb eine gemeinsame Seite
    mit zwei Reitern. Mit ☆ landet ein Eintrag auf der Startseite. */
+/* Neue Timer-Workouts und Blöcke sind erst ein Entwurf - gespeichert wird nur mit „Speichern“ */
+var neuEntwurf = null;   // { liste:"workouts"|"blocks", obj }
+function entwurf(liste, id){ return neuEntwurf && neuEntwurf.liste === liste && neuEntwurf.obj.id === id ? neuEntwurf.obj : null; }
+function entwurfSichern(liste, obj){
+  if(entwurf(liste, obj.id)){ state.db[liste].push(obj); neuEntwurf = null; }
+  save();
+}
 function createTimerWorkout(){
   var w = { id:uid(), name:t("newWorkout"), items:[], updatedAt:Date.now() };
-  state.db.workouts.push(w); save();
+  neuEntwurf = { liste:"workouts", obj:w };
   return w;
 }
 /* Timer-Workout per „Überrasch mich“ füllen: jede Übung wird ein Block (vorhandene gleiche Blöcke
@@ -2211,12 +2218,13 @@ function bindCommon(){
 /* ============ Block list ============ */
 function createBlock(){
   var b = { id:uid(), name:t("newBlock"), reps:6, workSec:30, restSec:10, updatedAt:Date.now() };
-  state.db.blocks.push(b); save();
+  neuEntwurf = { liste:"blocks", obj:b };
   return b;
 }
 /* ============ Block edit ============ */
 function renderBlockEdit(id){
-  var b = findBlock(id);
+  var istNeu = !!entwurf("blocks", id);
+  var b = findBlock(id) || entwurf("blocks", id);
   if(!b){ goBack("#library"); return; }
   app.innerHTML =
     topbar(t("editBlock"), { back:"#library" }) +
@@ -2251,7 +2259,7 @@ function renderBlockEdit(id){
     b.workSec = clamp(parseInt(app.querySelector("#f-work").value)||1, 1, 3600);
     b.restSec = clamp(parseInt(app.querySelector("#f-rest").value)||0, 0, 3600);
     b.updatedAt = Date.now();
-    save();
+    if(!istNeu) save();
     refreshTotal();
   }
   bindSteppers(app, persist);
@@ -2261,10 +2269,12 @@ function renderBlockEdit(id){
   /* Nach dem Speichern/Löschen zurück dorthin, woher man kam (Startseite, Blockliste oder Workout) */
   app.querySelector("[data-save]").addEventListener("click", function(){
     persist();
+    entwurfSichern("blocks", b);
     goBack("#home");
   });
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
+    if(istNeu){ neuEntwurf = null; goBack("#home"); return; }   // noch nicht gespeichert: einfach verwerfen
     confirmSheet(t("deleteBlockQ"), t("deleteBlockText", { name:b.name }), t("del"), function(){
       deleteBlockNow(id);
       goBack("#home");
@@ -2303,7 +2313,9 @@ function bindSteppers(root, onChange){
 
 /* ============ Workout edit ============ */
 function renderWorkoutEdit(id){
-  var w = findWorkout(id);
+  var istNeu = !!entwurf("workouts", id);
+  var w = findWorkout(id) || entwurf("workouts", id);
+  function save(){ if(!istNeu) window.save(); }   // Entwurf: erst „Speichern“ legt ihn an
   if(!w){ goBack("#library"); return; }
 
   var itemsHTML = w.items.map(function(it, idx){
@@ -2346,7 +2358,7 @@ function renderWorkoutEdit(id){
     }).join("")+'</div>';
 
   app.innerHTML =
-    topbar(t("workout"), { back:"#library", right:'<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
+    topbar(t("workout"), { back:"#library", right:istNeu ? '' : '<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
     '<div class="card">'+
       '<label for="w-name">'+t("name")+'</label>'+
       '<input type="text" id="w-name" value="'+esc(w.name)+'" maxlength="40">'+
@@ -2429,11 +2441,12 @@ function renderWorkoutEdit(id){
   app.querySelector("[data-save]").addEventListener("click", function(){
     w.name = app.querySelector("#w-name").value.trim() || t("untitled");
     w.updatedAt = Date.now();
-    save();
+    entwurfSichern("workouts", w);
     goBack("#library");
   });
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
+    if(istNeu){ neuEntwurf = null; goBack("#library"); return; }
     confirmSheet(t("deleteWorkoutQ"), t("cantUndo"), t("del"), function(){
       deleteTimerWorkoutNow(id);
       goBack("#library");
