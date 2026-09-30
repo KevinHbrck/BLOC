@@ -263,7 +263,7 @@ var I18N = {
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
     stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
-    stHistory:"Verlauf", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer",
+    stHistory:"Verlauf", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)",
     stUndo:"Letzten Satz löschen", stInfo:"Zur Übung", stWeight:"Arbeitsgewicht", stNone:"Keine Übung gefunden.",
     fabMy:"Workout aus Übungen", fabTimerWo:"Timer-Workout aus Blöcken", fabBlock:"Einzelner Block",
     tabTimerWo:"Workouts", tabBlocks:"Blöcke",
@@ -463,7 +463,7 @@ var I18N = {
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
     stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
-    stHistory:"History", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer",
+    stHistory:"History", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)",
     stUndo:"Delete last set", stInfo:"About the exercise", stWeight:"Working weight", stNone:"No exercise found.",
     fabMy:"Workout from exercises", fabTimerWo:"Timer workout from blocks", fabBlock:"Single block",
     tabTimerWo:"Workouts", tabBlocks:"Blocks",
@@ -1609,6 +1609,7 @@ function render(){
   if(route==="playdraft") return launchFromSource({ type:"draft" });
   if(route==="playlib") return launchFromSource({ type:"libworkout", id:parts[1] });
   if(route==="playex") return launchFromSource({ type:"exercise", id:parts[1] });
+  if(route==="playst") return launchFromSource({ type:"studio", id:parts[1] });
   return renderHome();
 }
 
@@ -1901,6 +1902,15 @@ function studioAlle(){ return state.db.settings.studio || (state.db.settings.stu
 function studioEintrag(id){ return (state.db.settings.studio || {})[id] || null; }
 function studioZiel(id){ var z = STUDIO_ZIEL[id] || [3, 12, 2.5]; return { saetze:z[0], wdh:z[1], schritt:z[2] }; }
 function studioTag(ts){ var d = new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
+function studioTimer(id){
+  var e = studioEintrag(id) || {}, tm = e.timer || {};
+  return { reps:tm.reps || 3, work:tm.work || 40, rest:tm.rest != null ? tm.rest : (e.pause || 90) };
+}
+function studioRun(ex){
+  var tm = studioTimer(ex.id), b = exBlock(ex);
+  b.id = "st-"+ex.id; b.reps = ex.perSide ? tm.reps*2 : tm.reps; b.workSec = tm.work; b.restSec = tm.rest;
+  return libQuickWorkout([b], 0, tplText(ex.name), "studio-"+ex.id);
+}
 function studioKg(v){ return (Math.round(v*100)/100).toLocaleString(currentLang()==="en" ? "en" : "de"); }
 function studioIds(){
   var gruppen = STUDIO_GRUPPEN.map(function(g){ return { id:g.id, name:tplText(g), ids:g.ids.split(" ").filter(findExercise) }; });
@@ -2113,7 +2123,13 @@ function renderStudioKarte(id){
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(EX_POSTURE[id][lang*2+1])+'</div>' : '')+
       (ILLU2[id] ? '<button type="button" class="btn btn-secondary" data-stinfo>'+esc(t("infoLong"))+'</button>' : '')+
     '</div>' : '')+
-    '<button type="button" class="btn btn-secondary" data-sttimer style="margin-top:12px;">'+ICON_PLAY+' '+esc(t("stTimer"))+'</button>'+
+    '<div class="section-title">'+esc(t("stTimer"))+'</div>'+
+    '<div class="card st-timer"><p class="st-timer-hint">'+esc(t("stTimerHint"))+'</p>'+
+      '<label>'+esc(t("stSets"))+'</label>'+stepperHTML("stt-reps", studioTimer(id).reps, 1, 20, 1)+
+      '<label>'+esc(t("stWork"))+'</label>'+stepperHTML("stt-work", studioTimer(id).work, 5, 600, 5)+
+      '<label>'+esc(t("stRest"))+'</label>'+stepperHTML("stt-rest", studioTimer(id).rest, 0, 600, 5)+
+      '<button type="button" class="btn btn-primary" data-sttimer style="margin-top:14px;">'+ICON_PLAY+' '+esc(t("stTimerStart"))+'</button>'+
+    '</div>'+
     '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a></p>'+
     '<div style="height:40px"></div>';
   bindCommon();
@@ -2149,7 +2165,14 @@ function renderStudioKarte(id){
   an("[data-stskip]", function(){ studioPauseStop(); neu(); });
   an("[data-stinfo]", function(){ openExInfo(id, false); });
   an(".topbar [data-exfav]", function(){ toggleExFav(id); neu(); });
-  an("[data-sttimer]", function(){ studioPauseStop(); go("#playex/"+id); });
+  an("[data-sttimer]", function(){ studioPauseStop(); go("#playst/"+id); });
+  var stt = app.querySelector(".st-timer");
+  bindSteppers(stt, function(){
+    eintrag().timer = { reps:clamp(parseInt(stt.querySelector("#stt-reps").value)||3, 1, 20),
+                        work:clamp(parseInt(stt.querySelector("#stt-work").value)||40, 5, 600),
+                        rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
+    save();
+  });
   app.querySelectorAll("[data-stpause]").forEach(function(b){ b.addEventListener("click", function(){ eintrag().pause = +b.getAttribute("data-stpause"); save(); neu(); }); });
   var notiz = app.querySelector("#st-notiz");
   notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
@@ -5357,6 +5380,10 @@ function workoutForSource(source){
   if(source.type==="exercise"){
     var ex = findExercise(source.id);
     return ex ? exerciseRun(ex) : null;
+  }
+  if(source.type==="studio"){
+    var sx = findExercise(source.id);
+    return sx ? studioRun(sx) : null;
   }
   if(source.type==="block"){
     var b = findBlock(source.id);
