@@ -216,9 +216,12 @@
       klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü"));
       klick('[data-fabopt="timerwo"]');
       await bis(function () { return $("#w-name"); }, 3000, "Timer-Workout-Editor");
+      klick("[data-addex]");
+      await bis(function () { return $(".wblock"); }, 3000, "Übung im Timer-Workout");
       klick("button.back");
       await bis(function () { return $('[data-libtab="mine"].active'); }, 3000, "zurück unter Meine");
       pruefe($$("[data-play]").length === 0, "Timer-Workout ohne Speichern angelegt");
+      pruefe($$("[data-playblock]").length === 1, "verworfenes Timer-Workout hat Blöcke angelegt: " + $$("[data-playblock]").length);
       klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü"));
       klick('[data-fabopt="timerwo"]');
       await bis(function () { return $("#w-name"); }, 3000, "Timer-Workout-Editor");

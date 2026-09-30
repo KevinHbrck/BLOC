@@ -340,7 +340,7 @@ var I18N = {
     volMusicHint:"Musik läuft weiter. iPhone auf lautlos = keine Töne.",
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
-    htLib:"Intervall-Programme und Übungen", htLibN:"{w} Workouts · {e} Übungen · selbst bauen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
+    htLib:"Intervall-Programme und Übungen", htLibN:"{w} Workouts · {e} Übungen rund um den Calisthenicspark", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
     repTitle:"Summit", htReps:"Challenges auf Bestzeit",
     warmTitle:"Mobility & Stretch", htWarm:"Vor und nach dem Training", warmSec:"Mobility · vor dem Training", stretchSec:"Stretch · nach dem Training",
     warmIntro:"Passt zu allem: vorher kurz aufwärmen, danach dehnen.",
@@ -540,7 +540,7 @@ var I18N = {
     volMusicHint:"Your music keeps playing. iPhone on silent = no sounds.",
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
-    htLib:"Interval programs and exercises", htLibN:"{w} workouts · {e} exercises · build your own", spSub:"A random session based on your picks",
+    htLib:"Interval programs and exercises", htLibN:"{w} workouts · {e} exercises around the calisthenics park", spSub:"A random session based on your picks",
     repTitle:"Summit", htReps:"Challenges against the clock",
     warmTitle:"Mobility & Stretch", htWarm:"Before and after training", warmSec:"Mobility · before training", stretchSec:"Stretch · after training",
     warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
@@ -671,6 +671,8 @@ function blockDuration(b){
 }
 function findBlock(id){
   for(var i=0;i<state.db.blocks.length;i++) if(state.db.blocks[i].id===id) return state.db.blocks[i];
+  var zw = (typeof neuEntwurf!=="undefined" && neuEntwurf && neuEntwurf.bloecke) || [];
+  for(var j=0;j<zw.length;j++) if(zw[j].id===id) return zw[j];
   return (typeof libBlockCache!=="undefined" && libBlockCache[id]) || null;
 }
 function findWorkout(id){
@@ -757,13 +759,16 @@ function libHide(key){
 }
 
 /* Übung als eigenen Block übernehmen - gibt es schon einen Block aus derselben Übung, wird der genommen */
-function adoptExercise(ex){
-  for(var i=0;i<state.db.blocks.length;i++){
-    var b = state.db.blocks[i];
+/* zwischen: Blöcke eines noch nicht gespeicherten Timer-Workouts - landen erst mit „Speichern“ unter Meine */
+function adoptExercise(ex, zwischen){
+  var alle = state.db.blocks.concat(zwischen || []);
+  for(var i=0;i<alle.length;i++){
+    var b = alle[i];
     if(b.ex===ex.id && b.reps===ex.reps && b.workSec===ex.workSec && b.restSec===ex.restSec) return b;
   }
   var nb = { id:uid(), ex:ex.id, name:tplText(ex.name), reps:ex.reps, workSec:ex.workSec, restSec:ex.restSec,
              sides:ex.perSide, hint:tplText(ex.hint), updatedAt:Date.now() };
+  if(zwischen){ zwischen.push(nb); return nb; }
   state.db.blocks.push(nb);
   save();
   return nb;
@@ -1716,12 +1721,17 @@ function bindFabMenu(actions){
 var neuEntwurf = null;   // { liste:"workouts"|"blocks", obj }
 function entwurf(liste, id){ return neuEntwurf && neuEntwurf.liste === liste && neuEntwurf.obj.id === id ? neuEntwurf.obj : null; }
 function entwurfSichern(liste, obj){
-  if(entwurf(liste, obj.id)){ state.db[liste].push(obj); neuEntwurf = null; }
+  if(entwurf(liste, obj.id)){
+    (neuEntwurf.bloecke || []).forEach(function(b){   // nur Blöcke, die im Workout noch vorkommen
+      if(obj.items && obj.items.some(function(it){ return it.blockId === b.id; })) state.db.blocks.push(b);
+    });
+    state.db[liste].push(obj); neuEntwurf = null;
+  }
   save();
 }
 function createTimerWorkout(){
   var w = { id:uid(), name:t("newWorkout"), items:[], updatedAt:Date.now() };
-  neuEntwurf = { liste:"workouts", obj:w };
+  neuEntwurf = { liste:"workouts", obj:w, bloecke:[] };
   return w;
 }
 /* Timer-Workout per „Überrasch mich“ füllen: jede Übung wird ein Block (vorhandene gleiche Blöcke
@@ -2393,7 +2403,7 @@ function renderWorkoutEdit(id){
     var ex = findExercise(el.getAttribute("data-addex"));
     if(!ex) return;
     if(exPos[ex.id]) w.items = w.items.filter(function(it){ var b = findBlock(it.blockId); return !(b && b.ex === ex.id); });   // nochmal = raus
-    else w.items.push({ blockId: adoptExercise(ex).id, restAfterSec: 30 });
+    else w.items.push({ blockId: adoptExercise(ex, istNeu ? neuEntwurf.bloecke : null).id, restAfterSec: 30 });
     w.updatedAt = Date.now();
     save();
     var y = window.scrollY; renderWorkoutEdit(id); window.scrollTo(0, y);
