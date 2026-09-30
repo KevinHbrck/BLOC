@@ -85,7 +85,7 @@
         if (i > 0) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));
         klick("[data-introweiter]");
       }
-      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Freies Training | Studio | Summit | Aufwärmen & Dehnen", "Seiten: " + titel.join(" | "));
+      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Air | Studio | Summit | Mobility & Stretch", "Seiten: " + titel.join(" | "));
       pruefe(!$("#overlayRoot .intro-sheet"), "„Los geht's“ schließt die Einführung nicht");
       await heim();
       await warte(500);
