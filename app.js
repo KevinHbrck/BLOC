@@ -255,7 +255,7 @@ var I18N = {
     shareTitle:"App teilen", shareCopy:"Link kopieren", shareWa:"Per WhatsApp", shareMore:"Weitere Möglichkeiten …",
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
     fCat:"Fokus", equipAny:"Alles", fEquipHintShort:"Was hast du da?",
-    favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche",
+    favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche", areasHint:"gedrückt halten zum Sortieren", areasSort:"Reihenfolge der Bereiche", areasSortHint:"Der oberste Bereich steht groß vorn.", moveUp:"Nach oben", moveDown:"Nach unten",
     timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Drinnen an Geräten · {n} Übungen · Fortschritt im Blick", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
     tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App.",
     stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
@@ -455,7 +455,7 @@ var I18N = {
     shareTitle:"Share the app", shareCopy:"Copy link", shareWa:"Via WhatsApp", shareMore:"More options …",
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
     fCat:"Focus", equipAny:"Anything", fEquipHintShort:"What do you have?",
-    favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections",
+    favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections", areasHint:"press and hold to reorder", areasSort:"Order of sections", areasSortHint:"The top section is shown large.", moveUp:"Move up", moveDown:"Move down",
     timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Indoors on machines · {n} exercises · track your progress", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
     tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest.",
     stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
@@ -1635,11 +1635,76 @@ var ICON_STAR = '<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1
 /* Bereichs-Kachel (zwei nebeneinander): Symbol oben, Titel, Kurzbeschreibung, Pfeil */
 /* art: "gross" (Workouts, der wichtigste Bereich) oder "zeile" (die übrigen, als ruhige Liste) */
 function areaTile(key, href, titel, unter, farbe, art){
-  return '<div class="area-tile'+(art ? ' '+art : '')+'" data-nav="'+href+'" role="button" tabindex="0" style="--c:'+farbe+'">'+
+  return '<div class="area-tile'+(art ? ' '+art : '')+'" data-nav="'+href+'" data-bereich="'+key+'" role="button" tabindex="0" style="--c:'+farbe+'">'+
       '<span class="at-ico">'+svgIcon(HOME_ICON[key])+'</span>'+
       '<span class="at-text"><b class="at-name">'+esc(titel)+'</b><small class="at-sub">'+esc(unter)+'</small></span>'+
       '<span class="at-chev">'+ICON_CHEV+'</span>'+
     '</div>';
+}
+/* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
+var BEREICH_KEYS = ["lib", "timer", "reps", "warm"];
+function bereichDaten(k){
+  if(k === "lib") return ["#library", t("library"), t("htLibN", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
+    e:EXERCISES.filter(function(ex){ return !ex.custom && fuerWorkout(ex); }).length }), "var(--tp-color)"];
+  if(k === "timer") return ["#timers", t("timers"), t("htTimers", { n:Object.keys(STUDIO_NUR).length }), "var(--bl-color)"];
+  if(k === "reps") return ["#reps", t("repTitle"), t("htReps"), "var(--rep-color)"];
+  return ["#warmstretch", t("warmTitle"), t("htWarm", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length }), "var(--ws-color)"];
+}
+function bereichReihe(){
+  var r = selArr(state.db.settings.bereiche).filter(function(k){ return BEREICH_KEYS.indexOf(k) > -1; });
+  BEREICH_KEYS.forEach(function(k){ if(r.indexOf(k) < 0) r.push(k); });
+  return r;
+}
+function bereicheHTML(){
+  var r = bereichReihe();
+  function kachel(k, art){ var d = bereichDaten(k); return areaTile(k, d[0], d[1], d[2], d[3], art); }
+  return '<div class="area-bereiche">'+kachel(r[0], "gross")+
+    '<div class="area-gruppe">'+r.slice(1).map(function(k){ return kachel(k, "zeile"); }).join("")+'</div></div>';
+}
+/* Langes Drücken (0,5 s, ohne zu wischen); der Klick danach wird geschluckt, damit die Seite nicht wechselt */
+var langDruckSperre = 0;
+document.addEventListener("click", function(e){ if(Date.now() < langDruckSperre){ e.stopPropagation(); e.preventDefault(); } }, true);
+function langDruck(el, fn){
+  var tm = 0, x0 = 0, y0 = 0;
+  function stop(){ if(tm){ clearTimeout(tm); tm = 0; } }
+  el.addEventListener("pointerdown", function(e){
+    x0 = e.clientX; y0 = e.clientY; stop();
+    tm = setTimeout(function(){
+      tm = 0; langDruckSperre = Date.now() + 700;
+      try { if(navigator.vibrate) navigator.vibrate(15); } catch(err){}
+      fn();
+    }, 500);
+  });
+  el.addEventListener("pointermove", function(e){ if(tm && Math.abs(e.clientX-x0) + Math.abs(e.clientY-y0) > 10) stop(); });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(function(ev){ el.addEventListener(ev, stop); });
+  el.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+}
+function openBereicheSheet(){
+  var root = document.getElementById("overlayRoot"), r = bereichReihe();
+  function zeichnen(){
+    root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bereiche-sheet">'+
+      '<h3>'+esc(t("areasSort"))+'</h3><p>'+esc(t("areasSortHint"))+'</p>'+
+      '<div class="bs-liste">'+r.map(function(k, i){
+        var d = bereichDaten(k);
+        return '<div class="bs-zeile" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><b>'+esc(d[1])+'</b>'+
+          '<button type="button" class="bs-pfeil" data-hoch="'+i+'"'+(i === 0 ? ' disabled' : '')+' aria-label="'+esc(t("moveUp"))+'">&#8593;</button>'+
+          '<button type="button" class="bs-pfeil" data-runter="'+i+'"'+(i === r.length-1 ? ' disabled' : '')+' aria-label="'+esc(t("moveDown"))+'">&#8595;</button></div>';
+      }).join("")+'</div>'+
+      '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
+      '<button class="btn btn-primary" data-ok>'+ICON_SAVE+' '+t("save")+'</button></div>'+
+      '</div></div>';
+    function tausch(i, j){ var x = r[i]; r[i] = r[j]; r[j] = x; zeichnen(); }
+    root.querySelectorAll("[data-hoch]").forEach(function(b){ b.addEventListener("click", function(){ var i = +b.getAttribute("data-hoch"); if(i > 0) tausch(i, i-1); }); });
+    root.querySelectorAll("[data-runter]").forEach(function(b){ b.addEventListener("click", function(){ var i = +b.getAttribute("data-runter"); if(i < r.length-1) tausch(i, i+1); }); });
+    root.querySelector("[data-cancel]").addEventListener("click", schliessen);
+    root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) schliessen(); });
+    root.querySelector("[data-ok]").addEventListener("click", function(){
+      state.db.settings.bereiche = r.slice(); save(); schliessen();
+      if((parseHash()[0] || "home") === "home") renderHome();
+    });
+  }
+  function schliessen(){ root.innerHTML = ""; }
+  zeichnen();
 }
 /* „Überrasch mich“ als große Karte - steht auf der Startseite und in allen Bibliotheks-Reitern */
 function surpriseCardHTML(){
@@ -1664,19 +1729,11 @@ function renderHome(){
     '</div>'+
     (favHTML || '<div class="fav-empty">'+t("favEmpty")+'</div>') +
     /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
-    '<div class="section-title">'+t("areas")+'</div>'+
-    '<div class="area-bereiche">'+
-      areaTile("lib", "#library", t("library"),
-        t("htLibN", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:EXERCISES.filter(function(ex){ return !ex.custom && fuerWorkout(ex); }).length }),
-        "var(--tp-color)", "gross") +
-      '<div class="area-gruppe">'+
-        areaTile("timer", "#timers", t("timers"), t("htTimers", { n:Object.keys(STUDIO_NUR).length }), "var(--bl-color)", "zeile") +
-        areaTile("reps", "#reps", t("repTitle"), t("htReps"), "var(--rep-color)", "zeile") +
-        areaTile("warm", "#warmstretch", t("warmTitle"), t("htWarm", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length }), "var(--ws-color)", "zeile") +
-      '</div>'+
-    '</div>' +
+    '<div class="section-title">'+t("areas")+' <span class="lbl-hint bs-hinweis">'+esc(t("areasHint"))+'</span></div>'+
+    bereicheHTML() +
     KODAK_BADGE;
   bindCommon();
+  app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var sp = app.querySelector("[data-surprise]");
   if(sp) sp.addEventListener("click", openSurprise);
   bindFavItems(renderHome);

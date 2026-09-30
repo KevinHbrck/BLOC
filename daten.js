@@ -513,7 +513,7 @@ var ILLU_POSES = {
   "triceps-dips":       [Q(null,[56,42],[52,68],[[34,64,30,89,24,89]],[[62,56,64,70]], gBench(60,92,70)), Q(null,[56,56],[52,80],[[34,72,30,89,24,89]],[[68,58,64,70]], gBench(60,92,70))],
   "squat-hold":         [P_SQ, null],
   "walking-lunges":     [qWith(P_L1,{ a:[[55,48,49,57]] }), qWith(P_WALK1,{ a:[[57,35,51,45]] })],
-  "reverse-lunges":     [P_L0, P_L1],
+  "reverse-lunges":     [qShift(P_L0, 14, 0), P_L1],   // vorderer Fuß bleibt stehen, der Körper geht nach hinten
   "side-lunges":        [qWith(P_F,{ a:[[45,38,50,44],[55,38,50,44]] }),
                          Q(null,[44,36],[40,64],[[28,70,26,89,20,89],[58,74,72,89,78,89]],[[46,50,52,54],[52,48,52,54]],"",true)],
   "cossack-squats":     [qWith(P_F,{ l:[[42,70,36,89,30,89],[58,70,64,89,70,89]], a:[[45,38,50,44],[55,38,50,44]] }),
@@ -554,7 +554,7 @@ var ILLU_POSES = {
                          Q(null,[48,32],[48,62],[[64,64,64,89,72,89],[38,82,26,86,22,89]],[[55,47,49,57]])],
   "bulgarian-split-squats": [Q(null,[50,18],[50,48],[[58,68,62,89,70,89],[38,62,26,70,20,70]],[[57,33,51,43]], gBench(6,30,70)),
                          Q(null,[50,32],[50,62],[[66,64,66,89,74,89],[40,80,26,70,20,70]],[[57,47,51,57]], gBench(6,30,70))],
-  "forward-lunges":     [P_L0, qMirror(qMirror(P_L1))],
+  "forward-lunges":     [qShift(P_L0, -14, 0), P_L1],  // Schritt nach vorn, der Körper wandert mit
   "single-leg-glute-bridge": [qWith(P_LBK,{ l:[[60,70,70,89,78,89],[62,70,76,62,80,58]] }), Q([14,83],[24,84],[46,68],[[62,64,70,89,78,89],[64,60,82,52,86,48]],[[33,88,43,88]])],
   "lateral-lunge-pulses": [Q(null,[44,36],[40,64],[[28,70,26,89,20,89],[58,74,72,89,78,89]],[[46,50,52,54],[52,48,52,54]],"",true),
                          Q(null,[44,40],[40,68],[[26,74,26,89,20,89],[58,77,72,89,78,89]],[[46,54,52,58],[52,52,52,58]],"",true)],
@@ -576,7 +576,7 @@ var ILLU_POSES = {
   "toe-touches":        [qWith(P_LB,{ l:[[52,66,54,48,58,46]], a:[[22,72,22,62]] }), Q(null,[30,74],[50,84],[[52,66,54,48,58,46]],[[42,64,52,52]])],
   "plank-shoulder-taps":[P_PH, qWith(P_PH,{ a:[[69,75,70,89],[62,70,70,64]] })],
   "toes-to-bar":        [Q([57,24],[50,30],[50,58],[[50,72,50,86]],[[47,19,46,6]], gBar(6,30,70)),
-                         Q([57,24],[50,30],[50,58],[[66,56,66,72,72,72]],[[47,19,46,6]], gBar(6,30,70))]
+                         Q(null,[48,30],[56,55],[[58,41,55,27,52,23]],[[47,19,46,6]], gBar(6,30,70))]
 };
 var P_FLEGS = [[46,70,45,89,39,89],[54,70,55,89,61,89]];
 Object.assign(ILLU_POSES, {
@@ -618,7 +618,7 @@ var G_KB = gBar(50,30,50)+'<path class="ip" d="M34 50V89"/>';
 var G_PT = gBar(80,40,62)+'<path class="ip" d="M44 80V89M58 80V89"/>';
 var G_MONKEY = gBar(6,8,92)+'<path class="ip" d="M20 3v6M40 3v6M60 3v6M80 3v6"/>';
 Object.assign(ILLU_POSES, {
-  "chin-ups":           [P_HANG, P_PULL],
+  "chin-ups":           [qWith(P_HANG,{ a:[[44,21,42,6],[56,21,58,6]] }), qWith(P_PULL,{ a:[[39,20,42,6],[61,20,58,6]] })],   // enger gegriffen
   "parallel-bar-dips":  [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), Q(null,[54,38],[52,64],[[50,76,40,84,42,86]],[[44,40,56,50]], G_PB)],
   "support-hold":       [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), null],
   "hanging-knee-raise": [P_HANGS, qWith(P_HANGS,{ l:[[66,56,66,72,72,72]] })],
@@ -836,7 +836,8 @@ Object.assign(ILLU_POSES, {
                         Q(null,[40,38],[42,64],[[60,62,54,89,62,89]],[[38,47,40,39]], gLinie("M36 12L42 74M36 89H66"))],
   "smith-squat":       [qWith(ILLU_POSES["barbell-squat"][0], { x:gLinie("M24 0V89M72 0V89")+gScheibe(47,20,7) }),
                         qWith(ILLU_POSES["barbell-squat"][1], { x:gLinie("M24 0V89M72 0V89")+gScheibe(43,35,7) })],
-  "leg-press-single":  ILLU_POSES["leg-press"],
+  "leg-press-single":  [qWith(ILLU_POSES["leg-press"][0],{ l:[[56,44,70,58,72,50],[62,66,60,84,66,86]] }),   // zweites Bein ruht unten
+                        qWith(ILLU_POSES["leg-press"][1],{ l:[[51,59,70,58,72,50],[50,66,48,84,54,86]] })],
   "hip-thrust":        [Q(null,[28,62],[46,80],[[60,66,66,86,73,88]],[[36,70,46,75]], gBench(6,32,66)+gScheibe(46,74,6)),
                         Q(null,[28,62],[50,60],[[64,62,66,86,73,88]],[[38,64,50,55]], gBench(6,32,66)+gScheibe(50,54,6))],
   "glute-kickback-cable": [Q(null,[58,24],[50,50],[[50,70,50,89,58,89],[48,69,46,87,52,89]],[[66,32,72,40]], gLinie("M76 18V89")+gRolle(74,84)+gPolster(46,86)),
@@ -870,8 +871,8 @@ Object.assign(ILLU_POSES, {
                              qWith(ILLU_POSES["triceps-curls"][0], { x:gLinie("M22 0V89")+gRolle(26,14)+gQuer(64,4,3) })],
   "triceps-machine":   [Q(null,[42,34],[42,63],ST_BEINE,[[34,44,42,52]], ST_SITZ+gGriff(42,52)), Q(null,[42,34],[42,63],ST_BEINE,[[43,46,44,58]], ST_SITZ+gGriff(44,58))],
   /* Gluteus-Maschine: vorgebeugt am Brustpolster, ein Fuß drückt die Platte nach hinten oben */
-  "glute-machine":     [Q(null,[58,24],[50,50],[[50,70,50,89,58,89],[48,69,46,87,52,89]],[[66,32,72,40]], gLinie("M78 12V89M66 20L74 28")+gGriff(72,40)+gPlatte(47,84,4,-3)),
-                        Q(null,[58,24],[50,50],[[50,70,50,89,58,89],[34,62,22,72,20,66]],[[66,32,72,40]], gLinie("M78 12V89M66 20L74 28")+gGriff(72,40)+gPlatte(21,69,4,-3))],
+  "glute-machine":     [Q(null,[66,30],[48,50],[[50,70,50,89,58,89],[48,69,46,87,52,89]],[[68,40,74,44]], gLinie("M80 10V89M66 42L74 32")+gGriff(74,44)+gPlatte(47,84,4,-3)),
+                        Q(null,[66,30],[48,50],[[50,70,50,89,58,89],[34,62,22,72,20,66]],[[68,40,74,44]], gLinie("M80 10V89M66 42L74 32")+gGriff(74,44)+gPlatte(21,69,4,-3))],
   /* Wadenpresse: in der Beinpresse, Beine fast gestreckt, nur die Fußspitzen drücken die Platte */
   "calf-press":        [Q(null,[18,36],[32,62],[[51,58,69,56,71,47]],[[24,46,32,54]], gLinie("M6 72H66")+gPlatte(71,47,1,-8)),
                         Q(null,[18,36],[32,62],[[51,58,69,56,76,52]],[[24,46,32,54]], gLinie("M6 72H66")+gPlatte(76,52,1,-8))],
@@ -943,6 +944,7 @@ ILLU_POSES["rung-pull-ups"] = [
   Q(null,[50,31],[50,59],[[52,74,45,85]],[[57,20,60,9],[43,20,40,9]], SP_LEITER),
   Q(null,[50,16],[50,44],[[52,59,45,70]],[[62,20,60,9],[38,20,40,9]], SP_LEITER)
 ];
+var V_BANK = '<path class="ip" d="M42 22V72M58 22V72"/>';   // Bank von oben
 var ILLU_VIEW2 = {
   "pull-ups":          { typ:"side", haupt:"front", p:[PS_HANG, PS_TOP] },
   "scapular-pull-ups": { typ:"side", haupt:"front", p:[PS_HANG, SS_AKT] },
@@ -953,6 +955,15 @@ var ILLU_VIEW2 = {
   "shoulder-press":   { typ:"front", p:[Q(null,[50,28],[50,58],[[46,74,45,89,39,89],[54,74,55,89,61,89]],[[37,36,37,24],[63,36,63,24]], gDB(37,23)+gDB(63,23), true),
                                         Q(null,[50,28],[50,58],[[46,74,45,89,39,89],[54,74,55,89,61,89]],[[40,17,42,5],[60,17,58,5]], gDB(42,5)+gDB(58,5), true)] },
   "reverse-snow-angels": { typ:"top", p:[V_SNOW, qWith(V_SNOW,{ a:[[38,14,44,4],[62,14,56,4]] })] },
+  /* Liegestütz-Varianten von oben: der Unterschied liegt in Handstellung und Ellbogen */
+  "push-ups":         { typ:"top", p:[qWith(V_ARCH,{ a:[[57,38.5,64,40],[43,38.5,36,40]] }), qWith(V_ARCH,{ a:[[62,46,64,40],[38,46,36,40]] })] },
+  "close-grip-push-ups": { typ:"top", p:[qWith(V_ARCH,{ a:[[53,38.5,56,40],[47,38.5,44,40]] }), qWith(V_ARCH,{ a:[[57,50,56,40],[43,50,44,40]] })] },
+  "diamond-push-ups": { typ:"top", p:[qWith(V_ARCH,{ a:[[51,39.5,52,42],[49,39.5,48,42]] }), qWith(V_ARCH,{ a:[[62,44,52,42],[38,44,48,42]] })] },
+  /* Fliegende und Überzug von oben: seitlich weit auf gegen gerade über den Kopf */
+  "db-fly":           { typ:"top", p:[qWith(V_ARCH,{ a:[[54,38,52,42],[46,38,48,42]], x:V_BANK+gDB(52,42)+gDB(48,42) }),
+                                      qWith(V_ARCH,{ a:[[62,38,74,40],[38,38,26,40]], x:V_BANK+gDB(74,40)+gDB(26,40) })] },
+  "pullover":         { typ:"top", p:[qWith(V_ARCH,{ a:[[54,38,51,42],[46,38,49,42]], x:V_BANK+gDB(50,43) }),
+                                      qWith(V_ARCH,{ a:[[54,24,52,12],[46,24,48,12]], x:V_BANK+gDB(50,10) })] },
   "spinal-twist":     { typ:"top",   p:[Q([44,15],[50,24],[50,56],[[66,58,62,74],[68,66,64,82]],[[36,27,20,27],[64,27,80,27]],"",true), null] }
 };
 
