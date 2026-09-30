@@ -1,6 +1,6 @@
 # BLOC – Modular Training Builder
 
-Trainings-App für Intervall-Workouts, Studio-Training und Challenges. Läuft als PWA direkt im Browser
+Trainings-App für Intervall-Workouts, Studio-Training und Challenges (Bereich „Summit“). Läuft als PWA direkt im Browser
 (Android und iOS), ohne App Store, ohne Konto – alle Daten bleiben auf dem Gerät. Deutsch und Englisch.
 
 Dieses Dokument beschreibt den **aktuellen Stand**. Wie die App dahin gekommen ist, steht in [VERLAUF.md](VERLAUF.md).
@@ -8,15 +8,15 @@ Dieses Dokument beschreibt den **aktuellen Stand**. Wie die App dahin gekommen i
 ## Aufbau
 
 **Startseite:** Wochenzeile (Trainings dieser Woche), Favoriten (☆, höchstens vier sichtbar, Rest über
-„Alle anzeigen“) und die Bereiche – **Workouts** als große Karte vorn, darunter als Liste **Freies Training**,
-**Challenges** und **Aufwärmen & Dehnen**.
+„Alle anzeigen“) und die Bereiche – **Freies Training** als große Karte vorn, darunter als Liste **Studio**,
+**Summit** und **Aufwärmen & Dehnen**.
 Beim allerersten Start erklärt eine kurze Einführung die Bereiche (später unter Einstellungen).
 
 | Bereich | Inhalt |
 |---|---|
-| **Workouts** | Reiter Workouts · Übungen · Meine. Suche, Kategorie-Kacheln (Kraft, Ausdauer, Rumpf, Stangenpark), darunter die aufklappbare Filterzeile „Fokus, Ausrüstung & Sortierung“. „Überrasch mich“ oben rechts. **Meine** = alles Selbstgebaute: eigene Workouts (Baukasten: Übungs-Kacheln antippen, Ablauf-Streifen, „Sinnvoll ordnen“, Speichern-Knopf), Timer-Workouts aus Blöcken und Blöcke (Block = eine Übung mit Runden, Arbeit, Pause); das + legt alle drei an |
-| **Freies Training** | Das Studio: Geräte- und Hantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag nach doppelter Progression |
-| **Challenges** | Reiter Einheiten · Programme · Meine. 52 Programme (nach Bergen benannt) auf Zeit, 12 Einheiten mit Namen (z. B. „3 · Stufenweg“) in drei Stufen, Varianten als Routen; eigene Challenges |
+| **Freies Training** (intern `library`) | Reiter Workouts · Übungen · Meine. Suche, Kategorie-Kacheln (Kraft, Ausdauer, Rumpf, Stangenpark), darunter die aufklappbare Filterzeile „Fokus, Ausrüstung & Sortierung“. „Überrasch mich“ oben rechts. **Meine** = alles Selbstgebaute: eigene Workouts (Baukasten: Übungs-Kacheln antippen, Ablauf-Streifen, „Sinnvoll ordnen“, Speichern-Knopf), Timer-Workouts aus Blöcken und Blöcke (Block = eine Übung mit Runden, Arbeit, Pause); das + legt alle drei an |
+| **Studio** (intern `timers`) | Das Studio: Geräte- und Hantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag nach doppelter Progression |
+| **Summit** (Challenges, intern `reps`) | Reiter Einheiten · Programme · Meine. 52 Programme (nach Bergen benannt) auf Zeit, 12 Einheiten mit Namen (z. B. „3 · Stufenweg“) in drei Stufen, Varianten als Routen; eigene Challenges |
 | **Aufwärmen & Dehnen** | Aufwärm- und Dehnprogramme und -übungen |
 
 **Überrasch mich:** Dauer, Kategorien, Ausrüstung, unter „Feinauswahl“ Fokus und Intensität. Regeln: Bereiche
@@ -35,8 +35,8 @@ und in allen Übungs-Kacheln (nur sichtbare laufen).
 
 **System · Hell · Dunkel · Nacht · C60.** System folgt Hell/Dunkel des Handys, Nacht ist warm mit wenig Blau
 (fürs Abendtraining), C60 ist der Kassetten-Look mit Walzenzähler.
-Farben nach 60-30-10: ruhige Flächen, vier Bereichsfarben (`--bl-color` Freies Training/Timer, `--tp-color`
-Workouts, `--rep-color` Challenges, `--ws-color` Aufwärmen & Dehnen), Akzentfarbe nur für die Hauptaktion,
+Farben nach 60-30-10: ruhige Flächen, vier Bereichsfarben (`--bl-color` Studio, `--tp-color`
+Freies Training, `--rep-color` Summit, `--ws-color` Aufwärmen & Dehnen), Akzentfarbe nur für die Hauptaktion,
 das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`).
 
 ## Daten und Sicherheit

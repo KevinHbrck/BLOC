@@ -172,6 +172,15 @@ var EXERCISE_ROWS = [
   ["barbell-curl", "Langhantel-/SZ-Curl", "Barbell Curl", "weight arms", 3, 40, 0, "Ellbogen fest, ohne Schwung", "Elbows fixed, no swinging", 45],
   ["overhead-cable-triceps", "Trizeps über Kopf am Kabel", "Overhead Cable Extension", "weight arms", 3, 40, 0, "Ellbogen zeigen nach vorn", "Elbows point forward", 45],
   ["triceps-machine", "Trizepsmaschine (Dip sitzend)", "Seated Dip Machine", "weight arms", 3, 40, 0, "Arme nach unten strecken, Schultern tief", "Press down, shoulders low", 60],
+  /* 2026-09-30: Geräte aus Kevins Studio */
+  ["glute-machine", "Gluteus-Maschine", "Glute Machine", "weight legs", 3, 40, 1, "Nur aus der Hüfte, Rücken ruhig", "From your hip only, back still", 45],
+  ["calf-press", "Wadenpresse", "Calf Press", "weight legs", 3, 40, 0, "Knie fast gestreckt, nur aus dem Sprunggelenk", "Knees nearly straight, move only at the ankle", 45],
+  ["lying-leg-curl", "Beinbeuger liegend", "Lying Leg Curl", "weight legs", 3, 40, 0, "Hüfte bleibt auf dem Polster", "Hips stay on the pad", 60],
+  ["rotary-torso", "Rotary Torso (Rumpfdrehen)", "Rotary Torso", "weight core", 3, 40, 1, "Langsam drehen, Becken bleibt fest", "Rotate slowly, hips stay fixed", 45],
+  ["back-extension-machine", "Rückenstrecker-Maschine", "Back Extension Machine", "weight back", 3, 40, 0, "Aus der Hüfte aufrichten, nicht überstrecken", "Extend from the hips, don't overarch", 60],
+  ["triceps-extension-machine", "Trizeps-Extension (Maschine)", "Triceps Extension Machine", "weight arms", 3, 40, 0, "Oberarme bleiben auf dem Polster", "Upper arms stay on the pad", 60],
+  ["lateral-raise-machine", "Seitheber-Maschine", "Lateral Raise Machine", "weight", 3, 40, 0, "Bis Schulterhöhe, Schultern tief", "Up to shoulder height, shoulders down", 45],
+  ["cable-lateral-raise", "Seitheben am Kabel", "Cable Lateral Raise", "weight", 3, 40, 1, "Arm leicht gebeugt, bis Schulterhöhe", "Arm slightly bent, up to shoulder height", 45],
   ["cable-woodchop", "Holzhacker am Kabel", "Cable Woodchop", "weight core", 3, 40, 0, "Drehung aus dem Rumpf, Arme lang", "Rotate from your core, long arms", 45],
   ["captains-chair", "Knieheben am Gerät", "Captain's Chair Knee Raise", "weight core calis", 3, 40, 0, "Rücken am Polster, Knie zur Brust", "Back on the pad, knees to your chest", 45],
   ["barbell-overhead-press", "Schulterdrücken (Langhantel)", "Barbell Overhead Press", "weight", 3, 40, 0, "Stange senkrecht über den Kopf", "Bar straight overhead", 90],
@@ -316,7 +325,7 @@ var EX_LEVEL = {
   "chest-press-machine":1,"butterfly":1,"pullover":2,"lat-pulldown":1,"row-machine":1,"cable-row":1,"reverse-butterfly":1,
   "back-extension":1,"shoulder-press-machine":1,"biceps-machine":1,"cable-curl":1,"triceps-pushdown":1,"skull-crusher":2,
   "ab-crunch-machine":1,"bench-press":2,"barbell-squat":2,"barbell-deadlift":2,
-  "hack-squat":1,"smith-squat":1,"leg-press-single":2,"hip-thrust":1,"glute-kickback-cable":1,"seated-calf":1,"incline-chest-press":1,"cable-crossover":2,"incline-db-press":2,"db-fly":2,"assisted-pullup":1,"close-grip-pulldown":1,"t-bar-row":2,"barbell-row":2,"face-pull":1,"straight-arm-pulldown":1,"lateral-raise":1,"shrugs":1,"hammer-curl":1,"barbell-curl":1,"overhead-cable-triceps":1,"triceps-machine":1,"cable-woodchop":2,"captains-chair":1,"barbell-overhead-press":2,"barbell-rdl":2
+  "hack-squat":1,"smith-squat":1,"leg-press-single":2,"hip-thrust":1,"glute-kickback-cable":1,"seated-calf":1,"incline-chest-press":1,"cable-crossover":2,"incline-db-press":2,"db-fly":2,"assisted-pullup":1,"close-grip-pulldown":1,"t-bar-row":2,"barbell-row":2,"face-pull":1,"straight-arm-pulldown":1,"lateral-raise":1,"shrugs":1,"hammer-curl":1,"barbell-curl":1,"overhead-cable-triceps":1,"triceps-machine":1,"glute-machine":1,"calf-press":1,"lying-leg-curl":1,"rotary-torso":1,"back-extension-machine":1,"triceps-extension-machine":1,"lateral-raise-machine":1,"cable-lateral-raise":1,"cable-woodchop":2,"captains-chair":1,"barbell-overhead-press":2,"barbell-rdl":2
 };
 /* Belastung je Übung: 1 locker, 2 mittel, 3 intensiv - angelehnt an das Compendium of Physical Activities
    (MET: leichte Rücken-/Rumpfübungen und Halteübungen etwa 2,5–3,5, moderate Kraft- und Körpergewichtsübungen
@@ -340,7 +349,7 @@ var EX_EQUIP = {
   "cable-row":"gym","reverse-butterfly":"gym","back-extension":"gym","shoulder-press-machine":"gym","biceps-machine":"gym",
   "cable-curl":"gym","triceps-pushdown":"gym","skull-crusher":"gym db","ab-crunch-machine":"gym","bench-press":"gym",
   "barbell-squat":"gym","barbell-deadlift":"gym",
-  "hack-squat":"gym","smith-squat":"gym","leg-press-single":"gym","hip-thrust":"gym","glute-kickback-cable":"gym","seated-calf":"gym","incline-chest-press":"gym","cable-crossover":"gym","incline-db-press":"gym db","db-fly":"gym db","assisted-pullup":"gym","close-grip-pulldown":"gym","t-bar-row":"gym","barbell-row":"gym","face-pull":"gym","straight-arm-pulldown":"gym","lateral-raise":"gym db","shrugs":"gym db","hammer-curl":"gym db","barbell-curl":"gym","overhead-cable-triceps":"gym","triceps-machine":"gym","cable-woodchop":"gym","captains-chair":"gym","barbell-overhead-press":"gym","barbell-rdl":"gym",
+  "hack-squat":"gym","smith-squat":"gym","leg-press-single":"gym","hip-thrust":"gym","glute-kickback-cable":"gym","seated-calf":"gym","incline-chest-press":"gym","cable-crossover":"gym","incline-db-press":"gym db","db-fly":"gym db","assisted-pullup":"gym","close-grip-pulldown":"gym","t-bar-row":"gym","barbell-row":"gym","face-pull":"gym","straight-arm-pulldown":"gym","lateral-raise":"gym db","shrugs":"gym db","hammer-curl":"gym db","barbell-curl":"gym","overhead-cable-triceps":"gym","triceps-machine":"gym","glute-machine":"gym","calf-press":"gym","lying-leg-curl":"gym","rotary-torso":"gym","back-extension-machine":"gym","triceps-extension-machine":"gym","lateral-raise-machine":"gym","cable-lateral-raise":"gym","cable-woodchop":"gym","captains-chair":"gym","barbell-overhead-press":"gym","barbell-rdl":"gym",
   "goblet-squat":"kb db","kb-swing":"kb","db-thruster":"db","romanian-deadlift":"db kb","db-deadlift":"db kb","bent-over-row":"db",
   "one-arm-row":"db","triceps-curls":"db","floor-press":"db","shoulder-press":"db","push-press":"db","weighted-reverse-lunge":"db kb","front-rack-carry":"kb db",
   "farmer-carry":"db kb","kb-clean":"kb","renegade-row":"db",
@@ -388,7 +397,12 @@ var EX_SUCH_ALIAS = { "russian-twists":"russian twist twists russische drehung r
   "jump-forward-squats":"weitsprung broad jump sprung nach vorn kniebeuge", "jump-forward-burpees":"weitsprung broad jump burpee sprung nach vorn",
   "rung-pull-ups":"hangelleiter sprossen klimmzug monkey bar zwischen den sprossen", "lat-pulldown":"lat zug latziehen", "leg-press":"beinpresse", "leg-press-45":"beinpresse schlitten",
   "skull-crusher":"french press trizeps liegend stirndrücken", "pullover":"überzüge ueberzug", "butterfly":"pec deck fliegende",
-  "reverse-butterfly":"reverse fly hintere schulter", "biceps-machine":"scott curl bizeps", "back-extension":"hyperextension",
+  "reverse-butterfly":"reverse fly hintere schulter", "biceps-machine":"scott curl bizeps defended curl preacher curl",
+  "cable-row":"low row rudern kabel tief", "triceps-pushdown":"triceps pressdown trizeps kabel", "lat-pulldown":"lat pulldown turm latzug",
+  "glute-machine":"gluteusmaschine gluteus po maschine kickback", "calf-press":"wadenpresse waden calf", "lying-leg-curl":"beinbeuger liegend leg curl hamstring",
+  "rotary-torso":"rotary torso rumpfdrehen rotation drehen", "back-extension-machine":"rückenstrecker maschine unterer rücken",
+  "triceps-extension-machine":"trizeps extension maschine", "lateral-raise-machine":"seitenhebermaschine seitheber seitheben maschine",
+  "cable-lateral-raise":"seitheben kabel verstellbarer kabelzug adjustable pulley", "back-extension":"hyperextension",
   "jump-lunges":"sprungausfallschritt ausfallschritt sprung split jumps lunge jumps", "cobra-lift":"cobra lift kobra" };
 
 /* ---------- Piktogramme ----------
@@ -847,6 +861,30 @@ Object.assign(ILLU_POSES, {
   "overhead-cable-triceps": [qWith(ILLU_POSES["triceps-curls"][1], { x:gLinie("M22 0V89")+gRolle(26,14)+gQuer(46,23,3) }),
                              qWith(ILLU_POSES["triceps-curls"][0], { x:gLinie("M22 0V89")+gRolle(26,14)+gQuer(64,4,3) })],
   "triceps-machine":   [Q(null,[42,34],[42,63],ST_BEINE,[[34,44,42,52]], ST_SITZ+gGriff(42,52)), Q(null,[42,34],[42,63],ST_BEINE,[[43,46,44,58]], ST_SITZ+gGriff(44,58))],
+  /* Gluteus-Maschine: vorgebeugt am Brustpolster, ein Fuß drückt die Platte nach hinten oben */
+  "glute-machine":     [Q(null,[58,24],[50,50],[[50,70,50,89,58,89],[48,69,46,87,52,89]],[[66,32,72,40]], gLinie("M78 12V89M66 20L74 28")+gGriff(72,40)+gPlatte(47,84,4,-3)),
+                        Q(null,[58,24],[50,50],[[50,70,50,89,58,89],[34,62,22,72,20,66]],[[66,32,72,40]], gLinie("M78 12V89M66 20L74 28")+gGriff(72,40)+gPlatte(21,69,4,-3))],
+  /* Wadenpresse: in der Beinpresse, Beine fast gestreckt, nur die Fußspitzen drücken die Platte */
+  "calf-press":        [Q(null,[18,36],[32,62],[[51,58,69,56,71,47]],[[24,46,32,54]], gLinie("M6 72H66")+gPlatte(71,47,1,-8)),
+                        Q(null,[18,36],[32,62],[[51,58,69,56,76,52]],[[24,46,32,54]], gLinie("M6 72H66")+gPlatte(76,52,1,-8))],
+  /* Beinbeuger liegend: bäuchlings auf der Bank, Fersen ziehen das Polster zum Po */
+  "lying-leg-curl":    [Q(null,[30,63],[54,64],[[70,65,86,66,89,72]],[[22,70,18,76]], gBench(16,72,70)+gPolster(86,61)+gGriff(18,76)),
+                        Q(null,[30,63],[54,64],[[70,65,62,48,56,46]],[[22,70,18,76]], gBench(16,72,70)+gPolster(64,44)+gGriff(18,76))],
+  /* Rotary Torso (von vorn): sitzend, Arme am Polster, der Oberkörper dreht von einer Seite zur anderen */
+  "rotary-torso":      [Q(null,[50,30],[50,60],[[43,64,40,82,36,86],[57,64,60,82,64,86]],[[42,40,34,45],[58,40,38,47]], gLinie("M36 62H64M50 62V89")+gQuer(36,46,5), true),
+                        Q(null,[50,30],[50,60],[[43,64,40,82,36,86],[57,64,60,82,64,86]],[[42,40,62,47],[58,40,66,45]], gLinie("M36 62H64M50 62V89")+gQuer(64,46,5), true)],
+  /* Rückenstrecker-Maschine: sitzend, Polster am oberen Rücken, aus der Beugung aufrichten */
+  "back-extension-machine": [Q(null,[56,40],[42,63],ST_BEINE,[[56,50,58,46]], gSitz(30,56,65)+gHand(58,46,'<circle class="ipf" cx="48" cy="35" r="4"/>')),
+                             Q(null,[37,35],[42,63],ST_BEINE,[[40,46,43,43]], gSitz(30,56,65)+gHand(43,43,'<circle class="ipf" cx="33" cy="32" r="4"/>'))],
+  /* Trizeps-Extension (Maschine): Oberarme liegen auf dem Polster, die Unterarme strecken nach vorn unten */
+  "triceps-extension-machine": [Q(null,[42,34],[42,63],ST_BEINE,[[56,46,56,33]], ST_SITZ+gLinie("M50 50L63 50")+gGriff(56,33)),
+                                Q(null,[42,34],[42,63],ST_BEINE,[[56,46,69,53]], ST_SITZ+gLinie("M50 50L63 50")+gGriff(69,53))],
+  /* Seitheber-Maschine (von vorn): sitzend, Polster an den Oberarmen, Arme seitlich bis Schulterhöhe */
+  "lateral-raise-machine": [Q(null,[50,30],[50,60],[[43,64,40,82,36,86],[57,64,60,82,64,86]],[[42,41,40,52],[58,41,60,52]], gLinie("M36 62H64M50 62V89")+gScheibe(41,46,3)+gScheibe(59,46,3), true),
+                            Q(null,[50,30],[50,60],[[43,64,40,82,36,86],[57,64,60,82,64,86]],[[38,35,28,33],[62,35,72,33]], gLinie("M36 62H64M50 62V89")+gScheibe(33,34,3)+gScheibe(67,34,3), true)],
+  /* Seitheben am Kabel (von vorn): Zug unten auf der anderen Seite, ein Arm hebt seitlich */
+  "cable-lateral-raise": [Q(null,[50,20],[50,52],ST_FRONT,[[58,32,56,46],[44,32,42,44]], gLinie("M16 8V89")+gRolle(20,84)+gGriff(56,46), true),
+                          Q(null,[50,20],[50,52],ST_FRONT,[[63,24,75,22],[44,32,42,44]], gLinie("M16 8V89")+gRolle(20,84)+gGriff(75,22), true)],
   "cable-woodchop":    [Q(null,[50,20],[50,52],ST_FRONT,[[40,14,32,6],[44,16,34,7]], gLinie("M12 0V89")+gQuer(33,6,3), true),
                         Q(null,[50,20],[50,52],ST_FRONT,[[58,32,66,42],[56,34,65,44]], gLinie("M12 0V89")+gQuer(66,43,3), true)],
   "captains-chair":    [Q(null,[48,30],[48,58],[[49,74,49,87,55,88]],[[56,40,64,34]], gLinie("M42 18V62M44 40H66M40 62V89")),
@@ -856,12 +894,12 @@ Object.assign(ILLU_POSES, {
 });
 /* Gruppen im Reiter „Studio“ */
 var STUDIO_GRUPPEN = [
-  { id:"beine",   de:"Beine & Po", en:"Legs & glutes", ids:"leg-press leg-press-45 leg-press-single hack-squat smith-squat leg-extension leg-curl adductor-machine abductor-machine hip-thrust glute-kickback-cable calf-machine seated-calf" },
+  { id:"beine",   de:"Beine & Po", en:"Legs & glutes", ids:"leg-press leg-press-45 leg-press-single hack-squat smith-squat leg-extension leg-curl adductor-machine abductor-machine hip-thrust glute-kickback-cable calf-machine seated-calf glute-machine calf-press lying-leg-curl" },
   { id:"brust",   de:"Brust",   en:"Chest",  ids:"chest-press-machine incline-chest-press butterfly cable-crossover incline-db-press db-fly pullover" },
-  { id:"ruecken", de:"Rücken",  en:"Back",   ids:"lat-pulldown close-grip-pulldown assisted-pullup row-machine cable-row t-bar-row face-pull straight-arm-pulldown reverse-butterfly back-extension" },
-  { id:"schulter",de:"Schultern", en:"Shoulders", ids:"shoulder-press-machine lateral-raise shrugs" },
-  { id:"arme",    de:"Arme",    en:"Arms",   ids:"biceps-machine cable-curl hammer-curl barbell-curl triceps-pushdown overhead-cable-triceps triceps-machine skull-crusher" },
-  { id:"bauch",   de:"Bauch",   en:"Abs",    ids:"ab-crunch-machine captains-chair cable-woodchop" },
+  { id:"ruecken", de:"Rücken",  en:"Back",   ids:"lat-pulldown close-grip-pulldown assisted-pullup row-machine cable-row t-bar-row face-pull straight-arm-pulldown reverse-butterfly back-extension back-extension-machine" },
+  { id:"schulter",de:"Schultern", en:"Shoulders", ids:"shoulder-press-machine lateral-raise-machine lateral-raise cable-lateral-raise shrugs" },
+  { id:"arme",    de:"Arme",    en:"Arms",   ids:"biceps-machine cable-curl hammer-curl barbell-curl triceps-pushdown overhead-cable-triceps triceps-machine triceps-extension-machine skull-crusher" },
+  { id:"bauch",   de:"Bauch",   en:"Abs",    ids:"ab-crunch-machine rotary-torso captains-chair cable-woodchop" },
   { id:"lh",      de:"Langhantel", en:"Barbell", ids:"bench-press barbell-squat barbell-deadlift barbell-rdl barbell-row barbell-overhead-press" }
 ];
 STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){
@@ -891,6 +929,14 @@ var ILLU_VIEW2 = {
 
 /* Ausführliche Anleitung je Übung: [Deutsch, Englisch], Schritte mit | getrennt */
 var EX_INFO = {
+  "glute-machine":["Mit der Brust ans Polster lehnen, Griffe fassen, einen Fuß an die Platte setzen.|Das Bein aus der Hüfte nach hinten oben drücken, bis es gestreckt ist.|Kontrolliert zurück, dann die Seite wechseln.","Lean your chest on the pad, hold the handles, place one foot on the plate.|Press the leg back and up from your hip until it is straight.|Return under control, then switch sides."],
+  "calf-press":["In die Beinpresse setzen, nur die Fußballen unten an die Platte.|Beine fast strecken und die Platte mit den Zehen wegdrücken.|Langsam zurück, bis die Waden gedehnt sind.","Sit in the leg press with only the balls of your feet on the lower edge of the plate.|Legs nearly straight, push the plate away with your toes.|Return slowly until your calves are stretched."],
+  "lying-leg-curl":["Bäuchlings auf die Bank legen, das Polster liegt knapp über den Fersen, Griffe fassen.|Die Fersen zum Po ziehen.|Langsam wieder strecken, ohne abzulegen.","Lie face down, the pad just above your heels, hold the handles.|Pull your heels towards your glutes.|Lower slowly without resting at the bottom."],
+  "rotary-torso":["Aufrecht setzen, Beine fixieren, Arme ans Polster legen.|Den Oberkörper langsam zur Seite drehen, das Becken bleibt ruhig.|Kontrolliert zurück, nach dem Satz die Seite wechseln.","Sit tall, lock your legs, place your arms on the pad.|Rotate your upper body slowly to the side, hips stay still.|Return under control, switch sides after the set."],
+  "back-extension-machine":["Hinsetzen, das Polster liegt am oberen Rücken, Füße fest.|Aus der Hüfte aufrichten, bis der Oberkörper aufrecht ist.|Langsam wieder nach vorn beugen.","Sit down with the pad on your upper back, feet planted.|Extend from your hips until your upper body is upright.|Lean forward again slowly."],
+  "triceps-extension-machine":["Hinsetzen, die Oberarme auf das Polster legen, Griffe fassen.|Die Arme nach vorn unten strecken.|Langsam beugen, die Oberarme bleiben liegen.","Sit down, rest your upper arms on the pad, hold the handles.|Extend your arms forward and down.|Bend slowly, upper arms stay on the pad."],
+  "lateral-raise-machine":["Hinsetzen, die Polster liegen außen an den Oberarmen.|Die Arme seitlich bis Schulterhöhe heben.|Langsam senken.","Sit down with the pads on the outside of your upper arms.|Raise your arms to the side up to shoulder height.|Lower slowly."],
+  "cable-lateral-raise":["Seitlich zum Kabelzug stellen, den unteren Griff mit der entfernten Hand fassen.|Den Arm leicht gebeugt seitlich bis Schulterhöhe heben.|Langsam senken, nach dem Satz die Seite wechseln.","Stand side-on to the cable, hold the low handle with the far hand.|Raise the slightly bent arm to the side up to shoulder height.|Lower slowly, switch sides after the set."],
   "rung-pull-ups":["Unter die Hangelleiter stellen und mit je einer Hand zwei hintereinanderliegende Sprossen greifen, Handflächen zueinander.|Schulterblätter nach unten ziehen und den Kopf zwischen den Sprossen hochziehen, bis das Kinn über den Sprossen ist.|Kontrolliert in den gestreckten Hang absenken.","Stand under the monkey bars and grip two rungs one behind the other, one hand each, palms facing.|Pull your shoulder blades down and pull your head up between the rungs until your chin clears them.|Lower with control to a full hang."],
   "hack-squat":["Rücken ans Polster, Schultern unter die Polster, Füße schulterbreit auf der Platte.|Sicherung lösen und kontrolliert in die Hocke gehen, bis die Oberschenkel etwa waagerecht sind.|Über die ganze Fußsohle hochdrücken.", "Back on the pad, shoulders under the pads, feet shoulder-width on the plate.|Release the safety and squat down with control until your thighs are about horizontal.|Drive up through your whole foot."],
   "smith-squat":["Unter die Stange stellen, Stange auf den oberen Rücken, Füße etwas nach vorn.|Stange aus den Haken drehen und in die Hocke gehen.|Hochdrücken und am Ende wieder einhaken.", "Step under the bar, rest it on your upper back, feet slightly forward.|Unhook the bar and squat down.|Drive up and hook it back at the end."],
@@ -1033,6 +1079,14 @@ var EX_INFO = {
    Grundlage: gängige Technikhinweise (u. a. ACE, NSCA, NASM): neutrale Wirbelsäule, Knie in Fußrichtung,
    Schultern weg von den Ohren, bei Bauchübungen den unteren Rücken am Boden halten. */
 var EX_POSTURE = {
+  "glute-machine":["Rücken gerade, Bauch fest.|Bewegung kommt aus der Hüfte.","Ins Hohlkreuz drücken, um weiter zu kommen.","Back straight, core tight.|Move from your hip.","Arching your lower back to go further."],
+  "calf-press":["Knie leicht gebeugt, nicht durchdrücken.|Ganze Bewegung im Sprunggelenk.","Die Knie arbeiten mit oder die Füße rutschen.","Knees slightly bent, never locked.|All the movement at the ankle.","Bending the knees or letting the feet slip."],
+  "lying-leg-curl":["Hüfte flach auf dem Polster.|Oben kurz halten.","Das Becken hebt sich, um Schwung zu holen.","Hips flat on the pad.|Pause briefly at the top.","Lifting your hips for momentum."],
+  "rotary-torso":["Aufrecht, Becken fest.|Langsam und gleichmäßig drehen.","Mit Schwung herumreißen.","Sit tall, hips fixed.|Rotate slowly and evenly.","Swinging round with momentum."],
+  "back-extension-machine":["Aus der Hüfte strecken, Blick nach vorn.|Oben aufrecht, nicht nach hinten überstrecken.","Ruckartig nach hinten schnellen.","Extend from the hips, look ahead.|Upright at the top, don't lean back.","Jerking backwards."],
+  "triceps-extension-machine":["Oberarme bleiben auf dem Polster.|Unten kurz strecken.","Die Schultern ziehen mit.","Upper arms stay on the pad.|Fully extend briefly.","Shrugging your shoulders into it."],
+  "lateral-raise-machine":["Schultern tief, Brust aufrecht.|Nur bis Schulterhöhe.","Mit den Schultern zum Ohr ziehen.","Shoulders down, chest up.|Only up to shoulder height.","Shrugging towards your ears."],
+  "cable-lateral-raise":["Oberkörper ruhig, Arm leicht gebeugt.|Oben kurz halten.","Aus dem Oberkörper Schwung holen.","Upper body still, arm slightly bent.|Pause at the top.","Swinging with your upper body."],
   "rung-pull-ups":["Rumpf fest, Beine ruhig.|Ellbogen ziehen nach unten.","Mit Schwung aus den Beinen ziehen oder den Kopf gegen die Sprosse stoßen.","Core braced, legs still.|Drive your elbows down.","Kicking for momentum or bumping your head on a rung."],
   "hack-squat":["Rücken und Po am Polster.|Knie zeigen in Fußrichtung.", "Die Fersen abheben.", "Back and hips on the pad.|Knees track your toes.", "Lifting your heels."],
   "smith-squat":["Brust aufrecht, Rumpf fest.|Knie folgen den Zehen.", "Die Knie nach innen fallen lassen.", "Chest up, core braced.|Knees follow your toes.", "Letting your knees cave in."],
@@ -1270,6 +1324,14 @@ Object.assign(EX_POSTURE, {
    Bei Dehnübungen: was gedehnt wird. Grundlage: gängige Übungsbeschreibungen (u. a. ACE-Übungsbibliothek);
    Beinheben z. B. vor allem Hüftbeuger, der Bauch stabilisiert. */
 var EX_MUSCLES = {
+  "glute-machine":["Großer Gesäßmuskel","Oberschenkel hinten, Rumpf","Glutes","Hamstrings, core"],
+  "calf-press":["Waden","Fußmuskulatur","Calves","Foot muscles"],
+  "lying-leg-curl":["Oberschenkel hinten","Waden","Hamstrings","Calves"],
+  "rotary-torso":["Schräge Bauchmuskeln","Gerader Bauchmuskel, unterer Rücken","Obliques","Rectus abdominis, lower back"],
+  "back-extension-machine":["Rückenstrecker","Gesäß, Oberschenkel hinten","Spinal erectors","Glutes, hamstrings"],
+  "triceps-extension-machine":["Trizeps","Unterarme","Triceps","Forearms"],
+  "lateral-raise-machine":["Seitliche Schulter","Trapez","Side delts","Traps"],
+  "cable-lateral-raise":["Seitliche Schulter","Trapez, Rumpf","Side delts","Traps, core"],
   "rung-pull-ups":["Breiter Rückenmuskel, Bizeps","Oberarmmuskel, Unterarme (Griff), Rumpf","Lats, biceps","Brachialis, forearms (grip), core"],
   "hack-squat":["Oberschenkel vorn, Gesäß", "Adduktoren, Waden", "Quads, glutes", "Adductors, calves"],
   "smith-squat":["Oberschenkel vorn, Gesäß", "Oberschenkel hinten, Rumpf", "Quads, glutes", "Hamstrings, core"],

@@ -234,7 +234,7 @@ var I18N = {
     blockOne:"Block", blockMany:"Blöcke",
     noWorkouts:"Noch kein Workout angelegt.<br>Tippe unten rechts auf +, um loszulegen.",
     singleBlocks:"Blöcke einzeln starten",
-    library:"Workouts", libEntry:"Übungen & Workouts", libEntrySub:"{e} Übungen · {w} fertige · {m} eigene Workouts",
+    library:"Freies Training", libEntry:"Übungen & Workouts", libEntrySub:"{e} Übungen · {w} fertige · {m} eigene Workouts",
     libWorkouts:"Workouts", libExercises:"Übungen", catAll:"Alle", catMix:"Gemischt",
     adopt:"Übernehmen", adoptTitle:"Als eigenes Workout kopieren und anpassen",
     adoptBlock:"Als Block", adoptBlockTitle:"Als eigenen Block speichern",
@@ -256,9 +256,10 @@ var I18N = {
     shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
     fCat:"Fokus", equipAny:"Alles", fEquipHintShort:"Was hast du da?",
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche",
-    timers:"Freies Training", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Geräte, Hanteln und Gewichte", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
+    timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Geräte, Hanteln und Gewichte", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
     tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App.",
-    stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen", stOwnNew:"Eigene Übung",
+    stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
+    stArt_geraet:"Gerät", stArt_kabel:"Kabel", stArt_frei:"Kurzhantel & Kettlebell", stArt_lh:"Langhantel", stArt_stange:"Stange", stOwnNew:"Eigene Übung",
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
     stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
@@ -340,9 +341,9 @@ var I18N = {
     lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
     favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
     htLib:"Intervall-Programme und Übungen", htLibN:"{w} Workouts · {e} Übungen · selbst bauen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
-    repTitle:"Challenges", htReps:"Wiederholungen auf Bestzeit",
+    repTitle:"Summit", htReps:"Challenges auf Bestzeit",
     warmTitle:"Aufwärmen & Dehnen", htWarm:"Vor und nach dem Training", warmSec:"Aufwärmen · vor dem Training", stretchSec:"Dehnen · nach dem Training",
-    warmIntro:"Passt zu Workouts und Challenges: vorher kurz aufwärmen, danach dehnen.",
+    warmIntro:"Passt zu allem: vorher kurz aufwärmen, danach dehnen.",
     wsWarm:"Aufwärmen", wsDehn:"Dehnen", wsIntroWarm:"Vor dem Training: Puls hoch, Gelenke mobil.",
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
@@ -433,7 +434,7 @@ var I18N = {
     blockOne:"block", blockMany:"blocks",
     noWorkouts:"No workouts yet.<br>Tap + at the bottom right to get started.",
     singleBlocks:"Start single blocks",
-    library:"Workouts", libEntry:"Exercises & workouts", libEntrySub:"{e} exercises · {w} ready-made · {m} own workouts",
+    library:"Free training", libEntry:"Exercises & workouts", libEntrySub:"{e} exercises · {w} ready-made · {m} own workouts",
     libWorkouts:"Workouts", libExercises:"Exercises", catAll:"All", catMix:"Mixed",
     adopt:"Copy", adoptTitle:"Copy as your own workout to adjust it",
     adoptBlock:"As block", adoptBlockTitle:"Save as your own block",
@@ -455,9 +456,10 @@ var I18N = {
     shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
     fCat:"Focus", equipAny:"Anything", fEquipHintShort:"What do you have?",
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections",
-    timers:"Free training", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Machines, dumbbells and weights", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
+    timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Machines, dumbbells and weights", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
     tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest.",
-    stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises", stOwnNew:"Own exercise",
+    stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
+    stArt_geraet:"Machine", stArt_kabel:"Cable", stArt_frei:"Dumbbell & kettlebell", stArt_lh:"Barbell", stArt_stange:"Bar", stOwnNew:"Own exercise",
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
     stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
@@ -539,7 +541,7 @@ var I18N = {
     lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
     favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
     htLib:"Interval programs and exercises", htLibN:"{w} workouts · {e} exercises · build your own", spSub:"A random session based on your picks",
-    repTitle:"Challenges", htReps:"Reps against the clock",
+    repTitle:"Summit", htReps:"Challenges against the clock",
     warmTitle:"Warm-up & stretch", htWarm:"Before and after training", warmSec:"Warm-up · before training", stretchSec:"Stretch · after training",
     warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
     wsWarm:"Warm-up", wsDehn:"Stretch", wsIntroWarm:"Before training: raise your pulse, loosen your joints.",
@@ -1836,6 +1838,18 @@ function studioIds(){
   gruppen.push({ id:"eigene", name:t("stOwn"), ids:EXERCISES.filter(function(ex){ return ex.custom; }).map(function(ex){ return ex.id; }), eigene:true });
   return gruppen;
 }
+/* Ausrüstung einer Studio-Übung - für die Chips über den Gruppen */
+function studioArt(id){
+  if(/cable|pulldown|pushdown|face-pull|woodchop|crossover/.test(id)) return "kabel";
+  if(/^barbell|bench-press|t-bar|hip-thrust/.test(id)) return "lh";
+  var eq = (findExercise(id) || {}).equip || [];
+  if(eq.indexOf("gym") < 0) return (eq.indexOf("bar") > -1 || eq.indexOf("dip") > -1) ? "stange" : "frei";
+  return eq.indexOf("db") > -1 ? "frei" : "geraet";
+}
+var STUDIO_ARTEN = ["geraet", "kabel", "frei", "lh", "stange"];
+var STUDIO_GRUPPEN_ICON = { beine:CAT_ICON.legs, brust:'<path d="M4 8c2.5-2 5.5-2 8 0 2.5-2 5.5-2 8 0v5c-2 3-5.5 4-8 1.5C9.5 17 6 16 4 13z"/>',
+  ruecken:CAT_ICON.back, schulter:'<circle cx="12" cy="6" r="2.5"/><path d="M4 18c0-5 3.5-8.5 8-8.5s8 3.5 8 8.5"/>', arme:CAT_ICON.arms,
+  bauch:CAT_ICON.core, lh:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, eigene:'<path d="M12 5v14M5 12h14"/>' };
 function studioKachel(id){
   var ex = findExercise(id);
   if(!ex) return "";
@@ -1847,19 +1861,38 @@ function studioKachel(id){
 }
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
+  // Filter: Gruppen-Kacheln (mehrere möglich) und Ausrüstung (mehrere möglich)
+  var fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+  function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
   var zuletzt = Object.keys(alle).filter(function(id){ return alle[id].zuletzt && findExercise(id); })
     .sort(function(a, b){ return alle[b].zuletzt - alle[a].zuletzt; }).slice(0, 6);
   var gruppen = studioIds(), imStudio = {};
   gruppen.forEach(function(g){ g.ids.forEach(function(id){ imStudio[id] = true; }); });
-  var favs = (s.exFavs || []).filter(function(id){ return imStudio[id]; });
-  zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0; });
+  var inGewaehlt = {};
+  gruppen.forEach(function(g){ if(!fGr.length || fGr.indexOf(g.id) > -1) g.ids.forEach(function(id){ inGewaehlt[id] = true; }); });
+  function passt(id){ return inGewaehlt[id] && artOk(id); }
+  var favs = (s.exFavs || []).filter(function(id){ return imStudio[id] && passt(id); });
+  zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0 && passt(id); });
+  var filterAn = fGr.length || fArt.length;
+  var kacheln = '<div class="main-tiles st-bereiche">'+gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+    var on = fGr.indexOf(g.id) > -1, n = g.ids.filter(artOk).length;
+    return '<button type="button" class="main-tile'+(on ? ' on' : '')+(fGr.length && !on ? ' off' : '')+'" data-stgr="'+g.id+'" aria-pressed="'+on+'" style="--mc:var(--bl-color)">'+
+      '<span class="mt-ico">'+svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight)+'</span><span class="mt-name">'+esc(g.name)+'</span><span class="mt-n">'+n+'</span></button>';
+  }).join("")+'</div>'+
+  '<div class="fc-chips st-arten">'+STUDIO_ARTEN.map(function(a){
+    var on = fArt.indexOf(a) > -1;
+    return '<button type="button" class="fc-chip'+(on ? ' on' : '')+'" data-start="'+a+'" aria-pressed="'+on+'">'+esc(t("stArt_"+a))+'</button>';
+  }).join("")+(filterAn ? '<button type="button" class="tpl-hide" data-streset>'+t("filterReset")+'</button>' : '')+'</div>';
   var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
       (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
     (zuletzt.length ? '<div class="st-gruppe"><div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div></div>' : '');
   gruppen.forEach(function(g){
     if(!g.ids.length && !g.eigene) return;
-    html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+g.ids.length+'</span></div><div class="fig-grid">'+
-      g.ids.map(studioKachel).join("")+
+    if(fGr.length && fGr.indexOf(g.id) < 0) return;
+    var ids = g.ids.filter(artOk);
+    if(!ids.length && (!g.eigene || filterAn)) return;
+    html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+ids.length+'</span></div><div class="fig-grid">'+
+      ids.map(studioKachel).join("")+
       (g.eigene ? '<button type="button" class="fig-karte st-neu" data-stnew>'+ICON_PLUS+'<span class="fig-name">'+esc(t("stOwnNew"))+'</span></button>' : '')+
     '</div></div>';
   });
@@ -1867,6 +1900,7 @@ function renderStudio(){
     topbar(t("timers"), { back:"#home" }) +
     '<div class="page-hint">'+esc(t("studioHint"))+'</div>'+
     searchHTML(studioQuery, "st", t("stSearch"))+
+    kacheln +
     html +
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
     '<div style="height:40px"></div>';
@@ -1880,6 +1914,11 @@ function renderStudio(){
     e.stopPropagation(); toggleExFav(b.getAttribute("data-exfav"));
     var y = window.scrollY; renderStudio(); window.scrollTo(0, y);
   }); });
+  function neuZeichnen(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
+  app.querySelectorAll("[data-stgr]").forEach(function(b){ b.addEventListener("click", function(){ s.stGruppen = selToggle(fGr, b.getAttribute("data-stgr")); save(); neuZeichnen(); }); });
+  app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
+  var zur = app.querySelector("[data-streset]");
+  if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
   var neu = app.querySelector("[data-stnew]");
   if(neu) neu.addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
   var q = app.querySelector("#st-q");
@@ -3696,9 +3735,9 @@ function introSeiten(){
   var einheiten = Array.isArray(REP_EINHEITEN) ? REP_EINHEITEN.length : Object.keys(REP_EINHEITEN).length;
   return [
     { ico:ICON_BAUSTEINE, farbe:"var(--accent)", titel:t("in1T"), text:t("in1"), notiz:t("in1N") },
-    { ico:HOME_ICON.timer, farbe:"var(--bl-color)", titel:t("timers"), text:t("in2", { s:Object.keys(STUDIO_NUR).length }) },
     { ico:HOME_ICON.lib, farbe:"var(--tp-color)", titel:t("library"),
       text:t("in3", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:mitgeliefert.filter(fuerWorkout).length }) },
+    { ico:HOME_ICON.timer, farbe:"var(--bl-color)", titel:t("timers"), text:t("in2", { s:Object.keys(STUDIO_NUR).length }) },
     { ico:HOME_ICON.reps, farbe:"var(--rep-color)", titel:t("repTitle"), text:t("in4", { c:REP_WORKOUT_ROWS.length, u:einheiten }) },
     { ico:HOME_ICON.warm, farbe:"var(--ws-color)", titel:t("warmTitle"),
       text:t("in5", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length, d:Object.keys(wsEx).length }) }
