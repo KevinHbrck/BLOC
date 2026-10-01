@@ -1716,10 +1716,17 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .st-timer-auf{ margin-bottom:12px; }
 .st-timer-auf .st-timer{ box-shadow:none; background:none; padding:0 16px 14px; margin:0; }
 /* Studio-Karte: Statistik-Knopf oben und Statistik-Fenster */
-.st-stats-knopf{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 14px; margin-right:6px; border:0; border-radius:14px;
-  background:var(--surface); box-shadow:var(--shadow); color:var(--text); font:inherit; font-size:14px; font-weight:600; flex:none; }
-.st-stats-knopf .ico{ width:18px; height:18px; color:var(--bl-color); }
-@media (max-width:400px){ .st-stats-knopf{ padding:0 12px; } .st-stats-knopf span{ display:none; } }
+.st-stats-leiste{ display:flex; align-items:center; gap:10px; width:100%; min-height:52px; padding:8px 6px 8px 10px; margin:0 0 10px; border:0; border-radius:14px;
+  background:color-mix(in srgb, var(--cat, var(--bl-color)) 9%, transparent); color:var(--text); font:inherit; text-align:left; cursor:pointer; }
+.st-stats-leiste:active{ transform:scale(.99); }
+.ssl-ico{ width:34px; height:34px; border-radius:10px; flex:none; display:flex; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--cat, var(--bl-color)) 16%, transparent); color:var(--cat, var(--bl-color)); }
+.ssl-ico .ico{ width:18px; height:18px; }
+.ssl-text{ display:flex; flex-direction:column; flex:1; min-width:0; }
+.ssl-text b{ font-size:14.5px; }
+.ssl-text small{ font-size:12.5px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ssl-kurve{ width:64px; height:26px; flex:none; color:var(--cat, var(--bl-color)); }
+.ssl-chev{ flex:none; display:flex; color:var(--text-dim); }
 .st-stats h3{ margin-bottom:12px; }
 .st-stats-zahlen{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:14px; }
 .st-stats-zahlen div{ background:var(--surface-2); border-radius:14px; padding:10px 8px; text-align:center; display:flex; flex-direction:column; gap:2px; }

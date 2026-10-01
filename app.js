@@ -263,7 +263,7 @@ var I18N = {
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
     stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
-    stHistory:"Verlauf", stStats:"Statistik", stStatsEmpty:"Noch keine Einträge. Trag deinen ersten Satz ein – ab der zweiten Woche wächst hier deine Kurve.", stBestKg:"Bestes Gewicht", stSessions:"Einheiten", stSetsAll:"Sätze", stSince:"seit {d}", stLastN:"Letzte Einheiten", stOneWeek:"Erst eine Woche mit Einträgen – die Kurve beginnt in der nächsten.", stWeekly:"Gewicht je Woche", repWeekly:"Zeit je Woche", weeksN:"{n} Wochen", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
+    stHistory:"Verlauf", stStats:"Statistik", stStatsNone:"noch keine Einträge", stStatsKurz:"Bestwert {kg} kg · {n} Einheiten", stStatsEmpty:"Noch keine Einträge. Trag deinen ersten Satz ein – ab der zweiten Woche wächst hier deine Kurve.", stBestKg:"Bestes Gewicht", stSessions:"Einheiten", stSetsAll:"Sätze", stSince:"seit {d}", stLastN:"Letzte Einheiten", stOneWeek:"Erst eine Woche mit Einträgen – die Kurve beginnt in der nächsten.", stWeekly:"Gewicht je Woche", repWeekly:"Zeit je Woche", weeksN:"{n} Wochen", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
     stUndo:"Letzten Satz löschen", stInfo:"Zur Übung", stWeight:"Arbeitsgewicht", stNone:"Keine Übung gefunden.",
     fabMy:"Workout aus Übungen", fabTimerWo:"Timer-Workout aus Blöcken", fabBlock:"Einzelner Block",
     tabTimerWo:"Workouts", tabBlocks:"Blöcke",
@@ -463,7 +463,7 @@ var I18N = {
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
     stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
-    stHistory:"History", stStats:"Stats", stStatsEmpty:"No entries yet. Log your first set – your curve grows from the second week.", stBestKg:"Best weight", stSessions:"Sessions", stSetsAll:"Sets", stSince:"since {d}", stLastN:"Latest sessions", stOneWeek:"Only one week logged so far – the curve starts next week.", stWeekly:"Weight per week", repWeekly:"Time per week", weeksN:"{n} weeks", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
+    stHistory:"History", stStats:"Stats", stStatsNone:"no entries yet", stStatsKurz:"best {kg} kg · {n} sessions", stStatsEmpty:"No entries yet. Log your first set – your curve grows from the second week.", stBestKg:"Best weight", stSessions:"Sessions", stSetsAll:"Sets", stSince:"since {d}", stLastN:"Latest sessions", stOneWeek:"Only one week logged so far – the curve starts next week.", stWeekly:"Weight per week", repWeekly:"Time per week", weeksN:"{n} weeks", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
     stUndo:"Delete last set", stInfo:"About the exercise", stWeight:"Working weight", stNone:"No exercise found.",
     fabMy:"Workout from exercises", fabTimerWo:"Timer workout from blocks", fabBlock:"Single block",
     tabTimerWo:"Workouts", tabBlocks:"Blocks",
@@ -2102,8 +2102,19 @@ function studioPauseStop(){
   studioPause = null;
 }
 var ICON_STATS = '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>';
-function studioStatsKnopf(){
-  return '<button type="button" class="st-stats-knopf" data-ststats>'+svgIcon(ICON_STATS)+'<span>'+esc(t("stStats"))+'</span></button>';
+/* Leiste oben in der Karte: „Statistik“, Kurzfassung, kleine Kurve - ein Tipp öffnet das Statistik-Fenster */
+function studioStatsLeiste(id){
+  var e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return l.s.length; }), kurz = t("stStatsNone");
+  if(log.length){
+    var best = 0;
+    log.forEach(function(l){ l.s.forEach(function(x){ if(x[0] > best) best = x[0]; }); });
+    kurz = t("stStatsKurz", { kg:studioKg(best), n:log.length });
+  }
+  return '<button type="button" class="st-stats-leiste" data-ststats>'+
+    '<span class="ssl-ico">'+svgIcon(ICON_STATS)+'</span>'+
+    '<span class="ssl-text"><b>'+esc(t("stStats"))+'</b><small>'+esc(kurz)+'</small></span>'+
+    wochenKurve(studioWochen(id), "ssl-kurve")+
+    '<span class="ssl-chev">'+ICON_CHEV+'</span></button>';
 }
 function wochenDiagramm(pts, einheit){
   var B = 300, H = 130, l = 34, r = 10, o = 10, u = 22;
@@ -2228,8 +2239,9 @@ function renderStudioKarte(id){
   if(wo.length > 1) kurve = '<div class="wo-kopf"><span>'+esc(t("stWeekly"))+SEP+esc(t("weeksN", { n:wo[wo.length-1].w - wo[0].w + 1 }))+'</span>'+
     '<b>'+studioKg(wo[0].v)+' → '+studioKg(wo[wo.length-1].v)+' kg</b></div>'+wochenKurve(wo, "st-kurve");
   app.innerHTML =
-    topbar(tplText(ex.name), { back:"#timers", right:studioStatsKnopf()+exFavBtn(id) }) +
+    topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
     '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
+      studioStatsLeiste(id)+
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+z.saetze+' × '+z.wdh+
         (e.kg != null ? SEP+esc(t("stWeight"))+' '+studioKg(e.kg)+' kg' : '')+'</div>'+
