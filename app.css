@@ -1715,3 +1715,19 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 /* Studio-Karte: Intervall-Timer zum Aufklappen */
 .st-timer-auf{ margin-bottom:12px; }
 .st-timer-auf .st-timer{ box-shadow:none; background:none; padding:0 16px 14px; margin:0; }
+/* Studio-Karte: Statistik-Knopf oben und Statistik-Fenster */
+.st-stats-knopf{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 14px; margin-right:6px; border:0; border-radius:14px;
+  background:var(--surface); box-shadow:var(--shadow); color:var(--text); font:inherit; font-size:14px; font-weight:600; flex:none; }
+.st-stats-knopf .ico{ width:18px; height:18px; color:var(--bl-color); }
+@media (max-width:400px){ .st-stats-knopf{ padding:0 12px; } .st-stats-knopf span{ display:none; } }
+.st-stats h3{ margin-bottom:12px; }
+.st-stats-zahlen{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:14px; }
+.st-stats-zahlen div{ background:var(--surface-2); border-radius:14px; padding:10px 8px; text-align:center; display:flex; flex-direction:column; gap:2px; }
+.st-stats-zahlen b{ font-size:18px; font-variant-numeric:tabular-nums; }
+.st-stats-zahlen span{ font-size:12px; color:var(--text-dim); }
+.st-stats-leer, .st-stats-hinweis{ color:var(--text-dim); font-size:14px; line-height:1.45; margin:6px 0; }
+.wo-diagramm{ display:block; width:100%; height:auto; margin:2px 0 8px; color:var(--cat, var(--bl-color)); }
+.wd-gitter{ fill:none; stroke:var(--border); stroke-width:1; }
+.wd-linie{ fill:none; stroke:currentColor; stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.wd-punkt{ fill:currentColor; }
+.wd-txt{ fill:var(--text-dim); font-size:10px; font-variant-numeric:tabular-nums; }

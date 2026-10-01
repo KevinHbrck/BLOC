@@ -263,7 +263,7 @@ var I18N = {
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
     stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
-    stHistory:"Verlauf", stWeekly:"Gewicht je Woche", repWeekly:"Zeit je Woche", weeksN:"{n} Wochen", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
+    stHistory:"Verlauf", stStats:"Statistik", stStatsEmpty:"Noch keine Einträge. Trag deinen ersten Satz ein – ab der zweiten Woche wächst hier deine Kurve.", stBestKg:"Bestes Gewicht", stSessions:"Einheiten", stSetsAll:"Sätze", stSince:"seit {d}", stLastN:"Letzte Einheiten", stOneWeek:"Erst eine Woche mit Einträgen – die Kurve beginnt in der nächsten.", stWeekly:"Gewicht je Woche", repWeekly:"Zeit je Woche", weeksN:"{n} Wochen", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
     stUndo:"Letzten Satz löschen", stInfo:"Zur Übung", stWeight:"Arbeitsgewicht", stNone:"Keine Übung gefunden.",
     fabMy:"Workout aus Übungen", fabTimerWo:"Timer-Workout aus Blöcken", fabBlock:"Einzelner Block",
     tabTimerWo:"Workouts", tabBlocks:"Blöcke",
@@ -463,7 +463,7 @@ var I18N = {
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
     stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
-    stHistory:"History", stWeekly:"Weight per week", repWeekly:"Time per week", weeksN:"{n} weeks", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
+    stHistory:"History", stStats:"Stats", stStatsEmpty:"No entries yet. Log your first set – your curve grows from the second week.", stBestKg:"Best weight", stSessions:"Sessions", stSetsAll:"Sets", stSince:"since {d}", stLastN:"Latest sessions", stOneWeek:"Only one week logged so far – the curve starts next week.", stWeekly:"Weight per week", repWeekly:"Time per week", weeksN:"{n} weeks", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
     stUndo:"Delete last set", stInfo:"About the exercise", stWeight:"Working weight", stNone:"No exercise found.",
     fabMy:"Workout from exercises", fabTimerWo:"Timer workout from blocks", fabBlock:"Single block",
     tabTimerWo:"Workouts", tabBlocks:"Blocks",
@@ -2101,6 +2101,58 @@ function studioPauseStop(){
   schedCancel();
   studioPause = null;
 }
+var ICON_STATS = '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>';
+function studioStatsKnopf(){
+  return '<button type="button" class="st-stats-knopf" data-ststats>'+svgIcon(ICON_STATS)+'<span>'+esc(t("stStats"))+'</span></button>';
+}
+function wochenDiagramm(pts, einheit){
+  var B = 300, H = 130, l = 34, r = 10, o = 10, u = 22;
+  var vs = pts.map(function(q){ return q.v; }), mx = Math.max.apply(null, vs), mn = Math.min.apply(null, vs);
+  if(mx === mn){ mx += 1; mn = Math.max(0, mn - 1); }
+  var w0 = pts[0].w, wb = pts[pts.length-1].w - w0 || 1;
+  function X(q){ return l + (pts.length === 1 ? .5 : (q.w - w0)/wb) * (B - l - r); }
+  function Y(q){ return o + (1 - (q.v - mn)/(mx - mn)) * (H - o - u); }
+  function datum(w){ return new Date(w * 6048e5 - 216e6).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric" }); }
+  return '<svg class="wo-diagramm" viewBox="0 0 '+B+' '+H+'" role="img" aria-label="'+esc(t("stWeekly"))+'">'+
+    '<path class="wd-gitter" d="M'+l+' '+o+'H'+(B-r)+'M'+l+' '+((o+H-u)/2)+'H'+(B-r)+'M'+l+' '+(H-u)+'H'+(B-r)+'"/>'+
+    '<text class="wd-txt" x="'+(l-5)+'" y="'+(o+4)+'" text-anchor="end">'+studioKg(mx)+'</text>'+
+    '<text class="wd-txt" x="'+(l-5)+'" y="'+(H-u+4)+'" text-anchor="end">'+studioKg(mn)+'</text>'+
+    '<text class="wd-txt" x="'+l+'" y="'+(H-5)+'">'+datum(pts[0].w)+'</text>'+
+    (pts.length > 1 ? '<text class="wd-txt" x="'+(B-r)+'" y="'+(H-5)+'" text-anchor="end">'+datum(pts[pts.length-1].w)+'</text>' : '')+
+    '<text class="wd-txt" x="'+(B/2)+'" y="'+(H-5)+'" text-anchor="middle">'+esc(einheit)+'</text>'+
+    (pts.length > 1 ? '<polyline class="wd-linie" points="'+pts.map(function(q){ return X(q).toFixed(1)+","+Y(q).toFixed(1); }).join(" ")+'"/>' : '')+
+    pts.map(function(q){ return '<circle class="wd-punkt" cx="'+X(q).toFixed(1)+'" cy="'+Y(q).toFixed(1)+'" r="3.5"/>'; }).join("")+'</svg>';
+}
+function openStudioStats(id){
+  var ex = findExercise(id), e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return l.s.length; });
+  var root = document.getElementById("overlayRoot"), innen;
+  if(!log.length) innen = '<p class="st-stats-leer">'+esc(t("stStatsEmpty"))+'</p>';
+  else {
+    var wo = studioWochen(id), saetze = 0, best = 0;
+    log.forEach(function(l){ saetze += l.s.length; l.s.forEach(function(x){ if(x[0] > best) best = x[0]; }); });
+    var seit = new Date(log[0].at).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" });
+    innen = '<div class="st-stats-zahlen">'+
+        '<div><b>'+studioKg(best)+' kg</b><span>'+esc(t("stBestKg"))+'</span></div>'+
+        '<div><b>'+log.length+'</b><span>'+esc(t("stSessions"))+'</span></div>'+
+        '<div><b>'+saetze+'</b><span>'+esc(t("stSetsAll"))+'</span></div></div>'+
+      '<div class="wo-kopf"><span>'+esc(t("stWeekly"))+SEP+esc(t("stSince", { d:seit }))+'</span>'+
+        (wo.length > 1 ? '<b>'+studioKg(wo[0].v)+' → '+studioKg(wo[wo.length-1].v)+' kg</b>' : '')+'</div>'+
+      wochenDiagramm(wo, "kg")+
+      (wo.length < 2 ? '<p class="st-stats-hinweis">'+esc(t("stOneWeek"))+'</p>' : '')+
+      '<div class="info-title">'+esc(t("stLastN"))+'</div>'+
+      log.slice(-8).reverse().map(function(l){
+        var d = new Date(l.at);
+        return '<div class="st-v-zeile"><span>'+d.toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" })+'</span>'+
+          '<b>'+l.s.map(function(x){ return studioKg(x[0])+"×"+x[1]; }).join(" · ")+'</b></div>';
+      }).join("");
+  }
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet st-stats" role="dialog" aria-label="'+esc(t("stStats"))+'" style="--cat:'+studioFarbe(ex)+'">'+
+    '<h3>'+esc(t("stStats"))+SEP+esc(tplText(ex.name))+'</h3>'+innen+
+    '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:14px;">'+t("close")+'</button></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+}
 function studioTimerKarte(id, titel, hinweis){
   var tm = studioTimer(id);
   return (titel ? '<div class="section-title">'+esc(titel)+'</div>' : '')+
@@ -2176,7 +2228,7 @@ function renderStudioKarte(id){
   if(wo.length > 1) kurve = '<div class="wo-kopf"><span>'+esc(t("stWeekly"))+SEP+esc(t("weeksN", { n:wo[wo.length-1].w - wo[0].w + 1 }))+'</span>'+
     '<b>'+studioKg(wo[0].v)+' → '+studioKg(wo[wo.length-1].v)+' kg</b></div>'+wochenKurve(wo, "st-kurve");
   app.innerHTML =
-    topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
+    topbar(tplText(ex.name), { back:"#timers", right:studioStatsKnopf()+exFavBtn(id) }) +
     '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+z.saetze+' × '+z.wdh+
@@ -2198,7 +2250,6 @@ function renderStudioKarte(id){
         return '<button type="button" class="fc-chip'+(pause === sec ? ' on' : '')+'" data-stpause="'+sec+'">'+(sec < 120 ? sec+" s" : (sec/60)+" min")+'</button>'; }).join("")+'</div>'+
       (h && h.s.length ? '<button type="button" class="st-undo" data-stundo>'+esc(t("stUndo"))+'</button>' : '')+
     '</div>'+
-    (verlauf ? '<div class="section-title">'+esc(t("stHistory"))+'</div><div class="card st-verlauf">'+kurve+verlauf+'</div>' : '')+
     '<div class="section-title">'+esc(t("stNote"))+'</div>'+
     '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
     '<details class="opt-mehr st-timer-auf"'+(state.db.settings.stTimerAuf ? ' open' : '')+'><summary>'+
@@ -2240,6 +2291,7 @@ function renderStudioKarte(id){
   an("[data-stup]", function(){ var en = eintrag(); en.kg = stg.kg; en.erhoeht = Date.now(); save(); showToast(t("stRaised", { kg:studioKg(stg.kg) })); neu(); });
   an("[data-stskip]", function(){ studioPauseStop(); neu(); });
   an("[data-stinfo]", function(){ openExInfo(id, false); });
+  an("[data-ststats]", function(){ openStudioStats(id); });
   an(".topbar [data-exfav]", function(){ toggleExFav(id); neu(); });
   studioTimerBinden(id, eintrag);
   var auf = app.querySelector(".st-timer-auf");
