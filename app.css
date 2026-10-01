@@ -516,7 +516,15 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .st-undo{ margin-top:10px; border:0; background:none; color:var(--text-dim); font:inherit; font-size:13px; text-decoration:underline; cursor:pointer; }
 .st-verlauf{ padding-top:10px; }
 .st-kurve{ width:100%; height:44px; margin-bottom:6px; }
-.st-kurve polyline{ fill:none; stroke:var(--accent); stroke-width:2.5; vector-effect:non-scaling-stroke; stroke-linejoin:round; stroke-linecap:round; }
+.wo-kurve polyline{ fill:none; stroke:currentColor; stroke-width:2.5; vector-effect:non-scaling-stroke; stroke-linejoin:round; stroke-linecap:round; }
+.st-kurve{ color:var(--bl-color); }
+/* Fortschritt je Woche: kleine Kurve auf Studio-Kacheln und Summit-Karten, größere auf den Detailseiten */
+.st-spark{ display:block; width:100%; height:20px; margin-top:4px; color:var(--cat, var(--bl-color)); }
+.rep-spark{ width:56px; height:24px; flex:none; margin-right:8px; color:var(--rep-color); }
+.rep-kurve{ display:block; width:100%; height:48px; color:var(--rep-color); }
+.rep-verlauf{ margin-bottom:12px; }
+.wo-kopf{ display:flex; justify-content:space-between; gap:10px; align-items:baseline; font-size:13px; color:var(--text-dim); margin-bottom:6px; }
+.wo-kopf b{ color:var(--text); font-variant-numeric:tabular-nums; }
 .st-v-zeile{ display:flex; justify-content:space-between; gap:10px; font-size:13.5px; padding:6px 0; border-top:1px solid var(--border); }
 .st-v-zeile:first-of-type{ border-top:0; }
 .st-v-zeile span{ color:var(--text-dim); white-space:nowrap; }

@@ -263,7 +263,7 @@ var I18N = {
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
     stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
     stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
-    stHistory:"Verlauf", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
+    stHistory:"Verlauf", stWeekly:"Gewicht je Woche", repWeekly:"Zeit je Woche", weeksN:"{n} Wochen", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
     stUndo:"Letzten Satz löschen", stInfo:"Zur Übung", stWeight:"Arbeitsgewicht", stNone:"Keine Übung gefunden.",
     fabMy:"Workout aus Übungen", fabTimerWo:"Timer-Workout aus Blöcken", fabBlock:"Einzelner Block",
     tabTimerWo:"Workouts", tabBlocks:"Blöcke",
@@ -463,7 +463,7 @@ var I18N = {
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
     stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
     stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
-    stHistory:"History", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
+    stHistory:"History", stWeekly:"Weight per week", repWeekly:"Time per week", weeksN:"{n} weeks", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
     stUndo:"Delete last set", stInfo:"About the exercise", stWeight:"Working weight", stNone:"No exercise found.",
     fabMy:"Workout from exercises", fabTimerWo:"Timer workout from blocks", fabBlock:"Single block",
     tabTimerWo:"Workouts", tabBlocks:"Blocks",
@@ -1905,6 +1905,29 @@ var studioQuery = "", studioPause = null;
 function studioAlle(){ return state.db.settings.studio || (state.db.settings.studio = {}); }
 function studioEintrag(id){ return (state.db.settings.studio || {})[id] || null; }
 function studioZiel(id){ var z = STUDIO_ZIEL[id] || [3, 12, 2.5]; return { saetze:z[0], wdh:z[1], schritt:z[2] }; }
+/* Fortschritt je Woche: aus [[Zeitpunkt, Wert], …] wird je Kalenderwoche (Montag) der beste Wert -
+   beim Gewicht der höchste, bei Zeiten der niedrigste. Die Kurve zeigt echte Wochenabstände. */
+function wochenWerte(liste, niedrigGut){
+  var je = {};
+  liste.forEach(function(x){
+    var d = new Date(x[0]); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7);
+    var w = Math.round(d.getTime() / 6048e5);
+    je[w] = w in je ? (niedrigGut ? Math.min(je[w], x[1]) : Math.max(je[w], x[1])) : x[1];
+  });
+  return Object.keys(je).map(Number).sort(function(a, b){ return a - b; }).map(function(w){ return { w:w, v:je[w] }; });
+}
+function wochenKurve(pts, cls){
+  if(pts.length < 2) return "";
+  var vs = pts.map(function(q){ return q.v; }), mx = Math.max.apply(null, vs), mn = Math.min.apply(null, vs), sp = mx - mn || 1;
+  var w0 = pts[0].w, wb = pts[pts.length-1].w - w0 || 1;
+  return '<svg class="wo-kurve '+(cls || "")+'" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+
+    pts.map(function(q){ return ((q.w - w0)/wb*100).toFixed(1)+","+(mx === mn ? 15 : 26 - (q.v - mn)/sp*22).toFixed(1); }).join(" ")+'"/></svg>';
+}
+function studioWochen(id){
+  var e = studioEintrag(id);
+  return wochenWerte((e && e.log || []).filter(function(l){ return l.s.length; }).map(function(l){
+    return [l.at, Math.max.apply(null, l.s.map(function(x){ return x[0]; }))]; }), false).slice(-16);
+}
 function studioTag(ts){ var d = new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
 function studioNurBlock(ex){
   return !!ex && !STUDIO_NUR[ex.id] && !ex.custom && ex.equip.every(function(q){ return ["db", "kb", "gym"].indexOf(q) < 0; });
@@ -1956,7 +1979,8 @@ function studioKachel(id){
   if(studioNurBlock(ex)){ var tb = studioTimer(id); sub = tb.reps+" × "+tb.work+" s"; last = null; }
   return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
-    '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span></div>';
+    '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>'+
+    (last ? wochenKurve(studioWochen(id), "st-spark") : '')+'</div>';
 }
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
@@ -2147,14 +2171,10 @@ function renderStudioKarte(id){
     return '<div class="st-v-zeile"><span>'+d.toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" })+'</span>'+
       '<b>'+l.s.map(function(x){ return studioKg(x[0])+"×"+x[1]; }).join(" · ")+'</b></div>';
   }).join("");
-  // kleine Kurve: bestes Gewicht je Einheit
-  var punkte = log.slice(-12).map(function(l){ return Math.max.apply(null, l.s.map(function(x){ return x[0]; })); });
-  var kurve = "";
-  if(punkte.length > 1){
-    var mx = Math.max.apply(null, punkte), mn = Math.min.apply(null, punkte), sp = mx - mn || 1;
-    kurve = '<svg class="st-kurve" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+
-      punkte.map(function(y, i){ return (i/(punkte.length-1)*100).toFixed(1)+","+(26 - (y-mn)/sp*22).toFixed(1); }).join(" ")+'"/></svg>';
-  }
+  // Kurve: bestes Gewicht je Woche
+  var wo = studioWochen(id), kurve = "";
+  if(wo.length > 1) kurve = '<div class="wo-kopf"><span>'+esc(t("stWeekly"))+SEP+esc(t("weeksN", { n:wo[wo.length-1].w - wo[0].w + 1 }))+'</span>'+
+    '<b>'+studioKg(wo[0].v)+' → '+studioKg(wo[wo.length-1].v)+' kg</b></div>'+wochenKurve(wo, "st-kurve");
   app.innerHTML =
     topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
     '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
@@ -4256,6 +4276,7 @@ function repQWdh(q){ var n = 0; repQSchritte(q).forEach(function(x){ if(typeof x
 function repQRunden(q){ var n = 0; q.teile.forEach(function(tl){ n += tl.bis - tl.von + 1; }); return n; }
 function repQStange(q){ return q.teile.some(function(tl){ return repBrauchtStange(tl.row); }); }
 function repBestOf(id){ var b = state.db.settings.repBest; return b && b[id] ? b[id] : null; }
+function repWochen(id){ var b = repBestOf(id); return wochenWerte(b && b.log || [], true).slice(-16); }
 /* Auf den Karten: was zu tun ist - je Übung die Menge über die Runden („21 · 15 · 9“, gleich bleibend „5 × 20“) */
 function repPlanEin(m){ if(typeof m === "number") return String(m); var sek = repSek(m); return sek ? repUhr(sek*1000) : repMenge(m); }
 function repPlanHTML(q){
@@ -4352,7 +4373,7 @@ function renderReps(){
     var best = repBestOf(id);
     return '<div class="list-item rep-karte" data-nav="#rep/'+id+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
       (zeile1 ? '<div class="sub rep-teile">'+zeile1+'</div>' : '')+'<div class="sub">'+zeile2+'</div>'+(plan || '')+'</div>'+
-      (best ? '<span class="chip">'+repUhr(best.best)+'</span>' : '')+
+      (best ? wochenKurve(repWochen(id), "rep-spark")+'<span class="chip">'+repUhr(best.best)+'</span>' : '')+
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   var html = topbar(t("repTitle"), { back:"#home" }) +
@@ -4447,6 +4468,11 @@ function renderRepDetail(id){
     '<div class="rep-meta">'+(q.einzel && !q.eigen ? esc(t("lvl"+q.lvl))+SEP : '')+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+
       (repQStange(q) ? SEP+esc(t("repBar")) : "")+
       (best ? SEP+esc(t("repBestIs", { z:repUhr(best.best) }))+(best.n > 1 ? ', '+esc(t("repLastIs", { z:repUhr(best.last) })) : '') : '')+'</div>'+
+    (function(){
+      var wo = repWochen(id);
+      return wo.length > 1 ? '<div class="card rep-verlauf"><div class="wo-kopf"><span>'+esc(t("repWeekly"))+SEP+esc(t("weeksN", { n:wo[wo.length-1].w - wo[0].w + 1 }))+'</span>'+
+        '<b>'+repUhr(wo[0].v)+' → '+repUhr(wo[wo.length-1].v)+'</b></div>'+wochenKurve(wo, "rep-kurve")+'</div>' : '';
+    })()+
     q.teile.map(function(tl, i){
       return '<div class="section-title">'+esc(q.einzel ? t("repTable") : (i+1)+". "+repTeilName(tl))+'</div>'+tabelle(tl);
     }).join("")+
@@ -4660,7 +4686,9 @@ function repFertig(){
   var alle = state.db.settings.repBest || (state.db.settings.repBest = {});
   var alt = alle[r.id];
   r.neueBest = !!alt && zeit < alt.best;
-  alle[r.id] = { best: alt ? Math.min(alt.best, zeit) : zeit, last: zeit, n: (alt ? alt.n : 0) + 1, at: Date.now() };
+  var rlog = alt && alt.log ? alt.log.slice(-59) : (alt ? [[alt.at || Date.now(), alt.last]] : []);   // ältere Stände: wenigstens die letzte Zeit
+  rlog.push([Date.now(), zeit]);
+  alle[r.id] = { best: alt ? Math.min(alt.best, zeit) : zeit, last: zeit, n: (alt ? alt.n : 0) + 1, at: Date.now(), log: rlog };
   // für die Wochenzeile und „Überrasch mich“ (Übungen der letzten Tage)
   pruneHistory(state.db);
   state.db.history.push({ at:Date.now(), dur:Math.round(zeit/1000),

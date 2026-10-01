@@ -941,8 +941,8 @@ var STUDIO_ZIEL = { "bench-press":[3,8,2.5], "barbell-squat":[3,8,5], "barbell-d
 /* Sprossen-Klimmzug: je eine Hand an zwei Sprossen der Hangelleiter, der Kopf kommt zwischen den Sprossen hoch */
 var SP_LEITER = '<path class="ip" d="M18 2H82"/><circle class="ip" cx="40" cy="5" r="3.4"/><circle class="ip" cx="60" cy="5" r="3.4"/>';
 ILLU_POSES["rung-pull-ups"] = [
-  Q(null,[50,31],[50,59],[[52,74,45,85]],[[57,20,60,9],[43,20,40,9]], SP_LEITER),
-  Q(null,[50,16],[50,44],[[52,59,45,70]],[[62,20,60,9],[38,20,40,9]], SP_LEITER)
+  Q(null,[50,31],[50,59],[[48,73,48,85],[52,73,52,85]],[[43,20,40,9],[57,20,60,9]], SP_LEITER, true),
+  Q(null,[50,16],[50,44],[[48,58,48,70],[52,58,52,70]],[[37,19,40,9],[63,19,60,9]], SP_LEITER, true)
 ];
 var V_BANK = '<path class="ip" d="M42 22V72M58 22V72"/>';   // Bank von oben
 var ILLU_VIEW2 = {
