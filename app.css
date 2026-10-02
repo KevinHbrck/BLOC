@@ -1782,3 +1782,23 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .wd-linie{ fill:none; stroke:currentColor; stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
 .wd-punkt{ fill:currentColor; }
 .wd-txt{ fill:var(--text-dim); font-size:10px; font-variant-numeric:tabular-nums; }
+
+/* Auswertung (Muskelgruppen) und Plan nach Gewichtung */
+.ausw{ padding:0; margin:12px 0; }
+.ausw > summary{ list-style:none; cursor:pointer; padding:12px 14px; display:flex; flex-direction:column; gap:2px; position:relative; }
+.ausw > summary::-webkit-details-marker{ display:none; }
+.ausw > summary::after{ content:"\25BE"; position:absolute; right:14px; top:14px; color:var(--text-dim); transition:transform .15s; }
+.ausw[open] > summary::after{ transform:rotate(180deg); }
+.ausw-t{ font-weight:700; }
+.ausw-s{ font-size:.85rem; color:var(--text-dim); }
+.ausw-row{ display:grid; grid-template-columns:104px 1fr 40px; gap:8px; align-items:center; padding:5px 14px; font-size:.9rem; }
+.ausw-row.null{ opacity:.45; }
+.ausw-row b{ text-align:right; font-variant-numeric:tabular-nums; }
+.ausw-bar{ height:10px; border-radius:6px; background:color-mix(in srgb, var(--text) 10%, var(--surface)); overflow:hidden; }
+.ausw-bar i{ display:block; height:100%; border-radius:6px; background:var(--bereich, var(--bl-color)); }
+.ausw-note{ padding:8px 14px 14px; font-size:.85rem; color:var(--text-dim); }
+.gen-card{ padding:8px 14px; margin-bottom:14px; }
+.gen-row{ display:grid; grid-template-columns:104px 1fr 40px; gap:8px; align-items:center; padding:9px 0; }
+.gen-row label{ margin:0; font-size:.9rem; }
+.gen-row b{ text-align:right; font-variant-numeric:tabular-nums; }
+.gen-row input[type=range]{ width:100%; accent-color:var(--bl-color); }

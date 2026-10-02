@@ -132,3 +132,8 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 
 - **Air · Reiter Timer** (vierter Reiter, eigenes helleres Blau `--ti-color`): Timer-Workouts und Blöcke wohnen dort, nicht mehr unter „Meine“. Das Plus im Reiter Timer bietet „Timer-Workout aus Blöcken“ und „Einzelner Block“; unter „Meine“ bleibt nur „Neues Workout“. Alte Sprünge (`#timers/workouts`, `#timers/blocks`, `#blocks`) landen im Reiter Timer
 - **Studio · Reiter Übungen · Mein Plan · Timer**: derselbe Timer-Bereich auch im Studio. **Mein Plan**: mehrere eigene Pläne (`settings.stPlaene` = Liste aus `{id, name, ids, updatedAt}`, in Sicherung und Schnappschuss enthalten); Plus legt einen neuen Plan an, Übungen antippen = hinzufügen (nummeriert), nochmal antippen = entfernen, „Fertig“, Umbenennen, Löschen mit Rückfrage
+
+## 2026-10-02 · Auswertung nach Muskelgruppen, Plan nach Gewichtung
+
+- **Auswertung** (ausklappbar, `auswertungHTML`): Verteilung auf Brust · Rücken · Schultern · Arme · Bauch & Rumpf · Beine & Po in Prozent, abgeleitet aus den Hauptmuskeln (`EX_MUSCLES`, Hilfsmuskeln zählen 0,35, sonst Kategorie). Erscheint bei jedem einzelnen Workout (Deckblatt, Air), bei jedem Plan in Mein Plan und als „Alle Pläne zusammen“ in der Planliste (nur dort mit Hinweis auf wenig vertretene Gruppen). Einzelne Workouts werden nicht bewertet – ein Leg Day bleibt ein Leg Day
+- **Plan nach Gewichtung** (Plus in der Planliste): Regler 0–10 je Muskelgruppe mit Live-Prozent, Anzahl Übungen 3–20; verteilt nach größtem Rest und zieht passende Studio-Übungen zufällig. Der Plan ist danach normal bearbeitbar

@@ -266,6 +266,9 @@ var I18N = {
     planOne:"1 Übung", planN:"{n} Übungen", planNew:"Neuen Plan anlegen", planDefault:"Plan {n}", planEdit:"Bearbeiten", planDone:"Fertig",
     planTippen:"Antippen = in den Plan, nochmal antippen = wieder raus. Die Nummer zeigt die Reihenfolge.", planEmpty:"Dieser Plan ist noch leer. Tippe auf „Bearbeiten“ und wähle Übungen aus.",
     planDel:"Plan löschen", planDelQ:"Plan löschen?", planSonst:"Weitere im Plan",
+    ausTitle:"Auswertung", ausSum:"Muskelgruppen im Überblick", ausEmpty:"Noch keine Übungen – die Auswertung erscheint, sobald etwas drin ist.", ausNote:"Zeigt nur die Verteilung – ein Leg Day bleibt ein Leg Day.", ausAll:"Alle Pläne zusammen", ausAllNote:"Alle Pläne zusammen gewichtet. Wenig vertreten: {n}.", ausAllOk:"Alle Pläne zusammen gewichtet – das ist ziemlich ausgewogen.",
+    mgBrust:"Brust", mgRuecken:"Rücken", mgSchulter:"Schultern", mgArme:"Arme", mgRumpf:"Bauch & Rumpf", mgBeine:"Beine & Po",
+    genNew:"Plan nach Gewichtung", genTitle:"Plan nach Gewichtung", genHint:"Stell mit den Reglern ein, wie viel Gewicht jede Muskelgruppe bekommen soll. Daraus entsteht ein Plan, den du danach noch ändern kannst.", genAnz:"Anzahl Übungen", genMake:"Plan erstellen", genZero:"Stell mindestens eine Gruppe über 0.", genName:"Plan nach Gewichtung",
     stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
     stArt_geraet:"Gerät", stArt_kabel:"Kabel", stArt_frei:"Kurzhantel & Kettlebell", stArt_lh:"Langhantel", stArt_stange:"Stange", stOwnNew:"Eigene Übung",
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
@@ -475,6 +478,9 @@ var I18N = {
     planOne:"1 exercise", planN:"{n} exercises", planNew:"Create a new plan", planDefault:"Plan {n}", planEdit:"Edit", planDone:"Done",
     planTippen:"Tap = add to the plan, tap again = remove. The number shows the order.", planEmpty:"This plan is empty. Tap “Edit” and pick exercises.",
     planDel:"Delete plan", planDelQ:"Delete plan?", planSonst:"Also in the plan",
+    ausTitle:"Analysis", ausSum:"Muscle groups at a glance", ausEmpty:"No exercises yet – the analysis appears once there is something in it.", ausNote:"Shows the split only – a leg day stays a leg day.", ausAll:"All plans combined", ausAllNote:"All plans weighted together. Underrepresented: {n}.", ausAllOk:"All plans weighted together – that is fairly balanced.",
+    mgBrust:"Chest", mgRuecken:"Back", mgSchulter:"Shoulders", mgArme:"Arms", mgRumpf:"Abs & core", mgBeine:"Legs & glutes",
+    genNew:"Plan by weighting", genTitle:"Plan by weighting", genHint:"Set with the sliders how much weight each muscle group gets. A plan is built from it, which you can still change afterwards.", genAnz:"Number of exercises", genMake:"Create plan", genZero:"Set at least one group above 0.", genName:"Weighted plan",
     stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
     stArt_geraet:"Machine", stArt_kabel:"Cable", stArt_frei:"Dumbbell & kettlebell", stArt_lh:"Barbell", stArt_stange:"Bar", stOwnNew:"Own exercise",
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
@@ -2167,6 +2173,7 @@ function studioSub(id){
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
 function renderStudioPlan(){
+  if(stGen) return renderStudioPlanGen();
   var p = stPlanAktiv && stPlanFind(stPlanAktiv);
   if(!p){ stPlanAktiv = null; return renderStudioPlanListe(); }
   var ids = stPlanIds(p), pos = {}, html;
@@ -2193,6 +2200,7 @@ function renderStudioPlan(){
       '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone>'+ICON_SAVE+' '+t("planDone")+'</button></span></div></div>';
   } else {
     html += '<div class="plan-kopf"><b>'+esc(planAnzahl(ids.length))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
+      (ids.length ? auswertungHTML(ids) : '')+
       (ids.length ? '<div class="fig-grid">'+ids.map(function(id, i){
         var ex = findExercise(id);
         return uebKachel({ bild:id, name:tplText(ex.name), attr:'data-studio="'+id+'"', cat:studioFarbe(ex), nr:[i+1], unter:'<span class="st-sub">'+esc(studioSub(id))+'</span>' });
@@ -2244,7 +2252,8 @@ function renderStudioPlanListe(){
         '<div class="meta"><div class="name">'+esc(p.name)+'</div><div class="sub">'+esc(planAnzahl(ids.length))+(ids.length ? SEP+esc(namen) : '')+'</div></div>'+
         '<span class="chip chev">'+ICON_CHEV+'</span></div>';
     }).join("") : '<div class="fav-empty">'+esc(t("planNone"))+'</div>')+
-    '<div style="height:90px"></div>'+fabMenuHTML([{ key:"neu", label:t("planNew"), ico:ICON_PLUS, cls:"bl" }]);
+    (pl.length > 1 ? auswertungHTML(pl.reduce(function(a, p){ return a.concat(stPlanIds(p)); }, []), { gesamt:true, titel:t("ausAll") }) : '')+
+    '<div style="height:90px"></div>'+fabMenuHTML([{ key:"neu", label:t("planNew"), ico:ICON_PLUS, cls:"bl" }, { key:"gen", label:t("genNew"), ico:ICON_PLUS, cls:"bl" }]);
   app.innerHTML = html;
   bindCommon(); bindStudioTabs();
   function oeffnen(id, bauen){ stPlanAktiv = id; stPlanBauen = bauen; stPlanQuery = ""; renderStudio(); window.scrollTo(0, 0); }
@@ -2253,10 +2262,116 @@ function renderStudioPlanListe(){
     el.addEventListener("click", los);
     el.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); los(); } });
   });
-  bindFabMenu({ "neu": function(){
+  bindFabMenu({ "gen": function(){
+    stGen = { w:{ brust:5, ruecken:5, schulter:3, arme:3, rumpf:4, beine:6 }, n:8 };
+    renderStudio(); window.scrollTo(0, 0);
+  }, "neu": function(){
     var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[], updatedAt:Date.now() };
     stPlaene().push(p); save(); oeffnen(p.id, true);
   } });
+}
+
+/* ============ Auswertung: Verteilung auf Muskelgruppen ============
+   Aus den Hauptmuskeln (EX_MUSCLES) jeder Übung; Hauptmuskeln zählen voll, Hilfsmuskeln mit 0,35.
+   Ohne Muskeldaten entscheidet die Kategorie. Nur Anzeige - bewertet wird nichts, ein Leg Day bleibt ein Leg Day. */
+var MUSKEL_GRP = [
+  { id:"brust",    key:"mgBrust",   re:/brust/ },
+  { id:"ruecken",  key:"mgRuecken", re:/rücken|latissimus|rauten|trapez|nacken/ },
+  { id:"schulter", key:"mgSchulter", re:/schulter/ },
+  { id:"arme",     key:"mgArme",    re:/bizeps|trizeps|unterarm|griff/ },
+  { id:"rumpf",    key:"mgRumpf",   re:/bauch|rumpf|schräg|core/ },
+  { id:"beine",    key:"mgBeine",   re:/gesäß|oberschenkel|waden|adduktor|abduktor|hüft|schienbein|fuß|bein/ }
+];
+var MUSKEL_KAT = { chest:"brust", back:"ruecken", arms:"arme", core:"rumpf", legs:"beine" };
+function mgVerteilung(ex){
+  var res = {}, m = EX_MUSCLES[ex.id];
+  function add(text, w){
+    var tr = MUSKEL_GRP.filter(function(g){ return g.re.test(text.toLowerCase()); });
+    tr.forEach(function(g){ res[g.id] = (res[g.id] || 0) + w/tr.length; });
+  }
+  if(m){ add(m[0] || "", 1); if(m[1]) add(m[1], 0.35); }
+  if(!Object.keys(res).length){
+    ex.cats.forEach(function(c){ if(MUSKEL_KAT[c]) res[MUSKEL_KAT[c]] = 1; });
+    if(!Object.keys(res).length && ex.cats.indexOf("cardio") > -1) res.beine = 1;
+  }
+  return res;
+}
+function mgProzent(ids){   // Zeilen in fester Reihenfolge, Summe 100 (größter Rest)
+  var sum = {}, tot = 0;
+  ids.forEach(function(id){
+    var ex = findExercise(id);
+    if(!ex || ex.main === "stretch") return;
+    var v = mgVerteilung(ex);
+    Object.keys(v).forEach(function(g){ sum[g] = (sum[g] || 0) + v[g]; tot += v[g]; });
+  });
+  var rows = MUSKEL_GRP.map(function(g){ var raw = tot ? (sum[g.id] || 0)*100/tot : 0; return { g:g.id, key:g.key, pct:Math.floor(raw), rest:raw - Math.floor(raw) }; });
+  var diff = tot ? 100 - rows.reduce(function(a, r){ return a + r.pct; }, 0) : 0;
+  rows.slice().sort(function(a, b){ return b.rest - a.rest; }).slice(0, diff).forEach(function(r){ r.pct++; });
+  return { rows:rows, leer:!tot };
+}
+function auswertungHTML(ids, opt){
+  opt = opt || {};
+  var r = mgProzent(ids), notiz;
+  if(r.leer) notiz = t("ausEmpty");
+  else if(opt.gesamt){
+    var wenig = r.rows.filter(function(x){ return x.pct < 8; }).map(function(x){ return t(x.key); });
+    notiz = wenig.length ? t("ausAllNote", { n:wenig.join(", ") }) : t("ausAllOk");
+  } else notiz = t("ausNote");
+  return '<details class="ausw card"><summary><span class="ausw-t">'+esc(opt.titel || t("ausTitle"))+'</span><span class="ausw-s">'+esc(t("ausSum"))+'</span></summary>'+
+    (r.leer ? '' : r.rows.map(function(x){
+      return '<div class="ausw-row'+(x.pct ? '' : ' null')+'"><span class="ausw-n">'+esc(t(x.key))+'</span>'+
+        '<span class="ausw-bar"><i style="width:'+x.pct+'%"></i></span><b>'+x.pct+'%</b></div>';
+    }).join(""))+
+    '<div class="ausw-note">'+esc(notiz)+'</div></details>';
+}
+/* Plan nach Gewichtung: Reglerwerte 0-10 je Gruppe, Anzahl der Übungen; verteilt nach größtem Rest und zieht passende Studio-Übungen */
+var stGen = null;   // { w:{gruppe:0-10}, n } solange die Seite offen ist
+function stGenBauen(w, n){
+  var tot = MUSKEL_GRP.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0);
+  if(!tot) return [];
+  var q = MUSKEL_GRP.map(function(g){ var raw = (w[g.id] || 0)*n/tot; return { g:g.id, k:Math.floor(raw), rest:raw - Math.floor(raw) }; });
+  var diff = n - q.reduce(function(a, x){ return a + x.k; }, 0);
+  q.slice().sort(function(a, b){ return b.rest - a.rest; }).slice(0, diff).forEach(function(x){ x.k++; });
+  var pools = {}, dazu = {};
+  studioIds().forEach(function(gr){ gr.ids.forEach(function(id){
+    var ex = findExercise(id); if(!ex || ex.main === "stretch" || dazu[id]) return;
+    dazu[id] = true;
+    var v = mgVerteilung(ex), best = null;
+    Object.keys(v).forEach(function(g){ if(best === null || v[g] > v[best]) best = g; });
+    if(best) (pools[best] = pools[best] || []).push(id);
+  }); });
+  var aus = [];
+  q.forEach(function(x){ shuffle(pools[x.g] || []).slice(0, x.k).forEach(function(id){ aus.push(id); }); });
+  return aus;
+}
+function renderStudioPlanGen(){
+  var w = stGen.w, tot = MUSKEL_GRP.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0);
+  var html = topbar(t("genTitle"), { back:"#timers" }) + studioTabsHTML("plan") + '<div class="page-hint">'+esc(t("genHint"))+'</div><div class="card gen-card">'+
+    MUSKEL_GRP.map(function(g){
+      return '<div class="gen-row"><label for="gw-'+g.id+'">'+esc(t(g.key))+'</label><input type="range" id="gw-'+g.id+'" data-gw="'+g.id+'" min="0" max="10" step="1" value="'+(w[g.id] || 0)+'">'+
+        '<b data-gp="'+g.id+'">'+(tot ? Math.round((w[g.id] || 0)*100/tot) : 0)+'%</b></div>';
+    }).join("")+
+    '<div class="gen-row"><label for="gw-n">'+esc(t("genAnz"))+'</label><input type="range" id="gw-n" min="3" max="20" step="1" value="'+stGen.n+'"><b data-gn>'+stGen.n+'</b></div></div>'+
+    '<button type="button" class="btn btn-primary" data-genmake>'+ICON_SAVE+' '+t("genMake")+'</button><div style="height:40px"></div>';
+  app.innerHTML = html;
+  var zur = app.querySelector("[data-back]");
+  if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ stGen = null; renderStudio(); window.scrollTo(0, 0); }); }
+  bindCommon(); bindStudioTabs();
+  function prozent(){
+    var s = MUSKEL_GRP.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0);
+    MUSKEL_GRP.forEach(function(g){ var b = app.querySelector('[data-gp="'+g.id+'"]'); if(b) b.textContent = (s ? Math.round((w[g.id] || 0)*100/s) : 0)+"%"; });
+  }
+  app.querySelectorAll("[data-gw]").forEach(function(el){ el.addEventListener("input", function(){ w[el.getAttribute("data-gw")] = +el.value; prozent(); }); });
+  var nn = app.querySelector("#gw-n");
+  nn.addEventListener("input", function(){ stGen.n = +nn.value; app.querySelector("[data-gn]").textContent = nn.value; });
+  app.querySelector("[data-genmake]").addEventListener("click", function(){
+    var ids = stGenBauen(w, stGen.n);
+    if(!ids.length){ showToast(t("genZero")); return; }
+    var p = { id:uid(), name:t("genName"), ids:ids, updatedAt:Date.now() };
+    stPlaene().push(p); save();
+    stGen = null; stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = "";
+    renderStudio(); window.scrollTo(0, 0);
+  });
 }
 
 /* Vorschlag für den nächsten Satz: heute der letzte Satz, sonst Arbeitsgewicht bzw. letztes Mal */
@@ -3772,7 +3887,7 @@ function renderDraftPage(d, cfg){
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: cfg.cover ? "" :
       '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>' }) +
     // Aufwärm- und Dehnprogramme: Überschrift, Kacheln und Figuren in der Farbe von Aufwärmen & Dehnen
-    (warmDehn ? '<div style="--bereich:var(--ws-color)">' : '<div>') + head + ablaufHTML + optionsHTML + palHTML + '</div>' +
+    (warmDehn ? '<div style="--bereich:var(--ws-color)">' : '<div>') + head + ablaufHTML + (warmDehn || !exs.length ? '' : auswertungHTML(d.items.map(function(it){ return it.ex; }))) + optionsHTML + palHTML + '</div>' +
     (cfg.cover || cfg.bau.neu ? '' : '<button class="btn btn-danger" data-mydel style="margin-top:18px;">'+ICON_TRASH+' '+t("myDelete")+'</button>')+
     '<div style="height:'+(cfg.cover ? 40 : 96)+'px"></div>'+
     (cfg.cover ? '' : '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+t("exCount", { n:exs.length })+'</b><br>'+dauer+'</span>'+
