@@ -1852,3 +1852,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .run-vgl th{ font-weight:500; color:var(--text-dim); text-align:right; font-size:12px; padding:6px 8px; } .run-vgl th:first-child, .run-vgl td:first-child{ text-align:left; }
 .run-vgl td{ text-align:right; }
 .run-vergleich{ margin-bottom:14px; }
+.run-dunkel{ touch-action:none; user-select:none; -webkit-user-select:none; }
+.rd-balken{ width:160px; height:4px; background:#1a1a1a; border-radius:2px; overflow:hidden; } .rd-balken i{ display:block; height:100%; width:0; background:#666; }
+.run-dunkel.halten .rd-balken i{ width:100%; transition:width 2s linear; }
