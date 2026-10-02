@@ -359,7 +359,7 @@ var I18N = {
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", repNewProg:"Neues Programm", repNewUnit:"Neue Einheit", reUnitTitle:"Eigene Einheit", reUnitDefault:"Meine Einheit", reUnitParts:"Programme", reUnitAdd:"Programm hinzufügen", reUnitEmpty:"Noch kein Programm – füge unten das erste hinzu.", reUnitHint:"Mehrere Programme hintereinander. „Von/Bis Runde“ nimmt nur einen Ausschnitt, „Halbe Menge“ halbiert Wiederholungen und Strecken.", reFrom:"Von Runde", reTo:"Bis Runde", reHalf:"Halbe Menge", reUnitDelQ:"Einheit löschen?", rePickProg:"Programm wählen", repMineIntro2:"Mit + legst du eigene Programme und Einheiten an – sie erscheinen auch unter Programme bzw. Einheiten.", repOwnTag:"Meine", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
+    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", runTitle:"Lauf (Beta)", runTeaser:"GPS · Kilometer, Zeit und Pace", runLaeuft:"Läuft gerade · {km} km", runBetaHint:"Beta: Aufzeichnung mit GPS. Der Bildschirm muss an bleiben – im Hintergrund oder bei gesperrtem Handy zeichnet eine Web-App nicht zuverlässig auf („Abdunkeln“ spart Akku). Die Route wird ohne Karte gezeigt; der Standort bleibt auf deinem Gerät.", runStart:"Lauf starten", runNone:"Noch kein Lauf.", runTotal:"{n} Läufe · {km} km", runPause:"Pause", runResume:"Weiter", runPaused:"Pausiert", runEnd:"Beenden", runDark:"Abdunkeln", runDarkHint:"Tippen zum Aufwecken", runTime:"Zeit", runDist:"Strecke", runPaceAvg:"Ø Pace", runPaceNow:"Tempo jetzt", runGpsWait:"Suche GPS-Signal …", runGpsOk:"GPS gut (±{m} m)", runGpsWeak:"GPS schwach (±{m} m)", runGpsDenied:"Standort nicht erlaubt – bitte in den Browser-Einstellungen freigeben.", runGpsLost:"Kein GPS-Signal.", runNoGps:"Dieses Gerät kann den Standort nicht ermitteln.", runLeaveQ:"Lauf verlassen?", runKeep:"Weiterlaufen", runSave:"Beenden und speichern", runDiscard:"Verwerfen", runEndQ:"Lauf beenden?", runEndText:"Der Lauf wird gespeichert.", runShort:"Zu kurz – nicht gespeichert.", runSaved:"Lauf gespeichert.", runSplits:"Kilometer", runRoute:"Route", runGpx:"Als GPX-Datei exportieren", runDelQ:"Lauf löschen?", runBroken:"Unterbrochener Lauf", runBrokenText:"{km} km – die App wurde zwischendurch beendet.", runRecover:"Speichern", runRoutePh:"Die Route erscheint, sobald du dich bewegst.", runDetail:"Lauf", repNewProg:"Neues Programm", repNewUnit:"Neue Einheit", reUnitTitle:"Eigene Einheit", reUnitDefault:"Meine Einheit", reUnitParts:"Programme", reUnitAdd:"Programm hinzufügen", reUnitEmpty:"Noch kein Programm – füge unten das erste hinzu.", reUnitHint:"Mehrere Programme hintereinander. „Von/Bis Runde“ nimmt nur einen Ausschnitt, „Halbe Menge“ halbiert Wiederholungen und Strecken.", reFrom:"Von Runde", reTo:"Bis Runde", reHalf:"Halbe Menge", reUnitDelQ:"Einheit löschen?", rePickProg:"Programm wählen", repMineIntro2:"Mit + legst du eigene Programme und Einheiten an – sie erscheinen auch unter Programme bzw. Einheiten.", repOwnTag:"Meine", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
     reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
@@ -571,7 +571,7 @@ var I18N = {
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", repNewProg:"New programme", repNewUnit:"New session", reUnitTitle:"Own session", reUnitDefault:"My session", reUnitParts:"Programmes", reUnitAdd:"Add programme", reUnitEmpty:"No programme yet – add the first one below.", reUnitHint:"Several programmes in a row. “From/To round” takes only a section, “Half amount” halves reps and distances.", reFrom:"From round", reTo:"To round", reHalf:"Half amount", reUnitDelQ:"Delete session?", rePickProg:"Choose programme", repMineIntro2:"Use + to create your own programmes and sessions – they also show under Programmes and Sessions.", repOwnTag:"Mine", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
+    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", runTitle:"Run (Beta)", runTeaser:"GPS · distance, time and pace", runLaeuft:"Running now · {km} km", runBetaHint:"Beta: GPS tracking. The screen has to stay on – a web app does not record reliably in the background or with a locked phone (“Dim” saves battery). The route is shown without a map; your location stays on your device.", runStart:"Start run", runNone:"No run yet.", runTotal:"{n} runs · {km} km", runPause:"Pause", runResume:"Resume", runPaused:"Paused", runEnd:"Finish", runDark:"Dim", runDarkHint:"Tap to wake", runTime:"Time", runDist:"Distance", runPaceAvg:"Avg pace", runPaceNow:"Pace now", runGpsWait:"Looking for GPS signal …", runGpsOk:"GPS good (±{m} m)", runGpsWeak:"GPS weak (±{m} m)", runGpsDenied:"Location not allowed – please enable it in your browser settings.", runGpsLost:"No GPS signal.", runNoGps:"This device cannot determine your location.", runLeaveQ:"Leave run?", runKeep:"Keep running", runSave:"Finish and save", runDiscard:"Discard", runEndQ:"Finish run?", runEndText:"The run will be saved.", runShort:"Too short – not saved.", runSaved:"Run saved.", runSplits:"Kilometres", runRoute:"Route", runGpx:"Export as GPX file", runDelQ:"Delete run?", runBroken:"Interrupted run", runBrokenText:"{km} km – the app was closed in between.", runRecover:"Save", runRoutePh:"The route appears as soon as you move.", runDetail:"Run", repNewProg:"New programme", repNewUnit:"New session", reUnitTitle:"Own session", reUnitDefault:"My session", reUnitParts:"Programmes", reUnitAdd:"Add programme", reUnitEmpty:"No programme yet – add the first one below.", reUnitHint:"Several programmes in a row. “From/To round” takes only a section, “Half amount” halves reps and distances.", reFrom:"From round", reTo:"To round", reHalf:"Half amount", reUnitDelQ:"Delete session?", rePickProg:"Choose programme", repMineIntro2:"Use + to create your own programmes and sessions – they also show under Programmes and Sessions.", repOwnTag:"Mine", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
     reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
@@ -1662,6 +1662,8 @@ function render(){
   if(route==="repplay") return renderRepPlayer(parts[1]);
   if(route==="repedit") return renderRepEdit(parts[1]);
   if(route==="repunitedit") return renderRepUnitEdit(parts[1]);
+  if(route==="run") return renderRun();
+  if(route==="rundetail") return renderRunDetail(parts[1]);
   if(route==="timers"){
     if(parts[1] === "workouts" || parts[1] === "blocks"){   // frühere Timer-Reiter: jetzt Air › Timer
       state.db.settings.libTab = "timer"; navStack[navStack.length-1] = "#library"; setUrl("#library");
@@ -1828,7 +1830,7 @@ function gesamtEintraege(){
     (s.myReps || (s.myReps = [])).push(c); save(); go("#repedit/"+c.id);
   });
   // Bereiche
-  [["#library", t("library")], ["#reps", t("repTitle")], ["#timers", t("timers")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
+  [["#library", t("library")], ["#reps", t("repTitle")], ["#run", t("runTitle")], ["#timers", t("timers")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
     add(t("srAreas"), p[1], "", "", function(){ go(p[0]); });
   });
   // Workouts aus Air und eigene Workouts
@@ -2055,6 +2057,12 @@ function bindTrash(refresh){
       } else if(kind === "ex"){
         var c = findCustom(id); if(!c) return;
         confirmSheet(t("exDeleteQ"), "„"+c.name+"“ – "+t("exDeleteText"), t("del"), function(){ deleteCustomExNow(id); refresh(); showToast(t("deletedToast", { n:c.name })); });
+      } else if(kind === "run"){    // Lauf-Tracker (Beta)
+        var lf = runById(id); if(!lf) return;
+        confirmSheet(t("runDelQ"), "„"+runKm(lf.dist)+" km“ – "+t("cantUndo"), t("del"), function(){
+          state.db.settings.runs = (state.db.settings.runs || []).filter(function(x){ return x.id !== id; });
+          save(); refresh(); showToast(t("deletedToast", { n:runKm(lf.dist)+" km" }));
+        });
       } else if(kind === "plan"){   // Studio › Mein Plan
         var pl = stPlanFind(id); if(!pl) return;
         confirmSheet(t("planDelQ"), "„"+pl.name+"“ – "+t("cantUndo"), t("del"), function(){
@@ -3317,6 +3325,8 @@ function showToast(text){
 }
 var ICON_EYE_OFF = '<path d="M3 3l18 18"/><path d="M10.6 5.1A9.8 9.8 0 0 1 12 5c5.5 0 9 5.5 9.5 7-.3.8-1.2 2.4-2.7 3.9M6.6 6.6C4.5 8 3 10.3 2.5 12c.5 1.5 4 7 9.5 7 1.8 0 3.4-.6 4.8-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
 var ICON_EYE = '<path d="M2.5 12c.5-1.5 4-7 9.5-7s9 5.5 9.5 7c-.5 1.5-4 7-9.5 7s-9-5.5-9.5-7z"/><circle cx="12" cy="12" r="3"/>';
+/* Pfad-Symbole für Menüs (openActionSheet setzt sie in ein eigenes SVG) */
+var P_PLUS = '<path d="M12 5v14M5 12h14"/>', P_PLAY = '<path d="M7 4l13 8-13 8z"/>', P_CHECK = '<path d="M5 12.5l4.5 4.5L19 7"/>', P_TRASH = '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>';
 var ICON_EDIT = '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>';
 var ICON_FILTER = '<path d="M4 6h16M7 12h10M10 18h4"/>';
 var ICON_INFO = '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>';
@@ -3361,7 +3371,7 @@ function exZuProgramm(id, ws){   // ws: „warm“ / „dehn“ aus Mobility & S
   function workoutWahl(){
     var acts = (state.db.myWorkouts || []).filter(function(mw){ return (mw.ws || "") === (ws || ""); })
       .map(function(mw){ return { ico:HOME_ICON.lib, label:mw.name, fn:function(){ inWorkout(mw); } }; });
-    acts.push({ ico:ICON_PLUS, label:t(ws ? "wsNew" : "myNew"), fn:function(){
+    acts.push({ ico:P_PLUS, label:t(ws ? "wsNew" : "myNew"), fn:function(){
       var mw = createMyFromDraft({ name:t("myDefaultName"), mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:[itemFromEx(id)], ws:ws });
       fertig(mw.name);
     } });
@@ -3370,7 +3380,7 @@ function exZuProgramm(id, ws){   // ws: „warm“ / „dehn“ aus Mobility & S
   function planWahl(){
     var acts = stPlaene().slice().sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); })
       .map(function(p){ return { ico:HOME_ICON.timer, label:p.name, fn:function(){ inPlan(p); } }; });
-    acts.push({ ico:ICON_PLUS, label:t("planNew"), fn:function(){
+    acts.push({ ico:P_PLUS, label:t("planNew"), fn:function(){
       var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[id], updatedAt:Date.now() };
       stPlaene().push(p); save(); fertig(p.name);
     } });
@@ -3658,7 +3668,7 @@ function renderLibrary(){
     var acts = [];
     if(ex.custom) acts.push({ ico:ICON_EDIT, label:t("edit"), fn:function(){ go("#exedit/"+ex.id); } });
     if(EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false, { onChange:neu }); } });
-    acts.push({ ico:ICON_PLUS, label:t("zpAdd"), fn:function(){ exZuProgramm(ex.id); } });
+    acts.push({ ico:P_PLUS, label:t("zpAdd"), fn:function(){ exZuProgramm(ex.id); } });
     acts.push({ ico:ICON_TIMERBLOCK, label:t("adoptBlockTitle"), fn:function(){ adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) })); } });
     acts.push({ ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("ex:"+ex.id); showToast(t("hiddenToast")); neu(); } });
     openActionSheet(tplText(ex.name), acts);
@@ -4234,7 +4244,7 @@ function renderDraftPage(d, cfg){
       d.items[i] = neuIt; speichern(); neu();
     } });
     if(cfg.cover && EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false); } });
-    acts.push({ ico:ICON_TRASH, label:t("del"), danger:true, fn:function(){ d.items.splice(i, 1); speichern(); neu(); } });
+    acts.push({ ico:P_TRASH, label:t("del"), danger:true, fn:function(){ d.items.splice(i, 1); speichern(); neu(); } });
     openActionSheet((i+1)+". "+tplText(ex.name), acts);
   }
   app.querySelectorAll("[data-wbitem]").forEach(function(el){
@@ -5028,6 +5038,255 @@ function repPlanHTML(q){
   return '<div class="rep-plan">'+zeilen.join("")+'</div>';
 }
 
+/* ============ Lauf-Tracker (Beta) ============
+   GPS-Lauf mit Zeit, Kilometern, Pace, Kilometer-Zwischenzeiten und Routenlinie. Bewusst ohne Hintergrundkarte:
+   Die Position wird nur auf dem Gerät verarbeitet, nichts geht ins Internet. Der Bildschirm bleibt an (Wake Lock);
+   im Hintergrund oder bei gesperrtem Handy zeichnet eine Web-App nicht zuverlässig auf - dafür gibt es „Abdunkeln“.
+   Gespeichert: settings.runs = [{ id, at, dur (ms, ohne Pausen), dist (m), pts:[[lat,lon]…], splits:[ms bis km 1, 2, …] }].
+   Ein laufender Lauf wird alle 10 s als settings.runLive gesichert (falls die Seite beendet wird). */
+var RUN_GENAU = 35;   // Fixes mit schlechterer Genauigkeit (m) werden ignoriert
+var RUN_MAX_MS = 12;  // schneller als 12 m/s (43 km/h) gilt als GPS-Sprung
+var run = null;       // laufende Aufzeichnung
+var runWake = null;
+function runMeter(a, b){   // Haversine
+  var R = 6371000, r = Math.PI/180, dLat = (b[0]-a[0])*r, dLon = (b[1]-a[1])*r;
+  var h = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return 2*R*Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function runPace(sek, m){   // „5:32“ min/km
+  if(!m || m < 20 || !sek) return "–:––";
+  var p = sek/(m/1000), min = Math.floor(p/60), s = Math.round(p%60);
+  if(s === 60){ min++; s = 0; }
+  return min > 59 ? "–:––" : min+":"+(s < 10 ? "0" : "")+s;
+}
+function runKm(m){ return (m/1000).toFixed(2).replace(".", currentLang() === "en" ? "." : ","); }
+function runZeit(r){ return (r.pauseAb || Date.now()) - r.start - r.pausenMs; }
+function runWachen(an){
+  if(!an){ if(runWake){ try{ runWake.release(); }catch(e){} runWake = null; } return; }
+  if(!("wakeLock" in navigator)) return;
+  navigator.wakeLock.request("screen").then(function(wl){ runWake = wl; }).catch(function(){});
+}
+document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "visible" && run && !run.pauseAb) runWachen(true); });
+
+/* Ein GPS-Punkt: filtert Ungenaues, Stillstand-Rauschen und Sprünge, zählt Strecke und Kilometer-Zwischenzeiten */
+function runPunkt(lat, lon, acc, ts){
+  var r = run;
+  if(!r || r.pauseAb) return;
+  r.gps = acc; r.fehler = 0;
+  if(acc > RUN_GENAU) return;
+  var p = [Math.round(lat*1e5)/1e5, Math.round(lon*1e5)/1e5];
+  if(!r.letzte){ r.letzte = { p:p, ts:ts }; if(!r.pts.length) r.pts.push(p); return; }
+  var dt = (ts - r.letzte.ts)/1000;
+  if(dt <= 0) return;
+  var d = runMeter(r.letzte.p, p);
+  if(d < Math.max(3, acc*0.5)) return;   // Rauschen im Stand
+  if(d/dt > RUN_MAX_MS) return;           // Sprung
+  var vor = r.dist, nun = runZeit(r);
+  r.dist += d; r.letzte = { p:p, ts:ts };
+  while(Math.floor(r.dist/1000) > r.splits.length){   // Kilometer-Marke überschritten: Zeit anteilig berechnen
+    var k = r.splits.length + 1, anteil = (k*1000 - vor)/(r.dist - vor);
+    r.splits.push(Math.round(r.tZ + anteil*(nun - r.tZ)));
+  }
+  r.tZ = nun;
+  if(!r.pts.length || runMeter(r.pts[r.pts.length-1], p) >= 5) r.pts.push(p);
+  r.verlauf.push({ t:nun, d:r.dist });
+  while(r.verlauf.length > 2 && nun - r.verlauf[1].t > 60000) r.verlauf.shift();   // nur die letzte Minute für „Tempo jetzt“
+}
+function runStart(){
+  if(!navigator.geolocation){ showToast(t("runNoGps")); return; }
+  run = { id:uid(), start:Date.now(), pauseAb:0, pausenMs:0, dist:0, pts:[], letzte:null, splits:[], tZ:0, verlauf:[], gps:null, fehler:0 };
+  runLauschen();
+  runWachen(true);
+  run.uhr = setInterval(function(){ runAnzeige(); runSichern(); }, 1000);
+  renderRun();
+}
+function runLauschen(){
+  var r = run;
+  r.watch = navigator.geolocation.watchPosition(function(pos){
+    runPunkt(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.timestamp || Date.now());
+    runAnzeige();
+  }, function(err){ r.fehler = err && err.code || 2; runAnzeige(); }, { enableHighAccuracy:true, maximumAge:1000, timeout:20000 });
+}
+function runStopWatch(){
+  if(!run) return;
+  if(run.watch != null) try{ navigator.geolocation.clearWatch(run.watch); }catch(e){}
+  if(run.uhr) clearInterval(run.uhr);
+  run.watch = null; run.uhr = 0;
+}
+function runPause(){
+  if(!run) return;
+  if(run.pauseAb){ run.pausenMs += Date.now() - run.pauseAb; run.pauseAb = 0; run.letzte = null; runWachen(true); }   // Lücke zählt nicht als Strecke
+  else { run.pauseAb = Date.now(); }
+  renderRun();
+}
+var runSichernAm = 0;
+function runSichern(){   // alle 10 s eine Kopie, damit ein beendeter Browser den Lauf nicht verschluckt
+  var r = run;
+  if(!r || Date.now() - runSichernAm < 10000) return;
+  runSichernAm = Date.now();
+  state.db.settings.runLive = { id:r.id, start:r.start, dur:runZeit(r), dist:r.dist, pts:r.pts, splits:r.splits, at:Date.now() };
+  save();
+}
+function runSpeichern(d){   // d: { id, start, dur, dist, pts, splits } -> in den Verlauf; zu kurze Läufe werden nicht behalten
+  var s = state.db.settings;
+  if(d.dist < 50){ showToast(t("runShort")); return false; }
+  (s.runs || (s.runs = [])).push({ id:d.id, at:d.start, dur:Math.round(d.dur), dist:Math.round(d.dist), pts:d.pts, splits:d.splits });
+  pruneHistory(state.db);
+  state.db.history.push({ at:d.start, dur:Math.round(d.dur/1000), ex:[] });   // zählt in der Wochenzeile
+  save();
+  showToast(t("runSaved"));
+  return true;
+}
+function runBeenden(speichern){
+  var r = run;
+  if(!r) return;
+  var dauer = runZeit(r);
+  runStopWatch(); runWachen(false);
+  var dunkel = document.getElementById("run-dunkel"); if(dunkel) dunkel.remove();
+  run = null;
+  delete state.db.settings.runLive;
+  var ok = speichern ? runSpeichern({ id:r.id, start:r.start, dur:dauer, dist:r.dist, pts:r.pts, splits:r.splits }) : (save(), false);
+  if(ok) go("#rundetail/"+r.id); else renderRun();
+}
+function runById(id){ var l = state.db.settings.runs || []; for(var i=0;i<l.length;i++) if(l[i].id === id) return l[i]; return null; }
+
+/* Routenlinie als SVG (ohne Karte): Länge und Breite im richtigen Verhältnis */
+function runSvg(pts){
+  if(!pts || pts.length < 2) return '<div class="run-leer">'+esc(t("runRoutePh"))+'</div>';
+  var minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
+  pts.forEach(function(p){ minLa = Math.min(minLa, p[0]); maxLa = Math.max(maxLa, p[0]); minLo = Math.min(minLo, p[1]); maxLo = Math.max(maxLo, p[1]); });
+  var kx = Math.cos((minLa + maxLa)/2*Math.PI/180), W = 300, H = 200, pad = 14;
+  var bw = Math.max((maxLo - minLo)*kx, 1e-6), bh = Math.max(maxLa - minLa, 1e-6);
+  var sk = Math.min((W - 2*pad)/bw, (H - 2*pad)/bh), ox = (W - bw*sk)/2, oy = (H - bh*sk)/2;
+  function xy(p){ return [(ox + (p[1] - minLo)*kx*sk).toFixed(1), (oy + (maxLa - p[0])*sk).toFixed(1)]; }
+  var a = xy(pts[0]), z = xy(pts[pts.length-1]);
+  return '<svg class="run-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'"><polyline points="'+pts.map(function(p){ return xy(p).join(","); }).join(" ")+
+    '" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<circle cx="'+a[0]+'" cy="'+a[1]+'" r="5" class="run-start"/><circle cx="'+z[0]+'" cy="'+z[1]+'" r="5" class="run-ziel"/></svg>';
+}
+function runGpxText(r){
+  var pts = (r.pts || []).map(function(p){ return '<trkpt lat="'+p[0]+'" lon="'+p[1]+'"/>'; }).join("");
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="BLOC" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>BLOC '+new Date(r.at).toISOString().slice(0, 10)+
+    '</name><trkseg>'+pts+'</trkseg></trk></gpx>';
+}
+function runTempoJetzt(r){
+  var v = r.verlauf;
+  if(v.length < 2) return "–:––";
+  var a = v[0], b = v[v.length-1];
+  return runPace((b.t - a.t)/1000, b.d - a.d);
+}
+/* Anzeige im Aufzeichnen-Fenster aktualisieren (ohne neu zu zeichnen) */
+function runAnzeige(){
+  var r = run;
+  if(!r) return;
+  var sek = runZeit(r)/1000;
+  function setze(id, txt){ var el = document.getElementById(id); if(el && el.textContent !== txt) el.textContent = txt; }
+  var zeit = repUhr(runZeit(r));
+  setze("run-zeit", zeit); setze("run-km", runKm(r.dist)); setze("run-pace", runPace(sek, r.dist)); setze("run-jetzt", runTempoJetzt(r));
+  setze("run-dz", zeit); setze("run-dk", runKm(r.dist)+" km");
+  var gps = r.fehler === 1 ? t("runGpsDenied") : r.fehler ? t("runGpsLost") : r.gps == null ? t("runGpsWait") :
+    t(r.gps <= 15 ? "runGpsOk" : "runGpsWeak", { m:Math.round(r.gps) });
+  setze("run-gps", r.pauseAb ? t("runPaused") : gps);
+  var karte = document.getElementById("run-karte");
+  if(karte && +karte.getAttribute("data-n") !== r.pts.length){ karte.setAttribute("data-n", r.pts.length); karte.innerHTML = runSvg(r.pts); }
+}
+function runDunkel(){
+  var d = document.createElement("div");
+  d.id = "run-dunkel"; d.className = "run-dunkel";
+  d.innerHTML = '<div id="run-dz" class="rd-z"></div><div id="run-dk" class="rd-k"></div><div class="rd-h">'+esc(t("runDarkHint"))+'</div>';
+  d.addEventListener("click", function(){ d.remove(); });
+  document.body.appendChild(d);
+  runAnzeige();
+}
+
+function renderRun(){
+  var s = state.db.settings;
+  if(run) return renderRunLive();
+  var runs = (s.runs || []).slice().sort(function(a, b){ return b.at - a.at; });
+  var km = runs.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
+  var live = s.runLive;
+  app.innerHTML =
+    topbar(t("runTitle"), { back:"#reps" }) +
+    '<div class="page-hint">'+esc(t("runBetaHint"))+'</div>'+
+    (live ? '<div class="card run-live"><b>'+esc(t("runBroken"))+'</b><div class="sub">'+esc(t("runBrokenText", { km:runKm(live.dist) }))+'</div>'+
+      '<div class="btn-row"><button type="button" class="btn btn-secondary" data-runlivedel>'+esc(t("runDiscard"))+'</button>'+
+      '<button type="button" class="btn btn-primary" data-runlivesave>'+esc(t("runRecover"))+'</button></div></div>' : '')+
+    '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button>'+
+    (runs.length ? '<div class="section-title">'+esc(t("runTotal", { n:runs.length, km:runKm(km*1000) }))+'</div>' : '')+
+    (runs.length ? runs.map(function(x){
+      var d = new Date(x.at);
+      return '<div class="list-item entry run-item" data-nav="#rundetail/'+x.id+'"><div class="meta"><div class="name">'+esc(runKm(x.dist))+' km</div>'+
+        '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(repUhr(x.dur))+SEP+esc(runPace(x.dur/1000, x.dist))+' /km</div></div>'+
+        '<div class="card-aside"><div class="card-acts">'+trashBtn("run", x.id, runKm(x.dist)+" km")+'</div></div></div>';
+    }).join("") : '<div class="empty" style="padding:24px 20px;">'+esc(t("runNone"))+'</div>')+
+    '<div style="height:40px"></div>';
+  bindCommon();
+  bindTrash(function(){ renderRun(); });
+  app.querySelector("[data-runstart]").addEventListener("click", runStart);
+  var lv = app.querySelector("[data-runlivesave]");
+  if(lv) lv.addEventListener("click", function(){
+    var l = s.runLive; delete s.runLive;
+    if(runSpeichern({ id:l.id, start:l.start, dur:l.dur, dist:l.dist, pts:l.pts, splits:l.splits })) go("#rundetail/"+l.id); else renderRun();
+  });
+  var ld = app.querySelector("[data-runlivedel]");
+  if(ld) ld.addEventListener("click", function(){ delete s.runLive; save(); renderRun(); });
+}
+function renderRunLive(){
+  var r = run;
+  app.innerHTML =
+    topbar(t("runTitle"), { back:"#reps" }) +
+    '<div class="run-gross"><div id="run-zeit" class="rg-zeit">0:00</div><div class="rg-label">'+esc(t("runTime"))+'</div></div>'+
+    '<div class="run-raster">'+
+      '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
+      '<div><b id="run-pace">–:––</b><small>'+esc(t("runPaceAvg"))+' /km</small></div>'+
+      '<div><b id="run-jetzt">–:––</b><small>'+esc(t("runPaceNow"))+' /km</small></div></div>'+
+    '<div class="run-gps" id="run-gps"></div>'+
+    '<div id="run-karte" class="run-karte" data-n="-1"></div>'+
+    '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
+      '<button type="button" class="btn btn-secondary" data-rundark>'+esc(t("runDark"))+'</button>'+
+      '<button type="button" class="btn btn-danger" data-runend>'+esc(t("runEnd"))+'</button></div>'+
+    '<div style="height:40px"></div>';
+  bindCommon();
+  var zur = app.querySelector("[data-back]");
+  if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
+    openActionSheet(t("runLeaveQ"), [
+      { ico:P_PLAY, label:t("runKeep"), fn:function(){} },
+      { ico:P_CHECK, label:t("runSave"), fn:function(){ runBeenden(true); } },
+      { ico:P_TRASH, label:t("runDiscard"), danger:true, fn:function(){ runBeenden(false); } }
+    ]);
+  }); }
+  app.querySelector("[data-runpause]").addEventListener("click", runPause);
+  app.querySelector("[data-rundark]").addEventListener("click", runDunkel);
+  app.querySelector("[data-runend]").addEventListener("click", function(){
+    confirmSheet(t("runEndQ"), t("runEndText"), t("runSave"), function(){ runBeenden(true); });
+  });
+  runAnzeige();
+}
+function renderRunDetail(id){
+  var x = runById(id);
+  if(!x) return go("#run");
+  var d = new Date(x.at), sp = x.splits || [];
+  app.innerHTML =
+    topbar(t("runDetail"), { back:"#run" }) +
+    '<div class="rep-meta">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long", day:"numeric", month:"long", year:"numeric" }))+'</div>'+
+    '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(repUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
+      '<div><b>'+esc(runPace(x.dur/1000, x.dist))+'</b><small>'+esc(t("runPaceAvg"))+' /km</small></div></div>'+
+    '<div class="section-title">'+esc(t("runRoute"))+'</div><div class="run-karte">'+runSvg(x.pts)+'</div>'+
+    (sp.length ? '<div class="section-title">'+esc(t("runSplits"))+'</div><div class="card"><table class="rep-tab run-splits">'+sp.map(function(ms, i){
+      var dauer = ms - (i ? sp[i-1] : 0);
+      return '<tr><td>'+(i+1)+' km</td><td>'+esc(repUhr(dauer))+'</td></tr>';
+    }).join("")+'</table></div>' : '')+
+    '<button type="button" class="btn btn-secondary" data-rungpx style="margin-top:14px;">'+esc(t("runGpx"))+'</button>'+
+    '<div style="height:40px"></div>';
+  bindCommon();
+  app.querySelector("[data-rungpx]").addEventListener("click", function(){
+    var blob = new Blob([runGpxText(x)], { type:"application/gpx+xml" }), a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "bloc-lauf-"+new Date(x.at).toISOString().slice(0, 10)+".gpx";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  });
+}
+
 /* Eigenes Workout als Karte (Air › Meine und Mobility & Stretch › Meine) */
 function myWoCard(mw, exs, mains, dur){
   return '<div class="list-item entry tpl-item lib-card my-item" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, exs))+'">'+
@@ -5131,7 +5390,7 @@ function renderWarmStretch(){
     var acts = [];
     if(ex.custom) acts.push({ ico:ICON_EDIT, label:t("edit"), fn:function(){ go("#exedit/"+ex.id); } });
     if(EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false, { onChange:neu }); } });
-    acts.push({ ico:ICON_PLUS, label:t("zpWs"), fn:function(){ exZuProgramm(ex.id, art); } });
+    acts.push({ ico:P_PLUS, label:t("zpWs"), fn:function(){ exZuProgramm(ex.id, art); } });
     acts.push({ ico:ICON_TIMERBLOCK, label:t("adoptBlockTitle"), fn:function(){ adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) })); } });
     acts.push({ ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("ex:"+ex.id); showToast(t("hiddenToast")); neu(); } });
     openActionSheet(tplText(ex.name), acts);
@@ -5154,6 +5413,10 @@ function renderReps(){
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   var html = topbar(t("repTitle"), { back:"#home", right:lupeHTML("rs", repQuery) }) +
+    // Lauf-Tracker (Beta): GPS-Lauf mit Kilometern, Zeit und Pace
+    '<div class="list-item entry run-teaser" data-nav="#run" role="button"><span class="playbtn rep">'+svgIcon('<circle cx="14" cy="4.5" r="2"/><path d="M6 21l3-6 3 2v5M9 15l1-4 4-1 2 3 3 1M10 11L8 8"/>')+'</span>'+
+      '<div class="meta"><div class="name">'+esc(t("runTitle"))+'</div><div class="sub">'+esc(run ? t("runLaeuft", { km:runKm(run.dist) }) : t("runTeaser"))+'</div></div>'+
+      '<span class="chip chev">'+ICON_CHEV+'</span></div>'+
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
       '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+
       '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
