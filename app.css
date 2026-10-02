@@ -1805,3 +1805,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .gen-row label{ margin:0; font-size:.9rem; }
 .gen-row b{ text-align:right; font-variant-numeric:tabular-nums; }
 .gen-row input[type=range]{ width:100%; accent-color:var(--bl-color); }
+/* Summit-Karten: ⋯ oben rechts, damit die Mengen-Spalten nicht schmaler werden */
+.rep-karte{ position:relative; }
+.rep-karte > .more-btn{ position:absolute; top:6px; right:6px; }
+.rep-karte .name{ padding-right:34px; }

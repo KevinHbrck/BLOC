@@ -346,6 +346,37 @@
       eingeben(f, "neuer block");
       pruefe($$("#gs-res [data-sr]").length >= 1, "Gesamtsuche findet „Neuer Block“ nicht");
     }],
+    ["Summit unter Meine ablegen; Mobility & Stretch: Meine, Körperregionen, Langdruck", async function () {
+      function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      klick('[data-nav="#reps"]');
+      klick(await bis(function () { return $("[data-repmore]"); }, 3000, "⋯ auf der Summit-Karte"));
+      klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Menü „Meine“"));
+      await bis(function () { var m = daten().settings.myReps; return m && m.length === 1 && m[0].zeilen.length > 2; }, 2000, "Kopie unter Meine");
+      await heim();
+      klick('[data-nav="#warmstretch"]');
+      klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
+      pruefe($$("[data-wstab]").length === 3 && $('[data-wstab="meine"]'), "Reiter Workouts · Übungen · Meine fehlen");
+      klick('[data-wstab="uebungen"]');
+      await bis(function () { return $$("[data-wsreg]").length === 8; }, 3000, "acht Körperregionen");
+      var alle = $$("[data-exlang]").length;
+      klick('[data-wsreg="huefte"]');
+      await bis(function () { var n = $$("[data-exlang]").length; return n > 0 && n < alle; }, 2000, "Filter Hüfte");
+      await lang($("[data-exlang]"));
+      klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neues Workout"));
+      await bis(function () { return daten().myWorkouts.some(function (m) { return m.ws === "dehn" && m.items.length === 1; }); }, 2000, "Dehn-Workout angelegt");
+      klick('[data-wstab="meine"]');
+      await bis(function () { return $$(".my-item").length === 1; }, 2000, "Meine in Mobility");
+      klick('[data-fabopt="new"]');
+      await bis(function () { return $$("[data-wsreg]").length === 8 && $$("[data-wbex]").length > 0; }, 3000, "Baukasten mit Dehnübungen und Regionen");
+      pruefe(!$('[data-wbex="push-ups"]'), "Kraftübung im Dehn-Baukasten");
+      await heim();
+      klick('[data-nav="#library"]');
+      klick(await bis(function () { return $('[data-libtab="mine"]'); }, 3000, "Air › Meine"));
+      var ohneWs = daten().myWorkouts.filter(function (m) { return !m.ws; }).length;
+      pruefe($$(".my-item").length === ohneWs, "Air › Meine zeigt " + $$(".my-item").length + " statt " + ohneWs);
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

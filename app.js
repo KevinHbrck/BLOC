@@ -359,7 +359,7 @@ var I18N = {
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
+    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
     reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
@@ -571,7 +571,7 @@ var I18N = {
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
+    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
     reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
@@ -971,14 +971,50 @@ function myRun(mw){ return draftRun(normMy(mw)); }
 function createMyFromDraft(d){
   var mw = { id:uid(), name:d.name, mode:d.mode, reps:d.reps, work:d.work, rest:d.rest, blockRest:d.blockRest,
              items:draftCopy(d.items), updatedAt:Date.now() };
+  if(d.ws) mw.ws = d.ws;   // „warm“ / „dehn“: gehört zu Mobility & Stretch (Reiter Meine dort), nicht zu Air
   if(!state.db.myWorkouts) state.db.myWorkouts = [];
   state.db.myWorkouts.push(mw); save();
   return mw;
 }
-/* Fertiges Workout übernehmen: Kopie unter „Eigene“, danach im Baukasten öffnen */
-function adoptLibWorkout(lw){
-  var mw = createMyFromDraft(draftFromLib(lw));
+/* Fertiges Workout übernehmen: Kopie unter „Eigene“, danach im Baukasten öffnen (ws: aus Mobility & Stretch) */
+function adoptLibWorkout(lw, ws){
+  var d = draftFromLib(lw);
+  if(ws) d.ws = ws;
+  var mw = createMyFromDraft(d);
   go("#mybuild/"+mw.id);
+}
+var bauNeuWs = "";   // beim Anlegen aus Mobility & Stretch: „warm“ bzw. „dehn“
+/* Körperregionen der Dehnübungen (Attribute für Filter in Mobility & Stretch) */
+var WS_REGIONEN = ["nacken", "schulter", "arme", "brust", "ruecken", "rumpf", "huefte", "beine"];
+var WS_REGION_VON = {
+  "neck-stretch":["nacken"], "shoulder-stretch":["schulter"], "triceps-stretch":["arme", "schulter"], "biceps-stretch":["arme", "brust"],
+  "chest-stretch":["brust", "schulter"], "wrist-stretch":["arme"], "side-bend":["rumpf"], "cat-cow":["ruecken", "rumpf"],
+  "childs-pose":["ruecken", "huefte"], "sphinx-stretch":["rumpf", "ruecken"], "cobra-lift":["rumpf", "ruecken"],
+  "downward-dog":["ruecken", "beine", "schulter"], "spinal-twist":["ruecken", "huefte"], "forward-fold":["ruecken", "beine"],
+  "hip-flexor-stretch":["huefte"], "quad-stretch":["beine"], "hamstring-stretch":["beine"], "calf-stretch":["beine"],
+  "figure-four":["huefte"], "pigeon-stretch":["huefte"], "butterfly-stretch":["huefte"], "worlds-greatest":["huefte", "beine", "schulter", "ruecken"]
+};
+function wsRegionenVon(id){ return WS_REGION_VON[id] || []; }
+function wsRegionOk(id, sel){ return !sel.length || wsRegionenVon(id).some(function(r){ return sel.indexOf(r) > -1; }); }
+/* Übungen eines Mobility-Bereichs: Aufwärmen (feste Liste) bzw. alle Dehnübungen */
+function wsUebungen(art){
+  var l = art === "warm" ? AUFWAERM_UEBUNGEN.map(findExercise) : EXERCISES.filter(function(ex){ return ex.main === "stretch"; });
+  return l.filter(function(ex){ return ex && !libHidden("ex:"+ex.id); });
+}
+/* Kacheln der Körperregionen (wie die Gruppen im Studio); counts: Anzahl je Region */
+function wsRegionTilesHTML(sel, counts){
+  var ico = { nacken:'<circle cx="12" cy="7" r="3"/><path d="M8 21v-5a4 4 0 0 1 8 0v5"/>', schulter:STUDIO_GRUPPEN_ICON.schulter, arme:CAT_ICON.arms, brust:STUDIO_GRUPPEN_ICON.brust,
+    ruecken:CAT_ICON.back, rumpf:CAT_ICON.core, huefte:'<path d="M6 5c0 6 2 8 6 8s6-2 6-8M9 13l-2 8M15 13l2 8"/>', beine:CAT_ICON.legs };
+  return '<div class="main-tiles st-bereiche">'+WS_REGIONEN.map(function(r){
+    var on = sel.indexOf(r) > -1;
+    return '<button type="button" class="main-tile'+(on ? ' on' : '')+(sel.length && !on ? ' off' : '')+'" data-wsreg="'+r+'" aria-pressed="'+on+'" style="--mc:var(--ws-color)">'+
+      '<span class="mt-ico">'+svgIcon(ico[r])+'</span><span class="mt-name">'+esc(t("rg_"+r))+'</span><span class="mt-n">'+(counts[r] || 0)+'</span></button>';
+  }).join("")+'</div>';
+}
+function wsRegionBinden(neu){
+  app.querySelectorAll("[data-wsreg]").forEach(function(b){
+    b.addEventListener("click", function(e){ e.stopPropagation(); var s = state.db.settings; s.wsRegionen = selToggle(s.wsRegionen, b.getAttribute("data-wsreg")); save(); neu(); });
+  });
 }
 var coverDraft = null;   // das Workout auf dem Deckblatt - Änderungen gelten nur für dieses Training
 
@@ -3273,9 +3309,9 @@ function openActionSheet(title, acts){
 }
 /* Übung per Langdruck in ein bestehendes Programm legen: Air-Übungen in eigene Air-Workouts und in Studio-Pläne,
    Studio-Geräte (nur im Studio) ausschließlich in Studio-Pläne - Air bekommt nie Studio-Übungen */
-function exZuProgramm(id){
+function exZuProgramm(id, ws){   // ws: „warm“ / „dehn“ aus Mobility & Stretch - dann nur eigene Workouts dieses Bereichs
   var ex = findExercise(id);
-  if(!ex || ex.main === "stretch") return;
+  if(!ex || (ex.main === "stretch" && !ws)) return;
   var name = tplText(ex.name), s = state.db.settings;
   function fertig(pname, schon){ showToast(t(schon ? "zpAlready" : "zpAdded", { e:name, p:pname })); }
   function inWorkout(mw){
@@ -3289,9 +3325,10 @@ function exZuProgramm(id){
     l.push(id); p.ids = l; p.updatedAt = Date.now(); save(); fertig(p.name);
   }
   function workoutWahl(){
-    var acts = (state.db.myWorkouts || []).map(function(mw){ return { ico:HOME_ICON.lib, label:mw.name, fn:function(){ inWorkout(mw); } }; });
-    acts.push({ ico:ICON_PLUS, label:t("myNew"), fn:function(){
-      var mw = createMyFromDraft({ name:t("myDefaultName"), mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:[itemFromEx(id)] });
+    var acts = (state.db.myWorkouts || []).filter(function(mw){ return (mw.ws || "") === (ws || ""); })
+      .map(function(mw){ return { ico:HOME_ICON.lib, label:mw.name, fn:function(){ inWorkout(mw); } }; });
+    acts.push({ ico:ICON_PLUS, label:t(ws ? "wsNew" : "myNew"), fn:function(){
+      var mw = createMyFromDraft({ name:t("myDefaultName"), mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:[itemFromEx(id)], ws:ws });
       fertig(mw.name);
     } });
     openActionSheet(t("zpPickWo"), acts);
@@ -3305,6 +3342,7 @@ function exZuProgramm(id){
     } });
     openActionSheet(t("zpPickPlan"), acts);
   }
+  if(ws) return workoutWahl();   // Mobility & Stretch: direkt die eigenen Workouts dieses Bereichs
   var acts = [];
   if(fuerWorkout(ex)) acts.push({ ico:HOME_ICON.lib, label:t("zpAir"), fn:workoutWahl });
   acts.push({ ico:HOME_ICON.timer, label:t("zpStudio"), fn:planWahl });
@@ -3366,7 +3404,7 @@ function libExCard(ex, hidden, sub){
     ? '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'
     : (ex.custom ? '<button type="button" class="illu-btn" data-exedit="'+ex.id+'" aria-label="'+t("edit")+'"><span class="custom-ico">'+catIcon(ex.cats[0])+'</span></button>' : '');
   var mus = musclesMain(ex);
-  return '<div class="list-item entry tpl-item lib-card'+(ex.id==="russian-twists"?' ua':'')+(isExFav(ex.id)?' ex-fav-on':'')+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, '+catVar(ex.cats[0])+')" data-q="'+esc(exSearchText(ex))+'"'+(ex.main !== "stretch" ? ' data-exlang="'+ex.id+'"' : '')+'>'+
+  return '<div class="list-item entry tpl-item lib-card'+(ex.id==="russian-twists"?' ua':'')+(isExFav(ex.id)?' ex-fav-on':'')+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, '+catVar(ex.cats[0])+')" data-q="'+esc(exSearchText(ex))+'"'+' data-exlang="'+ex.id+'">'+
     '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'" aria-label="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
     '<div class="sub">'+mainTagsHTML([ex.main])+sub+'</div>'+
@@ -3471,6 +3509,7 @@ function renderLibrary(){
       });
     } else {
       (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
+        if(mw.ws) return;   // Aufwärm- und Dehn-Workouts liegen unter Mobility & Stretch › Meine
         var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
         rows.push({ mw:mw, exs:exs, name:mw.name, focus:"", dur:workoutDuration(myRun(mw)) });
       });
@@ -3488,12 +3527,7 @@ function renderLibrary(){
         if(r.hidden){ hiddenCount++; hiddenCards += libWoCard(r.lw, r.exs, true, r.dur, r.mains); }
         else list += libWoCard(r.lw, r.exs, false, r.dur, r.mains);
       } else {
-        var mw = r.mw;
-        list += '<div class="list-item entry tpl-item lib-card my-item" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, r.exs))+'">'+
-          '<button class="playbtn tp" data-cover="my/'+mw.id+'" '+(r.exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
-          '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
-          '<div class="sub">'+mainTagsHTML(r.mains)+t("exCount", { n:r.exs.length })+SEP+fmtDauerKurz(r.dur)+'</div>'+
-          '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';
+        list += myWoCard(r.mw, r.exs, r.mains, r.dur);
       }
     });
     if(tab === "mine"){   // Timer-Workouts und Blöcke haben seit 2026-10 ihren eigenen Reiter „Timer“ - hier nur noch eigene Workouts
@@ -3577,11 +3611,12 @@ function renderLibrary(){
   });
   on("[data-womore]", function(el){
     var lw = findLibWorkout(el.getAttribute("data-womore"));
-    if(!lw) return;
-    openActionSheet(tplText(lw.name), [
-      { ico:ICON_COPY, label:t("adoptMine"), fn:function(){ adoptLibWorkout(lw); } },
-      { ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("wo:"+lw.id); showToast(t("hiddenToast")); neu(); } }
-    ]);
+    if(lw) woMenue(lw, neu);
+  });
+  // langes Drücken auf eine fertige Workout-Karte = dasselbe Menü wie ⋯
+  app.querySelectorAll(".lib-card [data-womore]").forEach(function(b){
+    var lw = findLibWorkout(b.getAttribute("data-womore"));
+    if(lw) langDruck(b.closest(".lib-card"), function(){ woMenue(lw, neu); });
   });
   on("[data-exmore]", function(el){
     var ex = findExercise(el.getAttribute("data-exmore"));
@@ -3589,6 +3624,7 @@ function renderLibrary(){
     var acts = [];
     if(ex.custom) acts.push({ ico:ICON_EDIT, label:t("edit"), fn:function(){ go("#exedit/"+ex.id); } });
     if(EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false, { onChange:neu }); } });
+    acts.push({ ico:ICON_PLUS, label:t("zpAdd"), fn:function(){ exZuProgramm(ex.id); } });
     acts.push({ ico:ICON_TIMERBLOCK, label:t("adoptBlockTitle"), fn:function(){ adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) })); } });
     acts.push({ ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("ex:"+ex.id); showToast(t("hiddenToast")); neu(); } });
     openActionSheet(tplText(ex.name), acts);
@@ -3872,10 +3908,14 @@ var ICON_GRIP = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentCo
 var bauEntwurf = null;
 function renderMyBuild(id){
   if(!bauEntwurf || bauEntwurf.key !== id){
-    if(id === "new") bauEntwurf = { key:id, neu:true, d:{ id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[] } };
+    if(id === "new"){
+      bauEntwurf = { key:id, neu:true, d:{ id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[] } };
+      if(bauNeuWs){ bauEntwurf.d.ws = bauNeuWs; if(bauNeuWs === "dehn") bauEntwurf.d.work = 30; }
+      bauNeuWs = "";
+    }
     else { var mw = findMy(id); if(!mw){ go("#library"); return; } bauEntwurf = { key:id, d:draftCopy(mw) }; }
   }
-  renderDraftPage(bauEntwurf.d, { cover:false, back:"#library", id:bauEntwurf.d.id, bau:bauEntwurf });
+  renderDraftPage(bauEntwurf.d, { cover:false, back:bauEntwurf.d.ws ? "#warmstretch" : "#library", id:bauEntwurf.d.id, bau:bauEntwurf });
 }
 function bauSpeichern(b){
   var d = b.d, l = state.db.myWorkouts || (state.db.myWorkouts = []), mw = null;
@@ -3883,6 +3923,7 @@ function bauSpeichern(b){
   if(!mw){ mw = { id:d.id }; l.push(mw); }
   mw.name = d.name; mw.mode = d.mode; mw.reps = d.reps; mw.work = d.work; mw.rest = d.rest; mw.blockRest = d.blockRest;
   mw.items = draftCopy(d.items); mw.updatedAt = Date.now();
+  if(d.ws) mw.ws = d.ws; else delete mw.ws;
   save();
   if(b.neu){   // ab jetzt ein normales Workout: Adresse und Zurück-Verlauf zeigen darauf
     b.neu = false; b.key = d.id;
@@ -3897,7 +3938,7 @@ function renderCover(kind, id){
     else if(kind==="my"){ var mw = findMy(id); if(!mw){ go("#library"); return; } coverDraft = draftFromMy(mw); }
     else { go("#library"); return; }
   }
-  renderDraftPage(coverDraft, { cover:true, back:"#library" });
+  renderDraftPage(coverDraft, { cover:true, back:coverDraft.ws ? "#warmstretch" : "#library" });
 }
 
 /* cfg.cover: Deckblatt (Änderungen nur für dieses Training) - sonst Baukasten (speichert sofort).
@@ -4006,7 +4047,19 @@ function renderDraftPage(d, cfg){
   // Übungsauswahl: große Kacheln, gefiltert wie in der Bibliothek
   var palOpen = !cfg.cover || d._pal;
   var palHTML = "";
-  if(palOpen){
+  if(palOpen && d.ws){   // Mobility & Stretch: nur Aufwärm- bzw. Dehnübungen, bei Dehnen mit Körperregionen
+    var wsSel = selArr(s.wsRegionen), wsAlle = wsUebungen(d.ws), wsCounts = {};
+    wsAlle.forEach(function(ex){ wsRegionenVon(ex.id).forEach(function(r){ wsCounts[r] = (wsCounts[r] || 0) + 1; }); });
+    var wsListe = wsAlle.filter(function(ex){ return d.ws !== "dehn" || wsRegionOk(ex.id, wsSel); })
+      .sort(function(a, b){ return (isExFav(b.id) ? 1 : 0) - (isExFav(a.id) ? 1 : 0); });
+    palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
+      '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
+      suchFeldHTML(buildQuery, "b")+
+      (d.ws === "dehn" ? '<div class="page-hint">'+esc(t("wsRegionHint"))+'</div>'+wsRegionTilesHTML(wsSel, wsCounts) : '')+
+      '<div class="fig-grid" id="dz-pal">'+(wsListe.map(function(ex){ return kachel(ex); }).join("") ||
+        '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
+      '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
+  } else if(palOpen){
     var palCounts = {};
     MAIN_CATS.forEach(function(c){ palCounts[c.id] = 0; });
     EXERCISES.forEach(function(ex){ if(fuerWorkout(ex) && !libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
@@ -4163,6 +4216,7 @@ function renderDraftPage(d, cfg){
   on("[data-bfsort]", function(el){ s.libSort = el.getAttribute("data-bfsort"); save(); neu(); });
   on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; save(); neu(); });
   on("[data-bmain]", function(el){ s.buildMains = selToggle(bmains, el.getAttribute("data-bmain")); save(); neu(); });
+  wsRegionBinden(neu);
   var bq = app.querySelector("#b-q");
   if(bq){
     applySearch(app.querySelector("#dz-pal") || app, buildQuery);
@@ -4806,8 +4860,43 @@ function repEinheit(eid){ for(var i=0;i<REP_EINHEITEN.length;i++) if(REP_EINHEIT
 function myRep(id){ var l = state.db.settings.myReps || []; for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i]; return null; }
 function myRepRow(c){
   return [c.id, c.name, c.name, 0, c.zeilen.map(function(z){
-    return [z.ex, z.m.slice(0, c.runden).map(function(v){ v = +v || 0; return v > 0 ? (z.art === "sek" ? v+"s" : v) : 0; })];
+    return [z.ex, z.m.slice(0, c.runden).map(function(v){ v = +v || 0; return v > 0 ? (z.art === "sek" ? v+"s" : z.art === "m" ? v+"m" : v) : 0; })];
   })];
+}
+/* Programm oder Einheit als Kopie unter „Meine“ ablegen (Runden hintereinander, Strecken in Metern, Zeiten in Sekunden) */
+function repZuMeine(id){
+  var q = repQuelle(id);
+  if(!q) return;
+  var R = repQRunden(q), zeilen = [], off = 0;
+  q.teile.forEach(function(tl){
+    tl.row[4].forEach(function(x){
+      var art = "wdh", m = [];
+      for(var r=0; r<R; r++) m.push(0);
+      x[1].slice(tl.von-1, tl.bis).forEach(function(v, k){
+        if(!v) return;
+        v = repMengeMal(v, tl.f);
+        var sek = repSek(v), d = /^(\d+(?:\.\d+)?)(m|km)$/.exec(v);
+        if(sek){ art = "sek"; v = sek; }
+        else if(d){ art = "m"; v = Math.round(+d[1]*(d[2] === "km" ? 1000 : 1)); }
+        else v = +v || 0;
+        m[off+k] = v;
+      });
+      var z = null;
+      zeilen.forEach(function(y){ if(y.ex === x[0] && y.art === art) z = y; });   // gleiche Übung in einem anderen Teil: eine Zeile
+      if(z) m.forEach(function(v, i){ if(v) z.m[i] = v; });
+      else zeilen.push({ ex:x[0], art:art, m:m });
+    });
+    off += tl.bis - tl.von + 1;
+  });
+  var c = { id:"my-"+uid(), name:q.name, runden:R, zeilen:zeilen, updatedAt:Date.now() };
+  (state.db.settings.myReps || (state.db.settings.myReps = [])).push(c);
+  save();
+  showToast(t("repKopiert", { n:q.name }));
+}
+function repMenue(id){
+  var q = repQuelle(id);
+  if(!q) return;
+  openActionSheet(q.name, [{ ico:ICON_COPY, label:t(q.eigen ? "actCopy" : "adoptMine"), fn:function(){ repZuMeine(id); } }]);
 }
 function repQuelle(id){
   if(/^my-/.test(id || "")){
@@ -4883,55 +4972,99 @@ function repPlanHTML(q){
   return '<div class="rep-plan">'+zeilen.join("")+'</div>';
 }
 
+/* Eigenes Workout als Karte (Air › Meine und Mobility & Stretch › Meine) */
+function myWoCard(mw, exs, mains, dur){
+  return '<div class="list-item entry tpl-item lib-card my-item" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, exs))+'">'+
+    '<button class="playbtn tp" data-cover="my/'+mw.id+'" '+(exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
+    '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
+    '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDauerKurz(dur)+'</div>'+
+    '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';
+}
+/* Menü eines fertigen Workouts (⋯ und langes Drücken): unter „Meine“ speichern, ausblenden. ws: aus Mobility & Stretch */
+function woMenue(lw, neu, ws){
+  openActionSheet(tplText(lw.name), [
+    { ico:ICON_COPY, label:t("adoptMine"), fn:function(){ adoptLibWorkout(lw, ws); } },
+    { ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("wo:"+lw.id); showToast(t("hiddenToast")); neu(); } }
+  ]);
+}
 /* ============ Aufwärmen & Dehnen ============
-   Eigene Kachel, weil beides zu Workouts und Challenges passt. Oben Aufwärmen | Dehnen, darunter wie in der
-   Bibliothek Workouts | Übungen. Aufwärmen: AUFWAERM_IDS bzw. AUFWAERM_UEBUNGEN, Dehnen: übrige Dehnprogramme
-   bzw. alle Übungen der Hauptkategorie Stretch. Karten und Knöpfe wie in der Bibliothek. */
+   Eigene Kachel, weil beides zu Workouts und Challenges passt. Aufbau wie Air: Lupe oben rechts, oben Aufwärmen | Dehnen,
+   darunter Workouts | Übungen | Meine. Bei Dehnen mit Körperregionen als Filter (Nacken, Schultern, Rücken, Hüfte, Beine …).
+   Meine = eigene Workouts dieses Bereichs (mw.ws = „warm“ / „dehn“); Übungen lassen sich per langem Drücken oder ⋯ dort einbauen. */
+var wsQuery = "";
 function renderWarmStretch(){
   var s = state.db.settings;
-  var art = s.wsArt === "dehn" ? "dehn" : "warm", tab = s.wsTab === "uebungen" ? "uebungen" : "workouts";
-  var liste;
+  var art = s.wsArt === "dehn" ? "dehn" : "warm", tab = ["uebungen", "meine"].indexOf(s.wsTab) > -1 ? s.wsTab : "workouts";
+  var regSel = art === "dehn" && tab !== "meine" ? selArr(s.wsRegionen).filter(function(r){ return WS_REGIONEN.indexOf(r) > -1; }) : [];
+  var liste = "", fab = "", counts = {};
+  function zaehlen(ids){
+    var da = {};
+    ids.forEach(function(id){ wsRegionenVon(id).forEach(function(r){ da[r] = true; }); });
+    Object.keys(da).forEach(function(r){ counts[r] = (counts[r] || 0) + 1; });
+  }
   if(tab === "workouts"){
     var wos = art === "warm" ? AUFWAERM_IDS.map(findLibWorkout).filter(Boolean)
                              : LIB_WORKOUTS.filter(function(lw){ return lw.focus === "stretch" && AUFWAERM_IDS.indexOf(lw.id) < 0; });
-    liste = wos.filter(function(lw){ return !libHidden("wo:"+lw.id); }).map(function(lw){
+    var rows = wos.filter(function(lw){ return !libHidden("wo:"+lw.id); }).map(function(lw){
       var exs = lw.exercises.map(findExercise).filter(Boolean);
       return { lw:lw, exs:exs, dur:workoutDuration(libWorkoutRun(lw)) };
-    }).sort(function(a, b){ return a.dur - b.dur; }).map(function(r){
-      return libWoCard(r.lw, r.exs, false, r.dur, woMains(r.exs));
-    }).join("");
+    });
+    if(art === "dehn") rows.forEach(function(r){ zaehlen(r.exs.map(function(ex){ return ex.id; })); });
+    liste = rows.filter(function(r){ return !regSel.length || r.exs.some(function(ex){ return wsRegionOk(ex.id, regSel); }); })
+      .sort(function(a, b){ return a.dur - b.dur; }).map(function(r){ return libWoCard(r.lw, r.exs, false, r.dur, woMains(r.exs)); }).join("");
+  } else if(tab === "uebungen"){
+    var exl = wsUebungen(art);
+    if(art === "dehn") exl.forEach(function(ex){ zaehlen([ex.id]); });
+    liste = exl.filter(function(ex){ return art !== "dehn" || wsRegionOk(ex.id, regSel); })
+      .map(function(ex){ return libExCard(ex, false, exSubText(ex)); }).join("");
   } else {
-    var exs = art === "warm" ? AUFWAERM_UEBUNGEN.map(findExercise).filter(Boolean)
-                             : EXERCISES.filter(function(ex){ return ex.main === "stretch"; });
-    liste = exs.filter(function(ex){ return !libHidden("ex:"+ex.id); }).map(function(ex){ return libExCard(ex, false, exSubText(ex)); }).join("");
+    (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return mw.ws === art; }).forEach(function(mw){
+      var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
+      liste += myWoCard(mw, exs, woMains(exs), workoutDuration(myRun(mw)));
+    });
+    if(!liste) liste = '<div class="empty" style="padding:30px 20px;">'+esc(t("wsMineEmpty"))+'</div>';
+    fab = fabMenuHTML([{ key:"new", label:t("wsNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
   function knopf(attr, wert, aktiv, text){ return '<button data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
   app.innerHTML =
-    topbar(t("warmTitle"), { back:"#home" }) +
+    topbar(t("warmTitle"), { back:"#home", right:lupeHTML("ws", wsQuery) }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
       knopf("wsart", "warm", art === "warm", t("wsWarm"))+knopf("wsart", "dehn", art === "dehn", t("wsDehn"))+
-    '</div><div class="theme-pick lib-tabs seg-2 unter-tabs">'+
-      knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+
+    '</div><div class="theme-pick lib-tabs seg-3 unter-tabs">'+
+      knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+knopf("wstab", "meine", tab === "meine", t("tabMine"))+
     '</div></div>'+
-    '<div class="rep-intro">'+esc(t(art === "warm" ? "wsIntroWarm" : "wsIntroDehn"))+'</div>'+
+    '<div class="rep-intro">'+esc(t(tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"))+'</div>'+
+    suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
+    (tab === "uebungen" ? '<div class="page-hint">'+esc(t("zpHintWs"))+'</div>' : '')+
+    (art === "dehn" && tab !== "meine" ? wsRegionTilesHTML(regSel, counts) : '')+
     // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
-    (liste ? '<div style="--bereich:var(--ws-color)">'+liste+'</div>' : '<div class="empty">'+t("libEmpty")+'</div>') +
-    '<div style="height:40px"></div>';
+    '<div style="--bereich:var(--ws-color)">'+(liste || '<div class="empty">'+t("libEmpty")+'</div>')+'</div>'+
+    '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>'+
+    '<div style="height:'+(fab ? 90 : 40)+'px"></div>'+fab;
   bindCommon();
   function neu(){ var y = window.scrollY; renderWarmStretch(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   on("[data-wsart]", function(el){ s.wsArt = el.getAttribute("data-wsart"); save(); renderWarmStretch(); window.scrollTo(0, 0); });
   on("[data-wstab]", function(el){ s.wsTab = el.getAttribute("data-wstab"); save(); renderWarmStretch(); window.scrollTo(0, 0); });
+  wsRegionBinden(neu);
+  var wq = app.querySelector("#ws-q");
+  if(wq){
+    applySearch(app, wsQuery);
+    wq.addEventListener("input", function(){ wsQuery = wq.value; applySearch(app, wsQuery); });
+  }
+  bindFabMenu({ "new": function(){ bauNeuWs = art; go("#mybuild/new"); } });
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   on("[data-womore]", function(el){
     var lw = findLibWorkout(el.getAttribute("data-womore"));
-    if(!lw) return;
-    openActionSheet(tplText(lw.name), [
-      { ico:ICON_COPY, label:t("adoptMine"), fn:function(){ adoptLibWorkout(lw); } },
-      { ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("wo:"+lw.id); showToast(t("hiddenToast")); neu(); } }
-    ]);
+    if(lw) woMenue(lw, neu, art);
   });
+  // langes Drücken wie in Air: Workout-Karte = Menü (⋯), Übungskarte = in ein eigenes Workout einbauen
+  app.querySelectorAll(".lib-card [data-womore]").forEach(function(b){
+    var lw = findLibWorkout(b.getAttribute("data-womore"));
+    if(lw) langDruck(b.closest(".lib-card"), function(){ woMenue(lw, neu, art); });
+  });
+  app.querySelectorAll("[data-exlang]").forEach(function(el){ langDruck(el, function(){ exZuProgramm(el.getAttribute("data-exlang"), art); }); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
   on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
   on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
@@ -4942,6 +5075,7 @@ function renderWarmStretch(){
     var acts = [];
     if(ex.custom) acts.push({ ico:ICON_EDIT, label:t("edit"), fn:function(){ go("#exedit/"+ex.id); } });
     if(EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false, { onChange:neu }); } });
+    acts.push({ ico:ICON_PLUS, label:t("zpWs"), fn:function(){ exZuProgramm(ex.id, art); } });
     acts.push({ ico:ICON_TIMERBLOCK, label:t("adoptBlockTitle"), fn:function(){ adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) })); } });
     acts.push({ ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("ex:"+ex.id); showToast(t("hiddenToast")); neu(); } });
     openActionSheet(tplText(ex.name), acts);
@@ -4959,7 +5093,7 @@ function renderReps(){
     if(qq) qq.teile.forEach(function(tl){ tl.row[4].forEach(function(x){ such.push(repExName(x[0])); }); });
     return '<div class="list-item rep-karte" data-nav="#rep/'+id+'" data-q="'+esc(such.join(" "))+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
       (zeile1 ? '<div class="sub rep-teile">'+zeile1+'</div>' : '')+'<div class="sub">'+zeile2+'</div>'+(plan || '')+repZeitenHTML(best)+'</div>'+
-      (best ? wochenKurve(repWochen(id), "rep-spark") : '')+
+      (best ? wochenKurve(repWochen(id), "rep-spark") : '')+moreBtn("data-repmore", id)+
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   var html = topbar(t("repTitle"), { back:"#home", right:lupeHTML("rs", repQuery) }) +
@@ -5022,6 +5156,11 @@ function renderReps(){
     if(repQuery) applySearch(app, repQuery);
     rq.addEventListener("input", function(){ repQuery = rq.value; applySearch(app, repQuery); });
   }
+  // ⋯ und langes Drücken auf eine Karte: unter „Meine“ ablegen (wie bei Air)
+  app.querySelectorAll("[data-repmore]").forEach(function(b){
+    b.addEventListener("click", function(e){ e.stopPropagation(); repMenue(b.getAttribute("data-repmore")); });
+    langDruck(b.closest(".rep-karte"), function(){ repMenue(b.getAttribute("data-repmore")); });
+  });
   var neuBtn = app.querySelector("[data-repnew]");
   if(neuBtn) neuBtn.addEventListener("click", function(){
     var c = { id:"my-"+uid(), name:t("reDefaultName"), runden:3, zeilen:[], updatedAt:Date.now() };
@@ -5087,14 +5226,14 @@ function renderRepEdit(id){
     return '<div class="card re-zeile">'+
       '<div class="re-kopf"><div class="rep-ex-in">'+(bild || '<span class="rep-leer"></span>')+'<b>'+esc(repExName(z.ex))+'</b></div>'+
         '<button type="button" class="dz-btn" data-rerm="'+i+'" aria-label="'+esc(t("del"))+'">&times;</button></div>'+
-      '<div class="seg-row re-art">'+["wdh", "sek"].map(function(a){
-        return '<button type="button" class="'+(z.art===a ? 'active' : '')+'" data-reart="'+i+':'+a+'">'+esc(t(a==="wdh" ? "reWdh" : "reSek"))+'</button>'; }).join("")+'</div>'+
+      '<div class="seg-row re-art">'+["wdh", "sek", "m"].map(function(a){
+        return '<button type="button" class="'+(z.art===a ? 'active' : '')+'" data-reart="'+i+':'+a+'">'+esc(t(a==="wdh" ? "reWdh" : a==="sek" ? "reSek" : "reMeter"))+'</button>'; }).join("")+'</div>'+
       '<div class="re-felder">'+felder+'</div></div>';
   }).join("");
   app.innerHTML =
     topbar(t("reTitle"), { back:"#reps" }) +
     '<div class="card"><label for="re-name">'+t("name")+'</label><input type="text" id="re-name" value="'+esc(c.name)+'" maxlength="40">'+
-      '<label>'+t("reRunden")+'</label>'+stepperHTML("re-runden", R, 1, 10, 1)+'</div>'+
+      '<label>'+t("reRunden")+'</label>'+stepperHTML("re-runden", R, 1, 20, 1)+'</div>'+
     '<div class="section-title">'+t("reUebungen")+'</div>'+
     (zeilen || '<div class="empty" style="padding:16px 20px;">'+esc(t("reLeer"))+'</div>')+
     '<button type="button" class="my-new" data-readd>'+ICON_PLUS+' '+t("myAdd")+'</button>'+
@@ -5109,7 +5248,7 @@ function renderRepEdit(id){
   var nameIn = app.querySelector("#re-name");
   nameIn.addEventListener("input", function(){ c.name = nameIn.value.trim() || t("reDefaultName"); speichern(); });
   bindSteppers(app, function(){
-    var n = clamp(parseInt(app.querySelector("#re-runden").value) || 1, 1, 10);
+    var n = clamp(parseInt(app.querySelector("#re-runden").value) || 1, 1, 20);
     if(n === c.runden) return;
     c.runden = n;
     c.zeilen.forEach(function(z){ while(z.m.length < n) z.m.push(z.m.length ? z.m[z.m.length-1] : (z.art === "sek" ? 30 : 10)); });
