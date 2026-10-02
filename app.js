@@ -5295,7 +5295,7 @@ function renderRepEdit(id){
 /* Auswahl einer Übung (mit Suche): Laufen, Sprint, Pause und alle Übungen außer Dehnen */
 function repExPicker(onPick){
   var root = document.getElementById("overlayRoot");
-  var ex = EXERCISES.filter(function(e){ return e.main !== "stretch" && !libHidden("ex:"+e.id); }).map(function(e){
+  var ex = EXERCISES.filter(function(e){ return fuerWorkout(e) && e.equip.indexOf("gym") < 0 && !libHidden("ex:"+e.id); }).map(function(e){
     return { id:e.id, name:tplText(e.name), q:exSearchText(e) };
   }).sort(function(a, b){ return a.name.localeCompare(b.name, currentLang()); });
   var liste = Object.keys(REP_PSEUDO).map(function(k){ var n = tplText(REP_PSEUDO[k]); return { id:k, name:n, q:n.toLowerCase() }; }).concat(ex);

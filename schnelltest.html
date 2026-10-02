@@ -174,7 +174,9 @@
       klick('[data-repf="tab:meine"]');
       klick(await bis(function () { return $("[data-repnew]"); }, 3000, "Neue Challenge"));
       klick(await bis(function () { return $("[data-readd]"); }, 3000, "Editor"));
-      klick(await bis(function () { return $('[data-repick="burpees"]'); }, 3000, "Übungsauswahl"));
+      await bis(function () { return $('[data-repick="burpees"]'); }, 3000, "Übungsauswahl");
+      pruefe(!$('[data-repick="leg-press"]') && !$('[data-repick="cobra-lift"]'), "Studio- oder Dehnübung in der Challenge-Auswahl");
+      klick($('[data-repick="burpees"]'));
       var f0 = await bis(function () { return $('[data-rem="0:0"]'); }, 3000, "Mengenfelder");
       f0.value = "5"; f0.dispatchEvent(new W.Event("change"));
       pruefe($('[data-rem="0:2"]').value === "5", "Runde 1 überträgt sich nicht auf Runde 3");
