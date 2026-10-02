@@ -1727,6 +1727,11 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .ssl-text small{ font-size:12.5px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .ssl-kurve{ width:64px; height:26px; flex:none; color:var(--cat, var(--bl-color)); }
 .ssl-chev{ flex:none; display:flex; color:var(--text-dim); }
+/* ohne Daten: gestrichelte Platzhalterlinie statt Kurve, leeres Diagramm-Gerüst im Fenster */
+.ssl-kurve.leer polyline{ stroke-dasharray:3 5; opacity:.5; }
+.wo-diagramm.leer{ opacity:.7; }
+/* Summit-Detailseite: Kachel steht in einer eigenen Zeile zwischen Kopfzeile und Tabellen (nichts liegt über Figuren) */
+.rep-meta + .st-stats-leiste{ margin-top:8px; margin-bottom:6px; }
 .st-stats h3{ margin-bottom:12px; }
 .st-stats-zahlen{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:14px; }
 .st-stats-zahlen div{ background:var(--surface-2); border-radius:14px; padding:10px 8px; text-align:center; display:flex; flex-direction:column; gap:2px; }

@@ -360,6 +360,8 @@ var I18N = {
     repAll:"Alle", repAllEquip:"Alle Geräte", repNoBar:"Ohne Stange", repNone:"Keine Programme für diese Auswahl.",
     repRound1:"1 Runde", repRoundsN:"{n} Runden", repReps:"{n} Wdh.", repBar:"Stange", repRound:"Runde",
     repBestIs:"Bestzeit {z}", repLastIs:"zuletzt {z}", repTable:"Ablauf", repStart:"Start",
+    repStatsKurz:"Bestzeit {z} · {n} Läufe", repStatsNone:"noch keine Läufe", repBestZeit:"Bestzeit", repLaeufe:"Läufe", repLetzte:"Letzte Zeit", repLastRuns:"Letzte Läufe",
+    repStatsEmpty:"Noch keine Zeit. Spiel das Programm einmal durch – dann steht hier deine Bestzeit und ab der zweiten Woche deine Kurve.",
     repHint:"Nach jeder Übung „Geschafft“ tippen.",
     repDone:"Geschafft", repSkip:"Überspringen", repUndo:"Zurück", repPause:"Pause", repResume:"Weiter", repEnd:"Beenden",
     repNext:"Danach: {x}", repLastStep:"Letzte Übung", repReady:"Gleich geht's los", repFinish:"Geschafft!", repNewBest:"Neue Bestzeit!",
@@ -560,6 +562,8 @@ var I18N = {
     repAll:"All", repAllEquip:"Any equipment", repNoBar:"No bar", repNone:"No programs match this selection.",
     repRound1:"1 round", repRoundsN:"{n} rounds", repReps:"{n} reps", repBar:"Bar", repRound:"Round",
     repBestIs:"Best {z}", repLastIs:"last {z}", repTable:"Sequence", repStart:"Start",
+    repStatsKurz:"Best {z} · {n} runs", repStatsNone:"no runs yet", repBestZeit:"Best time", repLaeufe:"Runs", repLetzte:"Last time", repLastRuns:"Latest runs",
+    repStatsEmpty:"No time yet. Play the program once – then your best time shows up here, and your curve from the second week.",
     repHint:"Tap “Done” after each exercise.",
     repDone:"Done", repSkip:"Skip", repUndo:"Back", repPause:"Pause", repResume:"Resume", repEnd:"End",
     repNext:"Next: {x}", repLastStep:"Last exercise", repReady:"Get ready", repFinish:"Done!", repNewBest:"New best time!",
@@ -2104,6 +2108,17 @@ function studioPauseStop(){
 }
 var ICON_STATS = '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>';
 /* Leiste oben in der Karte: „Statistik“, Kurzfassung, kleine Kurve - ein Tipp öffnet das Statistik-Fenster */
+/* Statistik-Kachel für Studio und Summit: immer sichtbar, eigene Zeile über dem Inhalt (so überdeckt sie keine Figur).
+   Ohne Kurve steht eine gestrichelte Platzhalterlinie, ein Tipp öffnet in jedem Fall das Statistik-Fenster. */
+function statsLeisteHTML(attr, kurz, pts, farbe){
+  var kurve = wochenKurve(pts, "ssl-kurve") ||
+    '<svg class="wo-kurve ssl-kurve leer" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,15 100,15"/></svg>';
+  return '<button type="button" class="st-stats-leiste" '+attr+(farbe ? ' style="--cat:'+farbe+'"' : '')+'>'+
+    '<span class="ssl-ico">'+svgIcon(ICON_STATS)+'</span>'+
+    '<span class="ssl-text"><b>'+esc(t("stStats"))+'</b><small>'+esc(kurz)+'</small></span>'+
+    kurve+
+    '<span class="ssl-chev">'+ICON_CHEV+'</span></button>';
+}
 function studioStatsLeiste(id){
   var e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return l.s.length; }), kurz = t("stStatsNone");
   if(log.length){
@@ -2111,59 +2126,80 @@ function studioStatsLeiste(id){
     log.forEach(function(l){ l.s.forEach(function(x){ if(x[0] > best) best = x[0]; }); });
     kurz = t("stStatsKurz", { kg:studioKg(best), n:log.length });
   }
-  return '<button type="button" class="st-stats-leiste" data-ststats>'+
-    '<span class="ssl-ico">'+svgIcon(ICON_STATS)+'</span>'+
-    '<span class="ssl-text"><b>'+esc(t("stStats"))+'</b><small>'+esc(kurz)+'</small></span>'+
-    wochenKurve(studioWochen(id), "ssl-kurve")+
-    '<span class="ssl-chev">'+ICON_CHEV+'</span></button>';
+  return statsLeisteHTML("data-ststats", kurz, studioWochen(id));
 }
-function wochenDiagramm(pts, einheit){
-  var B = 300, H = 130, l = 34, r = 10, o = 10, u = 22;
-  var vs = pts.map(function(q){ return q.v; }), mx = Math.max.apply(null, vs), mn = Math.min.apply(null, vs);
-  if(mx === mn){ mx += 1; mn = Math.max(0, mn - 1); }
-  var w0 = pts[0].w, wb = pts[pts.length-1].w - w0 || 1;
+/* Diagramm je Woche. fmt formatiert die Achsenwerte (Standard: Gewicht), schritt ist der Abstand, wenn alle Werte gleich sind.
+   Ohne Punkte zeichnet es nur das leere Gerüst - dann sieht man trotzdem, was hier entsteht. */
+function wochenDiagramm(pts, einheit, fmt, schritt){
+  fmt = fmt || studioKg; schritt = schritt || 1;
+  var B = 300, H = 130, l = 34, r = 10, o = 10, u = 22, leer = !pts.length;
+  var vs = pts.map(function(q){ return q.v; }), mx = leer ? 0 : Math.max.apply(null, vs), mn = leer ? 0 : Math.min.apply(null, vs);
+  if(mx === mn){ mx += schritt; mn = Math.max(0, mn - schritt); }
+  var w0 = leer ? 0 : pts[0].w, wb = leer ? 1 : (pts[pts.length-1].w - w0 || 1);
   function X(q){ return l + (pts.length === 1 ? .5 : (q.w - w0)/wb) * (B - l - r); }
   function Y(q){ return o + (1 - (q.v - mn)/(mx - mn)) * (H - o - u); }
   function datum(w){ return new Date(w * 6048e5 - 216e6).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric" }); }
-  return '<svg class="wo-diagramm" viewBox="0 0 '+B+' '+H+'" role="img" aria-label="'+esc(t("stWeekly"))+'">'+
+  return '<svg class="wo-diagramm'+(leer ? ' leer' : '')+'" viewBox="0 0 '+B+' '+H+'" role="img" aria-label="'+esc(t("stWeekly"))+'">'+
     '<path class="wd-gitter" d="M'+l+' '+o+'H'+(B-r)+'M'+l+' '+((o+H-u)/2)+'H'+(B-r)+'M'+l+' '+(H-u)+'H'+(B-r)+'"/>'+
-    '<text class="wd-txt" x="'+(l-5)+'" y="'+(o+4)+'" text-anchor="end">'+studioKg(mx)+'</text>'+
-    '<text class="wd-txt" x="'+(l-5)+'" y="'+(H-u+4)+'" text-anchor="end">'+studioKg(mn)+'</text>'+
-    '<text class="wd-txt" x="'+l+'" y="'+(H-5)+'">'+datum(pts[0].w)+'</text>'+
+    '<text class="wd-txt" x="'+(l-5)+'" y="'+(o+4)+'" text-anchor="end">'+(leer ? '–' : fmt(mx))+'</text>'+
+    '<text class="wd-txt" x="'+(l-5)+'" y="'+(H-u+4)+'" text-anchor="end">'+(leer ? '–' : fmt(mn))+'</text>'+
+    (leer ? '' : '<text class="wd-txt" x="'+l+'" y="'+(H-5)+'">'+datum(pts[0].w)+'</text>')+
     (pts.length > 1 ? '<text class="wd-txt" x="'+(B-r)+'" y="'+(H-5)+'" text-anchor="end">'+datum(pts[pts.length-1].w)+'</text>' : '')+
     '<text class="wd-txt" x="'+(B/2)+'" y="'+(H-5)+'" text-anchor="middle">'+esc(einheit)+'</text>'+
     (pts.length > 1 ? '<polyline class="wd-linie" points="'+pts.map(function(q){ return X(q).toFixed(1)+","+Y(q).toFixed(1); }).join(" ")+'"/>' : '')+
     pts.map(function(q){ return '<circle class="wd-punkt" cx="'+X(q).toFixed(1)+'" cy="'+Y(q).toFixed(1)+'" r="3.5"/>'; }).join("")+'</svg>';
 }
-function openStudioStats(id){
-  var ex = findExercise(id), e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return l.s.length; });
-  var root = document.getElementById("overlayRoot"), innen;
-  if(!log.length) innen = '<p class="st-stats-leer">'+esc(t("stStatsEmpty"))+'</p>';
-  else {
-    var wo = studioWochen(id), saetze = 0, best = 0;
-    log.forEach(function(l){ saetze += l.s.length; l.s.forEach(function(x){ if(x[0] > best) best = x[0]; }); });
-    var seit = new Date(log[0].at).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" });
-    innen = '<div class="st-stats-zahlen">'+
-        '<div><b>'+studioKg(best)+' kg</b><span>'+esc(t("stBestKg"))+'</span></div>'+
-        '<div><b>'+log.length+'</b><span>'+esc(t("stSessions"))+'</span></div>'+
-        '<div><b>'+saetze+'</b><span>'+esc(t("stSetsAll"))+'</span></div></div>'+
-      '<div class="wo-kopf"><span>'+esc(t("stWeekly"))+SEP+esc(t("stSince", { d:seit }))+'</span>'+
-        (wo.length > 1 ? '<b>'+studioKg(wo[0].v)+' → '+studioKg(wo[wo.length-1].v)+' kg</b>' : '')+'</div>'+
-      wochenDiagramm(wo, "kg")+
-      (wo.length < 2 ? '<p class="st-stats-hinweis">'+esc(t("stOneWeek"))+'</p>' : '')+
-      '<div class="info-title">'+esc(t("stLastN"))+'</div>'+
-      log.slice(-8).reverse().map(function(l){
-        var d = new Date(l.at);
-        return '<div class="st-v-zeile"><span>'+d.toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" })+'</span>'+
-          '<b>'+l.s.map(function(x){ return studioKg(x[0])+"×"+x[1]; }).join(" · ")+'</b></div>';
-      }).join("");
-  }
-  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet st-stats" role="dialog" aria-label="'+esc(t("stStats"))+'" style="--cat:'+studioFarbe(ex)+'">'+
-    '<h3>'+esc(t("stStats"))+SEP+esc(tplText(ex.name))+'</h3>'+innen+
+/* Statistik-Fenster für Studio und Summit. o: { titel, farbe, zahlen:[[Wert, Beschriftung] …], wochen, fmt, schritt, einheit,
+   suffix (hinter dem Verlauf, z. B. " kg"), seit, hatDaten, leerText, letzteTitel, letzte:[[links, rechts] …] }.
+   Ohne Daten bleibt alles stehen (Zahlen als „–“, leeres Diagramm), dazu ein kurzer Hinweis. */
+function openStatistik(o){
+  var root = document.getElementById("overlayRoot"), wo = o.wochen || [], fmt = o.fmt || studioKg;
+  var hinweis = !o.hatDaten ? o.leerText : wo.length < 2 ? t("stOneWeek") : "";
+  var innen = '<div class="st-stats-zahlen">'+o.zahlen.map(function(z){
+      return '<div><b>'+esc(o.hatDaten ? z[0] : "–")+'</b><span>'+esc(z[1])+'</span></div>'; }).join("")+'</div>'+
+    '<div class="wo-kopf"><span>'+esc(o.verlaufTitel)+(o.seit ? SEP+esc(t("stSince", { d:o.seit })) : '')+'</span>'+
+      (wo.length > 1 ? '<b>'+fmt(wo[0].v)+' → '+fmt(wo[wo.length-1].v)+(o.suffix || '')+'</b>' : '')+'</div>'+
+    wochenDiagramm(wo, o.einheit, fmt, o.schritt)+
+    (hinweis ? '<p class="st-stats-hinweis">'+esc(hinweis)+'</p>' : '')+
+    (o.letzte && o.letzte.length ? '<div class="info-title">'+esc(o.letzteTitel)+'</div>'+o.letzte.map(function(z){
+      return '<div class="st-v-zeile"><span>'+esc(z[0])+'</span><b>'+esc(z[1])+'</b></div>'; }).join("") : '');
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet st-stats" role="dialog" aria-label="'+esc(t("stStats"))+'" style="--cat:'+o.farbe+'">'+
+    '<h3>'+esc(t("stStats"))+SEP+esc(o.titel)+'</h3>'+innen+
     '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:14px;">'+t("close")+'</button></div></div>';
   function zu(){ root.innerHTML = ""; }
   root.querySelector("[data-cancel]").addEventListener("click", zu);
   root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+}
+function openStudioStats(id){
+  var ex = findExercise(id), e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return l.s.length; });
+  var saetze = 0, best = 0;
+  log.forEach(function(l){ saetze += l.s.length; l.s.forEach(function(x){ if(x[0] > best) best = x[0]; }); });
+  openStatistik({
+    titel:tplText(ex.name), farbe:studioFarbe(ex), hatDaten:log.length > 0, leerText:t("stStatsEmpty"),
+    zahlen:[[studioKg(best)+" kg", t("stBestKg")], [String(log.length), t("stSessions")], [String(saetze), t("stSetsAll")]],
+    verlaufTitel:t("stWeekly"), wochen:studioWochen(id), einheit:"kg", suffix:" kg",
+    seit:log.length ? new Date(log[0].at).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" }) : "",
+    letzteTitel:t("stLastN"),
+    letzte:log.slice(-8).reverse().map(function(l){
+      return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }),
+              l.s.map(function(x){ return studioKg(x[0])+"×"+x[1]; }).join(" · ")];
+    })
+  });
+}
+/* Summit: dieselbe Statistik für ein Programm (Bestzeit, Läufe, Zeit je Woche) */
+function openRepStats(id, name){
+  var b = repBestOf(id), log = (b && b.log) || [];
+  openStatistik({
+    titel:name, farbe:"var(--rep-color)", hatDaten:!!b, leerText:t("repStatsEmpty"),
+    zahlen:[[b ? repUhr(b.best) : "", t("repBestZeit")], [b ? String(b.n) : "", t("repLaeufe")], [b ? repUhr(b.last) : "", t("repLetzte")]],
+    verlaufTitel:t("repWeekly"), wochen:repWochen(id), fmt:repUhr, schritt:1000, einheit:"min",
+    seit:log.length ? new Date(log[0][0]).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" }) : "",
+    letzteTitel:t("repLastRuns"),
+    letzte:log.slice(-8).reverse().map(function(x){
+      return [new Date(x[0]).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }),
+              repUhr(x[1])+(b && x[1] === b.best ? " ★" : "")];
+    })
+  });
 }
 function studioTimerKarte(id, titel, hinweis){
   var tm = studioTimer(id);
@@ -4533,11 +4569,7 @@ function renderRepDetail(id){
     '<div class="rep-meta">'+(q.einzel && !q.eigen ? esc(t("lvl"+q.lvl))+SEP : '')+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+
       (repQStange(q) ? SEP+esc(t("repBar")) : "")+
       (best ? SEP+esc(t("repBestIs", { z:repUhr(best.best) }))+(best.n > 1 ? ', '+esc(t("repLastIs", { z:repUhr(best.last) })) : '') : '')+'</div>'+
-    (function(){
-      var wo = repWochen(id);
-      return wo.length > 1 ? '<div class="card rep-verlauf"><div class="wo-kopf"><span>'+esc(t("repWeekly"))+SEP+esc(t("weeksN", { n:wo[wo.length-1].w - wo[0].w + 1 }))+'</span>'+
-        '<b>'+repUhr(wo[0].v)+' → '+repUhr(wo[wo.length-1].v)+'</b></div>'+wochenKurve(wo, "rep-kurve")+'</div>' : '';
-    })()+
+    statsLeisteHTML("data-repstats", best ? t("repStatsKurz", { z:repUhr(best.best), n:best.n }) : t("repStatsNone"), repWochen(id), "var(--rep-color)")+
     q.teile.map(function(tl, i){
       return '<div class="section-title">'+esc(q.einzel ? t("repTable") : (i+1)+". "+repTeilName(tl))+'</div>'+tabelle(tl);
     }).join("")+
@@ -4547,6 +4579,7 @@ function renderRepDetail(id){
     (q.eigen ? '<button type="button" class="btn btn-secondary" data-nav="#repedit/'+id+'" style="margin-top:10px;">'+svgIcon(ICON_EDIT)+' '+esc(t("edit"))+'</button>' : '');
   bindCommon();
   app.querySelector("[data-repstart]").addEventListener("click", function(){ repRun = null; go("#repplay/"+id); });
+  app.querySelector("[data-repstats]").addEventListener("click", function(){ openRepStats(id, q.name); });
 }
 
 /* Eigene Challenge bearbeiten: Name, Runden, je Übung Wiederholungen oder Sekunden pro Runde. Speichert sofort. */
