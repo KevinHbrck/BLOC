@@ -669,7 +669,7 @@ function fmtDauerKurz(totalSec){
   totalSec = Math.max(0, Math.round(totalSec));
   if(totalSec >= 3600) return fmtDuration(totalSec);
   var s = totalSec%60;
-  return Math.floor(totalSec/60) + ":" + (s<10?"0":"") + s + " " + t("unitMin");
+  return Math.floor(totalSec/60) + ":" + (s<10?"0":"") + s + " " + t("unitMin");   // geschütztes Leerzeichen: „12:20 Min“ bricht nie in der Mitte um
 }
 function fmtDuration(totalSec){
   totalSec = Math.max(0, Math.round(totalSec));
