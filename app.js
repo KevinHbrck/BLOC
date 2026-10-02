@@ -5438,7 +5438,7 @@ function renderRunLive(){
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
       '<button type="button" class="btn btn-secondary" data-rundark>'+esc(t("runDark"))+'</button>'+
       (runAnsageEinst().every ? '<button type="button" class="btn btn-secondary run-stumm" data-runstumm aria-pressed="'+!!r.stumm+'">'+esc(t(r.stumm ? "runStummAus" : "runStummAn"))+'</button>' : '')+
-      '<button type="button" class="btn btn-danger" data-runend>'+esc(t("runEnd"))+'</button></div>'+
+      '<button type="button" class="btn btn-danger run-ende" data-runend>'+esc(t("runEnd"))+'</button></div>'+
     '<div style="height:40px"></div>';
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
