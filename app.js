@@ -211,6 +211,7 @@ var ERSTER_START = (function(){ try{ return !localStorage.getItem(DB_KEY); }catc
 var state = { db: loadDB() };
 
 function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state.db)); }
+var speichereDB = save;   // für Stellen, die ein eigenes lokales save() haben (renderWorkoutEdit)
 /* IDs zusammengelegter Übungen (EX_ALIAS) in Favoriten, Ausblendungen, eigenen Workouts und Blöcken umschreiben */
 function migrateExIds(db){
   function neu(id){ return EX_ALIAS[id] || id; }
@@ -2543,7 +2544,7 @@ function bindSteppers(root, onChange){
 function renderWorkoutEdit(id){
   var istNeu = !!entwurf("workouts", id);
   var w = findWorkout(id) || entwurf("workouts", id);
-  function save(){ if(!istNeu) window.save(); }   // Entwurf: erst „Speichern“ legt ihn an
+  function save(){ if(!istNeu) speichereDB(); }   // Entwurf: erst „Speichern“ legt ihn an
   if(!w){ goBack("#library"); return; }
 
   var itemsHTML = w.items.map(function(it, idx){
@@ -4826,7 +4827,6 @@ document.addEventListener("visibilitychange", function(){
   if(document.visibilityState === "visible" && repRun && repRun.start && !repRun.ende && !repRun.pauseAb) requestWakeLock();
 });
 
-/* ============ Settings ============ *//* ============ Settings ============ */
 /* ============ Figuren prüfen ============
    Alle Übungen mit Figur, nach Hauptkategorie. Tippen öffnet die Übungsinfo (bewegt, ggf. zweite Ansicht).
    „Unklar“ markiert eine Figur, optional mit Notiz: settings.figurNotiz = { Übungs-ID: "Notiz" }.
@@ -5045,7 +5045,7 @@ function renderSettings(){
         // nur echte BLOC-Sicherungen (z. B. nicht versehentlich die Sicherung des Vokabelkastens) - sonst wäre alles weg
         var istBloc = parsed && typeof parsed === "object" && !Array.isArray(parsed.cards) &&
           (Array.isArray(parsed.blocks) || Array.isArray(parsed.workouts) || Array.isArray(parsed.myWorkouts) || (parsed.settings && typeof parsed.settings === "object"));
-        if(!istBloc){ alert(t("fileError")); return; }
+        if(!istBloc){ showToast(t("fileError")); return; }
         confirmSheet(t("importQ"), t("importText"), t("importBtn"), function(){
           var db = defaultDB();
           db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
@@ -5061,7 +5061,7 @@ function renderSettings(){
           state.db = db; save(); syncCustomEx(); applyTheme(); applyLang(); applySpace();
           go("#home");
         });
-      }catch(e){ alert(t("fileError")); }
+      }catch(e){ showToast(t("fileError")); }
     };
     reader.readAsText(file);
   });
