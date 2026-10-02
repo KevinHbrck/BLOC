@@ -425,7 +425,9 @@
     ["Lauf-Tracker (Beta): Start, GPS-Punkte, Kilometer, Speichern, Verlauf, Löschen", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
       await heim();
-      var cb = null;   // Positionen werden vorgetäuscht - es wird kein echter Standort abgefragt
+      var cb = null, said = [];   // Positionen und Sprachausgabe werden vorgetäuscht - kein echter Standort, kein Ton
+      Object.defineProperty(W, "SpeechSynthesisUtterance", { configurable: true, value: function (t) { this.text = t; } });
+      Object.defineProperty(W, "speechSynthesis", { configurable: true, value: { speak: function (u) { if (u.text.trim()) said.push(u.text); }, cancel: function () {}, getVoices: function () { return []; } } });
       Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cb = f; return 1; }, clearWatch: function () {} } });
       pruefe($('.area-tile[data-nav="#run"]').textContent.indexOf("[BETA]") > -1, "Lauf-Kachel ohne [BETA]");
       klick($('.area-tile[data-nav="#run"]'));
@@ -437,9 +439,11 @@
       cb({ coords: { latitude: lat + 0.0001, longitude: 11, accuracy: 90 }, timestamp: ts + 6000 });   // zu ungenau: wird ignoriert
       await bis(function () { return /^1,3\d$/.test($("#run-km").textContent); }, 2000, "Strecke ≈ 1,3 km, war " + $("#run-km").textContent);
       pruefe($$("#run-karte polyline").length === 1, "Routenlinie fehlt");
+      pruefe(said.length === 1 && /1 Kilometer/.test(said[0]) && /Pace 6? ?/.test(said[0]) && /pro Kilometer/.test(said[0]), "Ansage bei 1 km fehlt oder falsch: " + said.join("|"));
       klick("[data-runend]");
       klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Beenden bestätigen"));
-      await bis(function () { return /^#rundetail/.test(W.location.hash) && $(".run-svg"); }, 3000, "Lauf-Detail mit Route");
+      await bis(function () { return /^#rundetail/.test(W.location.hash) && $(".run-svg") && $(".run-fertig"); }, 3000, "Lauf-Detail mit Abschlusskarte");
+      pruefe(/erster Lauf/.test($(".run-fertig").textContent), "Abschlusskarte ohne Highlight");
       var r = daten().settings.runs;
       pruefe(r.length === 1 && r[0].dist > 1250 && r[0].dist < 1400 && r[0].splits.length === 1, "gespeicherter Lauf: " + JSON.stringify(r && r[0] && { d: r[0].dist, s: r[0].splits.length }));
       pruefe(daten().history.some(function (e) { return e.ex && e.ex.length === 0 && e.dur >= 0; }), "Lauf zählt nicht in der Wochenzeile");
