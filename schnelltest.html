@@ -172,7 +172,8 @@
     }],
     ["Eigene Challenge: anlegen, Übung wählen, durchspielen, löschen", async function () {
       klick('[data-repf="tab:meine"]');
-      klick(await bis(function () { return $("[data-repnew]"); }, 3000, "Neue Challenge"));
+      klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus unter Meine"));
+      klick(await bis(function () { return $('[data-fabopt="prog"]'); }, 3000, "Neues Programm"));
       klick(await bis(function () { return $("[data-readd]"); }, 3000, "Editor"));
       await bis(function () { return $('[data-repick="burpees"]'); }, 3000, "Übungsauswahl");
       pruefe(!$('[data-repick="leg-press"]') && !$('[data-repick="cobra-lift"]'), "Studio- oder Dehnübung in der Challenge-Auswahl");
@@ -191,7 +192,7 @@
       klick(await bis(function () { return $('.topbar [data-nav^="#repedit"]'); }, 3000, "Bearbeiten"));
       klick(await bis(function () { return $("[data-redel]"); }, 3000, "Löschen"));
       klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Löschen bestätigen"));
-      await bis(function () { return $("[data-repnew]"); }, 3000, "zurück in der Liste");
+      await bis(function () { return $("[data-fab]"); }, 3000, "zurück in der Liste");
       pruefe(!$(".rep-karte"), "Challenge wurde nicht gelöscht");
     }],
     ["Wochenzeile zählt die Challenge (auch nach Neuladen)", async function () {
@@ -378,6 +379,48 @@
       klick(await bis(function () { return $('[data-libtab="mine"]'); }, 3000, "Air › Meine"));
       var ohneWs = daten().myWorkouts.filter(function (m) { return !m.ws; }).length;
       pruefe($$(".my-item").length === ohneWs, "Air › Meine zeigt " + $$(".my-item").length + " statt " + ohneWs);
+    }],
+    ["Summit: Plus in Programme und Meine, eigene Einheit; ★ und Mülleimer bei Meine und Mein Plan", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      klick('[data-nav="#reps"]');
+      klick(await bis(function () { return $('[data-repf="tab:meine"]'); }, 3000, "Reiter Meine"));
+      // Meine: Plus -> neue Einheit -> Programm hinzufügen
+      klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus unter Meine"));
+      klick(await bis(function () { return $('[data-fabopt="unit"]'); }, 3000, "Neue Einheit"));
+      klick(await bis(function () { return $("[data-ruadd]"); }, 3000, "Einheit bearbeiten"));
+      klick(await bis(function () { return $("#overlayRoot [data-rpick]"); }, 3000, "Programmauswahl"));
+      await bis(function () { var u = daten().settings.myRepUnits; return u && u.length === 1 && u[0].teile.length === 1; }, 2000, "Programm in der Einheit");
+      klick("[data-refertig]");
+      await bis(function () { return $(".rep-tab"); }, 3000, "Übersicht der Einheit");
+      klick("button.back");
+      klick(await bis(function () { return $('[data-repf="tab:einheiten"]'); }, 3000, "Reiter Einheiten"));
+      await bis(function () { return $(".rep-karte.eigen") && !$("[data-fab]"); }, 3000, "eigene Einheit oben in Einheiten (ohne Plus)");
+      // Programme: Plus
+      klick('[data-repf="tab:programme"]');
+      klick(await bis(function () { return $('[data-fabopt="prog"]'); }, 3000, "Plus in Programme"));
+      await bis(function () { return $("[data-readd]"); }, 3000, "Programm-Editor");
+      klick("button.back");
+      // Meine: Stern und Mülleimer
+      klick(await bis(function () { return $('[data-repf="tab:meine"]'); }, 3000, "Reiter Meine"));
+      await bis(function () { return $$(".rep-karte.eigen").length >= 2; }, 3000, "mindestens zwei eigene Karten");
+      var vorher = $$(".rep-karte.eigen").length;
+      klick($(".rep-karte.eigen [data-fav]"));
+      await bis(function () { return daten().settings.favs.some(function (k) { return /^rep:/.test(k); }); }, 2000, "Stern gesetzt");
+      klick($(".rep-karte.eigen [data-del]"));
+      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Löschen bestätigen"));
+      await bis(function () { return $$(".rep-karte.eigen").length === vorher - 1; }, 2000, "eine Karte weniger");
+      // Studio › Mein Plan
+      await heim();
+      klick('[data-nav="#timers"]');
+      klick(await bis(function () { return $('[data-sttab="plan"]'); }, 3000, "Reiter Plan"));
+      klick(await bis(function () { return $('[data-fabopt="neu"]') || ($("[data-fab]") && ($("[data-fab]").click(), $('[data-fabopt="neu"]'))); }, 3000, "Neuer Plan"));
+      klick("button.back");
+      await bis(function () { return $(".plan-item [data-fav]") && $(".plan-item [data-del]"); }, 3000, "Stern und Mülleimer am Plan");
+      klick($(".plan-item [data-fav]"));
+      await bis(function () { return daten().settings.favs.some(function (k) { return /^plan:/.test(k); }); }, 2000, "Plan-Stern gesetzt");
+      await heim();
+      pruefe($$(".fav-tile").length >= 1, "Favorit fehlt auf der Startseite");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

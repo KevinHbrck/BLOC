@@ -1809,3 +1809,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .rep-karte{ position:relative; }
 .rep-karte > .more-btn{ position:absolute; top:6px; right:6px; }
 .rep-karte .name{ padding-right:34px; }
+.ru-felder{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+.playbtn.rep{ background:var(--rep-color); color:#fff; }
+/* Summit › eigene Karten: ★ und Mülleimer oben rechts (wie in Air › Meine), ⋯ entfällt - das Menü liegt auf dem langen Drücken */
+.rep-karte.eigen > .card-aside{ position:absolute; top:2px; right:2px; }
+.rep-karte.eigen .name{ padding-right:84px; }

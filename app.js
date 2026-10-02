@@ -359,7 +359,7 @@ var I18N = {
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
+    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", repNewProg:"Neues Programm", repNewUnit:"Neue Einheit", reUnitTitle:"Eigene Einheit", reUnitDefault:"Meine Einheit", reUnitParts:"Programme", reUnitAdd:"Programm hinzufügen", reUnitEmpty:"Noch kein Programm – füge unten das erste hinzu.", reUnitHint:"Mehrere Programme hintereinander. „Von/Bis Runde“ nimmt nur einen Ausschnitt, „Halbe Menge“ halbiert Wiederholungen und Strecken.", reFrom:"Von Runde", reTo:"Bis Runde", reHalf:"Halbe Menge", reUnitDelQ:"Einheit löschen?", rePickProg:"Programm wählen", repMineIntro2:"Mit + legst du eigene Programme und Einheiten an – sie erscheinen auch unter Programme bzw. Einheiten.", repOwnTag:"Meine", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
     reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
@@ -571,7 +571,7 @@ var I18N = {
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
+    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", repNewProg:"New programme", repNewUnit:"New session", reUnitTitle:"Own session", reUnitDefault:"My session", reUnitParts:"Programmes", reUnitAdd:"Add programme", reUnitEmpty:"No programme yet – add the first one below.", reUnitHint:"Several programmes in a row. “From/To round” takes only a section, “Half amount” halves reps and distances.", reFrom:"From round", reTo:"To round", reHalf:"Half amount", reUnitDelQ:"Delete session?", rePickProg:"Choose programme", repMineIntro2:"Use + to create your own programmes and sessions – they also show under Programmes and Sessions.", repOwnTag:"Mine", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
     reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
@@ -1661,11 +1661,18 @@ function render(){
   if(route==="rep") return renderRepDetail(parts[1]);
   if(route==="repplay") return renderRepPlayer(parts[1]);
   if(route==="repedit") return renderRepEdit(parts[1]);
+  if(route==="repunitedit") return renderRepUnitEdit(parts[1]);
   if(route==="timers"){
     if(parts[1] === "workouts" || parts[1] === "blocks"){   // frühere Timer-Reiter: jetzt Air › Timer
       state.db.settings.libTab = "timer"; navStack[navStack.length-1] = "#library"; setUrl("#library");
       return renderLibrary();
     }
+    return renderTimers();
+  }
+  if(route==="studioplan"){   // Favorit auf der Startseite: Studio › Plan direkt geöffnet
+    var sp0 = state.db.settings;
+    if(stPlanFind(parts[1])){ sp0.stTab = "plan"; stPlanAktiv = parts[1]; stPlanBauen = false; stGen = null; stPlanQuery = ""; }
+    navStack[navStack.length-1] = "#timers"; setUrl("#timers");
     return renderTimers();
   }
   if(route==="blocks"){ state.db.settings.libTab = "timer"; navStack[navStack.length-1] = "#library"; setUrl("#library"); return renderLibrary(); }
@@ -1854,6 +1861,7 @@ function gesamtEintraege(){
     REP_STUFEN.forEach(function(st, i){ (e[1 + i] || []).forEach(function(v, k){ rep(e[0]+"-"+st+"-"+(k+1), t("srChallenges")); }); });
   });
   REP_WORKOUT_ROWS.forEach(function(r){ rep(r[0], t("srChallenges")); });
+  (s.myRepUnits || []).forEach(function(u){ rep(u.id, t("srOwnChall")); });
   (s.myReps || []).forEach(function(c){ rep(c.id, t("srOwnChall")); });
   // Timer-Workouts und Blöcke
   state.db.workouts.forEach(function(w){ add(t("mineTimer"), w.name || t("untitled"), "", "", function(){ go("#workout/"+w.id); }); });
@@ -2047,6 +2055,21 @@ function bindTrash(refresh){
       } else if(kind === "ex"){
         var c = findCustom(id); if(!c) return;
         confirmSheet(t("exDeleteQ"), "„"+c.name+"“ – "+t("exDeleteText"), t("del"), function(){ deleteCustomExNow(id); refresh(); showToast(t("deletedToast", { n:c.name })); });
+      } else if(kind === "plan"){   // Studio › Mein Plan
+        var pl = stPlanFind(id); if(!pl) return;
+        confirmSheet(t("planDelQ"), "„"+pl.name+"“ – "+t("cantUndo"), t("del"), function(){
+          state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== id; });
+          save(); refresh(); showToast(t("deletedToast", { n:pl.name }));
+        });
+      } else if(kind === "rep"){    // Summit › eigenes Programm / eigene Einheit
+        var rq = repQuelle(id); if(!rq) return;
+        confirmSheet(t(rq.unit ? "reUnitDelQ" : "reDelQ"), "„"+rq.name+"“ – "+t("cantUndo"), t("del"), function(){
+          var st = state.db.settings;
+          if(rq.unit) st.myRepUnits = (st.myRepUnits || []).filter(function(x){ return x.id !== id; });
+          else st.myReps = (st.myReps || []).filter(function(x){ return x.id !== id; });
+          if(st.repBest) delete st.repBest[id];
+          save(); refresh(); showToast(t("deletedToast", { n:rq.name }));
+        });
       } else if(kind === "my"){
         var mw = findMy(id); if(!mw) return;
         confirmSheet(t("myDeleteQ"), "„"+mw.name+"“ – "+t("cantUndo"), t("del"), function(){ deleteMyNow(id); refresh(); showToast(t("deletedToast", { n:mw.name })); });
@@ -2407,7 +2430,7 @@ function renderStudioPlanListe(){
       var ids = stPlanIds(p), namen = ids.slice(0, 3).map(function(id){ return tplText(findExercise(id).name); }).join(", ")+(ids.length > 3 ? " …" : "");
       return '<div class="list-item entry plan-item" data-plan="'+esc(p.id)+'" role="button" tabindex="0">'+
         '<div class="meta"><div class="name">'+esc(p.name)+'</div><div class="sub">'+esc(planAnzahl(ids.length))+(ids.length ? SEP+esc(namen) : '')+'</div></div>'+
-        '<span class="chip chev">'+ICON_CHEV+'</span></div>';
+        '<div class="card-aside"><div class="card-acts">'+favBtn("plan:"+p.id)+trashBtn("plan", p.id, p.name)+'</div></div></div>';
     }).join("") : '<div class="fav-empty">'+esc(t("planNone"))+'</div>')+
     (pl.length > 1 ? auswertungHTML(pl.reduce(function(a, p){ return a.concat(stPlanIds(p)); }, []), { gesamt:true, titel:t("ausAll") }) : '')+
     '<div style="height:90px"></div>'+fabMenuHTML([{ key:"neu", label:t("planNew"), ico:ICON_PLUS, cls:"bl" }, { key:"gen", label:t("genNew"), ico:ICON_PLUS, cls:"bl" }]);
@@ -2417,8 +2440,13 @@ function renderStudioPlanListe(){
   app.querySelectorAll("[data-plan]").forEach(function(el){
     function los(){ oeffnen(el.getAttribute("data-plan"), false); }
     el.addEventListener("click", los);
-    el.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); los(); } });
+    el.addEventListener("keydown", function(e){ if(e.target === el && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); los(); } });
   });
+  function neuPl(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
+  app.querySelectorAll("[data-fav]").forEach(function(el){
+    el.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neuPl(); });
+  });
+  bindTrash(neuPl);
   bindFabMenu({ "gen": function(){
     stGen = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8 };
     renderStudio(); window.scrollTo(0, 0);
@@ -3227,7 +3255,13 @@ function favEntries(){
       if(lw) e = { name:tplText(lw.name), sub:fmtDuration(workoutDuration(libWorkoutRun(lw))), cls:libIstWarmDehn(lw) ? "ws" : "tp", cover:"lib/"+id, ok:true };
     } else if(kind==="my"){
       var mw = findMy(id);
-      if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:"tp", cover:"my/"+id, ok:mw.items.length > 0 };
+      if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:mw.ws ? "ws" : "tp", cover:"my/"+id, ok:mw.items.length > 0 };
+    } else if(kind==="plan"){   // Studio › Mein Plan
+      var pl = stPlanFind(id);
+      if(pl) e = { name:pl.name, sub:planAnzahl(stPlanIds(pl).length), cls:"bl", go:"#studioplan/"+id, ok:true };
+    } else if(kind==="rep"){    // Summit › eigenes Programm bzw. eigene Einheit
+      var rq = repQuelle(id);
+      if(rq){ var rr = repQRunden(rq); e = { name:rq.name, sub:(rr===1 ? t("repRound1") : t("repRoundsN", { n:rr }))+" · "+t("repReps", { n:repQWdh(rq) }), cls:"rep", go:"#rep/"+id, ok:true }; }
     }
     if(e){ e.key = k; e.used = used[k] || 0; e.order = order; out.push(e); }
   });
@@ -4684,7 +4718,7 @@ function exportBackup(){
 function hatEigenes(db){
   var st = (db && db.settings) || {};
   return !!(db && ((db.blocks||[]).length || (db.workouts||[]).length || (db.myWorkouts||[]).length || (db.customEx||[]).length ||
-    Object.keys(st.studio || {}).length || (st.myReps || []).length));   // auch Gewichte im Freien Training und eigene Challenges
+    Object.keys(st.studio || {}).length || (st.myReps || []).length || (st.myRepUnits || []).length));   // auch Gewichte im Freien Training und eigene Challenges
 }
 /* Erinnerung: eigene Inhalte, aber seit 14 Tagen (oder nie) exportiert. Der Installations-Hinweis hat Vorrang,
    × blendet sie nur für diese Sitzung aus. */
@@ -4896,9 +4930,31 @@ function repZuMeine(id){
 function repMenue(id){
   var q = repQuelle(id);
   if(!q) return;
-  openActionSheet(q.name, [{ ico:ICON_COPY, label:t(q.eigen ? "actCopy" : "adoptMine"), fn:function(){ repZuMeine(id); } }]);
+  var acts = [];
+  if(q.eigen) acts.push({ ico:ICON_EDIT, label:t("edit"), fn:function(){ go(repEditRoute(q)+id); } });
+  if(!q.unit || !q.eigen) acts.push({ ico:ICON_COPY, label:t(q.eigen ? "actCopy" : "adoptMine"), fn:function(){ repZuMeine(id); } });
+  openActionSheet(q.name, acts);
 }
+/* Eigene Einheiten (mehrere Programme hintereinander): settings.myRepUnits = [{ id:"myu-…", name, teile:[{ prog, von, bis, f }], updatedAt }]
+   prog = Programm-ID (fest oder eigen „my-…“), von/bis = Runden, f = 1 oder 0.5 (halbe Menge). Sie erscheinen unter Einheiten und Meine. */
+function myRepUnit(id){ var l = state.db.settings.myRepUnits || []; for(var i=0;i<l.length;i++) if(l[i].id===id) return l[i]; return null; }
+function repProgRow(id){
+  if(/^my-/.test(id || "")){ var c = myRep(id); return c ? myRepRow(c) : null; }
+  return repRow(id);
+}
+function repEditRoute(q){ return q.unit ? "#repunitedit/" : "#repedit/"; }
 function repQuelle(id){
+  if(/^myu-/.test(id || "")){
+    var u = myRepUnit(id);
+    if(!u) return null;
+    var tt = (u.teile || []).map(function(p){
+      var row = repProgRow(p.prog);
+      if(!row) return null;
+      var R = repRunden(row), von = clamp(+p.von || 1, 1, Math.max(R, 1)), bis = clamp(+p.bis || R, von, Math.max(R, 1));
+      return { row:row, von:von, bis:bis, f:p.f === 0.5 ? 0.5 : 1 };
+    }).filter(Boolean);
+    return { id:id, name:u.name || t("reUnitDefault"), einzel:false, eigen:true, unit:true, lvl:0, teile:tt };
+  }
   if(/^my-/.test(id || "")){
     var c = myRep(id);
     if(!c) return null;
@@ -5088,12 +5144,13 @@ function renderReps(){
   function knopf(art, wert, text){
     return '<button type="button" data-repf="'+art+':'+wert+'" class="'+(String(repFilter[art])===String(wert) ? "active" : "")+'">'+esc(text)+'</button>';
   }
-  function karte(id, name, zeile1, zeile2, plan){
+  function karte(id, name, zeile1, zeile2, plan, eigen){
     var best = repBestOf(id), qq = repQuelle(id), such = [name, zeile1 || ""];
     if(qq) qq.teile.forEach(function(tl){ tl.row[4].forEach(function(x){ such.push(repExName(x[0])); }); });
-    return '<div class="list-item rep-karte" data-nav="#rep/'+id+'" data-q="'+esc(such.join(" "))+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
+    return '<div class="list-item rep-karte'+(eigen ? ' eigen' : '')+'" data-repid="'+id+'" data-nav="#rep/'+id+'" data-q="'+esc(such.join(" "))+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
       (zeile1 ? '<div class="sub rep-teile">'+zeile1+'</div>' : '')+'<div class="sub">'+zeile2+'</div>'+(plan || '')+repZeitenHTML(best)+'</div>'+
-      (best ? wochenKurve(repWochen(id), "rep-spark") : '')+moreBtn("data-repmore", id)+
+      (best ? wochenKurve(repWochen(id), "rep-spark") : '')+
+      (eigen ? '<div class="card-aside"><div class="card-acts">'+favBtn("rep:"+id)+trashBtn("rep", id, name)+'</div></div>' : moreBtn("data-repmore", id))+
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   var html = topbar(t("repTitle"), { back:"#home", right:lupeHTML("rs", repQuery) }) +
@@ -5102,11 +5159,31 @@ function renderReps(){
       '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
       '<button data-repf="tab:meine" class="'+(repFilter.tab==="meine"?"active":"")+'">'+esc(t("tabMine"))+'</button>'+
     '</div></div>'+suchFeldHTML(repQuery, "rs", t("repSearchPh"));
-  var liste = "";
+  var liste = "", fab = "";
+  /* Karte einer eigenen Challenge; mitTag: „Meine ·“ davor (in den Reitern Einheiten und Programme) */
+  function eigeneKarte(q, mitTag){
+    var R = repQRunden(q), tag = mitTag ? esc(t("repOwnTag"))+SEP : "";
+    return karte(q.id, q.name, q.unit && q.teile.length ? esc(q.teile.map(repTeilName).join(" + ")) : "", repQSchritte(q).length
+      ? tag+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+(repQStange(q) ? SEP+esc(t("repBar")) : "")
+      : tag+esc(t("reNoEx")), repPlanHTML(q), true);
+  }
+  function eigeneListe(arten, mitTag){   // arten: „prog“ und/oder „unit“; Einheiten zuerst
+    var s = state.db.settings, out = "";
+    if(arten.indexOf("unit") > -1) (s.myRepUnits || []).forEach(function(u){
+      var q = repQuelle(u.id);
+      if(q && !(repFilter.bar === "none" && repQStange(q))) out += eigeneKarte(q, mitTag);
+    });
+    if(arten.indexOf("prog") > -1) (s.myReps || []).forEach(function(c){
+      var q = repQuelle(c.id);
+      if(q && !(repFilter.bar === "none" && repQStange(q))) out += eigeneKarte(q, mitTag);
+    });
+    return out;
+  }
   if(repFilter.tab === "einheiten"){
     var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
     html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>'+
       '<div class="theme-pick rep-pick">'+knopf("stufe","leicht",t("stufe_leicht"))+knopf("stufe","standard",t("stufe_standard"))+knopf("stufe","fortgeschritten",t("stufe_fortgeschritten"))+'</div>';
+    liste += eigeneListe(["unit"], true);   // eigene Einheiten stehen oben
     REP_EINHEITEN.forEach(function(e){
       var varianten = e[1 + REP_STUFEN.indexOf(stufe)];
       varianten.forEach(function(v, k){
@@ -5121,20 +5198,14 @@ function renderReps(){
       });
     });
   } else if(repFilter.tab === "meine"){
-    html += '<div class="rep-intro">'+esc(t("repMineIntro"))+'</div>';
-    (state.db.settings.myReps || []).forEach(function(c){
-      var q = repQuelle(c.id);
-      if(!q) return;
-      var R = repQRunden(q);
-      liste += karte(q.id, q.name, "", repQSchritte(q).length
-        ? esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+(repQStange(q) ? SEP+esc(t("repBar")) : "")
-        : esc(t("reNoEx")), repPlanHTML(q));
-    });
-    liste = (liste || '<div class="empty" style="padding:24px 20px 4px;">'+esc(t("repMineEmpty"))+'</div>')+
-      '<div style="text-align:center"><button type="button" class="btn btn-primary empty-btn" data-repnew>'+ICON_PLUS+' '+esc(t("repNew"))+'</button></div>';
+    html += '<div class="rep-intro">'+esc(t("repMineIntro2"))+'</div>';
+    liste = eigeneListe(["unit", "prog"], false) || '<div class="empty" style="padding:24px 20px 4px;">'+esc(t("repMineEmpty"))+'</div>';
+    fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }, { key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
   } else {
     html += '<div class="rep-intro">'+esc(t("repIntro"))+'</div>'+
       '<div class="theme-pick rep-pick">'+knopf("lvl","all",t("repAll"))+knopf("lvl",1,t("lvl1"))+knopf("lvl",2,t("lvl2"))+knopf("lvl",3,t("lvl3"))+'</div>';
+    liste += eigeneListe(["prog"], true);   // eigene Programme stehen oben
+    fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }]);
     REP_WORKOUT_ROWS.filter(function(r){
       if(repFilter.lvl !== "all" && r[3] !== +repFilter.lvl) return false;
       if(repFilter.bar === "none" && repBrauchtStange(r)) return false;
@@ -5148,7 +5219,7 @@ function renderReps(){
   }
   html += (repFilter.tab === "meine" ? '' : '<div class="theme-pick rep-pick zwei">'+knopf("bar","all",t("repAllEquip"))+knopf("bar","none",t("repNoBar"))+'</div>') +
     (liste || '<div class="empty">'+esc(t("repNone"))+'</div>') +
-    '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("noResult"))+'</div><div style="height:40px"></div>';
+    '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("noResult"))+'</div><div style="height:'+(fab ? 90 : 40)+'px"></div>'+fab;
   app.innerHTML = html;
   bindCommon();
   var rq = app.querySelector("#rs-q");
@@ -5159,15 +5230,25 @@ function renderReps(){
   // ⋯ und langes Drücken auf eine Karte: unter „Meine“ ablegen (wie bei Air)
   app.querySelectorAll("[data-repmore]").forEach(function(b){
     b.addEventListener("click", function(e){ e.stopPropagation(); repMenue(b.getAttribute("data-repmore")); });
-    langDruck(b.closest(".rep-karte"), function(){ repMenue(b.getAttribute("data-repmore")); });
   });
-  var neuBtn = app.querySelector("[data-repnew]");
-  if(neuBtn) neuBtn.addEventListener("click", function(){
+  app.querySelectorAll(".rep-karte").forEach(function(k){ langDruck(k, function(){ repMenue(k.getAttribute("data-repid")); }); });
+  function neuRep(){ var y = window.scrollY; renderReps(); window.scrollTo(0, y); }
+  app.querySelectorAll("[data-fav]").forEach(function(el){
+    el.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neuRep(); });
+  });
+  bindTrash(neuRep);
+  // Plus unter „Meine“: neues Programm (Übungen × Runden) oder neue Einheit (mehrere Programme hintereinander)
+  bindFabMenu({ "prog": function(){
     var c = { id:"my-"+uid(), name:t("reDefaultName"), runden:3, zeilen:[], updatedAt:Date.now() };
     (state.db.settings.myReps || (state.db.settings.myReps = [])).push(c);
     save();
     go("#repedit/"+c.id);
-  });
+  }, "unit": function(){
+    var u = { id:"myu-"+uid(), name:t("reUnitDefault"), teile:[], updatedAt:Date.now() };
+    (state.db.settings.myRepUnits || (state.db.settings.myRepUnits = [])).push(u);
+    save();
+    go("#repunitedit/"+u.id);
+  } });
   app.querySelectorAll("[data-repf]").forEach(function(b){
     b.addEventListener("click", function(){
       var p = b.getAttribute("data-repf").split(":");
@@ -5195,7 +5276,7 @@ function renderRepDetail(id){
   }
   var schritte = repQSchritte(q).length;
   app.innerHTML =
-    topbar(q.name, { back:"#reps", right: q.eigen ? '<button class="iconbtn" data-nav="#repedit/'+id+'" title="'+esc(t("edit"))+'" aria-label="'+esc(t("edit"))+'">'+svgIcon(ICON_EDIT)+'</button>' : '' }) +
+    topbar(q.name, { back:"#reps", right: q.eigen ? '<button class="iconbtn" data-nav="'+repEditRoute(q)+id+'" title="'+esc(t("edit"))+'" aria-label="'+esc(t("edit"))+'">'+svgIcon(ICON_EDIT)+'</button>' : '' }) +
     '<div class="rep-meta">'+(q.einzel && !q.eigen ? esc(t("lvl"+q.lvl))+SEP : '')+esc(R===1 ? t("repRound1") : t("repRoundsN", { n:R }))+SEP+esc(t("repReps", { n:repQWdh(q) }))+
       (repQStange(q) ? SEP+esc(t("repBar")) : "")+
       (best ? SEP+esc(t("repBestIs", { z:repUhr(best.best) }))+(best.n > 1 ? ', '+esc(t("repLastIs", { z:repUhr(best.last) })) : '') : '')+'</div>'+
@@ -5204,9 +5285,9 @@ function renderRepDetail(id){
       return '<div class="section-title">'+esc(q.einzel ? t("repTable") : (i+1)+". "+repTeilName(tl))+'</div>'+tabelle(tl);
     }).join("")+
     '<div class="rep-intro">'+esc(t("repHint"))+'</div>'+
-    (schritte ? '' : '<div class="empty">'+esc(t("reLeer"))+'</div>')+
+    (schritte ? '' : '<div class="empty">'+esc(t(q.unit ? "reUnitEmpty" : "reLeer"))+'</div>')+
     '<button type="button" class="btn btn-primary" data-repstart'+(schritte ? '' : ' disabled')+'>'+ICON_PLAY+' '+esc(t("repStart"))+'</button>'+
-    (q.eigen ? '<button type="button" class="btn btn-secondary" data-nav="#repedit/'+id+'" style="margin-top:10px;">'+svgIcon(ICON_EDIT)+' '+esc(t("edit"))+'</button>' : '');
+    (q.eigen ? '<button type="button" class="btn btn-secondary" data-nav="'+repEditRoute(q)+id+'" style="margin-top:10px;">'+svgIcon(ICON_EDIT)+' '+esc(t("edit"))+'</button>' : '');
   bindCommon();
   app.querySelector("[data-repstart]").addEventListener("click", function(){ repRun = null; go("#repplay/"+id); });
   app.querySelector("[data-repstats]").addEventListener("click", function(){ openRepStats(id, q.name); });
@@ -5313,6 +5394,96 @@ function repExPicker(onPick){
   kachelKlick(root, "[data-repick]", function(b){ var id = b.getAttribute("data-repick"); close(); onPick(id); });
   root.querySelector("[data-reclose]").addEventListener("click", close);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
+}
+
+/* Auswahl eines Programms für eine eigene Einheit (mit Suche): erst eigene, dann die mitgelieferten */
+function repProgPicker(onPick){
+  var root = document.getElementById("overlayRoot");
+  var l = (state.db.settings.myReps || []).map(function(c){ var r = myRepRow(c); return { id:c.id, name:c.name || t("reDefaultName"), sub:t("repOwnTag")+SEP+repRunden(r)+" "+t("reRunden"), R:repRunden(r) }; })
+    .concat(REP_WORKOUT_ROWS.map(function(r){ return { id:r[0], name:repName(r), sub:t("lvl"+r[3])+SEP+repRunden(r)+" "+t("reRunden"), R:repRunden(r) }; }));
+  l = l.filter(function(o){ return o.R > 0; });
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet re-pick" role="dialog" aria-label="'+esc(t("rePickProg"))+'">'+
+    '<h3>'+esc(t("rePickProg"))+'</h3>'+searchHTML("", "rp", t("repSearchPh"))+
+    '<div class="re-pick-liste">'+l.map(function(o){
+      return '<div class="list-item entry" role="button" tabindex="0" data-rpick="'+esc(o.id)+'" data-q="'+esc(o.name)+'"><div class="meta"><div class="name">'+esc(o.name)+'</div><div class="sub">'+o.sub+'</div></div></div>';
+    }).join("")+'<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div></div>'+
+    '<button class="btn btn-secondary" data-reclose>'+t("cancel")+'</button>'+
+  '</div></div>';
+  function close(){ root.innerHTML = ""; }
+  var box = root.querySelector(".re-pick-liste"), q = root.querySelector("#rp-q");
+  q.addEventListener("input", function(){ applySearch(box, q.value); });
+  root.querySelectorAll("[data-rpick]").forEach(function(b){
+    function los(){ var id = b.getAttribute("data-rpick"); close(); onPick(id); }
+    b.addEventListener("click", los);
+    b.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); los(); } });
+  });
+  root.querySelector("[data-reclose]").addEventListener("click", close);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
+}
+/* Eigene Einheit bearbeiten: Name, Programme hintereinander (je mit Von/Bis-Runde und halber Menge). Speichert sofort. */
+function renderRepUnitEdit(id){
+  var u = myRepUnit(id);
+  if(!u) return go("#reps");
+  var teile = (u.teile || []).map(function(p, i){
+    var row = repProgRow(p.prog);
+    if(!row) return "";
+    var R = repRunden(row);
+    return '<div class="card re-zeile">'+
+      '<div class="re-kopf"><div class="rep-ex-in"><b>'+esc((i+1)+". "+repName(row))+'</b></div>'+
+        '<button type="button" class="dz-btn" data-rurm="'+i+'" aria-label="'+esc(t("del"))+'">&times;</button></div>'+
+      '<div class="ru-felder"><div><label>'+esc(t("reFrom"))+'</label>'+stepperHTML("ru-von-"+i, clamp(+p.von || 1, 1, R), 1, R, 1)+'</div>'+
+        '<div><label>'+esc(t("reTo"))+'</label>'+stepperHTML("ru-bis-"+i, clamp(+p.bis || R, 1, R), 1, R, 1)+'</div></div>'+
+      toggleRow("ru-half-"+i, esc(t("reHalf")), "", p.f === 0.5)+'</div>';
+  }).join("");
+  app.innerHTML =
+    topbar(t("reUnitTitle"), { back:"#reps" }) +
+    '<div class="card"><label for="ru-name">'+t("name")+'</label><input type="text" id="ru-name" value="'+esc(u.name)+'" maxlength="40"></div>'+
+    '<div class="section-title">'+t("reUnitParts")+'</div>'+
+    (teile || '<div class="empty" style="padding:16px 20px;">'+esc(t("reUnitEmpty"))+'</div>')+
+    '<button type="button" class="my-new" data-ruadd>'+ICON_PLUS+' '+t("reUnitAdd")+'</button>'+
+    '<div class="tm-hint" style="margin:10px 4px 16px;">'+esc(t("reUnitHint"))+'</div>'+
+    '<button type="button" class="btn btn-primary" data-refertig>'+esc(t("reFertig"))+'</button>'+
+    '<button type="button" class="btn btn-danger" data-redel style="margin-top:10px;">'+ICON_TRASH+' '+esc(t("reDelete"))+'</button>'+
+    '<div style="height:40px"></div>';
+  bindCommon();
+  function speichern(){ u.updatedAt = Date.now(); save(); }
+  function neu(){ var y = window.scrollY; renderRepUnitEdit(id); window.scrollTo(0, y); }
+  var nameIn = app.querySelector("#ru-name");
+  nameIn.addEventListener("input", function(){ u.name = nameIn.value.trim() || t("reUnitDefault"); speichern(); });
+  bindSteppers(app, function(){
+    u.teile.forEach(function(p, i){
+      var v = app.querySelector("#ru-von-"+i), b = app.querySelector("#ru-bis-"+i);
+      if(!v || !b) return;
+      var von = parseInt(v.value) || 1, bis = parseInt(b.value) || 1;
+      if(von > bis){ bis = von; b.value = bis; }
+      p.von = von; p.bis = bis;
+    });
+    speichern();
+  });
+  u.teile.forEach(function(p, i){
+    if(app.querySelector("#ru-half-"+i)) bindToggle("ru-half-"+i, function(v){ p.f = v ? 0.5 : 1; speichern(); });
+  });
+  app.querySelectorAll("[data-rurm]").forEach(function(b){
+    b.addEventListener("click", function(){ u.teile.splice(+b.getAttribute("data-rurm"), 1); speichern(); neu(); });
+  });
+  app.querySelector("[data-ruadd]").addEventListener("click", function(){
+    repProgPicker(function(pid){
+      var row = repProgRow(pid);
+      if(!row) return;
+      u.teile.push({ prog:pid, von:1, bis:repRunden(row), f:1 });
+      speichern(); neu();
+    });
+  });
+  app.querySelector("[data-refertig]").addEventListener("click", function(){ navStack.pop(); go("#rep/"+id); });
+  app.querySelector("[data-redel]").addEventListener("click", function(){
+    confirmSheet(t("reUnitDelQ"), "„"+(u.name || t("reUnitDefault"))+"“ – "+t("cantUndo"), t("del"), function(){
+      state.db.settings.myRepUnits = (state.db.settings.myRepUnits || []).filter(function(x){ return x.id !== id; });
+      if(state.db.settings.repBest) delete state.db.settings.repBest[id];
+      save();
+      navStack = navStack.filter(function(h){ return h.indexOf(id) < 0; });
+      go("#reps");
+    });
+  });
 }
 
 /* Ablauf: vor dem Start -> (Einzählen) -> Schritt für Schritt mit „Geschafft“ -> Ergebnis.
