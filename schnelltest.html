@@ -96,11 +96,11 @@
       klick("[data-introweg]");
       pruefe(!$("#overlayRoot .intro-sheet"), "„Überspringen“ schließt nicht");
     }],
-    ["Startseite: Workouts vorn, drei weitere Bereiche, Wochenzeile", async function () {
+    ["Startseite: Workouts vorn, vier weitere Bereiche (Lauf [BETA]), Wochenzeile", async function () {
       await heim();
-      pruefe($$(".area-tile").length === 4, "erwartet 4 Bereichs-Kacheln, gefunden " + $$(".area-tile").length);
+      pruefe($$(".area-tile").length === 5, "erwartet 5 Bereichs-Kacheln, gefunden " + $$(".area-tile").length);
       pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#library", "Freies Training steht nicht hervorgehoben vorn");
-      pruefe($$(".area-gruppe .area-tile.zeile").length === 3, "die übrigen drei Bereiche fehlen in der Liste");
+      pruefe($$(".area-gruppe .area-tile.zeile").length === 4, "die übrigen vier Bereiche fehlen in der Liste");
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
@@ -427,8 +427,8 @@
       await heim();
       var cb = null;   // Positionen werden vorgetäuscht - es wird kein echter Standort abgefragt
       Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cb = f; return 1; }, clearWatch: function () {} } });
-      klick('[data-nav="#reps"]');
-      klick(await bis(function () { return $(".run-teaser"); }, 3000, "Lauf-Karte in Summit"));
+      pruefe($('.area-tile[data-nav="#run"]').textContent.indexOf("[BETA]") > -1, "Lauf-Kachel ohne [BETA]");
+      klick($('.area-tile[data-nav="#run"]'));
       klick(await bis(function () { return $("[data-runstart]"); }, 3000, "Lauf starten"));
       await bis(function () { return cb && $("#run-zeit"); }, 3000, "Aufzeichnung läuft");
       var lat = 48, ts = Date.now();
