@@ -276,7 +276,7 @@ var I18N = {
     fEquipHint:"Was hast du da? Mehrere möglich. Nichts gewählt = alles.", hideEx:"In der Bibliothek ausblenden",
     hideWo:"Dieses Workout in der Bibliothek ausblenden", hiddenToast:"Ausgeblendet – unten in der Liste wieder einblendbar.",
     libCalis:"Calisthenics", calisRoutines:"Calisthenics-Programme", calisExercises:"Calisthenics-Übungen",
-    equipHave:"Ausrüstung", searchPh:"Übungen suchen …", noResult:"Keine passende Übung gefunden.",
+    equipHave:"Ausrüstung", search:"Suchen", searchPh:"Übungen suchen …", noResult:"Keine passende Übung gefunden.",
     int1:"Locker", int2:"Mittel", int3:"Intensiv",
     htFav:"Deine markierten Workouts", htTimer:"Eigene Intervall-Timer", htBlocks:"Einzelne Blöcke direkt starten",
     musWorked:"Trainiert", musStretched:"Dehnt", musAssist:"Unterstützend",
@@ -297,7 +297,7 @@ var I18N = {
     repsBothSides:"Die Runden zählen beide Seiten zusammen, z. B. 6 = 3 je Seite.",
     recommended:"Empfohlen", timeDone:"Fertig",
     voice:"Sprachansagen (Englisch)", voiceDesc:"Sagt in den Pausen die nächste Übung an",
-    surprise:"Überrasch mich", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
+    surprise:"Überrasch mich", spLast:"Zuletzt: {x}", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
     spMore:"Feinauswahl", spNoFocus:"ohne Fokus",
     introTitle:"Einführung", introSkip:"Überspringen", introNext:"Weiter", introRow:"Einführung ansehen", introRowSub:"BLOC in fünf kurzen Schritten",
     in1T:"Willkommen bei BLOC",
@@ -478,7 +478,7 @@ var I18N = {
     fEquipHint:"What do you have? Pick several. None selected = anything.", hideEx:"Hide in library",
     hideWo:"Hide this workout in the library", hiddenToast:"Hidden – you can show it again at the bottom of the list.",
     libCalis:"Calisthenics", calisRoutines:"Calisthenics routines", calisExercises:"Calisthenics exercises",
-    equipHave:"Equipment", searchPh:"Search exercises …", noResult:"No matching exercise found.",
+    equipHave:"Equipment", search:"Search", searchPh:"Search exercises …", noResult:"No matching exercise found.",
     int1:"Easy", int2:"Moderate", int3:"Intense",
     htFav:"Your starred workouts", htTimer:"Your own interval timers", htBlocks:"Start single blocks directly",
     musWorked:"Works", musStretched:"Stretches", musAssist:"Assisting",
@@ -499,7 +499,7 @@ var I18N = {
     repsBothSides:"Rounds count both sides together, e.g. 6 = 3 per side.",
     recommended:"Recommended", timeDone:"Done",
     voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests",
-    surprise:"Surprise me", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
+    surprise:"Surprise me", spLast:"Last: {x}", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
     spMore:"Fine-tuning", spNoFocus:"no focus",
     introTitle:"Introduction", introSkip:"Skip", introNext:"Next", introRow:"View introduction", introRowSub:"BLOC in five short steps",
     in1T:"Welcome to BLOC",
@@ -663,6 +663,13 @@ function fmtTime(totalSec){
   totalSec = Math.max(0, Math.round(totalSec));
   var m = Math.floor(totalSec/60), s = totalSec%60;
   return m + ":" + (s<10?"0":"") + s;
+}
+/* Kurzform für Karten: „12:20 Min“ bricht nicht mehr mit einem einzelnen „Sek“ um (ab einer Stunde wie fmtDuration) */
+function fmtDauerKurz(totalSec){
+  totalSec = Math.max(0, Math.round(totalSec));
+  if(totalSec >= 3600) return fmtDuration(totalSec);
+  var s = totalSec%60;
+  return Math.floor(totalSec/60) + ":" + (s<10?"0":"") + s + " " + t("unitMin");
 }
 function fmtDuration(totalSec){
   totalSec = Math.max(0, Math.round(totalSec));
@@ -1717,10 +1724,17 @@ function openBereicheSheet(){
   zeichnen();
 }
 /* „Überrasch mich“ als große Karte - steht auf der Startseite und in allen Bibliotheks-Reitern */
-function surpriseCardHTML(){
-  return '<button type="button" class="surprise-card" data-surprise>'+
+/* gross: die Hauptkarte oben in Air - zeigt zusätzlich, womit „Überrasch mich“ zuletzt gemischt hat (Dauer und Kategorien) */
+function surpriseCardHTML(gross){
+  var p = gross && state.db.settings.surprise, last = "";
+  if(p && p.dur){
+    var ms = selArr(p.mains).filter(function(m){ return m !== "stretch"; });
+    if(!ms.length) ms = ["kraft", "ausdauer", "rumpf"];
+    last = t("spLast", { x:p.dur+" Min · "+ms.map(function(m){ return tplText(mainCat(m)); }).join(", ") });
+  }
+  return '<button type="button" class="surprise-card'+(gross ? ' gross' : '')+'" data-surprise>'+
       '<span class="sc-ico">'+svgIcon(ICON_SPARK)+'</span>'+
-      '<span class="sc-txt"><b>'+t("surprise")+'</b><small>'+esc(t("spSub"))+'</small></span>'+
+      '<span class="sc-txt"><b>'+t("surprise")+'</b><small>'+esc(gross && last ? last : t("spSub"))+'</small></span>'+
       '<span class="sc-chev">'+ICON_CHEV+'</span>'+
     '</button>';
 }
@@ -2005,7 +2019,7 @@ function renderStudio(){
   });
   zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0 && passt(id); });
   var filterAn = fGr.length || fArt.length;
-  var kacheln = '<details class="opt-mehr st-filter" data-stfilter'+(s.stFilterZu ? '' : ' open')+'><summary>'+
+  var kacheln = '<details class="opt-mehr st-filter" data-stfilter'+(s.stFilterZu === false ? ' open' : '')+'><summary>'+
     '<span class="om-ico">'+svgIcon(CAT_ICON.weight)+'</span><span class="meta"><span class="name">'+esc(t("stFilter"))+'</span>'+
     (filterAn ? '<span class="sub">'+(fGr.length + fArt.length)+' aktiv</span>' : '')+'</span><span class="om-pfeil" aria-hidden="true">▾</span></summary><div class="st-filter-inhalt">'+
     '<div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
@@ -2879,7 +2893,7 @@ function libWoCard(lw, exs, hidden, dur, mains){
   return '<div class="list-item entry tpl-item lib-card'+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, var(--tp-color))" data-cover="lib/'+lw.id+'" data-q="'+esc(woSearchText(lw.name.de+" "+lw.name.en, exs))+'">'+
     '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
-    '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDuration(dur)+'</div>'+
+    '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDauerKurz(dur)+'</div>'+
     '</div>'+
     '<div class="card-aside"><div class="card-acts">'+
       (hidden ? '<button type="button" class="tpl-adopt" data-unhideone="wo:'+lw.id+'">'+svgIcon(ICON_EYE)+' '+t("unhide")+'</button>'
@@ -3014,7 +3028,7 @@ function renderLibrary(){
         list += '<div class="list-item entry tpl-item lib-card my-item" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, r.exs))+'">'+
           '<button class="playbtn tp" data-cover="my/'+mw.id+'" '+(r.exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
           '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
-          '<div class="sub">'+mainTagsHTML(r.mains)+t("exCount", { n:r.exs.length })+SEP+fmtDuration(r.dur)+'</div>'+
+          '<div class="sub">'+mainTagsHTML(r.mains)+t("exCount", { n:r.exs.length })+SEP+fmtDauerKurz(r.dur)+'</div>'+
           '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';
       }
     });
@@ -3049,14 +3063,18 @@ function renderLibrary(){
   var nf = filterCount(cat, equip);
 
   app.innerHTML =
-    topbar(t("library"), { back:"#home", right:'<button type="button" class="sp-top" data-surprise>'+svgIcon(ICON_SPARK)+esc(t("surprise"))+'</button>' }) +
+    // Suche als Lupe oben rechts (klappt das Feld auf), damit „Überrasch mich“ als Hauptleiste unter den Reitern Platz hat
+    topbar(t("library"), { back:"#home", right: tab === "mine" ? '' :
+      '<button type="button" class="iconbtn lib-lupe'+(libQuery ? ' an' : '')+'" data-lsuche title="'+esc(t("search"))+'" aria-label="'+esc(t("search"))+'">'+
+        svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'</button>' }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
       '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>'+
     '</div></div>'+
+    surpriseCardHTML(true) +   // das Alleinstellungsmerkmal von Air: schlanke, auffällige Leiste direkt unter den Reitern
     (tab === "mine" ? '' :
-    searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
+    '<div class="lib-suche'+(libQuery ? ' offen' : '')+'">'+searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+'</div>'+
     mainTilesHTML(mains, counts, "data-lmain", ["stretch"])+
     filterZeileHTML("data-ltoggle", nf, open)+
     (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
@@ -3094,6 +3112,12 @@ function renderLibrary(){
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
   on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
   on("[data-surprise]", function(){ openSurprise(); });
+  on("[data-lsuche]", function(){
+    var w = app.querySelector(".lib-suche"), q = app.querySelector("#l-q");
+    if(!w) return;
+    var offen = w.classList.toggle("offen");
+    if(offen && q) q.focus();
+  });
   on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   on("[data-unhideone]", function(el){
