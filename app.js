@@ -258,7 +258,7 @@ var I18N = {
     fCat:"Fokus", equipAny:"Alles", fEquipHintShort:"Was hast du da?",
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche", areasHint:"gedrückt halten zum Sortieren", areasSort:"Reihenfolge der Bereiche", areasSortHint:"Der oberste Bereich steht groß vorn.", moveUp:"Nach oben", moveDown:"Nach unten",
     timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Drinnen an Geräten · {n} Übungen · Fortschritt im Blick", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
-    tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App.",
+    tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App. Lange drücken legt sie in einen Plan.",
     tabTimer:"Timer", tabPlan:"Mein Plan",
     timerHint:"Eigene Intervall-Timer: Blöcke (eine Übung mit Runden, Arbeit und Pause) und Timer-Workouts aus mehreren Blöcken.",
     timerNoWo:"Noch kein Timer-Workout. Tippe unten rechts auf +.", timerNoBl:"Noch kein Block. Ein Block ist z. B. „6 × 30 s Arbeit / 10 s Pause“.",
@@ -359,7 +359,7 @@ var I18N = {
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
+    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
     reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
@@ -470,7 +470,7 @@ var I18N = {
     fCat:"Focus", equipAny:"Anything", fEquipHintShort:"What do you have?",
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections", areasHint:"press and hold to reorder", areasSort:"Order of sections", areasSortHint:"The top section is shown large.", moveUp:"Move up", moveDown:"Move down",
     timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Indoors on machines · {n} exercises · track your progress", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
-    tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest.",
+    tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest. Press and hold to add it to a plan.",
     tabTimer:"Timer", tabPlan:"My plan",
     timerHint:"Your own interval timers: blocks (one exercise with rounds, work and rest) and timer workouts made of several blocks.",
     timerNoWo:"No timer workout yet. Tap + at the bottom right.", timerNoBl:"No block yet. A block is e.g. “6 × 30 s work / 10 s rest”.",
@@ -571,7 +571,7 @@ var I18N = {
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
+    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
     reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
@@ -3529,6 +3529,7 @@ function renderLibrary(){
     surpriseCardHTML(true) +   // das Alleinstellungsmerkmal von Air: schlanke, auffällige Leiste direkt unter den Reitern
     (tab === "mine" || tab === "timer" ? '' :
     suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
+    (tab === "exercises" ? '<div class="page-hint">'+esc(t("zpHint"))+'</div>' : '')+
     mainTilesHTML(mains, counts, "data-lmain", ["stretch"])+
     filterZeileHTML("data-ltoggle", nf, open)+
     (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
