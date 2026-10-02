@@ -268,7 +268,7 @@ var I18N = {
     planDel:"Plan löschen", planDelQ:"Plan löschen?", planSonst:"Weitere im Plan",
     ausTitle:"Auswertung", ausSum:"Muskelgruppen im Überblick", ausEmpty:"Noch keine Übungen – die Auswertung erscheint, sobald etwas drin ist.", ausNote:"Zeigt nur die Verteilung – ein Leg Day bleibt ein Leg Day.", ausAll:"Alle Pläne zusammen", ausAllNote:"Alle Pläne zusammen gewichtet. Wenig vertreten: {n}.", ausAllOk:"Alle Pläne zusammen gewichtet – das ist ziemlich ausgewogen.",
     mgBrust:"Brust", mgRuecken:"Rücken", mgSchulter:"Schultern", mgArme:"Arme", mgRumpf:"Bauch & Rumpf", mgBeine:"Beine & Po",
-    genNew:"Plan nach Gewichtung", genTitle:"Plan nach Gewichtung", genHint:"Stell mit den Reglern ein, wie viel Gewicht jede Muskelgruppe bekommen soll. Daraus entsteht ein Plan, den du danach noch ändern kannst.", genAnz:"Anzahl Übungen", genMake:"Plan erstellen", genZero:"Stell mindestens eine Gruppe über 0.", genName:"Plan nach Gewichtung",
+    genNew:"Plan nach Gewichtung", genTitle:"Plan nach Gewichtung", genHint:"Es sind immer genau 100 % zu verteilen: Verschiebst du einen Regler, passen sich die anderen automatisch an. Daraus entsteht ein Plan, den du danach noch ändern kannst.", genAnz:"Anzahl Übungen", genMake:"Plan erstellen", genZero:"Stell mindestens eine Gruppe über 0.", genName:"Plan nach Gewichtung",
     stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
     stArt_geraet:"Gerät", stArt_kabel:"Kabel", stArt_frei:"Kurzhantel & Kettlebell", stArt_lh:"Langhantel", stArt_stange:"Stange", stOwnNew:"Eigene Übung",
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
@@ -480,7 +480,7 @@ var I18N = {
     planDel:"Delete plan", planDelQ:"Delete plan?", planSonst:"Also in the plan",
     ausTitle:"Analysis", ausSum:"Muscle groups at a glance", ausEmpty:"No exercises yet – the analysis appears once there is something in it.", ausNote:"Shows the split only – a leg day stays a leg day.", ausAll:"All plans combined", ausAllNote:"All plans weighted together. Underrepresented: {n}.", ausAllOk:"All plans weighted together – that is fairly balanced.",
     mgBrust:"Chest", mgRuecken:"Back", mgSchulter:"Shoulders", mgArme:"Arms", mgRumpf:"Abs & core", mgBeine:"Legs & glutes",
-    genNew:"Plan by weighting", genTitle:"Plan by weighting", genHint:"Set with the sliders how much weight each muscle group gets. A plan is built from it, which you can still change afterwards.", genAnz:"Number of exercises", genMake:"Create plan", genZero:"Set at least one group above 0.", genName:"Weighted plan",
+    genNew:"Plan by weighting", genTitle:"Plan by weighting", genHint:"There are always exactly 100% to distribute: move one slider and the others adjust automatically. A plan is built from it, which you can still change afterwards.", genAnz:"Number of exercises", genMake:"Create plan", genZero:"Set at least one group above 0.", genName:"Weighted plan",
     stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
     stArt_geraet:"Machine", stArt_kabel:"Cable", stArt_frei:"Dumbbell & kettlebell", stArt_lh:"Barbell", stArt_stange:"Bar", stOwnNew:"Own exercise",
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
@@ -2263,7 +2263,7 @@ function renderStudioPlanListe(){
     el.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); los(); } });
   });
   bindFabMenu({ "gen": function(){
-    stGen = { w:{ brust:5, ruecken:5, schulter:3, arme:3, rumpf:4, beine:6 }, n:8 };
+    stGen = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8 };
     renderStudio(); window.scrollTo(0, 0);
   }, "neu": function(){
     var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[], updatedAt:Date.now() };
@@ -2345,11 +2345,11 @@ function stGenBauen(w, n){
   return aus;
 }
 function renderStudioPlanGen(){
-  var w = stGen.w, tot = MUSKEL_GRP.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0);
+  var w = stGen.w;
   var html = topbar(t("genTitle"), { back:"#timers" }) + studioTabsHTML("plan") + '<div class="page-hint">'+esc(t("genHint"))+'</div><div class="card gen-card">'+
     MUSKEL_GRP.map(function(g){
-      return '<div class="gen-row"><label for="gw-'+g.id+'">'+esc(t(g.key))+'</label><input type="range" id="gw-'+g.id+'" data-gw="'+g.id+'" min="0" max="10" step="1" value="'+(w[g.id] || 0)+'">'+
-        '<b data-gp="'+g.id+'">'+(tot ? Math.round((w[g.id] || 0)*100/tot) : 0)+'%</b></div>';
+      return '<div class="gen-row"><label for="gw-'+g.id+'">'+esc(t(g.key))+'</label><input type="range" id="gw-'+g.id+'" data-gw="'+g.id+'" min="0" max="100" step="1" value="'+(w[g.id] || 0)+'">'+
+        '<b data-gp="'+g.id+'">'+(w[g.id] || 0)+'%</b></div>';
     }).join("")+
     '<div class="gen-row"><label for="gw-n">'+esc(t("genAnz"))+'</label><input type="range" id="gw-n" min="3" max="20" step="1" value="'+stGen.n+'"><b data-gn>'+stGen.n+'</b></div></div>'+
     '<button type="button" class="btn btn-primary" data-genmake>'+ICON_SAVE+' '+t("genMake")+'</button><div style="height:40px"></div>';
@@ -2357,12 +2357,24 @@ function renderStudioPlanGen(){
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ stGen = null; renderStudio(); window.scrollTo(0, 0); }); }
   bindCommon(); bindStudioTabs();
-  function prozent(){
-    var s = MUSKEL_GRP.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0);
-    MUSKEL_GRP.forEach(function(g){ var b = app.querySelector('[data-gp="'+g.id+'"]'); if(b) b.textContent = (s ? Math.round((w[g.id] || 0)*100/s) : 0)+"%"; });
+  /* Es sind immer genau 100 % zu verteilen: Wer einen Regler verschiebt, nimmt den anderen im gleichen Verhältnis etwas weg bzw. gibt ihnen etwas */
+  function verteilen(id, v){
+    var andere = MUSKEL_GRP.filter(function(g){ return g.id !== id; }), rest = 100 - v;
+    var so = andere.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0), sum = 0, gross = andere[0];
+    andere.forEach(function(g){
+      w[g.id] = so ? Math.round((w[g.id] || 0)*rest/so) : Math.round(rest/andere.length);
+      sum += w[g.id];
+      if(w[g.id] > w[gross.id]) gross = g;
+    });
+    w[gross.id] = Math.max(0, w[gross.id] + rest - sum);   // Rundungsrest
+    w[id] = v;
+    MUSKEL_GRP.forEach(function(g){
+      var r = app.querySelector("#gw-"+g.id), b = app.querySelector('[data-gp="'+g.id+'"]');
+      if(r) r.value = w[g.id];
+      if(b) b.textContent = w[g.id]+"%";
+    });
   }
-  app.querySelectorAll("[data-gw]").forEach(function(el){ el.addEventListener("input", function(){ w[el.getAttribute("data-gw")] = +el.value; prozent(); }); });
-  var nn = app.querySelector("#gw-n");
+  app.querySelectorAll("[data-gw]").forEach(function(el){ el.addEventListener("input", function(){ verteilen(el.getAttribute("data-gw"), +el.value); }); });  var nn = app.querySelector("#gw-n");
   nn.addEventListener("input", function(){ stGen.n = +nn.value; app.querySelector("[data-gn]").textContent = nn.value; });
   app.querySelector("[data-genmake]").addEventListener("click", function(){
     var ids = stGenBauen(w, stGen.n);
