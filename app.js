@@ -259,6 +259,13 @@ var I18N = {
     favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche", areasHint:"gedrückt halten zum Sortieren", areasSort:"Reihenfolge der Bereiche", areasSortHint:"Der oberste Bereich steht groß vorn.", moveUp:"Nach oben", moveDown:"Nach unten",
     timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Drinnen an Geräten · {n} Übungen · Fortschritt im Blick", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
     tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App.",
+    tabTimer:"Timer", tabPlan:"Mein Plan",
+    timerHint:"Eigene Intervall-Timer: Blöcke (eine Übung mit Runden, Arbeit und Pause) und Timer-Workouts aus mehreren Blöcken.",
+    timerNoWo:"Noch kein Timer-Workout. Tippe unten rechts auf +.", timerNoBl:"Noch kein Block. Ein Block ist z. B. „6 × 30 s Arbeit / 10 s Pause“.",
+    planHint:"Stell dir eigene Pläne aus Studio-Übungen zusammen – antippen genügt.", planNone:"Noch kein Plan. Tippe unten rechts auf +, um einen anzulegen.",
+    planOne:"1 Übung", planN:"{n} Übungen", planNew:"Neuen Plan anlegen", planDefault:"Plan {n}", planEdit:"Bearbeiten", planDone:"Fertig",
+    planTippen:"Antippen = in den Plan, nochmal antippen = wieder raus. Die Nummer zeigt die Reihenfolge.", planEmpty:"Dieser Plan ist noch leer. Tippe auf „Bearbeiten“ und wähle Übungen aus.",
+    planDel:"Plan löschen", planDelQ:"Plan löschen?", planSonst:"Weitere im Plan",
     stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
     stArt_geraet:"Gerät", stArt_kabel:"Kabel", stArt_frei:"Kurzhantel & Kettlebell", stArt_lh:"Langhantel", stArt_stange:"Stange", stOwnNew:"Eigene Übung",
     stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
@@ -461,6 +468,13 @@ var I18N = {
     favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections", areasHint:"press and hold to reorder", areasSort:"Order of sections", areasSortHint:"The top section is shown large.", moveUp:"Move up", moveDown:"Move down",
     timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Indoors on machines · {n} exercises · track your progress", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
     tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest.",
+    tabTimer:"Timer", tabPlan:"My plan",
+    timerHint:"Your own interval timers: blocks (one exercise with rounds, work and rest) and timer workouts made of several blocks.",
+    timerNoWo:"No timer workout yet. Tap + at the bottom right.", timerNoBl:"No block yet. A block is e.g. “6 × 30 s work / 10 s rest”.",
+    planHint:"Put together your own plans from gym exercises – just tap.", planNone:"No plan yet. Tap + at the bottom right to create one.",
+    planOne:"1 exercise", planN:"{n} exercises", planNew:"Create a new plan", planDefault:"Plan {n}", planEdit:"Edit", planDone:"Done",
+    planTippen:"Tap = add to the plan, tap again = remove. The number shows the order.", planEmpty:"This plan is empty. Tap “Edit” and pick exercises.",
+    planDel:"Delete plan", planDelQ:"Delete plan?", planSonst:"Also in the plan",
     stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
     stArt_geraet:"Machine", stArt_kabel:"Cable", stArt_frei:"Dumbbell & kettlebell", stArt_lh:"Barbell", stArt_stange:"Bar", stOwnNew:"Own exercise",
     stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
@@ -1598,13 +1612,13 @@ function render(){
   if(route==="repplay") return renderRepPlayer(parts[1]);
   if(route==="repedit") return renderRepEdit(parts[1]);
   if(route==="timers"){
-    if(parts[1] === "workouts" || parts[1] === "blocks"){   // frühere Timer-Reiter: jetzt Workouts › Meine
-      state.db.settings.libTab = "mine"; navStack[navStack.length-1] = "#library"; setUrl("#library");
+    if(parts[1] === "workouts" || parts[1] === "blocks"){   // frühere Timer-Reiter: jetzt Air › Timer
+      state.db.settings.libTab = "timer"; navStack[navStack.length-1] = "#library"; setUrl("#library");
       return renderLibrary();
     }
     return renderTimers();
   }
-  if(route==="blocks"){ state.db.settings.libTab = "mine"; navStack[navStack.length-1] = "#library"; setUrl("#library"); return renderLibrary(); }
+  if(route==="blocks"){ state.db.settings.libTab = "timer"; navStack[navStack.length-1] = "#library"; setUrl("#library"); return renderLibrary(); }
   if(route==="block") return renderBlockEdit(parts[1]);
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
@@ -1901,7 +1915,7 @@ function timerWorkoutRow(w){
   return '<div class="list-item entry" data-nav="#workout/'+w.id+'">'+
     '<button class="playbtn bl" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+' title="'+t("start")+'" aria-label="'+t("start")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(w.name||t("untitled"))+'</div>'+
-    '<div class="sub">'+count+' '+(count===1?t("blockOne"):t("blockMany"))+SEP+fmtDuration(workoutDuration(w))+'</div></div>'+
+    '<div class="sub">'+count+' '+(count===1?t("blockOne"):t("blockMany"))+SEP+fmtDauerKurz(workoutDuration(w))+'</div></div>'+
     '<button type="button" class="plus-btn" data-twplus="'+w.id+'" title="'+esc(t("spFill"))+'" aria-label="'+esc(t("spFill")+": "+(w.name || t("untitled")))+'">'+ICON_PLUS+'</button>'+
     favBtn("tw:"+w.id)+trashBtn("tw", w.id, w.name)+'</div>';
 }
@@ -1909,7 +1923,7 @@ function blockRow(b){
   return '<div class="list-item entry" data-nav="#block/'+b.id+'">'+
     '<button class="playbtn bl" data-playblock="'+b.id+'" title="'+t("startBlock")+'" aria-label="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(b.name)+'</div>'+
-    '<div class="sub">'+blockSpec(b)+SEP+fmtDuration(blockDuration(b))+'</div></div>'+
+    '<div class="sub">'+blockSpec(b)+SEP+fmtDauerKurz(blockDuration(b))+'</div></div>'+
     favBtn("bl:"+b.id)+trashBtn("bl", b.id, b.name)+'</div>';
 }
 /* Freies Training ist nur noch das Studio (2026-09-29). Timer-Workouts und Blöcke stehen unter Workouts › Meine. */
@@ -2003,6 +2017,9 @@ function studioKachel(id){
 }
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
+  // Reiter oben: Übungen · Mein Plan · Timer
+  if(s.stTab === "timer") return renderStudioTimer();
+  if(s.stTab === "plan") return renderStudioPlan();
   // Filter: Gruppen-Kacheln (mehrere möglich) und Ausrüstung (mehrere möglich)
   var fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
   function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
@@ -2048,6 +2065,7 @@ function renderStudio(){
   });
   app.innerHTML =
     topbar(t("timers"), { back:"#home" }) +
+    studioTabsHTML("uebungen") +
     '<div class="page-hint">'+esc(t("studioHint"))+'</div>'+
     searchHTML(studioQuery, "st", t("stSearch"))+
     kacheln +
@@ -2055,6 +2073,7 @@ function renderStudio(){
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
     '<div style="height:40px"></div>';
   bindCommon();
+  bindStudioTabs();
   app.querySelectorAll("[data-studio]").forEach(function(b){
     function oeffnen(){ go("#studio/"+b.getAttribute("data-studio")); }
     b.addEventListener("click", oeffnen);
@@ -2090,6 +2109,154 @@ function renderStudio(){
   }
   q.addEventListener("input", function(){ studioQuery = q.value; suchen(); });
   if(studioQuery) suchen();
+}
+
+/* ============ Timer-Reiter (Air und Studio) ============
+   Blöcke (eine Übung mit Runden, Arbeit, Pause) und Timer-Workouts (mehrere Blöcke hintereinander) haben einen eigenen Reiter
+   in einem leicht anderen Blau (--ti-color). Angelegt werden sie über das Plus in diesem Reiter. */
+function timerPanelHTML(){
+  var tws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
+  var bls = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
+  return '<div class="timer-panel"><div class="page-hint">'+esc(t("timerHint"))+'</div>'+
+    '<div class="section-title">'+t("mineTimer")+'</div>'+(tws.length ? tws.map(timerWorkoutRow).join("") : '<div class="fav-empty">'+esc(t("timerNoWo"))+'</div>')+
+    '<div class="section-title">'+t("mineBlocks")+'</div>'+(bls.length ? bls.map(blockRow).join("") : '<div class="fav-empty">'+esc(t("timerNoBl"))+'</div>')+'</div>';
+}
+function timerFabHTML(){
+  return fabMenuHTML([{ key:"timerwo", label:t("fabTimerWo"), ico:ICON_WORKOUT, cls:"ti" }, { key:"block", label:t("fabBlock"), ico:ICON_BLOCK, cls:"ti" }]);
+}
+function studioTabsHTML(tab){
+  function b(k, label){ return '<button data-sttab="'+k+'" class="'+(k === "timer" ? 'ti' : '')+(tab === k ? ' active' : '')+'">'+esc(label)+'</button>'; }
+  return '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+b("uebungen", t("libExercises"))+b("plan", t("tabPlan"))+b("timer", t("tabTimer"))+'</div></div>';
+}
+function bindStudioTabs(){
+  app.querySelectorAll("[data-sttab]").forEach(function(b){
+    b.addEventListener("click", function(){
+      state.db.settings.stTab = b.getAttribute("data-sttab"); stPlanAktiv = null; stPlanBauen = false;
+      save(); renderStudio(); window.scrollTo(0, 0);
+    });
+  });
+}
+function renderStudioTimer(){
+  app.innerHTML = topbar(t("timers"), { back:"#home" }) + studioTabsHTML("timer") + timerPanelHTML() + '<div style="height:90px"></div>' + timerFabHTML();
+  bindCommon(); bindStudioTabs();
+  function neu(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
+  function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
+  on("[data-play]", function(el){ if(!el.disabled) go("#play/"+el.getAttribute("data-play")); });
+  on("[data-playblock]", function(el){ go("#playblock/"+el.getAttribute("data-playblock")); });
+  on("[data-twplus]", function(el){ openSurprise(el.getAttribute("data-twplus")); });
+  on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
+  bindTrash(neu);
+  bindFabMenu({ "timerwo": function(){ go("#workout/"+createTimerWorkout().id); }, "block": function(){ go("#block/"+createBlock().id); } });
+}
+
+/* ============ Studio: Mein Plan ============
+   Mehrere eigene Pläne aus Studio-Übungen: settings.stPlaene = [{ id, name, ids:[Übungs-IDs in Reihenfolge], updatedAt }].
+   Das Plus legt einen neuen Plan an; Übungen werden wie im Workout-Baukasten von Air durch Antippen gewählt (Nummer = Reihenfolge,
+   nochmal antippen = raus). Ein Tipp auf eine Übung im fertigen Plan öffnet ihre Karte zum Eintragen. */
+var stPlanAktiv = null, stPlanBauen = false, stPlanQuery = "";
+function stPlaene(){ var s = state.db.settings; if(!Array.isArray(s.stPlaene)) s.stPlaene = []; return s.stPlaene; }
+function stPlanFind(id){ var l = stPlaene(); for(var i=0;i<l.length;i++) if(l[i].id === id) return l[i]; return null; }
+function stPlanIds(p){   // nur Übungen, die es noch gibt, jede nur einmal
+  var da = {};
+  return (Array.isArray(p.ids) ? p.ids : []).filter(function(id){ if(da[id] || !findExercise(id)) return false; da[id] = true; return true; });
+}
+function studioSub(id){
+  var ex = findExercise(id), e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
+  if(studioNurBlock(ex)){ var tb = studioTimer(id); return tb.reps+" × "+tb.work+" s"; }
+  return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
+}
+function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
+function renderStudioPlan(){
+  var p = stPlanAktiv && stPlanFind(stPlanAktiv);
+  if(!p){ stPlanAktiv = null; return renderStudioPlanListe(); }
+  var ids = stPlanIds(p), pos = {}, html;
+  ids.forEach(function(id, i){ pos[id] = [i+1]; });
+  html = topbar(p.name, { back:"#timers" }) + studioTabsHTML("plan");
+  if(stPlanBauen){
+    var gruppen = studioIds(), da = {};
+    gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
+    var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die gerade nicht in den sichtbaren Gruppen stehen (z. B. Air-Übungen ausgeblendet)
+    if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest }]);
+    html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
+      '<div class="page-hint">'+esc(t("planTippen"))+'</div>'+searchHTML(stPlanQuery, "pl", t("stSearch"));
+    gruppen.forEach(function(g){
+      if(!g.ids.length) return;
+      html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+'</div><div class="fig-grid">'+g.ids.map(function(id){
+        var ex = findExercise(id);
+        return ex ? uebKachel({ bild:id, name:tplText(ex.name), attr:'data-planex="'+id+'"', q:exSearchText(ex), cat:studioFarbe(ex), nr:pos[id] || [] }) : "";
+      }).join("")+'</div></div>';
+    });
+    html += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
+      '<button type="button" class="btn btn-danger" data-plandel style="margin-top:18px;">'+ICON_TRASH+' '+t("planDel")+'</button>'+
+      '<div style="height:96px"></div>'+
+      '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+esc(planAnzahl(ids.length))+'</b></span>'+
+      '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone>'+ICON_SAVE+' '+t("planDone")+'</button></span></div></div>';
+  } else {
+    html += '<div class="plan-kopf"><b>'+esc(planAnzahl(ids.length))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
+      (ids.length ? '<div class="fig-grid">'+ids.map(function(id, i){
+        var ex = findExercise(id);
+        return uebKachel({ bild:id, name:tplText(ex.name), attr:'data-studio="'+id+'"', cat:studioFarbe(ex), nr:[i+1], unter:'<span class="st-sub">'+esc(studioSub(id))+'</span>' });
+      }).join("")+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
+      '<div style="height:40px"></div>';
+  }
+  app.innerHTML = html;
+  // Zurück führt zur Plan-Liste, nicht aus dem Studio heraus
+  var zur = app.querySelector("[data-back]");
+  if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ stPlanAktiv = null; stPlanBauen = false; stPlanQuery = ""; renderStudio(); window.scrollTo(0, 0); }); }
+  bindCommon(); bindStudioTabs();
+  function neu(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
+  function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
+  an("[data-planedit]", function(){ stPlanBauen = true; stPlanQuery = ""; renderStudio(); window.scrollTo(0, 0); });
+  an("[data-plandone]", function(){ stPlanBauen = false; stPlanQuery = ""; renderStudio(); window.scrollTo(0, 0); });
+  an("[data-plandel]", function(){
+    confirmSheet(t("planDelQ"), "„"+p.name+"“ – "+t("cantUndo"), t("del"), function(){
+      state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });
+      stPlanAktiv = null; stPlanBauen = false; save(); renderStudio(); window.scrollTo(0, 0);
+      showToast(t("deletedToast", { n:p.name }));
+    });
+  });
+  var nm = app.querySelector("#plan-name");
+  if(nm) nm.addEventListener("input", function(){ p.name = nm.value.trim() || t("planDefault", { n:stPlaene().indexOf(p)+1 }); p.updatedAt = Date.now(); save(); });
+  kachelKlick(app, "[data-planex]", function(el){
+    var id = el.getAttribute("data-planex"), l = stPlanIds(p), i = l.indexOf(id);
+    if(i > -1) l.splice(i, 1); else l.push(id);
+    p.ids = l; p.updatedAt = Date.now(); save(); neu();
+  });
+  kachelKlick(app, "[data-studio]", function(el){ go("#studio/"+el.getAttribute("data-studio")); });
+  var q = app.querySelector("#pl-q");
+  if(q){
+    function suchen(){
+      applySearch(app, stPlanQuery);
+      app.querySelectorAll(".st-gruppe").forEach(function(g){   // leere Gruppen ausblenden
+        g.style.display = Array.prototype.some.call(g.querySelectorAll("[data-q]"), function(k){ return k.style.display !== "none"; }) ? "" : "none";
+      });
+    }
+    q.addEventListener("input", function(){ stPlanQuery = q.value; suchen(); });
+    if(stPlanQuery) suchen();
+  }
+}
+function renderStudioPlanListe(){
+  var pl = stPlaene().slice().sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); });
+  var html = topbar(t("timers"), { back:"#home" }) + studioTabsHTML("plan") + '<div class="page-hint">'+esc(t("planHint"))+'</div>'+
+    (pl.length ? pl.map(function(p){
+      var ids = stPlanIds(p), namen = ids.slice(0, 3).map(function(id){ return tplText(findExercise(id).name); }).join(", ")+(ids.length > 3 ? " …" : "");
+      return '<div class="list-item entry plan-item" data-plan="'+esc(p.id)+'" role="button" tabindex="0">'+
+        '<div class="meta"><div class="name">'+esc(p.name)+'</div><div class="sub">'+esc(planAnzahl(ids.length))+(ids.length ? SEP+esc(namen) : '')+'</div></div>'+
+        '<span class="chip chev">'+ICON_CHEV+'</span></div>';
+    }).join("") : '<div class="fav-empty">'+esc(t("planNone"))+'</div>')+
+    '<div style="height:90px"></div>'+fabMenuHTML([{ key:"neu", label:t("planNew"), ico:ICON_PLUS, cls:"bl" }]);
+  app.innerHTML = html;
+  bindCommon(); bindStudioTabs();
+  function oeffnen(id, bauen){ stPlanAktiv = id; stPlanBauen = bauen; stPlanQuery = ""; renderStudio(); window.scrollTo(0, 0); }
+  app.querySelectorAll("[data-plan]").forEach(function(el){
+    function los(){ oeffnen(el.getAttribute("data-plan"), false); }
+    el.addEventListener("click", los);
+    el.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); los(); } });
+  });
+  bindFabMenu({ "neu": function(){
+    var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[], updatedAt:Date.now() };
+    stPlaene().push(p); save(); oeffnen(p.id, true);
+  } });
 }
 
 /* Vorschlag für den nächsten Satz: heute der letzte Satz, sonst Arbeitsgewicht bzw. letztes Mal */
@@ -2985,7 +3152,7 @@ function libWoSort(list, sort){
 function renderLibrary(){
   var s = state.db.settings;
   if(s.libTab === "calis" || s.libTab === "stretch") s.libTab = "workouts";   // frühere Reiter Calisthenics und Dehnen
-  var tab = ["exercises","mine"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
+  var tab = ["exercises","mine","timer"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
   /* Dehnen und Aufwärmen stehen seit 2026-09 unter „Aufwärmen & Dehnen“ - hier nicht mehr */
   function ohneStretch(x){ return x !== "stretch"; }
   var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
@@ -2997,7 +3164,10 @@ function renderLibrary(){
   var counts = {}, hiddenCount = 0, hiddenCards = "", list = "", fab = "";
   MAIN_CATS.forEach(function(c){ counts[c.id] = 0; });
 
-  if(tab === "workouts" || tab === "mine"){
+  if(tab === "timer"){
+    list = timerPanelHTML();
+    fab = timerFabHTML();
+  } else if(tab === "workouts" || tab === "mine"){
     var rows = [];
     if(tab === "workouts"){
       LIB_WORKOUTS.forEach(function(lw){
@@ -3032,18 +3202,9 @@ function renderLibrary(){
           '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';
       }
     });
-    if(tab === "mine"){
-      var tws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
-      var bls = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
-      var eigene = list;
-      list = "";
-      if(eigene) list += (tws.length || bls.length ? '<div class="section-title">'+t("mineMy")+'</div>' : '') + eigene;
-      if(tws.length) list += '<div class="section-title">'+t("mineTimer")+'</div>'+tws.map(timerWorkoutRow).join("");
-      if(bls.length) list += '<div class="section-title">'+t("mineBlocks")+'</div>'+bls.map(blockRow).join("");
+    if(tab === "mine"){   // Timer-Workouts und Blöcke haben seit 2026-10 ihren eigenen Reiter „Timer“ - hier nur noch eigene Workouts
       if(!list) list = '<div class="empty" style="padding:30px 20px;">'+t("myEmpty")+'</div>';
-      fab = fabMenuHTML([{ key:"new", label:t("myNew"), ico:ICON_PLUS, cls:"tp" },
-                         { key:"timerwo", label:t("fabTimerWo"), ico:ICON_WORKOUT, cls:"wo" },
-                         { key:"block", label:t("fabBlock"), ico:ICON_BLOCK, cls:"bl" }]);
+      fab = fabMenuHTML([{ key:"new", label:t("myNew"), ico:ICON_PLUS, cls:"tp" }]);
     }
   } else {
     EXERCISES.forEach(function(ex){
@@ -3064,16 +3225,17 @@ function renderLibrary(){
 
   app.innerHTML =
     // Suche als Lupe oben rechts (klappt das Feld auf), damit „Überrasch mich“ als Hauptleiste unter den Reitern Platz hat
-    topbar(t("library"), { back:"#home", right: tab === "mine" ? '' :
+    topbar(t("library"), { back:"#home", right: (tab === "mine" || tab === "timer") ? '' :
       '<button type="button" class="iconbtn lib-lupe'+(libQuery ? ' an' : '')+'" data-lsuche title="'+esc(t("search"))+'" aria-label="'+esc(t("search"))+'">'+
         svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'</button>' }) +
-    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
+    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-4">'+
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
       '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>'+
+      '<button data-libtab="timer" class="ti'+(tab==="timer"?" active":"")+'">'+t("tabTimer")+'</button>'+   // eigener Reiter in eigenem Blau
     '</div></div>'+
     surpriseCardHTML(true) +   // das Alleinstellungsmerkmal von Air: schlanke, auffällige Leiste direkt unter den Reitern
-    (tab === "mine" ? '' :
+    (tab === "mine" || tab === "timer" ? '' :
     '<div class="lib-suche'+(libQuery ? ' offen' : '')+'">'+searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+'</div>'+
     mainTilesHTML(mains, counts, "data-lmain", ["stretch"])+
     filterZeileHTML("data-ltoggle", nf, open)+

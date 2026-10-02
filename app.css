@@ -21,6 +21,8 @@
   --bl-text:#ffffff;
   --tp-color:#3867e8;
   --tp-text:#ffffff;
+  --ti-color:#1e8fd5;   /* Timer (Blöcke und Timer-Workouts): ein leicht anderes, helleres Blau als Air */
+  --ti-text:#ffffff;
   /* Farblogik nach 60-30-10: ca. 60 % ruhige Flächen (--bg, --surface), 30 % Text, Linien und Zweitflächen (--text, --surface-2, --border),
      höchstens 10 % Akzent (--accent) - und der gehört der Hauptaktion, dem Logo und der Arbeitsphase im Timer.
      „Ausgewählt“ ist deshalb tonal: zarte Tönung der Akzentfarbe, normale Schriftfarbe, feine Kontur - weder schwarz noch grell. */
@@ -55,6 +57,7 @@
   --bl-color:#a98bff;
   --bl-text:#170b33;
   --tp-color:#6f92ff;
+  --ti-color:#58b6f4;
   --tp-text:#0b1330;
   --rep-color:#f5b82e;
   --ws-color:#3fcf8e;
@@ -80,6 +83,7 @@
     --bl-color:#a98bff;
     --bl-text:#170b33;
     --tp-color:#6f92ff;
+  --ti-color:#58b6f4;
     --tp-text:#0b1330;
     --rep-color:#f5b82e;
     --ws-color:#3fcf8e;
@@ -134,6 +138,7 @@
   --danger:#e1251b;
   --wo-color:#ef7b17; --wo-text:#ffffff;
   --bl-color:#f6b01e; --bl-text:#ffffff;
+  --ti-color:#2a86b8; --ti-text:#ffffff;
   --tp-color:#2f5fa7; --tp-text:#ffffff;   /* Air auch hier blau (Kassetten-Blau), Mobility & Stretch grün */
   --rep-color:#8a5a2b; --ws-color:#4f8f3a; --ws-text:#ffffff;   /* Gelb ist hier schon Studio: Summit in Bandbraun */
   --title-color:#e1251b;
@@ -1411,6 +1416,17 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 /* Ausgewählt überall gleich ruhig: Tönung + feine Kontur in der Akzentfarbe (die Farben selbst stehen oben bei --sel-*) */
 .lib-chip.active, .seg-row button.active, .theme-pick button.active, .sound-tile.active, .main-tile.on, .fc-chip.on, .fc-seg button.on,
 :root[data-vintage] .sound-tile.active{ border-color:var(--sel-border); }
+/* Timer (Blöcke und Timer-Workouts): eigener Reiter in eigenem Blau (--ti-color), in Air und im Studio */
+.lib-tabs.seg-4{ grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
+.lib-tabs button.ti{ color:var(--ti-color); font-weight:600; }
+.lib-tabs button.ti.active{ background:color-mix(in srgb, var(--ti-color) 16%, var(--surface)); border-color:color-mix(in srgb, var(--ti-color) 55%, var(--border)); color:var(--text); }
+.timer-panel .list-item .playbtn, .timer-panel .list-item .playbtn.bl, .timer-panel .list-item .playbtn.wo{ background:var(--ti-color); color:var(--ti-text, #fff); }
+.fab-opt .ico.ti{ background:var(--ti-color); color:var(--ti-text, #fff); }
+/* Studio: Mein Plan */
+.plan-kopf{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:2px 4px 12px; font-size:15px; }
+.plan-edit{ display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text); font:inherit; font-size:14px; cursor:pointer; }
+.plan-edit .ico{ width:16px; height:16px; }
+.plan-item{ cursor:pointer; }
 /* Einstellungen: „Stand wiederherstellen“ ersetzt alle Daten - leise statt als größter Knopf */
 .snap-zeile [data-snaprestore]{ width:auto; margin:10px 0 0; padding:9px 14px; font-size:13px; font-weight:500; background:none; color:var(--text-dim); border:1px solid var(--border); box-shadow:none; }
 /* Bereiche: zwei Kacheln nebeneinander */
@@ -1684,6 +1700,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   --accent:#ff8f3f; --accent-text:#1d1006;
   --rest:#a8c46a; --rest-text:#1a2208; --blockrest:#d99ac6; --danger:#ff7a6b;
   --bl-color:#d99ac6; --bl-text:#241018;
+  --ti-color:#7fb4d6; --ti-text:#0d1a24;
   --tp-color:#8fa8d8; --tp-text:#0f1626;   /* Air: gedämpftes Blau */
   --rep-color:#e8c05a;
   --ws-color:#a8c46a; --ws-text:#1a2208;   /* Mobility & Stretch: grün */

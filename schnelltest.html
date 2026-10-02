@@ -105,11 +105,11 @@
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
     }],
-    ["Bibliothek: Reiter Workouts · Übungen · Meine, Workouts vorhanden", async function () {
+    ["Bibliothek: Reiter Workouts · Übungen · Meine · Timer, Workouts vorhanden", async function () {
       klick('[data-nav="#library"]');
-      await bis(function () { return $$("[data-libtab]").length === 3; }, 3000, "Reiter");
+      await bis(function () { return $$("[data-libtab]").length === 4; }, 3000, "Reiter");
       var tabs = $$("[data-libtab]").map(function (b) { return b.textContent.trim(); }).join(" · ");
-      pruefe(tabs === "Workouts · Übungen · Meine", "Reihenfolge ist " + tabs);
+      pruefe(tabs === "Workouts · Übungen · Meine · Timer", "Reihenfolge ist " + tabs);
       klick('[data-libtab="workouts"]');
       pruefe($$(".lib-card").length >= 20, "zu wenige Workouts: " + $$(".lib-card").length);
     }],
@@ -203,30 +203,30 @@
       klick('[data-wstab="uebungen"]');
       pruefe(/Kobra/.test(D.body.textContent), "Kobra fehlt");
     }],
-    ["Timer-Workouts und Blöcke unter Workouts › Meine, Einstellungen öffnen", async function () {
+    ["Timer-Workouts und Blöcke im Reiter Timer, Einstellungen öffnen", async function () {
       await heim();
       klick('[data-nav="#library"]');
-      klick(await bis(function () { return $('[data-libtab="mine"]'); }, 3000, "Reiter Meine"));
+      klick(await bis(function () { return $('[data-libtab="timer"]'); }, 3000, "Reiter Timer"));
       klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü"));
       pruefe($('[data-fabopt="timerwo"]') && $('[data-fabopt="block"]'), "Timer-Workout und Block fehlen im Plus-Menü");
       klick('[data-fabopt="block"]');
       await bis(function () { return $("#f-name"); }, 3000, "Block-Editor");
       klick("[data-save]");
-      await bis(function () { return $$("[data-playblock]").length === 1; }, 3000, "neuer Block unter Meine");
+      await bis(function () { return $$("[data-playblock]").length === 1; }, 3000, "neuer Block im Reiter Timer");
       klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü"));
       klick('[data-fabopt="timerwo"]');
       await bis(function () { return $("#w-name"); }, 3000, "Timer-Workout-Editor");
       klick("[data-addex]");
       await bis(function () { return $(".wblock"); }, 3000, "Übung im Timer-Workout");
       klick("button.back");
-      await bis(function () { return $('[data-libtab="mine"].active'); }, 3000, "zurück unter Meine");
+      await bis(function () { return $('[data-libtab="timer"].active'); }, 3000, "zurück im Reiter Timer");
       pruefe($$("[data-play]").length === 0, "Timer-Workout ohne Speichern angelegt");
       pruefe($$("[data-playblock]").length === 1, "verworfenes Timer-Workout hat Blöcke angelegt: " + $$("[data-playblock]").length);
       klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü"));
       klick('[data-fabopt="timerwo"]');
       await bis(function () { return $("#w-name"); }, 3000, "Timer-Workout-Editor");
       klick("[data-save]");
-      await bis(function () { return $$("[data-play]").length === 1 && $('[data-libtab="mine"].active'); }, 3000, "Timer-Workout unter Meine");
+      await bis(function () { return $$("[data-play]").length === 1 && $('[data-libtab="timer"].active'); }, 3000, "Timer-Workout im Reiter Timer");
       await heim();
       klick('[data-nav="#settings"]');
       await bis(function () { return $("[data-export]"); }, 3000, "Sicherung in den Einstellungen");
