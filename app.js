@@ -4696,6 +4696,11 @@ function repQRunden(q){ var n = 0; q.teile.forEach(function(tl){ n += tl.bis - t
 function repQStange(q){ return q.teile.some(function(tl){ return repBrauchtStange(tl.row); }); }
 function repBestOf(id){ var b = state.db.settings.repBest; return b && b[id] ? b[id] : null; }
 function repWochen(id){ var b = repBestOf(id); return wochenWerte(b && b.log || [], true).slice(-16); }
+/* Auf den Karten immer: Bestzeit, letzte Zeit und Anzahl der Läufe (ohne Lauf mit „–“) */
+function repZeitenHTML(best){
+  function z(wert, label){ return '<span class="rz"><b>'+(wert == null ? "–" : esc(String(wert)))+'</b>'+esc(label)+'</span>'; }
+  return '<div class="rep-zeiten">'+z(best ? repUhr(best.best) : null, t("repBestZeit"))+z(best ? repUhr(best.last) : null, t("repLetzte"))+z(best ? best.n : null, t("repLaeufe"))+'</div>';
+}
 /* Auf den Karten: was zu tun ist - je Übung die Menge über die Runden („21 · 15 · 9“, gleich bleibend „5 × 20“) */
 function repPlanEin(m){ if(typeof m === "number") return String(m); var sek = repSek(m); return sek ? repUhr(sek*1000) : repMenge(m); }
 function repPlanHTML(q){
@@ -4791,8 +4796,8 @@ function renderReps(){
   function karte(id, name, zeile1, zeile2, plan){
     var best = repBestOf(id);
     return '<div class="list-item rep-karte" data-nav="#rep/'+id+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
-      (zeile1 ? '<div class="sub rep-teile">'+zeile1+'</div>' : '')+'<div class="sub">'+zeile2+'</div>'+(plan || '')+'</div>'+
-      (best ? wochenKurve(repWochen(id), "rep-spark")+'<span class="chip">'+repUhr(best.best)+'</span>' : '')+
+      (zeile1 ? '<div class="sub rep-teile">'+zeile1+'</div>' : '')+'<div class="sub">'+zeile2+'</div>'+(plan || '')+repZeitenHTML(best)+'</div>'+
+      (best ? wochenKurve(repWochen(id), "rep-spark") : '')+
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   var html = topbar(t("repTitle"), { back:"#home" }) +
