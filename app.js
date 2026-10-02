@@ -359,7 +359,7 @@ var I18N = {
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", reNoEx:"Noch keine Übungen",
+    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
     reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
@@ -571,7 +571,7 @@ var I18N = {
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", reNoEx:"No exercises yet",
+    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
     reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
@@ -1030,6 +1030,14 @@ function searchHTML(q, pre, ph){
   ph = ph || t("searchPh");
   return '<div class="lib-search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>', "ico s-ico")+
     '<input type="search" id="'+pre+'-q" value="'+esc(q||"")+'" placeholder="'+esc(ph)+'" autocomplete="off" aria-label="'+esc(ph)+'"></div>';
+}
+/* Suche überall wie in Air: Lupe oben rechts in der Leiste klappt das Suchfeld auf (bleibt offen, solange etwas gesucht wird) */
+function lupeHTML(pre, q){
+  return '<button type="button" class="iconbtn lib-lupe'+(q ? ' an' : '')+'" data-lupe="'+pre+'" title="'+esc(t("search"))+'" aria-label="'+esc(t("search"))+'">'+
+    svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'</button>';
+}
+function suchFeldHTML(q, pre, ph){
+  return '<div class="lib-suche'+(q ? ' offen' : '')+'" data-lsw="'+pre+'">'+searchHTML(q, pre, ph)+'</div>';
 }
 /* Suche tolerant: Groß/klein, Bindestriche, Leerzeichen und Umlaute egal („pull ups“ = „Pull-ups“ = „pullups“,
    „liegestutz“ = „Liegestütz“), jedes Wort für sich (Reihenfolge egal), Mehrzahl-s egal („pullups“ findet „Pull-Up“) */
@@ -1628,6 +1636,7 @@ function render(){
   if(route==="block") return renderBlockEdit(parts[1]);
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
+  if(route==="search") return renderSearch();
   if(route==="figuren") return renderFiguren();
   if(route==="studio") return renderStudioKarte(parts[1]);
   if(route==="install") return renderInstallGuide();
@@ -1758,12 +1767,105 @@ function surpriseCardHTML(gross){
       '<span class="sc-chev">'+ICON_CHEV+'</span>'+
     '</button>';
 }
+/* ============ Gesamtsuche ============
+   Lupe auf der Startseite (neben dem Zahnrad): durchsucht Übungen, Workouts (Air und eigene), Challenges (Summit),
+   Timer-Workouts, Blöcke, die Bereiche und Aktionen wie „Neuer Block“. Das Feld bleibt stehen, nur die Treffer werden neu gezeichnet. */
+var gesamtQuery = "";
+function gesamtEintraege(){
+  var l = [];
+  function add(gruppe, titel, sub, text, fn){ l.push({ g:gruppe, titel:titel, sub:sub || "", text:titel+" "+(sub || "")+" "+(text || ""), fn:fn }); }
+  var s = state.db.settings, neu = t("create");
+  // Aktionen (auch Erstellen von Blöcken, Timer-Workouts, Workouts, Übungen, Challenges)
+  add(neu, t("newBlock"), t("mineBlocks"), "block timer intervall erstellen anlegen neu create new", function(){ go("#block/"+createBlock().id); });
+  add(neu, t("newWorkout"), t("mineTimer"), "timer workout intervall erstellen anlegen neu create new", function(){ go("#workout/"+createTimerWorkout().id); });
+  add(neu, t("myNew"), t("tabMine"), "workout bauen baukasten erstellen anlegen neu create build", function(){ go("#mybuild/new"); });
+  add(neu, t("exNew"), t("libExercises"), "uebung übung erstellen anlegen neu create exercise", function(){ go("#exedit/new"); });
+  add(neu, t("repNew"), t("repTitle"), "challenge summit erstellen anlegen neu create", function(){
+    var c = { id:"my-"+uid(), name:t("reDefaultName"), runden:3, zeilen:[], updatedAt:Date.now() };
+    (s.myReps || (s.myReps = [])).push(c); save(); go("#repedit/"+c.id);
+  });
+  // Bereiche
+  [["#library", t("library")], ["#reps", t("repTitle")], ["#timers", t("timers")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
+    add(t("srAreas"), p[1], "", "", function(){ go(p[0]); });
+  });
+  // Workouts aus Air und eigene Workouts
+  LIB_WORKOUTS.forEach(function(lw){
+    if(libHidden("wo:"+lw.id)) return;
+    var exs = lw.exercises.map(findExercise).filter(Boolean);
+    add(t("workouts"), tplText(lw.name), t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(libWorkoutRun(lw))), woSearchText("", exs), function(){ go("#cover/lib/"+lw.id); });
+  });
+  (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
+    var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
+    add(t("mineMy"), mw.name, t("exCount", { n:exs.length }), woSearchText("", exs), function(){ go("#mybuild/"+mw.id); });
+  });
+  // Übungen
+  EXERCISES.forEach(function(ex){
+    if(libHidden("ex:"+ex.id)) return;
+    add(t("libExercises"), tplText(ex.name), ex.cats.map(catName).join(", "), exSearchText(ex), function(){
+      if(EX_INFO[ex.id]) openExInfo(ex.id, false, {});
+      else go(ex.custom ? "#exedit/"+ex.id : "#playex/"+ex.id);
+    });
+  });
+  // Summit: Einheiten, Programme, eigene Challenges
+  function rep(id, gruppe){
+    var q = repQuelle(id);
+    if(!q || !q.teile.length) return;
+    var ex = [];
+    q.teile.forEach(function(tl){ tl.row[4].forEach(function(x){ ex.push(repExName(x[0])); }); });
+    add(gruppe, q.name, q.einzel ? "" : q.teile.map(repTeilName).join(" + "), ex.join(" "), function(){ go("#rep/"+id); });
+  }
+  REP_EINHEITEN.forEach(function(e){
+    REP_STUFEN.forEach(function(st, i){ (e[1 + i] || []).forEach(function(v, k){ rep(e[0]+"-"+st+"-"+(k+1), t("srChallenges")); }); });
+  });
+  REP_WORKOUT_ROWS.forEach(function(r){ rep(r[0], t("srChallenges")); });
+  (s.myReps || []).forEach(function(c){ rep(c.id, t("srOwnChall")); });
+  // Timer-Workouts und Blöcke
+  state.db.workouts.forEach(function(w){ add(t("mineTimer"), w.name || t("untitled"), "", "", function(){ go("#workout/"+w.id); }); });
+  state.db.blocks.forEach(function(b){ add(t("mineBlocks"), b.name, blockSpec(b), "", function(){ go("#block/"+b.id); }); });
+  return l;
+}
+function renderSearch(){
+  var alle = gesamtEintraege();
+  app.innerHTML =
+    topbar(t("srTitle"), { back:"#home" }) +
+    searchHTML(gesamtQuery, "gs", t("srPh")) +
+    '<div id="gs-res"></div><div style="height:40px"></div>';
+  bindCommon();
+  var feld = app.querySelector("#gs-q"), res = app.querySelector("#gs-res");
+  function zeigen(){
+    var w = suchNorm(gesamtQuery);
+    if(!w){ res.innerHTML = '<div class="rep-intro">'+esc(t("srHint"))+'</div>'; return; }
+    var treffer = alle.filter(function(e){ return suchPasst(e.text, gesamtQuery); });
+    if(!treffer.length){ res.innerHTML = '<div class="empty" style="padding:30px 20px;">'+esc(t("noResult"))+'</div>'; return; }
+    var html = "", gruppe = null, n = 0, reihe = [];
+    treffer.forEach(function(e){ if(reihe.indexOf(e.g) < 0) reihe.push(e.g); e.n = suchPasst(e.titel, gesamtQuery) ? 0 : 1; });
+    // je Gruppe zuerst die Treffer im Namen, danach die über Übungen/Hinweise (stabil)
+    treffer = treffer.map(function(e, i){ return { e:e, i:i }; }).sort(function(a, b){
+      return reihe.indexOf(a.e.g) - reihe.indexOf(b.e.g) || a.e.n - b.e.n || a.i - b.i; }).map(function(o){ return o.e; });
+    treffer.forEach(function(e, i){
+      if(e.g !== gruppe){ gruppe = e.g; n = 0; html += '<div class="section-title">'+esc(gruppe)+'</div>'; }
+      if(++n > 12) return;   // je Gruppe die ersten zwölf; genauer tippen grenzt ein
+      html += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'"><div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
+        (e.sub ? '<div class="sub">'+esc(e.sub)+'</div>' : '')+'</div><span class="chip chev">'+ICON_CHEV+'</span></div>';
+    });
+    res.innerHTML = html;
+    res.querySelectorAll("[data-sr]").forEach(function(el){
+      function los(){ treffer[+el.getAttribute("data-sr")].fn(); }
+      el.addEventListener("click", los);
+      el.addEventListener("keydown", function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); los(); } });
+    });
+  }
+  feld.addEventListener("input", function(){ gesamtQuery = feld.value; zeigen(); });
+  zeigen();
+  if(!gesamtQuery) feld.focus();
+}
 /* Startseite: Favoriten als Kacheln, „Überrasch mich“, darunter die zwei Bereiche Timer und Bibliothek */
 function renderHome(){
   var favHTML = favItemsHTML();
   var nFav = favEntries().length;
   app.innerHTML =
     topbar("BLOC", { home:true, sub:"Modular Training Builder", right:
+      '<button class="iconbtn lib-lupe" data-nav="#search" title="'+esc(t("search"))+'" aria-label="'+esc(t("search"))+'">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'</button>'+
       '<button class="iconbtn" data-nav="#settings" title="'+t("settings")+'">'+ICON_SETTINGS+'</button>'
     }) +
     installTipHTML() + backupTipHTML() + wocheHTML() + wocheMuskelHTML() +
@@ -2070,10 +2172,10 @@ function renderStudio(){
     '</div></div>';
   });
   app.innerHTML =
-    topbar(t("timers"), { back:"#home" }) +
+    topbar(t("timers"), { back:"#home", right:lupeHTML("st", studioQuery) }) +
     studioTabsHTML("uebungen") +
     '<div class="page-hint">'+esc(t("studioHint"))+'</div>'+
-    searchHTML(studioQuery, "st", t("stSearch"))+
+    suchFeldHTML(studioQuery, "st", t("stSearch"))+
     kacheln +
     html +
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
@@ -2178,14 +2280,14 @@ function renderStudioPlan(){
   if(!p){ stPlanAktiv = null; return renderStudioPlanListe(); }
   var ids = stPlanIds(p), pos = {}, html;
   ids.forEach(function(id, i){ pos[id] = [i+1]; });
-  html = topbar(p.name, { back:"#timers" }) + studioTabsHTML("plan");
+  html = topbar(p.name, { back:"#timers", right: stPlanBauen ? lupeHTML("pl", stPlanQuery) : "" }) + studioTabsHTML("plan");
   if(stPlanBauen){
     var gruppen = studioIds(), da = {};
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die gerade nicht in den sichtbaren Gruppen stehen (z. B. Air-Übungen ausgeblendet)
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest }]);
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
-      '<div class="page-hint">'+esc(t("planTippen"))+'</div>'+searchHTML(stPlanQuery, "pl", t("stSearch"));
+      '<div class="page-hint">'+esc(t("planTippen"))+'</div>'+suchFeldHTML(stPlanQuery, "pl", t("stSearch"));
     gruppen.forEach(function(g){
       if(!g.ids.length) return;
       html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+'</div><div class="fig-grid">'+g.ids.map(function(id){
@@ -2758,6 +2860,13 @@ function maybeShowInstallTip(){}
 
 /* ============ Common bindings ============ */
 function bindCommon(){
+  app.querySelectorAll("[data-lupe]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var pre = b.getAttribute("data-lupe"), w = app.querySelector('.lib-suche[data-lsw="'+pre+'"]'), q = app.querySelector("#"+pre+"-q");
+      if(!w) return;
+      if(w.classList.toggle("offen") && q) q.focus();
+    });
+  });
   app.querySelectorAll("[data-nav]").forEach(function(el){
     el.addEventListener("click", function(ev){
       if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]") || ev.target.closest("[data-del]") || ev.target.closest("[data-twplus]")) return;
@@ -3352,9 +3461,7 @@ function renderLibrary(){
 
   app.innerHTML =
     // Suche als Lupe oben rechts (klappt das Feld auf), damit „Überrasch mich“ als Hauptleiste unter den Reitern Platz hat
-    topbar(t("library"), { back:"#home", right: (tab === "mine" || tab === "timer") ? '' :
-      '<button type="button" class="iconbtn lib-lupe'+(libQuery ? ' an' : '')+'" data-lsuche title="'+esc(t("search"))+'" aria-label="'+esc(t("search"))+'">'+
-        svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'</button>' }) +
+    topbar(t("library"), { back:"#home", right: (tab === "mine" || tab === "timer") ? '' : lupeHTML("l", libQuery) }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-4">'+
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
@@ -3363,7 +3470,7 @@ function renderLibrary(){
     '</div></div>'+
     surpriseCardHTML(true) +   // das Alleinstellungsmerkmal von Air: schlanke, auffällige Leiste direkt unter den Reitern
     (tab === "mine" || tab === "timer" ? '' :
-    '<div class="lib-suche'+(libQuery ? ' offen' : '')+'">'+searchHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+'</div>'+
+    suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
     mainTilesHTML(mains, counts, "data-lmain", ["stretch"])+
     filterZeileHTML("data-ltoggle", nf, open)+
     (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
@@ -3401,12 +3508,6 @@ function renderLibrary(){
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
   on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
   on("[data-surprise]", function(){ openSurprise(); });
-  on("[data-lsuche]", function(){
-    var w = app.querySelector(".lib-suche"), q = app.querySelector("#l-q");
-    if(!w) return;
-    var offen = w.classList.toggle("offen");
-    if(offen && q) q.focus();
-  });
   on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   on("[data-unhideone]", function(el){
@@ -3851,7 +3952,7 @@ function renderDraftPage(d, cfg){
     EXERCISES.forEach(function(ex){ if(fuerWorkout(ex) && !libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
-      searchHTML(buildQuery, "b")+
+      suchFeldHTML(buildQuery, "b")+
       mainTilesHTML(bmains, palCounts, "data-bmain", ["stretch"])+
       filterZeileHTML("data-bfilter", filterCount(cat, equip), !!s.buildFilterOpen)+
       (s.buildFilterOpen ? filterCardHTML("b", cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], ["stretch"], ["gym"])
@@ -3901,8 +4002,8 @@ function renderDraftPage(d, cfg){
       (d.items.length ? '<div class="wb-streifen">'+streifen+'</div>' : '<div class="fav-empty">'+esc(t("wbLeer"))+'</div>');
 
   app.innerHTML =
-    topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: cfg.cover ? "" :
-      '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>' }) +
+    topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: (palOpen ? lupeHTML("b", buildQuery) : "") + (cfg.cover ? "" :
+      '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>') }) +
     // Aufwärm- und Dehnprogramme: Überschrift, Kacheln und Figuren in der Farbe von Aufwärmen & Dehnen
     (warmDehn ? '<div style="--bereich:var(--ws-color)">' : '<div>') + head + ablaufHTML + (warmDehn || !exs.length ? '' : auswertungHTML(d.items.map(function(it){ return it.ex; }))) + optionsHTML + palHTML + '</div>' +
     (cfg.cover || cfg.bau.neu ? '' : '<button class="btn btn-danger" data-mydel style="margin-top:18px;">'+ICON_TRASH+' '+t("myDelete")+'</button>')+
@@ -4601,7 +4702,7 @@ function bindSnapZeile(){
    Ablauf in der Seite - der Intervall-Timer bleibt unberührt. Programme stehen in daten.js (REP_WORKOUT_ROWS).
    Bestzeiten: settings.repBest[id] = { best, last, n, at } (Millisekunden). */
 var repFilter = { lvl:"all", bar:"all", tab:"einheiten", stufe:"standard" };
-var repRun = null;
+var repRun = null, repQuery = "";
 function repRow(id){ for(var i=0;i<REP_WORKOUT_ROWS.length;i++) if(REP_WORKOUT_ROWS[i][0]===id) return REP_WORKOUT_ROWS[i]; return null; }
 function repName(row){ return currentLang()==="en" ? row[2] : row[1]; }
 function repRunden(row){ var n = 0; row[4].forEach(function(x){ n = Math.max(n, x[1].length); }); return n; }
@@ -4794,18 +4895,19 @@ function renderReps(){
     return '<button type="button" data-repf="'+art+':'+wert+'" class="'+(String(repFilter[art])===String(wert) ? "active" : "")+'">'+esc(text)+'</button>';
   }
   function karte(id, name, zeile1, zeile2, plan){
-    var best = repBestOf(id);
-    return '<div class="list-item rep-karte" data-nav="#rep/'+id+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
+    var best = repBestOf(id), qq = repQuelle(id), such = [name, zeile1 || ""];
+    if(qq) qq.teile.forEach(function(tl){ tl.row[4].forEach(function(x){ such.push(repExName(x[0])); }); });
+    return '<div class="list-item rep-karte" data-nav="#rep/'+id+'" data-q="'+esc(such.join(" "))+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
       (zeile1 ? '<div class="sub rep-teile">'+zeile1+'</div>' : '')+'<div class="sub">'+zeile2+'</div>'+(plan || '')+repZeitenHTML(best)+'</div>'+
       (best ? wochenKurve(repWochen(id), "rep-spark") : '')+
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
-  var html = topbar(t("repTitle"), { back:"#home" }) +
+  var html = topbar(t("repTitle"), { back:"#home", right:lupeHTML("rs", repQuery) }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
       '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+
       '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
       '<button data-repf="tab:meine" class="'+(repFilter.tab==="meine"?"active":"")+'">'+esc(t("tabMine"))+'</button>'+
-    '</div></div>';
+    '</div></div>'+suchFeldHTML(repQuery, "rs", t("repSearchPh"));
   var liste = "";
   if(repFilter.tab === "einheiten"){
     var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
@@ -4851,9 +4953,15 @@ function renderReps(){
     });
   }
   html += (repFilter.tab === "meine" ? '' : '<div class="theme-pick rep-pick zwei">'+knopf("bar","all",t("repAllEquip"))+knopf("bar","none",t("repNoBar"))+'</div>') +
-    (liste || '<div class="empty">'+esc(t("repNone"))+'</div>') + '<div style="height:40px"></div>';
+    (liste || '<div class="empty">'+esc(t("repNone"))+'</div>') +
+    '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("noResult"))+'</div><div style="height:40px"></div>';
   app.innerHTML = html;
   bindCommon();
+  var rq = app.querySelector("#rs-q");
+  if(rq){
+    if(repQuery) applySearch(app, repQuery);
+    rq.addEventListener("input", function(){ repQuery = rq.value; applySearch(app, repQuery); });
+  }
   var neuBtn = app.querySelector("[data-repnew]");
   if(neuBtn) neuBtn.addEventListener("click", function(){
     var c = { id:"my-"+uid(), name:t("reDefaultName"), runden:3, zeilen:[], updatedAt:Date.now() };
