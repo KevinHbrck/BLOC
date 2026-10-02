@@ -313,6 +313,39 @@
       await bis(function () { return $('[data-libtab="mine"]'); }, 3000, "zurück in der Bibliothek");
       pruefe($$(".my-item").length === 1, "ungespeichertes Workout wurde angelegt: " + $$(".my-item").length);
     }],
+    ["Langdruck: Übung in Workout bzw. Plan legen, Plan-Bau mit Filtern, Gesamtsuche", async function () {
+      function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }
+      await heim();
+      klick('[data-nav="#library"]');
+      klick(await bis(function () { return $('[data-libtab="exercises"]'); }, 3000, "Reiter Übungen"));
+      var karte = await bis(function () { return $("[data-exlang]"); }, 3000, "Übungskarte");
+      await lang(karte);
+      var opts = $$("#overlayRoot .act-opt").map(function (b) { return b.textContent; });
+      pruefe(opts.length === 2 && /Air/.test(opts[0]) && /Studio/.test(opts[1]), "Langdruck-Menü: " + opts.join(" | "));
+      klick("#overlayRoot [data-act]");
+      klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neues Workout"));
+      await bis(function () { return (JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || []).length === 1; }, 2000, "Workout angelegt");
+      await heim();
+      klick('[data-nav="#timers"]');
+      var kachel = await bis(function () { return $("[data-studio=\"leg-press\"]"); }, 3000, "Studio-Kachel");
+      await lang(kachel);
+      pruefe($$("#overlayRoot .act-opt").length === 1 && /Studio/.test($("#overlayRoot .act-opt").textContent), "Studio-Gerät darf nur in einen Plan");
+      klick("#overlayRoot [data-act]");
+      klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neuer Plan"));
+      await bis(function () { var p = JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene; return p && p.length === 1 && p[0].ids.indexOf("leg-press") > -1; }, 2000, "Plan mit Beinpresse");
+      klick('[data-sttab="plan"]');
+      klick(await bis(function () { return $("[data-plan]"); }, 3000, "Plan"));
+      klick(await bis(function () { return $("[data-planedit]"); }, 3000, "Bearbeiten"));
+      await bis(function () { return $("[data-stfilter]") && $$("[data-planex] .st-sub").length > 20; }, 3000, "Filter und Angaben im Plan-Bau");
+      var alle = $$("[data-planex]").length;
+      klick('[data-stgr="beine"]');
+      await bis(function () { var n = $$("[data-planex]").length; return n > 0 && n < alle; }, 2000, "Filter Beine");
+      await heim();
+      klick('.topbar [data-nav="#search"]');
+      var f = await bis(function () { return $("#gs-q"); }, 3000, "Gesamtsuche");
+      eingeben(f, "neuer block");
+      pruefe($$("#gs-res [data-sr]").length >= 1, "Gesamtsuche findet „Neuer Block“ nicht");
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

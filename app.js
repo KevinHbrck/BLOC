@@ -359,7 +359,7 @@ var I18N = {
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
+    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
     reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
@@ -571,7 +571,7 @@ var I18N = {
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
+    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
     reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
@@ -2123,6 +2123,38 @@ function studioKachel(id){
     '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>'+
     (last ? wochenKurve(studioWochen(id), "st-spark") : '')+'</div>';
 }
+/* Filter der Studio-Übungen (Air-Schalter, Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans */
+function studioFilterHTML(gruppen, fGr, fArt, artOk, filterAn){
+  var s = state.db.settings;
+  return '<details class="opt-mehr st-filter" data-stfilter'+(s.stFilterZu === false ? ' open' : '')+'><summary>'+
+    '<span class="om-ico">'+svgIcon(CAT_ICON.weight)+'</span><span class="meta"><span class="name">'+esc(t("stFilter"))+'</span>'+
+    (filterAn ? '<span class="sub">'+(fGr.length + fArt.length)+' aktiv</span>' : '')+'</span><span class="om-pfeil" aria-hidden="true">▾</span></summary><div class="st-filter-inhalt">'+
+    '<div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
+    '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div>'+
+    '<div class="main-tiles st-bereiche">'+gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+    var on = fGr.indexOf(g.id) > -1, n = g.ids.filter(artOk).length;
+    return '<button type="button" class="main-tile'+(on ? ' on' : '')+(fGr.length && !on ? ' off' : '')+'" data-stgr="'+g.id+'" aria-pressed="'+on+'" style="--mc:var(--bl-color)">'+
+      '<span class="mt-ico">'+svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight)+'</span><span class="mt-name">'+esc(g.name)+'</span><span class="mt-n">'+n+'</span></button>';
+  }).join("")+'</div>'+
+  '<div class="fc-chips st-arten">'+STUDIO_ARTEN.map(function(a){
+    var on = fArt.indexOf(a) > -1;
+    return '<button type="button" class="fc-chip'+(on ? ' on' : '')+'" data-start="'+a+'" aria-pressed="'+on+'">'+esc(t("stArt_"+a))+'</button>';
+  }).join("")+(filterAn ? '<button type="button" class="tpl-hide" data-streset>'+t("filterReset")+'</button>' : '')+'</div></div></details>';
+}
+function studioFilterBinden(fGr, fArt, neuZeichnen){
+  var s = state.db.settings;
+  app.querySelectorAll("[data-stgr]").forEach(function(b){ b.addEventListener("click", function(){ s.stGruppen = selToggle(fGr, b.getAttribute("data-stgr")); save(); neuZeichnen(); }); });
+  app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
+  var fk = app.querySelector("[data-stfilter]");
+  fk.addEventListener("toggle", function(){ if(!!s.stFilterZu === !fk.open) return; s.stFilterZu = !fk.open; save(); });   // „toggle“ kommt auch beim Zeichnen
+  app.querySelector("#st-air").addEventListener("change", function(e){
+    s.stAir = e.target.checked;
+    if(!s.stAir) s.stGruppen = selArr(s.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
+    save(); neuZeichnen();
+  });
+  var zur = app.querySelector("[data-streset]");
+  if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
+}
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
   // Reiter oben: Übungen · Mein Plan · Timer
@@ -2144,20 +2176,7 @@ function renderStudio(){
   });
   zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0 && passt(id); });
   var filterAn = fGr.length || fArt.length;
-  var kacheln = '<details class="opt-mehr st-filter" data-stfilter'+(s.stFilterZu === false ? ' open' : '')+'><summary>'+
-    '<span class="om-ico">'+svgIcon(CAT_ICON.weight)+'</span><span class="meta"><span class="name">'+esc(t("stFilter"))+'</span>'+
-    (filterAn ? '<span class="sub">'+(fGr.length + fArt.length)+' aktiv</span>' : '')+'</span><span class="om-pfeil" aria-hidden="true">▾</span></summary><div class="st-filter-inhalt">'+
-    '<div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
-    '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div>'+
-    '<div class="main-tiles st-bereiche">'+gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
-    var on = fGr.indexOf(g.id) > -1, n = g.ids.filter(artOk).length;
-    return '<button type="button" class="main-tile'+(on ? ' on' : '')+(fGr.length && !on ? ' off' : '')+'" data-stgr="'+g.id+'" aria-pressed="'+on+'" style="--mc:var(--bl-color)">'+
-      '<span class="mt-ico">'+svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight)+'</span><span class="mt-name">'+esc(g.name)+'</span><span class="mt-n">'+n+'</span></button>';
-  }).join("")+'</div>'+
-  '<div class="fc-chips st-arten">'+STUDIO_ARTEN.map(function(a){
-    var on = fArt.indexOf(a) > -1;
-    return '<button type="button" class="fc-chip'+(on ? ' on' : '')+'" data-start="'+a+'" aria-pressed="'+on+'">'+esc(t("stArt_"+a))+'</button>';
-  }).join("")+(filterAn ? '<button type="button" class="tpl-hide" data-streset>'+t("filterReset")+'</button>' : '')+'</div></div></details>';
+  var kacheln = studioFilterHTML(gruppen, fGr, fArt, artOk, filterAn);
   var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
       (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
     (zuletzt.length ? '<div class="st-gruppe"><div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div></div>' : '');
@@ -2186,23 +2205,14 @@ function renderStudio(){
     function oeffnen(){ go("#studio/"+b.getAttribute("data-studio")); }
     b.addEventListener("click", oeffnen);
     b.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); oeffnen(); } });
+    langDruck(b, function(){ exZuProgramm(b.getAttribute("data-studio")); });   // lange drücken: in einen Plan legen
   });
   app.querySelectorAll("[data-exfav]").forEach(function(b){ b.addEventListener("click", function(e){
     e.stopPropagation(); toggleExFav(b.getAttribute("data-exfav"));
     var y = window.scrollY; renderStudio(); window.scrollTo(0, y);
   }); });
   function neuZeichnen(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
-  app.querySelectorAll("[data-stgr]").forEach(function(b){ b.addEventListener("click", function(){ s.stGruppen = selToggle(fGr, b.getAttribute("data-stgr")); save(); neuZeichnen(); }); });
-  app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
-  var fk = app.querySelector("[data-stfilter]");
-  fk.addEventListener("toggle", function(){ if(!!s.stFilterZu === !fk.open) return; s.stFilterZu = !fk.open; save(); });   // „toggle“ kommt auch beim Zeichnen
-  app.querySelector("#st-air").addEventListener("change", function(e){
-    s.stAir = e.target.checked;
-    if(!s.stAir) s.stGruppen = selArr(s.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
-    save(); neuZeichnen();
-  });
-  var zur = app.querySelector("[data-streset]");
-  if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
+  studioFilterBinden(fGr, fArt, neuZeichnen);
   var neu = app.querySelector("[data-stnew]");
   if(neu) neu.addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
   var q = app.querySelector("#st-q");
@@ -2284,15 +2294,23 @@ function renderStudioPlan(){
   if(stPlanBauen){
     var gruppen = studioIds(), da = {};
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
+    // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung, Air-Schalter)
+    var s = state.db.settings, fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+    function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die gerade nicht in den sichtbaren Gruppen stehen (z. B. Air-Übungen ausgeblendet)
-    if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest }]);
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
-      '<div class="page-hint">'+esc(t("planTippen"))+'</div>'+suchFeldHTML(stPlanQuery, "pl", t("stSearch"));
+      '<div class="page-hint">'+esc(t("planTippen"))+'</div>'+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
+      studioFilterHTML(gruppen, fGr, fArt, artOk, fGr.length || fArt.length);
+    if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
     gruppen.forEach(function(g){
-      if(!g.ids.length) return;
-      html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+'</div><div class="fig-grid">'+g.ids.map(function(id){
+      if(!g.immer && fGr.length && fGr.indexOf(g.id) < 0) return;
+      var gids = g.immer ? g.ids : g.ids.filter(artOk);
+      if(!gids.length) return;
+      html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+gids.length+'</span></div><div class="fig-grid">'+gids.map(function(id){
         var ex = findExercise(id);
-        return ex ? uebKachel({ bild:id, name:tplText(ex.name), attr:'data-planex="'+id+'"', q:exSearchText(ex), cat:studioFarbe(ex), nr:pos[id] || [] }) : "";
+        // Angaben wie bei Studio › Übungen: letzter Satz bzw. Zeit unter dem Namen, dazu die Wochenkurve
+        return ex ? uebKachel({ bild:id, name:tplText(ex.name), attr:'data-planex="'+id+'"', q:exSearchText(ex), cat:studioFarbe(ex), nr:pos[id] || [],
+          unter:'<span class="st-sub">'+esc(studioSub(id))+'</span>' }) : "";
       }).join("")+'</div></div>';
     });
     html += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
@@ -2333,6 +2351,7 @@ function renderStudioPlan(){
     p.ids = l; p.updatedAt = Date.now(); save(); neu();
   });
   kachelKlick(app, "[data-studio]", function(el){ go("#studio/"+el.getAttribute("data-studio")); });
+  if(stPlanBauen) studioFilterBinden(selArr(state.db.settings.stGruppen), selArr(state.db.settings.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; }), neu);
   var q = app.querySelector("#pl-q");
   if(q){
     function suchen(){
@@ -3252,6 +3271,45 @@ function openActionSheet(title, acts){
   root.querySelector("[data-actclose]").addEventListener("click", close);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
 }
+/* Übung per Langdruck in ein bestehendes Programm legen: Air-Übungen in eigene Air-Workouts und in Studio-Pläne,
+   Studio-Geräte (nur im Studio) ausschließlich in Studio-Pläne - Air bekommt nie Studio-Übungen */
+function exZuProgramm(id){
+  var ex = findExercise(id);
+  if(!ex || ex.main === "stretch") return;
+  var name = tplText(ex.name), s = state.db.settings;
+  function fertig(pname, schon){ showToast(t(schon ? "zpAlready" : "zpAdded", { e:name, p:pname })); }
+  function inWorkout(mw){
+    mw = normMy(mw);
+    if(mw.items.some(function(it){ return it.ex === id; })) return fertig(mw.name, true);
+    mw.items.push(itemFromEx(id)); mw.updatedAt = Date.now(); save(); fertig(mw.name);
+  }
+  function inPlan(p){
+    var l = stPlanIds(p);
+    if(l.indexOf(id) > -1) return fertig(p.name, true);
+    l.push(id); p.ids = l; p.updatedAt = Date.now(); save(); fertig(p.name);
+  }
+  function workoutWahl(){
+    var acts = (state.db.myWorkouts || []).map(function(mw){ return { ico:HOME_ICON.lib, label:mw.name, fn:function(){ inWorkout(mw); } }; });
+    acts.push({ ico:ICON_PLUS, label:t("myNew"), fn:function(){
+      var mw = createMyFromDraft({ name:t("myDefaultName"), mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:[itemFromEx(id)] });
+      fertig(mw.name);
+    } });
+    openActionSheet(t("zpPickWo"), acts);
+  }
+  function planWahl(){
+    var acts = stPlaene().slice().sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); })
+      .map(function(p){ return { ico:HOME_ICON.timer, label:p.name, fn:function(){ inPlan(p); } }; });
+    acts.push({ ico:ICON_PLUS, label:t("planNew"), fn:function(){
+      var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[id], updatedAt:Date.now() };
+      stPlaene().push(p); save(); fertig(p.name);
+    } });
+    openActionSheet(t("zpPickPlan"), acts);
+  }
+  var acts = [];
+  if(fuerWorkout(ex)) acts.push({ ico:HOME_ICON.lib, label:t("zpAir"), fn:workoutWahl });
+  acts.push({ ico:HOME_ICON.timer, label:t("zpStudio"), fn:planWahl });
+  openActionSheet(name, acts);
+}
 function moreBtn(attr, val, label){
   return '<button type="button" class="more-btn" '+attr+'="'+esc(val)+'" title="'+esc(label||t("more"))+'" aria-label="'+esc(label||t("more"))+'">'+ICON_DOTS+'</button>';
 }
@@ -3308,7 +3366,7 @@ function libExCard(ex, hidden, sub){
     ? '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'
     : (ex.custom ? '<button type="button" class="illu-btn" data-exedit="'+ex.id+'" aria-label="'+t("edit")+'"><span class="custom-ico">'+catIcon(ex.cats[0])+'</span></button>' : '');
   var mus = musclesMain(ex);
-  return '<div class="list-item entry tpl-item lib-card'+(ex.id==="russian-twists"?' ua':'')+(isExFav(ex.id)?' ex-fav-on':'')+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, '+catVar(ex.cats[0])+')" data-q="'+esc(exSearchText(ex))+'">'+
+  return '<div class="list-item entry tpl-item lib-card'+(ex.id==="russian-twists"?' ua':'')+(isExFav(ex.id)?' ex-fav-on':'')+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, '+catVar(ex.cats[0])+')" data-q="'+esc(exSearchText(ex))+'"'+(ex.main !== "stretch" ? ' data-exlang="'+ex.id+'"' : '')+'>'+
     '<button class="playbtn cat" data-playex="'+ex.id+'" title="'+t("startBlock")+'" aria-label="'+t("startBlock")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(tplText(ex.name))+'</div>'+
     '<div class="sub">'+mainTagsHTML([ex.main])+sub+'</div>'+
@@ -3507,6 +3565,7 @@ function renderLibrary(){
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
   on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
+  app.querySelectorAll("[data-exlang]").forEach(function(el){ langDruck(el, function(){ exZuProgramm(el.getAttribute("data-exlang")); }); });   // lange drücken: in Workout oder Plan legen
   on("[data-surprise]", function(){ openSurprise(); });
   on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
