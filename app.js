@@ -266,7 +266,7 @@ var I18N = {
     planOne:"1 Übung", planN:"{n} Übungen", planNew:"Neuen Plan anlegen", planDefault:"Plan {n}", planEdit:"Bearbeiten", planDone:"Fertig",
     planTippen:"Antippen = in den Plan, nochmal antippen = wieder raus. Die Nummer zeigt die Reihenfolge.", planEmpty:"Dieser Plan ist noch leer. Tippe auf „Bearbeiten“ und wähle Übungen aus.",
     planDel:"Plan löschen", planDelQ:"Plan löschen?", planSonst:"Weitere im Plan",
-    ausTitle:"Auswertung", ausSum:"Muskelgruppen im Überblick", ausEmpty:"Noch keine Übungen – die Auswertung erscheint, sobald etwas drin ist.", ausNote:"Zeigt nur die Verteilung – ein Leg Day bleibt ein Leg Day.", ausAll:"Alle Pläne zusammen", ausAllNote:"Alle Pläne zusammen gewichtet. Wenig vertreten: {n}.", ausAllOk:"Alle Pläne zusammen gewichtet – das ist ziemlich ausgewogen.",
+    ausWoche:"Muskelgruppen – letzte 7 Tage", ausWocheSum:"Was du wirklich trainiert hast", ausWoNote:"Letzte 7 Tage. Wenig vertreten: {n}.", ausWoOk:"Letzte 7 Tage – das ist ziemlich ausgewogen.", ausTitle:"Auswertung", ausSum:"Muskelgruppen im Überblick", ausEmpty:"Noch keine Übungen – die Auswertung erscheint, sobald etwas drin ist.", ausNote:"Zeigt nur die Verteilung – ein Leg Day bleibt ein Leg Day.", ausAll:"Alle Pläne zusammen", ausAllNote:"Alle Pläne zusammen gewichtet. Wenig vertreten: {n}.", ausAllOk:"Alle Pläne zusammen gewichtet – das ist ziemlich ausgewogen.",
     mgBrust:"Brust", mgRuecken:"Rücken", mgSchulter:"Schultern", mgArme:"Arme", mgRumpf:"Bauch & Rumpf", mgBeine:"Beine & Po",
     genNew:"Plan nach Gewichtung", genTitle:"Plan nach Gewichtung", genHint:"Es sind immer genau 100 % zu verteilen: Verschiebst du einen Regler, passen sich die anderen automatisch an. Daraus entsteht ein Plan, den du danach noch ändern kannst.", genAnz:"Anzahl Übungen", genMake:"Plan erstellen", genZero:"Stell mindestens eine Gruppe über 0.", genName:"Plan nach Gewichtung",
     stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
@@ -478,7 +478,7 @@ var I18N = {
     planOne:"1 exercise", planN:"{n} exercises", planNew:"Create a new plan", planDefault:"Plan {n}", planEdit:"Edit", planDone:"Done",
     planTippen:"Tap = add to the plan, tap again = remove. The number shows the order.", planEmpty:"This plan is empty. Tap “Edit” and pick exercises.",
     planDel:"Delete plan", planDelQ:"Delete plan?", planSonst:"Also in the plan",
-    ausTitle:"Analysis", ausSum:"Muscle groups at a glance", ausEmpty:"No exercises yet – the analysis appears once there is something in it.", ausNote:"Shows the split only – a leg day stays a leg day.", ausAll:"All plans combined", ausAllNote:"All plans weighted together. Underrepresented: {n}.", ausAllOk:"All plans weighted together – that is fairly balanced.",
+    ausWoche:"Muscle groups – last 7 days", ausWocheSum:"What you actually trained", ausWoNote:"Last 7 days. Underrepresented: {n}.", ausWoOk:"Last 7 days – that is fairly balanced.", ausTitle:"Analysis", ausSum:"Muscle groups at a glance", ausEmpty:"No exercises yet – the analysis appears once there is something in it.", ausNote:"Shows the split only – a leg day stays a leg day.", ausAll:"All plans combined", ausAllNote:"All plans weighted together. Underrepresented: {n}.", ausAllOk:"All plans weighted together – that is fairly balanced.",
     mgBrust:"Chest", mgRuecken:"Back", mgSchulter:"Shoulders", mgArme:"Arms", mgRumpf:"Abs & core", mgBeine:"Legs & glutes",
     genNew:"Plan by weighting", genTitle:"Plan by weighting", genHint:"There are always exactly 100% to distribute: move one slider and the others adjust automatically. A plan is built from it, which you can still change afterwards.", genAnz:"Number of exercises", genMake:"Create plan", genZero:"Set at least one group above 0.", genName:"Weighted plan",
     stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
@@ -1766,7 +1766,7 @@ function renderHome(){
     topbar("BLOC", { home:true, sub:"Modular Training Builder", right:
       '<button class="iconbtn" data-nav="#settings" title="'+t("settings")+'">'+ICON_SETTINGS+'</button>'
     }) +
-    installTipHTML() + backupTipHTML() + wocheHTML() +
+    installTipHTML() + backupTipHTML() + wocheHTML() + wocheMuskelHTML() +
     '<div class="sec-head"><div class="section-title">'+t("favorites")+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
@@ -2313,11 +2313,11 @@ function auswertungHTML(ids, opt){
   opt = opt || {};
   var r = mgProzent(ids), notiz;
   if(r.leer) notiz = t("ausEmpty");
-  else if(opt.gesamt){
+  else if(opt.gesamt || opt.woche){
     var wenig = r.rows.filter(function(x){ return x.pct < 8; }).map(function(x){ return t(x.key); });
-    notiz = wenig.length ? t("ausAllNote", { n:wenig.join(", ") }) : t("ausAllOk");
+    notiz = wenig.length ? t(opt.woche ? "ausWoNote" : "ausAllNote", { n:wenig.join(", ") }) : t(opt.woche ? "ausWoOk" : "ausAllOk");
   } else notiz = t("ausNote");
-  return '<details class="ausw card"><summary><span class="ausw-t">'+esc(opt.titel || t("ausTitle"))+'</span><span class="ausw-s">'+esc(t("ausSum"))+'</span></summary>'+
+  return '<details class="ausw card"><summary><span class="ausw-t">'+esc(opt.titel || t("ausTitle"))+'</span><span class="ausw-s">'+esc(opt.sub || t("ausSum"))+'</span></summary>'+
     (r.leer ? '' : r.rows.map(function(x){
       return '<div class="ausw-row'+(x.pct ? '' : ' null')+'"><span class="ausw-n">'+esc(t(x.key))+'</span>'+
         '<span class="ausw-bar"><i style="width:'+x.pct+'%"></i></span><b>'+x.pct+'%</b></div>';
@@ -3563,6 +3563,11 @@ function wocheHTML(){
     '<span class="wo-tage" aria-hidden="true">'+w.tage.map(function(an, i){
       return '<span class="wo-tag'+(an ? ' an' : '')+(i === w.heute ? ' heute' : '')+'"><i></i><small>'+esc(namen[i] || "")+'</small></span>'; }).join("")+'</span>'+
   '</div>';
+}
+function wocheMuskelHTML(){   // letzte 7 Tage aus dem Kurz-Gedächtnis (Air, Studio, Summit); nichts Neues wird gespeichert
+  var since = Date.now() - 7*86400000, ids = [];
+  (state.db.history || []).forEach(function(e){ if(e && e.at >= since) (e.ex || []).forEach(function(id){ ids.push(id); }); });
+  return ids.length ? auswertungHTML(ids, { woche:true, titel:t("ausWoche"), sub:t("ausWocheSum") }) : "";
 }
 function recentExercises(days){
   var since = Date.now() - days*86400000, out = {};
