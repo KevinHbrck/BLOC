@@ -139,3 +139,9 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 - **Plan nach Gewichtung** (Plus in der Planliste): Regler 0–10 je Muskelgruppe mit Live-Prozent, Anzahl Übungen 3–20; verteilt nach größtem Rest und zieht passende Studio-Übungen zufällig. Der Plan ist danach normal bearbeitbar
 - **Plan nach Gewichtung · immer genau 100 %**: Die Regler laufen in Prozent (0–100); verschiebt man einen, passen sich die anderen im gleichen Verhältnis an (Rundungsrest geht an die größte Gruppe), die Summe bleibt 100
 - **Startseite · Muskelgruppen der letzten 7 Tage** (`wocheMuskelHTML`, zugeklappt unter der Wochenzeile): dieselbe Auswertung, aber aus dem Kurz-Gedächtnis (`state.db.history`, Air, Studio und Summit), also was wirklich trainiert wurde; Hinweis auf wenig vertretene Gruppen. Es wird nichts Neues gespeichert
+
+## 2026-10-05 · Run moderner, GPS-Vergleich entfernt
+
+- **GPS-Vergleich (Beta-Test) entfernt**: kein zweiter „ungefährer“ Modus mehr, kein Schalter, keine Vergleichskarte, Texte und Test angepasst (bereits gespeicherte Läufe behalten ihre Daten, der Vergleich wird nur nicht mehr angezeigt)
+- **Run neu gestaltet**: Startseite mit großer Kilometer-Summe und rundem Start-Knopf, Verlauf und Ansagen darunter; Live-Ansicht mit sehr großer Zeit, Kennzahlen als Kacheln und GPS-Status als Punkt (grün gut, gelb schwach, rot kein Signal, pulsierend bei Suche); größerer Countdown
+- **Routenkarte minimalistisch**: eine ruhige Linie in der Textfarbe, Start als Ring, Ziel als Punkt (live mit sanftem Puls), keine Farben, kein Raster; Bestzeit-Kilometer nur fett. Fassung 2026-10-02-26

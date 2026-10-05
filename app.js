@@ -359,7 +359,7 @@ var I18N = {
     wsIntroDehn:"Nach dem Training: ruhig dehnen.",
     repTabUnits:"Einheiten", repTabProgs:"Programme",
     repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", runVorTitel:"Start in", runPlus10:"+10 s", runJetzt:"Jetzt starten", runAbbrechen:"Abbrechen", runLos:"Los!", runGrobLive:"Ungefähr (Test)", runVglTitel:"GPS-Vergleich (Beta-Test)", runVglGenau:"Genau", runVglGrob:"Ungefähr", runVglPunkte:"Punkte", runVglAcc:"Ø Genauigkeit", runVglAbw:"Abweichung der Strecke: {m} m ({p} %).", runVglAn:"GPS-Vergleich (Beta-Test)", runVglAnHint:"Zeichnet zusätzlich den ungefähren GPS-Modus mit auf und vergleicht ihn am Ende mit dem genauen. Manche Geräte nutzen für beide dieselbe Quelle – dann sind die Werte ähnlich.", runAnsagen:"Ansagen", runAus:"Aus", runInhalt:"Inhalt", runWasKm:"Nur km", runWasPace:"km + Pace", runWasAlles:"Alles", runTest:"Hörprobe", runAnsageHint:"Sagt dir beim Laufen die Kilometer an – hier aus- oder seltener stellen, im Lauf geht es auch mit „Ansagen aus“.", runStummAn:"Ansagen aus", runStummAus:"Ansagen an", runGeschafft:"Lauf geschafft", runGespeichert:"Gespeichert unter „Run [BETA]“.", runErster:"Dein erster Lauf", runLaengster:"Längster Lauf bisher", runSchnellsterKm:"Schnellster Kilometer: {z}", runSchnellstePace:"Schnellste Durchschnitts-Pace", runM5:"Meilenstein: 5 km", runM10:"Meilenstein: 10 km", runMHalb:"Meilenstein: Halbmarathon", runTitle:"Run [BETA]", runTeaser:"GPS · Kilometer, Zeit und Pace", runLaeuft:"Läuft gerade · {km} km", runBetaHint:"Beta: Aufzeichnung mit GPS. Der Bildschirm muss an bleiben – im Hintergrund oder bei gesperrtem Handy zeichnet eine Web-App nicht zuverlässig auf („Abdunkeln“ spart Akku). Die Route wird ohne Karte gezeigt; der Standort bleibt auf deinem Gerät.", runStart:"Lauf starten", runNone:"Noch kein Lauf.", runTotal:"{n} Läufe · {km} km", runPause:"Pause", runResume:"Weiter", runPaused:"Pausiert", runEnd:"Beenden", runDark:"Abdunkeln", runDarkHint:"Zum Aufwecken 2 Sekunden gedrückt halten", runTime:"Zeit", runDist:"Strecke", runPaceAvg:"Ø Pace", runPaceNow:"Tempo jetzt", runGpsWait:"Suche GPS-Signal …", runGpsOk:"GPS gut (±{m} m)", runGpsWeak:"GPS schwach (±{m} m)", runGpsDenied:"Standort nicht erlaubt – bitte in den Browser-Einstellungen freigeben.", runGpsLost:"Kein GPS-Signal.", runNoGps:"Dieses Gerät kann den Standort nicht ermitteln.", runLeaveQ:"Lauf verlassen?", runKeep:"Weiterlaufen", runSave:"Beenden und speichern", runDiscard:"Verwerfen", runEndQ:"Lauf beenden?", runEndText:"Der Lauf wird gespeichert.", runShort:"Zu kurz – nicht gespeichert.", runSaved:"Lauf gespeichert.", runSplits:"Kilometer", runRoute:"Route", runGpx:"Als GPX-Datei exportieren", runDelQ:"Lauf löschen?", runBroken:"Unterbrochener Lauf", runBrokenText:"{km} km – die App wurde zwischendurch beendet.", runRecover:"Speichern", runRoutePh:"Die Route erscheint, sobald du dich bewegst.", runDetail:"Lauf", repNewProg:"Neues Programm", repNewUnit:"Neue Einheit", reUnitTitle:"Eigene Einheit", reUnitDefault:"Meine Einheit", reUnitParts:"Programme", reUnitAdd:"Programm hinzufügen", reUnitEmpty:"Noch kein Programm – füge unten das erste hinzu.", reUnitHint:"Mehrere Programme hintereinander. „Von/Bis Runde“ nimmt nur einen Ausschnitt, „Halbe Menge“ halbiert Wiederholungen und Strecken.", reFrom:"Von Runde", reTo:"Bis Runde", reHalf:"Halbe Menge", reUnitDelQ:"Einheit löschen?", rePickProg:"Programm wählen", repMineIntro2:"Mit + legst du eigene Programme und Einheiten an – sie erscheinen auch unter Programme bzw. Einheiten.", repOwnTag:"Meine", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
+    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", runVorTitel:"Start in", runPlus10:"+10 s", runJetzt:"Jetzt starten", runAbbrechen:"Abbrechen", runLos:"Los!", runAnsagen:"Ansagen", runAus:"Aus", runInhalt:"Inhalt", runWasKm:"Nur km", runWasPace:"km + Pace", runWasAlles:"Alles", runTest:"Hörprobe", runAnsageHint:"Sagt dir beim Laufen die Kilometer an – hier aus- oder seltener stellen, im Lauf geht es auch mit „Ansagen aus“.", runStummAn:"Ansagen aus", runStummAus:"Ansagen an", runGeschafft:"Lauf geschafft", runGespeichert:"Gespeichert unter „Run [BETA]“.", runErster:"Dein erster Lauf", runLaengster:"Längster Lauf bisher", runSchnellsterKm:"Schnellster Kilometer: {z}", runSchnellstePace:"Schnellste Durchschnitts-Pace", runM5:"Meilenstein: 5 km", runM10:"Meilenstein: 10 km", runMHalb:"Meilenstein: Halbmarathon", runTitle:"Run [BETA]", runVerlauf:"Verlauf", runLaeufe:"{n} Läufe insgesamt", runTeaser:"GPS · Kilometer, Zeit und Pace", runLaeuft:"Läuft gerade · {km} km", runBetaHint:"Beta: Aufzeichnung mit GPS. Der Bildschirm muss an bleiben – im Hintergrund oder bei gesperrtem Handy zeichnet eine Web-App nicht zuverlässig auf („Abdunkeln“ spart Akku). Die Route wird ohne Karte gezeigt; der Standort bleibt auf deinem Gerät.", runStart:"Lauf starten", runNone:"Noch kein Lauf.", runTotal:"{n} Läufe · {km} km", runPause:"Pause", runResume:"Weiter", runPaused:"Pausiert", runEnd:"Beenden", runDark:"Abdunkeln", runDarkHint:"Zum Aufwecken 2 Sekunden gedrückt halten", runTime:"Zeit", runDist:"Strecke", runPaceAvg:"Ø Pace", runPaceNow:"Tempo jetzt", runGpsWait:"Suche GPS-Signal …", runGpsOk:"GPS gut (±{m} m)", runGpsWeak:"GPS schwach (±{m} m)", runGpsDenied:"Standort nicht erlaubt – bitte in den Browser-Einstellungen freigeben.", runGpsLost:"Kein GPS-Signal.", runNoGps:"Dieses Gerät kann den Standort nicht ermitteln.", runLeaveQ:"Lauf verlassen?", runKeep:"Weiterlaufen", runSave:"Beenden und speichern", runDiscard:"Verwerfen", runEndQ:"Lauf beenden?", runEndText:"Der Lauf wird gespeichert.", runShort:"Zu kurz – nicht gespeichert.", runSaved:"Lauf gespeichert.", runSplits:"Kilometer", runRoute:"Route", runGpx:"Als GPX-Datei exportieren", runDelQ:"Lauf löschen?", runBroken:"Unterbrochener Lauf", runBrokenText:"{km} km – die App wurde zwischendurch beendet.", runRecover:"Speichern", runRoutePh:"Die Route erscheint, sobald du dich bewegst.", runDetail:"Lauf", repNewProg:"Neues Programm", repNewUnit:"Neue Einheit", reUnitTitle:"Eigene Einheit", reUnitDefault:"Meine Einheit", reUnitParts:"Programme", reUnitAdd:"Programm hinzufügen", reUnitEmpty:"Noch kein Programm – füge unten das erste hinzu.", reUnitHint:"Mehrere Programme hintereinander. „Von/Bis Runde“ nimmt nur einen Ausschnitt, „Halbe Menge“ halbiert Wiederholungen und Strecken.", reFrom:"Von Runde", reTo:"Bis Runde", reHalf:"Halbe Menge", reUnitDelQ:"Einheit löschen?", rePickProg:"Programm wählen", repMineIntro2:"Mit + legst du eigene Programme und Einheiten an – sie erscheinen auch unter Programme bzw. Einheiten.", repOwnTag:"Meine", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
     reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
     reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
     reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
@@ -571,7 +571,7 @@ var I18N = {
     wsIntroDehn:"After training: stretch calmly.",
     repTabUnits:"Sessions", repTabProgs:"Programs",
     repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", runVorTitel:"Starting in", runPlus10:"+10 s", runJetzt:"Start now", runAbbrechen:"Cancel", runLos:"Go!", runGrobLive:"Approx. (test)", runVglTitel:"GPS comparison (beta test)", runVglGenau:"Precise", runVglGrob:"Approximate", runVglPunkte:"Points", runVglAcc:"Avg accuracy", runVglAbw:"Distance difference: {m} m ({p} %).", runVglAn:"GPS comparison (beta test)", runVglAnHint:"Also records the approximate GPS mode and compares it with the precise one at the end. Some devices use the same source for both – then the values look alike.", runAnsagen:"Announcements", runAus:"Off", runInhalt:"Content", runWasKm:"Km only", runWasPace:"Km + pace", runWasAlles:"Everything", runTest:"Preview", runAnsageHint:"Announces your kilometres while you run – turn it off or reduce it here, or use “Mute” during a run.", runStummAn:"Mute", runStummAus:"Unmute", runGeschafft:"Run done", runGespeichert:"Saved under “Run [BETA]”.", runErster:"Your first run", runLaengster:"Longest run so far", runSchnellsterKm:"Fastest kilometre: {z}", runSchnellstePace:"Fastest average pace", runM5:"Milestone: 5 km", runM10:"Milestone: 10 km", runMHalb:"Milestone: half marathon", runTitle:"Run [BETA]", runTeaser:"GPS · distance, time and pace", runLaeuft:"Running now · {km} km", runBetaHint:"Beta: GPS tracking. The screen has to stay on – a web app does not record reliably in the background or with a locked phone (“Dim” saves battery). The route is shown without a map; your location stays on your device.", runStart:"Start run", runNone:"No run yet.", runTotal:"{n} runs · {km} km", runPause:"Pause", runResume:"Resume", runPaused:"Paused", runEnd:"Finish", runDark:"Dim", runDarkHint:"Press and hold for 2 seconds to wake", runTime:"Time", runDist:"Distance", runPaceAvg:"Avg pace", runPaceNow:"Pace now", runGpsWait:"Looking for GPS signal …", runGpsOk:"GPS good (±{m} m)", runGpsWeak:"GPS weak (±{m} m)", runGpsDenied:"Location not allowed – please enable it in your browser settings.", runGpsLost:"No GPS signal.", runNoGps:"This device cannot determine your location.", runLeaveQ:"Leave run?", runKeep:"Keep running", runSave:"Finish and save", runDiscard:"Discard", runEndQ:"Finish run?", runEndText:"The run will be saved.", runShort:"Too short – not saved.", runSaved:"Run saved.", runSplits:"Kilometres", runRoute:"Route", runGpx:"Export as GPX file", runDelQ:"Delete run?", runBroken:"Interrupted run", runBrokenText:"{km} km – the app was closed in between.", runRecover:"Save", runRoutePh:"The route appears as soon as you move.", runDetail:"Run", repNewProg:"New programme", repNewUnit:"New session", reUnitTitle:"Own session", reUnitDefault:"My session", reUnitParts:"Programmes", reUnitAdd:"Add programme", reUnitEmpty:"No programme yet – add the first one below.", reUnitHint:"Several programmes in a row. “From/To round” takes only a section, “Half amount” halves reps and distances.", reFrom:"From round", reTo:"To round", reHalf:"Half amount", reUnitDelQ:"Delete session?", rePickProg:"Choose programme", repMineIntro2:"Use + to create your own programmes and sessions – they also show under Programmes and Sessions.", repOwnTag:"Mine", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
+    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", runVorTitel:"Starting in", runPlus10:"+10 s", runJetzt:"Start now", runAbbrechen:"Cancel", runLos:"Go!", runAnsagen:"Announcements", runAus:"Off", runInhalt:"Content", runWasKm:"Km only", runWasPace:"Km + pace", runWasAlles:"Everything", runTest:"Preview", runAnsageHint:"Announces your kilometres while you run – turn it off or reduce it here, or use “Mute” during a run.", runStummAn:"Mute", runStummAus:"Unmute", runGeschafft:"Run done", runGespeichert:"Saved under “Run [BETA]”.", runErster:"Your first run", runLaengster:"Longest run so far", runSchnellsterKm:"Fastest kilometre: {z}", runSchnellstePace:"Fastest average pace", runM5:"Milestone: 5 km", runM10:"Milestone: 10 km", runMHalb:"Milestone: half marathon", runTitle:"Run [BETA]", runVerlauf:"History", runLaeufe:"{n} runs in total", runTeaser:"GPS · distance, time and pace", runLaeuft:"Running now · {km} km", runBetaHint:"Beta: GPS tracking. The screen has to stay on – a web app does not record reliably in the background or with a locked phone (“Dim” saves battery). The route is shown without a map; your location stays on your device.", runStart:"Start run", runNone:"No run yet.", runTotal:"{n} runs · {km} km", runPause:"Pause", runResume:"Resume", runPaused:"Paused", runEnd:"Finish", runDark:"Dim", runDarkHint:"Press and hold for 2 seconds to wake", runTime:"Time", runDist:"Distance", runPaceAvg:"Avg pace", runPaceNow:"Pace now", runGpsWait:"Looking for GPS signal …", runGpsOk:"GPS good (±{m} m)", runGpsWeak:"GPS weak (±{m} m)", runGpsDenied:"Location not allowed – please enable it in your browser settings.", runGpsLost:"No GPS signal.", runNoGps:"This device cannot determine your location.", runLeaveQ:"Leave run?", runKeep:"Keep running", runSave:"Finish and save", runDiscard:"Discard", runEndQ:"Finish run?", runEndText:"The run will be saved.", runShort:"Too short – not saved.", runSaved:"Run saved.", runSplits:"Kilometres", runRoute:"Route", runGpx:"Export as GPX file", runDelQ:"Delete run?", runBroken:"Interrupted run", runBrokenText:"{km} km – the app was closed in between.", runRecover:"Save", runRoutePh:"The route appears as soon as you move.", runDetail:"Run", repNewProg:"New programme", repNewUnit:"New session", reUnitTitle:"Own session", reUnitDefault:"My session", reUnitParts:"Programmes", reUnitAdd:"Add programme", reUnitEmpty:"No programme yet – add the first one below.", reUnitHint:"Several programmes in a row. “From/To round” takes only a section, “Half amount” halves reps and distances.", reFrom:"From round", reTo:"To round", reHalf:"Half amount", reUnitDelQ:"Delete session?", rePickProg:"Choose programme", repMineIntro2:"Use + to create your own programmes and sessions – they also show under Programmes and Sessions.", repOwnTag:"Mine", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
     reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
     reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
     reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
@@ -5141,21 +5141,6 @@ function runAnsage(k){
   (r.gesagt || (r.gesagt = [])).push(txt);
   runSag(txt);
 }
-/* Zweiter Modus für den Vergleich (Beta): gleiche Regeln, aber großzügigere Genauigkeitsgrenze, weil „ungefähre“ Fixes weniger genau sind.
-   Fließt nicht in die Anzeige des Laufs ein, nur in den Vergleich am Ende. */
-var RUN_GENAU_GROB = 150;
-function runPunktGrob(lat, lon, acc, ts){
-  var r = run, g = r && r.grob;
-  if(!g || r.pauseAb) return;
-  g.n++; g.sumAcc += acc; g.gps = acc;
-  if(acc > RUN_GENAU_GROB) return;
-  var p = [Math.round(lat*1e5)/1e5, Math.round(lon*1e5)/1e5];
-  if(!g.letzte){ g.letzte = { p:p, ts:ts }; g.pts.push(p); return; }
-  var dt = (ts - g.letzte.ts)/1000, d = runMeter(g.letzte.p, p);
-  if(dt <= 0 || d < Math.max(3, acc*0.5) || d/dt > RUN_MAX_MS) return;
-  g.dist += d; g.letzte = { p:p, ts:ts };
-  if(!g.pts.length || runMeter(g.pts[g.pts.length-1], p) >= 10) g.pts.push(p);
-}
 /* „Lauf starten“: erst ein Countdown (20 s, beliebig oft +10 s), damit man das Handy wegstecken kann und das GPS Zeit zum Finden hat.
    Während des Countdowns läuft nur die Suche nach dem Signal - Zeit und Strecke zählen erst ab „Los“. */
 var RUN_VORLAUF = 20;
@@ -5197,8 +5182,7 @@ function runVorLos(){
   runLosgehts();
 }
 function runLosgehts(){
-  run = { id:uid(), start:Date.now(), pauseAb:0, pausenMs:0, dist:0, pts:[], letzte:null, splits:[], tZ:0, verlauf:[], gps:null, fehler:0, stumm:false, gesagt:[], n:0, sumAcc:0,
-    grob:state.db.settings.runVergleich !== false ? { dist:0, pts:[], letzte:null, n:0, sumAcc:0, gps:null } : null };   // grob: zweiter Modus parallel (Beta-Vergleich)
+  run = { id:uid(), start:Date.now(), pauseAb:0, pausenMs:0, dist:0, pts:[], letzte:null, splits:[], tZ:0, verlauf:[], gps:null, fehler:0, stumm:false, gesagt:[], n:0, sumAcc:0 };
   runLauschen();
   runWachen(true);
   run.uhr = setInterval(function(){ runAnzeige(); runSichern(); }, 1000);
@@ -5210,20 +5194,16 @@ function runLauschen(){
     runPunkt(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.timestamp || Date.now());
     runAnzeige();
   }, function(err){ r.fehler = err && err.code || 2; runAnzeige(); }, { enableHighAccuracy:true, maximumAge:1000, timeout:20000 });
-  if(r.grob) r.watchG = navigator.geolocation.watchPosition(function(pos){
-    runPunktGrob(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.timestamp || Date.now());
-  }, function(){}, { enableHighAccuracy:false, maximumAge:5000, timeout:30000 });
 }
 function runStopWatch(){
   if(!run) return;
   if(run.watch != null) try{ navigator.geolocation.clearWatch(run.watch); }catch(e){}
-  if(run.watchG != null) try{ navigator.geolocation.clearWatch(run.watchG); }catch(e){}
   if(run.uhr) clearInterval(run.uhr);
-  run.watch = null; run.watchG = null; run.uhr = 0;
+  run.watch = null; run.uhr = 0;
 }
 function runPause(){
   if(!run) return;
-  if(run.pauseAb){ run.pausenMs += Date.now() - run.pauseAb; run.pauseAb = 0; run.letzte = null; if(run.grob) run.grob.letzte = null; runWachen(true); }   // Lücke zählt nicht als Strecke
+  if(run.pauseAb){ run.pausenMs += Date.now() - run.pauseAb; run.pauseAb = 0; run.letzte = null; runWachen(true); }   // Lücke zählt nicht als Strecke
   else { run.pauseAb = Date.now(); }
   renderRun();
 }
@@ -5239,7 +5219,6 @@ function runSpeichern(d){   // d: { id, start, dur, dist, pts, splits } -> in de
   var s = state.db.settings;
   if(d.dist < 50){ showToast(t("runShort")); return false; }
   var x = { id:d.id, at:d.start, dur:Math.round(d.dur), dist:Math.round(d.dist), pts:d.pts, splits:d.splits };
-  if(d.vgl) x.vgl = d.vgl;   // GPS-Vergleich (Beta-Test): zweiter Modus und Kennzahlen beider Modi
   (s.runs || (s.runs = [])).push(x);
   pruneHistory(state.db);
   state.db.history.push({ at:d.start, dur:Math.round(d.dur/1000), ex:[] });   // zählt in der Wochenzeile
@@ -5256,9 +5235,7 @@ function runBeenden(speichern){
   var dunkel = document.getElementById("run-dunkel"); if(dunkel) dunkel.remove();
   run = null;
   delete state.db.settings.runLive;
-  var vgl = r.grob && r.grob.n ? { dist:Math.round(r.grob.dist), pts:r.grob.pts, n:r.grob.n, acc:Math.round(r.grob.sumAcc/r.grob.n),
-    nG:r.n, accG:r.n ? Math.round(r.sumAcc/r.n) : 0 } : null;
-  var ok = speichern ? runSpeichern({ id:r.id, start:r.start, dur:dauer, dist:r.dist, pts:r.pts, splits:r.splits, vgl:vgl }) : (save(), false);
+  var ok = speichern ? runSpeichern({ id:r.id, start:r.start, dur:dauer, dist:r.dist, pts:r.pts, splits:r.splits }) : (save(), false);
   if(ok){ runNeu = r.id; go("#rundetail/"+r.id); } else renderRun();   // runNeu: Abschlusskarte oben im Detail
 }
 var runNeu = null;
@@ -5283,10 +5260,6 @@ function runHighlights(x){
   });
   return out;
 }
-/* Beta-Test: den „ungefähren“ GPS-Modus parallel mitlaufen lassen und am Ende mit dem genauen vergleichen */
-function runVergleichHTML(){
-  return '<div class="card run-vergleich">'+toggleRow("run-vgl", esc(t("runVglAn")), esc(t("runVglAnHint")), state.db.settings.runVergleich !== false)+'</div>';
-}
 function runAnsageHTML(){
   var e = runAnsageEinst();
   function kn(attr, wert, aktiv, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
@@ -5300,20 +5273,19 @@ function runAnsageHTML(){
 function runById(id){ var l = state.db.settings.runs || []; for(var i=0;i<l.length;i++) if(l[i].id === id) return l[i]; return null; }
 
 /* Routenlinie als SVG (ohne Karte): Länge und Breite im richtigen Verhältnis */
-function runSvg(pts, ptsG){   // ptsG: zweite Linie (grau) für den GPS-Vergleich
+function runSvg(pts){
   if(!pts || pts.length < 2) return '<div class="run-leer">'+esc(t("runRoutePh"))+'</div>';
   var minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
-  pts.concat(ptsG || []).forEach(function(p){ minLa = Math.min(minLa, p[0]); maxLa = Math.max(maxLa, p[0]); minLo = Math.min(minLo, p[1]); maxLo = Math.max(maxLo, p[1]); });
+  pts.forEach(function(p){ minLa = Math.min(minLa, p[0]); maxLa = Math.max(maxLa, p[0]); minLo = Math.min(minLo, p[1]); maxLo = Math.max(maxLo, p[1]); });
   var kx = Math.cos((minLa + maxLa)/2*Math.PI/180), W = 300, H = 200, pad = 14;
   var bw = Math.max((maxLo - minLo)*kx, 1e-6), bh = Math.max(maxLa - minLa, 1e-6);
   var sk = Math.min((W - 2*pad)/bw, (H - 2*pad)/bh), ox = (W - bw*sk)/2, oy = (H - bh*sk)/2;
   function xy(p){ return [(ox + (p[1] - minLo)*kx*sk).toFixed(1), (oy + (maxLa - p[0])*sk).toFixed(1)]; }
-  var a = xy(pts[0]), z = xy(pts[pts.length-1]);
+  var a = xy(pts[0]), z = xy(pts[pts.length-1]), pl = pts.map(function(p){ return xy(p).join(","); }).join(" ");
   return '<svg class="run-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'">'+
-    (ptsG && ptsG.length > 1 ? '<polyline class="run-grob" points="'+ptsG.map(function(p){ return xy(p).join(","); }).join(" ")+'" fill="none" stroke="#8a8f98" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>' : '')+
-    '<polyline points="'+pts.map(function(p){ return xy(p).join(","); }).join(" ")+
-    '" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
-    '<circle cx="'+a[0]+'" cy="'+a[1]+'" r="5" class="run-start"/><circle cx="'+z[0]+'" cy="'+z[1]+'" r="5" class="run-ziel"/></svg>';
+    '<polyline points="'+pl+'" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<circle cx="'+a[0]+'" cy="'+a[1]+'" r="5" class="run-start"/>'+
+    '<circle cx="'+z[0]+'" cy="'+z[1]+'" r="9" class="run-ring"/><circle cx="'+z[0]+'" cy="'+z[1]+'" r="5" class="run-ziel"/></svg>';
 }
 function runGpxText(r){
   var pts = (r.pts || []).map(function(p){ return '<trkpt lat="'+p[0]+'" lon="'+p[1]+'"/>'; }).join("");
@@ -5338,10 +5310,10 @@ function runAnzeige(){
   var gps = r.fehler === 1 ? t("runGpsDenied") : r.fehler ? t("runGpsLost") : r.gps == null ? t("runGpsWait") :
     t(r.gps <= 15 ? "runGpsOk" : "runGpsWeak", { m:Math.round(r.gps) });
   setze("run-gps", r.pauseAb ? t("runPaused") : gps);
-  if(r.grob) setze("run-grob", t("runGrobLive")+": "+runKm(r.grob.dist)+" km"+(r.grob.gps != null ? " · ±"+Math.round(r.grob.gps)+" m" : ""));
+  var gz = document.getElementById("run-gps");
+  if(gz) gz.className = "run-gps " + (r.pauseAb ? "pause" : r.fehler ? "aus" : r.gps == null ? "suche" : r.gps <= 15 ? "gut" : "mittel");
   var karte = document.getElementById("run-karte");
-  var nK = r.pts.length + (r.grob ? r.grob.pts.length*1000 : 0);   // neu zeichnen, wenn sich eine der beiden Linien verlängert hat
-  if(karte && +karte.getAttribute("data-n") !== nK){ karte.setAttribute("data-n", nK); karte.innerHTML = runSvg(r.pts, r.grob && r.grob.pts); }
+  if(karte && +karte.getAttribute("data-n") !== r.pts.length){ karte.setAttribute("data-n", r.pts.length); karte.innerHTML = runSvg(r.pts); }
 }
 function runDunkel(){
   var d = document.createElement("div");
@@ -5385,19 +5357,20 @@ function renderRun(){
   var live = s.runLive;
   app.innerHTML =
     topbar(t("runTitle"), { back:"#home" }) +
-    '<div class="page-hint">'+esc(t("runBetaHint"))+'</div>'+
     (live ? '<div class="card run-live"><b>'+esc(t("runBroken"))+'</b><div class="sub">'+esc(t("runBrokenText", { km:runKm(live.dist) }))+'</div>'+
       '<div class="btn-row"><button type="button" class="btn btn-secondary" data-runlivedel>'+esc(t("runDiscard"))+'</button>'+
       '<button type="button" class="btn btn-primary" data-runlivesave>'+esc(t("runRecover"))+'</button></div></div>' : '')+
-    '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button>'+
-    runAnsageHTML()+runVergleichHTML()+
-    (runs.length ? '<div class="section-title">'+esc(t("runTotal", { n:runs.length, km:runKm(km*1000) }))+'</div>' : '')+
+    '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div><div class="rh-sub">'+esc(runs.length ? t("runLaeufe", { n:runs.length }) : t("runTeaser"))+'</div>'+
+      '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button></div>'+
+    (runs.length ? '<div class="section-title">'+esc(t("runVerlauf"))+'</div>' : '')+
     (runs.length ? runs.map(function(x){
       var d = new Date(x.at);
       return '<div class="list-item entry run-item" data-nav="#rundetail/'+x.id+'"><div class="meta"><div class="name">'+esc(runKm(x.dist))+' km</div>'+
         '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(repUhr(x.dur))+SEP+esc(runPace(x.dur/1000, x.dist))+' /km</div></div>'+
         '<div class="card-aside"><div class="card-acts">'+trashBtn("run", x.id, runKm(x.dist)+" km")+'</div></div></div>';
     }).join("") : '<div class="empty" style="padding:24px 20px;">'+esc(t("runNone"))+'</div>')+
+    runAnsageHTML()+
+    '<div class="page-hint">'+esc(t("runBetaHint"))+'</div>'+
     '<div style="height:40px"></div>';
   bindCommon();
   bindTrash(function(){ renderRun(); });
@@ -5408,7 +5381,6 @@ function renderRun(){
   app.querySelectorAll("[data-runwas]").forEach(function(b){
     b.addEventListener("click", function(){ var e = runAnsageEinst(); s.runAnsage = { every:e.every, was:b.getAttribute("data-runwas") }; save(); renderRun(); });
   });
-  bindToggle("run-vgl", function(v){ s.runVergleich = v; save(); });
   var rt = app.querySelector("[data-runtest]");
   if(rt) rt.addEventListener("click", function(){   // Hörprobe: so klänge die Ansage bei 6:12 min/km
     var e = runAnsageEinst(), sp = [], k = Math.max(e.every, 1);
@@ -5427,13 +5399,11 @@ function renderRunLive(){
   var r = run;
   app.innerHTML =
     topbar(t("runTitle"), { back:"#home" }) +
-    '<div class="run-gross"><div id="run-zeit" class="rg-zeit">0:00</div><div class="rg-label">'+esc(t("runTime"))+'</div></div>'+
+    '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div></div>'+
     '<div class="run-raster">'+
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
       '<div><b id="run-pace">–:––</b><small>'+esc(t("runPaceAvg"))+' /km</small></div>'+
       '<div><b id="run-jetzt">–:––</b><small>'+esc(t("runPaceNow"))+' /km</small></div></div>'+
-    '<div class="run-gps" id="run-gps"></div>'+
-    (r.grob ? '<div class="run-gps run-grobzeile" id="run-grob"></div>' : '')+
     '<div id="run-karte" class="run-karte" data-n="-1"></div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
       '<button type="button" class="btn btn-secondary" data-rundark>'+esc(t("runDark"))+'</button>'+
@@ -5479,12 +5449,7 @@ function renderRunDetail(id){
     '<div class="rep-meta">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long", day:"numeric", month:"long", year:"numeric" }))+'</div>'+
     '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(repUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
       '<div><b>'+esc(runPace(x.dur/1000, x.dist))+'</b><small>'+esc(t("runPaceAvg"))+' /km</small></div></div>'+
-    '<div class="section-title">'+esc(t("runRoute"))+'</div><div class="run-karte">'+runSvg(x.pts, x.vgl && x.vgl.pts)+
-      (x.vgl && x.vgl.pts && x.vgl.pts.length > 1 ? '<div class="run-legende"><span><i class="l-genau"></i>'+esc(t("runVglGenau"))+'</span><span><i class="l-grob"></i>'+esc(t("runVglGrob"))+'</span></div>' : '')+'</div>'+
-    (x.vgl ? '<div class="section-title">'+esc(t("runVglTitel"))+'</div><div class="card run-vgl"><table class="rep-tab run-splits"><tr><th></th><th>'+esc(t("runDist"))+'</th><th>'+esc(t("runVglPunkte"))+'</th><th>'+esc(t("runVglAcc"))+'</th></tr>'+
-      '<tr><td>'+esc(t("runVglGenau"))+'</td><td>'+esc(runKm(x.dist))+' km</td><td>'+(x.vgl.nG || 0)+'</td><td>±'+(x.vgl.accG || 0)+' m</td></tr>'+
-      '<tr><td>'+esc(t("runVglGrob"))+'</td><td>'+esc(runKm(x.vgl.dist))+' km</td><td>'+(x.vgl.n || 0)+'</td><td>±'+(x.vgl.acc || 0)+' m</td></tr></table>'+
-      '<div class="rf-gespeichert">'+esc(t("runVglAbw", { m:Math.abs(x.dist - x.vgl.dist), p:x.dist ? Math.round(Math.abs(x.dist - x.vgl.dist)/x.dist*1000)/10 : 0 }))+'</div></div>' : '')+
+    '<div class="section-title">'+esc(t("runRoute"))+'</div><div class="run-karte">'+runSvg(x.pts)+'</div>'+
     (sp.length ? '<div class="section-title">'+esc(t("runSplits"))+'</div><div class="card"><table class="rep-tab run-splits">'+sp.map(function(ms, i){
       var dauer = ms - (i ? sp[i-1] : 0);
       return '<tr'+(dauer === bk && sp.length > 1 ? ' class="schnell"' : '')+'><td>'+(i+1)+' km</td><td>'+esc(repUhr(dauer))+(dauer === bk && sp.length > 1 ? ' ★' : '')+'</td></tr>';
