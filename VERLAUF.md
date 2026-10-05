@@ -145,3 +145,7 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 - **GPS-Vergleich (Beta-Test) entfernt**: kein zweiter „ungefährer“ Modus mehr, kein Schalter, keine Vergleichskarte, Texte und Test angepasst (bereits gespeicherte Läufe behalten ihre Daten, der Vergleich wird nur nicht mehr angezeigt)
 - **Run neu gestaltet**: Startseite mit großer Kilometer-Summe und rundem Start-Knopf, Verlauf und Ansagen darunter; Live-Ansicht mit sehr großer Zeit, Kennzahlen als Kacheln und GPS-Status als Punkt (grün gut, gelb schwach, rot kein Signal, pulsierend bei Suche); größerer Countdown
 - **Routenkarte minimalistisch**: eine ruhige Linie in der Textfarbe, Start als Ring, Ziel als Punkt (live mit sanftem Puls), keine Farben, kein Raster; Bestzeit-Kilometer nur fett. Fassung 2026-10-02-26
+
+## 2026-10-05 · Bodyweight = alles ohne Gerät
+
+- Der Filter **Bodyweight** zeigt jetzt jede Übung ohne Ausrüstung (`bwDazu`): auch Burpees, Jumping Jacks, Mountain Climbers, Planks, Sit-ups usw. – vorher nur die wenigen mit der Kategorie „Bodyweight“. Dehnübungen und Übungen mit Stange/Dip/Geräten zählen nicht dazu; eigene Übungen behalten ihre gewählten Kategorien. Fassung 2026-10-02-27

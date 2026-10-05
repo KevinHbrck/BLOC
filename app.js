@@ -806,6 +806,9 @@ function adoptExercise(ex, zwischen){
   return nb;
 }
 EXERCISES.forEach(function(ex){ ex.level = EX_LEVEL[ex.id] || 2; ex.equip = (EX_EQUIP[ex.id] || "none").split(" "); });
+/* Bodyweight = alles ohne GerÃ¤t: jede Ãbung ohne AusrÃ¼stung (auch Burpees, Jumping Jacks â¦) zÃ¤hlt dazu, nur DehnÃ¼bungen nicht */
+function bwDazu(ex){ if(ex.equip.every(function(e){ return e === "none"; }) && ex.cats.indexOf("stretch") < 0 && ex.cats.indexOf("bw") < 0) ex.cats.push("bw"); }
+EXERCISES.forEach(bwDazu);
 
 var EX_MAIN = {};
 Object.keys(EX_MAIN_ROWS).forEach(function(k){ EX_MAIN_ROWS[k].split(" ").forEach(function(id){ EX_MAIN[id] = k; }); });
