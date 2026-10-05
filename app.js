@@ -5624,6 +5624,7 @@ function renderReps(){
     html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>'+
       '<div class="theme-pick rep-pick">'+knopf("stufe","leicht",t("stufe_leicht"))+knopf("stufe","standard",t("stufe_standard"))+knopf("stufe","fortgeschritten",t("stufe_fortgeschritten"))+'</div>';
     liste += eigeneListe(["unit"], true);   // eigene Einheiten stehen oben
+    fab = fabMenuHTML([{ key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
     REP_EINHEITEN.forEach(function(e){
       var varianten = e[1 + REP_STUFEN.indexOf(stufe)];
       varianten.forEach(function(v, k){
