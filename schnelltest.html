@@ -395,7 +395,7 @@
       await bis(function () { return $(".rep-tab"); }, 3000, "Übersicht der Einheit");
       klick("button.back");
       klick(await bis(function () { return $('[data-repf="tab:einheiten"]'); }, 3000, "Reiter Einheiten"));
-      await bis(function () { return $(".rep-karte.eigen") && !$("[data-fab]"); }, 3000, "eigene Einheit oben in Einheiten (ohne Plus)");
+      await bis(function () { return $(".rep-karte.eigen") && $(".fab[data-fabopt=\"unit\"]"); }, 3000, "eigene Einheit oben in Einheiten (mit Plus)");
       // Programme: Plus
       klick('[data-repf="tab:programme"]');
       klick(await bis(function () { return $('[data-fabopt="prog"]'); }, 3000, "Plus in Programme"));
@@ -456,6 +456,10 @@
       klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Beenden bestätigen"));
       await bis(function () { return /^#rundetail/.test(W.location.hash) && $(".run-svg") && $(".run-fertig"); }, 3000, "Lauf-Detail mit Abschlusskarte");
       pruefe(/erster Lauf/.test($(".run-fertig").textContent), "Abschlusskarte ohne Highlight");
+      pruefe($$(".run-kms .rk").length >= 1 && /\/km/.test($(".run-kms").textContent), "Pace je Kilometer fehlt");
+      var nm = $("#run-name"); nm.value = "Intervalle"; nm.dispatchEvent(new W.Event("input", { bubbles: true }));
+      var nt = $("#run-note"); nt.value = "Regen"; nt.dispatchEvent(new W.Event("input", { bubbles: true }));
+      pruefe(daten().settings.runs[0].name === "Intervalle" && daten().settings.runs[0].note === "Regen", "Name/Notiz nicht gespeichert");
       var r = daten().settings.runs;
       pruefe(r.length === 1 && r[0].dist > 1250 && r[0].dist < 1400 && r[0].splits.length === 1, "gespeicherter Lauf: " + JSON.stringify(r && r[0] && { d: r[0].dist, s: r[0].splits.length }));
       pruefe(daten().history.some(function (e) { return e.ex && e.ex.length === 0 && e.dur >= 0; }), "Lauf zählt nicht in der Wochenzeile");
@@ -463,6 +467,37 @@
       klick(await bis(function () { return $(".run-item [data-del]"); }, 3000, "Mülleimer am Lauf"));
       klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Löschen bestätigen"));
       await bis(function () { return !$(".run-item") && (daten().settings.runs || []).length === 0; }, 2000, "Lauf gelöscht");
+    }],
+    ["Lauf: Auto-Pause (Stehzeit herausgerechnet, geht von selbst weiter) und Intervall-Anzeige", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      var cbs = [], cb = function (p) { cbs.forEach(function (f) { f(p); }); };
+      Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cbs.push(f); return cbs.length; }, clearWatch: function () {} } });
+      klick($('.area-tile[data-nav="#run"]'));
+      var sl = await bis(function () { return $("#run-auto"); }, 3000, "Auto-Pause-Regler");
+      sl.value = "1"; sl.dispatchEvent(new W.Event("input", { bubbles: true }));
+      pruefe(daten().settings.runAuto === 5 && /5 s/.test($("#run-auto-wert").textContent), "Auto-Pause nicht auf 5 s: " + JSON.stringify(daten().settings.runAuto));
+      klick($("#run-iv-an"));
+      await bis(function () { return $("#run-iv-lauf"); }, 2000, "Intervall-Felder");
+      pruefe(daten().settings.runIv && daten().settings.runIv.an === true, "Intervall nicht eingeschaltet");
+      klick($("[data-runstart]"));
+      klick(await bis(function () { return $("[data-runjetzt]"); }, 3000, "Jetzt starten"));
+      await bis(function () { return cbs.length >= 2 && $("#run-zeit"); }, 3000, "Aufzeichnung läuft");
+      var lat = 48, ts = Date.now();
+      for (var i = 0; i < 6; i++) { lat += 10 / 111320; ts += 2000; cb({ coords: { latitude: lat, longitude: 11, accuracy: 8, speed: 3 }, timestamp: ts }); }
+      await bis(function () { return /Laufen/.test($("#run-iv").textContent); }, 2000, "Intervall-Anzeige Laufen");
+      await bis(function () { return /Auto-Pause/.test($("#run-gps").textContent) && /Weiter/.test($("[data-runpause]").textContent); }, 9000, "Auto-Pause nach etwa 5 s Stillstand");
+      var z1 = $("#run-zeit").textContent;
+      await warte(1500);
+      pruefe($("#run-zeit").textContent === z1, "Zeit läuft in der Auto-Pause weiter");
+      for (var j = 0; j < 4; j++) { lat += 10 / 111320; ts += 2000; cb({ coords: { latitude: lat, longitude: 11, accuracy: 8, speed: 3 }, timestamp: ts }); }
+      await bis(function () { return !/Auto-Pause/.test($("#run-gps").textContent) && /Pause/.test($("[data-runpause]").textContent) && !/Weiter/.test($("[data-runpause]").textContent); }, 3000, "Weiter von selbst nach Bewegung");
+      klick("[data-runend]");
+      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Beenden bestätigen"));
+      await bis(function () { return /^#rundetail/.test(W.location.hash); }, 3000, "Lauf-Detail");
+      var rr = daten().settings.runs.filter(function (r) { return r.iv; })[0];
+      pruefe(rr && rr.iv.lauf === 60 && rr.pause > 3000, "Intervall/Pausenzeit nicht gespeichert: " + JSON.stringify(rr && { iv: rr.iv, p: rr.pause }));
+      pruefe(/Pausen/.test($(".rep-meta").textContent) && /Intervall/.test($(".rep-meta").textContent), "Detail ohne Intervall-/Pausenzeile");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

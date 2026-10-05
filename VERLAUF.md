@@ -153,3 +153,11 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 ## 2026-10-05 · Summit: Plus auch bei Einheiten
 
 - Im Reiter **Einheiten** gibt es jetzt unten rechts ein Plus: öffnet direkt „Neue Einheit“ (Programme antippen und hintereinander legen); die eigene Einheit steht danach oben in der Liste. Fassung 2026-10-02-28
+
+## 2026-10-05 · Run: Name/Notiz, Intervall, Auto-Pause, Pace je Kilometer
+
+- **Lauf bearbeiten**: im Detail Name (z. B. „Intervalle“) und Notiz (z. B. „Regen“), werden beim Tippen gespeichert; der Name steht in der Verlaufsliste hinter den Kilometern
+- **Intervall-Lauf** (Run-Startseite): Laufen und Gehen in Sekunden einstellbar; im Lauf eine Anzeige „Laufen · 0:42 · Runde 3“, beim Wechsel Signalton, Vibration und Ansage („Laufen!“/„Gehen!“), Tick in den letzten 3 s; gespeichert als `iv`, im Detail „Intervall 1:00 / 1:00“
+- **Auto-Pause** (Regler Aus bis 20 s, mindestens 5 s): ohne Bewegung (kein neuer GPS-Schritt, Gerät meldet Tempo <0,5 m/s) pausiert der Lauf, die Stehzeit wird herausgerechnet (Pause beginnt beim letzten Schritt); weiter von selbst bei ≥ 10 m Weg vom Pausenort oder ≥ 1,5 m/s. Herausgerechnete Pausen stehen im Detail (`pause`)
+- **Pace je Kilometer** im Detail als Balken (schnellster kräftig), angefangener Rest-Kilometer ab 100 m zuletzt
+- Schnelltest 21 Prüfungen (neu: Auto-Pause/Intervall, Name/Notiz). Fassung 2026-10-02-30
