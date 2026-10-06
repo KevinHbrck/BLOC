@@ -3540,11 +3540,11 @@ function statBuckets(weeks, gran, minN){
 function statBalken(vals, labels, kurz, farbe){
   var mx = Math.max.apply(null, vals.concat([1]));
   return '<div class="bscroll"><div class="bchart'+(farbe ? ' farbe' : '')+'"'+(farbe ? ' style="--c:'+farbe+'"' : '')+'>'+vals.map(function(v, i){
-    return '<div class="bc'+(i === vals.length-1 ? ' jetzt' : '')+(v ? '' : ' leer')+'"><span class="bw">'+(v ? esc(kurz(v)) : "")+'</span><span class="bs"><i style="height:'+(v ? Math.max(5, Math.round(100*v/mx)) : 0)+'%"></i></span><small>'+esc(labels[i])+'</small></div>';
+    return '<div class="bc'+(i === vals.length-1 ? ' jetzt' : '')+(v ? '' : ' leer')+'" style="--i:'+Math.max(0, i - Math.max(0, vals.length - 12))+'"><span class="bw">'+(v ? esc(kurz(v)) : "")+'</span><span class="bs"><i style="height:'+(v ? Math.max(5, Math.round(100*v/mx)) : 0)+'%"></i></span><small>'+esc(labels[i])+'</small></div>';
   }).join("")+'</div></div>';
 }
 function statPz(sek){ var s = Math.round(sek); return Math.floor(s/60)+":"+("0"+s%60).slice(-2); }
-function statMin(sek){ return String(Math.round(sek/60)); }
+function statMin(sek){ return sek > 0 && sek < 30 ? "<1" : String(Math.round(sek/60)); }
 /* Pace-Verlauf der letzten Läufe als Linie (schneller = höher) */
 function statPaceSvg(runs){
   var p = runs.map(function(x){ return x.dur/1000/(x.dist/1000); }), mn = Math.min.apply(null, p), mx = Math.max.apply(null, p), W = Math.max(300, p.length*40 + 28), H = 120, px = 14, py = 18;
@@ -3565,9 +3565,11 @@ function renderStats(){
   function eintraege(k, tage){ return hist.filter(function(e){ return bereichVonEintrag(e) === k && e.at >= jetzt - tage*tag; }); }
   function bes(k, tage){ return besuche(hist.filter(function(e){ return bereichVonEintrag(e) === k; })).filter(function(b){ return b.von >= jetzt - tage*tag; }); }
   function summe(l){ return l.reduce(function(a, b){ return a + b.s; }, 0); }
-  function dauer(sek){ return sek >= 60 ? fmtDuration(Math.round(sek/60)*60) : "–"; }
+  function dauer(sek){ return sek >= 60 ? fmtDuration(Math.round(sek/60)*60) : sek > 0 ? "<1 Min" : "–"; }
   var besA = besucheAlle(hist);
-  var n7 = besA.filter(function(b){ return b.von >= jetzt - 7*tag; }).length, nV = besA.filter(function(b){ return b.von >= jetzt - 14*tag && b.von < jetzt - 7*tag; }).length;
+  var montag = new Date(); montag.setHours(0, 0, 0, 0); montag = montag.getTime() - ((new Date().getDay() + 6) % 7)*tag;
+  var n7 = besA.filter(function(b){ return b.von >= montag; }).length, nV = besA.filter(function(b){ return b.von >= montag - 7*tag && b.von < montag; }).length;   // diese Woche (ab Montag) und die Woche davor
+  var ziel = clamp(Math.round(+s.wochenZiel) || 3, 1, 7);
   var fr = jetzt;
   Object.keys(s.statW || {}).forEach(function(k){ var tt = new Date(k+"T00:00:00").getTime(); if(tt < fr) fr = tt; });
   (state.db.history || []).forEach(function(e){ if(e && e.at < fr) fr = e.at; });
@@ -3591,9 +3593,14 @@ function renderStats(){
       statBalken([0, 0, 0, 0, 0, 0, 0, 0], labels.slice(-8), function(){ return ""; }).replace('class="bchart"', 'class="bchart geist"')+'</div>';
   } else {
     var delta = n7 > nV ? t("statMehr", { n:n7 - nV }) : n7 === nV ? (n7 ? t("statGleich") : "") : t("statWeniger", { n:nV });
-    html += '<div class="card stat-hero"><div class="sh-zahl">'+n7+'</div><div class="sh-text">'+esc(t(n7 === 1 ? "statHero1" : "statHeroN"))+'</div>'+
-      (delta ? '<div class="sh-delta'+(n7 > nV ? ' auf' : '')+'">'+(n7 > nV ? svgIcon('<path d="M6 15l6-6 6 6"/>') : '')+esc(delta)+'</div>' : '')+
-      (serie >= 2 ? '<div class="sh-serie">'+svgIcon('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>')+esc(t("statSerie", { n:serie }))+'</div>' : '')+'</div>';
+    var anteil = Math.min(1, n7/ziel), R = 74, U = 2*Math.PI*R, geschafft = n7 >= ziel;
+    html += '<div class="card stat-hero'+(geschafft ? ' geschafft' : '')+'"><div class="ring" style="--u:'+U.toFixed(1)+';--p:'+(U*anteil).toFixed(1)+'">'+
+      '<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="'+R+'" class="ring-bg"/>'+(anteil > 0 ? '<circle cx="100" cy="100" r="'+R+'" class="ring-bar" transform="rotate(-90 100 100)"/>' : '')+'</svg>'+
+      '<div class="ring-mitte"><b>'+n7+'</b><small>'+esc(t("statRing", { z:ziel }))+'</small></div></div>'+
+      '<div class="sh-text">'+esc(t(geschafft ? "statZielGeschafft" : "statHeroWoche"))+'</div>'+
+      '<div class="sh-chips">'+(delta ? '<span class="sh-delta'+(n7 > nV ? ' auf' : '')+'">'+(n7 > nV ? svgIcon('<path d="M6 15l6-6 6 6"/>') : '')+esc(delta)+'</span>' : '')+
+        (serie >= 2 ? '<span class="sh-serie">'+svgIcon('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>')+esc(t("statSerie", { n:serie }))+'</span>' : '')+'</div>'+
+      '<div class="sh-ziel"><span>'+esc(t("statZiel"))+'</span><button type="button" data-ziel="-1" aria-label="−">&minus;</button><b>'+ziel+'</b><button type="button" data-ziel="1" aria-label="+">&plus;</button></div></div>';
     // Verlauf: Woche / Monat / Jahr, nach links wischen für früher
     var zeit = statModus === "zeit";
     function knopf(attr, wert, aktivWert, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktivWert === wert ? 'active' : '')+'">'+esc(text)+'</button>'; }
@@ -3629,7 +3636,10 @@ function renderStats(){
     var tageSeit = letzte ? Math.floor((new Date(jetzt).setHours(0, 0, 0, 0) - new Date(letzte).setHours(0, 0, 0, 0))/tag + 0.5) : 0;
     var sub = k === "run" && runs.length ? t("statRunSub", { n:runs.length, km:runKm(runs.reduce(function(a, x){ return a + x.dist; }, 0)) })
       : l.length ? t("statBereichSub", { n:l.length, z:dauer(summe(l)) })+" · "+statTage(tageSeit) : t("statNichts");
-    html += '<div class="card stat-karte stat-bereichkarte" style="--c:'+d[3]+'"><div class="sk-kopf"><b class="sb-name"><i></i>'+esc(d[1])+'</b></div><div class="sk-sub">'+esc(sub)+'</div>';
+    var chipsK = k === "run" && runs.length ? [[String(runs.length), t("statLaeufe")], [runKm(runs.reduce(function(a, x){ return a + x.dist; }, 0)), "km"], [letzte ? statTage(tageSeit) : "–", t("statZuletzt")]]
+      : l.length ? [[String(l.length), t("statChipTrainings")], [dauer(summe(l)), t("statChipZeit")], [statTage(tageSeit), t("statZuletzt")]] : null;
+    html += '<div class="card stat-karte stat-bereichkarte" style="--c:'+d[3]+'"><div class="sk-kopf"><b class="sb-name"><i></i>'+esc(d[1])+'</b><span class="sk-sub">'+esc(t("statLetzte4"))+'</span></div>'+
+      (chipsK ? '<div class="chips-stat">'+chipsK.map(function(c){ return '<span><b>'+esc(c[0])+'</b><small>'+esc(c[1])+'</small></span>'; }).join("")+'</div>' : '<div class="sk-sub">'+esc(sub)+'</div>');
     if(k !== "run" && vk.some(function(v){ return v > 0; })) html += statBalken(vk, labels, statMin, d[3]);
     if(k === "run" && runs.length){
       var gut = runs.filter(function(x){ return x.dist >= 1000; }).sort(function(a, b){ return a.at - b.at; }), letzteL = gut.slice(-60);
@@ -3678,6 +3688,7 @@ function renderStats(){
   if(kal) kal.addEventListener("toggle", function(){ statKalOffen = kal.open; });
   function neu(){ var y = window.scrollY; renderStats(); window.scrollTo(0, y); }
   app.querySelectorAll("[data-statmodus]").forEach(function(b){ b.addEventListener("click", function(){ statModus = b.getAttribute("data-statmodus"); neu(); }); });
+  app.querySelectorAll("[data-ziel]").forEach(function(b){ b.addEventListener("click", function(){ s.wochenZiel = clamp(ziel + (+b.getAttribute("data-ziel")), 1, 7); save(); neu(); }); });
   app.querySelectorAll("[data-statgran]").forEach(function(b){ b.addEventListener("click", function(){ statGran = b.getAttribute("data-statgran"); neu(); }); });
 }
 function recentExercises(days){

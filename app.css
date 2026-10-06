@@ -1985,3 +1985,33 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .heat-legende small{ font-size:10px; color:var(--text-dim); }
 .heat-legende .hz{ width:14px; height:14px; aspect-ratio:auto; border-radius:4px; }
 .stat-gran{ justify-content:flex-start; margin:-2px 0 12px; }
+/* Statistik lebendiger: Wochenziel-Ring, Balken in Akzentfarbe mit Aufbau-Animation, Bereichskarten mit Kennzahlen */
+.stat-hero{ background:linear-gradient(165deg, color-mix(in srgb, var(--accent) 13%, var(--surface)), var(--surface) 62%); }
+.ring{ position:relative; width:190px; height:190px; margin:0 auto 8px; }
+.ring svg{ width:100%; height:100%; display:block; }
+.ring-bg{ fill:none; stroke:color-mix(in srgb, var(--accent) 16%, var(--surface-2)); stroke-width:16; }
+.ring-bar{ fill:none; stroke:var(--accent); stroke-width:16; stroke-linecap:round; stroke-dasharray:var(--p) var(--u); animation:ringIn 1s cubic-bezier(.2,.8,.2,1) both; }
+.stat-hero.geschafft .ring-bar{ filter:drop-shadow(0 0 7px color-mix(in srgb, var(--accent) 55%, transparent)); }
+@keyframes ringIn{ from{ stroke-dasharray:0 var(--u); } }
+.ring-mitte{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-mitte b{ font-size:62px; line-height:1; font-weight:800; letter-spacing:-.04em; color:var(--accent); font-variant-numeric:tabular-nums; }
+.ring-mitte small{ color:var(--text-dim); font-size:14px; margin-top:2px; }
+.sh-chips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px; }
+.sh-chips .sh-delta, .sh-chips .sh-serie{ margin:0; }
+.sh-ziel{ display:flex; align-items:center; justify-content:center; gap:10px; margin-top:14px; color:var(--text-dim); font-size:13px; }
+.sh-ziel b{ min-width:18px; color:var(--text); font-size:15px; }
+.sh-ziel button{ width:30px; height:30px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--text); font:inherit; font-size:18px; line-height:1; cursor:pointer; }
+.bc .bs i{ background:color-mix(in srgb, var(--accent) 30%, var(--surface-2)); opacity:1; transform-origin:bottom; animation:balkenHoch .7s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--i, 0) * 45ms); }
+.bc.jetzt .bs i{ background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, #fff), var(--accent)); }
+.bchart.farbe .bs i{ background:color-mix(in srgb, var(--c) 34%, var(--surface-2)); opacity:1; }
+.bchart.farbe .bc.jetzt .bs i{ background:var(--c); }
+@keyframes balkenHoch{ from{ transform:scaleY(0); } }
+@media (prefers-reduced-motion: reduce){ .bc .bs i, .ring-bar{ animation:none; } }
+.hz.l1{ background:color-mix(in srgb, var(--accent) 24%, var(--surface-2)); }
+.hz.l2{ background:color-mix(in srgb, var(--accent) 52%, var(--surface-2)); }
+.hz.l3{ background:color-mix(in srgb, var(--accent) 92%, var(--surface-2)); }
+.stat-bereichkarte{ background:linear-gradient(165deg, color-mix(in srgb, var(--c) 9%, var(--surface)), var(--surface) 55%); border-color:color-mix(in srgb, var(--c) 24%, var(--border)); }
+.chips-stat{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:6px 0 8px; }
+.chips-stat span{ background:color-mix(in srgb, var(--c) 11%, var(--surface-2)); border-radius:14px; padding:10px 4px; text-align:center; }
+.chips-stat b{ display:block; font-size:16px; font-variant-numeric:tabular-nums; }
+.chips-stat small{ display:block; color:var(--text-dim); font-size:11px; margin-top:2px; }

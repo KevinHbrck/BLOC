@@ -73,3 +73,8 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Statistik über die ganze Zeit**: Wochensummen (`settings.statW`) ohne 60-Wochen-Grenze (bis ca. 20 Jahre), jetzt als Besuche archiviert (`bn`/`bs`); Verlauf und Bereichs-Diagramme umschaltbar **Woche · Monat · Jahr** (nach links wischen, so weit Daten da sind; Woche zeigt bis zu 104 Wochen)
 - **README neu** (aktueller Stand inkl. Run, Statistik, Leiste, Fokus, Grundsatz „lokal, ohne Server“), **VERLAUF.md gekürzt** (ältere Einträge in `docs/VERLAUF-Archiv.md`), neuer **`docs/TESTPLAN.md`** für Ton und GPS auf dem echten Handy
 - **Texte in `texte.js`** (`window.BLOC_TEXTE`, ein Schlüssel pro Zeile statt zwei Zeilen mit je 7.000+ Zeichen); `app.js` nutzt `var I18N = window.BLOC_TEXTE`. `texte.js` steht im Service-Worker-Grundgerüst und in `index.html`. Schnelltest 24 Prüfungen (neu: Besuche, Monat/Jahr, Archiv). Fassung 2026-10-02-43
+
+## 2026-10-06 · Statistik lebendiger
+
+- **Wochenziel-Ring** statt großer Zahl: Trainings dieser Woche (ab Montag) von einem einstellbaren Ziel (1–7, `settings.wochenZiel`, Standard 3), Ring füllt sich animiert, bei erreichtem Ziel „Wochenziel geschafft!“; Vergleich mit der Vorwoche und Serie als Chips
+- **Balken in Akzentfarbe** (laufende Woche kräftig, frühere zart) mit Aufbau-Animation, Kalender in Akzentfarbe, **Bereichskarten** mit Farbverlauf und drei Kennzahlen (Trainings, Zeit, Zuletzt; Run: Läufe, km, Zuletzt); Werte unter einer halben Minute zeigen „<1“ statt „0“. Fassung 2026-10-02-44
