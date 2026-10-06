@@ -544,6 +544,35 @@
       klick(await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Einstellungen"));
       pruefe((daten().settings.fokusAus || []).indexOf("run") < 0, "Fokus nicht zurückgesetzt");
     }],
+    ["Statistik: ein Training = Timer bis 60 Minuten Abstand, Woche · Monat · Jahr, Archiv", async function () {
+      await heim();
+      var db = JSON.parse(W.localStorage.getItem(KEY)), M = 60000, D = 86400000, n = Date.now();
+      db.history = [
+        { at: n - 120 * M, dur: 600, ex: ["burpees"], b: "lib" }, { at: n - 135 * M, dur: 600, ex: ["push-ups"], b: "lib" }, { at: n - 150 * M, dur: 600, ex: ["air-squats"], b: "lib" },   // ein Besuch (40 min)
+        { at: n - 1 * D, dur: 1200, ex: ["burpees"], b: "lib" },                                                                                                                      // ein zweiter
+        { at: n - 50 * D, dur: 900, ex: ["a"], b: "lib" }, { at: n - 50 * D + 20 * M, dur: 900, ex: ["b"], b: "lib" }                                                                  // älter als 31 Tage: ein Besuch im Archiv
+      ];
+      db.settings = db.settings || {}; db.settings.statW = {}; db.settings.fokusAus = []; db.settings.runs = [];
+      W.localStorage.setItem(KEY, JSON.stringify(db));
+      await heim();
+      klick('.tabbar [data-nav="#stats"]');
+      await bis(function () { return $(".sh-zahl"); }, 3000, "Statistik");
+      pruefe($(".sh-zahl").textContent === "2", "drei Timer in 40 Minuten sind ein Training, mit dem gestrigen zwei: " + $(".sh-zahl").textContent);
+      pruefe(/60/.test($(".stat-karte .bchart .bc.jetzt .bw").textContent), "Zeit der laufenden Woche sollte 60 min sein (40 + 20): " + $(".stat-karte .bchart .bc.jetzt .bw").textContent);
+      klick('[data-statgran="monat"]');
+      await bis(function () { return $(".stat-karte .bchart .bc small") && /\d\d$/.test($(".stat-karte .bchart .bc small").textContent); }, 2000, "Monatsansicht");
+      klick('[data-statgran="jahr"]');
+      await bis(function () { return /^20\d\d$/.test($(".stat-karte .bchart .bc small").textContent); }, 2000, "Jahresansicht");
+      klick('[data-statgran="woche"]');
+      await bis(function () { return $(".stat-karte .bchart .bc.jetzt"); }, 2000, "Wochenansicht");
+      klick('.tabbar [data-nav="#settings"]');   // eine Änderung speichern, damit der Stand (inkl. Archiv) in den Speicher kommt
+      klick(await bis(function () { return $('[data-fokus="warm"]'); }, 3000, "Fokus")); klick($('[data-fokus="warm"]'));
+      var sw = JSON.parse(W.localStorage.getItem(KEY)).settings.statW;
+      var wo = Object.keys(sw)[0];
+      pruefe(wo && sw[wo].bn === 1 && sw[wo].bs === 2100, "alte Einträge sollten als ein Besuch von 35 min archiviert sein: " + JSON.stringify(sw));
+      klick('.tabbar [data-nav="#home"]');
+      await bis(function () { return $(".woche") && /[12] Training/.test($(".woche").getAttribute("aria-label")); }, 3000, "Wochenzeile zählt Besuche");
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

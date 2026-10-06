@@ -231,432 +231,7 @@ function migrateExIds(db){
 }
 
 /* ============ Sprache (Deutsch / Englisch) ============ */
-var I18N = {
-  de: {
-    back:"Zurück", settings:"Einstellungen", workouts:"Workouts", untitled:"Ohne Namen",
-    blockOne:"Block", blockMany:"Blöcke",
-    noWorkouts:"Noch kein Workout angelegt.<br>Tippe unten rechts auf +, um loszulegen.",
-    singleBlocks:"Blöcke einzeln starten",
-    library:"Air", libEntry:"Übungen & Workouts", libEntrySub:"{e} Übungen · {w} fertige · {m} eigene Workouts",
-    libWorkouts:"Workouts", libExercises:"Übungen", catAll:"Alle", catMix:"Gemischt",
-    adopt:"Übernehmen", adoptTitle:"Als eigenes Workout kopieren und anpassen",
-    adoptBlock:"Als Block", adoptBlockTitle:"Als eigenen Block speichern",
-    adoptedBlock:"„{n}“ ist jetzt bei deinen Blöcken.", addedToWorkout:"„{n}“ hinzugefügt.",
-    addFromLibrary:"Aus der Bibliothek", startTemplate:"Workout starten",
-    hide:"Ausblenden", hiddenN:"{n} ausgeblendet.", showAgain:"Wieder einblenden",
-    libEmpty:"Hier ist gerade nichts zu sehen.", blockRestN:"{n} s Blockpause",
-    perSide:"je Seite", left:"Links", right:"Rechts",
-    libReady:"Fertige", libMine:"Eigene", exCount:"{n} Übungen", adoptMine:"Unter „Meine“ speichern",
-    myNew:"Eigenes Workout erstellen", myDefaultName:"Mein Workout", myWorkout:"Eigenes Workout",
-    myEmpty:"Noch kein eigenes Workout. Stell dir eins aus den Übungen zusammen.",
-    myInWorkout:"Übungen im Workout ({n}) · {d}", myAdd:"Übungen hinzufügen", myRest:"Pause zwischen den Übungen",
-    dropHere:"Übungen am Griff ⠿ hierher ziehen oder unten auf + tippen.", dropToRemove:"Hier ablegen zum Entfernen",
-    myDelete:"Eigenes Workout löschen", myDeleteQ:"Eigenes Workout löschen?", deletedToast:"„{n}“ gelöscht.",
-    spFill:"Überrasch mich: Übungen hinzufügen", spFillHint:"Die Übungen kommen als Blöcke hinten in „{n}“.", spCount:"Anzahl Übungen", spCountUnit:"Übungen",
-    spFilled:"{n} Übungen zu „{w}“ hinzugefügt.",
-    sortLabel:"Sortieren", sortStd:"Standard", posture:"Haltung", avoid:"Vermeiden",
-    shareTitle:"App teilen", shareCopy:"Link kopieren", shareWa:"Per WhatsApp", shareMore:"Weitere Möglichkeiten …",
-    shareCopied:"Link kopiert.", shareText:"Schau dir BLOC an – mein Intervall-Timer mit Übungsbibliothek:",
-    fCat:"Fokus", equipAny:"Alles", fEquipHintShort:"Was hast du da?",
-    favEmpty:"Markiere Workouts, Timer oder Blöcke mit ☆ – sie erscheinen dann hier.", areas:"Bereiche", areasHint:"gedrückt halten zum Sortieren", areasSort:"Reihenfolge der Bereiche", areasSortHint:"Der oberste Bereich steht groß vorn.", moveUp:"Nach oben", moveDown:"Nach unten",
-    timers:"Studio", oneTimerWo:"1 Workout", nTimerWo:"{n} Workouts", oneBlock:"1 Block", nBlocks:"{n} Blöcke", htTimers:"Drinnen an Geräten · {n} Übungen · Fortschritt im Blick", mineMy:"Eigene Workouts", mineTimer:"Timer-Workouts", mineBlocks:"Blöcke",
-    tabStudio:"Studio", studioHint:"Übung antippen, Gewicht eintragen – den Rest merkt sich die App. Lange drücken legt sie in einen Plan.",
-    tabTimer:"Timer", tabPlan:"Mein Plan",
-    timerHint:"Eigene Intervall-Timer: Blöcke (eine Übung mit Runden, Arbeit und Pause) und Timer-Workouts aus mehreren Blöcken.",
-    timerNoWo:"Noch kein Timer-Workout. Tippe unten rechts auf +.", timerNoBl:"Noch kein Block. Ein Block ist z. B. „6 × 30 s Arbeit / 10 s Pause“.",
-    planHint:"Stell dir eigene Pläne aus Studio-Übungen zusammen – antippen genügt.", planNone:"Noch kein Plan. Tippe unten rechts auf +, um einen anzulegen.",
-    planOne:"1 Übung", planN:"{n} Übungen", planNew:"Neuen Plan anlegen", planDefault:"Plan {n}", planEdit:"Bearbeiten", planDone:"Fertig",
-    planTippen:"Antippen = in den Plan, nochmal antippen = wieder raus. Die Nummer zeigt die Reihenfolge.", planEmpty:"Dieser Plan ist noch leer. Tippe auf „Bearbeiten“ und wähle Übungen aus.",
-    planDel:"Plan löschen", planDelQ:"Plan löschen?", planSonst:"Weitere im Plan",
-    ausWoche:"Muskelgruppen – letzte 7 Tage", ausWocheSum:"Was du wirklich trainiert hast", ausWoNote:"Letzte 7 Tage. Wenig vertreten: {n}.", ausWoOk:"Letzte 7 Tage – das ist ziemlich ausgewogen.", ausTitle:"Auswertung", ausSum:"Muskelgruppen im Überblick", ausEmpty:"Noch keine Übungen – die Auswertung erscheint, sobald etwas drin ist.", ausNote:"Zeigt nur die Verteilung – ein Leg Day bleibt ein Leg Day.", ausAll:"Alle Pläne zusammen", ausAllNote:"Alle Pläne zusammen gewichtet. Wenig vertreten: {n}.", ausAllOk:"Alle Pläne zusammen gewichtet – das ist ziemlich ausgewogen.",
-    mgBrust:"Brust", mgRuecken:"Rücken", mgSchulter:"Schultern", mgArme:"Arme", mgRumpf:"Bauch & Rumpf", mgBeine:"Beine & Po",
-    genNew:"Plan nach Gewichtung", genTitle:"Plan nach Gewichtung", genHint:"Es sind immer genau 100 % zu verteilen: Verschiebst du einen Regler, passen sich die anderen automatisch an. Daraus entsteht ein Plan, den du danach noch ändern kannst.", genAnz:"Anzahl Übungen", genMake:"Plan erstellen", genZero:"Stell mindestens eine Gruppe über 0.", genName:"Plan nach Gewichtung",
-    stFilter:"Filter · Gruppen & Ausrüstung", stAir:"Air-Übungen einbeziehen", stAirDesc:"Kurzhantel, Kettlebell, Stange und Körpergewicht aus Air. Mit ★ markierte stehen immer oben.", stAirGr:"Air · Körpergewicht", stRecent:"Zuletzt", stFavs:"★ Meine Übungen", stFavHint:"Tipp auf ☆, dann steht die Übung hier oben.", stFree:"Kurzhantel & Kettlebell", stBar:"Stange & Barren", stOwn:"Eigene Übungen",
-    stArt_geraet:"Gerät", stArt_kabel:"Kabel", stArt_frei:"Kurzhantel & Kettlebell", stArt_lh:"Langhantel", stArt_stange:"Stange", stOwnNew:"Eigene Übung",
-    stSearch:"Übung oder Gerät suchen …", stNoData:"–", stToday:"Heute", stSet:"Satz", stSetDone:"Satz eintragen",
-    stKg:"kg", stReps:"Wdh.", stGoal:"Ziel", stPause:"Pause", stSkip:"Weiter", stPauseEnd:"Pause vorbei – nächster Satz!",
-    stSuggest:"Zweimal {z} geschafft – nächstes Mal {kg} kg?", stSuggestYes:"Ja, erhöhen", stRaised:"Nächstes Mal {kg} kg",
-    stHistory:"Verlauf", stStats:"Statistik", stStatsNone:"noch keine Einträge", stStatsKurz:"Bestwert {kg} kg · {n} Einheiten", stStatsEmpty:"Noch keine Einträge. Trag deinen ersten Satz ein – ab der zweiten Woche wächst hier deine Kurve.", stBestKg:"Bestes Gewicht", stSessions:"Einheiten", stSetsAll:"Sätze", stSince:"seit {d}", stLastN:"Letzte Einheiten", stOneWeek:"Erst eine Woche mit Einträgen – die Kurve beginnt in der nächsten.", stWeekly:"Gewicht je Woche", repWeekly:"Zeit je Woche", weeksN:"{n} Wochen", stNote:"Notiz", stNotePh:"z. B. Sitz 4, Lehne Stufe 2, Griff breit", stTimer:"Mit Intervall-Timer", stTimerStart:"Timer starten", stBlock:"Block", stBlockHint:"Ohne Gewicht: Runden, Arbeit und Pause einstellen und loslegen.", stTimerHint:"Runden × Arbeit, dazwischen Pause – gilt nur für diese Übung.", stSets:"Runden", stWork:"Arbeit (Sekunden)", stRest:"Pause (Sekunden)", stRestKurz:"Pause",
-    stUndo:"Letzten Satz löschen", stInfo:"Zur Übung", stWeight:"Arbeitsgewicht", stNone:"Keine Übung gefunden.",
-    fabMy:"Workout aus Übungen", fabTimerWo:"Timer-Workout aus Blöcken", fabBlock:"Einzelner Block",
-    tabTimerWo:"Workouts", tabBlocks:"Blöcke",
-    timerWoHint:"Mehrere Blöcke hintereinander, mit Pause dazwischen.",
-    blocksHint:"Ein Block = eine Übung mit festen Zeiten, z. B. 6 × 30 s / 10 s.",
-    noTimerWorkouts:"Noch kein Timer-Workout.<br>Tippe unten rechts auf +.",
-    filter:"Filter", filterReset:"Zurücksetzen", more:"Mehr", infoLong:"Info und Anleitung",
-    actSave:"Speichern", actCopy:"Kopie", fCatHint:"Mehrere möglich. Nichts gewählt = alle.",
-    fEquipHint:"Was hast du da? Mehrere möglich. Nichts gewählt = alles.", hideEx:"In der Bibliothek ausblenden",
-    hideWo:"Dieses Workout in der Bibliothek ausblenden", hiddenToast:"Ausgeblendet – unten in der Liste wieder einblendbar.",
-    libCalis:"Calisthenics", calisRoutines:"Calisthenics-Programme", calisExercises:"Calisthenics-Übungen",
-    equipHave:"Ausrüstung", search:"Suchen", searchPh:"Übungen suchen …", noResult:"Keine passende Übung gefunden.",
-    int1:"Locker", int2:"Mittel", int3:"Intensiv",
-    htFav:"Deine markierten Workouts", htTimer:"Eigene Intervall-Timer", htBlocks:"Einzelne Blöcke direkt starten",
-    musWorked:"Trainiert", musStretched:"Dehnt", musAssist:"Unterstützend",
-    optTitle:"Zeiten & Sprachansagen", optRestShort:"{n} s Pause", optVoiceOn:"Ansagen an", optVoiceOff:"Ansagen aus",
-    libStretch:"Dehnen", stretchRoutines:"Dehnprogramme", stretchExercises:"Dehnübungen",
-    hold1:"{s} s halten", holdN:"{n} × {s} s halten", holdSide:"{s} s je Seite", holdSideN:"{n} × {s} s je Seite",
-    phHold:"Halten", phSwitch:"Seite wechseln", phRelax:"Lösen",
-    favorites:"Favoriten", timerWorkouts:"Timer-Workouts", favorite:"Favorit",
-    favAdded:"Zu den Favoriten hinzugefügt.", favRemoved:"Aus den Favoriten entfernt.",
-    lvl1:"Einsteiger", lvl2:"Mittel", lvl3:"Fortgeschritten", lvlAll:"Alle Stufen", equipAll:"Jede Ausrüstung", equipLabel:"Ausrüstung",
-    coverTitle:"Übersicht", kindLib:"Fertiges Workout", kindMy:"Eigenes Workout", kindSurprise:"Überraschung",
-    letsGo:"Los geht's", saveAsMy:"Als Eigenes speichern", saveAsNewMy:"Als neues Eigenes speichern", savedMy:"Unter „Meine“ gespeichert.",
-    coverHint:"Änderungen gelten nur für dieses Training, bis du speicherst.",
-    coverDirty:"Angepasst – gilt nur für dieses Training.", reroll:"Neu mischen",
-    timesLabel:"Zeiten", tmReps:"Runden", tmWork:"Arbeit (s)", tmRest:"Pause (s)", modeUniform:"Für alle gleich", modeIndividual:"Je Übung",
-    modeIndividualHint:"Tippe bei einer Übung auf die Zeit, um sie anzupassen.",
-    sidesNote:"„Je Seite“: Seite wechselt nach jedem Intervall.",
-    repsBothSides:"Die Runden zählen beide Seiten zusammen, z. B. 6 = 3 je Seite.",
-    recommended:"Empfohlen", timeDone:"Fertig",
-    voice:"Sprachansagen (Englisch)", voiceDesc:"Sagt in den Pausen die nächste Übung an",
-    surprise:"Überrasch mich", spLast:"Zuletzt: {x}", spDur:"Dauer", spAreas:"Fokus", spLevel:"Intensität", spGo:"Zusammenstellen",
-    spMore:"Feinauswahl", spNoFocus:"ohne Fokus",
-    introTitle:"Einführung", introSkip:"Überspringen", introNext:"Weiter", introRow:"Einführung ansehen", introRowSub:"BLOC in fünf kurzen Schritten",
-    in1T:"Willkommen bei BLOC",
-    in1:"Bau dir dein Training aus Bausteinen – und schau dabei über den Tellerrand.",
-    in1N:"Kein Konto, keine Community – alles bleibt auf deinem Handy.",
-    in2:"{s} Übungen fürs Studio. Trag deine Gewichte ein – BLOC sagt dir, wann mehr geht.",
-    in3:"{w} Workouts und {e} Übungen: fertig starten oder selbst bauen. „Überrasch mich“ mischt Neues für dich.",
-    in4:"{c} Programme und {u} Einheiten: feste Wiederholungen, so schnell du kannst. Schlag deine Bestzeit.",
-    in5:"{p} Programme und {d} Übungen: vorher mobilisieren, danach dehnen.",
-    spNone:"Keine passenden Übungen – wähle andere Bereiche oder Ausrüstung.", spName:"Überraschung · {n} Min",
-    info:"Info", howTo:"So geht's", viewSide:"Seitlich", viewFront:"Von vorn", viewTop:"Von oben", tip:"Tipp", infoRunning:"Timer läuft weiter", infoPaused:"Timer pausiert",
-    infoPause:"Pause", infoResume:"Weiter",
-    noBlocksHome:"Noch kein Block angelegt.<br>Tippe unten rechts auf + und wähle <b>Neuer Block</b>.",
-    startBlock:"Block einzeln starten", newWorkout:"Neues Workout", newBlock:"Neuer Block", create:"Neu anlegen",
-    installTitle:"Für dauerhaften Speicher installieren", installText:"Einmal antippen, und die App liegt auf deinem Startbildschirm.",
-    installNow:"Jetzt installieren",
-    tipIOS:"Für dauerhaften Speicher: Teile-Symbol &#8593; antippen und <b>„Zum Home-Bildschirm“</b> wählen.",
-    tipAndroid:"Für dauerhaften Speicher: Menü &#8942; öffnen und <b>„App installieren“</b> wählen.",
-    viewGuide:"Anleitung ansehen",
-    blocks:"Blöcke", blockSub:"{reps} &times; {work}s Arbeit / {rest}s Pause",
-    noBlocksList:"Noch kein Block angelegt.<br>Ein Block ist z. B. „6 × 30 s Arbeit / 10 s Pause“.",
-    editBlock:"Block bearbeiten", name:"Name", reps:"Runden", workSec:"Arbeit (Sekunden)",
-    restSec:"Pause zwischen den Runden (Sekunden)", total:"Gesamtdauer:",
-    save:"Speichern", deleteBlock:"Block löschen", deleteBlockQ:"Block löschen?",
-    deleteBlockText:"„{name}“ wird auch aus allen Workouts entfernt.", del:"Löschen",
-    workout:"Workout", deletedBlock:"(gelöschter Block)", restAfter:"Pause danach:", sec:"Sek", start:"Start",
-    workoutBlocks:"Blöcke ({n}) &middot; Gesamt {d}", noBlocksInWorkout:"Noch keine Blöcke im Workout.",
-    addBlock:"Block hinzufügen", noBlocksAvail:"Keine Blöcke vorhanden.", createBlockFirst:"Erst einen Block anlegen",
-    deleteWorkout:"Workout löschen", deleteWorkoutQ:"Workout löschen?", cantUndo:"Diese Aktion kann nicht rückgängig gemacht werden.",
-    appearance:"Darstellung", optWichtig:"Wichtig", optMehr:"Mehr", optTraining:"Training",
-    mehrTimer:"Timer und Töne", mehrTimerSub:"Ton, Klang, Einzählen, Vibration, Bildschirm", mehrApp:"App", mehrAppSub:"Einführung, installieren, teilen",
-    mehrLoeschenSub:"Lässt sich nur mit einer Sicherung rückgängig machen.", thSystem:"System", thLight:"Hell", thDark:"Dunkel", thNacht:"Nacht", thKodak:"C60",
-    themeInfo:"Nacht: warme Farben mit wenig Blau, schont abends die Augen. C60: Kassetten-Look mit Walzenzähler statt Ring.",
-    language:"Sprache",
-    installation:"Installation", installRow:"App auf den Home-Bildschirm legen", installRowSub:"Anleitung für iPhone &amp; Android",
-    timer:"Timer", volume:"Lautstärke", sound:"Ton", soundDesc:"Töne bei Phasenwechsel", soundStyle:"Klang",
-    space:"Raumklang", spaceDesc:"Hall und Stereo-Tiefe für alle Klänge",
-    countIn:"Countdown-Piepsen", countInDesc:"Kurze Töne in den letzten 3 Sekunden",
-    vibration:"Vibration", vibrationDesc:"Haptisches Feedback (falls unterstützt)",
-    keepAwake:"Bildschirm an lassen", keepAwakeDesc:"Bildschirm bleibt im Training an",
-    volMusicHint:"Musik läuft weiter. iPhone auf lautlos = keine Töne.",
-    lastRun:"Nochmal wie letztes Mal", lastToday:"heute", lastYesterday:"gestern",
-    favAll:"Alle Favoriten anzeigen ({n})", favLess:"Weniger", favAllShort:"Alle anzeigen",
-    htLib:"Intervall-Programme und Übungen", htLibN:"Draußen im Calisthenicspark · {w} Workouts · {e} Übungen", spSub:"Zufälliges Training nach deinen Auswahlkriterien",
-    repTitle:"Summit", htReps:"Challenges auf Bestzeit",
-    warmTitle:"Mobility & Stretch", htWarm:"Vor und nach dem Training · {p} Programme", warmSec:"Mobility · vor dem Training", stretchSec:"Stretch · nach dem Training",
-    warmIntro:"Passt zu allem: vorher kurz aufwärmen, danach dehnen.",
-    wsWarm:"Mobility", wsDehn:"Stretch", wsIntroWarm:"Vor dem Training: Puls hoch, Gelenke mobil.",
-    wsIntroDehn:"Nach dem Training: ruhig dehnen.",
-    repTabUnits:"Einheiten", repTabProgs:"Programme",
-    repMineIntro:"Eigene Übungen und Mengen – mit Bestzeit.",
-    repNew:"Neue Challenge", repMineEmpty:"Noch keine eigene Challenge.", repMore:"+ {n} weitere", repSearchPh:"Challenges suchen …", srTitle:"Suche", runVorTitel:"Start in", runPlus10:"+10 s", runJetzt:"Jetzt starten", runAbbrechen:"Abbrechen", runLos:"Los!", runAnsagen:"Ansagen", runAus:"Aus", runInhalt:"Inhalt", runWasKm:"Nur km", runWasPace:"km + Pace", runWasAlles:"Alles", runTest:"Hörprobe", runAnsageHint:"Sagt dir beim Laufen die Kilometer an – hier aus- oder seltener stellen, im Lauf geht es auch mit „Ansagen aus“.", runStummAn:"Ansagen aus", runStummAus:"Ansagen an", runGeschafft:"Lauf geschafft", runGespeichert:"Gespeichert unter „Run“.", runErster:"Dein erster Lauf", runLaengster:"Längster Lauf bisher", runSchnellsterKm:"Schnellster Kilometer: {z}", runSchnellstePace:"Schnellste Durchschnitts-Pace", runM5:"Meilenstein: 5 km", runM10:"Meilenstein: 10 km", runMHalb:"Meilenstein: Halbmarathon", runTitle:"Run", runVerlauf:"Verlauf", tabStart:"Start", statWeniger2:"weniger", statMehr2:"mehr Trainingszeit", statHero1:"Training in den letzten 7 Tagen", statHeroN:"Trainings in den letzten 7 Tagen", statMehr:"{n} mehr als in den 7 Tagen davor", statGleich:"So viele wie in den 7 Tagen davor", statWeniger:"In den 7 Tagen davor waren es {n}", statSerie:"{n} Wochen in Folge", statStart:"Dein Verlauf beginnt mit dem ersten Training. Danach siehst du hier Woche für Woche, wie es vorangeht.", statVerlauf:"Verlauf", statModusZeit:"Zeit", statModusN:"Trainings", statMinHint:"Trainingszeit in Minuten pro Woche (Wochenbeginn Montag) – nach links wischen für frühere Wochen", statNHint:"Trainings pro Woche (Wochenbeginn Montag) – nach links wischen für frühere Wochen", statJetzt:"jetzt", statKalender:"Letzte 4 Wochen", statTageAktiv:"{n} aktive Tage", statBereichSub:"{n} in 4 Wochen · {z}", statRunSub:"{n} Läufe · {km} km insgesamt", statPaceTitel:"Pace-Verlauf", statPaceBesser:"Du wirst schneller: {z} /km gegenüber den Läufen davor.", statPaceLangsamer:"{z} /km langsamer als zuvor – lockere Läufe gehören dazu.", statPaceGleich:"Gleichmäßig unterwegs.", statRekorde:"Rekorde", statRekLang:"Längster Lauf", statRekKm:"Schnellster Kilometer", statRekPace:"Schnellste Pace", statVerb:"Bestzeiten verbessert", fokusLabel:"Bereiche auf der Startseite", statUeber:"Überblick", statN28:"Trainings (4 Wochen)", statZeit28:"Zeit (4 Wochen)", statZuletzt:"Zuletzt", statHeute:"heute", statGestern:"gestern", statVorTagen:"vor {n} Tagen", statNichts:"Noch nichts in den letzten 4 Wochen.", statAlleAus:"Alle Bereiche sind ausgeblendet – im Fokus (Einstellungen) wieder einschalten.", statKmWochen:"Kilometer pro Woche", statWoche0:"letzte 7 Tage", statWocheN:"vor {n} Wo.", tabStats:"Statistik", statTrain:"Training", statN7:"Trainings (7 Tage)", statZeit7:"Zeit (7 Tage)", statN30:"Trainings (30 Tage)", statMuskelLeer:"Die Muskelgruppen der letzten 7 Tage erscheinen, sobald du trainiert hast.", statLaeufe:"Läufe", statKmGes:"Kilometer", statKm7:"km (7 Tage)", statLang:"Längster Lauf (km)", statBeste:"Schnellste Pace", statLaufLeer:"Noch kein Lauf – starte einen unter „Run“.", fokusTitel:"Fokus", fokusHint:"Bereiche, die du nicht brauchst, verschwinden von der Startseite. Deine Daten bleiben erhalten, und die Suche findet weiterhin alles.", fokusAlleAus:"Alle Bereiche sind ausgeblendet.", fokusAendern:"Fokus ändern", runHaltenHint:"Zum Auslösen jeden Knopf 3 Sekunden gedrückt halten – so passiert in der Tasche nichts.", runLaeufe:"{n} Läufe insgesamt", runNamePh:"Name, z. B. Intervalle", runNotePh:"Notiz, z. B. Regen, Gegenwind", runIvMeta:"Intervall {l} / {g}", runPausenMeta:"Pausen {z} herausgerechnet", runIvAn:"Intervall-Lauf", runIvHint:"Wechselt zwischen Laufen und Gehen mit Signalton, Vibration und Ansage; in den letzten 3 Sekunden tickt es.", runIvLaufS:"Laufen (Sek.)", runIvGehS:"Gehen (Sek.)", runIvLauf:"Laufen", runIvGeh:"Gehen", runIvRunde:"Runde {n}", runSagLauf:"Laufen!", runSagGeh:"Gehen!", runAutoTitel:"Auto-Pause", runAutoNach:"nach {s} s", runAutoPausiert:"Auto-Pause", runAutoHint:"Pausiert, wenn du so lange stehst, und läuft von selbst weiter, sobald du dich bewegst. Die Stehzeit wird herausgerechnet. GPS zittert im Stand und braucht ein paar Sekunden, darum mindestens 5 s – bei Ampeln oder Gedränge kann die Pause etwas verzögert einsetzen.", runTeaser:"GPS · Kilometer, Zeit und Pace", runLaeuft:"Läuft gerade · {km} km", runBetaHint:"Aufzeichnung mit GPS. Der Bildschirm muss an bleiben – im Hintergrund oder bei gesperrtem Handy zeichnet eine Web-App nicht zuverlässig auf („Abdunkeln“ spart Akku). Die Route wird ohne Karte gezeigt; der Standort bleibt auf deinem Gerät.", runStart:"Lauf starten", runNone:"Noch kein Lauf.", runTotal:"{n} Läufe · {km} km", runPause:"Pause", runResume:"Weiter", runPaused:"Pausiert", runEnd:"Beenden", runDark:"Abdunkeln", runDarkHint:"Zum Aufwecken 2 Sekunden gedrückt halten", runTime:"Zeit", runDist:"Strecke", runPaceAvg:"Ø Pace", runPaceNow:"Tempo jetzt", runGpsWait:"Suche GPS-Signal …", runGpsOk:"GPS gut (±{m} m)", runGpsWeak:"GPS schwach (±{m} m)", runGpsDenied:"Standort nicht erlaubt – bitte in den Browser-Einstellungen freigeben.", runGpsLost:"Kein GPS-Signal.", runNoGps:"Dieses Gerät kann den Standort nicht ermitteln.", runLeaveQ:"Lauf verlassen?", runKeep:"Weiterlaufen", runSave:"Beenden und speichern", runDiscard:"Verwerfen", runEndQ:"Lauf beenden?", runEndText:"Der Lauf wird gespeichert.", runShort:"Zu kurz – nicht gespeichert.", runSaved:"Lauf gespeichert.", runSplits:"Kilometer", runRoute:"Route", runGpx:"Als GPX-Datei exportieren", runDelQ:"Lauf löschen?", runBroken:"Unterbrochener Lauf", runBrokenText:"{km} km – die App wurde zwischendurch beendet.", runRecover:"Speichern", runRoutePh:"Die Route erscheint, sobald du dich bewegst.", runDetail:"Lauf", repNewProg:"Neues Programm", repNewUnit:"Neue Einheit", reUnitTitle:"Eigene Einheit", reUnitDefault:"Meine Einheit", reUnitParts:"Programme", reUnitAdd:"Programm hinzufügen", reUnitEmpty:"Noch kein Programm – füge unten das erste hinzu.", reUnitHint:"Mehrere Programme hintereinander. „Von/Bis Runde“ nimmt nur einen Ausschnitt, „Halbe Menge“ halbiert Wiederholungen und Strecken.", reFrom:"Von Runde", reTo:"Bis Runde", reHalf:"Halbe Menge", reUnitDelQ:"Einheit löschen?", rePickProg:"Programm wählen", repMineIntro2:"Mit + legst du eigene Programme und Einheiten an – sie erscheinen auch unter Programme bzw. Einheiten.", repOwnTag:"Meine", zpHintWs:"Lange auf eine Übung drücken: in ein eigenes Workout legen.", zpAdd:"Zu Programm hinzufügen", rg_nacken:"Nacken", rg_schulter:"Schultern", rg_arme:"Arme & Hände", rg_brust:"Brust", rg_ruecken:"Rücken", rg_rumpf:"Rumpf & Seite", rg_huefte:"Hüfte & Gesäß", rg_beine:"Beine", wsMineIntro:"Eigene Workouts für diesen Bereich – Übungen unter „Übungen“ lange drücken oder mit ⋯ hinzufügen.", wsMineEmpty:"Noch kein eigenes Workout in diesem Bereich.", wsNew:"Eigenes Workout erstellen", wsSearchPh:"Suchen …", zpWs:"Zu eigenem Workout hinzufügen", wsRegionHint:"Welche Körperregion willst du dehnen?", repKopiert:"„{n}“ liegt jetzt unter „Meine“.", reMeter:"Meter", zpHint:"Lange auf eine Übung drücken: in ein Workout oder einen Studio-Plan legen.", zpAir:"Zu Air-Workout hinzufügen", zpStudio:"Zu Studio-Plan hinzufügen", zpPickWo:"Workout wählen", zpPickPlan:"Plan wählen", zpAdded:"„{e}“ ist jetzt in „{p}“.", zpAlready:"„{e}“ ist schon in „{p}“.", zpNone:"Noch kein eigenes Workout.", srPh:"Alles suchen: Übungen, Workouts, Blöcke …", srHint:"Findet Übungen, Workouts, Challenges, Timer-Workouts und Blöcke – und Aktionen wie „Neuer Block“.", srAreas:"Bereiche", srChallenges:"Challenges", srOwnChall:"Eigene Challenge", reNoEx:"Noch keine Übungen",
-    reTitle:"Eigene Challenge", reRunden:"Runden", reUebungen:"Übungen", reLeer:"Noch keine Übung – füge unten die erste hinzu.",
-    reHint:"Runde 1 gilt für alle Runden, bis du eine einzeln änderst. 0 = auslassen.",
-    reWdh:"Wiederholungen", reSek:"Sekunden", reDelete:"Challenge löschen", reDelQ:"Challenge löschen?", reDefaultName:"Meine Challenge", reFertig:"Fertig",
-    repUnitsIntro:"12 Einheiten in drei Stufen, mehrere Programme am Stück.",
-    stufe_leicht:"Einsteiger", stufe_standard:"Mittel", stufe_fortgeschritten:"Fortgeschritten", unitN:"Einheit {n}", variant:"Variante {n}", filterMehr:"Fokus, Ausrüstung & Sortierung",
-    rundenTeil:"Runden {a}–{b}", runde1Teil:"Runde {a}", halb:"halbe Menge",
-    repIntro:"So schnell wie möglich, aber sauber – mit Bestzeit.",
-    repAll:"Alle", repAllEquip:"Alle Geräte", repNoBar:"Ohne Stange", repNone:"Keine Programme für diese Auswahl.",
-    repRound1:"1 Runde", repRoundsN:"{n} Runden", repReps:"{n} Wdh.", repBar:"Stange", repRound:"Runde",
-    repBestIs:"Bestzeit {z}", repLastIs:"zuletzt {z}", repTable:"Ablauf", repStart:"Start",
-    repStatsKurz:"Bestzeit {z} · {n} Läufe", repStatsNone:"noch keine Läufe", repBestZeit:"Bestzeit", repLaeufe:"Läufe", repLetzte:"Letzte Zeit", repLastRuns:"Letzte Läufe",
-    repStatsEmpty:"Noch keine Zeit. Spiel das Programm einmal durch – dann steht hier deine Bestzeit und ab der zweiten Woche deine Kurve.",
-    repHint:"Nach jeder Übung „Geschafft“ tippen.",
-    repDone:"Geschafft", repSkip:"Überspringen", repUndo:"Zurück", repPause:"Pause", repResume:"Weiter", repEnd:"Beenden",
-    repNext:"Danach: {x}", repLastStep:"Letzte Übung", repReady:"Gleich geht's los", repFinish:"Geschafft!", repNewBest:"Neue Bestzeit!",
-    repAgain:"Nochmal", repToList:"Fertig", repEndQ:"Challenge beenden?", repEndText:"Die Zeit wird nicht gespeichert.", repEndBtn:"Beenden",
-    snapNone:"Letzter Schnappschuss: noch keiner", snapAgo:"Letzter Schnappschuss: {x}", snapToday:"heute", snapYesterday:"gestern",
-    snapDays:"vor {n} Tagen", snapRestore:"Stand vom {d} wiederherstellen", snapQ:"Schnappschuss wiederherstellen?",
-    snapText:"Deine aktuellen Daten werden durch den Stand vom {d} ersetzt.", snapBtn:"Wiederherstellen",
-    snapInfo:"Alle 7 Tage automatisch eine Kopie auf diesem Gerät.",
-    backupTipTitle:"Lange nicht gesichert", backupTipText:"Sichere deine eigenen Workouts, Übungen und Gewichte als Datei.",
-    backupNow:"Jetzt sichern", shareBackup:"Sicherung teilen (z. B. Drive, Mail)", backupShared:"Sicherung übergeben.",
-    wbAblauf:"Dein Ablauf", wbWaehlen:"Übungen wählen", wbTippen:"Antippen = dazu, nochmal antippen = raus.",
-    wbLeer:"Noch leer – tippe unten Übungen an.", wbOrdnen:"Sinnvoll ordnen", wbGeordnet:"Geordnet: große Übungen zuerst, Wechsel der Muskelgruppen, Dehnen am Ende",
-    wbAblaufHint:"Tipp auf eine Übung: Zeiten, verschieben, tauschen, entfernen.", wbZeiten:"Zeiten anpassen", wbNachVorn:"Nach vorn",
-    wbNachHinten:"Nach hinten", wbTauschen:"Andere Übung", wbKeinTausch:"Keine passende andere Übung gefunden", wbMischen:"Nochmal mischen", wbGespeichert:"Gespeichert", wbVerwerfenQ:"Änderungen verwerfen?",
-    wbVerwerfenText:"Das Workout ist noch nicht gespeichert.", wbVerwerfen:"Verwerfen",
-    figTitle:"Figuren prüfen", figSub:"Alle Figuren auf einen Blick – Unklares markieren und teilen",
-    figIntro:"Antippen zeigt die Figur bewegt. Unklares markieren, kurz notieren, am Ende teilen.",
-    figAll:"Alle", figMarked:"Markierte ({n})", figFlag:"Unklar", figNotePh:"Was ist unklar? (optional)",
-    figShare:"Markierte teilen ({n})", figNone:"Noch nichts markiert.", figCopied:"Liste kopiert.", figShareHead:"BLOC – unklare Figuren",
-    weekTitle:"Diese Woche", weekNone:"noch kein Training", weekDays:"M D M D F S S",
-    weekOne:"1 Training", weekN:"{n} Trainings",
-    tabWorkouts:"Workouts", tabMine:"Meine", mainCat:"Kategorie", multiOk:"Mehrere möglich",
-    spMainHint:"Nichts gewählt = Kraft, Ausdauer und Rumpf.",
-    spFocusHint:"Optional – grenzt innerhalb der Kategorie weiter ein.",
-    sortDur:"Dauer", searchWoPh:"Workouts suchen …", unitsOf:"Einheit {i} von {n}", exOf:"Übung {i} von {n}",
-    data:"Daten", exportBackup:"Sicherung als Datei speichern", importBackup:"Sicherung einlesen", deleteAll:"Alle Daten löschen",
-    localNote:"Alle Daten bleiben lokal auf diesem Gerät. Für dauerhaften Speicher auf iOS: zum Home-Bildschirm hinzufügen.",
-    importQ:"Sicherung einlesen?", importText:"Alle deine aktuellen Daten werden durch die Sicherung ersetzt.", importBtn:"Einlesen",
-    fileError:"Datei konnte nicht gelesen werden.",
-    deleteAllQ:"Alle Daten löschen?", deleteAllText:"Eigene Workouts, Blöcke, Übungen, Challenges, Gewichte und Einstellungen werden unwiderruflich gelöscht.", deleteAllBtn:"Alles löschen",
-    installApp:"App installieren",
-    iosSteps:[
-      "Diese Seite in <b>Safari</b> öffnen (nicht Chrome – dort fehlt der nötige Button).",
-      "Unten in der Mitte auf das Teilen-Symbol <b>&#8593;</b> tippen.",
-      "Nach unten scrollen und <b>„Zum Home-Bildschirm“</b> auswählen.",
-      "Oben rechts auf <b>„Hinzufügen“</b> tippen.",
-      "Fertig! Das Icon liegt jetzt auf deinem Home-Bildschirm und startet als eigene App mit dauerhaftem Speicher."
-    ],
-    androidSteps:[
-      "Diese Seite in <b>Chrome</b> öffnen.",
-      "Oben rechts auf die drei Punkte <b>&#8942;</b> tippen.",
-      "<b>„App installieren“</b> bzw. <b>„Zum Startbildschirm hinzufügen“</b> auswählen.",
-      "Installation im Dialog bestätigen.",
-      "Fertig! Die App erscheint auf dem Startbildschirm und in der App-Liste."
-    ],
-    androidQuickNote:"Einmal antippen genügt. Sonst von Hand:",
-    installOutro:"Danach läuft sie im Vollbild – ohne 7-Tage-Speicherlimit.",
-    cancel:"Abbrechen", chooseSound:"Klang wählen", natural:"Natürlich", electronic:"Elektronisch", close:"Schließen",
-    phWork:"Los!", phRest:"Pause", phBlockrest:"Blockpause", phPrep:"Los geht's",
-    upNext:"Als nächstes:", thenDone:"Danach: Fertig",
-    doneTitle:"Workout geschafft!", again:"Nochmal", finish:"Fertig",
-    endQ:"Workout beenden?", endText:"Der Fortschritt geht verloren.", endBtn:"Beenden",
-    skip:"Überspringen", pause:"Pause", restartPhase:"Phase neu",
-    unitH:"Std", unitMin:"Min", unitSec:"Sek",
-    hideShort:"Ausblenden", unhide:"Einblenden", hiddenSection:"Ausgeblendet ({n})",
-    hiddenSectionHint:"Ausgeblendete Einträge nutzt „Überrasch mich“ nicht.",
-    exNew:"Eigene Übung anlegen", exEditTitle:"Eigene Übung", exNewTitle:"Neue Übung", exName:"Name der Übung",
-    exFocus:"Fokus", exFocusHint:"Mehrere möglich.", exEquip:"Ausrüstung", exPerSide:"Je Seite",
-    exPerSideDesc:"Links und rechts im Wechsel – Runden gelten pro Seite", exReco:"Empfohlene Zeiten",
-    exHint:"Hinweis (optional)", exHintPh:"z. B. Rücken gerade halten", exSave:"Übung speichern", exDelete:"Übung löschen",
-    exDeleteQ:"Übung löschen?", exDeleteText:"Sie verschwindet auch aus eigenen Workouts, in denen sie vorkommt.",
-    exSaved:"Übung gespeichert.", exNameMissing:"Bitte gib der Übung einen Namen.", customTag:"Eigene Übung", edit:"Bearbeiten",
-    share:"Teilen", shareWo:"Workout teilen", shareLinkCopied:"Link kopiert – einfach verschicken.", kindShared:"Geteiltes Workout",
-    shareBad:"Dieser Link ist leider ungültig oder unvollständig.", shareMsg:"Probier mein Workout „{n}“ in BLOC aus:",
-    sharedMissing:"{n} Übung(en) aus dem Link kennt diese Fassung der App nicht – sie wurden weggelassen.",
-    spAvoid:"Übungen der letzten 7 Tage meiden", spAvoidDesc:"Nur wenn genug andere passen.",
-    spRules:"Wechselt Muskelgruppen ab und gleicht Drücken und Ziehen aus. Intensiv = mehr Sprünge, Locker = ruhiger.",
-    privacy:"Datenschutz & Haftung", privacyRow:"Datenschutz & Haftungsausschluss", privacyRowSub:"Keine Datensammlung · Training auf eigene Verantwortung",
-    ownRisk:"Training auf eigene Verantwortung.", ownRiskMore:"Haftungsausschluss"
-  },
-  en: {
-    back:"Back", settings:"Settings", workouts:"Workouts", untitled:"Untitled",
-    blockOne:"block", blockMany:"blocks",
-    noWorkouts:"No workouts yet.<br>Tap + at the bottom right to get started.",
-    singleBlocks:"Start single blocks",
-    library:"Air", libEntry:"Exercises & workouts", libEntrySub:"{e} exercises · {w} ready-made · {m} own workouts",
-    libWorkouts:"Workouts", libExercises:"Exercises", catAll:"All", catMix:"Mixed",
-    adopt:"Copy", adoptTitle:"Copy as your own workout to adjust it",
-    adoptBlock:"As block", adoptBlockTitle:"Save as your own block",
-    adoptedBlock:"“{n}” is now in your blocks.", addedToWorkout:"“{n}” added.",
-    addFromLibrary:"From the library", startTemplate:"Start workout",
-    hide:"Hide", hiddenN:"{n} hidden.", showAgain:"Show again",
-    libEmpty:"Nothing to show here.", blockRestN:"{n} s block rest",
-    perSide:"per side", left:"Left", right:"Right",
-    libReady:"Ready-made", libMine:"My own", exCount:"{n} exercises", adoptMine:"Save to “Mine”",
-    myNew:"Create your own workout", myDefaultName:"My workout", myWorkout:"Own workout",
-    myEmpty:"No own workout yet. Put one together from the exercises.",
-    myInWorkout:"Exercises in workout ({n}) · {d}", myAdd:"Add exercises", myRest:"Rest between exercises",
-    dropHere:"Drag exercises here by the ⠿ handle or tap + below.", dropToRemove:"Drop here to remove",
-    myDelete:"Delete own workout", myDeleteQ:"Delete own workout?", deletedToast:"“{n}” deleted.",
-    spFill:"Surprise me: add exercises", spFillHint:"The exercises are added as blocks at the end of “{n}”.", spCount:"Number of exercises", spCountUnit:"exercises",
-    spFilled:"{n} exercises added to “{w}”.",
-    sortLabel:"Sort", sortStd:"Default", posture:"Posture", avoid:"Avoid",
-    shareTitle:"Share the app", shareCopy:"Copy link", shareWa:"Via WhatsApp", shareMore:"More options …",
-    shareCopied:"Link copied.", shareText:"Check out BLOC – my interval timer with an exercise library:",
-    fCat:"Focus", equipAny:"Anything", fEquipHintShort:"What do you have?",
-    favEmpty:"Star workouts, timers or blocks with ☆ – they'll show up here.", areas:"Sections", areasHint:"press and hold to reorder", areasSort:"Order of sections", areasSortHint:"The top section is shown large.", moveUp:"Move up", moveDown:"Move down",
-    timers:"Studio", oneTimerWo:"1 workout", nTimerWo:"{n} workouts", oneBlock:"1 block", nBlocks:"{n} blocks", htTimers:"Indoors on machines · {n} exercises · track your progress", mineMy:"Own workouts", mineTimer:"Timer workouts", mineBlocks:"Blocks",
-    tabStudio:"Gym", studioHint:"Tap an exercise, log the weight – the app remembers the rest. Press and hold to add it to a plan.",
-    tabTimer:"Timer", tabPlan:"My plan",
-    timerHint:"Your own interval timers: blocks (one exercise with rounds, work and rest) and timer workouts made of several blocks.",
-    timerNoWo:"No timer workout yet. Tap + at the bottom right.", timerNoBl:"No block yet. A block is e.g. “6 × 30 s work / 10 s rest”.",
-    planHint:"Put together your own plans from gym exercises – just tap.", planNone:"No plan yet. Tap + at the bottom right to create one.",
-    planOne:"1 exercise", planN:"{n} exercises", planNew:"Create a new plan", planDefault:"Plan {n}", planEdit:"Edit", planDone:"Done",
-    planTippen:"Tap = add to the plan, tap again = remove. The number shows the order.", planEmpty:"This plan is empty. Tap “Edit” and pick exercises.",
-    planDel:"Delete plan", planDelQ:"Delete plan?", planSonst:"Also in the plan",
-    ausWoche:"Muscle groups – last 7 days", ausWocheSum:"What you actually trained", ausWoNote:"Last 7 days. Underrepresented: {n}.", ausWoOk:"Last 7 days – that is fairly balanced.", ausTitle:"Analysis", ausSum:"Muscle groups at a glance", ausEmpty:"No exercises yet – the analysis appears once there is something in it.", ausNote:"Shows the split only – a leg day stays a leg day.", ausAll:"All plans combined", ausAllNote:"All plans weighted together. Underrepresented: {n}.", ausAllOk:"All plans weighted together – that is fairly balanced.",
-    mgBrust:"Chest", mgRuecken:"Back", mgSchulter:"Shoulders", mgArme:"Arms", mgRumpf:"Abs & core", mgBeine:"Legs & glutes",
-    genNew:"Plan by weighting", genTitle:"Plan by weighting", genHint:"There are always exactly 100% to distribute: move one slider and the others adjust automatically. A plan is built from it, which you can still change afterwards.", genAnz:"Number of exercises", genMake:"Create plan", genZero:"Set at least one group above 0.", genName:"Weighted plan",
-    stFilter:"Filter · groups & equipment", stAir:"Include Air exercises", stAirDesc:"Dumbbell, kettlebell, bar and bodyweight from Air. Starred ones always show at the top.", stAirGr:"Air · bodyweight", stRecent:"Recent", stFavs:"★ My exercises", stFavHint:"Tap ☆ to pin an exercise up here.", stFree:"Dumbbell & kettlebell", stBar:"Bar & dip bars", stOwn:"Own exercises",
-    stArt_geraet:"Machine", stArt_kabel:"Cable", stArt_frei:"Dumbbell & kettlebell", stArt_lh:"Barbell", stArt_stange:"Bar", stOwnNew:"Own exercise",
-    stSearch:"Search exercise or machine …", stNoData:"–", stToday:"Today", stSet:"Set", stSetDone:"Log set",
-    stKg:"kg", stReps:"reps", stGoal:"Goal", stPause:"Rest", stSkip:"Next", stPauseEnd:"Rest over – next set!",
-    stSuggest:"{z} done twice – {kg} kg next time?", stSuggestYes:"Yes, increase", stRaised:"Next time {kg} kg",
-    stHistory:"History", stStats:"Stats", stStatsNone:"no entries yet", stStatsKurz:"best {kg} kg · {n} sessions", stStatsEmpty:"No entries yet. Log your first set – your curve grows from the second week.", stBestKg:"Best weight", stSessions:"Sessions", stSetsAll:"Sets", stSince:"since {d}", stLastN:"Latest sessions", stOneWeek:"Only one week logged so far – the curve starts next week.", stWeekly:"Weight per week", repWeekly:"Time per week", weeksN:"{n} weeks", stNote:"Note", stNotePh:"e.g. seat 4, backrest 2, wide grip", stTimer:"With interval timer", stTimerStart:"Start timer", stBlock:"Block", stBlockHint:"No weight: set rounds, work and rest, then go.", stTimerHint:"Rounds × work with rest in between – for this exercise only.", stSets:"Rounds", stWork:"Work (seconds)", stRest:"Rest (seconds)", stRestKurz:"rest",
-    stUndo:"Delete last set", stInfo:"About the exercise", stWeight:"Working weight", stNone:"No exercise found.",
-    fabMy:"Workout from exercises", fabTimerWo:"Timer workout from blocks", fabBlock:"Single block",
-    tabTimerWo:"Workouts", tabBlocks:"Blocks",
-    timerWoHint:"Several blocks in a row, with a rest in between.",
-    blocksHint:"A block = one exercise with fixed times, e.g. 6 × 30 s / 10 s.",
-    noTimerWorkouts:"No timer workouts yet.<br>Tap + at the bottom right.",
-    filter:"Filter", filterReset:"Reset", more:"More", infoLong:"Info and how-to",
-    actSave:"Save", actCopy:"Copy", fCatHint:"Pick several. None selected = all.",
-    fEquipHint:"What do you have? Pick several. None selected = anything.", hideEx:"Hide in library",
-    hideWo:"Hide this workout in the library", hiddenToast:"Hidden – you can show it again at the bottom of the list.",
-    libCalis:"Calisthenics", calisRoutines:"Calisthenics routines", calisExercises:"Calisthenics exercises",
-    equipHave:"Equipment", search:"Search", searchPh:"Search exercises …", noResult:"No matching exercise found.",
-    int1:"Easy", int2:"Moderate", int3:"Intense",
-    htFav:"Your starred workouts", htTimer:"Your own interval timers", htBlocks:"Start single blocks directly",
-    musWorked:"Works", musStretched:"Stretches", musAssist:"Assisting",
-    optTitle:"Timing & voice cues", optRestShort:"{n} s rest", optVoiceOn:"voice on", optVoiceOff:"voice off",
-    libStretch:"Stretch", stretchRoutines:"Stretch routines", stretchExercises:"Stretches",
-    hold1:"hold {s} s", holdN:"hold {n} × {s} s", holdSide:"{s} s per side", holdSideN:"{n} × {s} s per side",
-    phHold:"Hold", phSwitch:"Switch sides", phRelax:"Release",
-    favorites:"Favourites", timerWorkouts:"Timer workouts", favorite:"Favourite",
-    favAdded:"Added to favourites.", favRemoved:"Removed from favourites.",
-    lvl1:"Beginner", lvl2:"Intermediate", lvl3:"Advanced", lvlAll:"All levels", equipAll:"Any equipment", equipLabel:"Equipment",
-    coverTitle:"Overview", kindLib:"Ready-made workout", kindMy:"Own workout", kindSurprise:"Surprise",
-    letsGo:"Let's go", saveAsMy:"Save as my own", saveAsNewMy:"Save as new own workout", savedMy:"Saved to “Mine”.",
-    coverHint:"Changes apply to this session only until you save.",
-    coverDirty:"Adjusted – applies to this session only.", reroll:"Shuffle again",
-    timesLabel:"Timing", tmReps:"Rounds", tmWork:"Work (s)", tmRest:"Rest (s)", modeUniform:"Same for all", modeIndividual:"Per exercise",
-    modeIndividualHint:"Tap an exercise's timing to adjust it.",
-    sidesNote:"“Per side”: switches sides after each interval.",
-    repsBothSides:"Rounds count both sides together, e.g. 6 = 3 per side.",
-    recommended:"Recommended", timeDone:"Done",
-    voice:"Voice cues (English)", voiceDesc:"Announces the next exercise during rests",
-    surprise:"Surprise me", spLast:"Last: {x}", spDur:"Duration", spAreas:"Focus", spLevel:"Intensity", spGo:"Build it",
-    spMore:"Fine-tuning", spNoFocus:"no focus",
-    introTitle:"Introduction", introSkip:"Skip", introNext:"Next", introRow:"View introduction", introRowSub:"BLOC in five short steps",
-    in1T:"Welcome to BLOC",
-    in1:"Build your training from blocks – and look beyond your usual routine.",
-    in1N:"No account, no community – everything stays on your phone.",
-    in2:"{s} gym exercises. Log your weights – BLOC tells you when to add more.",
-    in3:"{w} workouts and {e} exercises: start one or build your own. “Surprise me” mixes something new.",
-    in4:"{c} programs and {u} units: fixed reps, as fast as you can. Beat your best time.",
-    in5:"{p} routines and {d} exercises: warm up before, stretch after.",
-    spNone:"No matching exercises – pick other areas or equipment.", spName:"Surprise · {n} min",
-    info:"Info", howTo:"How to", viewSide:"Side", viewFront:"Front", viewTop:"From above", tip:"Tip", infoRunning:"Timer keeps running", infoPaused:"Timer paused",
-    infoPause:"Pause", infoResume:"Resume",
-    noBlocksHome:"No blocks yet.<br>Tap + at the bottom right and choose <b>New block</b>.",
-    startBlock:"Start this block", newWorkout:"New workout", newBlock:"New block", create:"Create",
-    installTitle:"Install for permanent storage", installText:"One tap and the app is on your home screen.",
-    installNow:"Install now",
-    tipIOS:"For permanent storage: tap the share icon &#8593; and choose <b>“Add to Home Screen”</b>.",
-    tipAndroid:"For permanent storage: open the menu &#8942; and choose <b>“Install app”</b>.",
-    viewGuide:"View guide",
-    blocks:"Blocks", blockSub:"{reps} &times; {work}s work / {rest}s rest",
-    noBlocksList:"No blocks yet.<br>A block is e.g. “6 × 30 s work / 10 s rest”.",
-    editBlock:"Edit block", name:"Name", reps:"Rounds", workSec:"Work (seconds)",
-    restSec:"Rest between rounds (seconds)", total:"Total:",
-    save:"Save", deleteBlock:"Delete block", deleteBlockQ:"Delete block?",
-    deleteBlockText:"“{name}” will also be removed from all workouts.", del:"Delete",
-    workout:"Workout", deletedBlock:"(deleted block)", restAfter:"Rest after:", sec:"s", start:"Start",
-    workoutBlocks:"Blocks ({n}) &middot; Total {d}", noBlocksInWorkout:"No blocks in this workout yet.",
-    addBlock:"Add block", noBlocksAvail:"No blocks available.", createBlockFirst:"Create a block first",
-    deleteWorkout:"Delete workout", deleteWorkoutQ:"Delete workout?", cantUndo:"This can't be undone.",
-    appearance:"Appearance", optWichtig:"Essentials", optMehr:"More", optTraining:"Training",
-    mehrTimer:"Timer and sounds", mehrTimerSub:"Sound, style, count-in, vibration, screen", mehrApp:"App", mehrAppSub:"Intro, install, share",
-    mehrLoeschenSub:"Only a backup can undo this.", thSystem:"System", thLight:"Light", thDark:"Dark", thNacht:"Night", thKodak:"C60",
-    themeInfo:"Night: warm colours with little blue, easy on the eyes in the evening. C60: cassette look with a rolling counter instead of the ring.",
-    language:"Language",
-    installation:"Installation", installRow:"Add the app to your home screen", installRowSub:"Guide for iPhone &amp; Android",
-    timer:"Timer", volume:"Volume", sound:"Sound", soundDesc:"Beeps between phases", soundStyle:"Sound style",
-    space:"Room sound", spaceDesc:"Reverb and stereo depth for all sounds",
-    countIn:"Countdown beeps", countInDesc:"Short beeps in the last 3 seconds",
-    vibration:"Vibration", vibrationDesc:"Haptic feedback (if supported)",
-    keepAwake:"Keep screen on", keepAwakeDesc:"Screen stays on while training",
-    volMusicHint:"Your music keeps playing. iPhone on silent = no sounds.",
-    lastRun:"Again, like last time", lastToday:"today", lastYesterday:"yesterday",
-    favAll:"Show all favourites ({n})", favLess:"Fewer", favAllShort:"Show all",
-    htLib:"Interval programs and exercises", htLibN:"Outdoors in the calisthenics park · {w} workouts · {e} exercises", spSub:"A random session based on your picks",
-    repTitle:"Summit", htReps:"Challenges against the clock",
-    warmTitle:"Mobility & Stretch", htWarm:"Before and after training · {p} routines", warmSec:"Mobility · before training", stretchSec:"Stretch · after training",
-    warmIntro:"Goes with workouts and challenges: warm up briefly before, stretch afterwards.",
-    wsWarm:"Mobility", wsDehn:"Stretch", wsIntroWarm:"Before training: raise your pulse, loosen your joints.",
-    wsIntroDehn:"After training: stretch calmly.",
-    repTabUnits:"Sessions", repTabProgs:"Programs",
-    repMineIntro:"Your own exercises and amounts – with best time.",
-    repNew:"New challenge", repMineEmpty:"No challenges of your own yet.", repMore:"+ {n} more", repSearchPh:"Search challenges …", srTitle:"Search", runVorTitel:"Starting in", runPlus10:"+10 s", runJetzt:"Start now", runAbbrechen:"Cancel", runLos:"Go!", runAnsagen:"Announcements", runAus:"Off", runInhalt:"Content", runWasKm:"Km only", runWasPace:"Km + pace", runWasAlles:"Everything", runTest:"Preview", runAnsageHint:"Announces your kilometres while you run – turn it off or reduce it here, or use “Mute” during a run.", runStummAn:"Mute", runStummAus:"Unmute", runGeschafft:"Run done", runGespeichert:"Saved under “Run”.", runErster:"Your first run", runLaengster:"Longest run so far", runSchnellsterKm:"Fastest kilometre: {z}", runSchnellstePace:"Fastest average pace", runM5:"Milestone: 5 km", runM10:"Milestone: 10 km", runMHalb:"Milestone: half marathon", runTitle:"Run", runVerlauf:"History", tabStart:"Home", statWeniger2:"less", statMehr2:"more training time", statHero1:"workout in the last 7 days", statHeroN:"workouts in the last 7 days", statMehr:"{n} more than in the 7 days before", statGleich:"Same as in the 7 days before", statWeniger:"It was {n} in the 7 days before", statSerie:"{n} weeks in a row", statStart:"Your progress starts with the first workout. After that you will see here, week by week, how it is going.", statVerlauf:"Progress", statModusZeit:"Time", statModusN:"Workouts", statMinHint:"Training time in minutes per week (weeks start on Monday) – swipe right for earlier weeks", statNHint:"Workouts per week (weeks start on Monday) – swipe right for earlier weeks", statJetzt:"now", statKalender:"Last 4 weeks", statTageAktiv:"{n} active days", statBereichSub:"{n} in 4 weeks · {z}", statRunSub:"{n} runs · {km} km in total", statPaceTitel:"Pace trend", statPaceBesser:"You are getting faster: {z} /km compared with the runs before.", statPaceLangsamer:"{z} /km slower than before – easy runs are part of it.", statPaceGleich:"Steady going.", statRekorde:"Records", statRekLang:"Longest run", statRekKm:"Fastest kilometre", statRekPace:"Fastest pace", statVerb:"Best times improved", fokusLabel:"Areas on the home screen", statUeber:"Overview", statN28:"Workouts (4 weeks)", statZeit28:"Time (4 weeks)", statZuletzt:"Last", statHeute:"today", statGestern:"yesterday", statVorTagen:"{n} days ago", statNichts:"Nothing in the last 4 weeks yet.", statAlleAus:"All areas are hidden – switch them back on under Focus (Settings).", statKmWochen:"Kilometres per week", statWoche0:"last 7 days", statWocheN:"{n} wk ago", tabStats:"Statistics", statTrain:"Training", statN7:"Workouts (7 days)", statZeit7:"Time (7 days)", statN30:"Workouts (30 days)", statMuskelLeer:"Muscle groups of the last 7 days show up once you have trained.", statLaeufe:"Runs", statKmGes:"Kilometres", statKm7:"km (7 days)", statLang:"Longest run (km)", statBeste:"Fastest pace", statLaufLeer:"No run yet – start one under “Run”.", fokusTitel:"Focus", fokusHint:"Areas you do not need disappear from the home screen. Your data stays, and search still finds everything.", fokusAlleAus:"All areas are hidden.", fokusAendern:"Change focus", runHaltenHint:"Press and hold any button for 3 seconds to trigger it – so nothing happens in your pocket.", runLaeufe:"{n} runs in total", runNamePh:"Name, e.g. Intervals", runNotePh:"Note, e.g. rain, headwind", runIvMeta:"Intervals {l} / {g}", runPausenMeta:"{z} of pauses removed", runIvAn:"Interval run", runIvHint:"Switches between running and walking with a signal tone, vibration and announcement; it ticks during the last 3 seconds.", runIvLaufS:"Run (sec)", runIvGehS:"Walk (sec)", runIvLauf:"Run", runIvGeh:"Walk", runIvRunde:"Round {n}", runSagLauf:"Run!", runSagGeh:"Walk!", runAutoTitel:"Auto-pause", runAutoNach:"after {s} s", runAutoPausiert:"Auto-pause", runAutoHint:"Pauses when you stand that long and resumes by itself as soon as you move. The standing time is removed. GPS jitters when you stand still and needs a few seconds, so 5 s at least – at traffic lights or in crowds the pause may start a little late.", runTeaser:"GPS · distance, time and pace", runLaeuft:"Running now · {km} km", runBetaHint:"GPS tracking. The screen has to stay on – a web app does not record reliably in the background or with a locked phone (“Dim” saves battery). The route is shown without a map; your location stays on your device.", runStart:"Start run", runNone:"No run yet.", runTotal:"{n} runs · {km} km", runPause:"Pause", runResume:"Resume", runPaused:"Paused", runEnd:"Finish", runDark:"Dim", runDarkHint:"Press and hold for 2 seconds to wake", runTime:"Time", runDist:"Distance", runPaceAvg:"Avg pace", runPaceNow:"Pace now", runGpsWait:"Looking for GPS signal …", runGpsOk:"GPS good (±{m} m)", runGpsWeak:"GPS weak (±{m} m)", runGpsDenied:"Location not allowed – please enable it in your browser settings.", runGpsLost:"No GPS signal.", runNoGps:"This device cannot determine your location.", runLeaveQ:"Leave run?", runKeep:"Keep running", runSave:"Finish and save", runDiscard:"Discard", runEndQ:"Finish run?", runEndText:"The run will be saved.", runShort:"Too short – not saved.", runSaved:"Run saved.", runSplits:"Kilometres", runRoute:"Route", runGpx:"Export as GPX file", runDelQ:"Delete run?", runBroken:"Interrupted run", runBrokenText:"{km} km – the app was closed in between.", runRecover:"Save", runRoutePh:"The route appears as soon as you move.", runDetail:"Run", repNewProg:"New programme", repNewUnit:"New session", reUnitTitle:"Own session", reUnitDefault:"My session", reUnitParts:"Programmes", reUnitAdd:"Add programme", reUnitEmpty:"No programme yet – add the first one below.", reUnitHint:"Several programmes in a row. “From/To round” takes only a section, “Half amount” halves reps and distances.", reFrom:"From round", reTo:"To round", reHalf:"Half amount", reUnitDelQ:"Delete session?", rePickProg:"Choose programme", repMineIntro2:"Use + to create your own programmes and sessions – they also show under Programmes and Sessions.", repOwnTag:"Mine", zpHintWs:"Press and hold an exercise to add it to a workout of your own.", zpAdd:"Add to programme", rg_nacken:"Neck", rg_schulter:"Shoulders", rg_arme:"Arms & hands", rg_brust:"Chest", rg_ruecken:"Back", rg_rumpf:"Core & sides", rg_huefte:"Hips & glutes", rg_beine:"Legs", wsMineIntro:"Your own workouts for this area – press and hold an exercise under “Exercises” or use ⋯ to add it.", wsMineEmpty:"No workout of your own in this area yet.", wsNew:"Create your own workout", wsSearchPh:"Search …", zpWs:"Add to own workout", wsRegionHint:"Which body region do you want to stretch?", repKopiert:"“{n}” is now under “Mine”.", reMeter:"Metres", zpHint:"Press and hold an exercise to add it to a workout or Studio plan.", zpAir:"Add to Air workout", zpStudio:"Add to Studio plan", zpPickWo:"Choose workout", zpPickPlan:"Choose plan", zpAdded:"“{e}” is now in “{p}”.", zpAlready:"“{e}” is already in “{p}”.", zpNone:"No workout of your own yet.", srPh:"Search everything: exercises, workouts, blocks …", srHint:"Finds exercises, workouts, challenges, timer workouts and blocks – and actions like “New block”.", srAreas:"Areas", srChallenges:"Challenges", srOwnChall:"Own challenge", reNoEx:"No exercises yet",
-    reTitle:"Own challenge", reRunden:"Rounds", reUebungen:"Exercises", reLeer:"No exercise yet – add the first one below.",
-    reHint:"Round 1 applies to all rounds until you change one. 0 = skip.",
-    reWdh:"Reps", reSek:"Seconds", reDelete:"Delete challenge", reDelQ:"Delete challenge?", reDefaultName:"My challenge", reFertig:"Done",
-    repUnitsIntro:"12 sessions in three levels, several programs in a row.",
-    stufe_leicht:"Beginner", stufe_standard:"Intermediate", stufe_fortgeschritten:"Advanced", unitN:"Session {n}", variant:"Option {n}", filterMehr:"Focus, equipment & sort",
-    rundenTeil:"rounds {a}–{b}", runde1Teil:"round {a}", halb:"half volume",
-    repIntro:"As fast as possible, but clean – with best time.",
-    repAll:"All", repAllEquip:"Any equipment", repNoBar:"No bar", repNone:"No programs match this selection.",
-    repRound1:"1 round", repRoundsN:"{n} rounds", repReps:"{n} reps", repBar:"Bar", repRound:"Round",
-    repBestIs:"Best {z}", repLastIs:"last {z}", repTable:"Sequence", repStart:"Start",
-    repStatsKurz:"Best {z} · {n} runs", repStatsNone:"no runs yet", repBestZeit:"Best time", repLaeufe:"Runs", repLetzte:"Last time", repLastRuns:"Latest runs",
-    repStatsEmpty:"No time yet. Play the program once – then your best time shows up here, and your curve from the second week.",
-    repHint:"Tap “Done” after each exercise.",
-    repDone:"Done", repSkip:"Skip", repUndo:"Back", repPause:"Pause", repResume:"Resume", repEnd:"End",
-    repNext:"Next: {x}", repLastStep:"Last exercise", repReady:"Get ready", repFinish:"Done!", repNewBest:"New best time!",
-    repAgain:"Again", repToList:"Finish", repEndQ:"End challenge?", repEndText:"Your time won't be saved.", repEndBtn:"End",
-    snapNone:"Last snapshot: none yet", snapAgo:"Last snapshot: {x}", snapToday:"today", snapYesterday:"yesterday",
-    snapDays:"{n} days ago", snapRestore:"Restore state from {d}", snapQ:"Restore snapshot?",
-    snapText:"Your current data will be replaced with the state from {d}.", snapBtn:"Restore",
-    snapInfo:"An automatic copy on this device every 7 days.",
-    backupTipTitle:"No recent backup", backupTipText:"Back up your own workouts, exercises and weights as a file.",
-    backupNow:"Back up now", shareBackup:"Share backup (e.g. Drive, mail)", backupShared:"Backup shared.",
-    wbAblauf:"Your sequence", wbWaehlen:"Pick exercises", wbTippen:"Tap = add, tap again = remove.",
-    wbLeer:"Still empty – tap exercises below.", wbOrdnen:"Smart order", wbGeordnet:"Ordered: big lifts first, alternating muscle groups, stretches last",
-    wbAblaufHint:"Tap an exercise: times, move, swap, remove.", wbZeiten:"Adjust times", wbNachVorn:"Move up",
-    wbNachHinten:"Move down", wbTauschen:"Swap exercise", wbKeinTausch:"No suitable alternative found", wbMischen:"Shuffle again", wbGespeichert:"Saved", wbVerwerfenQ:"Discard changes?",
-    wbVerwerfenText:"This workout isn't saved yet.", wbVerwerfen:"Discard",
-    figTitle:"Review figures", figSub:"All figures at a glance – mark and share unclear ones",
-    figIntro:"Tap to see a figure move. Mark what's unclear, add a note, then share.",
-    figAll:"All", figMarked:"Marked ({n})", figFlag:"Unclear", figNotePh:"What is unclear? (optional)",
-    figShare:"Share marked ({n})", figNone:"Nothing marked yet.", figCopied:"List copied.", figShareHead:"BLOC – unclear figures",
-    weekTitle:"This week", weekNone:"no workout yet", weekDays:"M T W T F S S",
-    weekOne:"1 workout", weekN:"{n} workouts",
-    tabWorkouts:"Workouts", tabMine:"Mine", mainCat:"Category", multiOk:"Pick several",
-    spMainHint:"None picked = strength, cardio and core.",
-    spFocusHint:"Optional – narrows things down within the category.",
-    sortDur:"Duration", searchWoPh:"Search workouts …", unitsOf:"Unit {i} of {n}", exOf:"Exercise {i} of {n}",
-    data:"Data", exportBackup:"Save backup as file", importBackup:"Load backup", deleteAll:"Delete all data",
-    localNote:"All data stays on this device. For permanent storage on iOS, add the app to your home screen.",
-    importQ:"Load backup?", importText:"All your current data will be replaced by the backup.", importBtn:"Load",
-    fileError:"Couldn't read the file.",
-    deleteAllQ:"Delete all data?", deleteAllText:"Your own workouts, blocks, exercises, challenges, weights and settings will be permanently deleted.", deleteAllBtn:"Delete everything",
-    installApp:"Install app",
-    iosSteps:[
-      "Open this page in <b>Safari</b> (not Chrome – the button you need is missing there).",
-      "Tap the share icon <b>&#8593;</b> at the bottom center.",
-      "Scroll down and choose <b>“Add to Home Screen”</b>.",
-      "Tap <b>“Add”</b> at the top right.",
-      "Done! The icon is now on your home screen and opens as its own app with permanent storage."
-    ],
-    androidSteps:[
-      "Open this page in <b>Chrome</b>.",
-      "Tap the three dots <b>&#8942;</b> at the top right.",
-      "Choose <b>“Install app”</b> or <b>“Add to Home screen”</b>.",
-      "Confirm the installation in the dialog.",
-      "Done! The app appears on your home screen and in your app list."
-    ],
-    androidQuickNote:"One tap is enough. Otherwise manually:",
-    installOutro:"Then it runs full screen – without the 7-day storage limit.",
-    cancel:"Cancel", chooseSound:"Choose sound", natural:"Natural", electronic:"Electronic", close:"Close",
-    phWork:"Go!", phRest:"Rest", phBlockrest:"Block break", phPrep:"Get ready",
-    upNext:"Up next:", thenDone:"Then: done",
-    doneTitle:"Workout complete!", again:"Again", finish:"Done",
-    endQ:"End workout?", endText:"Your progress will be lost.", endBtn:"End",
-    skip:"Skip", pause:"Pause", restartPhase:"Restart phase",
-    unitH:"h", unitMin:"min", unitSec:"s",
-    hideShort:"Hide", unhide:"Show", hiddenSection:"Hidden ({n})",
-    hiddenSectionHint:"“Surprise me” doesn't use hidden entries.",
-    exNew:"Create your own exercise", exEditTitle:"Own exercise", exNewTitle:"New exercise", exName:"Exercise name",
-    exFocus:"Focus", exFocusHint:"Pick several.", exEquip:"Equipment", exPerSide:"Per side",
-    exPerSideDesc:"Alternates left and right – rounds count per side", exReco:"Recommended times",
-    exHint:"Cue (optional)", exHintPh:"e.g. keep your back straight", exSave:"Save exercise", exDelete:"Delete exercise",
-    exDeleteQ:"Delete exercise?", exDeleteText:"It will also be removed from your own workouts that use it.",
-    exSaved:"Exercise saved.", exNameMissing:"Please give the exercise a name.", customTag:"Own exercise", edit:"Edit",
-    share:"Share", shareWo:"Share workout", shareLinkCopied:"Link copied – just send it.", kindShared:"Shared workout",
-    shareBad:"Sorry, this link is invalid or incomplete.", shareMsg:"Try my workout “{n}” in BLOC:",
-    sharedMissing:"This version of the app doesn't know {n} exercise(s) from the link – they were left out.",
-    spAvoid:"Avoid exercises from the last 7 days", spAvoidDesc:"Only if enough others fit.",
-    spRules:"Alternates muscle groups and balances push and pull. Intense = more jumps, Easy = calmer.",
-    privacy:"Privacy & disclaimer", privacyRow:"Privacy & disclaimer", privacyRowSub:"No data collection · train at your own risk",
-    ownRisk:"Train at your own risk.", ownRiskMore:"Disclaimer"
-  }
-};
+var I18N = window.BLOC_TEXTE;   // Texte stehen in texte.js (ein Schlüssel pro Zeile)
 var SOUND_LABELS_EN = {
   klangschale:"Singing bowl", triangel:"Triangle", klatschen:"Clapping", sanft:"Gentle", arcade:"Arcade", weich:"Soft"
 };
@@ -3810,7 +3385,7 @@ function bereichVonQuelle(src){
   if(ty === "exercise") return exIsMobility(src.id) ? "warm" : "lib";
   return "lib";
 }
-/* Wochensummen für die Statistik: Einträge, die aus dem Kurz-Verlauf fallen, wandern als Summe in settings.statW[Montag] = { n, s, a:{ bereich:{ n, s } } } (höchstens 60 Wochen) -
+/* Wochensummen für die Statistik: Einträge, die aus dem Kurz-Verlauf fallen, wandern als Summe in settings.statW[Montag] = { bn, bs, a:{ bereich:{ n, s } } } (über Jahre) -
    so bleibt der Fortschritt über Monate sichtbar, ohne einzelne Trainings aufzubewahren. Nur lokal. */
 function wocheKey(ts){
   var d = new Date(ts); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7);
@@ -3820,13 +3395,20 @@ function pruneHistory(db){
   var since = Date.now() - histKeepDays()*86400000;
   var sw = db.settings && (db.settings.statW || (db.settings.statW = {}));
   if(sw){
-    (db.history || []).forEach(function(e){
-      if(!e || !(e.at < since)) return;
-      var w = sw[wocheKey(e.at)] || (sw[wocheKey(e.at)] = { n:0, s:0, a:{} }), b = bereichVonEintrag(e), a = w.a[b] || (w.a[b] = { n:0, s:0 }), dur = +e.dur || 0;
-      w.n++; w.s += dur; a.n++; a.s += dur;
-    });
+    var alt = (db.history || []).filter(function(e){ return e && e.at < since; });
+    if(alt.length){
+      var woche = function(ts){ var k = wocheKey(ts); return sw[k] || (sw[k] = { bn:0, bs:0, a:{} }); };
+      // bn/bs: Besuche aller Bereiche außer Run zusammen; a[bereich]: Besuche je Bereich (Run: jeder Lauf einzeln)
+      besuche(alt.filter(function(e){ return bereichVonEintrag(e) !== "run"; })).forEach(function(b){ var w = woche(b.von); w.bn = (w.bn || 0) + 1; w.bs = (w.bs || 0) + b.s; });
+      ["lib", "timer", "reps", "warm", "run"].forEach(function(k){
+        var l = alt.filter(function(e){ return bereichVonEintrag(e) === k; });
+        (k === "run" ? l.map(function(e){ return besuche([e])[0]; }) : besuche(l)).forEach(function(b){
+          var w = woche(b.von), a = w.a[k] || (w.a[k] = { n:0, s:0 }); a.n++; a.s += b.s;
+        });
+      });
+    }
     var keys = Object.keys(sw).sort();
-    while(keys.length > 60) delete sw[keys.shift()];
+    while(keys.length > 1040) delete sw[keys.shift()];   // gut 20 Jahre; eine Woche ist nur wenige Byte groß
   }
   db.history = (db.history || []).filter(function(e){ return e && e.at >= since; })
     .map(function(e){ var x = { at:e.at, ex:e.ex || [], dur:+e.dur || 0 }; if(e.studio) x.studio = e.studio; if(e.b) x.b = e.b; return x; });
@@ -3852,11 +3434,11 @@ function wocheDaten(){
   var d = new Date(); d.setHours(0, 0, 0, 0);
   var start = d.getTime() - ((d.getDay() + 6) % 7)*86400000;   // Montag 0:00
   var tage = [0,0,0,0,0,0,0], n = 0, sek = 0;
-  (state.db.history || []).forEach(function(e){
-    if(!e || e.at < start) return;
-    var tag = Math.floor((e.at - start)/86400000);
+  besucheAlle((state.db.history || []).filter(function(e){ return e; })).forEach(function(b){   // ein Besuch = ein Training (Timer bis 60 Minuten Abstand)
+    if(b.von < start) return;
+    var tag = Math.floor((b.von - start)/86400000);
     if(tag > 6) return;
-    tage[tag] = 1; n++; sek += +e.dur || 0;
+    tage[tag] = 1; n++; sek += b.s;
   });
   return { tage:tage, n:n, sek:sek, heute:(d.getDay() + 6) % 7 };
 }
@@ -3880,32 +3462,86 @@ function wocheMuskelHTML(){   // letzte 7 Tage aus dem Kurz-Gedächtnis (Air, St
    der in den letzten 4 Wochen am meisten genutzte steht oben. Grundlage: Kurz-Verlauf (31 Tage) + Wochensummen (statW), bei Run die Läufe selbst. */
 var statKalOffen = false;   // Kalender startet zugeklappt (nur innerhalb des Besuchs gemerkt)
 var statModus = "zeit";   // Verlauf-Diagramm: "zeit" | "n"
+var statGran = "woche";   // Zeitraum je Balken: "woche" | "monat" | "jahr"
 function statTage(n){ return n <= 0 ? t("statHeute") : n === 1 ? t("statGestern") : t("statVorTagen", { n:n }); }
+/* Ein „Besuch“ (= ein Training): alle Timer-Einträge, zwischen denen höchstens BESUCH_LUECKE liegt; die Zeit läuft vom ersten Start bis zum Ende des letzten.
+   Spanne eines Eintrags: Studio und Run speichern den Start (at), Air, Summit und Mobility das Ende. Läufe zählen immer einzeln. */
+function besuchLuecke(){ return 60*60*1000; }   // Funktion statt Variable: loadDB läuft vor dieser Stelle
+function eintragSpanne(e){
+  var b = bereichVonEintrag(e), d = (+e.dur || 0)*1000;
+  return (b === "timer" || b === "run") ? [e.at, e.at + d] : [e.at - d, e.at];
+}
+function besuche(list){
+  var sp = list.map(function(e){ var x = eintragSpanne(e); return { von:x[0], bis:x[1], b:bereichVonEintrag(e) }; }).sort(function(a, b){ return a.von - b.von; }), out = [];
+  sp.forEach(function(x){
+    var l = out[out.length-1];
+    if(l && x.von - l.bis <= besuchLuecke()){ l.bis = Math.max(l.bis, x.bis); l.n++; l.areas[x.b] = true; }
+    else { var a = {}; a[x.b] = true; out.push({ von:x.von, bis:x.bis, n:1, areas:a }); }
+  });
+  out.forEach(function(b){ b.s = Math.max(0, (b.bis - b.von)/1000); });
+  return out;
+}
+function besucheAlle(list){
+  var lauf = list.filter(function(e){ return bereichVonEintrag(e) === "run"; }).map(function(e){ return besuche([e])[0]; });
+  return besuche(list.filter(function(e){ return bereichVonEintrag(e) !== "run"; })).concat(lauf).sort(function(a, b){ return a.von - b.von; });
+}
 function statWochenReihe(n, aktiv){
   var mo = new Date(); mo.setHours(0, 0, 0, 0); mo.setDate(mo.getDate() - (mo.getDay() + 6) % 7);
   var sw = state.db.settings.statW || {}, out = [], idx = {};
+  var ohneRun = ["lib", "timer", "reps", "warm"].every(function(k){ return aktiv.indexOf(k) > -1; });
   for(var i = n-1; i >= 0; i--){
-    var d = new Date(mo); d.setDate(d.getDate() - 7*i); var key = wocheKey(d.getTime()), src = sw[key] && sw[key].a || {}, w = { key:key, ab:d.getTime(), n:0, s:0, a:{} };
-    Object.keys(src).forEach(function(b){ if(aktiv.indexOf(b) > -1) w.a[b] = { n:src[b].n || 0, s:src[b].s || 0 }; });
+    var d = new Date(mo); d.setDate(d.getDate() - 7*i); var key = wocheKey(d.getTime()), src = sw[key] || {}, ar = src.a || {}, w = { key:key, ab:d.getTime(), n:0, s:0, a:{} };
+    Object.keys(ar).forEach(function(b){ if(aktiv.indexOf(b) > -1) w.a[b] = { n:ar[b].n || 0, s:ar[b].s || 0 }; });
+    if(ohneRun && src.bn != null){   // archivierte Besuche (alle Bereiche außer Run zusammengefasst)
+      w.n = src.bn; w.s = src.bs || 0;
+      if(aktiv.indexOf("run") > -1 && ar.run){ w.n += ar.run.n || 0; w.s += ar.run.s || 0; }
+    } else Object.keys(w.a).forEach(function(b){ w.n += w.a[b].n; w.s += w.a[b].s; });
     idx[key] = w; out.push(w);
   }
-  (state.db.history || []).forEach(function(e){
-    var w = e && idx[wocheKey(e.at)], b = e && bereichVonEintrag(e);
-    if(!w || aktiv.indexOf(b) < 0) return;
-    var a = w.a[b] || (w.a[b] = { n:0, s:0 }); a.n++; a.s += +e.dur || 0;
+  var live = (state.db.history || []).filter(function(e){ return e && aktiv.indexOf(bereichVonEintrag(e)) > -1; });
+  aktiv.forEach(function(k){
+    besuche(live.filter(function(e){ return bereichVonEintrag(e) === k; })).forEach(function(b){
+      var w = idx[wocheKey(b.von)]; if(!w) return;
+      var a = w.a[k] || (w.a[k] = { n:0, s:0 }); a.n++; a.s += b.s;
+    });
   });
-  out.forEach(function(w){ Object.keys(w.a).forEach(function(b){ w.n += w.a[b].n; w.s += w.a[b].s; }); });
+  besucheAlle(live).forEach(function(b){ var w = idx[wocheKey(b.von)]; if(w){ w.n++; w.s += b.s; } });
   return out;
 }
-/* Balkendiagramm: vals (Zahlen), labels (Text darunter), kurz (Text über dem Balken); der letzte Balken ist die laufende Woche */
+/* Wochen zu Balken je Woche/Monat/Jahr zusammenfassen (Monat/Jahr nach dem Montag der Woche); davor leere Balken, damit mindestens minN da sind */
+function statBuckets(weeks, gran, minN){
+  var out = [], lang = currentLang() === "en" ? "en-GB" : "de-DE", dayMs = 86400000;
+  if(gran === "woche"){
+    out = weeks.map(function(w){ var d = new Date(w.ab); return { ab:w.ab, bis:w.ab + 7*dayMs, n:w.n, s:w.s, a:w.a, label:d.getDate()+"."+(d.getMonth()+1)+"." }; });
+  } else {
+    var idx = {};
+    weeks.forEach(function(w){
+      var d = new Date(w.ab), key = gran === "jahr" ? String(d.getFullYear()) : d.getFullYear()+"-"+d.getMonth();
+      var b = idx[key];
+      if(!b){
+        var ab = gran === "jahr" ? new Date(d.getFullYear(), 0, 1) : new Date(d.getFullYear(), d.getMonth(), 1), bis = gran === "jahr" ? new Date(d.getFullYear()+1, 0, 1) : new Date(d.getFullYear(), d.getMonth()+1, 1);
+        b = idx[key] = { ab:ab.getTime(), bis:bis.getTime(), n:0, s:0, a:{}, label:gran === "jahr" ? String(d.getFullYear()) : d.toLocaleDateString(lang, { month:"short" }).replace(".", "")+" "+String(d.getFullYear()).slice(-2) };
+        out.push(b);
+      }
+      b.n += w.n; b.s += w.s;
+      Object.keys(w.a).forEach(function(k){ var x = b.a[k] || (b.a[k] = { n:0, s:0 }); x.n += w.a[k].n; x.s += w.a[k].s; });
+    });
+  }
+  while(out.length < (minN || 0)){   // links auffüllen
+    var f = out[0], ab = new Date(f.ab);
+    if(gran === "woche") ab.setDate(ab.getDate() - 7); else if(gran === "monat") ab.setMonth(ab.getMonth() - 1); else ab.setFullYear(ab.getFullYear() - 1);
+    var lab = gran === "woche" ? ab.getDate()+"."+(ab.getMonth()+1)+"." : gran === "jahr" ? String(ab.getFullYear()) : ab.toLocaleDateString(lang, { month:"short" }).replace(".", "")+" "+String(ab.getFullYear()).slice(-2);
+    out.unshift({ ab:ab.getTime(), bis:f.ab, n:0, s:0, a:{}, label:lab });
+  }
+  if(gran !== "jahr" && out.length) out[out.length-1].label = t("statJetzt");
+  return out;
+}
+/* Balkendiagramm: vals (Zahlen), labels (Text darunter), kurz (Text über dem Balken); der letzte Balken ist der laufende Zeitraum */
 function statBalken(vals, labels, kurz, farbe){
   var mx = Math.max.apply(null, vals.concat([1]));
   return '<div class="bscroll"><div class="bchart'+(farbe ? ' farbe' : '')+'"'+(farbe ? ' style="--c:'+farbe+'"' : '')+'>'+vals.map(function(v, i){
     return '<div class="bc'+(i === vals.length-1 ? ' jetzt' : '')+(v ? '' : ' leer')+'"><span class="bw">'+(v ? esc(kurz(v)) : "")+'</span><span class="bs"><i style="height:'+(v ? Math.max(5, Math.round(100*v/mx)) : 0)+'%"></i></span><small>'+esc(labels[i])+'</small></div>';
   }).join("")+'</div></div>';
-}
-function statWochenLabels(reihe){
-  return reihe.map(function(w, i){ var d = new Date(w.ab); return i === reihe.length-1 ? t("statJetzt") : d.getDate()+"."+(d.getMonth()+1)+"."; });
 }
 function statPz(sek){ var s = Math.round(sek); return Math.floor(s/60)+":"+("0"+s%60).slice(-2); }
 function statMin(sek){ return String(Math.round(sek/60)); }
@@ -3924,23 +3560,26 @@ function statPaceSvg(runs){
 function renderStats(){
   var s = state.db.settings, jetzt = Date.now(), tag = 86400000, runs = s.runs || [];
   pruneHistory(state.db);
-  var h = (state.db.history || []).filter(function(e){ return e && e.at >= jetzt - 28*tag; });
   var aktiv = BEREICH_KEYS.filter(function(k){ return !fokusAus(k); });
-  function von(k, tage){ return h.filter(function(e){ return bereichVonEintrag(e) === k && e.at >= jetzt - tage*tag; }); }
-  function summe(l){ return l.reduce(function(a, e){ return a + (+e.dur || 0); }, 0); }
+  var hist = (state.db.history || []).filter(function(e){ return e && aktiv.indexOf(bereichVonEintrag(e)) > -1; });
+  function eintraege(k, tage){ return hist.filter(function(e){ return bereichVonEintrag(e) === k && e.at >= jetzt - tage*tag; }); }
+  function bes(k, tage){ return besuche(hist.filter(function(e){ return bereichVonEintrag(e) === k; })).filter(function(b){ return b.von >= jetzt - tage*tag; }); }
+  function summe(l){ return l.reduce(function(a, b){ return a + b.s; }, 0); }
   function dauer(sek){ return sek >= 60 ? fmtDuration(Math.round(sek/60)*60) : "–"; }
-  function inFokus(e){ return aktiv.indexOf(bereichVonEintrag(e)) > -1; }
-  var hist = (state.db.history || []).filter(function(e){ return e && inFokus(e); });
-  var n7 = hist.filter(function(e){ return e.at >= jetzt - 7*tag; }).length, nV = hist.filter(function(e){ return e.at >= jetzt - 14*tag && e.at < jetzt - 7*tag; }).length;
+  var besA = besucheAlle(hist);
+  var n7 = besA.filter(function(b){ return b.von >= jetzt - 7*tag; }).length, nV = besA.filter(function(b){ return b.von >= jetzt - 14*tag && b.von < jetzt - 7*tag; }).length;
   var fr = jetzt;
   Object.keys(s.statW || {}).forEach(function(k){ var tt = new Date(k+"T00:00:00").getTime(); if(tt < fr) fr = tt; });
   (state.db.history || []).forEach(function(e){ if(e && e.at < fr) fr = e.at; });
   if(aktiv.indexOf("run") > -1) runs.forEach(function(x){ if(x.at < fr) fr = x.at; });
-  var reihe = statWochenReihe(Math.min(104, Math.max(8, Math.ceil((jetzt - fr)/(7*tag)) + 1)), aktiv), acht = reihe.slice(-8);
-  var gesamt = reihe.reduce(function(a, w){ return a + w.n; }, 0);
-  var serie = 0, si = reihe.length - 1;
-  if(si >= 0 && !reihe[si].n) si--;
-  while(si >= 0 && reihe[si].n){ serie++; si--; }
+  var voll = statWochenReihe(Math.min(1040, Math.max(8, Math.ceil((jetzt - fr)/(7*tag)) + 1)), aktiv);   // alle Wochen, soweit Daten da sind
+  var reihe = statBuckets(statGran === "woche" ? voll.slice(-104) : voll, statGran, statGran === "woche" ? 8 : statGran === "monat" ? 6 : 3);
+  var gesamt = voll.reduce(function(a, w){ return a + w.n; }, 0);
+  var serie = 0, si = voll.length - 1;
+  if(si >= 0 && !voll[si].n) si--;
+  while(si >= 0 && voll[si].n){ serie++; si--; }
+  var einheit = t(statGran === "woche" ? "statUWoche" : statGran === "monat" ? "statUMonat" : "statUJahr");
+  var labels = reihe.map(function(b){ return b.label; });
   var html = topbar(t("tabStats"), {});
   if(!aktiv.length){
     app.innerHTML = html + '<div class="card fokus-leer"><div>'+esc(t("statAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
@@ -3949,22 +3588,24 @@ function renderStats(){
   // Willkommen / Kopf
   if(!gesamt && !(aktiv.indexOf("run") > -1 && runs.length)){
     html += '<div class="card stat-hero leer"><div class="sh-text">'+esc(t("statStart"))+'</div>'+
-      statBalken([0, 0, 0, 0, 0, 0, 0, 0], statWochenLabels(acht), function(){ return ""; }).replace('class="bchart"', 'class="bchart geist"')+'</div>';
+      statBalken([0, 0, 0, 0, 0, 0, 0, 0], labels.slice(-8), function(){ return ""; }).replace('class="bchart"', 'class="bchart geist"')+'</div>';
   } else {
     var delta = n7 > nV ? t("statMehr", { n:n7 - nV }) : n7 === nV ? (n7 ? t("statGleich") : "") : t("statWeniger", { n:nV });
     html += '<div class="card stat-hero"><div class="sh-zahl">'+n7+'</div><div class="sh-text">'+esc(t(n7 === 1 ? "statHero1" : "statHeroN"))+'</div>'+
       (delta ? '<div class="sh-delta'+(n7 > nV ? ' auf' : '')+'">'+(n7 > nV ? svgIcon('<path d="M6 15l6-6 6 6"/>') : '')+esc(delta)+'</div>' : '')+
       (serie >= 2 ? '<div class="sh-serie">'+svgIcon('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>')+esc(t("statSerie", { n:serie }))+'</div>' : '')+'</div>';
-    // Verlauf: 8 Wochen
+    // Verlauf: Woche / Monat / Jahr, nach links wischen für früher
     var zeit = statModus === "zeit";
+    function knopf(attr, wert, aktivWert, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktivWert === wert ? 'active' : '')+'">'+esc(text)+'</button>'; }
     html += '<div class="card stat-karte"><div class="sk-kopf"><b>'+esc(t("statVerlauf"))+'</b><span class="stat-seg">'+
-      '<button type="button" data-statmodus="zeit" class="'+(zeit ? 'active' : '')+'">'+esc(t("statModusZeit"))+'</button>'+
-      '<button type="button" data-statmodus="n" class="'+(zeit ? '' : 'active')+'">'+esc(t("statModusN"))+'</button></span></div>'+
-      statBalken(reihe.map(function(w){ return zeit ? w.s : w.n; }), statWochenLabels(reihe), function(v){ return zeit ? statMin(v) : String(v); })+
-      '<div class="sk-unter">'+esc(t(zeit ? "statMinHint" : "statNHint"))+'</div></div>';
-    // Kalender: letzte 4 Wochen
+      knopf("statmodus", "zeit", statModus, t("statModusZeit"))+knopf("statmodus", "n", statModus, t("statModusN"))+'</span></div>'+
+      '<div class="sk-kopf stat-gran"><span class="stat-seg">'+knopf("statgran", "woche", statGran, t("statGranWoche"))+knopf("statgran", "monat", statGran, t("statGranMonat"))+knopf("statgran", "jahr", statGran, t("statGranJahr"))+'</span></div>'+
+      statBalken(reihe.map(function(b){ return zeit ? b.s : b.n; }), labels, function(v){ return zeit ? statMin(v) : String(v); })+
+      '<div class="sk-unter">'+esc(t(zeit ? "statMinHint" : "statNHint", { u:einheit })+" – "+t("statWischen"))+'</div>'+
+      '<div class="sk-unter">'+esc(t("statBesuchHint"))+'</div></div>';
+    // Kalender: letzte 4 Wochen (Tag = Start des Trainings)
     var tage = {}, mo = new Date(); mo.setHours(0, 0, 0, 0); mo.setDate(mo.getDate() - (mo.getDay() + 6) % 7 - 21);
-    hist.forEach(function(e){ var d = new Date(e.at); var k = d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); tage[k] = (tage[k] || 0) + (+e.dur || 0); });
+    besA.forEach(function(b){ var d = new Date(b.von); var k = d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); tage[k] = (tage[k] || 0) + b.s; });
     var namen = t("weekDays").split(" "), heute = new Date(); heute.setHours(0, 0, 0, 0);
     var zellen = "", aktTage = 0;
     for(var i = 0; i < 28; i++){
@@ -3977,24 +3618,23 @@ function renderStats(){
       '<div class="heat"><div class="heat-tage">'+namen.map(function(x){ return '<small>'+esc(x)+'</small>'; }).join("")+'</div><div class="heat-raster">'+zellen+'</div>'+
       '<div class="heat-legende"><small>'+esc(t("statWeniger2"))+'</small><i class="hz l0"></i><i class="hz l1"></i><i class="hz l2"></i><i class="hz l3"></i><small>'+esc(t("statMehr2"))+'</small></div></div></details>';
   }
-  // Bereiche, der am meisten genutzte zuerst
-  var folge = aktiv.map(function(k, i){ return { k:k, n:von(k, 28).length, i:i }; }).sort(function(a, b){
-    var fix = function(k){ return k === "run" ? 1 : k === "warm" ? 2 : 0; };   // Run und Mobility & Stretch stehen immer ganz unten (Run zweitletzter), davor nach Nutzung
+  // Bereiche: Run und Mobility & Stretch immer ganz unten (Run zweitletzter), davor der in den letzten 4 Wochen am meisten genutzte zuerst
+  var folge = aktiv.map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
+    var fix = function(k){ return k === "run" ? 1 : k === "warm" ? 2 : 0; };
     return fix(a.k) - fix(b.k) || b.n - a.n || a.i - b.i;
   });
   folge.forEach(function(r){
-    var k = r.k, d = bereichDaten(k), l = von(k, 28), letzte = l.length ? Math.max.apply(null, l.map(function(e){ return e.at; })) : 0;
-    var vk = reihe.map(function(w){ return (w.a[k] || {}).s || 0; });
+    var k = r.k, d = bereichDaten(k), l = bes(k, 28), letzte = l.length ? Math.max.apply(null, l.map(function(b){ return b.bis; })) : 0;
+    var vk = reihe.map(function(b){ return (b.a[k] || {}).s || 0; });
     var tageSeit = letzte ? Math.floor((new Date(jetzt).setHours(0, 0, 0, 0) - new Date(letzte).setHours(0, 0, 0, 0))/tag + 0.5) : 0;
     var sub = k === "run" && runs.length ? t("statRunSub", { n:runs.length, km:runKm(runs.reduce(function(a, x){ return a + x.dist; }, 0)) })
       : l.length ? t("statBereichSub", { n:l.length, z:dauer(summe(l)) })+" · "+statTage(tageSeit) : t("statNichts");
     html += '<div class="card stat-karte stat-bereichkarte" style="--c:'+d[3]+'"><div class="sk-kopf"><b class="sb-name"><i></i>'+esc(d[1])+'</b></div><div class="sk-sub">'+esc(sub)+'</div>';
-    if(k !== "run" && vk.some(function(v){ return v > 0; })) html += statBalken(vk, statWochenLabels(reihe), statMin, d[3]);
+    if(k !== "run" && vk.some(function(v){ return v > 0; })) html += statBalken(vk, labels, statMin, d[3]);
     if(k === "run" && runs.length){
       var gut = runs.filter(function(x){ return x.dist >= 1000; }).sort(function(a, b){ return a.at - b.at; }), letzteL = gut.slice(-60);
-      // Kilometer pro Woche (8 Wochen)
-      var wk = reihe.map(function(w){ return runs.filter(function(x){ return x.at >= w.ab && x.at < w.ab + 7*tag; }).reduce(function(a, x){ return a + x.dist; }, 0); });
-      if(wk.some(function(v){ return v > 0; })) html += '<div class="sk-unter titel">'+esc(t("statKmWochen"))+'</div>'+statBalken(wk, statWochenLabels(reihe), function(v){ return runKm(v).replace(/[,.]00$/, ""); }, d[3]);
+      var wk = reihe.map(function(b){ return runs.filter(function(x){ return x.at >= b.ab && x.at < b.bis; }).reduce(function(a, x){ return a + x.dist; }, 0); });
+      if(wk.some(function(v){ return v > 0; })) html += '<div class="sk-unter titel">'+esc(t("statKmPro", { u:einheit }))+'</div>'+statBalken(wk, labels, function(v){ return runKm(v).replace(/[,.]00$/, ""); }, d[3]);
       if(letzteL.length >= 2){
         html += '<div class="sk-unter titel">'+esc(t("statPaceTitel"))+'</div>'+statPaceSvg(letzteL);
         var pace = letzteL.slice(-12).map(function(x){ return x.dur/1000/(x.dist/1000); }), halb2 = Math.max(1, Math.floor(pace.length/2));
@@ -4003,7 +3643,6 @@ function renderStats(){
         var diff = avg(davor) - avg(neu);
         html += '<div class="sk-unter">'+esc(diff > 3 ? t("statPaceBesser", { z:statPz(diff) }) : diff < -3 ? t("statPaceLangsamer", { z:statPz(-diff) }) : t("statPaceGleich"))+'</div>';
       }
-      // Rekorde
       var rek = [];
       var l1 = runs.reduce(function(m, x){ return !m || x.dist > m.dist ? x : m; }, null);
       if(l1) rek.push([t("statRekLang"), runKm(l1.dist)+" km", l1.at]);
@@ -4027,7 +3666,7 @@ function renderStats(){
         return '<div><span>'+esc(x.name)+'</span><b>'+esc(repUhr(x.erst)+" → "+repUhr(x.best))+'</b><small>−'+esc(repUhr(x.erst - x.best))+'</small></div>'; }).join("")+'</div>';
     }
     if(k === "lib" || k === "timer"){
-      var ids = []; von(k, 7).forEach(function(e){ (e.ex || []).forEach(function(id){ ids.push(id); }); });
+      var ids = []; eintraege(k, 7).forEach(function(e){ (e.ex || []).forEach(function(id){ ids.push(id); }); });
       if(ids.length) html += auswertungHTML(ids, { woche:true, titel:t("ausWoche"), sub:t("ausWocheSum") });
     }
     html += '</div>';
@@ -4037,9 +3676,9 @@ function renderStats(){
   app.querySelectorAll(".bscroll").forEach(function(b){ b.scrollLeft = b.scrollWidth; });
   var kal = app.querySelector("[data-statkal]");
   if(kal) kal.addEventListener("toggle", function(){ statKalOffen = kal.open; });
-  app.querySelectorAll("[data-statmodus]").forEach(function(b){
-    b.addEventListener("click", function(){ statModus = b.getAttribute("data-statmodus"); var y = window.scrollY; renderStats(); window.scrollTo(0, y); });
-  });
+  function neu(){ var y = window.scrollY; renderStats(); window.scrollTo(0, y); }
+  app.querySelectorAll("[data-statmodus]").forEach(function(b){ b.addEventListener("click", function(){ statModus = b.getAttribute("data-statmodus"); neu(); }); });
+  app.querySelectorAll("[data-statgran]").forEach(function(b){ b.addEventListener("click", function(){ statGran = b.getAttribute("data-statgran"); neu(); }); });
 }
 function recentExercises(days){
   var since = Date.now() - days*86400000, out = {};

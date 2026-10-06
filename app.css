@@ -1984,3 +1984,4 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .heat-legende{ display:flex; align-items:center; justify-content:flex-end; gap:5px; margin-top:4px; }
 .heat-legende small{ font-size:10px; color:var(--text-dim); }
 .heat-legende .hz{ width:14px; height:14px; aspect-ratio:auto; border-radius:4px; }
+.stat-gran{ justify-content:flex-start; margin:-2px 0 12px; }
