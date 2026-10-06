@@ -3570,7 +3570,11 @@ function renderStats(){
   function dauer(sek){ return sek >= 60 ? fmtDuration(Math.round(sek/60)*60) : sek > 0 ? "<1 Min" : "–"; }
   var besA = besucheAlle(hist);
   var montag = new Date(); montag.setHours(0, 0, 0, 0); montag = montag.getTime() - ((new Date().getDay() + 6) % 7)*tag;
-  var n7 = besA.filter(function(b){ return b.von >= montag; }).length, nV = besA.filter(function(b){ return b.von >= montag - 7*tag && b.von < montag; }).length;   // diese Woche (ab Montag) und die Woche davor
+  function trainingsTage(von, bis){   // verschiedene Tage mit Training (nicht Einheiten): ein Tag zählt einmal, egal wie viele Trainings
+    var o = {}; besA.forEach(function(b){ if(b.von >= von && b.von < bis){ var dd = new Date(b.von); o[dd.getFullYear()+"-"+dd.getMonth()+"-"+dd.getDate()] = 1; } });
+    return Object.keys(o).length;
+  }
+  var n7 = trainingsTage(montag, jetzt + tag), nV = trainingsTage(montag - 7*tag, montag);   // Trainingstage diese Woche (ab Montag) und in der Woche davor
   var ziel = clamp(Math.round(+s.wochenZiel) || 3, 1, 7);
   var fr = jetzt;
   Object.keys(s.statW || {}).forEach(function(k){ var tt = new Date(k+"T00:00:00").getTime(); if(tt < fr) fr = tt; });

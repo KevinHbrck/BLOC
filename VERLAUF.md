@@ -90,3 +90,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Statistik › Bewegungsempfehlung**: Bewegung dieser Woche (Ziel 150 min) und Krafttage (Ziel 2) als Balken, mit Link zu den Quellen; Mobility & Stretch zählt nicht mit
 - **`docs/FACHPRUEFUNG.md`**: Checkliste für eine Prüfung der Inhalte durch eine Fachperson
 - **Figur Skater Jumps** neu nach dem seitlichen Ausfallschritt (Standbein gebeugt, anderes Bein seitlich gestreckt, Hand Richtung Fuß; Vorderansicht); **Pistol Squat**: Spielbein in der Ausgangshaltung nach vorn gestreckt. Entwicklungshilfe `?dev` (`window.BLOC_DEV`) zum Prüfen der Figuren. Fassung 2026-10-02-46
+
+## 2026-10-06 · Wochenziel zählt Trainingstage
+
+- Das Wochenziel (1–7) und der Ring zählen jetzt **verschiedene Tage mit Training**, nicht mehr Einheiten: mehrere Trainings am selben Tag sind ein Tag; der Vergleich mit der Vorwoche zählt ebenfalls Tage („In der Vorwoche: 4“). Beschriftungen angepasst („Trainingstage diese Woche“, „von 3 Tagen“, „Wochenziel (Tage)“). Fassung 2026-10-02-47
