@@ -1912,3 +1912,13 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .fokus-card .toggle-row{ padding:8px 0; }
 .fokus-leer{ text-align:center; display:grid; gap:12px; }
+/* Fokus kompakt: Chips in einer Zeile; Statistik: Bereichstitel mit Farbpunkt */
+.fokus-card{ padding:12px 14px 8px; }
+.fokus-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+.fokus-chip{ display:inline-flex; align-items:center; gap:7px; padding:8px 12px; border-radius:999px; border:1px solid var(--border); background:none; color:var(--text-dim); font:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+.fokus-chip i{ width:9px; height:9px; border-radius:50%; background:var(--c, var(--text-dim)); opacity:.35; }
+.fokus-chip.an{ color:var(--text); background:var(--sel-bg); border-color:var(--sel-border); }
+.fokus-chip.an i{ opacity:1; }
+.fokus-card .tm-hint{ margin:0; font-size:12px; }
+.stat-bereich{ display:flex; align-items:center; gap:8px; }
+.stat-bereich i{ width:10px; height:10px; border-radius:50%; background:var(--c, var(--text-dim)); }
