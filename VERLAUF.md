@@ -78,3 +78,8 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - **Wochenziel-Ring** statt großer Zahl: Trainings dieser Woche (ab Montag) von einem einstellbaren Ziel (1–7, `settings.wochenZiel`, Standard 3), Ring füllt sich animiert, bei erreichtem Ziel „Wochenziel geschafft!“; Vergleich mit der Vorwoche und Serie als Chips
 - **Balken in Akzentfarbe** (laufende Woche kräftig, frühere zart) mit Aufbau-Animation, Kalender in Akzentfarbe, **Bereichskarten** mit Farbverlauf und drei Kennzahlen (Trainings, Zeit, Zuletzt; Run: Läufe, km, Zuletzt); Werte unter einer halben Minute zeigen „<1“ statt „0“. Fassung 2026-10-02-44
+
+## 2026-10-06 · Favoriten tragen wieder die Farbe ihres Bereichs
+
+- Favoriten auf der Startseite waren durch eine Designregel (`.list-item .playbtn.bl` → Air-Blau) wieder alle blau. Jetzt: **Air blau** (`tp`), **Studio-Pläne violett** (`st`), **Timer-Workouts und Blöcke hellblau** (`ti`), Summit gold, Mobility grün. Fassung 2026-10-02-45
+- Neu im Ordner `promo/`: 30-Sekunden-Werbevideo als HTML (`promo-bloc.html`, gebaut mit `build.sh` aus `promo-template.html` und den Bildschirmfotos in `bilder/`; Musik wird im Browser erzeugt, Aufnahme als MP4/WebM direkt im Browser). Nicht Teil der App-Auslieferung

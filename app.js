@@ -2868,10 +2868,10 @@ function favEntries(){
     var kind = k.split(":")[0], id = k.slice(kind.length+1), e = null;
     if(kind==="tw"){
       var tw = findWorkout(id);
-      if(tw) e = { name:tw.name || t("untitled"), sub:fmtDuration(workoutDuration(tw)), cls:"bl", go:"#play/"+id, ok:tw.items.length > 0 };
+      if(tw) e = { name:tw.name || t("untitled"), sub:fmtDuration(workoutDuration(tw)), cls:"ti", go:"#play/"+id, ok:tw.items.length > 0 };
     } else if(kind==="bl"){
       var bl = findBlock(id);
-      if(bl && state.db.blocks.indexOf(bl) > -1) e = { name:bl.name, sub:blockSpec(bl), cls:"bl", go:"#playblock/"+id, ok:true };
+      if(bl && state.db.blocks.indexOf(bl) > -1) e = { name:bl.name, sub:blockSpec(bl), cls:"ti", go:"#playblock/"+id, ok:true };
     } else if(kind==="lib"){
       var lw = findLibWorkout(id);
       if(lw) e = { name:tplText(lw.name), sub:fmtDuration(workoutDuration(libWorkoutRun(lw))), cls:libIstWarmDehn(lw) ? "ws" : "tp", cover:"lib/"+id, ok:true };
@@ -2880,7 +2880,7 @@ function favEntries(){
       if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:mw.ws ? "ws" : "tp", cover:"my/"+id, ok:mw.items.length > 0 };
     } else if(kind==="plan"){   // Studio › Mein Plan
       var pl = stPlanFind(id);
-      if(pl) e = { name:pl.name, sub:planAnzahl(stPlanIds(pl).length), cls:"bl", go:"#studioplan/"+id, ok:true };
+      if(pl) e = { name:pl.name, sub:planAnzahl(stPlanIds(pl).length), cls:"st", go:"#studioplan/"+id, ok:true };
     } else if(kind==="rep"){    // Summit › eigenes Programm bzw. eigene Einheit
       var rq = repQuelle(id);
       if(rq){ var rr = repQRunden(rq); e = { name:rq.name, sub:(rr===1 ? t("repRound1") : t("repRoundsN", { n:rr }))+" · "+t("repReps", { n:repQWdh(rq) }), cls:"rep", go:"#rep/"+id, ok:true }; }
