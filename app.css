@@ -1903,3 +1903,12 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .run-knoepfe .hold::after{ content:""; position:absolute; inset:0 auto 0 0; width:0; background:currentColor; opacity:.2; pointer-events:none; }
 .run-knoepfe .hold.halten::after{ width:100%; transition:width 3s linear; }
 .run-haltehint{ text-align:center; margin:12px 4px 0; }
+/* Leiste unten: Start · Suche · Statistik · Einstellungen (nur auf den Hauptseiten) */
+.tabbar{ position:fixed; left:0; right:0; bottom:0; z-index:40; display:flex; justify-content:center; gap:4px; padding:6px 10px calc(8px + env(safe-area-inset-bottom)); background:var(--surface); border-top:1px solid var(--border); }
+.tabbar .tab{ flex:1; max-width:140px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 4px 6px; border:0; border-radius:14px; background:none; color:var(--text-dim); font:inherit; font-size:11px; font-weight:600; cursor:pointer; }
+.tabbar .tab .ico{ width:24px; height:24px; display:block; }
+.tabbar .tab .ico svg{ width:24px; height:24px; }
+.tabbar .tab.active{ color:var(--text); background:var(--sel-bg); }
+body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
+.fokus-card .toggle-row{ padding:8px 0; }
+.fokus-leer{ text-align:center; display:grid; gap:12px; }

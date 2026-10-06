@@ -166,3 +166,10 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 
 - **Abdunkeln** steht als eigener, breiter Knopf ganz oben (Mond-Symbol) und ist schon im Countdown möglich (die Zahl läuft im dunklen Bild weiter und geht nahtlos in Zeit und Kilometer über). Nach dem Lauf, auf der Startseite und im Detail ist der dunkle Bildschirm sicher weg (`runDunkelWeg`)
 - **Im normalen Lauf-Bildschirm lösen alle Knöpfe (Abdunkeln, Pause/Weiter, Ansagen, Beenden) erst nach 3 s Gedrückthalten aus** (`runHalten`, `RUN_HALTEN`): der Knopf füllt sich dabei, ein kurzer Tipp tut nichts, Tastatur-Klick löst sofort aus. Hinweis unter den Knöpfen. Aufwecken aus dem Dunkel weiter 2 s halten. Schnelltest 22 Prüfungen. Fassung 2026-10-02-32
+
+## 2026-10-06 · Leiste unten, Statistik, Fokus
+
+- **Leiste unten** (`tabLeiste`, `#tabbar`): Start · Suche · Statistik · Einstellungen, nur auf diesen vier Hauptseiten (in Listen, Editoren und im Training ausgeblendet). Lupe und Zahnrad oben auf der Startseite entfallen
+- **Statistik** (`#stats`, `renderStats`): Training (Trainings und Zeit der letzten 7 Tage, Trainings der letzten 30 Tage), Muskelgruppen der letzten 7 Tage (von der Startseite hierher verlegt) und Run (Läufe, Kilometer, km der letzten 7 Tage, längster Lauf, schnellste und Ø-Pace); alles lokal aus den gespeicherten Daten. Die Wochenzeile „Diese Woche“ bleibt auf der Startseite
+- **Fokus** ganz oben in den Einstellungen: Schalter je Bereich (Air, Studio, Summit, Mobility & Stretch, Run) – ausgeblendete Bereiche verschwinden von der Startseite (`settings.fokusAus`), Daten und Suche bleiben; sind alle aus, zeigt die Startseite einen Hinweis mit Knopf zu den Einstellungen
+- Schnelltest 23 Prüfungen (neu: Leiste, Statistik, Fokus). Fassung 2026-10-02-33
