@@ -179,3 +179,8 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 - **Statistik richtet sich nach dem Fokus**: nur eingeschaltete Bereiche erscheinen, der in den letzten 4 Wochen am meisten genutzte steht oben (bei Gleichstand die Reihenfolge der Startseite). Oben ein Überblick (Trainings und Zeit 7 Tage, Trainings 4 Wochen); je Bereich Trainings, Zeit und „Zuletzt“, bei Air und Studio die Muskelgruppen der letzten 7 Tage; Run mit Läufen, Kilometern, längstem Lauf, Paces und **Kilometern pro Woche** (4 Wochen als Balken). Alles ohne Server
 - **Verlauf merkt sich den Bereich** (`b` = lib/timer/reps/warm/run in `state.db.history`, `bereichVonQuelle`); ältere Einträge ohne `b` werden geschätzt (Studio, sonst mit Übungen = Air, ohne Übungen = Run). Der Kurz-Verlauf hält jetzt 31 statt 14 Tage (`histKeepDays`), damit die 4-Wochen-Zahlen stimmen
 - **Fokus in den Einstellungen kompakt**: fünf Chips in einer Zeile mit Bereichsfarbe statt fünf Schalterzeilen. Schnelltest 23 Prüfungen. Fassung 2026-10-02-34
+
+## 2026-10-06 · Fokus wie Darstellung, Filter starten zugeklappt
+
+- **Fokus** in den Einstellungen im Stil von „Darstellung“: Karte mit Beschriftung „Bereiche auf der Startseite“ und denselben Auswahl-Knöpfen (`.theme-pick`, ausgewählt = an), statt Chips
+- **Filter beginnen zugeklappt**: Air-Filter (`libFilterOpen`), Studio-Filter (`stFilterZu`) und Studio-Timer (`stTimerAuf`) wurden bisher dauerhaft offen gemerkt; sie werden jetzt beim Besuch der Startseite zurückgesetzt, innerhalb eines Besuchs bleibt der Zustand. Fassung 2026-10-02-36

@@ -528,7 +528,7 @@
       pruefe($$(".run-raster").length >= 1 && !$(".woche"), "Statistik ohne Kacheln oder Wochenzeile dort");
       klick('.tabbar [data-nav="#settings"]');
       var fk = await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Fokus in den Einstellungen");
-      pruefe(/Fokus/.test($$(".section-title")[0].textContent) && $$(".fokus-chip").length === 5, "Fokus steht nicht ganz oben oder nicht als Chips");
+      pruefe(/Fokus/.test($$(".section-title")[0].textContent) && $$("[data-fokus]").length === 5, "Fokus steht nicht ganz oben oder nicht als Chips");
       klick(fk);
       pruefe((daten().settings.fokusAus || []).indexOf("run") > -1, "Fokus nicht gespeichert");
       klick('.tabbar [data-nav="#stats"]');
