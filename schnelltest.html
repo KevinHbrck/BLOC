@@ -96,7 +96,7 @@
       klick("[data-introweg]");
       pruefe(!$("#overlayRoot .intro-sheet"), "„Überspringen“ schließt nicht");
     }],
-    ["Startseite: Workouts vorn, vier weitere Bereiche (Lauf [BETA]), Wochenzeile", async function () {
+    ["Startseite: Workouts vorn, vier weitere Bereiche (Lauf), Wochenzeile", async function () {
       await heim();
       pruefe($$(".area-tile").length === 5, "erwartet 5 Bereichs-Kacheln, gefunden " + $$(".area-tile").length);
       pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#library", "Freies Training steht nicht hervorgehoben vorn");
@@ -422,14 +422,14 @@
       await heim();
       pruefe($$(".fav-tile").length >= 1, "Favorit fehlt auf der Startseite");
     }],
-    ["Lauf-Tracker (Beta): Start, GPS-Punkte, Kilometer, Speichern, Verlauf, Löschen", async function () {
+    ["Lauf-Tracker: Start, GPS-Punkte, Kilometer, Speichern, Verlauf, Löschen", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
       await heim();
       var cbs = [], said = [], cb = function (p) { cbs.forEach(function (f) { f(p); }); };   // Positionen und Sprachausgabe werden vorgetäuscht - kein echter Standort, kein Ton
       Object.defineProperty(W, "SpeechSynthesisUtterance", { configurable: true, value: function (t) { this.text = t; } });
       Object.defineProperty(W, "speechSynthesis", { configurable: true, value: { speak: function (u) { if (u.text.trim()) said.push(u.text); }, cancel: function () {}, getVoices: function () { return []; } } });
       Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cbs.push(f); return cbs.length; }, clearWatch: function () {} } });
-      pruefe($('.area-tile[data-nav="#run"]').textContent.indexOf("[BETA]") > -1, "Lauf-Kachel ohne [BETA]");
+      pruefe($('.area-tile[data-nav="#run"]').textContent.indexOf("BETA") < 0, "Lauf-Kachel trägt noch BETA");
       klick($('.area-tile[data-nav="#run"]'));
       klick(await bis(function () { return $("[data-runstart]"); }, 3000, "Lauf starten"));
       await bis(function () { return $("#run-vor") && +$("#run-vor").textContent >= 19; }, 3000, "Countdown ab 20 s");
