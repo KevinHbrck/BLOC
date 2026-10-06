@@ -556,9 +556,9 @@
       W.localStorage.setItem(KEY, JSON.stringify(db));
       await heim();
       klick('.tabbar [data-nav="#stats"]');
-      await bis(function () { return $(".ring-mitte b"); }, 3000, "Statistik");
+      await bis(function () { return $(".sr-mitte b"); }, 3000, "Statistik");
       var erwartet = new Date().getDay() === 1 ? "1" : "2";   // diese Woche (ab Montag): montags liegt der Vortag in der Vorwoche
-      pruefe($(".ring-mitte b").textContent === erwartet, "drei Timer in 40 Minuten sind ein Training: " + $(".ring-mitte b").textContent);
+      pruefe($(".sr-mitte b").textContent === erwartet, "drei Timer in 40 Minuten sind ein Training: " + $(".sr-mitte b").textContent);
       pruefe(/^(40|60)$/.test($(".stat-karte .bchart .bc.jetzt .bw").textContent), "Zeit der laufenden Woche sollte 60 min sein (40 + 20), montags nur 40: " + $(".stat-karte .bchart .bc.jetzt .bw").textContent);
       klick('[data-statgran="monat"]');
       await bis(function () { return $(".stat-karte .bchart .bc small") && /\d\d$/.test($(".stat-karte .bchart .bc small").textContent); }, 2000, "Monatsansicht");

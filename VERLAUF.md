@@ -105,3 +105,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 ## 2026-10-06 · Skater: ruhigere Bewegung
 
 - Skater Jumps: die Bewegung lief über ein aufrechtes Stehen in der Mitte und wirkte wie hektisches Hüpfen. Jetzt: Landung (seitlicher Ausfallschritt) → **tiefer, breiter Stand in der Mitte** → Gegenseite, weich überblendet, Zyklus ca. 1,6 s. Fassung 2026-10-02-50
+
+## 2026-10-06 · Timer-Ring repariert
+
+- Beim laufenden Timer erschien außen ein zweiter, dicker Ring: meine Statistik-CSS (Wochenziel-Ring) nutzte dieselben Klassennamen (`.ring-bg`, `.ring-bar`) wie der Timer und überschrieb dessen dünnen Ring. Der Statistik-Ring heißt jetzt `.stat-ring` / `.sr-bg` / `.sr-bar` / `.sr-mitte`; der Timer sieht wieder aus wie vorher. Lehre: neue Klassen für Statistik/Hilfen mit eigenem Präfix. Fassung 2026-10-02-51

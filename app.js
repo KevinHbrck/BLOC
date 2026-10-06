@@ -3644,9 +3644,9 @@ function renderStats(){
   } else {
     var delta = n7 > nV ? t("statMehr", { n:n7 - nV }) : n7 === nV ? (n7 ? t("statGleich") : "") : t("statWeniger", { n:nV });
     var anteil = Math.min(1, n7/ziel), R = 74, U = 2*Math.PI*R, geschafft = n7 >= ziel;
-    html += '<div class="card stat-hero'+(geschafft ? ' geschafft' : '')+'"><div class="ring" style="--u:'+U.toFixed(1)+';--p:'+(U*anteil).toFixed(1)+'">'+
-      '<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="'+R+'" class="ring-bg"/>'+(anteil > 0 ? '<circle cx="100" cy="100" r="'+R+'" class="ring-bar" transform="rotate(-90 100 100)"/>' : '')+'</svg>'+
-      '<div class="ring-mitte"><b>'+n7+'</b><small>'+esc(t("statRing", { z:ziel }))+'</small></div></div>'+
+    html += '<div class="card stat-hero'+(geschafft ? ' geschafft' : '')+'"><div class="stat-ring" style="--u:'+U.toFixed(1)+';--p:'+(U*anteil).toFixed(1)+'">'+
+      '<svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="'+R+'" class="sr-bg"/>'+(anteil > 0 ? '<circle cx="100" cy="100" r="'+R+'" class="sr-bar" transform="rotate(-90 100 100)"/>' : '')+'</svg>'+
+      '<div class="sr-mitte"><b>'+n7+'</b><small>'+esc(t("statRing", { z:ziel }))+'</small></div></div>'+
       '<div class="sh-text">'+esc(t(geschafft ? "statZielGeschafft" : "statHeroWoche"))+'</div>'+
       '<div class="sh-chips">'+(delta ? '<span class="sh-delta'+(n7 > nV ? ' auf' : '')+'">'+(n7 > nV ? svgIcon('<path d="M6 15l6-6 6 6"/>') : '')+esc(delta)+'</span>' : '')+
         (serie >= 2 ? '<span class="sh-serie">'+svgIcon('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>')+esc(t("statSerie", { n:serie }))+'</span>' : '')+'</div>'+
