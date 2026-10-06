@@ -681,7 +681,7 @@ var JJ_AUF  = qScale(qWith(P_F, { l:[[42,70,33,89,27,89],[58,70,67,89,73,89]], a
 var JJ_LUFT = qShift(qScale(qWith(P_F, { l:[[44,70,40,87,37,92],[56,70,60,87,63,92]], a:[[37,28,29,20],[63,28,71,20]] }), .86), 0, -8);
 /* Skater Jumps: auf einem Bein landen -> Flug durch die Mitte -> auf dem anderen landen */
 var SK_L   = Q(null,[55,42],[55,62],[[66,74,62,89,57,89],[40,74,24,86,19,86]],[[60,58,64,72],[42,50,32,46]],"",true);   // Landung wie beim seitlichen Ausfallschritt: Standbein gebeugt, anderes Bein seitlich gestreckt, Hand reicht Richtung Fuß (Vorderansicht)
-var SK_AIR = Q(null,[50,22],[50,48],[[48,64,46,76,44,79],[52,64,58,74,60,77]],[[40,34,35,44],[60,34,66,42]],"",true);   // Flug: Füße in der Luft, Arme schwingen
+var SK_AIR = Q(null,[50,42],[50,61],[[40,73,36,87,32,87],[60,73,64,87,68,87]],[[46,54,48,64],[54,54,52,64]],"",true);   // Mitte: tiefer, breiter Stand (Gewicht wechselt die Seite), Füße knapp über dem Boden - wirkt wie Gleiten, nicht wie Aufrichten
 /* Lateral Hops: seitlich hin und her, jedes Mal kurz abheben und landen */
 var LH_BODEN = qScale(qWith(P_F, { l:[[47,71,46,89,40,89],[53,71,54,89,60,89]], a:[[42,36,38,48],[58,36,62,48]] }), .86);
 var LH_LUFT  = qShift(qScale(qWith(P_F, { l:[[47,68,46,84,40,86],[53,68,54,84,60,86]], a:[[42,36,38,48],[58,36,62,48]] }), .86), 0, -8);
@@ -696,7 +696,7 @@ var JL_AIR = qShift(Q(null,[50,16],[50,46],[[56,65,53,83,60,85],[44,66,41,84,47,
 var JF_AIR = Q(null,[58,8],[48,34],[[44,52,34,64,36,72]],[[68,8,78,2]]);
 var ILLU_SEQ = {
   "jumping-jacks": { k:[JJ_ZU, JJ_LUFT, JJ_AUF, JJ_LUFT], t:[[.1,.2,"o"],[.03,.2,"i"],[.1,.2,"o"],[.03,.2,"i"]] },
-  "skater-jumps":  { k:[SK_L, SK_AIR, qMirror(SK_L), qMirror(SK_AIR)], t:[[.1,.18,"o"],[.02,.18,"i"],[.1,.18,"o"],[.02,.18,"i"]] },
+  "skater-jumps":  { k:[SK_L, SK_AIR, qMirror(SK_L), SK_AIR], t:[[.14,.34],[0,.34],[.14,.34],[0,.34]] },   // weich von Seite zu Seite (Zyklus ca. 1,6 s), kein Aufrichten dazwischen
   "lateral-hops":  { k:[qShift(LH_BODEN,-12,0), LH_LUFT, qShift(LH_BODEN,12,0), LH_LUFT], t:[[.03,.12,"o"],[.01,.12,"i"],[.03,.12,"o"],[.01,.12,"i"]] },
   /* Fast Feet: flottes Trippeln */
   "fast-feet":     { k:[ILLU_POSES["fast-feet"][0], ILLU_POSES["fast-feet"][1]], t:[[.02,.11],[.02,.11]] },

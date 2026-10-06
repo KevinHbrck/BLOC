@@ -101,3 +101,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Bestleistung bemerken** (Studio): trägt man einen Satz mit mehr als dem bisherigen Bestgewicht ein, zeigt die Karte eine ruhige Zeile „Neue Bestleistung · 120 kg × 10 · vorher 117,5 kg“ (`studioPR`); verschwindet bei „Letzten Satz löschen“ oder beim Verlassen der Karte. Der Verlauf selbst (Kurve, Bestwert, letzte Einheiten) gab es schon
 - **Leichter / Schwerer** in der Übungsinfo („Passt es nicht?“): zwei Knöpfe zur nächst leichteren und nächst schwereren Übung (`LZ_KETTEN` in `daten.js`, 9 Ketten, ca. 35 Übungen; nicht fachlich geprüft, siehe `quellen.html`)
 - Schnelltest 25 Prüfungen. Fassung 2026-10-02-49
+
+## 2026-10-06 · Skater: ruhigere Bewegung
+
+- Skater Jumps: die Bewegung lief über ein aufrechtes Stehen in der Mitte und wirkte wie hektisches Hüpfen. Jetzt: Landung (seitlicher Ausfallschritt) → **tiefer, breiter Stand in der Mitte** → Gegenseite, weich überblendet, Zyklus ca. 1,6 s. Fassung 2026-10-02-50
