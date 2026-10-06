@@ -1973,3 +1973,14 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .bscroll .bchart{ min-width:100%; width:max-content; }
 .bscroll .bc{ flex:1 0 38px; }
 .bscroll .stat-linie{ max-width:none; }
+/* Kalender einklappbar */
+.stat-kal summary{ display:flex; align-items:baseline; gap:10px; cursor:pointer; list-style:none; }
+.stat-kal summary::-webkit-details-marker{ display:none; }
+.stat-kal summary .sk-sub{ margin:0; flex:1; text-align:right; }
+.stat-kal .sk-chev{ width:16px; height:16px; align-self:center; color:var(--text-dim); transition:transform .2s; }
+.stat-kal .sk-chev svg{ width:16px; height:16px; }
+.stat-kal[open] .sk-chev{ transform:rotate(90deg); }
+.stat-kal .heat{ margin-top:14px; }
+.heat-legende{ display:flex; align-items:center; justify-content:flex-end; gap:5px; margin-top:4px; }
+.heat-legende small{ font-size:10px; color:var(--text-dim); }
+.heat-legende .hz{ width:14px; height:14px; aspect-ratio:auto; border-radius:4px; }

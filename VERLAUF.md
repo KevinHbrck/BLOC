@@ -199,3 +199,7 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 ## 2026-10-06 · Statistik: Diagramme verschiebbar
 
 - **Verlauf, Wochenbalken je Bereich, Kilometer pro Woche und Pace-Linie lassen sich nach links wischen**, solange Daten da sind (mindestens 8, höchstens 104 Wochen; startet bei „jetzt“ rechts; Balkenbreite fest, `.bscroll`). Pace-Linie zeigt bis zu 60 Läufe, der Trend-Satz nutzt die letzten 12. Fassung 2026-10-02-39
+
+## 2026-10-06 · Statistik: Kalender einklappbar
+
+- „Letzte 4 Wochen“ ist einklappbar (startet zugeklappt, Zeile zeigt die aktiven Tage), die Tage sind je nach Trainingszeit dunkler (Legende „weniger → mehr Trainingszeit“). Fassung 2026-10-02-40
