@@ -15,6 +15,7 @@ Stand: 2026-10-06 · Fassung 2026-10-02-46
 | Fertige Workouts (Air) und Aufwärm-/Dehnprogramme | 46 Workouts, 13 Programme | `daten.js` (`LIB_WORKOUT_ROWS`) | Ist die Übungsauswahl und Reihenfolge sinnvoll (Belastung, Pausen, Dauer)? Sind Stufen (Leicht/Standard/Fortgeschritten) richtig eingeordnet (`EX_LEVEL`)? |
 | Summit-Programme (Challenges auf Zeit) und Einheiten | 52 Programme, 12 Einheiten à 3 Stufen | `daten.js` (`REP_WORKOUT_ROWS`, `REP_EINHEITEN`) | Sind Wiederholungszahlen und Pausen für die angegebene Stufe vertretbar? (Das sind bewusst harte Selbstvergleichs-Challenges.) |
 | „Überrasch mich“-Regeln | Generator | `app.js` (Suche „spDauerTreffen“, Überrasch-Regeln in der README) | Ist die Mischung (Muskelgruppen reihum, Drücken/Ziehen, Burpee-Variante) vertretbar? |
+| „Leichter / Schwerer“-Ketten | 9 Ketten, ca. 35 Übungen | `daten.js` (`LZ_KETTEN`) | Ist die Reihenfolge von leicht nach schwer fachlich richtig? Fehlen sinnvolle Zwischenstufen (z. B. Knie-Liegestütze)? |
 | Zuordnung Muskelgruppen und Körperregionen | `EX_MUSCLES`, Dehnen-Regionen | `daten.js` | Stimmen Haupt- und Hilfsmuskeln? |
 | Figuren | Strichfiguren je Übung | `daten.js` (`ILLU_POSES`, `ILLU_SEQ`) | Zeigen sie die Ausführung im Wesentlichen richtig? (Prüfansicht: `index.html?dev` und Konsole `BLOC_DEV`, oder Einstellungen › Figuren prüfen) |
 | Bewegungsempfehlung in der Statistik | Statistik-Karte | `app.js` (`statWho…`) | Ist die Darstellung (150 min, 2 Krafttage) richtig und nicht irreführend? |

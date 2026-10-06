@@ -94,3 +94,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 ## 2026-10-06 · Wochenziel zählt Trainingstage
 
 - Das Wochenziel (1–7) und der Ring zählen jetzt **verschiedene Tage mit Training**, nicht mehr Einheiten: mehrere Trainings am selben Tag sind ein Tag; der Vergleich mit der Vorwoche zählt ebenfalls Tage („In der Vorwoche: 4“). Beschriftungen angepasst („Trainingstage diese Woche“, „von 3 Tagen“, „Wochenziel (Tage)“). Fassung 2026-10-02-47
+
+## 2026-10-06 · Drei kleine Hilfen (schlank)
+
+- **„Was ist was?“**: Link neben „Bereiche“ auf der Startseite (`.sec-link`), öffnet fünf Zeilen Klartext zu Air, Studio, Summit, Run, Mobility; die Startseite selbst bleibt unverändert
+- **Bestleistung bemerken** (Studio): trägt man einen Satz mit mehr als dem bisherigen Bestgewicht ein, zeigt die Karte eine ruhige Zeile „Neue Bestleistung · 120 kg × 10 · vorher 117,5 kg“ (`studioPR`); verschwindet bei „Letzten Satz löschen“ oder beim Verlassen der Karte. Der Verlauf selbst (Kurve, Bestwert, letzte Einheiten) gab es schon
+- **Leichter / Schwerer** in der Übungsinfo („Passt es nicht?“): zwei Knöpfe zur nächst leichteren und nächst schwereren Übung (`LZ_KETTEN` in `daten.js`, 9 Ketten, ca. 35 Übungen; nicht fachlich geprüft, siehe `quellen.html`)
+- Schnelltest 25 Prüfungen. Fassung 2026-10-02-49

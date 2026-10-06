@@ -2026,3 +2026,22 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .who-zeile .who-bar{ grid-column:1 / -1; height:8px; border-radius:999px; background:var(--surface-2); overflow:hidden; }
 .who-zeile .who-bar u{ display:block; height:100%; border-radius:999px; background:color-mix(in srgb, var(--accent) 55%, var(--surface-2)); text-decoration:none; }
 .who-zeile.ok .who-bar u{ background:var(--accent); }
+/* „Was ist was?“, Bestleistung, Leichter/Schwerer: kleine, ruhige Ergänzungen */
+.wi-sheet h3{ margin:0 0 10px; }
+.wi-zeile{ display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-top:1px solid var(--border); }
+.wi-zeile:first-of-type{ border-top:0; }
+.wi-zeile .at-ico{ width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex:none; margin:0;
+  background:color-mix(in srgb, var(--c) 16%, transparent); color:var(--c); }
+.wi-zeile .at-ico .ico{ width:20px; height:20px; }
+.wi-zeile b{ display:block; font-size:16px; }
+.wi-zeile small{ display:block; color:var(--text-dim); font-size:13.5px; line-height:1.4; }
+.st-pr{ display:flex; gap:10px; align-items:center; margin-top:10px; padding:10px 12px; border-radius:14px; background:color-mix(in srgb, #f5b82e 18%, var(--surface)); border:1px solid color-mix(in srgb, #f5b82e 45%, var(--border)); }
+.st-pr-stern{ width:30px; height:30px; border-radius:50%; background:#f5b82e; color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex:none; }
+.st-pr b{ display:block; font-size:15px; }
+.st-pr small{ color:var(--text-dim); font-size:13px; }
+.info-lz{ display:flex; gap:8px; margin-bottom:14px; }
+.lz-btn{ flex:1; min-width:0; text-align:left; border:1px solid var(--border); background:var(--surface); color:var(--text); border-radius:14px; padding:9px 12px; font:inherit; cursor:pointer; }
+.lz-btn.s{ text-align:right; }
+.lz-btn small{ display:block; color:var(--text-dim); font-size:11.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; }
+.lz-btn b{ display:block; font-size:14.5px; }
+.lz-leer{ flex:1; }

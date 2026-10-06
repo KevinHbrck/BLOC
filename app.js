@@ -10,7 +10,7 @@ var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_
     LIB_FOKUS_TAUSCH = BLOC_DATEN.LIB_FOKUS_TAUSCH || {},
     STUDIO_GRUPPEN = BLOC_DATEN.STUDIO_GRUPPEN || [], STUDIO_ZIEL = BLOC_DATEN.STUDIO_ZIEL || {};
 var EX_ALIAS = BLOC_DATEN.EX_ALIAS, LIB_CATS = BLOC_DATEN.LIB_CATS, EXERCISE_ROWS = BLOC_DATEN.EXERCISE_ROWS,
-    LIB_WORKOUT_ROWS = BLOC_DATEN.LIB_WORKOUT_ROWS, EX_LEVEL = BLOC_DATEN.EX_LEVEL, EX_EQUIP = BLOC_DATEN.EX_EQUIP, MAIN_CATS = BLOC_DATEN.MAIN_CATS,
+    LIB_WORKOUT_ROWS = BLOC_DATEN.LIB_WORKOUT_ROWS, EX_LEVEL = BLOC_DATEN.EX_LEVEL, EX_EQUIP = BLOC_DATEN.EX_EQUIP, LZ_KETTEN = BLOC_DATEN.LZ_KETTEN || [], MAIN_CATS = BLOC_DATEN.MAIN_CATS,
     EX_MAIN_ROWS = BLOC_DATEN.EX_MAIN_ROWS, EQUIPS = BLOC_DATEN.EQUIPS, EX_SUCH_ALIAS = BLOC_DATEN.EX_SUCH_ALIAS, Q = BLOC_DATEN.Q,
     qSwap = BLOC_DATEN.qSwap, qMirror = BLOC_DATEN.qMirror, qShift = BLOC_DATEN.qShift, qWith = BLOC_DATEN.qWith, gHand = BLOC_DATEN.gHand,
     gDB = BLOC_DATEN.gDB, gKB = BLOC_DATEN.gKB, gBar = BLOC_DATEN.gBar, gBox = BLOC_DATEN.gBox, gWall = BLOC_DATEN.gWall, gPole = BLOC_DATEN.gPole,
@@ -1023,6 +1023,18 @@ function bereichsFarbe(){
   if(/^#(reps|rep|repplay|repedit)(\/|$)/.test(h)) return "var(--rep-color)";
   return "";
 }
+/* Nachbarn in den Leichter/Schwerer-Ketten (Daten: LZ_KETTEN in daten.js) */
+function leichterSchwerer(id){
+  for(var i = 0; i < LZ_KETTEN.length; i++){
+    var k = LZ_KETTEN[i], j = k.indexOf(id);
+    if(j < 0) continue;
+    var l = j > 0 ? k[j-1] : null, s = j < k.length-1 ? k[j+1] : null;
+    if(l && !(findExercise(l) && EX_INFO[l])) l = null;
+    if(s && !(findExercise(s) && EX_INFO[s])) s = null;
+    return l || s ? { l:l, s:s } : null;
+  }
+  return null;
+}
 function openExInfo(exId, live, lib){
   var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe() || (ex && studioFarbe(ex) === "var(--bl-color)" ? "var(--bl-color)" : "");
   if(!ex || !info) return;
@@ -1049,6 +1061,12 @@ function openExInfo(exId, live, lib){
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(p[lang*2+1])+'</div>';
     })()+
     '<div class="info-tip"><b>'+t("tip")+':</b> '+esc(tplText(ex.hint))+'</div>'+
+    (function(){   // Passt es nicht? Eine Zeile mit der leichteren und der schwereren Variante
+      var lz = live ? null : leichterSchwerer(exId);
+      if(!lz) return "";
+      function knopf(id, richtung){ return id ? '<button type="button" class="lz-btn '+richtung+'" data-lz="'+id+'"><small>'+(richtung === "l" ? '‹ '+esc(t("lzLeichter")) : esc(t("lzSchwerer"))+' ›')+'</small><b>'+esc(tplText(findExercise(id).name))+'</b></button>' : '<span class="lz-leer"></span>'; }
+      return '<div class="info-title">'+esc(t("lzTitel"))+'</div><div class="info-lz">'+knopf(lz.l, "l")+knopf(lz.s, "s")+'</div>';
+    })()+
     (lib ? '<div class="info-lib">'+
       '<button type="button" class="tpl-adopt" data-infoblock>'+ICON_PLUS+' '+t("adoptBlock")+'</button>'+
       '<button type="button" class="tpl-hide" data-infohide>'+t("hideEx")+'</button></div>' : '')+
@@ -1068,6 +1086,7 @@ function openExInfo(exId, live, lib){
     root.innerHTML = "";
   }
   root.querySelectorAll("[data-close]").forEach(function(b){ b.addEventListener("click", close); });
+  root.querySelectorAll("[data-lz]").forEach(function(b){ b.addEventListener("click", function(){ var nach = b.getAttribute("data-lz"); close(); openExInfo(nach, false, lib); }); });
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
   if(live){
     var pauseBtn = root.querySelector("[data-infopause]");
@@ -1537,7 +1556,8 @@ function renderHome(){
     '</div>'+
     (favHTML || '<div class="fav-empty">'+t("favEmpty")+'</div>') +
     /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
-    '<div class="section-title">'+t("areas")+' <span class="lbl-hint bs-hinweis">'+esc(t("areasHint"))+'</span></div>'+
+    '<div class="sec-head"><div class="section-title">'+t("areas")+' <span class="lbl-hint bs-hinweis">'+esc(t("areasHint"))+'</span></div>'+
+      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
     bereicheHTML() +
     KODAK_BADGE;
   bindCommon();
@@ -1546,6 +1566,23 @@ function renderHome(){
   if(sp) sp.addEventListener("click", openSurprise);
   bindFavItems(renderHome);
   bindBackupTip();
+  var wib = app.querySelector("[data-wasistwas]");
+  if(wib) wib.addEventListener("click", openWasIstWas);
+}
+/* „Was ist was?“: fünf Zeilen Klartext zu den Bereichen (nur Lesen, nichts wird geändert) */
+function openWasIstWas(){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet wi-sheet" role="dialog" aria-label="'+esc(t("wiTitel"))+'">'+
+    '<h3>'+esc(t("wiTitel"))+'</h3>'+
+    BEREICH_KEYS.map(function(k){
+      var d = bereichDaten(k);
+      return '<div class="wi-zeile" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><div><b>'+esc(d[1])+'</b><small>'+esc(t("wi_"+k))+'</small></div></div>';
+    }).join("")+
+    '<button class="btn btn-secondary" data-ok style="margin-top:12px">'+esc(t("wiOk"))+'</button>'+
+  '</div></div>';
+  function zu(){ root.innerHTML = ""; }
+  root.querySelector("[data-ok]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
 }
 
 function timersSubText(){
@@ -2197,6 +2234,7 @@ function renderStudioPlanGen(){
 
 /* Vorschlag für den nächsten Satz: heute der letzte Satz, sonst Arbeitsgewicht bzw. letztes Mal */
 function studioVorschlag(id){
+  if(studioPR && studioPR.id !== id) studioPR = null;
   var e = studioEintrag(id) || {}, z = studioZiel(id), log = e.log || [], heute = studioTag(Date.now());
   var h = log.length && studioTag(log[log.length-1].at) === heute ? log[log.length-1] : null;
   if(h && h.s.length) return { kg:h.s[h.s.length-1][0], wdh:h.s[h.s.length-1][1] };
@@ -2373,6 +2411,7 @@ function renderStudioBlockKarte(id, ex){
   notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
   studioTimerBinden(id, eintrag);
 }
+var studioPR = null;   // { id, kg, w, vorher } - zeigt nach einem Satz mit neuem Bestgewicht eine ruhige Zeile auf der Karte
 function renderStudioKarte(id){
   var ex = findExercise(id);
   if(!ex){ go("#timers"); return; }
@@ -2410,6 +2449,7 @@ function renderStudioKarte(id){
           '<button type="button" data-wminus>&minus;</button><input type="number" inputmode="numeric" id="st-w" value="'+v.wdh+'"><button type="button" data-wplus>&plus;</button></div></div>'+
       '</div>'+
       '<button type="button" class="btn btn-primary st-los" data-stset>✓ '+esc(t("stSetDone"))+' '+((h ? h.s.length : 0)+1)+'</button>'+
+      (studioPR ? '<div class="st-pr" role="status"><span class="st-pr-stern" aria-hidden="true">★</span><div><b>'+esc(t("stPrTitel"))+'</b><small>'+esc(t("stPrText", { kg:studioKg(studioPR.kg), w:studioPR.w, v:studioKg(studioPR.vorher) }))+'</small></div></div>' : '')+
       '<div class="st-pause" id="st-pause"'+(studioPause && studioPause.id === id ? '' : ' hidden')+'>'+
         '<span>'+esc(t("stPause"))+'</span><b id="st-pause-zeit"></b><button type="button" class="btn btn-secondary" data-stskip>'+esc(t("stSkip"))+'</button></div>'+
       '<div class="st-pausewahl">'+esc(t("stPause"))+': '+[60, 90, 120, 180].map(function(sec){
@@ -2440,8 +2480,11 @@ function renderStudioKarte(id){
   an("[data-stset]", function(){
     var en = eintrag(), jetzt = Date.now(), kg = kgWert(), w = Math.max(1, Math.min(100, parseInt(wIn.value) || 1));
     var l = en.log.length && studioTag(en.log[en.log.length-1].at) === studioTag(jetzt) ? en.log[en.log.length-1] : null;
+    var vorher = 0;   // bisheriges Bestgewicht (vor diesem Satz)
+    en.log.forEach(function(lg){ lg.s.forEach(function(x){ if(x[0] > vorher) vorher = x[0]; }); });
     if(!l){ l = { at:jetzt, s:[] }; en.log.push(l); if(en.log.length > 60) en.log = en.log.slice(-60); }
     l.s.push([kg, w]);
+    studioPR = vorher > 0 && kg > vorher ? { id:id, kg:kg, w:w, vorher:vorher } : null;
     en.kg = kg; en.zuletzt = jetzt;
     studioVerlauf(id, jetzt);
     save();
@@ -2452,6 +2495,7 @@ function renderStudioKarte(id){
   an("[data-stundo]", function(){
     var en = eintrag(), l = en.log[en.log.length-1];
     if(l && studioTag(l.at) === heute){ l.s.pop(); if(!l.s.length) en.log.pop(); }
+    studioPR = null;
     studioPauseStop(); save(); neu();
   });
   an("[data-stup]", function(){ var en = eintrag(); en.kg = stg.kg; en.erhoeht = Date.now(); save(); showToast(t("stRaised", { kg:studioKg(stg.kg) })); neu(); });

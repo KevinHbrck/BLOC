@@ -349,6 +349,19 @@ var EX_INT = {
   "scapular-push-ups":1,"scapular-pull-ups":1,"dead-hang":1,"calf-raises":1,"glute-bridge":1,"deep-squats":1,"squat-hold":1,
   "plank":1,"side-plank":1,"dead-bug":1,"reverse-crunch":1,"sit-ups":1,"toe-touches":1,"triceps-curls":1,"farmer-carry":1
 };
+/* Leichter / Schwerer: Ketten von leicht nach schwer (nur Übungen, die es in BLOC gibt). Jede Übung bekommt Nachbarn aus der ersten Kette, in der sie vorkommt.
+   Bewusst nur ein Hinweis zum Ausprobieren, keine Trainingsplanung - Fachprüfung offen (siehe quellen.html). */
+var LZ_KETTEN = [
+  ["push-ups", "close-grip-push-ups", "diamond-push-ups", "archer-push-ups", "clap-push-ups"],
+  ["inverted-rows", "negative-pull-ups", "chin-ups", "pull-ups", "commando-pull-ups"],
+  ["air-squats", "split-squats", "bulgarian-split-squats", "pistol-assist", "pistol-squats"],
+  ["reverse-lunges", "forward-lunges", "walking-lunges", "jump-lunges"],
+  ["plank-burpees", "burpees", "burpee-squat-jumps", "jump-forward-burpees", "burpee-pull-ups"],
+  ["dead-bug", "plank", "plank-shoulder-taps", "hollow-hold"],
+  ["leg-raises", "hanging-knee-raise", "hanging-leg-raise", "toes-to-bar"],
+  ["glute-bridge", "single-leg-glute-bridge"],
+  ["jump-squats", "jump-forward-squats", "tuck-jumps"]
+];
 var EX_EQUIP = {
   "leg-press":"gym","leg-press-45":"gym","leg-extension":"gym","leg-curl":"gym","adductor-machine":"gym","abductor-machine":"gym",
   "calf-machine":"gym","chest-press-machine":"gym","butterfly":"gym","pullover":"gym db","lat-pulldown":"gym","row-machine":"gym",
@@ -1691,6 +1704,7 @@ window.BLOC_DATEN = {
   LIB_WORKOUT_ROWS:LIB_WORKOUT_ROWS,
   EX_LEVEL:EX_LEVEL,
   EX_EQUIP:EX_EQUIP,
+  LZ_KETTEN:LZ_KETTEN,
   MAIN_CATS:MAIN_CATS,
   EX_MAIN_ROWS:EX_MAIN_ROWS,
   EQUIPS:EQUIPS,

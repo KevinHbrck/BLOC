@@ -574,6 +574,29 @@
       klick('.tabbar [data-nav="#home"]');
       await bis(function () { return $(".woche") && /[12] Training/.test($(".woche").getAttribute("aria-label")); }, 3000, "Wochenzeile zählt Besuche");
     }],
+    ["Kleine Hilfen: „Was ist was?“, Bestleistung, Leichter/Schwerer", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      klick(await bis(function () { return $("[data-wasistwas]"); }, 3000, "Link „Was ist was?“"));
+      await bis(function () { return $$("#overlayRoot .wi-zeile").length === 5; }, 2000, "fünf Zeilen Klartext");
+      klick($("#overlayRoot [data-ok]"));
+      await bis(function () { return !$("#overlayRoot .wi-zeile"); }, 2000, "Hinweis schließt");
+      // Bestleistung: vorheriges Bestgewicht vorgeben, dann einen Satz darüber eintragen
+      var db = daten(); db.settings.studio = db.settings.studio || {};
+      db.settings.stGruppen = []; db.settings.stArten = []; db.settings.stTab = "uebungen";   // keine Filter aus früheren Tests
+      db.settings.studio["leg-press"] = { log: [{ at: Date.now() - 3 * 86400000, s: [[100, 10]] }], kg: 100, zuletzt: Date.now() - 3 * 86400000 };
+      W.localStorage.setItem(KEY, JSON.stringify(db));
+      await heim();
+      klick('[data-nav="#timers"]');
+      klick(await bis(function () { return $$("[data-sttab]").filter(function (b) { return /Übungen/.test(b.textContent); })[0]; }, 3000, "Reiter Übungen im Studio"));
+      klick(await bis(function () { return $('[data-studio="leg-press"]'); }, 3000, "Kachel Beinpresse"));
+      var kg = await bis(function () { return $("#st-kg"); }, 3000, "Studio-Karte");
+      kg.value = "105"; kg.dispatchEvent(new W.Event("input", { bubbles: true })); kg.dispatchEvent(new W.Event("change", { bubbles: true }));
+      klick("[data-stset]");
+      await bis(function () { return $(".st-pr") && /Neue Bestleistung/.test($(".st-pr").textContent) && /vorher 100/.test($(".st-pr").textContent); }, 3000, "Bestleistung wird gemeldet");
+      klick("[data-stundo]");
+      await bis(function () { return !$(".st-pr"); }, 3000, "Hinweis weg nach „Letzten Satz löschen“");
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]
