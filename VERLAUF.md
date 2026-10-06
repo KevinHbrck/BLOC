@@ -184,3 +184,9 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 
 - **Fokus** in den Einstellungen im Stil von „Darstellung“: Karte mit Beschriftung „Bereiche auf der Startseite“ und denselben Auswahl-Knöpfen (`.theme-pick`, ausgewählt = an), statt Chips
 - **Filter beginnen zugeklappt**: Air-Filter (`libFilterOpen`), Studio-Filter (`stFilterZu`) und Studio-Timer (`stTimerAuf`) wurden bisher dauerhaft offen gemerkt; sie werden jetzt beim Besuch der Startseite zurückgesetzt, innerhalb eines Besuchs bleibt der Zustand. Fassung 2026-10-02-36
+
+## 2026-10-06 · Statistik mit Diagrammen, neue Bereichs-Reihenfolge
+
+- **Statistik einladender**: Kopf mit großer Zahl (Trainings in 7 Tagen), Vergleich zum Zeitraum davor und Wochen-Serie; **Verlauf** über 8 Wochen als Balken (umschaltbar Zeit/Trainings); **Kalender** der letzten 4 Wochen (Tage dunkler je Trainingszeit); je Bereich eine Karte mit Wochenbalken in der Bereichsfarbe; Run mit Kilometern pro Woche, **Pace-Verlauf** der letzten Läufe als Linie mit Trend-Satz und Rekorden (längster Lauf, schnellster Kilometer, schnellste Pace); Summit mit „Bestzeiten verbessert“; Muskelgruppen bei Air und Studio. Ohne Daten ein freundlicher Start mit Platzhalter-Balken
+- **Wochensummen** (`settings.statW[Montag] = { n, s, a:{ bereich:{ n, s } } }`): was nach 31 Tagen aus dem Kurz-Verlauf fällt, wird als Wochensumme behalten (höchstens 60 Wochen), damit der Fortschritt über Monate sichtbar bleibt; nur lokal, in Sicherung und Schnappschuss enthalten; Datenschutzseite ergänzt
+- **Reihenfolge der Bereiche**: Air, Studio, Summit, Run, Mobility & Stretch (Standard und einmalige Übernahme `bereicheV`); die Statistik stellt weiterhin den zuletzt am meisten genutzten Bereich nach oben. Schnelltest 23 Prüfungen. Fassung 2026-10-02-37

@@ -525,7 +525,7 @@
       pruefe($$(".tabbar .tab").length === 4 && !$(".topbar [data-nav=\"#settings\"]"), "Leiste mit vier Einträgen fehlt oder Zahnrad noch oben");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent) && $(".tabbar .tab.active") && /Statistik/.test($(".tabbar .tab.active").textContent); }, 3000, "Statistik-Seite mit aktiver Leiste");
-      pruefe($$(".run-raster").length >= 1 && !$(".woche"), "Statistik ohne Kacheln oder Wochenzeile dort");
+      pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 5 && !$(".woche"), "Statistik ohne Kopf, ohne fünf Bereiche oder mit Wochenzeile");
       klick('.tabbar [data-nav="#settings"]');
       var fk = await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Fokus in den Einstellungen");
       pruefe(/Fokus/.test($$(".section-title")[0].textContent) && $$("[data-fokus]").length === 5, "Fokus steht nicht ganz oben oder nicht als Chips");
@@ -533,7 +533,7 @@
       pruefe((daten().settings.fokusAus || []).indexOf("run") > -1, "Fokus nicht gespeichert");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent); }, 3000, "Statistik");
-      pruefe(!$$(".stat-bereich").some(function (e) { return /Run/.test(e.textContent); }) && $$(".stat-bereich").length === 4, "Statistik zeigt ausgeblendeten Bereich oder falsche Anzahl");
+      pruefe(!$$(".stat-bereichkarte").some(function (e) { return /Run/.test(e.querySelector(".sb-name").textContent); }) && $$(".stat-bereichkarte").length === 4, "Statistik zeigt ausgeblendeten Bereich oder falsche Anzahl");
       klick('.tabbar [data-nav="#home"]');
       await bis(function () { return $(".area-tile") && !$('.area-tile[data-nav="#run"]'); }, 3000, "Run von der Startseite verschwunden");
       klick('.area-tile[data-nav="#reps"]');
