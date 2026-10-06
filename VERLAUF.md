@@ -114,3 +114,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - **Suche**: unter dem Suchfeld Kategorien als Chips (Alle · Übungen · Workouts · Challenges · Timer · Bereiche · Erstellen, nach links wischbar). Mit gewählter Kategorie und ohne Suchwort erscheinen alle Einträge dieser Kategorie, mit Suchwort wird darin gesucht; „Alle“ ohne Suchwort zeigt wie bisher den Hinweis (`suchKat`, `suchKategorie`)
 - **„Figuren prüfen“ aus den Einstellungen entfernt** (Zeile, Seite `#figuren`, `renderFiguren`, Schnelltest dazu). Zum Prüfen der Figuren bleibt `index.html?dev` (`window.BLOC_DEV`). Schnelltest 25 Prüfungen. Fassung 2026-10-02-52
+
+## 2026-10-06 · Skater komplett neu
+
+- Skater Jumps neu gezeichnet nach Beschreibung und Zeichnung von WorkoutLabs (<https://workoutlabs.com/exercise-guide/skaters/>; nur als Vorlage für Haltung und Ablauf, Figur selbst gezeichnet): Landung auf einem Bein (Knie gebeugt), Oberkörper nach vorn, anderes Bein gebeugt hinter dem Körper, Gegenarm vor dem Körper; kurzer Flug mit beiden Füßen in der Luft. Der Blick bleibt nach rechts, Beine und Arme tauschen die Rollen (`qSwap`) – kein Umdrehen und kein Aufrichten dazwischen; Zyklus ca. 1,5 s. Fassung 2026-10-02-53

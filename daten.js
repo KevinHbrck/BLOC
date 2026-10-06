@@ -489,8 +489,8 @@ var ILLU_POSES = {
   "high-knees":         [Q(null,[50,20],[50,50],[[68,52,68,70,75,70],[50,70,50,89,58,89]],[[44,32,40,42],[57,30,63,23]]),
                          Q(null,[50,20],[50,50],[[50,70,50,89,58,89],[68,52,68,70,75,70]],[[57,30,63,23],[44,32,40,42]])],
   "jumping-jacks":      [P_F, qWith(P_F,{ l:[[42,70,33,89,27,89],[58,70,67,89,73,89]], a:[[40,16,33,5],[60,16,67,5]] })],
-  "skater-jumps":       [Q(null,[55,42],[55,62],[[66,74,62,89,57,89],[40,74,24,86,19,86]],[[60,58,64,72],[42,50,32,46]],"",true),
-                         qMirror(Q(null,[55,42],[55,62],[[66,74,62,89,57,89],[40,74,24,86,19,86]],[[60,58,64,72],[42,50,32,46]],"",true))],
+  "skater-jumps":       [Q(null,[60,30],[46,55],[[58,70,52,89,59,89],[37,72,22,78,17,79]],[[67,40,72,50],[50,38,42,44]]),
+                         qSwap(Q(null,[60,30],[46,55],[[58,70,52,89,59,89],[37,72,22,78,17,79]],[[67,40,72,50],[50,38,42,44]]))],
   "plank-burpees":      [P_SQH, P_PH],
   "burpee-squat-jumps": [P_PH, P_JUP],
   "frogs":              [qWith(P_DSQ,{ a:[[54,62,58,88]] }), P_JUP],
@@ -680,8 +680,8 @@ var JJ_ZU   = qScale(P_F, .86);
 var JJ_AUF  = qScale(qWith(P_F, { l:[[42,70,33,89,27,89],[58,70,67,89,73,89]], a:[[40,16,33,5],[60,16,67,5]] }), .86);
 var JJ_LUFT = qShift(qScale(qWith(P_F, { l:[[44,70,40,87,37,92],[56,70,60,87,63,92]], a:[[37,28,29,20],[63,28,71,20]] }), .86), 0, -8);
 /* Skater Jumps: auf einem Bein landen -> Flug durch die Mitte -> auf dem anderen landen */
-var SK_L   = Q(null,[55,42],[55,62],[[66,74,62,89,57,89],[40,74,24,86,19,86]],[[60,58,64,72],[42,50,32,46]],"",true);   // Landung wie beim seitlichen Ausfallschritt: Standbein gebeugt, anderes Bein seitlich gestreckt, Hand reicht Richtung Fuß (Vorderansicht)
-var SK_AIR = Q(null,[50,42],[50,61],[[40,73,36,87,32,87],[60,73,64,87,68,87]],[[46,54,48,64],[54,54,52,64]],"",true);   // Mitte: tiefer, breiter Stand (Gewicht wechselt die Seite), Füße knapp über dem Boden - wirkt wie Gleiten, nicht wie Aufrichten
+var SK_L   = Q(null,[60,30],[46,55],[[58,70,52,89,59,89],[37,72,22,78,17,79]],[[67,40,72,50],[50,38,42,44]]);   // Landung auf einem Bein (Knie gebeugt), Oberkörper nach vorn, anderes Bein gebeugt hinter dem Körper, Gegenarm vor dem Körper - nach Beschreibung und Zeichnung von WorkoutLabs (Seitenansicht, Blick nach rechts; hinteres Bein und hinterer Arm heller)
+var SK_AIR = Q(null,[62,28],[48,50],[[58,62,54,74,60,74],[38,64,24,70,19,70]],[[66,38,72,46],[52,36,44,40]]);   // kurzer Flug: beide Füße in der Luft, Körper bleibt vorgeneigt
 /* Lateral Hops: seitlich hin und her, jedes Mal kurz abheben und landen */
 var LH_BODEN = qScale(qWith(P_F, { l:[[47,71,46,89,40,89],[53,71,54,89,60,89]], a:[[42,36,38,48],[58,36,62,48]] }), .86);
 var LH_LUFT  = qShift(qScale(qWith(P_F, { l:[[47,68,46,84,40,86],[53,68,54,84,60,86]], a:[[42,36,38,48],[58,36,62,48]] }), .86), 0, -8);
@@ -696,7 +696,7 @@ var JL_AIR = qShift(Q(null,[50,16],[50,46],[[56,65,53,83,60,85],[44,66,41,84,47,
 var JF_AIR = Q(null,[58,8],[48,34],[[44,52,34,64,36,72]],[[68,8,78,2]]);
 var ILLU_SEQ = {
   "jumping-jacks": { k:[JJ_ZU, JJ_LUFT, JJ_AUF, JJ_LUFT], t:[[.1,.2,"o"],[.03,.2,"i"],[.1,.2,"o"],[.03,.2,"i"]] },
-  "skater-jumps":  { k:[SK_L, SK_AIR, qMirror(SK_L), SK_AIR], t:[[.14,.34],[0,.34],[.14,.34],[0,.34]] },   // weich von Seite zu Seite (Zyklus ca. 1,6 s), kein Aufrichten dazwischen
+  "skater-jumps":  { k:[SK_L, SK_AIR, qSwap(SK_L), qSwap(SK_AIR)], t:[[.16,.3],[0,.3],[.16,.3],[0,.3]] },   // Blick bleibt rechts, die Beine und Arme tauschen die Rollen (Zyklus ca. 1,5 s)
   "lateral-hops":  { k:[qShift(LH_BODEN,-12,0), LH_LUFT, qShift(LH_BODEN,12,0), LH_LUFT], t:[[.03,.12,"o"],[.01,.12,"i"],[.03,.12,"o"],[.01,.12,"i"]] },
   /* Fast Feet: flottes Trippeln */
   "fast-feet":     { k:[ILLU_POSES["fast-feet"][0], ILLU_POSES["fast-feet"][1]], t:[[.02,.11],[.02,.11]] },
