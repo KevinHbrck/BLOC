@@ -234,19 +234,18 @@
       klick('[data-nav="#settings"]');
       await bis(function () { return $("[data-export]"); }, 3000, "Sicherung in den Einstellungen");
     }],
-    ["Figuren prüfen: Seite, markieren, Notiz, Filter", async function () {
+    ["Suche: Kategorien filtern, ohne Suchwort alle Einträge einer Kategorie", async function () {
       await heim();
-      klick('[data-nav="#settings"]');
-      klick(await bis(function () { return $('[data-nav="#figuren"]'); }, 3000, "Eintrag in den Einstellungen"));
-      await bis(function () { return $$(".fig-karte").length > 100; }, 3000, "Figuren");
-      klick('[data-figflag="pull-ups"]');
-      var f = await bis(function () { return $('[data-fignotiz="pull-ups"]'); }, 2000, "Notizfeld");
-      eingeben(f, "Test");
-      pruefe(/\(1\)/.test($("[data-figshare]").textContent), "Teilen-Knopf zählt nicht mit");
-      klick('[data-figfilter="markiert"]');
-      pruefe($$(".fig-karte").length === 1, "Filter „Markierte“ zeigt " + $$(".fig-karte").length);
-      klick('[data-figflag="pull-ups"]');
-      pruefe($$(".fig-karte").length > 100, "nach dem Entmarkieren nicht zurück bei allen");
+      klick('.tabbar [data-nav="#search"]');
+      await bis(function () { return $$("[data-srkat]").length === 7; }, 3000, "sieben Kategorien");
+      klick('[data-srkat="uebungen"]');
+      await bis(function () { return $$("[data-sr]").length > 100; }, 3000, "Kategorie Übungen zeigt alle Übungen");
+      eingeben($("#gs-q"), "burpee");
+      var n = await bis(function () { var l = $$("[data-sr]"); return l.length && l.length < 10 && l; }, 3000, "Suche in der Kategorie Übungen");
+      pruefe(!$$(".section-title").some(function (e) { return /Bereiche|Challenges/.test(e.textContent); }), "Treffer anderer Kategorien in Übungen");
+      klick('[data-srkat="alle"]');
+      eingeben($("#gs-q"), "");
+      await bis(function () { return $(".rep-intro") && !$$("[data-sr]").length; }, 3000, "Alle + leer = Hinweistext");
     }],
     ["Freies Training (Studio): Karte, Satz eintragen, Pause, Steigerung", async function () {
       await heim();

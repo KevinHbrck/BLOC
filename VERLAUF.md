@@ -109,3 +109,8 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 ## 2026-10-06 · Timer-Ring repariert
 
 - Beim laufenden Timer erschien außen ein zweiter, dicker Ring: meine Statistik-CSS (Wochenziel-Ring) nutzte dieselben Klassennamen (`.ring-bg`, `.ring-bar`) wie der Timer und überschrieb dessen dünnen Ring. Der Statistik-Ring heißt jetzt `.stat-ring` / `.sr-bg` / `.sr-bar` / `.sr-mitte`; der Timer sieht wieder aus wie vorher. Lehre: neue Klassen für Statistik/Hilfen mit eigenem Präfix. Fassung 2026-10-02-51
+
+## 2026-10-06 · Suche mit Kategorien, „Figuren prüfen“ entfernt
+
+- **Suche**: unter dem Suchfeld Kategorien als Chips (Alle · Übungen · Workouts · Challenges · Timer · Bereiche · Erstellen, nach links wischbar). Mit gewählter Kategorie und ohne Suchwort erscheinen alle Einträge dieser Kategorie, mit Suchwort wird darin gesucht; „Alle“ ohne Suchwort zeigt wie bisher den Hinweis (`suchKat`, `suchKategorie`)
+- **„Figuren prüfen“ aus den Einstellungen entfernt** (Zeile, Seite `#figuren`, `renderFiguren`, Schnelltest dazu). Zum Prüfen der Figuren bleibt `index.html?dev` (`window.BLOC_DEV`). Schnelltest 25 Prüfungen. Fassung 2026-10-02-52

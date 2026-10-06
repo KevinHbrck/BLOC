@@ -1315,7 +1315,6 @@ function render(){
   if(route==="settings") return renderSettings();
   if(route==="search") return renderSearch();
   if(route==="stats") return renderStats();
-  if(route==="figuren") return renderFiguren();
   if(route==="studio") return renderStudioKarte(parts[1]);
   if(route==="install") return renderInstallGuide();
   if(route==="play") return startPlayer(parts[1]);
@@ -1454,9 +1453,20 @@ function surpriseCardHTML(gross){
    Lupe auf der Startseite (neben dem Zahnrad): durchsucht Übungen, Workouts (Air und eigene), Challenges (Summit),
    Timer-Workouts, Blöcke, die Bereiche und Aktionen wie „Neuer Block“. Das Feld bleibt stehen, nur die Treffer werden neu gezeichnet. */
 var gesamtQuery = "";
+/* Kategorien der Suche: ordnet die Gruppen der Treffer sechs Kategorien zu (Chips unter dem Suchfeld) */
+var suchKat = "alle";
+var SUCH_KATEGORIEN = ["alle", "uebungen", "workouts", "challenges", "timer", "bereiche", "erstellen"];
+function suchKategorie(gruppe){
+  if(gruppe === t("libExercises")) return "uebungen";
+  if(gruppe === t("workouts") || gruppe === t("mineMy")) return "workouts";
+  if(gruppe === t("srChallenges") || gruppe === t("srOwnChall")) return "challenges";
+  if(gruppe === t("mineTimer") || gruppe === t("mineBlocks")) return "timer";
+  if(gruppe === t("srAreas")) return "bereiche";
+  return "erstellen";
+}
 function gesamtEintraege(){
   var l = [];
-  function add(gruppe, titel, sub, text, fn){ l.push({ g:gruppe, titel:titel, sub:sub || "", text:titel+" "+(sub || "")+" "+(text || ""), fn:fn }); }
+  function add(gruppe, titel, sub, text, fn){ l.push({ g:gruppe, k:suchKategorie(gruppe), titel:titel, sub:sub || "", text:titel+" "+(sub || "")+" "+(text || ""), fn:fn }); }
   var s = state.db.settings, neu = t("create");
   // Aktionen (auch Erstellen von Blöcken, Timer-Workouts, Workouts, Übungen, Challenges)
   add(neu, t("newBlock"), t("mineBlocks"), "block timer intervall erstellen anlegen neu create new", function(){ go("#block/"+createBlock().id); });
@@ -1513,13 +1523,16 @@ function renderSearch(){
   app.innerHTML =
     topbar(t("srTitle"), { back:"#home" }) +
     searchHTML(gesamtQuery, "gs", t("srPh")) +
+    '<div class="lib-chips sr-kats">'+SUCH_KATEGORIEN.map(function(k){
+      return '<button type="button" class="lib-chip'+(suchKat === k ? ' active' : '')+'" data-srkat="'+k+'" aria-pressed="'+(suchKat === k)+'">'+esc(t("srKat_"+k))+'</button>';
+    }).join("")+'</div>'+
     '<div id="gs-res"></div><div style="height:40px"></div>';
   bindCommon();
   var feld = app.querySelector("#gs-q"), res = app.querySelector("#gs-res");
   function zeigen(){
-    var w = suchNorm(gesamtQuery);
-    if(!w){ res.innerHTML = '<div class="rep-intro">'+esc(t("srHint"))+'</div>'; return; }
-    var treffer = alle.filter(function(e){ return suchPasst(e.text, gesamtQuery); });
+    var w = suchNorm(gesamtQuery), gewaehlt = suchKat !== "alle";
+    if(!w && !gewaehlt){ res.innerHTML = '<div class="rep-intro">'+esc(t("srHint"))+'</div>'; return; }
+    var treffer = alle.filter(function(e){ return (!gewaehlt || e.k === suchKat) && (!w || suchPasst(e.text, gesamtQuery)); });   // ohne Suchwort zeigt eine Kategorie alle ihre Einträge
     if(!treffer.length){ res.innerHTML = '<div class="empty" style="padding:30px 20px;">'+esc(t("noResult"))+'</div>'; return; }
     var html = "", gruppe = null, n = 0, reihe = [];
     treffer.forEach(function(e){ if(reihe.indexOf(e.g) < 0) reihe.push(e.g); e.n = suchPasst(e.titel, gesamtQuery) ? 0 : 1; });
@@ -1528,7 +1541,7 @@ function renderSearch(){
       return reihe.indexOf(a.e.g) - reihe.indexOf(b.e.g) || a.e.n - b.e.n || a.i - b.i; }).map(function(o){ return o.e; });
     treffer.forEach(function(e, i){
       if(e.g !== gruppe){ gruppe = e.g; n = 0; html += '<div class="section-title">'+esc(gruppe)+'</div>'; }
-      if(++n > 12) return;   // je Gruppe die ersten zwölf; genauer tippen grenzt ein
+      if(!gewaehlt && ++n > 12) return;   // je Gruppe die ersten zwölf; genauer tippen grenzt ein (mit gewählter Kategorie alle)
       html += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'"><div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
         (e.sub ? '<div class="sub">'+esc(e.sub)+'</div>' : '')+'</div><span class="chip chev">'+ICON_CHEV+'</span></div>';
     });
@@ -1540,6 +1553,13 @@ function renderSearch(){
     });
   }
   feld.addEventListener("input", function(){ gesamtQuery = feld.value; zeigen(); });
+  app.querySelectorAll("[data-srkat]").forEach(function(b){
+    b.addEventListener("click", function(){
+      suchKat = b.getAttribute("data-srkat");
+      app.querySelectorAll("[data-srkat]").forEach(function(x){ var an = x === b; x.classList.toggle("active", an); x.setAttribute("aria-pressed", String(an)); });
+      zeigen();
+    });
+  });
   zeigen();
   if(!gesamtQuery) feld.focus();
 }
@@ -6157,58 +6177,6 @@ document.addEventListener("visibilitychange", function(){
   if(document.visibilityState === "visible" && repRun && repRun.start && !repRun.ende && !repRun.pauseAb) requestWakeLock();
 });
 
-/* ============ Figuren prüfen ============
-   Alle Übungen mit Figur, nach Hauptkategorie. Tippen öffnet die Übungsinfo (bewegt, ggf. zweite Ansicht).
-   „Unklar“ markiert eine Figur, optional mit Notiz: settings.figurNotiz = { Übungs-ID: "Notiz" }.
-   „Markierte teilen“ gibt die Liste als Text weiter (Teilen-Menü, sonst Zwischenablage). */
-var figNurMarkierte = false;
-function renderFiguren(){
-  var s = state.db.settings, notiz = s.figurNotiz || (s.figurNotiz = {});
-  var n = Object.keys(notiz).length;
-  if(!n) figNurMarkierte = false;
-  var html = "";
-  MAIN_CATS.forEach(function(c){
-    var exs = EXERCISES.filter(function(ex){ return ex.main === c.id && ILLU[ex.id] && (!figNurMarkierte || ex.id in notiz); });
-    if(!exs.length) return;
-    html += '<div class="section-title">'+esc(tplText(c))+' <span class="lbl-hint">'+exs.length+'</span></div><div class="fig-grid">'+
-      exs.map(function(ex){
-        var an = ex.id in notiz;
-        return '<div class="fig-karte'+(an ? ' an' : '')+'" style="--cat:var(--tp-color)">'+
-          '<button type="button" class="fig-bild" data-figinfo="'+ex.id+'" aria-label="'+esc(tplText(ex.name))+'">'+illuStillHTML(ex.id, "fig-illu")+
-            (ILLU2[ex.id] ? '<span class="fig-2" aria-hidden="true">2</span>' : '')+'</button>'+
-          '<div class="fig-name">'+esc(tplText(ex.name))+'</div>'+
-          '<button type="button" class="fig-flag'+(an ? ' an' : '')+'" data-figflag="'+ex.id+'" aria-pressed="'+an+'">'+(an ? '⚑ ' : '')+esc(t("figFlag"))+'</button>'+
-          (an ? '<input type="text" class="fig-notiz" data-fignotiz="'+ex.id+'" value="'+esc(notiz[ex.id] || "")+'" placeholder="'+esc(t("figNotePh"))+'" maxlength="140">' : '')+
-        '</div>';
-      }).join("")+'</div>';
-  });
-  app.innerHTML =
-    topbar(t("figTitle"), { back:"#settings" }) +
-    '<div class="rep-intro">'+esc(t("figIntro"))+'</div>'+
-    '<div class="theme-pick rep-pick zwei"><button type="button" class="'+(figNurMarkierte ? '' : 'active')+'" data-figfilter="alle">'+esc(t("figAll"))+'</button>'+
-      '<button type="button" class="'+(figNurMarkierte ? 'active' : '')+'" data-figfilter="markiert"'+(n ? '' : ' disabled')+'>'+esc(t("figMarked", { n:n }))+'</button></div>'+
-    (html || '<div class="empty">'+esc(t("figNone"))+'</div>')+
-    '<div style="height:90px"></div>'+
-    '<div class="fig-leiste"><button type="button" class="btn btn-primary" data-figshare'+(n ? '' : ' disabled')+'>'+ICON_SHARE+' '+esc(t("figShare", { n:n }))+'</button></div>';
-  bindCommon();
-  function neu(){ var y = window.scrollY; renderFiguren(); window.scrollTo(0, y); }
-  app.querySelectorAll("[data-figinfo]").forEach(function(b){ b.addEventListener("click", function(){ openExInfo(b.getAttribute("data-figinfo"), false); }); });
-  app.querySelectorAll("[data-figflag]").forEach(function(b){ b.addEventListener("click", function(){
-    var id = b.getAttribute("data-figflag");
-    if(id in notiz) delete notiz[id]; else notiz[id] = "";
-    save(); neu();
-    if(id in notiz){ var f = app.querySelector('[data-fignotiz="'+id+'"]'); if(f) f.focus(); }
-  }); });
-  app.querySelectorAll("[data-fignotiz]").forEach(function(f){ f.addEventListener("input", function(){ notiz[f.getAttribute("data-fignotiz")] = f.value.trim(); save(); }); });
-  app.querySelectorAll("[data-figfilter]").forEach(function(b){ b.addEventListener("click", function(){ figNurMarkierte = b.getAttribute("data-figfilter") === "markiert"; renderFiguren(); window.scrollTo(0, 0); }); });
-  var teilen = app.querySelector("[data-figshare]");
-  teilen.addEventListener("click", function(){
-    var zeilen = Object.keys(notiz).map(function(id){ var ex = findExercise(id); return "- "+(ex ? tplText(ex.name) : id)+" ("+id+")"+(notiz[id] ? ": "+notiz[id] : ""); });
-    var text = t("figShareHead")+"\n"+zeilen.join("\n");
-    if(navigator.share) navigator.share({ title:t("figShareHead"), text:text }).catch(function(e){ if(!e || e.name !== "AbortError") copyText(text, t("figCopied")); });
-    else copyText(text, t("figCopied"));
-  });
-}
 
 /* Adresse der App ohne # und Parameter - die Seite, die man weitergeben kann */
 /* Als Datei geöffnet (file://) gibt es keine teilbare Adresse - dann die veröffentlichte App */
@@ -6300,8 +6268,6 @@ function renderSettings(){
       '<div class="share-card"><div class="share-url" id="share-url">'+esc(appUrl())+'</div>'+
       '<button type="button" class="btn btn-secondary" data-sharecopy>'+t("shareCopy")+'</button></div>',
       '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>')+
-    '<div class="list-item" data-nav="#figuren"><div class="meta"><div class="name">'+esc(t("figTitle"))+'</div>'+
-      '<div class="sub">'+esc(t("figSub"))+'</div></div><span class="chip chev">'+ICON_CHEV+'</span></div>'+
     '<a class="list-item" href="quellen.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
       '<div class="meta"><div class="name">'+t("sourcesRow")+'</div>'+
       '<div class="sub">'+t("sourcesRowSub")+'</div></div>'+
