@@ -1967,3 +1967,9 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .rekorde b{ font-variant-numeric:tabular-nums; }
 .rekorde small{ text-align:right; color:var(--text-dim); font-size:11px; }
 .stat-bereichkarte .ausw{ margin:12px 0 0; padding:0; border:0; background:none; }
+/* Diagramme verschiebbar: horizontal wischen, solange Daten da sind (startet bei „jetzt“ rechts) */
+.bscroll{ overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-width:none; margin:0 -4px; padding:0 4px; }
+.bscroll::-webkit-scrollbar{ display:none; }
+.bscroll .bchart{ min-width:100%; width:max-content; }
+.bscroll .bc{ flex:1 0 38px; }
+.bscroll .stat-linie{ max-width:none; }

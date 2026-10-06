@@ -195,3 +195,7 @@ Den **aktuellen** Stand beschreibt die [README](README.md).
 
 - **„[BETA]“ bei Run entfernt** (Titel, Kachel, Hinweise, Datenschutzseite, Schnelltest)
 - **Statistik**: Run steht als zweitletzter Bereich, Mobility & Stretch als letzter; davor die übrigen nach Nutzung. Die Startseite bleibt unverändert (Air, Studio, Summit, Run, Mobility & Stretch). Fassung 2026-10-02-38
+
+## 2026-10-06 · Statistik: Diagramme verschiebbar
+
+- **Verlauf, Wochenbalken je Bereich, Kilometer pro Woche und Pace-Linie lassen sich nach links wischen**, solange Daten da sind (mindestens 8, höchstens 104 Wochen; startet bei „jetzt“ rechts; Balkenbreite fest, `.bscroll`). Pace-Linie zeigt bis zu 60 Läufe, der Trend-Satz nutzt die letzten 12. Fassung 2026-10-02-39
