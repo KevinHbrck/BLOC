@@ -775,6 +775,8 @@ function illuStillHTML(exId, cls){
 /* Bewegte Figur: zunächst Pose A als Standbild; sobald das SVG im Dokument hängt, baut
    illuSetup() daraus ein Skelett, das zwischen den Posen nur die Gelenkwinkel dreht. */
 var illuReduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+/* Entwicklungshilfe zum Prüfen der Figuren: nur mit ?dev in der Adresse (kein Einfluss auf die App) */
+if(/[?&]dev\b/.test(location.search)) window.BLOC_DEV = { qSVG:qSVG, illuIds:illuIds, POSES:ILLU_POSES, SEQ:ILLU_SEQ };
 function illuHTML(exId, cls, view2){
   var p = view2 ? ILLU2[exId] : ILLU[exId];
   if(!p) return "";
@@ -1050,7 +1052,7 @@ function openExInfo(exId, live, lib){
     (lib ? '<div class="info-lib">'+
       '<button type="button" class="tpl-adopt" data-infoblock>'+ICON_PLUS+' '+t("adoptBlock")+'</button>'+
       '<button type="button" class="tpl-hide" data-infohide>'+t("hideEx")+'</button></div>' : '')+
-    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a></p>'+
+    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
     '<button class="btn btn-secondary" data-close>'+t("close")+'</button>'+
   '</div></div>';
   if(lib){
@@ -2359,7 +2361,7 @@ function renderStudioBlockKarte(id, ex){
     '<div class="section-title">'+esc(t("stNote"))+'</div>'+
     '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
     studioInfoHTML(id, ex)+
-    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a></p>'+
+    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
     '<div style="height:40px"></div>';
   bindCommon();
   function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
@@ -2421,7 +2423,7 @@ function renderStudioKarte(id){
       '<span class="sub">'+studioTimer(id).reps+' × '+studioTimer(id).work+' s · '+esc(t("stRestKurz"))+' '+studioTimer(id).rest+' s</span></span>'+
       '<span class="om-pfeil" aria-hidden="true">▾</span></summary>'+studioTimerKarte(id, "", t("stTimerHint"))+'</details>'+
     studioInfoHTML(id, ex)+
-    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a></p>'+
+    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
     '<div style="height:40px"></div>';
   bindCommon();
   function neu(){ var y = window.scrollY; renderStudioKarte(id); window.scrollTo(0, y); }
@@ -3601,6 +3603,14 @@ function renderStats(){
       '<div class="sh-chips">'+(delta ? '<span class="sh-delta'+(n7 > nV ? ' auf' : '')+'">'+(n7 > nV ? svgIcon('<path d="M6 15l6-6 6 6"/>') : '')+esc(delta)+'</span>' : '')+
         (serie >= 2 ? '<span class="sh-serie">'+svgIcon('<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>')+esc(t("statSerie", { n:serie }))+'</span>' : '')+'</div>'+
       '<div class="sh-ziel"><span>'+esc(t("statZiel"))+'</span><button type="button" data-ziel="-1" aria-label="−">&minus;</button><b>'+ziel+'</b><button type="button" data-ziel="1" aria-label="+">&plus;</button></div></div>';
+    // Bewegungsempfehlung (WHO 2020 und Nationale Empfehlungen 2016): Orientierung, keine Diagnose
+    var woche = besA.filter(function(b){ return b.von >= montag && Object.keys(b.areas).some(function(k){ return k !== "warm"; }); }), kraftTage = {}, minWo = 0;
+    woche.forEach(function(b){ minWo += b.s/60; if(b.areas.lib || b.areas.timer || b.areas.reps){ var dd = new Date(b.von); kraftTage[dd.getFullYear()+"-"+dd.getMonth()+"-"+dd.getDate()] = 1; } });
+    var nKraft = Object.keys(kraftTage).length, nMin = Math.round(minWo);
+    function whoZeile(label, wert, ziel, text){ var p = Math.min(100, Math.round(100*wert/ziel)); return '<div class="who-zeile'+(wert >= ziel ? ' ok' : '')+'"><span>'+esc(label)+'</span><b>'+esc(text)+(wert >= ziel ? ' ✓' : '')+'</b><i class="who-bar"><u style="width:'+p+'%"></u></i></div>'; }
+    html += '<div class="card stat-karte stat-who"><div class="sk-kopf"><b>'+esc(t("statWhoTitel"))+'</b><a class="sk-link" href="quellen.html#belegt" target="_blank" rel="noopener">'+esc(t("sourcesLink"))+'</a></div>'+
+      whoZeile(t("statWhoMin"), nMin, 150, nMin+" / 150 min")+whoZeile(t("statWhoKraft"), nKraft, 2, nKraft+" / 2")+
+      '<div class="sk-unter">'+esc(t("statWhoHint"))+'</div></div>';
     // Verlauf: Woche / Monat / Jahr, nach links wischen für früher
     var zeit = statModus === "zeit";
     function knopf(attr, wert, aktivWert, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktivWert === wert ? 'active' : '')+'">'+esc(text)+'</button>'; }
@@ -6244,6 +6254,11 @@ function renderSettings(){
       '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>')+
     '<div class="list-item" data-nav="#figuren"><div class="meta"><div class="name">'+esc(t("figTitle"))+'</div>'+
       '<div class="sub">'+esc(t("figSub"))+'</div></div><span class="chip chev">'+ICON_CHEV+'</span></div>'+
+    '<a class="list-item" href="quellen.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
+      '<div class="meta"><div class="name">'+t("sourcesRow")+'</div>'+
+      '<div class="sub">'+t("sourcesRowSub")+'</div></div>'+
+      '<span class="chip chev">'+ICON_CHEV+'</span>'+
+    '</a>'+
     '<a class="list-item" href="privacy.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
       '<div class="meta"><div class="name">'+t("privacyRow")+'</div>'+
       '<div class="sub">'+t("privacyRowSub")+'</div></div>'+

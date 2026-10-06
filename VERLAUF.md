@@ -83,3 +83,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - Favoriten auf der Startseite waren durch eine Designregel (`.list-item .playbtn.bl` → Air-Blau) wieder alle blau. Jetzt: **Air blau** (`tp`), **Studio-Pläne violett** (`st`), **Timer-Workouts und Blöcke hellblau** (`ti`), Summit gold, Mobility grün. Fassung 2026-10-02-45
 - Neu im Ordner `promo/`: 30-Sekunden-Werbevideo als HTML (`promo-bloc.html`, gebaut mit `build.sh` aus `promo-template.html` und den Bildschirmfotos in `bilder/`; Musik wird im Browser erzeugt, Aufnahme als MP4/WebM direkt im Browser). Nicht Teil der App-Auslieferung
+
+## 2026-10-06 · Quellen & Substanz, Skater-Figur
+
+- **`quellen.html`** (aus Einstellungen › „Quellen & Hintergrund“, aus den Info-Hinweisen und aus der Statistik verlinkt): ehrliche Vorbemerkung (eigene Zusammenstellungen, nicht fachlich geprüft), Tabelle „woran sich BLOC orientiert“ und 11 geprüfte Quellen (WHO 2020, Nationale Empfehlungen 2016, ACSM 2009 und 2011, Schoenfeld 2016, Buchheit & Laursen 2013, Tabata 1996, Behm 2016, NHS, ACE). Deutsch und Englisch; im Service-Worker-Grundgerüst
+- **Statistik › Bewegungsempfehlung**: Bewegung dieser Woche (Ziel 150 min) und Krafttage (Ziel 2) als Balken, mit Link zu den Quellen; Mobility & Stretch zählt nicht mit
+- **`docs/FACHPRUEFUNG.md`**: Checkliste für eine Prüfung der Inhalte durch eine Fachperson
+- **Figur Skater Jumps** neu nach dem seitlichen Ausfallschritt (Standbein gebeugt, anderes Bein seitlich gestreckt, Hand Richtung Fuß; Vorderansicht); **Pistol Squat**: Spielbein in der Ausgangshaltung nach vorn gestreckt. Entwicklungshilfe `?dev` (`window.BLOC_DEV`) zum Prüfen der Figuren. Fassung 2026-10-02-46

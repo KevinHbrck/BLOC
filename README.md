@@ -66,10 +66,12 @@ die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist r
 | `app.css` | Gestaltung aller Designs |
 | `app.js` | Programmlogik (Oberfläche, Timer, Statistik, Run, Speicher) |
 | `texte.js` | Alle Oberflächentexte Deutsch/Englisch, **ein Schlüssel pro Zeile** (gut zu vergleichen) |
+| `quellen.html` | Quellen und Hintergrund: woran sich BLOC orientiert, was eigene Zusammenstellung ist (aus der App verlinkt) |
 | `daten.js` | Inhalte: Übungen, Workouts, Challenges, Anleitungen, Muskeln, Figuren (`window.BLOC_DATEN`) |
 | `sw.js` | Service Worker für Offline-Betrieb; **einzige Stelle der Versionsnummer** (`FASSUNG`) |
 | `schnelltest.html` | Automatischer Klicktest (nur lokal) |
 | `docs/TESTPLAN.md` | Checkliste für das, was der Browser-Test nicht kann (Ton, GPS) |
+| `docs/FACHPRUEFUNG.md` | Checkliste für eine fachliche Prüfung der Inhalte durch Trainer/Sportwissenschaft/Physiotherapie |
 
 ## Neue Fassung veröffentlichen
 

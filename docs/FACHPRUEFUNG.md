@@ -1,0 +1,34 @@
+# Fachprüfung – was geprüft werden sollte
+
+BLOC ist ein privates Projekt. Die Inhalte sind **eigene Zusammenstellungen**, orientiert an allgemein anerkannten Empfehlungen
+(Quellen: [quellen.html](../quellen.html)), aber **nicht von einer Fachperson freigegeben**. Dieses Dokument ist die Checkliste für eine
+Trainerin, einen Sportwissenschaftler oder eine Physiotherapeutin, die die Inhalte gegenlesen.
+
+Stand: 2026-10-06 · Fassung 2026-10-02-46
+
+## Was zu prüfen ist (nach Wichtigkeit)
+
+| Bereich | Umfang | Wo im Code | Fragen an die Fachperson |
+|---|---|---|---|
+| Übungsbeschreibungen: „So geht's“, Haltung, Vermeiden | ca. 190 Übungen, Deutsch und Englisch | `daten.js` (`EX_INFO` = Schritte, `EX_POSTURE` = Haltung und Vermeiden, je Übungs-Id) | Sind die Anweisungen fachlich richtig und sicher? Fehlen wichtige Warnhinweise? |
+| Studio: Steigerungsvorschlag (doppelte Progression), Wiederholungsbereiche, Pausen | Studio-Karte | `app.js` (Suche „doppelten Progression“: Ziel zweimal hintereinander geschafft → Gewicht hoch) | Ist die Regel für Einsteiger sinnvoll und sicher? Passen die Schrittgrößen (kg)? |
+| Fertige Workouts (Air) und Aufwärm-/Dehnprogramme | 46 Workouts, 13 Programme | `daten.js` (`LIB_WORKOUT_ROWS`) | Ist die Übungsauswahl und Reihenfolge sinnvoll (Belastung, Pausen, Dauer)? Sind Stufen (Leicht/Standard/Fortgeschritten) richtig eingeordnet (`EX_LEVEL`)? |
+| Summit-Programme (Challenges auf Zeit) und Einheiten | 52 Programme, 12 Einheiten à 3 Stufen | `daten.js` (`REP_WORKOUT_ROWS`, `REP_EINHEITEN`) | Sind Wiederholungszahlen und Pausen für die angegebene Stufe vertretbar? (Das sind bewusst harte Selbstvergleichs-Challenges.) |
+| „Überrasch mich“-Regeln | Generator | `app.js` (Suche „spDauerTreffen“, Überrasch-Regeln in der README) | Ist die Mischung (Muskelgruppen reihum, Drücken/Ziehen, Burpee-Variante) vertretbar? |
+| Zuordnung Muskelgruppen und Körperregionen | `EX_MUSCLES`, Dehnen-Regionen | `daten.js` | Stimmen Haupt- und Hilfsmuskeln? |
+| Figuren | Strichfiguren je Übung | `daten.js` (`ILLU_POSES`, `ILLU_SEQ`) | Zeigen sie die Ausführung im Wesentlichen richtig? (Prüfansicht: `index.html?dev` und Konsole `BLOC_DEV`, oder Einstellungen › Figuren prüfen) |
+| Bewegungsempfehlung in der Statistik | Statistik-Karte | `app.js` (`statWho…`) | Ist die Darstellung (150 min, 2 Krafttage) richtig und nicht irreführend? |
+
+## Wie Rückmeldungen festgehalten werden
+
+1. Pro Befund: Übung bzw. Programm (Id), Problem, Vorschlag, ggf. Quelle.
+2. Änderungen werden in `VERLAUF.md` mit Datum und Namen der prüfenden Person (wenn gewünscht) notiert.
+3. Erst wenn eine Fachperson einen Bereich geprüft hat, wird in `quellen.html` und in der App stehen, **welcher** Bereich **wann** und
+   **von wem** geprüft wurde – bis dahin steht dort ausdrücklich „nicht geprüft“.
+
+## Was schon abgesichert ist
+
+- Mengenempfehlungen (WHO 2020, Nationale Empfehlungen 2016), Progression (ACSM 2009), Pausen, Intervall- und Tabata-Zeitschema,
+  Trennung von dynamischem Aufwärmen und Dehnen: mit Quellen belegt (siehe `quellen.html`).
+- Technik-Hinweise sind allgemein üblich formuliert (z. B. „Knie in Fußrichtung“). Einzelne Hinweise wurden **nicht** Satz für Satz gegen
+  eine Quelle geprüft.
