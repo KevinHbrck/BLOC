@@ -7,7 +7,7 @@
  */
 
 /* Einzige Stelle für die Versionsnummer - die App fragt sie per postMessage ab (Einstellungen, ganz unten) */
-var FASSUNG = "2026-10-02-30";
+var FASSUNG = "2026-10-02-32";
 var NETZ_WARTEN = 2500;   // ms - so lange wartet der Start höchstens aufs Netz, wenn es eine gespeicherte Fassung gibt
 var SPEICHER = "sporttimer-" + FASSUNG;
 var GRUNDGERUEST = ["./", "./index.html", "./daten.js", "./app.js", "./app.css", "./manifest.json", "./icon.png", "./icon-180.png", "./privacy.html"];

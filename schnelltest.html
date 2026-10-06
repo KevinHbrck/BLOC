@@ -499,6 +499,26 @@
       pruefe(rr && rr.iv.lauf === 60 && rr.pause > 3000, "Intervall/Pausenzeit nicht gespeichert: " + JSON.stringify(rr && { iv: rr.iv, p: rr.pause }));
       pruefe(/Pausen/.test($(".rep-meta").textContent) && /Intervall/.test($(".rep-meta").textContent), "Detail ohne Intervall-/Pausenzeile");
     }],
+    ["Lauf: Knöpfe im Lauf lösen erst nach 3 s Halten aus", async function () {
+      await heim();
+      var cbs = [];
+      Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cbs.push(f); return cbs.length; }, clearWatch: function () {} } });
+      klick($('.area-tile[data-nav="#run"]'));
+      klick(await bis(function () { return $("[data-runstart]"); }, 3000, "Lauf starten"));
+      klick(await bis(function () { return $("[data-runjetzt]"); }, 3000, "Jetzt starten"));
+      var pb = await bis(function () { return $("[data-runpause]"); }, 3000, "Pause-Knopf");
+      pb.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true })); pb.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true }));
+      pb.dispatchEvent(new W.MouseEvent("click", { bubbles: true, detail: 1 }));
+      await warte(400);
+      pruefe(/Pause/.test(pb.textContent) && !/Weiter/.test(pb.textContent), "kurzer Tipp darf nicht pausieren");
+      pb.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true }));
+      await warte(1500);
+      pruefe(pb.classList.contains("halten") && !/Weiter/.test(pb.textContent), "nach 1,5 s darf noch nichts passiert sein");
+      await bis(function () { return /Weiter/.test($("[data-runpause]").textContent); }, 3000, "Pause nach 3 s Halten");
+      klick("[data-runend]");
+      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Beenden bestätigen"));
+      await bis(function () { return /^#run/.test(W.location.hash) && !W.document.getElementById("run-dunkel"); }, 3000, "nach dem Lauf kein Abdunkeln");
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

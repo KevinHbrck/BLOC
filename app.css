@@ -1895,3 +1895,11 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .rk-p{ text-align:right; font-weight:600; font-variant-numeric:tabular-nums; }
 .rk-p small{ font-weight:400; color:var(--text-dim); font-size:11px; }
 .run-notiz input, .run-notiz textarea{ width:100%; box-sizing:border-box; font:inherit; font-weight:400; font-size:16px; padding:12px 14px; border-radius:12px; } .run-notiz textarea{ min-height:72px; }
+/* Run: Abdunkeln steht als eigener Knopf ganz oben (auch schon im Countdown) */
+.run-knoepfe .run-dunkelbtn{ grid-column:1 / -1; order:-1; display:flex; align-items:center; justify-content:center; gap:8px; }
+.run-dunkelbtn .ico{ width:20px; height:20px; }
+/* Run im Lauf: jeder Knopf löst erst nach 3 s Halten aus (füllt sich dabei) */
+.run-knoepfe .hold{ position:relative; overflow:hidden; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+.run-knoepfe .hold::after{ content:""; position:absolute; inset:0 auto 0 0; width:0; background:currentColor; opacity:.2; pointer-events:none; }
+.run-knoepfe .hold.halten::after{ width:100%; transition:width 3s linear; }
+.run-haltehint{ text-align:center; margin:12px 4px 0; }
