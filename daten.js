@@ -481,6 +481,13 @@ var P_L0    = P_STH;
 var P_L1    = Q(null,[48,32],[48,62],[[66,63,66,89,74,89],[36,85,20,87,18,89]],[[55,48,49,57]]);
 var P_WALK1 = Q(null,[50,20],[50,50],[[57,69,62,89,70,89],[43,69,38,89,46,89]],[[52,34,53,47]]);
 
+/* Skater Jumps in der Vorderansicht (man steht der Figur gegenüber, der Oberkörper bleibt zu uns gedreht - die Bewegung läuft seitlich über das Bild):
+   Landung tief auf einem Bein, der Rücken stark nach unten gebeugt (von vorn: kurzer Rumpf, Kopf tief), die Hand der Standseite reicht Richtung Boden,
+   das andere Bein gekreuzt hinter dem Standbein, der andere Arm schwingt nach außen - dann Flug (bleibt tief), dann Landung auf dem anderen Bein.
+   Die Landung rechts ist das Spiegelbild der Landung links; der Flug zeigt in Sprungrichtung. Es wirkt nicht wie eine Drehung, weil der Rumpf in beiden
+   Hälften zu uns steht. */
+var SK_L   = Q(null,[35,52],[38,68],[[34,78,37,89,31,89],[47,78,29,83,24,84]],[[43,62,37,76],[26,57,19,65]],"",true);
+var SK_AIR = Q(null,[49,46],[51,60],[[44,70,37,78,32,79],[56,70,59,79,64,80]],[[40,54,31,61],[60,54,69,60]],"",true);   // Flug nach links; nach rechts gespiegelt
 var ILLU_POSES = {
   /* Cardio */
   "burpees":            [P_STUP, P_PH],
@@ -489,8 +496,7 @@ var ILLU_POSES = {
   "high-knees":         [Q(null,[50,20],[50,50],[[68,52,68,70,75,70],[50,70,50,89,58,89]],[[44,32,40,42],[57,30,63,23]]),
                          Q(null,[50,20],[50,50],[[50,70,50,89,58,89],[68,52,68,70,75,70]],[[57,30,63,23],[44,32,40,42]])],
   "jumping-jacks":      [P_F, qWith(P_F,{ l:[[42,70,33,89,27,89],[58,70,67,89,73,89]], a:[[40,16,33,5],[60,16,67,5]] })],
-  "skater-jumps":       [Q(null,[60,30],[46,55],[[58,70,52,89,59,89],[37,72,22,78,17,79]],[[67,40,72,50],[50,38,42,44]]),
-                         qSwap(Q(null,[60,30],[46,55],[[58,70,52,89,59,89],[37,72,22,78,17,79]],[[67,40,72,50],[50,38,42,44]]))],
+  "skater-jumps":       [SK_L, qMirror(SK_L)],
   "plank-burpees":      [P_SQH, P_PH],
   "burpee-squat-jumps": [P_PH, P_JUP],
   "frogs":              [qWith(P_DSQ,{ a:[[54,62,58,88]] }), P_JUP],
@@ -679,9 +685,6 @@ function jSeq(k, faktor){ return k.map(function(q){ return qScale(q, faktor || .
 var JJ_ZU   = qScale(P_F, .86);
 var JJ_AUF  = qScale(qWith(P_F, { l:[[42,70,33,89,27,89],[58,70,67,89,73,89]], a:[[40,16,33,5],[60,16,67,5]] }), .86);
 var JJ_LUFT = qShift(qScale(qWith(P_F, { l:[[44,70,40,87,37,92],[56,70,60,87,63,92]], a:[[37,28,29,20],[63,28,71,20]] }), .86), 0, -8);
-/* Skater Jumps: auf einem Bein landen -> Flug durch die Mitte -> auf dem anderen landen */
-var SK_L   = Q(null,[60,30],[46,55],[[58,70,52,89,59,89],[37,72,22,78,17,79]],[[67,40,72,50],[50,38,42,44]]);   // Landung auf einem Bein (Knie gebeugt), Oberkörper nach vorn, anderes Bein gebeugt hinter dem Körper, Gegenarm vor dem Körper - nach Beschreibung und Zeichnung von WorkoutLabs (Seitenansicht, Blick nach rechts; hinteres Bein und hinterer Arm heller)
-var SK_AIR = Q(null,[62,28],[48,50],[[58,62,54,74,60,74],[38,64,24,70,19,70]],[[66,38,72,46],[52,36,44,40]]);   // kurzer Flug: beide Füße in der Luft, Körper bleibt vorgeneigt
 /* Lateral Hops: seitlich hin und her, jedes Mal kurz abheben und landen */
 var LH_BODEN = qScale(qWith(P_F, { l:[[47,71,46,89,40,89],[53,71,54,89,60,89]], a:[[42,36,38,48],[58,36,62,48]] }), .86);
 var LH_LUFT  = qShift(qScale(qWith(P_F, { l:[[47,68,46,84,40,86],[53,68,54,84,60,86]], a:[[42,36,38,48],[58,36,62,48]] }), .86), 0, -8);
@@ -696,7 +699,7 @@ var JL_AIR = qShift(Q(null,[50,16],[50,46],[[56,65,53,83,60,85],[44,66,41,84,47,
 var JF_AIR = Q(null,[58,8],[48,34],[[44,52,34,64,36,72]],[[68,8,78,2]]);
 var ILLU_SEQ = {
   "jumping-jacks": { k:[JJ_ZU, JJ_LUFT, JJ_AUF, JJ_LUFT], t:[[.1,.2,"o"],[.03,.2,"i"],[.1,.2,"o"],[.03,.2,"i"]] },
-  "skater-jumps":  { k:[SK_L, SK_AIR, qSwap(SK_L), qSwap(SK_AIR)], t:[[.16,.3],[0,.3],[.16,.3],[0,.3]] },   // Blick bleibt rechts, die Beine und Arme tauschen die Rollen (Zyklus ca. 1,5 s)
+  "skater-jumps":  { k:[SK_L, qMirror(SK_AIR), qMirror(SK_L), SK_AIR], t:[[.16,.3],[0,.3],[.16,.3],[0,.3]] },   // Landung links → Flug nach rechts → Landung rechts → Flug nach links (Zyklus ca. 1,5 s)
   "lateral-hops":  { k:[qShift(LH_BODEN,-12,0), LH_LUFT, qShift(LH_BODEN,12,0), LH_LUFT], t:[[.03,.12,"o"],[.01,.12,"i"],[.03,.12,"o"],[.01,.12,"i"]] },
   /* Fast Feet: flottes Trippeln */
   "fast-feet":     { k:[ILLU_POSES["fast-feet"][0], ILLU_POSES["fast-feet"][1]], t:[[.02,.11],[.02,.11]] },
