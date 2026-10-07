@@ -146,3 +146,9 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - Skater Jumps jetzt in der **Vorderansicht**: man steht der Figur gegenüber, der Oberkörper bleibt zu uns gedreht, die Bewegung läuft seitlich über das Bild (Landung links → Flug → Landung rechts → Flug zurück). Die Profil-Fassung davor wirkte beim Wechsel der Seite wie eine Drehung um 180°.
 - **Rücken tief**: in der Landung tief auf einem Bein, der Rücken stark nach unten gebeugt (von vorn: kurzer Rumpf, Kopf tief, bleibt auch im Flug tief), die Hand der Standseite reicht Richtung Boden, das andere Bein ist hinter dem Standbein gekreuzt, der andere Arm schwingt nach außen.
 - Daten: `SK_L`/`SK_AIR` (frontal) vor `ILLU_POSES`, Landung rechts per `qMirror`. FASSUNG 2026-10-02-57; Schnelltest 27/27 grün.
+
+## 2026-10-07 · Kleine graue Zusatztexte entfernt
+
+- Startseite: „gedrückt halten zum Sortieren“ neben **Bereiche** entfällt; der Tipp steht jetzt am Ende von „Was ist was?“.
+- „Mehrere möglich“ an den Filtergruppen (Air, Studio, Mobility & Stretch) und im Formular „Eigene Übung“ entfällt - die Chips lassen sich ohnehin einzeln an- und abschalten.
+- Bleiben: die Zahlen hinter Gruppennamen (z. B. „Arme 8“, sie sind Information), die Erklärtexte der ersten drei Besuche mit „?“ und der Hinweis bei leeren Favoriten. FASSUNG 2026-10-02-58; Schnelltest 27/27 grün.

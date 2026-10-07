@@ -590,7 +590,7 @@ function wsRegionFilterHTML(sel, anzahl, art){
   return filterKarteHTML({ offen:!!state.db.settings.wsFilterOpen, toggle:"data-wstoggle", reset:"data-wsfreset", n:sel.length,
     summe:sel.length ? sel.map(function(r){ return t("rg_"+r); }).join(", ") : t(art === "Ex" ? "afAlleEx" : "afAlleWo"),
     zeigen:filterZeigenText(anzahl, art),
-    inhalt:filterChipsHTML(t("afRegion"), t("multiOk"), WS_REGIONEN.map(function(r){
+    inhalt:filterChipsHTML(t("afRegion"), "", WS_REGIONEN.map(function(r){
       return filterChip("data-wsreg", r, sel.indexOf(r) > -1, svgIcon(ico[r]), t("rg_"+r)); }).join("")) });
 }
 function wsRegionBinden(neu){
@@ -1614,7 +1614,7 @@ function renderHome(){
     '</div>'+
     favHTML +
     /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
-    '<div class="sec-head"><div class="section-title">'+t("areas")+' <span class="lbl-hint bs-hinweis">'+esc(t("areasHint"))+'</span></div>'+
+    '<div class="sec-head"><div class="section-title">'+t("areas")+'</div>'+
       '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
     bereicheHTML() +
     KODAK_BADGE;
@@ -1636,6 +1636,7 @@ function openWasIstWas(){
       var d = bereichDaten(k);
       return '<div class="wi-zeile" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><div><b>'+esc(d[1])+'</b><small>'+esc(t("wi_"+k))+'</small></div></div>';
     }).join("")+
+    '<p class="hw-zeile" style="margin-top:12px">'+esc(t("wiSort"))+'</p>'+
     '<button class="btn btn-secondary" data-ok style="margin-top:12px">'+esc(t("wiOk"))+'</button>'+
   '</div></div>';
   function zu(){ root.innerHTML = ""; }
@@ -1918,9 +1919,9 @@ function studioFilterHTML(gruppen, fGr, fArt, anzahl){
     filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t("afAlleEx"),
     zeigen:filterZeigenText(anzahl, "Ex"),
-    inhalt:filterChipsHTML(t("afGruppe"), t("multiOk"), gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+    inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
         return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
-      filterChipsHTML(t("equipHave"), t("multiOk"), STUDIO_ARTEN.map(function(a){
+      filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.map(function(a){
         return filterChip("data-start", a, fArt.indexOf(a) > -1, "", t("stArt_"+a)); }).join("")) });
 }
 function studioFilterBinden(fGr, fArt, neuZeichnen){
@@ -3226,9 +3227,9 @@ function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung){
   return filterKarteHTML({ offen:offen, toggle:'data-'+pre+'toggle', reset:'data-'+pre+'freset', n:namen.length,
     summe:namen.length ? namen.join(", ") : t(uebung ? "afAlleEx" : "afAlleWo"),
     zeigen:filterZeigenText(n, uebung ? "Ex" : "Wo"),
-    inhalt:filterChipsHTML(t("afTraining"), t("multiOk"), LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
+    inhalt:filterChipsHTML(t("afTraining"), "", LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
         return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join(""))+
-      filterChipsHTML(t("equipHave"), t("multiOk"), EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
+      filterChipsHTML(t("equipHave"), "", EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
         return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join(""))+
       '<div class="af-lbl">'+esc(t("sortLabel"))+'</div><div class="fc-seg">'+sortOpts.map(function(o){
         return '<button type="button" class="'+(o[0]===sort?'on':'')+'" data-'+pre+'fsort="'+o[0]+'">'+o[1]+'</button>';
@@ -4542,7 +4543,7 @@ function openSurprise(twId){
         return '<button type="button" class="fc-chip'+(p.anzahl===v?' on':'')+'" data-spanz="'+v+'">'+v+' '+t("spCountUnit")+'</button>'; }).join("")+'</div>'
           : '<label>'+t("spDur")+'</label><div class="sp-chips">'+[10,15,20,30,45,60].map(function(v){
         return '<button type="button" class="fc-chip'+(p.dur===v?' on':'')+'" data-spdur="'+v+'">'+v+' Min</button>'; }).join("")+'</div>')+
-      '<label>'+t("mainCat")+' <span class="lbl-hint">'+esc(t("multiOk"))+'</span></label>'+
+      '<label>'+t("mainCat")+'</label>'+
       mainTilesHTML(p.mains, null, "data-spmain", ["stretch"])+
       '<div class="tm-hint" style="margin-top:-4px;">'+esc(t("spMainHint"))+'</div>'+
       '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
