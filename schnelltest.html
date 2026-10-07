@@ -121,7 +121,7 @@
     ["Suche: „pull ups“, „klimmzug“, „liegestutz“", async function () {
       klick('[data-libtab="exercises"]');
       var q = await bis(function () { return $("#l-q"); }, 3000, "Suchfeld");
-      function namen(x) { eingeben(q, x); return $$(".lib-card").filter(sichtbar).map(function (c) { return (c.querySelector(".name") || {}).textContent || ""; }); }
+      function namen(x) { eingeben(q, x); return $$(".fig-karte").filter(sichtbar).map(function (c) { return (c.querySelector(".fig-name") || {}).textContent || ""; }); }
       pruefe(namen("pull ups").indexOf("Pull-ups") > -1, "„pull ups“ findet Pull-ups nicht");
       pruefe(namen("klimmzug").length >= 5, "„klimmzug“ findet zu wenig");
       pruefe(namen("liegestutz").indexOf("Push-ups") > -1, "„liegestutz“ findet Push-ups nicht");
@@ -433,7 +433,7 @@
       klick('[data-sttab="plan"]');
       klick(await bis(function () { return $("[data-plan]"); }, 3000, "Plan"));
       klick(await bis(function () { return $("[data-planedit]"); }, 3000, "Bearbeiten"));
-      await bis(function () { return $(".air-filter") && $$("[data-planex] .st-sub").length > 20; }, 3000, "Filter und Angaben im Plan-Bau");
+      await bis(function () { return $(".air-filter") && $$("[data-planex] .st-mus").length > 20; }, 3000, "Filter und Angaben im Plan-Bau");
       var alle = $$("[data-planex]").length;
       await filterAuf();
       klick('[data-stgr="beine"]');

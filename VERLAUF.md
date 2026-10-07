@@ -152,3 +152,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - Startseite: „gedrückt halten zum Sortieren“ neben **Bereiche** entfällt; der Tipp steht jetzt am Ende von „Was ist was?“.
 - „Mehrere möglich“ an den Filtergruppen (Air, Studio, Mobility & Stretch) und im Formular „Eigene Übung“ entfällt - die Chips lassen sich ohnehin einzeln an- und abschalten.
 - Bleiben: die Zahlen hinter Gruppennamen (z. B. „Arme 8“, sie sind Information), die Erklärtexte der ersten drei Besuche mit „?“ und der Hinweis bei leeren Favoriten. FASSUNG 2026-10-02-58; Schnelltest 27/27 grün.
+
+## 2026-10-07 · Übungen als quadratische Kacheln mit Muskeln
+
+- **Air › Übungen** und **Mobility & Stretch › Übungen** zeigen die Übungen jetzt wie im Studio als quadratische Kacheln (drei pro Zeile auf dem Handy): Figur, Name und darunter in Kurzform die ersten zwei **Hauptmuskeln** (z. B. „Seitliches Gesäß, Oberschenkel vorn“). Tippen = Übungsinfo (eigene Übung: bearbeiten), ▶ unten links = starten, ☆ = merken, lange drücken = in Workout oder Plan legen. Ausgeblendete Übungen bleiben unten als Zeilen mit „Einblenden“.
+- **Studio** (und Plan-Bau, Workout-Baukasten): dieselbe Muskelzeile unter dem Namen; der Strich „–“ ohne Gewicht entfällt, der letzte Satz steht erst, wenn er eingetragen ist.
+- Die Übungsinfo hat neu den Knopf „Zu Programm hinzufügen“ (früher nur im ⋯-Menü der Zeile). Die Workout-Listen bleiben Zeilen.
+- Schnelltest angepasst (Suche zählt Kacheln, Plan-Bau zählt Muskelzeilen); 27/27 grün. FASSUNG 2026-10-02-59.

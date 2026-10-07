@@ -681,7 +681,7 @@ function uebKachel(o){
   var gewaehlt = o.nr && o.nr.length;
   return '<div class="fig-karte wb-kachel'+(gewaehlt ? ' gewaehlt' : '')+(o.klasse ? ' '+o.klasse : '')+'" role="button" tabindex="0" '+o.attr+
       (o.q ? ' data-q="'+esc(o.q)+'"' : '')+' style="--cat:'+(o.cat || 'var(--accent)')+'"'+(o.nr ? ' aria-pressed="'+!!gewaehlt+'"' : '')+'>'+
-    '<span class="fig-bild">'+(ILLU[o.bild] ? illuHTML(o.bild, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.none)+'</span>')+
+    '<span class="fig-bild">'+(ILLU[o.bild] ? illuHTML(o.bild, "fig-illu") : '<span class="st-ohne">'+(o.ico || svgIcon(EQUIP_ICON.none))+'</span>')+
       (gewaehlt ? '<span class="wb-nr">'+o.nr.join("·")+'</span>' : '')+(o.innen || '')+'</span>'+
     '<span class="fig-name">'+esc(o.name)+'</span>'+(o.unter || '')+'</div>';
 }
@@ -1076,6 +1076,7 @@ function openExInfo(exId, live, lib){
     })()+
     (lib ? '<div class="info-lib">'+
       '<button type="button" class="tpl-adopt" data-infoblock>'+ICON_PLUS+' '+t("adoptBlock")+'</button>'+
+      (lib.zu ? '<button type="button" class="tpl-adopt" data-infozu>'+ICON_PLUS+' '+t("zpAdd")+'</button>' : '')+
       '<button type="button" class="tpl-hide" data-infohide>'+t("hideEx")+'</button></div>' : '')+
     '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
     '<button class="btn btn-secondary" data-close>'+t("close")+'</button>'+
@@ -1084,6 +1085,7 @@ function openExInfo(exId, live, lib){
     root.querySelector("[data-infoblock]").addEventListener("click", function(){
       adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) }));
     });
+    if(lib.zu) root.querySelector("[data-infozu]").addEventListener("click", function(){ close(); lib.zu(); });
     root.querySelector("[data-infohide]").addEventListener("click", function(){
       libHide("ex:"+exId); close(); if(lib.onChange) lib.onChange();
     });
@@ -1899,7 +1901,7 @@ function studioKachel(id){
   if(studioNurBlock(ex)){ var tb = studioTimer(id); sub = tb.reps+" × "+tb.work+" s"; last = null; }
   return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
-    '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>'+
+    '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+(sub === t("stNoData") ? '' : '<span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>')+
     (last ? wochenKurve(studioWochen(id), "st-spark") : '')+'</div>';
 }
 /* Anzahl der Übungen, die der Studio-Filter gerade zeigt (ohne Doppelte aus Favoriten/Zuletzt) */
@@ -2068,6 +2070,13 @@ function studioSub(id){
   if(studioNurBlock(ex)){ var tb = studioTimer(id); return tb.reps+" × "+tb.work+" s"; }
   return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
 }
+/* Unter dem Namen einer Kachel: wofür die Übung da ist - die ersten zwei Hauptmuskeln in Kurzform, klein. Ohne Muskeldaten (eigene Übungen) entfällt die Zeile. */
+function kachelMuskel(ex){ var m = ex && musclesMain(ex); return m ? '<span class="st-mus">'+esc(m.split(", ").slice(0, 2).join(", "))+'</span>' : ''; }
+/* Studio-Kacheln im Plan: Muskeln und - falls schon eingetragen - der letzte Satz bzw. die Zeit (kein „–“ mehr ohne Daten) */
+function studioUnter(id){
+  var sub = studioSub(id);
+  return kachelMuskel(findExercise(id))+(sub === t("stNoData") ? '' : '<span class="st-sub">'+esc(sub)+'</span>');
+}
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
 function renderStudioPlan(){
   if(stGen) return renderStudioPlanGen();
@@ -2096,7 +2105,7 @@ function renderStudioPlan(){
         var ex = findExercise(id);
         // Angaben wie bei Studio › Übungen: letzter Satz bzw. Zeit unter dem Namen, dazu die Wochenkurve
         return ex ? uebKachel({ bild:id, name:tplText(ex.name), attr:'data-planex="'+id+'"', q:exSearchText(ex), cat:studioFarbe(ex), nr:pos[id] || [],
-          unter:'<span class="st-sub">'+esc(studioSub(id))+'</span>' }) : "";
+          unter:studioUnter(id) }) : "";
       }).join("")+'</div></div>';
     });
     html += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
@@ -2109,7 +2118,7 @@ function renderStudioPlan(){
       (ids.length ? auswertungHTML(ids) : '')+
       (ids.length ? '<div class="fig-grid">'+ids.map(function(id, i){
         var ex = findExercise(id);
-        return uebKachel({ bild:id, name:tplText(ex.name), attr:'data-studio="'+id+'"', cat:studioFarbe(ex), nr:[i+1], unter:'<span class="st-sub">'+esc(studioSub(id))+'</span>' });
+        return uebKachel({ bild:id, name:tplText(ex.name), attr:'data-studio="'+id+'"', cat:studioFarbe(ex), nr:[i+1], unter:studioUnter(id) });
       }).join("")+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
       '<div style="height:40px"></div>';
   }
@@ -3152,6 +3161,19 @@ function libWoCard(lw, exs, hidden, dur, mains){
               : favBtn("lib:"+lw.id)+moreBtn("data-womore", lw.id))+
     '</div></div></div>';
 }
+/* Quadratische Übungskachel wie im Studio (Air › Übungen, Mobility & Stretch › Übungen): Figur, Name, darunter die Hauptmuskeln in Kurzform.
+   Tippen = Übungsinfo (eigene Übung: bearbeiten), ▶ unten links = starten, ☆ = merken, lange drücken = in Workout oder Plan legen. */
+function libExKachel(ex){
+  return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:(ex.custom ? 'data-exedit="' : 'data-info="')+ex.id+'" data-exlang="'+ex.id+'"', q:exSearchText(ex),
+    cat:'var(--bereich, '+catVar(ex.cats[0])+')', klasse:'air-kachel', ico:ex.custom ? catIcon(ex.cats[0]) : "",
+    innen:exFavBtn(ex.id)+'<button type="button" class="air-start" data-playex="'+ex.id+'" title="'+esc(t("startBlock"))+'" aria-label="'+esc(t("startBlock"))+'">'+ICON_PLAY+'</button>',
+    unter:kachelMuskel(ex) });
+}
+function airKachelBinden(){   // Enter/Leertaste wie ein Tippen
+  app.querySelectorAll(".air-kachel").forEach(function(el){
+    el.addEventListener("keydown", function(e){ if(e.target === el && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); el.click(); } });
+  });
+}
 function libExCard(ex, hidden, sub){
   var bild = ILLU[ex.id]
     ? '<button type="button" class="illu-btn" data-info="'+ex.id+'" aria-label="'+t("info")+'">'+illuHTML(ex.id, "lib-illu")+'</button>'
@@ -3312,7 +3334,9 @@ function renderLibrary(){
       if(!fuerAir(ex) || !exPasses(ex, cat, equip, [])) return;
       if(libHidden("ex:"+ex.id)){ hiddenCount++; hiddenCards += libExCard(ex, true, exSubText(ex)); }
     });
-    sortedExercises(cat, exSort, equip, mains).forEach(function(ex){ if(fuerAir(ex)){ list += libExCard(ex, false, exSubText(ex)); anzahl++; } });
+    var kacheln = "";
+    sortedExercises(cat, exSort, equip, mains).forEach(function(ex){ if(fuerAir(ex)){ kacheln += libExKachel(ex); anzahl++; } });
+    if(kacheln) list = '<div class="fig-grid">'+kacheln+'</div>';
     fab = fabMenuHTML([{ key:"new", label:t("exNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
   if(!list) list = '<div class="empty" style="padding:40px 20px;">'+t("libEmpty")+'</div>';
@@ -3365,7 +3389,8 @@ function renderLibrary(){
   on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
   app.querySelectorAll("[data-exlang]").forEach(function(el){ langDruck(el, function(){ exZuProgramm(el.getAttribute("data-exlang")); }); });   // lange drücken: in Workout oder Plan legen
   on("[data-surprise]", function(){ openSurprise(); });
-  on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
+  on("[data-info]", function(el){ var id = el.getAttribute("data-info"); openExInfo(id, false, { onChange:neu, zu:function(){ exZuProgramm(id); } }); });
+  airKachelBinden();
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   on("[data-unhideone]", function(el){
     var k = el.getAttribute("data-unhideone");
@@ -4038,7 +4063,7 @@ function renderDraftPage(d, cfg){
   var pos = {};
   d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
   function kachel(ex){
-    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:'var(--bereich, '+catVar(ex.cats[0])+')', nr:pos[ex.id] || [],
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:'var(--bereich, '+catVar(ex.cats[0])+')', nr:pos[ex.id] || [], unter:kachelMuskel(ex),
       innen:'<button type="button" class="wb-i" data-exinfo="'+ex.id+'" aria-label="'+esc(t("info"))+'">i</button>'+exFavBtn(ex.id) });
   }
   // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen
@@ -5615,7 +5640,7 @@ function renderWarmStretch(){
   } else if(tab === "uebungen"){
     var exl = wsUebungen(art).filter(function(ex){ return art !== "dehn" || wsRegionOk(ex.id, regSel); });
     anzahl = exl.length;
-    liste = exl.map(function(ex){ return libExCard(ex, false, exSubText(ex)); }).join("");
+    liste = exl.length ? '<div class="fig-grid">'+exl.map(function(ex){ return libExKachel(ex); }).join("")+'</div>' : "";
   } else {
     (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return mw.ws === art; }).forEach(function(mw){
       var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
@@ -5667,7 +5692,8 @@ function renderWarmStretch(){
   app.querySelectorAll("[data-exlang]").forEach(function(el){ langDruck(el, function(){ exZuProgramm(el.getAttribute("data-exlang"), art); }); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
   on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
-  on("[data-info]", function(el){ openExInfo(el.getAttribute("data-info"), false, { onChange:neu }); });
+  on("[data-info]", function(el){ var id = el.getAttribute("data-info"); openExInfo(id, false, { onChange:neu, zu:function(){ exZuProgramm(id, art); } }); });
+  airKachelBinden();
   on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
   on("[data-exmore]", function(el){
     var ex = findExercise(el.getAttribute("data-exmore"));

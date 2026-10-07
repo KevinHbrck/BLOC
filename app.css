@@ -498,6 +498,14 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .topbar .ex-fav{ font-size:24px; width:44px; height:44px; }
 .st-sub{ font-size:11.5px; color:var(--text-dim); line-height:1.25; margin-top:-2px; }
 .st-sub.an{ color:var(--text); font-weight:600; }
+/* Quadratische Übungskacheln in Air und Mobility & Stretch */
+.air-kachel{ cursor:pointer; user-select:none; -webkit-user-select:none; text-align:left; }
+.air-kachel .fig-bild{ position:relative; }
+.air-kachel .ex-fav{ position:absolute; right:2px; top:2px; }
+.air-start{ position:absolute; left:5px; bottom:5px; width:28px; height:28px; padding:0; border:0; border-radius:50%; background:var(--cat, var(--accent)); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.25); }
+.air-start svg{ width:13px; height:13px; margin-left:1px; }
+.st-mus{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:11px; line-height:1.25; color:var(--text-dim); margin-top:-2px; }
 .st-ohne{ display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-size:30px; opacity:.6; }
 .st-neu{ align-items:center; justify-content:center; gap:8px; border:1.5px dashed var(--border); background:transparent; box-shadow:none; color:var(--text-dim); font:inherit; cursor:pointer; min-height:150px; }
 .st-neu svg{ width:26px; height:26px; }
