@@ -195,7 +195,12 @@ function loadDB(){
     db.history = Array.isArray(parsed.history) ? parsed.history : [];
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
     pruneHistory(db);
-    if(db.settings.bereicheV !== 2){ db.settings.bereiche = ["lib", "timer", "reps", "run", "warm"]; db.settings.bereicheV = 2; }   // einmalig: neue Standard-Reihenfolge übernehmen
+    if(db.settings.bereicheV !== 3){   // einmalig: der Timer ist wieder ein eigener Bereich - bei bestehender Reihenfolge direkt nach Studio einsortieren, sonst Standard
+      var br0 = db.settings.bereicheV === 2 ? selArr(db.settings.bereiche) : [];
+      if(!br0.length) br0 = ["lib", "timer", "intervall", "reps", "run", "warm"];
+      else if(br0.indexOf("intervall") < 0){ var nach = br0.indexOf("timer") > -1 ? br0.indexOf("timer") : br0.indexOf("lib"); br0.splice(nach + 1, 0, "intervall"); }
+      db.settings.bereiche = br0; db.settings.bereicheV = 3;
+    }
     db.settings.theme = migrateTheme(db.settings.theme);
     db.settings.soundStyle = migrateSound(db.settings.soundStyle);
     /* Sprachansagen halten auf den meisten Handys Musik anderer Apps (Spotify) an -
@@ -1408,10 +1413,11 @@ function areaTile(key, href, titel, unter, farbe, art){
     '</div>';
 }
 /* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
-var BEREICH_KEYS = ["lib", "timer", "reps", "run", "warm"];   // Standard-Reihenfolge: Air, Studio, Summit, Run, Mobility & Stretch
+var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Standard-Reihenfolge: Air, Studio, Timer, Summit, Run, Mobility & Stretch
 function bereichDaten(k){
   if(k === "lib") return ["#library", t("library"), t("htLibN", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && fuerWorkout(ex); }).length }), "var(--tp-color)"];
+  if(k === "intervall"){ var tw = state.db.workouts.length, tb = state.db.blocks.length; return ["#intervall", t("tabTimer"), tw || tb ? t("tmQuick", { w:tw, b:tb }) : t("tmQuickLeer"), "var(--ti-color)"]; }
   if(k === "timer") return ["#timers", t("timers"), t("htTimers", { n:Object.keys(STUDIO_NUR).length }), "var(--bl-color)"];
   if(k === "reps") return ["#reps", t("repTitle"), t("htReps"), "var(--rep-color)"];
   if(k === "run") return ["#run", t("runTitle"), run ? t("runLaeuft", { km:runKm(run.dist) }) : t("runTeaser"), "var(--run-color, #e5573f)"];
@@ -1424,14 +1430,6 @@ function bereichReihe(){
 }
 /* Fokus (Einstellungen): Bereiche, die man nicht braucht, verschwinden von der Startseite (settings.fokusAus = Liste der Schlüssel); die Daten bleiben, die Suche findet weiterhin alles */
 function fokusAus(k){ return selArr(state.db.settings.fokusAus).indexOf(k) > -1; }
-/* Timer: Schnellwahl unter den Bereichen (kein Bereich - ohne Fokus, Sortierung und Statistik) */
-function timerSchnellHTML(){
-  var w = state.db.workouts.length, b = state.db.blocks.length;
-  return '<div class="area-gruppe tm-schnell"><div class="area-tile zeile" data-nav="#intervall" role="button" tabindex="0" style="--c:var(--ti-color)">'+
-    '<span class="at-ico">'+svgIcon(HOME_ICON.intervall)+'</span>'+
-    '<span class="at-text"><b class="at-name">'+esc(t("tabTimer"))+'</b><small class="at-sub">'+esc(w || b ? t("tmQuick", { w:w, b:b }) : t("tmQuickLeer"))+'</small></span>'+
-    '<span class="at-chev">'+ICON_CHEV+'</span></div></div>';
-}
 function bereicheHTML(){
   var r = bereichReihe().filter(function(k){ return !fokusAus(k); });
   if(!r.length) return '<div class="card fokus-leer"><div>'+esc(t("fokusAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
@@ -1484,11 +1482,10 @@ function openBereicheSheet(){
   function schliessen(){ root.innerHTML = ""; }
   zeichnen();
 }
-/* „Überrasch mich“: Knopf rechts in der ersten Leiste von Air (in jedem Reiter erreichbar, statt einer großen Karte unter den Reitern).
-   kompakt: nur das Symbol - wenn rechts noch das „?“ steht und der Platz knapp wird. Auf sehr schmalen Handys immer kompakt (CSS). */
-function surprisePilleHTML(kompakt){
-  return '<button type="button" class="sp-pille'+(kompakt ? ' kompakt' : '')+'" data-surprise title="'+esc(t("spSub"))+'" aria-label="'+esc(t("surprise"))+'">'+
-    svgIcon(ICON_UEBERRASCH)+'<span class="sp-txt">'+esc(t("surprise"))+'</span></button>';
+/* „Überrasch mich“: schmale Leiste (eine Zeile) direkt unter den Reitern von Air - das Alleinstellungsmerkmal, aber ohne viel Höhe zu kosten */
+function surpriseLeisteHTML(){
+  return '<button type="button" class="sp-leiste" data-surprise title="'+esc(t("spSub"))+'">'+svgIcon(ICON_UEBERRASCH)+'<b>'+esc(t("surprise"))+'</b>'+
+    '<span class="sp-chev">'+ICON_CHEV+'</span></button>';
 }
 /* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Air, Studio, Mobility & Stretch, Summit) */
 function reiterZeileHTML(farbe, knoepfe){ return '<div class="rz" style="--rz:'+farbe+'">'+knoepfe+'</div>'; }
@@ -1521,7 +1518,7 @@ function gesamtEintraege(){
     (s.myReps || (s.myReps = [])).push(c); save(); go("#repedit/"+c.id);
   });
   // Bereiche
-  [["#library", t("library")], ["#reps", t("repTitle")], ["#run", t("runTitle")], ["#timers", t("timers")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
+  [["#library", t("library")], ["#intervall", t("tabTimer")], ["#reps", t("repTitle")], ["#run", t("runTitle")], ["#timers", t("timers")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
     add(t("srAreas"), p[1], "", "", function(){ go(p[0]); });
   });
   // Workouts aus Air und eigene Workouts
@@ -1621,7 +1618,7 @@ function renderHome(){
     /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
     '<div class="sec-head"><div class="section-title">'+t("areas")+'</div>'+
       '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
-    bereicheHTML() + timerSchnellHTML() +
+    bereicheHTML() +
     KODAK_BADGE;
   bindCommon();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
@@ -3235,10 +3232,13 @@ function filterKarteHTML(o){
       '</div></div>';
   }
   return '<div class="card air-filter'+(o.offen ? ' offen' : '')+'">'+
+    '<div class="af-reihe">'+
     '<button type="button" class="af-kopf" '+o.toggle+' aria-expanded="'+!!o.offen+'">'+svgIcon(ICON_FILTER)+
       '<span class="af-titel"><b>'+t("filter")+'</b><small>'+esc(o.summe)+'</small></span>'+
       (o.n ? '<span class="af-n">'+o.n+'</span>' : '')+
       '<span class="tpl-chev'+(o.offen ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>'+
+    (o.extra || '')+
+    '</div>'+
     body+
   '</div>';
 }
@@ -3260,10 +3260,10 @@ function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung){
     inhalt:filterChipsHTML(t("afTraining"), "", LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
         return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join(""))+
       filterChipsHTML(t("equipHave"), "", EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
-        return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join(""))+
-      '<div class="af-lbl">'+esc(t("sortLabel"))+'</div><div class="fc-seg">'+sortOpts.map(function(o){
-        return '<button type="button" class="'+(o[0]===sort?'on':'')+'" data-'+pre+'fsort="'+o[0]+'">'+o[1]+'</button>';
-      }).join("")+'</div>' });
+        return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join("")),
+    /* Sortierung: kein Block mehr in der Karte, nur ein Schalter „A–Z“ neben der Kopfzeile (aus = die Standardreihenfolge der Liste: Standard bzw. Dauer) */
+    extra:'<button type="button" class="af-az'+(sort === "az" ? ' on' : '')+'" data-'+pre+'fsort="'+(sort === "az" ? sortOpts[0][0] : "az")+'" aria-pressed="'+(sort === "az")+
+      '" title="'+esc(t("afSortAz"))+'" aria-label="'+esc(t("afSortAz"))+'">A&ndash;Z</button>' });
 }
 /* Fokus eines Workouts: passt, wenn der Workout-Fokus gewählt ist oder mindestens ein Drittel der Übungen passt */
 function woFocusOk(focus, exs, cat, id){
@@ -3348,12 +3348,12 @@ function renderLibrary(){
   list += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>';
 
   app.innerHTML =
-    // Erste Leiste: Zurück, Titel, „Überrasch mich“ (Alleinstellungsmerkmal von Air), ggf. „?“, Lupe
-    topbar(t("library"), { back:"#home", right: surprisePilleHTML(!!hw.knopf) + hw.knopf + (tab === "mine" ? '' : lupeHTML("l", libQuery)) }) +
+    topbar(t("library"), { back:"#home", right: hw.knopf + (tab === "mine" ? '' : lupeHTML("l", libQuery)) }) +
     reiterZeileHTML("var(--tp-color)",
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
       '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>')+
+    surpriseLeisteHTML() +   // das Alleinstellungsmerkmal von Air: eine schmale Zeile unter den Reitern
     (tab === "mine" ? '' :
     suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
     (tab === "exercises" ? hw.z(0, "page-hint") : '')+
@@ -3501,11 +3501,13 @@ function renderExEdit(id){
 /* Achtung: pruneHistory läuft schon in loadDB, also bevor diese Zeile ausgeführt wird - deshalb eine Funktion
    statt einer Variablen (eine var wäre dann noch undefined, und der ganze Verlauf fiele beim Laden weg) */
 function histKeepDays(){ return 31; }   // für die Statistik der letzten Wochen; „Überrasch mich“ schaut nur auf wenige Tage zurück
-/* Bereich eines Eintrags: b = "lib" (Air) | "timer" (Studio) | "reps" (Summit) | "warm" (Mobility & Stretch) | "run". Ältere Einträge ohne b werden geschätzt. */
+/* Bereich eines Eintrags: b = "lib" (Air) | "intervall" (Timer) | "timer" (Studio) | "reps" (Summit) | "warm" (Mobility & Stretch) | "run". Ältere Einträge ohne b werden geschätzt
+   (Timer-Workouts und Blöcke, die vor 2026-10-07 gelaufen sind, stehen als Air). */
 function bereichVonEintrag(e){ return e.b || (e.studio ? "timer" : (e.ex && e.ex.length ? "lib" : "run")); }
 function bereichVonQuelle(src){
   var ty = src && src.type;
   if(ty === "studio") return "timer";
+  if(ty === "workout" || ty === "block") return "intervall";   // eigene Timer-Workouts und Blöcke
   if(ty === "libworkout"){ var lw = findLibWorkout(src.id); return libIstWarmDehn(lw) ? "warm" : "lib"; }
   if(ty === "mine"){ var mw = (state.db.myWorkouts || []).filter(function(x){ return x.id === src.id; })[0]; return mw && (mw.ws === "warm" || mw.ws === "dehn") ? "warm" : "lib"; }
   if(ty === "exercise") return exIsMobility(src.id) ? "warm" : "lib";
@@ -3526,7 +3528,7 @@ function pruneHistory(db){
       var woche = function(ts){ var k = wocheKey(ts); return sw[k] || (sw[k] = { bn:0, bs:0, a:{} }); };
       // bn/bs: Besuche aller Bereiche außer Run zusammen; a[bereich]: Besuche je Bereich (Run: jeder Lauf einzeln)
       besuche(alt.filter(function(e){ return bereichVonEintrag(e) !== "run"; })).forEach(function(b){ var w = woche(b.von); w.bn = (w.bn || 0) + 1; w.bs = (w.bs || 0) + b.s; });
-      ["lib", "timer", "reps", "warm", "run"].forEach(function(k){
+      ["lib", "intervall", "timer", "reps", "warm", "run"].forEach(function(k){
         var l = alt.filter(function(e){ return bereichVonEintrag(e) === k; });
         (k === "run" ? l.map(function(e){ return besuche([e])[0]; }) : besuche(l)).forEach(function(b){
           var w = woche(b.von), a = w.a[k] || (w.a[k] = { n:0, s:0 }); a.n++; a.s += b.s;
@@ -3614,7 +3616,7 @@ function besucheAlle(list){
 function statWochenReihe(n, aktiv){
   var mo = new Date(); mo.setHours(0, 0, 0, 0); mo.setDate(mo.getDate() - (mo.getDay() + 6) % 7);
   var sw = state.db.settings.statW || {}, out = [], idx = {};
-  var ohneRun = ["lib", "timer", "reps", "warm"].every(function(k){ return aktiv.indexOf(k) > -1; });
+  var ohneRun = ["lib", "intervall", "timer", "reps", "warm"].every(function(k){ return aktiv.indexOf(k) > -1; });
   for(var i = n-1; i >= 0; i--){
     var d = new Date(mo); d.setDate(d.getDate() - 7*i); var key = wocheKey(d.getTime()), src = sw[key] || {}, ar = src.a || {}, w = { key:key, ab:d.getTime(), n:0, s:0, a:{} };
     Object.keys(ar).forEach(function(b){ if(aktiv.indexOf(b) > -1) w.a[b] = { n:ar[b].n || 0, s:ar[b].s || 0 }; });

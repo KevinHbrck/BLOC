@@ -103,10 +103,11 @@
     }],
     ["Startseite: Workouts vorn, vier weitere Bereiche (Lauf), Wochenzeile", async function () {
       await heim();
-      pruefe($$(".area-tile[data-bereich]").length === 5, "erwartet 5 Bereichs-Kacheln, gefunden " + $$(".area-tile[data-bereich]").length);
-      pruefe($('.tm-schnell [data-nav="#intervall"]'), "Timer-Schnellwahl fehlt auf der Startseite");
+      pruefe($$(".area-tile[data-bereich]").length === 6, "erwartet 6 Bereichs-Kacheln, gefunden " + $$(".area-tile[data-bereich]").length);
+      pruefe($('.area-tile[data-bereich="intervall"][data-nav="#intervall"]'), "Timer fehlt als Bereich auf der Startseite");
       pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#library", "Freies Training steht nicht hervorgehoben vorn");
-      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").length === 4, "die übrigen vier Bereiche fehlen in der Liste");
+      pruefe($$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "lib,timer,intervall,reps,run,warm", "Reihenfolge der Bereiche: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
+      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").length === 5, "die übrigen fünf Bereiche fehlen in der Liste");
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
@@ -119,11 +120,22 @@
       pruefe($(".rz") && !$(".lib-tabs-card") && !$(".surprise-card"), "Reiterzeile fehlt oder die große Karte steht noch da");
       klick('[data-libtab="workouts"]');
       pruefe($$(".lib-card").length >= 20, "zu wenige Workouts: " + $$(".lib-card").length);
-      pruefe($(".topbar .sp-pille[data-surprise]"), "Überrasch mich fehlt in der ersten Leiste (Workouts)");
+      var sl = $(".sp-leiste[data-surprise]");
+      pruefe(sl && !$(".topbar .sp-leiste"), "Überrasch mich fehlt als Leiste unter den Reitern (Workouts)");
+      pruefe(sl.getBoundingClientRect().height <= 50, "Überrasch-mich-Leiste ist nicht schmal: " + Math.round(sl.getBoundingClientRect().height) + " px");
       klick('[data-libtab="exercises"]');
-      await bis(function () { return $(".topbar .sp-pille[data-surprise]") && $$("[data-playex]").length > 50; }, 3000, "Überrasch mich auch im Reiter Übungen");
+      await bis(function () { return $(".sp-leiste[data-surprise]") && $$("[data-playex]").length > 50; }, 3000, "Überrasch mich auch im Reiter Übungen");
+      // Sortierung A–Z: kleiner Schalter in der Kopfzeile der Filterkarte, kein Sortier-Block mehr in der Karte
+      pruefe($(".air-filter .af-az") && !$(".air-filter .fc-seg"), "A–Z-Schalter fehlt oder der Sortier-Block steht noch in der Karte");
+      klick(".af-az");
+      await bis(function () { return $(".af-az.on"); }, 2000, "A–Z an");
+      var namen = $$(".air-kachel .fig-name").map(function (e) { return e.textContent.trim(); }).filter(function (n) { return n; });
+      var sortiert = namen.slice().sort(function (a, b) { return a.localeCompare(b, "de"); });
+      pruefe(namen.length > 50 && namen.join("|") === sortiert.join("|"), "A–Z: Liste ist nicht alphabetisch (" + namen.slice(0, 4).join(", ") + " …)");
+      klick(".af-az");
+      await bis(function () { return !$(".af-az.on"); }, 2000, "A–Z aus");
       klick('[data-libtab="mine"]');
-      await bis(function () { return $(".topbar .sp-pille[data-surprise]") && !$("#l-q"); }, 3000, "Überrasch mich auch im Reiter Meine");
+      await bis(function () { return $(".sp-leiste[data-surprise]") && !$("#l-q"); }, 3000, "Überrasch mich auch im Reiter Meine");
       klick('[data-libtab="workouts"]');
     }],
     ["Suche: „pull ups“, „klimmzug“, „liegestutz“", async function () {
@@ -630,15 +642,15 @@
       pruefe($$(".tabbar .tab").length === 4 && !$(".topbar [data-nav=\"#settings\"]"), "Leiste mit vier Einträgen fehlt oder Zahnrad noch oben");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent) && $(".tabbar .tab.active") && /Statistik/.test($(".tabbar .tab.active").textContent); }, 3000, "Statistik-Seite mit aktiver Leiste");
-      pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 5 && !$(".woche"), "Statistik ohne Kopf, ohne fünf Bereiche oder mit Wochenzeile");
+      pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 6 && !$(".woche"), "Statistik ohne Kopf, ohne sechs Bereiche oder mit Wochenzeile");
       klick('.tabbar [data-nav="#settings"]');
       var fk = await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Fokus in den Einstellungen");
-      pruefe(/Fokus/.test($$(".section-title")[0].textContent) && $$("[data-fokus]").length === 5, "Fokus steht nicht ganz oben oder nicht als Chips");
+      pruefe(/Fokus/.test($$(".section-title")[0].textContent) && $$("[data-fokus]").length === 6, "Fokus steht nicht ganz oben oder nicht als Chips");
       klick(fk);
       pruefe((daten().settings.fokusAus || []).indexOf("run") > -1, "Fokus nicht gespeichert");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent); }, 3000, "Statistik");
-      pruefe(!$$(".stat-bereichkarte").some(function (e) { return /Run/.test(e.querySelector(".sb-name").textContent); }) && $$(".stat-bereichkarte").length === 4, "Statistik zeigt ausgeblendeten Bereich oder falsche Anzahl");
+      pruefe(!$$(".stat-bereichkarte").some(function (e) { return /Run/.test(e.querySelector(".sb-name").textContent); }) && $$(".stat-bereichkarte").length === 5, "Statistik zeigt ausgeblendeten Bereich oder falsche Anzahl");
       klick('.tabbar [data-nav="#home"]');
       await bis(function () { return $(".area-tile") && !$('.area-tile[data-nav="#run"]'); }, 3000, "Run von der Startseite verschwunden");
       klick('.area-tile[data-nav="#reps"]');
@@ -683,7 +695,7 @@
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
       await heim();
       klick(await bis(function () { return $("[data-wasistwas]"); }, 3000, "Link „Was ist was?“"));
-      await bis(function () { return $$("#overlayRoot .wi-zeile").length === 5; }, 2000, "fünf Zeilen Klartext");
+      await bis(function () { return $$("#overlayRoot .wi-zeile").length === 6; }, 2000, "sechs Zeilen Klartext");
       klick($("#overlayRoot [data-ok]"));
       await bis(function () { return !$("#overlayRoot .wi-zeile"); }, 2000, "Hinweis schließt");
       // Bestleistung: vorheriges Bestgewicht vorgeben, dann einen Satz darüber eintragen
