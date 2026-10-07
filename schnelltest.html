@@ -298,23 +298,24 @@
       await bis(function () { return $('[data-wsreg="beine"].on') && $('[data-wsreg="nacken"].on') && $(".af-body"); }, 2000, "Dehnen: Beine dazu, Karte bleibt offen");
       klick('[data-wsfreset]');
       await bis(function () { return !$('[data-wsreg].on'); }, 2000, "Dehnen: Zurücksetzen");
-      // Summit: Stufe und Ausrüstung in derselben Karte
+      // Summit: Stufe sichtbar über der Karte (ohne Aufklappen), Ausrüstung in der Karte
       await heim();
       klick('[data-nav="#reps"]');
-      await filterAuf();
+      await bis(function () { return $('[data-repf="stufe:leicht"]'); }, 3000, "Summit: Stufen sichtbar");
+      pruefe(!$(".af-body") && $(".af-kopf"), "Summit: Karte ist nicht zu");
       klick('[data-repf="stufe:leicht"]');
-      await bis(function () { return $('[data-repf="stufe:leicht"].on') && $(".af-body"); }, 2000, "Summit: Stufe, Karte bleibt offen");
+      await bis(function () { return $('[data-repf="stufe:leicht"].active'); }, 2000, "Summit: Stufe gewählt");
+      await filterAuf();
       klick('[data-repf="bar:none"]');
-      await bis(function () { return $('[data-repf="bar:none"].on') && $('[data-repf="stufe:leicht"].on') && $(".af-body"); }, 2000, "Summit: Ohne Stange dazu, Karte bleibt offen");
+      await bis(function () { return $('[data-repf="bar:none"].on') && $('[data-repf="stufe:leicht"].active') && $(".af-body"); }, 2000, "Summit: Ohne Stange, Karte bleibt offen, Stufe bleibt");
       klick('[data-repfreset]');
-      await bis(function () { return $('[data-repf="stufe:standard"].on') && $('[data-repf="bar:all"].on'); }, 2000, "Summit: Zurücksetzen");
+      await bis(function () { return $('[data-repf="bar:all"].on') && $('[data-repf="stufe:leicht"].active'); }, 2000, "Summit: Zurücksetzen betrifft nur die Ausrüstung");
     }],
     ["Freies Training (Studio): Karte, Satz eintragen, Pause, Steigerung", async function () {
       await heim();
       klick('[data-nav="#timers"]');
       pruefe(!$("[data-ttab]"), "Freies Training hat noch Reiter");
       await bis(function () { return $$("[data-studio]").length > 30; }, 3000, "Studio-Kacheln");
-      await filterAuf();
       pruefe(!$('[data-stgr="air"]') && $("#st-air") && !$("#st-air").checked, "Air-Übungen sind im Studio nicht standardmäßig aus");
       eingeben($("#st-q"), "beinpresse");
       pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");

@@ -127,3 +127,9 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Studio**: Gruppen, Ausrüstung und der Schalter „Air-Übungen“ liegen in derselben Karte. **Fehler behoben:** der Filter klappte nach jeder Auswahl zu, weil das Auf/Zu beim ersten Öffnen nicht gespeichert wurde - Mehrfachauswahl war dadurch mühsam. Jetzt bleibt die Karte offen, bis man sie schließt (beim Start der App wieder zu).
 - **Mobility & Stretch** (Dehnen): Körperregionen als Chips in der Karte, auch im Baukasten. **Summit**: Stufe (Einheiten) bzw. Level (Programme) und Ausrüstung in der Karte; Zurücksetzen stellt „Mittel“/„Alle“/„Alle Geräte“ wieder her.
 - Schnelltest: neuer Test zur Filterkarte (Air ohne Kacheln und ohne Studio-Übungen, Mehrfachwahl in Air, Studio, Dehnen, Summit), bestehende Tests öffnen die Karte vorher. 26 Prüfungen, alle grün. FASSUNG 2026-10-02-54.
+
+## 2026-10-07 · Filterkarte: Summit-Stufe und Studio-Schalter wieder außerhalb
+
+- **Summit**: Stufe (Einheiten) bzw. Level (Programme) stehen wieder sichtbar über der Filterkarte - das ist die Hauptwahl der Seite und gehört nicht hinter eine zugeklappte Karte. In der Karte bleibt nur die Ausrüstung („Alle Geräte“ / „Ohne Stange“); „Zurücksetzen“ betrifft nur diese.
+- **Studio**: „Air-Übungen einbeziehen“ ist eine Einstellung, kein Filter - eigene Zeile über der Karte (auch im Plan-Bau). Die Karte enthält nur noch Gruppen und Ausrüstung.
+- Schnelltest angepasst (Summit-Stufe ohne Aufklappen, Zurücksetzen nur für die Ausrüstung); 26 Prüfungen, alle grün. FASSUNG 2026-10-02-55.

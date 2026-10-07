@@ -1560,7 +1560,8 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .af-body{ padding:2px 14px 14px; border-top:1px solid var(--border); }
 .af-lbl{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin:14px 0 8px; }
 .af-lbl span{ font-weight:400; letter-spacing:0; text-transform:none; font-size:12.5px; margin-left:4px; }
-.af-body .toggle-row{ padding:12px 0 2px; border-bottom:none; }
+.st-air-zeile{ padding:12px 14px; }
+.st-air-zeile .toggle-row{ padding:0; border:none; }
 .af-fuss{ margin-top:18px; }
 .af-fuss .btn{ padding:14px 10px; font-size:15px; white-space:nowrap; }
 .af-fuss .af-reset{ width:auto; flex:0 0 auto; padding:14px 14px; gap:6px; }

@@ -1881,12 +1881,13 @@ function studioFilterHTML(gruppen, fGr, fArt, anzahl){
   var s = state.db.settings;
   var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
     .concat(fArt.map(function(a){ return t("stArt_"+a); }));
-  return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
+  // „Air-Übungen einbeziehen“ ist eine Einstellung, kein Filter: eigene Zeile über der Karte
+  return '<div class="card st-air-zeile"><div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
+      '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div></div>'+
+    filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t("afAlleEx"),
     zeigen:filterZeigenText(anzahl, "Ex"),
-    inhalt:'<div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
-        '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div>'+
-      filterChipsHTML(t("afGruppe"), t("multiOk"), gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+    inhalt:filterChipsHTML(t("afGruppe"), t("multiOk"), gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
         return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
       filterChipsHTML(t("equipHave"), t("multiOk"), STUDIO_ARTEN.map(function(a){
         return filterChip("data-start", a, fArt.indexOf(a) > -1, "", t("stArt_"+a)); }).join("")) });
@@ -1897,8 +1898,7 @@ function studioFilterBinden(fGr, fArt, neuZeichnen){
   app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
   // Auf/zu steht in den Einstellungen, damit die Karte beim Neuzeichnen (nach jedem Antippen) offen bleibt - Mehrfachauswahl ohne ständiges Aufklappen
   app.querySelectorAll("[data-sttoggle]").forEach(function(b){ b.addEventListener("click", function(){ s.stFilterOpen = !s.stFilterOpen; save(); neuZeichnen(); }); });
-  var air = app.querySelector("#st-air");   // nur da, solange die Karte offen ist
-  if(air) air.addEventListener("change", function(e){
+  app.querySelector("#st-air").addEventListener("change", function(e){
     s.stAir = e.target.checked;
     if(!s.stAir) s.stGruppen = selArr(s.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
     save(); neuZeichnen();
@@ -5644,6 +5644,9 @@ function renderWarmStretch(){
 
 /* Liste: Reiter Einheiten (Stufe Leicht/Standard/Fortgeschritten) und Programme A–Z (Stufe 1-3), beide optional ohne Stange */
 function renderReps(){
+  function knopf(art, wert, text){
+    return '<button type="button" data-repf="'+art+':'+wert+'" class="'+(String(repFilter[art])===String(wert) ? "active" : "")+'">'+esc(text)+'</button>';
+  }
   var anzahl = 0;   // sichtbare Karten (für „N … anzeigen“)
   function karte(id, name, zeile1, zeile2, plan, eigen){
     anzahl++;
@@ -5683,7 +5686,8 @@ function renderReps(){
   }
   if(repFilter.tab === "einheiten"){
     var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
-    html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>';
+    html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>'+
+      '<div class="theme-pick rep-pick">'+knopf("stufe","leicht",t("stufe_leicht"))+knopf("stufe","standard",t("stufe_standard"))+knopf("stufe","fortgeschritten",t("stufe_fortgeschritten"))+'</div>';
     liste += eigeneListe(["unit"], true);   // eigene Einheiten stehen oben
     fab = fabMenuHTML([{ key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
     REP_EINHEITEN.forEach(function(e){
@@ -5704,7 +5708,8 @@ function renderReps(){
     liste = eigeneListe(["unit", "prog"], false) || '<div class="empty" style="padding:24px 20px 4px;">'+esc(t("repMineEmpty"))+'</div>';
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }, { key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
   } else {
-    html += '<div class="rep-intro">'+esc(t("repIntro"))+'</div>';
+    html += '<div class="rep-intro">'+esc(t("repIntro"))+'</div>'+
+      '<div class="theme-pick rep-pick">'+knopf("lvl","all",t("repAll"))+knopf("lvl",1,t("lvl1"))+knopf("lvl",2,t("lvl2"))+knopf("lvl",3,t("lvl3"))+'</div>';
     liste += eigeneListe(["prog"], true);   // eigene Programme stehen oben
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }]);
     REP_WORKOUT_ROWS.filter(function(r){
@@ -5718,18 +5723,14 @@ function renderReps(){
         repPlanHTML(repQuelle(r[0])));
     });
   }
-  /* Filterkarte (dieselbe wie in Air): Einheiten nach Stufe, Programme nach Level, beide nach Ausrüstung. Unter „Meine“ gibt es nichts zu filtern. */
+  /* Filterkarte (dieselbe wie in Air) mit der Ausrüstung. Stufe bzw. Level stehen als Hauptwahl sichtbar darüber. Unter „Meine“ gibt es nichts zu filtern. */
   function repFilterKarte(){
     var ein = repFilter.tab === "einheiten", ohneStange = repFilter.bar === "none";
-    var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
-    function chip(art, wert, text){ return filterChip("data-repf", art+":"+wert, String(art === "stufe" ? stufe : repFilter[art]) === String(wert), "", text); }
-    var wahl = ein ? chip("stufe", "leicht", t("stufe_leicht"))+chip("stufe", "standard", t("stufe_standard"))+chip("stufe", "fortgeschritten", t("stufe_fortgeschritten"))
-                   : chip("lvl", "all", t("repAll"))+chip("lvl", 1, t("lvl1"))+chip("lvl", 2, t("lvl2"))+chip("lvl", 3, t("lvl3"));
-    return filterKarteHTML({ offen:!!state.db.settings.repFilterOpen, toggle:"data-reptoggle", reset:"data-repfreset",
-      n:(ohneStange ? 1 : 0)+(ein ? (stufe !== "standard" ? 1 : 0) : (repFilter.lvl !== "all" ? 1 : 0)),
-      summe:(ein ? t("stufe_"+stufe) : repFilter.lvl === "all" ? t("repAll") : t("lvl"+repFilter.lvl))+(ohneStange ? " · "+t("repNoBar") : ""),
+    function chip(wert, text){ return filterChip("data-repf", "bar:"+wert, repFilter.bar === wert, "", text); }
+    return filterKarteHTML({ offen:!!state.db.settings.repFilterOpen, toggle:"data-reptoggle", reset:"data-repfreset", n:ohneStange ? 1 : 0,
+      summe:t(ohneStange ? "repNoBar" : "repAllEquip"),
       zeigen:filterZeigenText(anzahl, ein ? "Ei" : "Pr"),
-      inhalt:filterChipsHTML(t("afStufe"), "", wahl)+filterChipsHTML(t("equipHave"), "", chip("bar", "all", t("repAllEquip"))+chip("bar", "none", t("repNoBar"))) });
+      inhalt:filterChipsHTML(t("equipHave"), "", chip("all", t("repAllEquip"))+chip("none", t("repNoBar"))) });
   }
   html += (repFilter.tab === "meine" ? '' : repFilterKarte()) +
     (liste || '<div class="empty">'+esc(t("repNone"))+'</div>') +
@@ -5775,7 +5776,7 @@ function renderReps(){
     b.addEventListener("click", function(){ var s = state.db.settings; s.repFilterOpen = !s.repFilterOpen; save(); neuRep(); });
   });
   var rz = app.querySelector("[data-repfreset]");
-  if(rz) rz.addEventListener("click", function(){ repFilter.stufe = "standard"; repFilter.lvl = "all"; repFilter.bar = "all"; neuRep(); });
+  if(rz) rz.addEventListener("click", function(){ repFilter.bar = "all"; neuRep(); });
 }
 
 /* Detail: je Programm eine Tabelle Übungen × Runden, Bestzeit, Start */
