@@ -1291,6 +1291,7 @@ function render(){
   tabLeiste(route);
   if(route==="home"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
     var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.repFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
+    hinweisBesucht = {};   // Erklärtexte: der nächste Besuch einer Seite zählt wieder
   }
   if(repRun && route !== "repplay") repStop();   // Rep-Workout verlassen: Stoppuhr aus
   if(studioPause && route !== "studio") studioPauseStop();
@@ -1351,6 +1352,36 @@ function topbar(title, opts){
     (opts.sub ? '<span class="ttl-sub">'+esc(opts.sub)+'</span>' : '')+'</h1>'+right+'</div>';
 }
 var SEP = ' <span class="sep-dot">&middot;</span> ';
+
+/* Erklärtexte über den Listen: bei den ersten Besuchen einer Seite stehen sie da, danach genügt ein „?“ in der Kopfzeile, das sie in einem Fenster öffnet.
+   Ein Besuch = die Seite von der Startseite aus betreten (Reiter, Filter und Zurück zählen nicht); gezählt wird in settings.hinweise.
+   hinweise(key, [Textschlüssel …]) gibt { knopf: das „?“ (nur wenn die Texte eingeklappt sind), z(i, klasse): Zeile i (nur solange sie noch stehen) } zurück. */
+var HINWEIS_BESUCHE = 3;
+var hinweisBesucht = {};   // seit dem letzten Besuch der Startseite schon gezählte Seiten
+var hinweisTexte = [];     // Texte der gerade gezeigten Seite (für das Fenster)
+var ICON_HILFE = '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.5a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2 1-1.2 1.8M12 17v.2"/>';
+function hinweise(key, keys){
+  var texte = hinweisTexte = keys.map(function(k){ return t(k); });
+  if(!keys.length) return { knopf:"", z:function(){ return ""; } };
+  var h = state.db.settings.hinweise || (state.db.settings.hinweise = {});
+  if(!hinweisBesucht[key]){ hinweisBesucht[key] = true; h[key] = (h[key] || 0) + 1; save(); }
+  var offen = h[key] <= HINWEIS_BESUCHE;
+  return {
+    knopf: offen ? "" : '<button type="button" class="iconbtn" data-hinweis title="'+esc(t("hwKnopf"))+'" aria-label="'+esc(t("hwKnopf"))+'">'+svgIcon(ICON_HILFE)+'</button>',
+    z: function(i, klasse){ return offen ? '<div class="'+klasse+'">'+esc(texte[i])+'</div>' : ''; }
+  };
+}
+function openHinweise(){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet wi-sheet" role="dialog" aria-label="'+esc(t("hwTitel"))+'">'+
+    '<h3>'+esc(t("hwTitel"))+'</h3>'+
+    hinweisTexte.map(function(x){ return '<p class="hw-zeile">'+esc(x)+'</p>'; }).join("")+
+    '<button class="btn btn-secondary" data-ok style="margin-top:12px">'+esc(t("wiOk"))+'</button>'+
+  '</div></div>';
+  function zu(){ root.innerHTML = ""; }
+  root.querySelector("[data-ok]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+}
 
 /* ============ Startseite ============ */
 var HOME_ICON = {
@@ -1577,11 +1608,11 @@ function renderHome(){
   app.innerHTML =
     topbar("BLOC", { home:true, sub:"Modular Training Builder" }) +
     installTipHTML() + backupTipHTML() + wocheHTML() +
-    '<div class="sec-head"><div class="section-title">'+t("favorites")+'</div>'+
+    '<div class="sec-head"><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
     '</div>'+
-    (favHTML || '<div class="fav-empty">'+t("favEmpty")+'</div>') +
+    favHTML +
     /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
     '<div class="sec-head"><div class="section-title">'+t("areas")+' <span class="lbl-hint bs-hinweis">'+esc(t("areasHint"))+'</span></div>'+
       '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
@@ -1928,6 +1959,7 @@ function renderStudio(){
   zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0 && passt(id); });
   var filterAn = fGr.length || fArt.length;
   var kacheln = studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk));
+  var hw = hinweise("studio", ["studioHint"]);
   var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
       (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
     (zuletzt.length ? '<div class="st-gruppe"><div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div></div>' : '');
@@ -1942,9 +1974,9 @@ function renderStudio(){
     '</div></div>';
   });
   app.innerHTML =
-    topbar(t("timers"), { back:"#home", right:lupeHTML("st", studioQuery) }) +
+    topbar(t("timers"), { back:"#home", right:hw.knopf+lupeHTML("st", studioQuery) }) +
     studioTabsHTML("uebungen") +
-    '<div class="page-hint">'+esc(t("studioHint"))+'</div>'+
+    hw.z(0, "page-hint")+
     suchFeldHTML(studioQuery, "st", t("stSearch"))+
     kacheln +
     html +
@@ -1983,10 +2015,10 @@ function renderStudio(){
 /* ============ Timer-Reiter (Air und Studio) ============
    Blöcke (eine Übung mit Runden, Arbeit, Pause) und Timer-Workouts (mehrere Blöcke hintereinander) haben einen eigenen Reiter
    in einem leicht anderen Blau (--ti-color). Angelegt werden sie über das Plus in diesem Reiter. */
-function timerPanelHTML(){
+function timerPanelHTML(hw){
   var tws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
   var bls = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
-  return '<div class="timer-panel"><div class="page-hint">'+esc(t("timerHint"))+'</div>'+
+  return '<div class="timer-panel">'+hw.z(0, "page-hint")+
     '<div class="section-title">'+t("mineTimer")+'</div>'+(tws.length ? tws.map(timerWorkoutRow).join("") : '<div class="fav-empty">'+esc(t("timerNoWo"))+'</div>')+
     '<div class="section-title">'+t("mineBlocks")+'</div>'+(bls.length ? bls.map(blockRow).join("") : '<div class="fav-empty">'+esc(t("timerNoBl"))+'</div>')+'</div>';
 }
@@ -2006,7 +2038,8 @@ function bindStudioTabs(){
   });
 }
 function renderStudioTimer(){
-  app.innerHTML = topbar(t("timers"), { back:"#home" }) + studioTabsHTML("timer") + timerPanelHTML() + '<div style="height:90px"></div>' + timerFabHTML();
+  var hw = hinweise("timer", ["timerHint"]);
+  app.innerHTML = topbar(t("timers"), { back:"#home", right:hw.knopf }) + studioTabsHTML("timer") + timerPanelHTML(hw) + '<div style="height:90px"></div>' + timerFabHTML();
   bindCommon(); bindStudioTabs();
   function neu(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
@@ -2041,7 +2074,8 @@ function renderStudioPlan(){
   if(!p){ stPlanAktiv = null; return renderStudioPlanListe(); }
   var ids = stPlanIds(p), pos = {}, html;
   ids.forEach(function(id, i){ pos[id] = [i+1]; });
-  html = topbar(p.name, { back:"#timers", right: stPlanBauen ? lupeHTML("pl", stPlanQuery) : "" }) + studioTabsHTML("plan");
+  var hw = stPlanBauen ? hinweise("planbau", ["planTippen"]) : hinweise("", []);
+  html = topbar(p.name, { back:"#timers", right:hw.knopf+(stPlanBauen ? lupeHTML("pl", stPlanQuery) : "") }) + studioTabsHTML("plan");
   if(stPlanBauen){
     var gruppen = studioIds(), da = {};
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
@@ -2050,7 +2084,7 @@ function renderStudioPlan(){
     function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die gerade nicht in den sichtbaren Gruppen stehen (z. B. Air-Übungen ausgeblendet)
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
-      '<div class="page-hint">'+esc(t("planTippen"))+'</div>'+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
+      hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
       studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk));
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
     gruppen.forEach(function(g){
@@ -2117,7 +2151,8 @@ function renderStudioPlan(){
 }
 function renderStudioPlanListe(){
   var pl = stPlaene().slice().sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); });
-  var html = topbar(t("timers"), { back:"#home" }) + studioTabsHTML("plan") + '<div class="page-hint">'+esc(t("planHint"))+'</div>'+
+  var hw = hinweise("plan", ["planHint"]);
+  var html = topbar(t("timers"), { back:"#home", right:hw.knopf }) + studioTabsHTML("plan") + hw.z(0, "page-hint")+
     (pl.length ? pl.map(function(p){
       var ids = stPlanIds(p), namen = ids.slice(0, 3).map(function(id){ return tplText(findExercise(id).name); }).join(", ")+(ids.length > 3 ? " …" : "");
       return '<div class="list-item entry plan-item" data-plan="'+esc(p.id)+'" role="button" tabindex="0">'+
@@ -2642,6 +2677,7 @@ function maybeShowInstallTip(){}
 
 /* ============ Common bindings ============ */
 function bindCommon(){
+  app.querySelectorAll("[data-hinweis]").forEach(function(b){ b.addEventListener("click", openHinweise); });
   app.querySelectorAll("[data-lupe]").forEach(function(b){
     b.addEventListener("click", function(){
       var pre = b.getAttribute("data-lupe"), w = app.querySelector('.lib-suche[data-lsw="'+pre+'"]'), q = app.querySelector("#"+pre+"-q");
@@ -3233,9 +3269,10 @@ function renderLibrary(){
   var woSort = s.libWoSort === "az" ? "az" : "dur";
   var open = !!s.libFilterOpen;
   var hiddenCount = 0, hiddenCards = "", list = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
+  var hw = tab === "exercises" ? hinweise("air", ["zpHint"]) : tab === "timer" ? hinweise("timer", ["timerHint"]) : hinweise("", []);
 
   if(tab === "timer"){
-    list = timerPanelHTML();
+    list = timerPanelHTML(hw);
     fab = timerFabHTML();
   } else if(tab === "workouts" || tab === "mine"){
     var rows = [];
@@ -3282,7 +3319,7 @@ function renderLibrary(){
 
   app.innerHTML =
     // Suche als Lupe oben rechts (klappt das Feld auf), damit „Überrasch mich“ als Hauptleiste unter den Reitern Platz hat
-    topbar(t("library"), { back:"#home", right: (tab === "mine" || tab === "timer") ? '' : lupeHTML("l", libQuery) }) +
+    topbar(t("library"), { back:"#home", right: hw.knopf + ((tab === "mine" || tab === "timer") ? '' : lupeHTML("l", libQuery)) }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-4">'+
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
@@ -3292,7 +3329,7 @@ function renderLibrary(){
     surpriseCardHTML(true) +   // das Alleinstellungsmerkmal von Air: schlanke, auffällige Leiste direkt unter den Reitern
     (tab === "mine" || tab === "timer" ? '' :
     suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
-    (tab === "exercises" ? '<div class="page-hint">'+esc(t("zpHint"))+'</div>' : '')+
+    (tab === "exercises" ? hw.z(0, "page-hint") : '')+
     airFilterHTML("l", open, cat, equip, tab==="exercises" ? exSort : woSort,
       tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], anzahl, tab==="exercises"))+
     list + hiddenBlockHTML(hiddenCount, hiddenCards) +
@@ -4050,22 +4087,24 @@ function renderDraftPage(d, cfg){
 
   // Übungsauswahl: große Kacheln, gefiltert wie in der Bibliothek
   var palOpen = !cfg.cover || d._pal;
-  var palHTML = "";
+  var palHTML = "", hw = hinweise("", []);
   if(palOpen && d.ws){   // Mobility & Stretch: nur Aufwärm- bzw. Dehnübungen, bei Dehnen mit Körperregionen
     var wsSel = selArr(s.wsRegionen), wsAlle = wsUebungen(d.ws);
     var wsListe = wsAlle.filter(function(ex){ return d.ws !== "dehn" || wsRegionOk(ex.id, wsSel); })
       .sort(function(a, b){ return (isExFav(b.id) ? 1 : 0) - (isExFav(a.id) ? 1 : 0); });
+    hw = hinweise("bau", ["wbTippen"].concat(d.ws === "dehn" ? ["wsRegionHint"] : []));
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
-      '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
+      hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
-      (d.ws === "dehn" ? '<div class="page-hint">'+esc(t("wsRegionHint"))+'</div>'+wsRegionFilterHTML(wsSel, wsListe.length, "Ex") : '')+
+      (d.ws === "dehn" ? hw.z(1, "page-hint")+wsRegionFilterHTML(wsSel, wsListe.length, "Ex") : '')+
       '<div class="fig-grid" id="dz-pal">'+(wsListe.map(function(ex){ return kachel(ex); }).join("") ||
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   } else if(palOpen){
     var palListe = sortedExercises(cat, sort, equip, []).filter(fuerAir);
+    hw = hinweise("bau", ["wbTippen"]);
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
-      '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
+      hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
       airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true)+
       '<div class="fig-grid" id="dz-pal">'+(palListe.map(function(ex){ return kachel(ex); }).join("") ||
@@ -4113,7 +4152,7 @@ function renderDraftPage(d, cfg){
       (d.items.length ? '<div class="wb-streifen">'+streifen+'</div>' : '<div class="fav-empty">'+esc(t("wbLeer"))+'</div>');
 
   app.innerHTML =
-    topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: (palOpen ? lupeHTML("b", buildQuery) : "") + (cfg.cover ? "" :
+    topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: hw.knopf + (palOpen ? lupeHTML("b", buildQuery) : "") + (cfg.cover ? "" :
       '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>') }) +
     // Aufwärm- und Dehnprogramme: Überschrift, Kacheln und Figuren in der Farbe von Aufwärmen & Dehnen
     (warmDehn ? '<div style="--bereich:var(--ws-color)">' : '<div>') + head + ablaufHTML + (warmDehn || !exs.length ? '' : auswertungHTML(d.items.map(function(it){ return it.ex; }))) + optionsHTML + palHTML + '</div>' +
@@ -5585,16 +5624,17 @@ function renderWarmStretch(){
     fab = fabMenuHTML([{ key:"new", label:t("wsNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
   function knopf(attr, wert, aktiv, text){ return '<button data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
+  var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
-    topbar(t("warmTitle"), { back:"#home", right:lupeHTML("ws", wsQuery) }) +
+    topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
       knopf("wsart", "warm", art === "warm", t("wsWarm"))+knopf("wsart", "dehn", art === "dehn", t("wsDehn"))+
     '</div><div class="theme-pick lib-tabs seg-3 unter-tabs">'+
       knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+knopf("wstab", "meine", tab === "meine", t("tabMine"))+
     '</div></div>'+
-    '<div class="rep-intro">'+esc(t(tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"))+'</div>'+
+    hw.z(0, "rep-intro")+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
-    (tab === "uebungen" ? '<div class="page-hint">'+esc(t("zpHintWs"))+'</div>' : '')+
+    (tab === "uebungen" ? hw.z(1, "page-hint") : '')+
     (art === "dehn" && tab !== "meine" ? wsRegionFilterHTML(regSel, anzahl, tab === "uebungen" ? "Ex" : "Wo") : '')+
     // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
     '<div style="--bereich:var(--ws-color)">'+(liste || '<div class="empty">'+t("libEmpty")+'</div>')+'</div>'+
@@ -5658,7 +5698,8 @@ function renderReps(){
       (eigen ? '<div class="card-aside"><div class="card-acts">'+favBtn("rep:"+id)+trashBtn("rep", id, name)+'</div></div>' : moreBtn("data-repmore", id))+
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
-  var html = topbar(t("repTitle"), { back:"#home", right:lupeHTML("rs", repQuery) }) +
+  var hw = hinweise("reps", [repFilter.tab === "einheiten" ? "repUnitsIntro" : repFilter.tab === "meine" ? "repMineIntro2" : "repIntro"]);
+  var html = topbar(t("repTitle"), { back:"#home", right:hw.knopf+lupeHTML("rs", repQuery) }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
       '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+
       '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
@@ -5686,7 +5727,7 @@ function renderReps(){
   }
   if(repFilter.tab === "einheiten"){
     var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
-    html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>'+
+    html += hw.z(0, "rep-intro")+
       '<div class="theme-pick rep-pick">'+knopf("stufe","leicht",t("stufe_leicht"))+knopf("stufe","standard",t("stufe_standard"))+knopf("stufe","fortgeschritten",t("stufe_fortgeschritten"))+'</div>';
     liste += eigeneListe(["unit"], true);   // eigene Einheiten stehen oben
     fab = fabMenuHTML([{ key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
@@ -5704,11 +5745,11 @@ function renderReps(){
       });
     });
   } else if(repFilter.tab === "meine"){
-    html += '<div class="rep-intro">'+esc(t("repMineIntro2"))+'</div>';
+    html += hw.z(0, "rep-intro");
     liste = eigeneListe(["unit", "prog"], false) || '<div class="empty" style="padding:24px 20px 4px;">'+esc(t("repMineEmpty"))+'</div>';
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }, { key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
   } else {
-    html += '<div class="rep-intro">'+esc(t("repIntro"))+'</div>'+
+    html += hw.z(0, "rep-intro")+
       '<div class="theme-pick rep-pick">'+knopf("lvl","all",t("repAll"))+knopf("lvl",1,t("lvl1"))+knopf("lvl",2,t("lvl2"))+knopf("lvl",3,t("lvl3"))+'</div>';
     liste += eigeneListe(["prog"], true);   // eigene Programme stehen oben
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }]);

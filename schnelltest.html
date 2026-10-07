@@ -311,6 +311,37 @@
       klick('[data-repfreset]');
       await bis(function () { return $('[data-repf="bar:all"].on') && $('[data-repf="stufe:leicht"].active'); }, 2000, "Summit: Zurücksetzen betrifft nur die Ausrüstung");
     }],
+    ["Erklärtexte: erste Besuche mit Text, danach „?“ in der Kopfzeile; leere Favoriten nur eine Zeile", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      var d0 = daten(); d0.settings.hinweise = {}; W.localStorage.setItem(KEY, JSON.stringify(d0));   // frisch zählen, egal was frühere Tests besucht haben
+      await heim();
+      pruefe(!$(".fav-empty"), "Startseite: leere Favoriten zeigen noch einen ganzen Kasten");
+      var fav = $$(".section-title").filter(function (e) { return /Favoriten/.test(e.textContent); })[0];
+      pruefe(fav && /☆/.test(fav.textContent), "Startseite: Favoriten-Zeile ohne Hinweis");
+      klick('[data-nav="#timers"]');
+      await bis(function () { return $$("[data-studio]").length > 30; }, 3000, "Studio");
+      pruefe($(".page-hint") && /antippen/.test($(".page-hint").textContent) && !$("[data-hinweis]"), "Studio: erster Besuch zeigt den Text");
+      await bis(function () { var h = daten().settings.hinweise; return h && h.studio === 1; }, 2000, "Besuch gezählt");
+      await filterAuf();
+      pruefe(daten().settings.hinweise.studio === 1, "Filter öffnen zählt als neuer Besuch");
+      // vierter Besuch: der Text ist eingeklappt, ein „?“ öffnet ihn
+      var d = daten(); d.settings.hinweise = { studio: 3, reps: 3, ws: 3 }; W.localStorage.setItem(KEY, JSON.stringify(d));
+      await heim();
+      klick('[data-nav="#timers"]');
+      await bis(function () { return $("[data-hinweis]"); }, 3000, "„?“ im Studio");
+      pruefe(!$(".page-hint"), "Studio: Text steht noch da");
+      klick("[data-hinweis]");
+      var z = await bis(function () { return $("#overlayRoot .hw-zeile"); }, 2000, "Fenster mit Hinweis");
+      pruefe(/antippen/.test(z.textContent), "Fenster zeigt den Studio-Text nicht");
+      klick("#overlayRoot [data-ok]");
+      await bis(function () { return !$("#overlayRoot .hw-zeile"); }, 2000, "Fenster schließt");
+      await heim();
+      klick('[data-nav="#reps"]');
+      await bis(function () { return $("[data-hinweis]") && !$(".rep-intro"); }, 3000, "Summit: „?“ statt Text");
+      await heim();
+      klick('[data-nav="#warmstretch"]');
+      await bis(function () { return $("[data-hinweis]") && !$(".rep-intro"); }, 3000, "Dehnen: „?“ statt Text");
+    }],
     ["Freies Training (Studio): Karte, Satz eintragen, Pause, Steigerung", async function () {
       await heim();
       klick('[data-nav="#timers"]');

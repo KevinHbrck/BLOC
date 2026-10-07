@@ -2049,6 +2049,11 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .who-zeile.ok .who-bar u{ background:var(--accent); }
 /* „Was ist was?“, Bestleistung, Leichter/Schwerer: kleine, ruhige Ergänzungen */
 .wi-sheet h3{ margin:0 0 10px; }
+.hw-zeile{ margin:0 0 10px; font-size:15px; line-height:1.45; }
+/* „?“ in der Kopfzeile: kleiner als Zurück und Lupe, damit lange Titel („Mobility & Stretch“) nicht umbrechen */
+.iconbtn[data-hinweis]{ width:44px; height:44px; border-radius:14px; box-shadow:none; }
+.iconbtn[data-hinweis] .ico{ width:22px; height:22px; color:var(--text-dim); }
+.topbar:has([data-hinweis]) h1{ font-size:18px; }
 .wi-zeile{ display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-top:1px solid var(--border); }
 .wi-zeile:first-of-type{ border-top:0; }
 .wi-zeile .at-ico{ width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex:none; margin:0;

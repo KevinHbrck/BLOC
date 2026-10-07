@@ -133,3 +133,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Summit**: Stufe (Einheiten) bzw. Level (Programme) stehen wieder sichtbar über der Filterkarte - das ist die Hauptwahl der Seite und gehört nicht hinter eine zugeklappte Karte. In der Karte bleibt nur die Ausrüstung („Alle Geräte“ / „Ohne Stange“); „Zurücksetzen“ betrifft nur diese.
 - **Studio**: „Air-Übungen einbeziehen“ ist eine Einstellung, kein Filter - eigene Zeile über der Karte (auch im Plan-Bau). Die Karte enthält nur noch Gruppen und Ausrüstung.
 - Schnelltest angepasst (Summit-Stufe ohne Aufklappen, Zurücksetzen nur für die Ausrüstung); 26 Prüfungen, alle grün. FASSUNG 2026-10-02-55.
+
+## 2026-10-07 · Weniger Erklärtext: „?“ statt grauer Zeilen, leere Favoriten nur eine Zeile
+
+- **Erklärtexte über den Listen** (Air › Übungen, Studio, Timer, Plan, Plan-Bau, Workout-Baukasten, Mobility & Stretch, Summit) stehen nur bei den ersten drei Besuchen einer Seite. Danach sitzt ein kleines „?“ neben der Lupe, das den Text in einem Fenster öffnet. Ein Besuch = die Seite von der Startseite aus betreten; Reiter, Filter und Zurück zählen nicht. Gezählt wird lokal in `settings.hinweise` (nichts verlässt das Gerät). Neu: `hinweise()`, `openHinweise()`.
+- **Startseite**: leere Favoriten sind keine Box mehr, sondern eine Zeile neben der Überschrift („Favoriten – mit ☆ markieren, dann stehen sie hier“); mit dem ersten Favoriten verschwindet der Hinweis.
+- Das „?“ ist kleiner als Zurück und Lupe, und der Titel wird mit „?“ etwas kleiner, damit „Mobility & Stretch“ nicht umbricht.
+- Schnelltest: neuer Test zu den Erklärtexten (Zählung, „?“, Fenster, Startseite); 27 Prüfungen, alle grün. FASSUNG 2026-10-02-56.
