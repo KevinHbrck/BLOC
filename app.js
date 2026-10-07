@@ -3162,11 +3162,14 @@ function libWoCard(lw, exs, hidden, dur, mains){
     '</div></div></div>';
 }
 /* Quadratische Übungskachel wie im Studio (Air › Übungen, Mobility & Stretch › Übungen): Figur, Name, darunter die Hauptmuskeln in Kurzform.
-   Tippen = Übungsinfo (eigene Übung: bearbeiten), ▶ unten links = starten, ☆ = merken, lange drücken = in Workout oder Plan legen. */
+   Tippen = Übungsinfo (eigene Übung: bearbeiten), ▶ unten links = starten, ☆ = merken, lange drücken = in Workout oder Plan legen;
+   unten rechts auf der Figur das Gerät, falls eines gebraucht wird. */
 function libExKachel(ex){
+  var g = ex.equip[0], geraet = g && g !== "none" && EQUIP_ICON[g]
+    ? '<span class="air-gear" aria-label="'+esc(exEquipText(ex))+'">'+svgIcon(EQUIP_ICON[g])+'</span>' : '';   // Kurzhantel, Kettlebell, Stange, Dip-Barren; ohne Geräte nichts
   return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:(ex.custom ? 'data-exedit="' : 'data-info="')+ex.id+'" data-exlang="'+ex.id+'"', q:exSearchText(ex),
     cat:'var(--bereich, '+catVar(ex.cats[0])+')', klasse:'air-kachel', ico:ex.custom ? catIcon(ex.cats[0]) : "",
-    innen:exFavBtn(ex.id)+'<button type="button" class="air-start" data-playex="'+ex.id+'" title="'+esc(t("startBlock"))+'" aria-label="'+esc(t("startBlock"))+'">'+ICON_PLAY+'</button>',
+    innen:exFavBtn(ex.id)+geraet+'<button type="button" class="air-start" data-playex="'+ex.id+'" title="'+esc(t("startBlock"))+'" aria-label="'+esc(t("startBlock"))+'">'+ICON_PLAY+'</button>',
     unter:kachelMuskel(ex) });
 }
 function airKachelBinden(){   // Enter/Leertaste wie ein Tippen

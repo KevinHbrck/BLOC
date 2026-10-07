@@ -159,3 +159,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Studio** (und Plan-Bau, Workout-Baukasten): dieselbe Muskelzeile unter dem Namen; der Strich „–“ ohne Gewicht entfällt, der letzte Satz steht erst, wenn er eingetragen ist.
 - Die Übungsinfo hat neu den Knopf „Zu Programm hinzufügen“ (früher nur im ⋯-Menü der Zeile). Die Workout-Listen bleiben Zeilen.
 - Schnelltest angepasst (Suche zählt Kacheln, Plan-Bau zählt Muskelzeilen); 27/27 grün. FASSUNG 2026-10-02-59.
+
+## 2026-10-07 · Übungskacheln nachgebessert
+
+- Die **Muskelzeile steht direkt unter dem Namen** (keine Lücke mehr für eine zweite Namenszeile), Schrift 12 px statt 11, bis zu drei Zeilen (auf dem 375-px-Raster passen 102 von 103 Texten vollständig).
+- **▶ Start**: 30 px sichtbar, aber 44 px Tippbereich, damit man das ☆ daneben nicht trifft.
+- **Gerät auf der Figur**: unten rechts ein kleines Symbol (Kettlebell, Kurzhantel, Stange, Dip-Barren), wenn die Übung ein Gerät braucht; ohne Geräte nichts. Das ersetzt die frühere Zeile „Ohne Geräte · Cardio …“ der Listenansicht.
+- FASSUNG 2026-10-02-60; Schnelltest 27/27 grün.
