@@ -180,3 +180,9 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **„Überrasch mich“ als schmale Leiste** (eine Zeile, 42 px, Zauberstab-Symbol) direkt unter den Reitern von Air in allen drei Reitern; der Knopf in der ersten Leiste entfällt.
 - **Sortierung A–Z als kleiner Schalter** in der Kopfzeile der Filterkarte (rechts neben „Filter“); der Sortier-Block in der Karte entfällt, die Karte wird kürzer. Aus = Standardreihenfolge (Standard bzw. Dauer), an = alphabetisch; gilt auch im Workout-Baukasten.
 - Schnelltest angepasst (sechs Bereiche, Reihenfolge, Leiste, A–Z, Fokus, Statistik); 27/27 grün. FASSUNG 2026-10-02-62.
+
+## 2026-10-07 · Studio ohne Air-Schalter
+
+- Der Schalter **„Air-Übungen einbeziehen“** über dem Studio-Filter entfällt (auch im Plan-Bau). Studio zeigt nur noch die Studio-Übungen und die eigenen; die Gruppen „Kurzhantel & Kettlebell“, „Stange & Barren“ und „Air · Körpergewicht“ gibt es dort nicht mehr.
+- Wer den Schalter an hatte: Filter auf diese Gruppen werden einmalig gelöst (`loadDB`), `settings.stAir` wird entfernt. Eingetragene Sätze bleiben gespeichert.
+- Schnelltest angepasst (kein Air-Schalter im Studio). FASSUNG 2026-10-02-63.

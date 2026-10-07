@@ -367,7 +367,7 @@
       klick('[data-nav="#timers"]');
       pruefe(!$("[data-ttab]"), "Freies Training hat noch Reiter");
       await bis(function () { return $$("[data-studio]").length > 30; }, 3000, "Studio-Kacheln");
-      pruefe(!$('[data-stgr="air"]') && $("#st-air") && !$("#st-air").checked, "Air-Übungen sind im Studio nicht standardmäßig aus");
+      pruefe(!$('[data-stgr="air"]') && !$("#st-air"), "Studio zeigt noch den Air-Schalter oder Air-Übungen");
       eingeben($("#st-q"), "beinpresse");
       pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");
       eingeben($("#st-q"), "");

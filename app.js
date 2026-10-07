@@ -195,6 +195,10 @@ function loadDB(){
     db.history = Array.isArray(parsed.history) ? parsed.history : [];
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
     pruneHistory(db);
+    if(db.settings.stAir != null){   // einmalig: der Schalter „Air-Übungen einbeziehen“ im Studio ist entfallen - Filter auf die entfallenen Gruppen lösen
+      db.settings.stGruppen = selArr(db.settings.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
+      delete db.settings.stAir;
+    }
     if(db.settings.bereicheV !== 3){   // einmalig: der Timer ist wieder ein eigener Bereich - bei bestehender Reihenfolge direkt nach Studio einsortieren, sonst Standard
       var br0 = db.settings.bereicheV === 2 ? selArr(db.settings.bereiche) : [];
       if(!br0.length) br0 = ["lib", "timer", "intervall", "reps", "run", "warm"];
@@ -1868,16 +1872,6 @@ function studioRun(ex){
 function studioKg(v){ return (Math.round(v*100)/100).toLocaleString(currentLang()==="en" ? "en" : "de"); }
 function studioIds(){
   var gruppen = STUDIO_GRUPPEN.map(function(g){ return { id:g.id, name:tplText(g), ids:g.ids.split(" ").filter(findExercise) }; });
-  var inGruppen = {};
-  gruppen.forEach(function(g){ g.ids.forEach(function(id){ inGruppen[id] = true; }); });
-  function mit(eq){ return EXERCISES.filter(function(ex){ return !ex.custom && !inGruppen[ex.id] && ex.main !== "stretch" && ex.equip.some(function(e){ return eq.indexOf(e) > -1; }); }).map(function(ex){ return ex.id; }); }
-  if(state.db.settings.stAir){   // Air-Übungen nur, wenn eingeschaltet (Standard: aus)
-    gruppen.push({ id:"frei", name:t("stFree"), ids:mit(["db", "kb"]) });
-    gruppen.push({ id:"stange", name:t("stBar"), ids:mit(["bar", "dip"]).filter(function(id){ return gruppen[gruppen.length-1].ids.indexOf(id) < 0; }) });
-    var schon = {};
-    gruppen.forEach(function(g){ g.ids.forEach(function(id){ schon[id] = true; }); });
-    gruppen.push({ id:"air", name:t("stAirGr"), ids:EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && fuerWorkout(ex); }).map(function(ex){ return ex.id; }) });
-  }
   gruppen.push({ id:"eigene", name:t("stOwn"), ids:EXERCISES.filter(function(ex){ return ex.custom; }).map(function(ex){ return ex.id; }), eigene:true });
   return gruppen;
 }
@@ -1910,15 +1904,12 @@ function studioAnzahl(gruppen, fGr, artOk){
   gruppen.forEach(function(g){ if(!fGr.length || fGr.indexOf(g.id) > -1) n += g.ids.filter(artOk).length; });
   return n;
 }
-/* Filter der Studio-Übungen (Air-Schalter, Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
+/* Filter der Studio-Übungen (Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
 function studioFilterHTML(gruppen, fGr, fArt, anzahl){
   var s = state.db.settings;
   var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
     .concat(fArt.map(function(a){ return t("stArt_"+a); }));
-  // „Air-Übungen einbeziehen“ ist eine Einstellung, kein Filter: eigene Zeile über der Karte
-  return '<div class="card st-air-zeile"><div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
-      '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div></div>'+
-    filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
+  return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t("afAlleEx"),
     zeigen:filterZeigenText(anzahl, "Ex"),
     inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
@@ -1932,11 +1923,6 @@ function studioFilterBinden(fGr, fArt, neuZeichnen){
   app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
   // Auf/zu steht in den Einstellungen, damit die Karte beim Neuzeichnen (nach jedem Antippen) offen bleibt - Mehrfachauswahl ohne ständiges Aufklappen
   app.querySelectorAll("[data-sttoggle]").forEach(function(b){ b.addEventListener("click", function(){ s.stFilterOpen = !s.stFilterOpen; save(); neuZeichnen(); }); });
-  app.querySelector("#st-air").addEventListener("change", function(e){
-    s.stAir = e.target.checked;
-    if(!s.stAir) s.stGruppen = selArr(s.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
-    save(); neuZeichnen();
-  });
   var zur = app.querySelector("[data-streset]");
   if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
 }
@@ -2091,7 +2077,7 @@ function renderStudioPlan(){
   if(stPlanBauen){
     var gruppen = studioIds(), da = {};
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
-    // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung, Air-Schalter)
+    // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung)
     var s = state.db.settings, fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
     function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die gerade nicht in den sichtbaren Gruppen stehen (z. B. Air-Übungen ausgeblendet)
