@@ -1306,10 +1306,11 @@ function render(){
   if(route==="repunitedit") return renderRepUnitEdit(parts[1]);
   if(route==="run") return renderRun();
   if(route==="rundetail") return renderRunDetail(parts[1]);
+  if(route==="intervall") return renderIntervall();   // Timer: eigene Seite (früher je ein Reiter in Air und Studio)
   if(route==="timers"){
-    if(parts[1] === "workouts" || parts[1] === "blocks"){   // frühere Timer-Reiter: jetzt Air › Timer
-      state.db.settings.libTab = "timer"; navStack[navStack.length-1] = "#library"; setUrl("#library");
-      return renderLibrary();
+    if(parts[1] === "workouts" || parts[1] === "blocks"){   // frühere Timer-Reiter: jetzt die Timer-Seite
+      navStack[navStack.length-1] = "#intervall"; setUrl("#intervall");
+      return renderIntervall();
     }
     return renderTimers();
   }
@@ -1319,7 +1320,7 @@ function render(){
     navStack[navStack.length-1] = "#timers"; setUrl("#timers");
     return renderTimers();
   }
-  if(route==="blocks"){ state.db.settings.libTab = "timer"; navStack[navStack.length-1] = "#library"; setUrl("#library"); return renderLibrary(); }
+  if(route==="blocks"){ navStack[navStack.length-1] = "#intervall"; setUrl("#intervall"); return renderIntervall(); }
   if(route==="block") return renderBlockEdit(parts[1]);
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
@@ -1394,7 +1395,8 @@ var HOME_ICON = {
   warm:'<circle cx="12" cy="4.5" r="2"/><path d="M5 8.5l7 2 7-2M12 10.5v4.5l-4.5 5.5M12 15l4.5 5.5"/>',   /* Mobility & Stretch: Figur streckt sich */
   run:'<circle cx="14" cy="4.5" r="2"/><path d="M6 21l3-6 3 2v5M9 15l1-4 4-1 2 3 3 1M10 11L8 8"/>'   /* Lauf: Läufer */
 };
-var ICON_SPARK = '<path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/>';
+/* „Überrasch mich“: Zauberstab mit Funken (klarer und moderner als die beiden Sterne davor) */
+var ICON_UEBERRASCH = '<path d="M4.5 19.5L14.5 9.5"/><path d="M13 3.5l.9 2.2 2.2.9-2.2.9L13 9.7l-.9-2.2-2.2-.9 2.2-.9z"/><path d="M19.5 11.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/><path d="M6 5l.5 1.2 1.2.5-1.2.5L6 8.4l-.5-1.2-1.2-.5 1.2-.5z"/>';
 var ICON_STAR = '<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>';
 /* Bereichs-Kachel (zwei nebeneinander): Symbol oben, Titel, Kurzbeschreibung, Pfeil */
 /* art: "gross" (Workouts, der wichtigste Bereich) oder "zeile" (die übrigen, als ruhige Liste) */
@@ -1422,6 +1424,14 @@ function bereichReihe(){
 }
 /* Fokus (Einstellungen): Bereiche, die man nicht braucht, verschwinden von der Startseite (settings.fokusAus = Liste der Schlüssel); die Daten bleiben, die Suche findet weiterhin alles */
 function fokusAus(k){ return selArr(state.db.settings.fokusAus).indexOf(k) > -1; }
+/* Timer: Schnellwahl unter den Bereichen (kein Bereich - ohne Fokus, Sortierung und Statistik) */
+function timerSchnellHTML(){
+  var w = state.db.workouts.length, b = state.db.blocks.length;
+  return '<div class="area-gruppe tm-schnell"><div class="area-tile zeile" data-nav="#intervall" role="button" tabindex="0" style="--c:var(--ti-color)">'+
+    '<span class="at-ico">'+svgIcon(HOME_ICON.intervall)+'</span>'+
+    '<span class="at-text"><b class="at-name">'+esc(t("tabTimer"))+'</b><small class="at-sub">'+esc(w || b ? t("tmQuick", { w:w, b:b }) : t("tmQuickLeer"))+'</small></span>'+
+    '<span class="at-chev">'+ICON_CHEV+'</span></div></div>';
+}
 function bereicheHTML(){
   var r = bereichReihe().filter(function(k){ return !fokusAus(k); });
   if(!r.length) return '<div class="card fokus-leer"><div>'+esc(t("fokusAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
@@ -1474,21 +1484,14 @@ function openBereicheSheet(){
   function schliessen(){ root.innerHTML = ""; }
   zeichnen();
 }
-/* „Überrasch mich“ als große Karte - steht auf der Startseite und in allen Bibliotheks-Reitern */
-/* gross: die Hauptkarte oben in Air - zeigt zusätzlich, womit „Überrasch mich“ zuletzt gemischt hat (Dauer und Kategorien) */
-function surpriseCardHTML(gross){
-  var p = gross && state.db.settings.surprise, last = "";
-  if(p && p.dur){
-    var ms = selArr(p.mains).filter(function(m){ return m !== "stretch"; });
-    if(!ms.length) ms = ["kraft", "ausdauer", "rumpf"];
-    last = t("spLast", { x:p.dur+" Min · "+ms.map(function(m){ return tplText(mainCat(m)); }).join(", ") });
-  }
-  return '<button type="button" class="surprise-card'+(gross ? ' gross' : '')+'" data-surprise>'+
-      '<span class="sc-ico">'+svgIcon(ICON_SPARK)+'</span>'+
-      '<span class="sc-txt"><b>'+t("surprise")+'</b><small>'+esc(gross && last ? last : t("spSub"))+'</small></span>'+
-      '<span class="sc-chev">'+ICON_CHEV+'</span>'+
-    '</button>';
+/* „Überrasch mich“: Knopf rechts in der ersten Leiste von Air (in jedem Reiter erreichbar, statt einer großen Karte unter den Reitern).
+   kompakt: nur das Symbol - wenn rechts noch das „?“ steht und der Platz knapp wird. Auf sehr schmalen Handys immer kompakt (CSS). */
+function surprisePilleHTML(kompakt){
+  return '<button type="button" class="sp-pille'+(kompakt ? ' kompakt' : '')+'" data-surprise title="'+esc(t("spSub"))+'" aria-label="'+esc(t("surprise"))+'">'+
+    svgIcon(ICON_UEBERRASCH)+'<span class="sp-txt">'+esc(t("surprise"))+'</span></button>';
 }
+/* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Air, Studio, Mobility & Stretch, Summit) */
+function reiterZeileHTML(farbe, knoepfe){ return '<div class="rz" style="--rz:'+farbe+'">'+knoepfe+'</div>'; }
 /* ============ Gesamtsuche ============
    Lupe auf der Startseite (neben dem Zahnrad): durchsucht Übungen, Workouts (Air und eigene), Challenges (Summit),
    Timer-Workouts, Blöcke, die Bereiche und Aktionen wie „Neuer Block“. Das Feld bleibt stehen, nur die Treffer werden neu gezeichnet. */
@@ -1618,7 +1621,7 @@ function renderHome(){
     /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
     '<div class="sec-head"><div class="section-title">'+t("areas")+'</div>'+
       '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
-    bereicheHTML() +
+    bereicheHTML() + timerSchnellHTML() +
     KODAK_BADGE;
   bindCommon();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
@@ -1943,7 +1946,7 @@ function studioFilterBinden(fGr, fArt, neuZeichnen){
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
   // Reiter oben: Übungen · Mein Plan · Timer
-  if(s.stTab === "timer") return renderStudioTimer();
+  if(s.stTab === "timer") s.stTab = "uebungen";   // der frühere Reiter „Timer“ ist jetzt eine eigene Seite
   if(s.stTab === "plan") return renderStudioPlan();
   // Filter: Gruppen-Kacheln (mehrere möglich) und Ausrüstung (mehrere möglich)
   var fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
@@ -2015,9 +2018,8 @@ function renderStudio(){
   if(studioQuery) suchen();
 }
 
-/* ============ Timer-Reiter (Air und Studio) ============
-   Blöcke (eine Übung mit Runden, Arbeit, Pause) und Timer-Workouts (mehrere Blöcke hintereinander) haben einen eigenen Reiter
-   in einem leicht anderen Blau (--ti-color). Angelegt werden sie über das Plus in diesem Reiter. */
+/* ============ Timer ============
+   Blöcke und Timer-Workouts haben eine eigene Seite (renderIntervall, Schnellwahl auf der Startseite); die Liste baut timerPanelHTML. */
 function timerPanelHTML(hw){
   var tws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
   var bls = state.db.blocks.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
@@ -2029,8 +2031,8 @@ function timerFabHTML(){
   return fabMenuHTML([{ key:"timerwo", label:t("fabTimerWo"), ico:ICON_WORKOUT, cls:"ti" }, { key:"block", label:t("fabBlock"), ico:ICON_BLOCK, cls:"ti" }]);
 }
 function studioTabsHTML(tab){
-  function b(k, label){ return '<button data-sttab="'+k+'" class="'+(k === "timer" ? 'ti' : '')+(tab === k ? ' active' : '')+'">'+esc(label)+'</button>'; }
-  return '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+b("uebungen", t("libExercises"))+b("plan", t("tabPlan"))+b("timer", t("tabTimer"))+'</div></div>';
+  function b(k, label){ return '<button data-sttab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
+  return reiterZeileHTML("var(--bl-color)", b("uebungen", t("libExercises"))+b("plan", t("tabPlan")));
 }
 function bindStudioTabs(){
   app.querySelectorAll("[data-sttab]").forEach(function(b){
@@ -2040,11 +2042,14 @@ function bindStudioTabs(){
     });
   });
 }
-function renderStudioTimer(){
+/* Timer: eigene Seite (früher je ein Reiter in Air und Studio, mit derselben Liste). Erreichbar über die Schnellwahl auf der Startseite.
+   Blöcke (eine Übung mit Runden, Arbeit, Pause) und Timer-Workouts (mehrere Blöcke hintereinander) in der Timer-Farbe (--ti-color);
+   angelegt werden sie über das Plus. */
+function renderIntervall(){
   var hw = hinweise("timer", ["timerHint"]);
-  app.innerHTML = topbar(t("timers"), { back:"#home", right:hw.knopf }) + studioTabsHTML("timer") + timerPanelHTML(hw) + '<div style="height:90px"></div>' + timerFabHTML();
-  bindCommon(); bindStudioTabs();
-  function neu(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
+  app.innerHTML = topbar(t("tabTimer"), { back:"#home", right:hw.knopf }) + timerPanelHTML(hw) + '<div style="height:90px"></div>' + timerFabHTML();
+  bindCommon();
+  function neu(){ var y = window.scrollY; renderIntervall(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   on("[data-play]", function(el){ if(!el.disabled) go("#play/"+el.getAttribute("data-play")); });
   on("[data-playblock]", function(el){ go("#playblock/"+el.getAttribute("data-playblock")); });
@@ -2735,9 +2740,9 @@ function createBlock(){
 function renderBlockEdit(id){
   var istNeu = !!entwurf("blocks", id);
   var b = findBlock(id) || entwurf("blocks", id);
-  if(!b){ goBack("#library"); return; }
+  if(!b){ goBack("#intervall"); return; }
   app.innerHTML =
-    topbar(t("editBlock"), { back:"#library" }) +
+    topbar(t("editBlock"), { back:"#intervall" }) +
     '<div class="card">'+
       '<label for="f-name">'+t("name")+'</label>'+
       '<input type="text" id="f-name" value="'+esc(b.name)+'" maxlength="40">'+
@@ -2826,7 +2831,7 @@ function renderWorkoutEdit(id){
   var istNeu = !!entwurf("workouts", id);
   var w = findWorkout(id) || entwurf("workouts", id);
   function save(){ if(!istNeu) speichereDB(); }   // Entwurf: erst „Speichern“ legt ihn an
-  if(!w){ goBack("#library"); return; }
+  if(!w){ goBack("#intervall"); return; }
 
   var itemsHTML = w.items.map(function(it, idx){
     var b = findBlock(it.blockId);
@@ -2868,7 +2873,7 @@ function renderWorkoutEdit(id){
     }).join("")+'</div>';
 
   app.innerHTML =
-    topbar(t("workout"), { back:"#library", right:istNeu ? '' : '<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
+    topbar(t("workout"), { back:"#intervall", right:istNeu ? '' : '<button class="iconbtn" data-play title="'+t("start")+'">'+ICON_PLAY+'</button>' }) +
     '<div class="card">'+
       '<label for="w-name">'+t("name")+'</label>'+
       '<input type="text" id="w-name" value="'+esc(w.name)+'" maxlength="40">'+
@@ -2952,14 +2957,14 @@ function renderWorkoutEdit(id){
     w.name = app.querySelector("#w-name").value.trim() || t("untitled");
     w.updatedAt = Date.now();
     entwurfSichern("workouts", w);
-    goBack("#library");
+    goBack("#intervall");
   });
 
   app.querySelector("[data-delete]").addEventListener("click", function(){
-    if(istNeu){ neuEntwurf = null; goBack("#library"); return; }
+    if(istNeu){ neuEntwurf = null; goBack("#intervall"); return; }
     confirmSheet(t("deleteWorkoutQ"), t("cantUndo"), t("del"), function(){
       deleteTimerWorkoutNow(id);
-      goBack("#library");
+      goBack("#intervall");
     });
   });
 }
@@ -3285,7 +3290,7 @@ function libWoSort(list, sort){
 function renderLibrary(){
   var s = state.db.settings;
   if(s.libTab === "calis" || s.libTab === "stretch") s.libTab = "workouts";   // frühere Reiter Calisthenics und Dehnen
-  var tab = ["exercises","mine","timer"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";
+  var tab = ["exercises","mine"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";   // der frühere Reiter „Timer“ ist jetzt eine eigene Seite
   /* Dehnen und Aufwärmen stehen seit 2026-09 unter „Aufwärmen & Dehnen“ - hier nicht mehr */
   function ohneStretch(x){ return x !== "stretch"; }
   var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
@@ -3295,12 +3300,9 @@ function renderLibrary(){
   var woSort = s.libWoSort === "az" ? "az" : "dur";
   var open = !!s.libFilterOpen;
   var hiddenCount = 0, hiddenCards = "", list = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
-  var hw = tab === "exercises" ? hinweise("air", ["zpHint"]) : tab === "timer" ? hinweise("timer", ["timerHint"]) : hinweise("", []);
+  var hw = tab === "exercises" ? hinweise("air", ["zpHint"]) : hinweise("", []);
 
-  if(tab === "timer"){
-    list = timerPanelHTML(hw);
-    fab = timerFabHTML();
-  } else if(tab === "workouts" || tab === "mine"){
+  if(tab === "workouts" || tab === "mine"){
     var rows = [];
     if(tab === "workouts"){
       LIB_WORKOUTS.forEach(function(lw){
@@ -3346,16 +3348,13 @@ function renderLibrary(){
   list += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>';
 
   app.innerHTML =
-    // Suche als Lupe oben rechts (klappt das Feld auf), damit „Überrasch mich“ als Hauptleiste unter den Reitern Platz hat
-    topbar(t("library"), { back:"#home", right: hw.knopf + ((tab === "mine" || tab === "timer") ? '' : lupeHTML("l", libQuery)) }) +
-    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-4">'+
+    // Erste Leiste: Zurück, Titel, „Überrasch mich“ (Alleinstellungsmerkmal von Air), ggf. „?“, Lupe
+    topbar(t("library"), { back:"#home", right: surprisePilleHTML(!!hw.knopf) + hw.knopf + (tab === "mine" ? '' : lupeHTML("l", libQuery)) }) +
+    reiterZeileHTML("var(--tp-color)",
       '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
       '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
-      '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>'+
-      '<button data-libtab="timer" class="ti'+(tab==="timer"?" active":"")+'">'+t("tabTimer")+'</button>'+   // eigener Reiter in eigenem Blau
-    '</div></div>'+
-    surpriseCardHTML(true) +   // das Alleinstellungsmerkmal von Air: schlanke, auffällige Leiste direkt unter den Reitern
-    (tab === "mine" || tab === "timer" ? '' :
+      '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>')+
+    (tab === "mine" ? '' :
     suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
     (tab === "exercises" ? hw.z(0, "page-hint") : '')+
     airFilterHTML("l", open, cat, equip, tab==="exercises" ? exSort : woSort,
@@ -3379,13 +3378,7 @@ function renderLibrary(){
     applySearch(app, libQuery);
     lq.addEventListener("input", function(){ libQuery = lq.value; applySearch(app, libQuery); });
   }
-  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/new"); else go("#exedit/new"); },
-                "timerwo": function(){ go("#workout/"+createTimerWorkout().id); },
-                "block": function(){ go("#block/"+createBlock().id); } });
-  // Timer-Workouts und Blöcke unter „Meine“: starten und per „Überrasch mich“ füllen
-  on("[data-play]", function(el){ if(!el.disabled) go("#play/"+el.getAttribute("data-play")); });
-  on("[data-playblock]", function(el){ go("#playblock/"+el.getAttribute("data-playblock")); });
-  on("[data-twplus]", function(el){ openSurprise(el.getAttribute("data-twplus")); });
+  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/new"); else go("#exedit/new"); } });
 
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
@@ -4565,7 +4558,7 @@ function openSurprise(twId){
     // Neu zeichnen ohne Springen: die Scrollposition im Fenster bleibt erhalten
     var alt = root.querySelector(".sp-sheet"), scrollAlt = alt ? alt.scrollTop : 0;
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet">'+
-      '<h3>'+svgIcon(ICON_SPARK, "ico sp-h-ico")+' '+t("surprise")+'</h3>'+
+      '<h3>'+svgIcon(ICON_UEBERRASCH, "ico sp-h-ico")+' '+t("surprise")+'</h3>'+
       (tw ? '<div class="tm-hint" style="margin-top:0">'+esc(t("spFillHint", { n:tw.name || t("untitled") }))+'</div>'+
             '<label>'+t("spCount")+'</label><div class="sp-chips">'+[4,6,8,10,12,15].map(function(v){
         return '<button type="button" class="fc-chip'+(p.anzahl===v?' on':'')+'" data-spanz="'+v+'">'+v+' '+t("spCountUnit")+'</button>'; }).join("")+'</div>'
@@ -5656,11 +5649,11 @@ function renderWarmStretch(){
   var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
     topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) }) +
-    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
+    '<div class="theme-pick lib-tabs seg-2 ws-art">'+
       knopf("wsart", "warm", art === "warm", t("wsWarm"))+knopf("wsart", "dehn", art === "dehn", t("wsDehn"))+
-    '</div><div class="theme-pick lib-tabs seg-3 unter-tabs">'+
-      knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+knopf("wstab", "meine", tab === "meine", t("tabMine"))+
-    '</div></div>'+
+    '</div>'+
+    reiterZeileHTML("var(--ws-color)",
+      knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+knopf("wstab", "meine", tab === "meine", t("tabMine")))+
     hw.z(0, "rep-intro")+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
     (tab === "uebungen" ? hw.z(1, "page-hint") : '')+
@@ -5730,11 +5723,10 @@ function renderReps(){
   }
   var hw = hinweise("reps", [repFilter.tab === "einheiten" ? "repUnitsIntro" : repFilter.tab === "meine" ? "repMineIntro2" : "repIntro"]);
   var html = topbar(t("repTitle"), { back:"#home", right:hw.knopf+lupeHTML("rs", repQuery) }) +
-    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-3">'+
+    reiterZeileHTML("var(--rep-color)",
       '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+
       '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
-      '<button data-repf="tab:meine" class="'+(repFilter.tab==="meine"?"active":"")+'">'+esc(t("tabMine"))+'</button>'+
-    '</div></div>'+suchFeldHTML(repQuery, "rs", t("repSearchPh"));
+      '<button data-repf="tab:meine" class="'+(repFilter.tab==="meine"?"active":"")+'">'+esc(t("tabMine"))+'</button>')+suchFeldHTML(repQuery, "rs", t("repSearchPh"));
   var liste = "", fab = "";
   /* Karte einer eigenen Challenge; mitTag: „Meine ·“ davor (in den Reitern Einheiten und Programme) */
   function eigeneKarte(q, mitTag){

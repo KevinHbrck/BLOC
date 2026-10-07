@@ -2063,6 +2063,22 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 /* „Was ist was?“, Bestleistung, Leichter/Schwerer: kleine, ruhige Ergänzungen */
 .wi-sheet h3{ margin:0 0 10px; }
 .hw-zeile{ margin:0 0 10px; font-size:15px; line-height:1.45; }
+/* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (statt einer Karte mit Knöpfen) */
+.rz{ display:flex; margin:0 0 12px; border-bottom:1px solid var(--border); }
+.rz button{ flex:1; min-width:0; border:none; background:none; padding:12px 4px 11px; font:inherit; font-size:15px; font-weight:600; color:var(--text-dim); position:relative; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rz button.active{ color:var(--text); font-weight:800; }
+.rz button.active::after{ content:""; position:absolute; left:16%; right:16%; bottom:-1px; height:3px; border-radius:3px 3px 0 0; background:var(--rz, var(--tp-color)); }
+:root[data-vintage] .rz button{ font-family:var(--f-mono); text-transform:uppercase; font-size:12.5px; letter-spacing:.04em; }
+.ws-art{ margin:0 0 4px; }
+/* „Überrasch mich“ in der ersten Leiste von Air */
+.sp-pille{ display:inline-flex; align-items:center; justify-content:center; gap:7px; height:48px; padding:0 15px 0 12px; border-radius:24px; flex:none; white-space:nowrap;
+  border:1px solid color-mix(in srgb, var(--accent) 38%, transparent); background:color-mix(in srgb, var(--accent) 13%, var(--surface)); color:var(--text);
+  font:inherit; font-size:14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); }
+.sp-pille .ico{ width:20px; height:20px; color:var(--accent); flex:none; }
+.sp-pille.kompakt{ padding:0; width:48px; }
+.sp-pille.kompakt .sp-txt{ display:none; }
+@media (max-width:359px){ .sp-pille{ padding:0; width:48px; } .sp-pille .sp-txt{ display:none; } }
+.tm-schnell{ margin-top:10px; }
 /* „?“ in der Kopfzeile: kleiner als Zurück und Lupe, damit lange Titel („Mobility & Stretch“) nicht umbrechen */
 .iconbtn[data-hinweis]{ width:44px; height:44px; border-radius:14px; box-shadow:none; }
 .iconbtn[data-hinweis] .ico{ width:22px; height:22px; color:var(--text-dim); }

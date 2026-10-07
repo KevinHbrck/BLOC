@@ -166,3 +166,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **▶ Start**: 30 px sichtbar, aber 44 px Tippbereich, damit man das ☆ daneben nicht trifft.
 - **Gerät auf der Figur**: unten rechts ein kleines Symbol (Kettlebell, Kurzhantel, Stange, Dip-Barren), wenn die Übung ein Gerät braucht; ohne Geräte nichts. Das ersetzt die frühere Zeile „Ohne Geräte · Cardio …“ der Listenansicht.
 - FASSUNG 2026-10-02-60; Schnelltest 27/27 grün.
+
+## 2026-10-07 · Schlankere Kopfzone, „Überrasch mich“ in der Leiste, Timer als eigene Seite
+
+- **Reiterzeile statt Karte**: Air, Studio, Mobility & Stretch und Summit haben schlanke Reiter mit Unterstrich in der Farbe des Bereichs (`reiterZeileHTML`, `.rz`) statt einer Karte mit Knöpfen. Das spart Höhe, der aktive Reiter ist eindeutig. Bei Mobility & Stretch bleibt der Umschalter Mobility | Stretch darüber.
+- **„Überrasch mich“ in der ersten Leiste von Air**: ein Knopf mit Symbol und Text rechts neben dem Titel, in jedem Reiter erreichbar; die große Karte unter den Reitern entfällt. Steht rechts zusätzlich das „?“ (Erklärtext eingeklappt) oder ist das Handy sehr schmal, zeigt der Knopf nur das Symbol. Neues, klareres Symbol: Zauberstab mit Funken (statt der zwei Sterne).
+- **Timer als eigene Seite** (`#intervall`, `renderIntervall`): der Reiter „Timer“ gab es in Air und Studio mit derselben Liste - jetzt je ein Reiter weniger (Air: Workouts · Übungen · Meine; Studio: Übungen · Mein Plan). Der Timer hat auf der Startseite eine schlanke **Schnellwahl** unter den Bereichen („Eigene Intervall-Timer · 3 Workouts · 5 Blöcke“); sie gehört nicht zu den sortierbaren Bereichen und nicht zum Fokus. Alte Adressen (`#blocks`, `#timers/workouts`) und gespeicherte Reiter führen dorthin; die Editoren für Blöcke und Timer-Workouts kehren zur Timer-Seite zurück.
+- Filterkarte und Hinweiszeile bleiben unverändert. Schnelltest angepasst (Reiterzeile, Überrasch mich in jedem Reiter, Timer-Seite, Schnellwahl); 27/27 grün. FASSUNG 2026-10-02-61.
