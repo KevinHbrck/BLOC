@@ -405,6 +405,8 @@ function mainMatch(sel, main){ sel = selArr(sel); return !sel.length || sel.inde
 var STUDIO_NUR = {};
 STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){ STUDIO_NUR[id] = true; }); });
 function fuerWorkout(ex){ return !STUDIO_NUR[ex.id] && ex.main !== "stretch"; }
+/* Air zeigt keine Studio-Übungen (Geräte, Langhantel, alles mit Ausrüstung „Fitnessstudio“) - die gehören nur zu Studio */
+function fuerAir(ex){ return fuerWorkout(ex) && ex.equip.indexOf("gym") < 0; }
 function exIsMobility(id){ var ex = id && findExercise(id); return !!(ex && ex.main === "stretch"); }
 function stretchLast(items, idOf){
   var a = [], b = [];
@@ -581,20 +583,25 @@ function wsUebungen(art){
   var l = art === "warm" ? AUFWAERM_UEBUNGEN.map(findExercise) : EXERCISES.filter(function(ex){ return ex.main === "stretch"; });
   return l.filter(function(ex){ return ex && !libHidden("ex:"+ex.id); });
 }
-/* Kacheln der Körperregionen (wie die Gruppen im Studio); counts: Anzahl je Region */
-function wsRegionTilesHTML(sel, counts){
+/* Filterkarte der Körperregionen (Dehnen), dieselbe Karte wie in Air. anzahl: wie viele Einträge gerade zu sehen sind; art: Wo (Workouts) oder Ex (Übungen) */
+function wsRegionFilterHTML(sel, anzahl, art){
   var ico = { nacken:'<circle cx="12" cy="7" r="3"/><path d="M8 21v-5a4 4 0 0 1 8 0v5"/>', schulter:STUDIO_GRUPPEN_ICON.schulter, arme:CAT_ICON.arms, brust:STUDIO_GRUPPEN_ICON.brust,
     ruecken:CAT_ICON.back, rumpf:CAT_ICON.core, huefte:'<path d="M6 5c0 6 2 8 6 8s6-2 6-8M9 13l-2 8M15 13l2 8"/>', beine:CAT_ICON.legs };
-  return '<div class="main-tiles st-bereiche">'+WS_REGIONEN.map(function(r){
-    var on = sel.indexOf(r) > -1;
-    return '<button type="button" class="main-tile'+(on ? ' on' : '')+(sel.length && !on ? ' off' : '')+'" data-wsreg="'+r+'" aria-pressed="'+on+'" style="--mc:var(--ws-color)">'+
-      '<span class="mt-ico">'+svgIcon(ico[r])+'</span><span class="mt-name">'+esc(t("rg_"+r))+'</span><span class="mt-n">'+(counts[r] || 0)+'</span></button>';
-  }).join("")+'</div>';
+  return filterKarteHTML({ offen:!!state.db.settings.wsFilterOpen, toggle:"data-wstoggle", reset:"data-wsfreset", n:sel.length,
+    summe:sel.length ? sel.map(function(r){ return t("rg_"+r); }).join(", ") : t(art === "Ex" ? "afAlleEx" : "afAlleWo"),
+    zeigen:filterZeigenText(anzahl, art),
+    inhalt:filterChipsHTML(t("afRegion"), t("multiOk"), WS_REGIONEN.map(function(r){
+      return filterChip("data-wsreg", r, sel.indexOf(r) > -1, svgIcon(ico[r]), t("rg_"+r)); }).join("")) });
 }
 function wsRegionBinden(neu){
   app.querySelectorAll("[data-wsreg]").forEach(function(b){
     b.addEventListener("click", function(e){ e.stopPropagation(); var s = state.db.settings; s.wsRegionen = selToggle(s.wsRegionen, b.getAttribute("data-wsreg")); save(); neu(); });
   });
+  app.querySelectorAll("[data-wstoggle]").forEach(function(b){
+    b.addEventListener("click", function(e){ e.stopPropagation(); var s = state.db.settings; s.wsFilterOpen = !s.wsFilterOpen; save(); neu(); });
+  });
+  var zur = app.querySelector("[data-wsfreset]");
+  if(zur) zur.addEventListener("click", function(e){ e.stopPropagation(); state.db.settings.wsRegionen = []; save(); neu(); });
 }
 var coverDraft = null;   // das Workout auf dem Deckblatt - Änderungen gelten nur für dieses Training
 
@@ -1283,7 +1290,7 @@ function render(){
   var route = parts[0] || "home";
   tabLeiste(route);
   if(route==="home"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
-    var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterZu; delete sz.stTimerAuf;
+    var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.repFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
   }
   if(repRun && route !== "repplay") repStop();   // Rep-Workout verlassen: Stoppuhr aus
   if(studioPause && route !== "studio") studioPauseStop();
@@ -1863,31 +1870,35 @@ function studioKachel(id){
     '<span class="fig-name">'+esc(tplText(ex.name))+'</span><span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>'+
     (last ? wochenKurve(studioWochen(id), "st-spark") : '')+'</div>';
 }
-/* Filter der Studio-Übungen (Air-Schalter, Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans */
-function studioFilterHTML(gruppen, fGr, fArt, artOk, filterAn){
+/* Anzahl der Übungen, die der Studio-Filter gerade zeigt (ohne Doppelte aus Favoriten/Zuletzt) */
+function studioAnzahl(gruppen, fGr, artOk){
+  var n = 0;
+  gruppen.forEach(function(g){ if(!fGr.length || fGr.indexOf(g.id) > -1) n += g.ids.filter(artOk).length; });
+  return n;
+}
+/* Filter der Studio-Übungen (Air-Schalter, Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
+function studioFilterHTML(gruppen, fGr, fArt, anzahl){
   var s = state.db.settings;
-  return '<details class="opt-mehr st-filter" data-stfilter'+(s.stFilterZu === false ? ' open' : '')+'><summary>'+
-    '<span class="om-ico">'+svgIcon(CAT_ICON.weight)+'</span><span class="meta"><span class="name">'+esc(t("stFilter"))+'</span>'+
-    (filterAn ? '<span class="sub">'+(fGr.length + fArt.length)+' aktiv</span>' : '')+'</span><span class="om-pfeil" aria-hidden="true">▾</span></summary><div class="st-filter-inhalt">'+
-    '<div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
-    '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div>'+
-    '<div class="main-tiles st-bereiche">'+gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
-    var on = fGr.indexOf(g.id) > -1, n = g.ids.filter(artOk).length;
-    return '<button type="button" class="main-tile'+(on ? ' on' : '')+(fGr.length && !on ? ' off' : '')+'" data-stgr="'+g.id+'" aria-pressed="'+on+'" style="--mc:var(--bl-color)">'+
-      '<span class="mt-ico">'+svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight)+'</span><span class="mt-name">'+esc(g.name)+'</span><span class="mt-n">'+n+'</span></button>';
-  }).join("")+'</div>'+
-  '<div class="fc-chips st-arten">'+STUDIO_ARTEN.map(function(a){
-    var on = fArt.indexOf(a) > -1;
-    return '<button type="button" class="fc-chip'+(on ? ' on' : '')+'" data-start="'+a+'" aria-pressed="'+on+'">'+esc(t("stArt_"+a))+'</button>';
-  }).join("")+(filterAn ? '<button type="button" class="tpl-hide" data-streset>'+t("filterReset")+'</button>' : '')+'</div></div></details>';
+  var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
+    .concat(fArt.map(function(a){ return t("stArt_"+a); }));
+  return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
+    summe:namen.length ? namen.join(", ") : t("afAlleEx"),
+    zeigen:filterZeigenText(anzahl, "Ex"),
+    inhalt:'<div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
+        '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div>'+
+      filterChipsHTML(t("afGruppe"), t("multiOk"), gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+        return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
+      filterChipsHTML(t("equipHave"), t("multiOk"), STUDIO_ARTEN.map(function(a){
+        return filterChip("data-start", a, fArt.indexOf(a) > -1, "", t("stArt_"+a)); }).join("")) });
 }
 function studioFilterBinden(fGr, fArt, neuZeichnen){
   var s = state.db.settings;
   app.querySelectorAll("[data-stgr]").forEach(function(b){ b.addEventListener("click", function(){ s.stGruppen = selToggle(fGr, b.getAttribute("data-stgr")); save(); neuZeichnen(); }); });
   app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
-  var fk = app.querySelector("[data-stfilter]");
-  fk.addEventListener("toggle", function(){ if(!!s.stFilterZu === !fk.open) return; s.stFilterZu = !fk.open; save(); });   // „toggle“ kommt auch beim Zeichnen
-  app.querySelector("#st-air").addEventListener("change", function(e){
+  // Auf/zu steht in den Einstellungen, damit die Karte beim Neuzeichnen (nach jedem Antippen) offen bleibt - Mehrfachauswahl ohne ständiges Aufklappen
+  app.querySelectorAll("[data-sttoggle]").forEach(function(b){ b.addEventListener("click", function(){ s.stFilterOpen = !s.stFilterOpen; save(); neuZeichnen(); }); });
+  var air = app.querySelector("#st-air");   // nur da, solange die Karte offen ist
+  if(air) air.addEventListener("change", function(e){
     s.stAir = e.target.checked;
     if(!s.stAir) s.stGruppen = selArr(s.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
     save(); neuZeichnen();
@@ -1916,7 +1927,7 @@ function renderStudio(){
   });
   zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0 && passt(id); });
   var filterAn = fGr.length || fArt.length;
-  var kacheln = studioFilterHTML(gruppen, fGr, fArt, artOk, filterAn);
+  var kacheln = studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk));
   var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
       (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
     (zuletzt.length ? '<div class="st-gruppe"><div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div></div>' : '');
@@ -2040,7 +2051,7 @@ function renderStudioPlan(){
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die gerade nicht in den sichtbaren Gruppen stehen (z. B. Air-Übungen ausgeblendet)
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
       '<div class="page-hint">'+esc(t("planTippen"))+'</div>'+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
-      studioFilterHTML(gruppen, fGr, fArt, artOk, fGr.length || fArt.length);
+      studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk));
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
     gruppen.forEach(function(g){
       if(!g.immer && fGr.length && fGr.indexOf(g.id) < 0) return;
@@ -3076,25 +3087,6 @@ function moreBtn(attr, val, label){
   return '<button type="button" class="more-btn" '+attr+'="'+esc(val)+'" title="'+esc(label||t("more"))+'" aria-label="'+esc(label||t("more"))+'">'+ICON_DOTS+'</button>';
 }
 
-/* Suche + Filter-Knopf in einer Zeile; die Filter selbst liegen in einem Einblendfenster.
-   Aktive Filter stehen als kurze Zeile darunter (mit „Zurücksetzen“). */
-function filterCount(cat, equip){ return selArr(cat).length + selArr(equip).length; }
-/* Filter-Zeile unter den Kategorie-Kacheln: Fokus, Ausrüstung, Sortierung - klappt direkt darunter auf */
-function filterZeileHTML(attr, n, offen){
-  return '<button type="button" class="filter-zeile'+(n || offen ? ' on' : '')+'" '+attr+' aria-expanded="'+!!offen+'">'+svgIcon(ICON_FILTER)+
-    '<span class="fz-text">'+esc(t("filterMehr"))+'</span>'+(n ? '<span class="filter-n">'+n+'</span>' : '')+
-    '<span class="tpl-chev'+(offen ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>';
-}
-function activeFiltersHTML(cat, equip, pre){
-  cat = selArr(cat); equip = selArr(equip);
-  if(!cat.length && !equip.length) return "";
-  var parts = [];
-  if(cat.length) parts.push(t("fCat")+": "+cat.map(catName).join(", "));
-  if(equip.length) parts.push(t("equipHave")+": "+equip.map(equipName).join(", "));
-  return '<div class="active-filters"><span>'+esc(parts.join(" · "))+'</span>'+
-    '<button type="button" class="tpl-hide" data-'+pre+'freset>'+t("filterReset")+'</button></div>';
-}
-
 function hiddenBlockHTML(n, cards){
   if(!n) return "";
   return '<div class="section-title hid-head">'+svgIcon(ICON_EYE_OFF)+t("hiddenSection", { n:n })+'</div>'+
@@ -3163,25 +3155,48 @@ function mainTilesHTML(sel, counts, attr, ohne){
   }).join("")+'</div>';
 }
 var ICON_RESET = '<path d="M4 4v5h5"/><path d="M4.6 14a8 8 0 1 0 1.9-7.9L4 9"/>';
-/* Filterfeld direkt auf der Seite (Fokus, Ausrüstung, Sortierung) - auf- und zuklappbar über den Filter-Knopf */
-function filterCardHTML(pre, cat, equip, sort, sortOpts, ohneCats, ohneEquip){
-  cat = selArr(cat); equip = selArr(equip);
-  return '<div class="card filter-card">'+
-    '<div class="fc-head"><b>'+t("filter")+'</b><button type="button" class="fc-reset" data-'+pre+'freset>'+svgIcon(ICON_RESET)+t("filterReset")+'</button></div>'+
-    '<div class="fc-lbl">'+t("fCat")+' <span>'+t("multiOk")+'</span></div>'+
-    '<div class="fc-chips">'+LIB_CATS.filter(function(c){ return !ohneCats || ohneCats.indexOf(c.id) < 0; }).map(function(c){
-      var on = cat.indexOf(c.id) > -1;
-      return '<button type="button" class="fc-chip'+(on?' on':'')+'" data-'+pre+'fcat="'+c.id+'" aria-pressed="'+on+'">'+catIcon(c.id)+esc(tplText(c))+'</button>';
-    }).join("")+'</div>'+
-    '<div class="fc-lbl">'+t("equipHave")+' <span>'+t("multiOk")+'</span></div>'+
-    '<div class="fc-chips">'+EQUIPS.filter(function(e){ return !ohneEquip || ohneEquip.indexOf(e.id) < 0; }).map(function(e){
-      var on = equip.indexOf(e.id) > -1;
-      return '<button type="button" class="fc-chip'+(on?' on':'')+'" data-'+pre+'fequip="'+e.id+'" aria-pressed="'+on+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>';
-    }).join("")+'</div>'+
-    (sortOpts ? '<div class="fc-lbl">'+t("sortLabel")+'</div><div class="fc-seg">'+sortOpts.map(function(o){
-      return '<button type="button" class="'+(o[0]===sort?'on':'')+'" data-'+pre+'fsort="'+o[0]+'">'+o[1]+'</button>';
-    }).join("")+'</div>' : '')+
+/* Gemeinsame Filterkarte (Air, Baukasten, Studio, Mobility & Stretch, Summit). Zu: eine Zeile mit Zusammenfassung, was gerade gilt.
+   Auf: Gruppen von Chips (Training, Ausrüstung …) und unten „Zurücksetzen“ + „N … anzeigen“ (klappt zu). Auf/Zu merkt sich der Bereich selbst.
+   o: { offen, toggle:"data-xtoggle", reset:"data-xfreset", n:Anzahl aktiver Filter, summe:Text der Kopfzeile, inhalt:HTML, zeigen:Text des Knopfes } */
+function filterKarteHTML(o){
+  var body = '';
+  if(o.offen){
+    body = '<div class="af-body">'+o.inhalt+
+      '<div class="btn-row af-fuss">'+
+        '<button type="button" class="btn btn-secondary af-reset" '+o.reset+(o.n ? '' : ' disabled')+'>'+svgIcon(ICON_RESET)+t("filterReset")+'</button>'+
+        '<button type="button" class="btn btn-primary" '+o.toggle+'>'+esc(o.zeigen)+'</button>'+
+      '</div></div>';
+  }
+  return '<div class="card air-filter'+(o.offen ? ' offen' : '')+'">'+
+    '<button type="button" class="af-kopf" '+o.toggle+' aria-expanded="'+!!o.offen+'">'+svgIcon(ICON_FILTER)+
+      '<span class="af-titel"><b>'+t("filter")+'</b><small>'+esc(o.summe)+'</small></span>'+
+      (o.n ? '<span class="af-n">'+o.n+'</span>' : '')+
+      '<span class="tpl-chev'+(o.offen ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>'+
+    body+
   '</div>';
+}
+function filterChipsHTML(lbl, hint, chips){
+  return '<div class="af-lbl">'+esc(lbl)+(hint ? ' <span>'+esc(hint)+'</span>' : '')+'</div><div class="fc-chips">'+chips+'</div>';
+}
+function filterChip(attr, wert, an, ico, text){
+  return '<button type="button" class="fc-chip'+(an ? ' on' : '')+'" '+attr+'="'+wert+'" aria-pressed="'+!!an+'">'+(ico || '')+esc(text)+'</button>';
+}
+/* Text des unteren Knopfes: „12 Workouts anzeigen“. art: Wo (Workouts) · Ex (Übungen) · Ei (Einheiten) · Pr (Programme) */
+function filterZeigenText(n, art){ return n ? t("af"+art+(n === 1 ? "1" : "N"), { n:n }) : t("afNull"); }
+/* Air (Bibliothek und Baukasten): Training, Ausrüstung, Sortierung. Studio-Ausrüstung („Fitnessstudio“) gibt es hier nicht. */
+function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung){
+  cat = selArr(cat); equip = selArr(equip);
+  var namen = cat.map(catName).concat(equip.map(equipName));
+  return filterKarteHTML({ offen:offen, toggle:'data-'+pre+'toggle', reset:'data-'+pre+'freset', n:namen.length,
+    summe:namen.length ? namen.join(", ") : t(uebung ? "afAlleEx" : "afAlleWo"),
+    zeigen:filterZeigenText(n, uebung ? "Ex" : "Wo"),
+    inhalt:filterChipsHTML(t("afTraining"), t("multiOk"), LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
+        return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join(""))+
+      filterChipsHTML(t("equipHave"), t("multiOk"), EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
+        return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join(""))+
+      '<div class="af-lbl">'+esc(t("sortLabel"))+'</div><div class="fc-seg">'+sortOpts.map(function(o){
+        return '<button type="button" class="'+(o[0]===sort?'on':'')+'" data-'+pre+'fsort="'+o[0]+'">'+o[1]+'</button>';
+      }).join("")+'</div>' });
 }
 /* Fokus eines Workouts: passt, wenn der Workout-Fokus gewählt ist oder mindestens ein Drittel der Übungen passt */
 function woFocusOk(focus, exs, cat, id){
@@ -3204,7 +3219,7 @@ function libWoSort(list, sort){
 }
 
 /* Bibliothek: Reiter Workouts (fertige Programme) · Übungen · Meine.
-   Darunter Suche mit Filter-Knopf, die Kacheln der Hauptkategorien und - aufgeklappt - das Filterfeld. */
+   Darunter die Suche und die einklappbare Filterkarte (Training, Ausrüstung, Sortierung). */
 function renderLibrary(){
   var s = state.db.settings;
   if(s.libTab === "calis" || s.libTab === "stretch") s.libTab = "workouts";   // frühere Reiter Calisthenics und Dehnen
@@ -3212,13 +3227,12 @@ function renderLibrary(){
   /* Dehnen und Aufwärmen stehen seit 2026-09 unter „Aufwärmen & Dehnen“ - hier nicht mehr */
   function ohneStretch(x){ return x !== "stretch"; }
   var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
-  var equip = selArr(s.libEquips);
-  var mains = selArr(s.libMains).filter(ohneStretch);
+  var equip = selArr(s.libEquips).filter(function(x){ return x !== "gym"; });   // Studio-Ausrüstung gibt es in Air nicht
+  var mains = [];   // die Kacheln der Hauptkategorien gibt es in Air nicht mehr; ein früher gespeicherter Wert wirkt nicht mehr
   var exSort = s.libSort === "az" ? "az" : "std";
   var woSort = s.libWoSort === "az" ? "az" : "dur";
   var open = !!s.libFilterOpen;
-  var counts = {}, hiddenCount = 0, hiddenCards = "", list = "", fab = "";
-  MAIN_CATS.forEach(function(c){ counts[c.id] = 0; });
+  var hiddenCount = 0, hiddenCards = "", list = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
 
   if(tab === "timer"){
     list = timerPanelHTML();
@@ -3238,18 +3252,15 @@ function renderLibrary(){
         rows.push({ mw:mw, exs:exs, name:mw.name, focus:"", dur:workoutDuration(myRun(mw)) });
       });
     }
-    // erst Fokus und Ausrüstung (bestimmt die Zahlen auf den Kacheln), dann die Kacheln selbst
     rows = rows.filter(function(r){
       r.mains = woMains(r.exs);
       if(tab === "mine") return true;   // eigene Programme: ungefiltert
-      if(!woFocusOk(r.focus, r.exs, cat, r.lw && r.lw.id) || !woFits(r.exs, equip) || !woGearOk(r.exs, cat, equip, mains)) return false;
-      if(!r.hidden) r.mains.forEach(function(m){ counts[m]++; });
-      return !mains.length || r.mains.some(function(m){ return mains.indexOf(m) > -1; });
+      return woFocusOk(r.focus, r.exs, cat, r.lw && r.lw.id) && woFits(r.exs, equip) && woGearOk(r.exs, cat, equip, mains);
     });
     libWoSort(rows, woSort).forEach(function(r){
       if(r.lw){
         if(r.hidden){ hiddenCount++; hiddenCards += libWoCard(r.lw, r.exs, true, r.dur, r.mains); }
-        else list += libWoCard(r.lw, r.exs, false, r.dur, r.mains);
+        else { list += libWoCard(r.lw, r.exs, false, r.dur, r.mains); anzahl++; }
       } else {
         list += myWoCard(r.mw, r.exs, r.mains, r.dur);
       }
@@ -3260,20 +3271,14 @@ function renderLibrary(){
     }
   } else {
     EXERCISES.forEach(function(ex){
-      if(ex.main === "stretch") return;
-      if(!exPasses(ex, cat, equip, [])) return;
-      if(libHidden("ex:"+ex.id)){
-        if(mainMatch(mains, ex.main)){ hiddenCount++; hiddenCards += libExCard(ex, true, exSubText(ex)); }
-        return;
-      }
-      counts[ex.main]++;
+      if(!fuerAir(ex) || !exPasses(ex, cat, equip, [])) return;
+      if(libHidden("ex:"+ex.id)){ hiddenCount++; hiddenCards += libExCard(ex, true, exSubText(ex)); }
     });
-    sortedExercises(cat, exSort, equip, mains).forEach(function(ex){ if(ex.main !== "stretch") list += libExCard(ex, false, exSubText(ex)); });
+    sortedExercises(cat, exSort, equip, mains).forEach(function(ex){ if(fuerAir(ex)){ list += libExCard(ex, false, exSubText(ex)); anzahl++; } });
     fab = fabMenuHTML([{ key:"new", label:t("exNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
   if(!list) list = '<div class="empty" style="padding:40px 20px;">'+t("libEmpty")+'</div>';
   list += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>';
-  var nf = filterCount(cat, equip);
 
   app.innerHTML =
     // Suche als Lupe oben rechts (klappt das Feld auf), damit „Überrasch mich“ als Hauptleiste unter den Reitern Platz hat
@@ -3288,11 +3293,8 @@ function renderLibrary(){
     (tab === "mine" || tab === "timer" ? '' :
     suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
     (tab === "exercises" ? '<div class="page-hint">'+esc(t("zpHint"))+'</div>' : '')+
-    mainTilesHTML(mains, counts, "data-lmain", ["stretch"])+
-    filterZeileHTML("data-ltoggle", nf, open)+
-    (open ? filterCardHTML("l", cat, equip, tab==="exercises" ? exSort : woSort,
-              tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], ["stretch"])
-          : activeFiltersHTML(cat, equip, "l")))+
+    airFilterHTML("l", open, cat, equip, tab==="exercises" ? exSort : woSort,
+      tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], anzahl, tab==="exercises"))+
     list + hiddenBlockHTML(hiddenCount, hiddenCards) +
     '<div style="height:90px"></div>' + fab;
   bindCommon();
@@ -3301,11 +3303,10 @@ function renderLibrary(){
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   on("[data-libtab]", function(el){ s.libTab = el.getAttribute("data-libtab"); save(); renderLibrary(); window.scrollTo(0,0); });
   on("[data-ltoggle]", function(){ s.libFilterOpen = !open; save(); neu(); });
-  on("[data-lmain]", function(el){ s.libMains = selToggle(mains, el.getAttribute("data-lmain")); save(); neu(); });
   on("[data-lfcat]", function(el){ s.libCats = selToggle(cat, el.getAttribute("data-lfcat")); save(); neu(); });
   on("[data-lfequip]", function(el){ s.libEquips = selToggle(equip, el.getAttribute("data-lfequip")); save(); neu(); });
   on("[data-lfsort]", function(el){ if(tab==="exercises") s.libSort = el.getAttribute("data-lfsort"); else s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
-  on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; s.libMains = []; save(); neu(); });
+  on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; save(); neu(); });
   on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
   bindTrash(neu);
   var lq = app.querySelector("#l-q");
@@ -3987,7 +3988,7 @@ function renderDraftPage(d, cfg){
   }
   function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
   var cat = ohne(selArr(s.buildCats || s.buildCat), "stretch"), sort = s.libSort === "az" ? "az" : "std";
-  var equip = ohne(selArr(s.buildEquips), "gym"), bmains = ohne(selArr(s.buildMains), "stretch");
+  var equip = ohne(selArr(s.buildEquips), "gym");
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
   var cats = [];
@@ -4051,29 +4052,23 @@ function renderDraftPage(d, cfg){
   var palOpen = !cfg.cover || d._pal;
   var palHTML = "";
   if(palOpen && d.ws){   // Mobility & Stretch: nur Aufwärm- bzw. Dehnübungen, bei Dehnen mit Körperregionen
-    var wsSel = selArr(s.wsRegionen), wsAlle = wsUebungen(d.ws), wsCounts = {};
-    wsAlle.forEach(function(ex){ wsRegionenVon(ex.id).forEach(function(r){ wsCounts[r] = (wsCounts[r] || 0) + 1; }); });
+    var wsSel = selArr(s.wsRegionen), wsAlle = wsUebungen(d.ws);
     var wsListe = wsAlle.filter(function(ex){ return d.ws !== "dehn" || wsRegionOk(ex.id, wsSel); })
       .sort(function(a, b){ return (isExFav(b.id) ? 1 : 0) - (isExFav(a.id) ? 1 : 0); });
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
       suchFeldHTML(buildQuery, "b")+
-      (d.ws === "dehn" ? '<div class="page-hint">'+esc(t("wsRegionHint"))+'</div>'+wsRegionTilesHTML(wsSel, wsCounts) : '')+
+      (d.ws === "dehn" ? '<div class="page-hint">'+esc(t("wsRegionHint"))+'</div>'+wsRegionFilterHTML(wsSel, wsListe.length, "Ex") : '')+
       '<div class="fig-grid" id="dz-pal">'+(wsListe.map(function(ex){ return kachel(ex); }).join("") ||
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   } else if(palOpen){
-    var palCounts = {};
-    MAIN_CATS.forEach(function(c){ palCounts[c.id] = 0; });
-    EXERCISES.forEach(function(ex){ if(fuerWorkout(ex) && !libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, [])) palCounts[ex.main]++; });
+    var palListe = sortedExercises(cat, sort, equip, []).filter(fuerAir);
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       '<div class="page-hint">'+esc(t("wbTippen"))+'</div>'+
       suchFeldHTML(buildQuery, "b")+
-      mainTilesHTML(bmains, palCounts, "data-bmain", ["stretch"])+
-      filterZeileHTML("data-bfilter", filterCount(cat, equip), !!s.buildFilterOpen)+
-      (s.buildFilterOpen ? filterCardHTML("b", cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], ["stretch"], ["gym"])
-                         : activeFiltersHTML(cat, equip, "b"))+
-      '<div class="fig-grid" id="dz-pal">'+(sortedExercises(cat, sort, equip, bmains).filter(fuerWorkout).map(function(ex){ return kachel(ex); }).join("") ||
+      airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true)+
+      '<div class="fig-grid" id="dz-pal">'+(palListe.map(function(ex){ return kachel(ex); }).join("") ||
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   }
@@ -4213,12 +4208,11 @@ function renderDraftPage(d, cfg){
   });
   on("[data-wbordnen]", function(){ d.items = wbSinnvollOrdnen(d.items); speichern(); neu(); showToast(t("wbGeordnet")); });
 
-  on("[data-bfilter]", function(){ s.buildFilterOpen = !s.buildFilterOpen; save(); neu(); });
+  on("[data-btoggle]", function(){ s.buildFilterOpen = !s.buildFilterOpen; save(); neu(); });
   on("[data-bfcat]", function(el){ s.buildCats = selToggle(cat, el.getAttribute("data-bfcat")); save(); neu(); });
   on("[data-bfequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bfequip")); save(); neu(); });
   on("[data-bfsort]", function(el){ s.libSort = el.getAttribute("data-bfsort"); save(); neu(); });
   on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; save(); neu(); });
-  on("[data-bmain]", function(el){ s.buildMains = selToggle(bmains, el.getAttribute("data-bmain")); save(); neu(); });
   wsRegionBinden(neu);
   var bq = app.querySelector("#b-q");
   if(bq){
@@ -5567,12 +5561,7 @@ function renderWarmStretch(){
   var s = state.db.settings;
   var art = s.wsArt === "dehn" ? "dehn" : "warm", tab = ["uebungen", "meine"].indexOf(s.wsTab) > -1 ? s.wsTab : "workouts";
   var regSel = art === "dehn" && tab !== "meine" ? selArr(s.wsRegionen).filter(function(r){ return WS_REGIONEN.indexOf(r) > -1; }) : [];
-  var liste = "", fab = "", counts = {};
-  function zaehlen(ids){
-    var da = {};
-    ids.forEach(function(id){ wsRegionenVon(id).forEach(function(r){ da[r] = true; }); });
-    Object.keys(da).forEach(function(r){ counts[r] = (counts[r] || 0) + 1; });
-  }
+  var liste = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
   if(tab === "workouts"){
     var wos = art === "warm" ? AUFWAERM_IDS.map(findLibWorkout).filter(Boolean)
                              : LIB_WORKOUTS.filter(function(lw){ return lw.focus === "stretch" && AUFWAERM_IDS.indexOf(lw.id) < 0; });
@@ -5580,14 +5569,13 @@ function renderWarmStretch(){
       var exs = lw.exercises.map(findExercise).filter(Boolean);
       return { lw:lw, exs:exs, dur:workoutDuration(libWorkoutRun(lw)) };
     });
-    if(art === "dehn") rows.forEach(function(r){ zaehlen(r.exs.map(function(ex){ return ex.id; })); });
-    liste = rows.filter(function(r){ return !regSel.length || r.exs.some(function(ex){ return wsRegionOk(ex.id, regSel); }); })
-      .sort(function(a, b){ return a.dur - b.dur; }).map(function(r){ return libWoCard(r.lw, r.exs, false, r.dur, woMains(r.exs)); }).join("");
+    rows = rows.filter(function(r){ return !regSel.length || r.exs.some(function(ex){ return wsRegionOk(ex.id, regSel); }); }).sort(function(a, b){ return a.dur - b.dur; });
+    anzahl = rows.length;
+    liste = rows.map(function(r){ return libWoCard(r.lw, r.exs, false, r.dur, woMains(r.exs)); }).join("");
   } else if(tab === "uebungen"){
-    var exl = wsUebungen(art);
-    if(art === "dehn") exl.forEach(function(ex){ zaehlen([ex.id]); });
-    liste = exl.filter(function(ex){ return art !== "dehn" || wsRegionOk(ex.id, regSel); })
-      .map(function(ex){ return libExCard(ex, false, exSubText(ex)); }).join("");
+    var exl = wsUebungen(art).filter(function(ex){ return art !== "dehn" || wsRegionOk(ex.id, regSel); });
+    anzahl = exl.length;
+    liste = exl.map(function(ex){ return libExCard(ex, false, exSubText(ex)); }).join("");
   } else {
     (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return mw.ws === art; }).forEach(function(mw){
       var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
@@ -5607,7 +5595,7 @@ function renderWarmStretch(){
     '<div class="rep-intro">'+esc(t(tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"))+'</div>'+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
     (tab === "uebungen" ? '<div class="page-hint">'+esc(t("zpHintWs"))+'</div>' : '')+
-    (art === "dehn" && tab !== "meine" ? wsRegionTilesHTML(regSel, counts) : '')+
+    (art === "dehn" && tab !== "meine" ? wsRegionFilterHTML(regSel, anzahl, tab === "uebungen" ? "Ex" : "Wo") : '')+
     // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
     '<div style="--bereich:var(--ws-color)">'+(liste || '<div class="empty">'+t("libEmpty")+'</div>')+'</div>'+
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>'+
@@ -5656,10 +5644,9 @@ function renderWarmStretch(){
 
 /* Liste: Reiter Einheiten (Stufe Leicht/Standard/Fortgeschritten) und Programme A–Z (Stufe 1-3), beide optional ohne Stange */
 function renderReps(){
-  function knopf(art, wert, text){
-    return '<button type="button" data-repf="'+art+':'+wert+'" class="'+(String(repFilter[art])===String(wert) ? "active" : "")+'">'+esc(text)+'</button>';
-  }
+  var anzahl = 0;   // sichtbare Karten (für „N … anzeigen“)
   function karte(id, name, zeile1, zeile2, plan, eigen){
+    anzahl++;
     var best = repBestOf(id), qq = repQuelle(id), such = [name, zeile1 || ""];
     if(qq) qq.teile.forEach(function(tl){ tl.row[4].forEach(function(x){ such.push(repExName(x[0])); }); });
     return '<div class="list-item rep-karte'+(eigen ? ' eigen' : '')+'" data-repid="'+id+'" data-nav="#rep/'+id+'" data-q="'+esc(such.join(" "))+'"><div class="meta"><div class="name">'+esc(name)+'</div>'+
@@ -5696,8 +5683,7 @@ function renderReps(){
   }
   if(repFilter.tab === "einheiten"){
     var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
-    html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>'+
-      '<div class="theme-pick rep-pick">'+knopf("stufe","leicht",t("stufe_leicht"))+knopf("stufe","standard",t("stufe_standard"))+knopf("stufe","fortgeschritten",t("stufe_fortgeschritten"))+'</div>';
+    html += '<div class="rep-intro">'+esc(t("repUnitsIntro"))+'</div>';
     liste += eigeneListe(["unit"], true);   // eigene Einheiten stehen oben
     fab = fabMenuHTML([{ key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
     REP_EINHEITEN.forEach(function(e){
@@ -5718,8 +5704,7 @@ function renderReps(){
     liste = eigeneListe(["unit", "prog"], false) || '<div class="empty" style="padding:24px 20px 4px;">'+esc(t("repMineEmpty"))+'</div>';
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }, { key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
   } else {
-    html += '<div class="rep-intro">'+esc(t("repIntro"))+'</div>'+
-      '<div class="theme-pick rep-pick">'+knopf("lvl","all",t("repAll"))+knopf("lvl",1,t("lvl1"))+knopf("lvl",2,t("lvl2"))+knopf("lvl",3,t("lvl3"))+'</div>';
+    html += '<div class="rep-intro">'+esc(t("repIntro"))+'</div>';
     liste += eigeneListe(["prog"], true);   // eigene Programme stehen oben
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }]);
     REP_WORKOUT_ROWS.filter(function(r){
@@ -5733,7 +5718,20 @@ function renderReps(){
         repPlanHTML(repQuelle(r[0])));
     });
   }
-  html += (repFilter.tab === "meine" ? '' : '<div class="theme-pick rep-pick zwei">'+knopf("bar","all",t("repAllEquip"))+knopf("bar","none",t("repNoBar"))+'</div>') +
+  /* Filterkarte (dieselbe wie in Air): Einheiten nach Stufe, Programme nach Level, beide nach Ausrüstung. Unter „Meine“ gibt es nichts zu filtern. */
+  function repFilterKarte(){
+    var ein = repFilter.tab === "einheiten", ohneStange = repFilter.bar === "none";
+    var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
+    function chip(art, wert, text){ return filterChip("data-repf", art+":"+wert, String(art === "stufe" ? stufe : repFilter[art]) === String(wert), "", text); }
+    var wahl = ein ? chip("stufe", "leicht", t("stufe_leicht"))+chip("stufe", "standard", t("stufe_standard"))+chip("stufe", "fortgeschritten", t("stufe_fortgeschritten"))
+                   : chip("lvl", "all", t("repAll"))+chip("lvl", 1, t("lvl1"))+chip("lvl", 2, t("lvl2"))+chip("lvl", 3, t("lvl3"));
+    return filterKarteHTML({ offen:!!state.db.settings.repFilterOpen, toggle:"data-reptoggle", reset:"data-repfreset",
+      n:(ohneStange ? 1 : 0)+(ein ? (stufe !== "standard" ? 1 : 0) : (repFilter.lvl !== "all" ? 1 : 0)),
+      summe:(ein ? t("stufe_"+stufe) : repFilter.lvl === "all" ? t("repAll") : t("lvl"+repFilter.lvl))+(ohneStange ? " · "+t("repNoBar") : ""),
+      zeigen:filterZeigenText(anzahl, ein ? "Ei" : "Pr"),
+      inhalt:filterChipsHTML(t("afStufe"), "", wahl)+filterChipsHTML(t("equipHave"), "", chip("bar", "all", t("repAllEquip"))+chip("bar", "none", t("repNoBar"))) });
+  }
+  html += (repFilter.tab === "meine" ? '' : repFilterKarte()) +
     (liste || '<div class="empty">'+esc(t("repNone"))+'</div>') +
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("noResult"))+'</div><div style="height:'+(fab ? 90 : 40)+'px"></div>'+fab;
   app.innerHTML = html;
@@ -5767,11 +5765,17 @@ function renderReps(){
   } });
   app.querySelectorAll("[data-repf]").forEach(function(b){
     b.addEventListener("click", function(){
-      var p = b.getAttribute("data-repf").split(":");
+      var p = b.getAttribute("data-repf").split(":"), y = window.scrollY;
       repFilter[p[0]] = p[1];
       renderReps();
+      if(p[0] !== "tab") window.scrollTo(0, y);   // Filter-Chips: Seite bleibt, wo sie ist
     });
   });
+  app.querySelectorAll("[data-reptoggle]").forEach(function(b){
+    b.addEventListener("click", function(){ var s = state.db.settings; s.repFilterOpen = !s.repFilterOpen; save(); neuRep(); });
+  });
+  var rz = app.querySelector("[data-repfreset]");
+  if(rz) rz.addEventListener("click", function(){ repFilter.stufe = "standard"; repFilter.lvl = "all"; repFilter.bar = "all"; neuRep(); });
 }
 
 /* Detail: je Programm eine Tabelle Übungen × Runden, Bestzeit, Start */

@@ -118,3 +118,12 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 ## 2026-10-06 · Skater komplett neu
 
 - Skater Jumps neu gezeichnet nach Beschreibung und Zeichnung von WorkoutLabs (<https://workoutlabs.com/exercise-guide/skaters/>; nur als Vorlage für Haltung und Ablauf, Figur selbst gezeichnet): Landung auf einem Bein (Knie gebeugt), Oberkörper nach vorn, anderes Bein gebeugt hinter dem Körper, Gegenarm vor dem Körper; kurzer Flug mit beiden Füßen in der Luft. Der Blick bleibt nach rechts, Beine und Arme tauschen die Rollen (`qSwap`) – kein Umdrehen und kein Aufrichten dazwischen; Zyklus ca. 1,5 s. Fassung 2026-10-02-53
+
+## 2026-10-07 · Eine Filterkarte für Air, Studio, Mobility & Stretch und Summit
+
+- **Gemeinsame Filterkarte** (`filterKarteHTML`): zugeklappt eine Zeile „Filter“ mit Zusammenfassung (z. B. „Beine, Kurzhantel“) und Zahl der aktiven Filter; aufgeklappt Chips in Gruppen, unten „Zurücksetzen“ und „N … anzeigen“ (klappt die Karte zu, die Zahl entspricht der Liste). Aufgebaut wie die ältere Filteransicht, im aktuellen Layout.
+- **Air**: die vier Kacheln (Kraft · Ausdauer · Rumpf · Stangenpark) entfallen; Filter über Training (Cardio … Calisthenics) und Ausrüstung (Ohne Geräte … Dip-Barren), dazu Sortierung. Auch im Workout-Baukasten dieselbe Karte.
+- **Studio-Übungen nicht mehr in Air**: Übungen mit Ausrüstung „Fitnessstudio“ (Geräte, Langhantel, eigene Studio-Übungen) erscheinen in Air weder in der Übungsliste noch im Baukasten; der Chip „Fitnessstudio“ entfällt dort. Kein fertiger Air-Workout enthält solche Übungen. Die Suche über alles findet sie weiterhin.
+- **Studio**: Gruppen, Ausrüstung und der Schalter „Air-Übungen“ liegen in derselben Karte. **Fehler behoben:** der Filter klappte nach jeder Auswahl zu, weil das Auf/Zu beim ersten Öffnen nicht gespeichert wurde - Mehrfachauswahl war dadurch mühsam. Jetzt bleibt die Karte offen, bis man sie schließt (beim Start der App wieder zu).
+- **Mobility & Stretch** (Dehnen): Körperregionen als Chips in der Karte, auch im Baukasten. **Summit**: Stufe (Einheiten) bzw. Level (Programme) und Ausrüstung in der Karte; Zurücksetzen stellt „Mittel“/„Alle“/„Alle Geräte“ wieder her.
+- Schnelltest: neuer Test zur Filterkarte (Air ohne Kacheln und ohne Studio-Übungen, Mehrfachwahl in Air, Studio, Dehnen, Summit), bestehende Tests öffnen die Karte vorher. 26 Prüfungen, alle grün. FASSUNG 2026-10-02-54.

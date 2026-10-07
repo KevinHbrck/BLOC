@@ -71,6 +71,11 @@
       iframe.src = "index.html?schnelltest=" + Date.now() + "&lang=de#home";   // Texte immer deutsch, egal welche Browsersprache
     });
   }
+  // Filterkarte (Air, Studio, Mobility & Stretch, Summit) aufklappen, falls sie zu ist
+  async function filterAuf() {
+    if (!$(".af-body")) klick(".af-kopf");
+    await bis(function () { return $(".af-body"); }, 2000, "Filterkarte offen");
+  }
   async function heim() { await laden(); await bis(function () { return $(".area-tile"); }, 5000, "Startseite"); }
 
   var TESTS = [
@@ -247,11 +252,69 @@
       eingeben($("#gs-q"), "");
       await bis(function () { return $(".rep-intro") && !$$("[data-sr]").length; }, 3000, "Alle + leer = Hinweistext");
     }],
+    ["Filterkarte: Air ohne Kategorie-Kacheln und Studio-Übungen, bleibt beim Mehrfachwählen offen (auch Studio, Dehnen, Summit)", async function () {
+      await heim();
+      klick('[data-nav="#library"]');
+      klick(await bis(function () { return $('[data-libtab="exercises"]'); }, 3000, "Reiter Übungen"));
+      await bis(function () { return $$("[data-playex]").length > 50; }, 3000, "Übungen in Air");
+      pruefe(!$(".main-tile"), "Kategorie-Kacheln sind noch da");
+      pruefe(!$('[data-playex="leg-press"]') && !$('[data-playex="bench-press"]') && !$('[data-playex="barbell-squat"]'), "Studio-Übung in Air sichtbar");
+      pruefe($(".af-kopf") && !$(".af-body"), "Filterkarte ist nicht standardmäßig zu");
+      await filterAuf();
+      pruefe(!$('[data-lfequip="gym"]'), "Chip „Fitnessstudio“ in Air");
+      pruefe($$('[data-lfcat]').length === 8 && $$('[data-lfequip]').length === 5, "Training- und Ausrüstungs-Chips: " + $$('[data-lfcat]').length + "/" + $$('[data-lfequip]').length);
+      klick('[data-lfcat="legs"]');
+      await bis(function () { return $('[data-lfcat="legs"].on') && $(".af-body"); }, 2000, "Beine gewählt, Karte bleibt offen");
+      klick('[data-lfcat="core"]');
+      await bis(function () { return $('[data-lfcat="legs"].on') && $('[data-lfcat="core"].on') && $(".af-body"); }, 2000, "zwei Gruppen gewählt, Karte bleibt offen");
+      var knopf = $(".af-fuss .btn-primary").textContent;
+      pruefe(/^\d+ Übungen anzeigen$/.test(knopf), "Knopf unten: " + knopf);
+      pruefe(parseInt(knopf, 10) === $$("[data-playex]").length, "Zahl am Knopf (" + knopf + ") passt nicht zu den " + $$("[data-playex]").length + " Karten");
+      klick('[data-lfreset]');
+      await bis(function () { return !$('[data-lfcat].on'); }, 2000, "Zurücksetzen");
+      klick(".af-fuss .btn-primary");
+      await bis(function () { return !$(".af-body"); }, 2000, "„anzeigen“ klappt die Karte zu");
+      // Studio: Gruppen und Ausrüstung nacheinander wählen, ohne dass die Karte zuklappt
+      await heim();
+      klick('[data-nav="#timers"]');
+      await bis(function () { return $$("[data-studio]").length > 30; }, 3000, "Studio-Kacheln");
+      await filterAuf();
+      klick('[data-stgr="beine"]');
+      await bis(function () { return $('[data-stgr="beine"].on') && $(".af-body"); }, 2000, "Studio: Beine, Karte bleibt offen");
+      klick('[data-stgr="brust"]');
+      await bis(function () { return $('[data-stgr="brust"].on') && $('[data-stgr="beine"].on') && $(".af-body"); }, 2000, "Studio: Brust dazu, Karte bleibt offen");
+      klick('[data-start="geraet"]');
+      await bis(function () { return $('[data-start="geraet"].on') && $('[data-stgr="brust"].on') && $(".af-body"); }, 2000, "Studio: Ausrüstung dazu, Karte bleibt offen");
+      klick('[data-streset]');   // die Auswahl bleibt gespeichert - für die folgenden Tests zurücksetzen
+      await bis(function () { return !$('[data-stgr].on') && !$('[data-start].on'); }, 2000, "Studio: Zurücksetzen");
+      // Mobility & Stretch › Dehnen: Körperregionen mehrfach
+      await heim();
+      klick('[data-nav="#warmstretch"]');
+      klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
+      await filterAuf();
+      klick('[data-wsreg="nacken"]');
+      await bis(function () { return $('[data-wsreg="nacken"].on') && $(".af-body"); }, 2000, "Dehnen: Nacken, Karte bleibt offen");
+      klick('[data-wsreg="beine"]');
+      await bis(function () { return $('[data-wsreg="beine"].on') && $('[data-wsreg="nacken"].on') && $(".af-body"); }, 2000, "Dehnen: Beine dazu, Karte bleibt offen");
+      klick('[data-wsfreset]');
+      await bis(function () { return !$('[data-wsreg].on'); }, 2000, "Dehnen: Zurücksetzen");
+      // Summit: Stufe und Ausrüstung in derselben Karte
+      await heim();
+      klick('[data-nav="#reps"]');
+      await filterAuf();
+      klick('[data-repf="stufe:leicht"]');
+      await bis(function () { return $('[data-repf="stufe:leicht"].on') && $(".af-body"); }, 2000, "Summit: Stufe, Karte bleibt offen");
+      klick('[data-repf="bar:none"]');
+      await bis(function () { return $('[data-repf="bar:none"].on') && $('[data-repf="stufe:leicht"].on') && $(".af-body"); }, 2000, "Summit: Ohne Stange dazu, Karte bleibt offen");
+      klick('[data-repfreset]');
+      await bis(function () { return $('[data-repf="stufe:standard"].on') && $('[data-repf="bar:all"].on'); }, 2000, "Summit: Zurücksetzen");
+    }],
     ["Freies Training (Studio): Karte, Satz eintragen, Pause, Steigerung", async function () {
       await heim();
       klick('[data-nav="#timers"]');
       pruefe(!$("[data-ttab]"), "Freies Training hat noch Reiter");
       await bis(function () { return $$("[data-studio]").length > 30; }, 3000, "Studio-Kacheln");
+      await filterAuf();
       pruefe(!$('[data-stgr="air"]') && $("#st-air") && !$("#st-air").checked, "Air-Übungen sind im Studio nicht standardmäßig aus");
       eingeben($("#st-q"), "beinpresse");
       pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");
@@ -338,8 +401,9 @@
       klick('[data-sttab="plan"]');
       klick(await bis(function () { return $("[data-plan]"); }, 3000, "Plan"));
       klick(await bis(function () { return $("[data-planedit]"); }, 3000, "Bearbeiten"));
-      await bis(function () { return $("[data-stfilter]") && $$("[data-planex] .st-sub").length > 20; }, 3000, "Filter und Angaben im Plan-Bau");
+      await bis(function () { return $(".air-filter") && $$("[data-planex] .st-sub").length > 20; }, 3000, "Filter und Angaben im Plan-Bau");
       var alle = $$("[data-planex]").length;
+      await filterAuf();
       klick('[data-stgr="beine"]');
       await bis(function () { var n = $$("[data-planex]").length; return n > 0 && n < alle; }, 2000, "Filter Beine");
       await heim();
@@ -361,6 +425,7 @@
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
       pruefe($$("[data-wstab]").length === 3 && $('[data-wstab="meine"]'), "Reiter Workouts · Übungen · Meine fehlen");
       klick('[data-wstab="uebungen"]');
+      await filterAuf();
       await bis(function () { return $$("[data-wsreg]").length === 8; }, 3000, "acht Körperregionen");
       var alle = $$("[data-exlang]").length;
       klick('[data-wsreg="huefte"]');
@@ -371,6 +436,7 @@
       klick('[data-wstab="meine"]');
       await bis(function () { return $$(".my-item").length === 1; }, 2000, "Meine in Mobility");
       klick('[data-fabopt="new"]');
+      await filterAuf();
       await bis(function () { return $$("[data-wsreg]").length === 8 && $$("[data-wbex]").length > 0; }, 3000, "Baukasten mit Dehnübungen und Regionen");
       pruefe(!$('[data-wbex="push-ups"]'), "Kraftübung im Dehn-Baukasten");
       await heim();
