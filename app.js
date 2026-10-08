@@ -1871,15 +1871,46 @@ function studioIds(){
   var inGruppen = {};
   gruppen.forEach(function(g){ g.ids.forEach(function(id){ inGruppen[id] = true; }); });
   function mit(eq){ return EXERCISES.filter(function(ex){ return !ex.custom && !inGruppen[ex.id] && ex.main !== "stretch" && ex.equip.some(function(e){ return eq.indexOf(e) > -1; }); }).map(function(ex){ return ex.id; }); }
-  if(state.db.settings.stAir){   // Air-Übungen nur, wenn eingeschaltet (Standard: aus)
-    gruppen.push({ id:"frei", name:t("stFree"), ids:mit(["db", "kb"]) });
-    gruppen.push({ id:"stange", name:t("stBar"), ids:mit(["bar", "dip"]).filter(function(id){ return gruppen[gruppen.length-1].ids.indexOf(id) < 0; }) });
-    var schon = {};
-    gruppen.forEach(function(g){ g.ids.forEach(function(id){ schon[id] = true; }); });
-    gruppen.push({ id:"air", name:t("stAirGr"), ids:EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && fuerWorkout(ex); }).map(function(ex){ return ex.id; }) });
-  }
   gruppen.push({ id:"eigene", name:t("stOwn"), ids:EXERCISES.filter(function(ex){ return ex.custom; }).map(function(ex){ return ex.id; }), eigene:true });
+  // Die Air-Gruppen (air:true) sind immer dabei, kein Schalter: in der Liste stehen sie zugeklappt unter „Aus Air“ (studioAirBlockHTML)
+  gruppen.push({ id:"frei", name:t("stFree"), ids:mit(["db", "kb"]), air:true });
+  gruppen.push({ id:"stange", name:t("stBar"), ids:mit(["bar", "dip"]).filter(function(id){ return gruppen[gruppen.length-1].ids.indexOf(id) < 0; }), air:true });
+  var schon = {};
+  gruppen.forEach(function(g){ g.ids.forEach(function(id){ schon[id] = true; }); });
+  gruppen.push({ id:"air", name:t("stAirGr"), ids:EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && fuerWorkout(ex); }).map(function(ex){ return ex.id; }), air:true });
   return gruppen;
+}
+/* Welche Air-Gruppen gerade aufgeklappt sind - nur für diesen Besuch gemerkt, nichts davon wird gespeichert */
+var studioAirOffen = {};
+/* Air-Übungen im Studio ohne Schalter: Ohne Gruppenwahl stehen die drei Air-Gruppen am Ende der Liste als schmale, zugeklappte Zeilen
+   („Kurzhantel & Kettlebell · 34“) - die Liste bleibt kurz, nichts ist versteckt. Gruppen-Chip oder Suche zeigen sie offen.
+   liste: [{ g:Gruppe, ids:[…] }], kachel: Funktion id -> HTML der Kachel */
+function studioAirBlockHTML(liste, kachel){
+  if(!liste.length) return "";
+  return '<div class="st-gruppe st-air-block"><div class="section-title">'+esc(t("stAirBlock"))+'</div>'+liste.map(function(x){
+    return '<details class="st-air-gr" data-airgr="'+x.g.id+'"'+(studioAirOffen[x.g.id] ? ' open' : '')+'><summary>'+
+      '<span class="sag-ico">'+svgIcon(STUDIO_GRUPPEN_ICON[x.g.id] || CAT_ICON.weight)+'</span><b>'+esc(x.g.name)+'</b>'+
+      '<span class="lbl-hint">'+x.ids.length+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+      '<div class="fig-grid">'+x.ids.map(kachel).join("")+'</div></details>';
+  }).join("")+'</div>';
+}
+/* Auf/zu per Antippen (selbst umgeschaltet, damit der Zustand für das Neuzeichnen bekannt ist); während einer Suche sind alle offen.
+   suche: Funktion, die den aktuellen Suchtext liefert */
+function studioAirBinden(suche){
+  app.querySelectorAll("details.st-air-gr > summary").forEach(function(sm){
+    sm.addEventListener("click", function(e){
+      e.preventDefault();
+      if(suche()) return;
+      var d = sm.parentNode; d.open = !d.open; studioAirOffen[d.getAttribute("data-airgr")] = d.open;
+    });
+  });
+}
+/* Nach applySearch aufrufen: bei Suche alle Air-Gruppen mit Treffern offen, ohne Treffer ausgeblendet; ohne Suche wieder wie gemerkt */
+function studioAirSuche(q){
+  app.querySelectorAll("details.st-air-gr").forEach(function(d){
+    d.open = !!q || !!studioAirOffen[d.getAttribute("data-airgr")];
+    d.style.display = !q || Array.prototype.some.call(d.querySelectorAll("[data-q]"), function(k){ return k.style.display !== "none"; }) ? "" : "none";
+  });
 }
 /* Ausrüstung einer Studio-Übung - für die Chips über den Gruppen */
 function studioArt(id){
@@ -1910,15 +1941,12 @@ function studioAnzahl(gruppen, fGr, artOk){
   gruppen.forEach(function(g){ if(!fGr.length || fGr.indexOf(g.id) > -1) n += g.ids.filter(artOk).length; });
   return n;
 }
-/* Filter der Studio-Übungen (Air-Schalter, Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
+/* Filter der Studio-Übungen (Gruppen inkl. der Air-Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
 function studioFilterHTML(gruppen, fGr, fArt, anzahl){
   var s = state.db.settings;
   var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
     .concat(fArt.map(function(a){ return t("stArt_"+a); }));
-  // „Air-Übungen einbeziehen“ ist eine Einstellung, kein Filter: eigene Zeile über der Karte
-  return '<div class="card st-air-zeile"><div class="toggle-row"><div><div class="label">'+esc(t("stAir"))+'</div><div class="desc">'+esc(t("stAirDesc"))+'</div></div>'+
-      '<label class="switch"><input type="checkbox" id="st-air" '+(s.stAir ? "checked" : "")+'><span class="track"></span><span class="thumb"></span></label></div></div>'+
-    filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
+  return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t("afAlleEx"),
     zeigen:filterZeigenText(anzahl, "Ex"),
     inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
@@ -1932,11 +1960,6 @@ function studioFilterBinden(fGr, fArt, neuZeichnen){
   app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
   // Auf/zu steht in den Einstellungen, damit die Karte beim Neuzeichnen (nach jedem Antippen) offen bleibt - Mehrfachauswahl ohne ständiges Aufklappen
   app.querySelectorAll("[data-sttoggle]").forEach(function(b){ b.addEventListener("click", function(){ s.stFilterOpen = !s.stFilterOpen; save(); neuZeichnen(); }); });
-  app.querySelector("#st-air").addEventListener("change", function(e){
-    s.stAir = e.target.checked;
-    if(!s.stAir) s.stGruppen = selArr(s.stGruppen).filter(function(g){ return ["frei", "stange", "air"].indexOf(g) < 0; });
-    save(); neuZeichnen();
-  });
   var zur = app.querySelector("[data-streset]");
   if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
 }
@@ -1966,16 +1989,19 @@ function renderStudio(){
   var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
       (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
     (zuletzt.length ? '<div class="st-gruppe"><div class="section-title">'+esc(t("stRecent"))+'</div><div class="fig-grid">'+zuletzt.map(studioKachel).join("")+'</div></div>' : '');
+  var airZu = [];   // Air-Gruppen ohne Gruppenwahl: zugeklappt am Ende
   gruppen.forEach(function(g){
     if(!g.ids.length && !g.eigene) return;
     if(fGr.length && fGr.indexOf(g.id) < 0) return;
     var ids = g.ids.filter(artOk);
     if(!ids.length && (!g.eigene || filterAn)) return;
+    if(g.air && !fGr.length){ airZu.push({ g:g, ids:ids }); return; }
     html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+ids.length+'</span></div><div class="fig-grid">'+
       ids.map(studioKachel).join("")+
       (g.eigene ? '<button type="button" class="fig-karte st-neu" data-stnew>'+ICON_PLUS+'<span class="fig-name">'+esc(t("stOwnNew"))+'</span></button>' : '')+
     '</div></div>';
   });
+  html += studioAirBlockHTML(airZu, studioKachel);
   app.innerHTML =
     topbar(t("timers"), { back:"#home", right:hw.knopf+lupeHTML("st", studioQuery) }) +
     studioTabsHTML("uebungen") +
@@ -2002,9 +2028,11 @@ function renderStudio(){
   var neu = app.querySelector("[data-stnew]");
   if(neu) neu.addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
   var q = app.querySelector("#st-q");
+  studioAirBinden(function(){ return studioQuery; });
   function suchen(){
     app.querySelectorAll(".fav-empty").forEach(function(x){ x.style.display = studioQuery ? "none" : ""; });
     applySearch(app, studioQuery);
+    studioAirSuche(studioQuery);
     // leere Gruppen ausblenden, „Zuletzt“ nur ohne Suche
     app.querySelectorAll(".st-gruppe").forEach(function(g){
       var sichtbar = Array.prototype.some.call(g.querySelectorAll("[data-q]"), function(k){ return k.style.display !== "none"; });
@@ -2091,25 +2119,29 @@ function renderStudioPlan(){
   if(stPlanBauen){
     var gruppen = studioIds(), da = {};
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
-    // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung, Air-Schalter)
+    // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung); die Air-Gruppen stehen auch hier zugeklappt unter „Aus Air“
     var s = state.db.settings, fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
     function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
-    var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die gerade nicht in den sichtbaren Gruppen stehen (z. B. Air-Übungen ausgeblendet)
+    var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keiner Gruppe stehen
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
       hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
       studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk));
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
+    function planKachel(id){
+      var ex = findExercise(id);
+      // Angaben wie bei Studio › Übungen: letzter Satz bzw. Zeit unter dem Namen, dazu die Wochenkurve
+      return ex ? uebKachel({ bild:id, name:tplText(ex.name), attr:'data-planex="'+id+'"', q:exSearchText(ex), cat:studioFarbe(ex), nr:pos[id] || [],
+        unter:studioUnter(id) }) : "";
+    }
+    var airZu = [];
     gruppen.forEach(function(g){
       if(!g.immer && fGr.length && fGr.indexOf(g.id) < 0) return;
       var gids = g.immer ? g.ids : g.ids.filter(artOk);
       if(!gids.length) return;
-      html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+gids.length+'</span></div><div class="fig-grid">'+gids.map(function(id){
-        var ex = findExercise(id);
-        // Angaben wie bei Studio › Übungen: letzter Satz bzw. Zeit unter dem Namen, dazu die Wochenkurve
-        return ex ? uebKachel({ bild:id, name:tplText(ex.name), attr:'data-planex="'+id+'"', q:exSearchText(ex), cat:studioFarbe(ex), nr:pos[id] || [],
-          unter:studioUnter(id) }) : "";
-      }).join("")+'</div></div>';
+      if(g.air && !fGr.length){ airZu.push({ g:g, ids:gids }); return; }
+      html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+gids.length+'</span></div><div class="fig-grid">'+gids.map(planKachel).join("")+'</div></div>';
     });
+    html += studioAirBlockHTML(airZu, planKachel);
     html += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
       '<button type="button" class="btn btn-danger" data-plandel style="margin-top:18px;">'+ICON_TRASH+' '+t("planDel")+'</button>'+
       '<div style="height:96px"></div>'+
@@ -2151,8 +2183,10 @@ function renderStudioPlan(){
   if(stPlanBauen) studioFilterBinden(selArr(state.db.settings.stGruppen), selArr(state.db.settings.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; }), neu);
   var q = app.querySelector("#pl-q");
   if(q){
+    studioAirBinden(function(){ return stPlanQuery; });
     function suchen(){
       applySearch(app, stPlanQuery);
+      studioAirSuche(stPlanQuery);
       app.querySelectorAll(".st-gruppe").forEach(function(g){   // leere Gruppen ausblenden
         g.style.display = Array.prototype.some.call(g.querySelectorAll("[data-q]"), function(k){ return k.style.display !== "none"; }) ? "" : "none";
       });
@@ -2257,7 +2291,7 @@ function stGenBauen(w, n){
   var diff = n - q.reduce(function(a, x){ return a + x.k; }, 0);
   q.slice().sort(function(a, b){ return b.rest - a.rest; }).slice(0, diff).forEach(function(x){ x.k++; });
   var pools = {}, dazu = {};
-  studioIds().forEach(function(gr){ gr.ids.forEach(function(id){
+  studioIds().filter(function(gr){ return !gr.air; }).forEach(function(gr){ gr.ids.forEach(function(id){   // nur Studio-Übungen, keine Air-Gruppen
     var ex = findExercise(id); if(!ex || ex.main === "stretch" || dazu[id]) return;
     dazu[id] = true;
     var v = mgVerteilung(ex), best = null;

@@ -1573,8 +1573,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .af-body{ padding:2px 14px 14px; border-top:1px solid var(--border); }
 .af-lbl{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin:14px 0 8px; }
 .af-lbl span{ font-weight:400; letter-spacing:0; text-transform:none; font-size:12.5px; margin-left:4px; }
-.st-air-zeile{ padding:12px 14px; }
-.st-air-zeile .toggle-row{ padding:0; border:none; }
 .af-fuss{ margin-top:18px; }
 .af-fuss .btn{ padding:14px 10px; font-size:15px; white-space:nowrap; }
 .af-fuss .af-reset{ width:auto; flex:0 0 auto; padding:14px 14px; gap:6px; }
@@ -1769,7 +1767,19 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .st-bereiche .main-tile{ padding:7px 2px 6px; gap:1px; }
 .st-bereiche .mt-ico .ico{ width:19px; height:19px; }
 .st-bereiche .mt-name{ min-height:0; font-size:11px; }
-/* Studio: Filterkasten zum Einklappen, Schalter für Air-Übungen */
+/* Studio: Air-Gruppen als schmale, zugeklappte Zeilen unter „Aus Air“ */
+.st-air-gr{ background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:8px; overflow:hidden; }
+.st-air-gr > summary{ list-style:none; display:flex; align-items:center; gap:12px; min-height:52px; padding:8px 14px; cursor:pointer; }
+.st-air-gr > summary::-webkit-details-marker{ display:none; }
+.st-air-gr > summary b{ flex:1; min-width:0; font-size:15px; font-weight:600; }
+.st-air-gr .tpl-chev{ margin-left:0; color:var(--text-dim); }
+.st-air-gr[open] .tpl-chev{ transform:rotate(180deg); }
+.sag-ico{ width:34px; height:34px; border-radius:10px; flex:none; display:flex; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--tp-color) 14%, transparent); color:var(--tp-color); }
+.sag-ico .ico{ width:19px; height:19px; }
+.st-air-gr .fig-grid{ padding:6px 12px 12px; }
+:root[data-vintage] .st-air-gr{ border-radius:8px; background:var(--raised, var(--surface)); }
+/* Studio: Filterkasten zum Einklappen */
 .st-filter{ margin-bottom:14px; }
 .st-filter .om-pfeil{ color:var(--text-dim); font-size:18px; transition:transform .2s; }
 .st-filter[open] .om-pfeil{ transform:rotate(180deg); }

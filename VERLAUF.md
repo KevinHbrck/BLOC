@@ -180,3 +180,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **„Überrasch mich“ als schmale Leiste** (eine Zeile, 42 px, Zauberstab-Symbol) direkt unter den Reitern von Air in allen drei Reitern; der Knopf in der ersten Leiste entfällt.
 - **Sortierung A–Z als kleiner Schalter** in der Kopfzeile der Filterkarte (rechts neben „Filter“); der Sortier-Block in der Karte entfällt, die Karte wird kürzer. Aus = Standardreihenfolge (Standard bzw. Dauer), an = alphabetisch; gilt auch im Workout-Baukasten.
 - Schnelltest angepasst (sechs Bereiche, Reihenfolge, Leiste, A–Z, Fokus, Statistik); 27/27 grün. FASSUNG 2026-10-02-62.
+
+## 2026-10-08 · Studio: Air-Übungen ohne Schalter
+
+- **Der Schalter „Air-Übungen einbeziehen“ ist weg.** Die Air-Übungen (Kurzhantel & Kettlebell, Stange & Barren, Körpergewicht) sind im Studio immer da: Ohne Gruppenwahl stehen sie am Ende der Liste unter **„Aus Air“** als drei schmale, zugeklappte Zeilen mit Zahl (z. B. „Kurzhantel & Kettlebell · 16“). So bleibt die Studio-Liste kurz, und nichts ist versteckt. Antippen klappt eine Zeile auf (`studioAirBlockHTML`, `studioAirBinden`); der Zustand gilt nur für den Besuch und wird nicht gespeichert.
+- **Suche** klappt alle Air-Gruppen mit Treffern auf und blendet die ohne Treffer aus; ohne Suchwort stehen sie wieder zugeklappt da. **Gruppen-Chips** (Kurzhantel & Kettlebell, Stange & Barren, Körpergewicht) zeigen die Gruppe offen als eigenen Abschnitt. Dasselbe gilt im Plan-Bau.
+- „Plan nach Gewichtung“ zieht weiterhin nur echte Studio-Übungen (`gr.air` wird übersprungen). ★-markierte Air-Übungen folgen jetzt wie alle anderen der Gruppenwahl. Die alte Einstellung `settings.stAir` wird nicht mehr gelesen (bleibt in alten Ständen unbenutzt liegen). Gruppe „Air · Körpergewicht“ heißt jetzt „Körpergewicht“ (steht ja unter „Aus Air“).
+- Schnelltest angepasst: kein Schalter, drei zugeklappte Zeilen, Auf-/Zuklappen, Suche, Chip „Stange & Barren“, Zurücksetzen. FASSUNG 2026-10-02-63.

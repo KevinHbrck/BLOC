@@ -307,6 +307,11 @@
       await bis(function () { return $('[data-start="geraet"].on') && $('[data-stgr="brust"].on') && $(".af-body"); }, 2000, "Studio: Ausrüstung dazu, Karte bleibt offen");
       klick('[data-streset]');   // die Auswahl bleibt gespeichert - für die folgenden Tests zurücksetzen
       await bis(function () { return !$('[data-stgr].on') && !$('[data-start].on'); }, 2000, "Studio: Zurücksetzen");
+      // Air-Gruppe per Chip: steht dann offen als eigener Abschnitt, nicht mehr in „Aus Air“
+      klick('[data-stgr="stange"]');
+      await bis(function () { return $('[data-stgr="stange"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length > 5; }, 2000, "Studio: Chip „Stange & Barren“ zeigt die Übungen offen");
+      klick('[data-streset]');
+      await bis(function () { return !$('[data-stgr].on') && $$("details.st-air-gr").length === 3; }, 2000, "Studio: Zurücksetzen bringt „Aus Air“ zurück");
       // Mobility & Stretch › Dehnen: Körperregionen mehrfach
       await heim();
       klick('[data-nav="#warmstretch"]');
@@ -367,7 +372,19 @@
       klick('[data-nav="#timers"]');
       pruefe(!$("[data-ttab]"), "Freies Training hat noch Reiter");
       await bis(function () { return $$("[data-studio]").length > 30; }, 3000, "Studio-Kacheln");
-      pruefe(!$('[data-stgr="air"]') && $("#st-air") && !$("#st-air").checked, "Air-Übungen sind im Studio nicht standardmäßig aus");
+      // Air-Übungen gibt es im Studio ohne Schalter: drei zugeklappte Zeilen unter „Aus Air“; Antippen, Suche und Gruppen-Chip zeigen sie
+      pruefe(!$("#st-air"), "Studio: der Schalter „Air-Übungen“ ist noch da");
+      var airZeilen = $$("details.st-air-gr");
+      pruefe(airZeilen.length === 3 && airZeilen.every(function (d) { return !d.open && sichtbar(d); }), "Studio: die drei Air-Gruppen stehen nicht zugeklappt am Ende (" + airZeilen.length + ")");
+      klick(airZeilen[2].querySelector("summary"));
+      pruefe(airZeilen[2].open && sichtbar(airZeilen[2].querySelector("[data-studio]")), "Studio: Antippen klappt die Air-Gruppe nicht auf");
+      klick(airZeilen[2].querySelector("summary"));
+      pruefe(!airZeilen[2].open, "Studio: zweites Antippen klappt die Air-Gruppe nicht zu");
+      eingeben($("#st-q"), "liegestütz");
+      pruefe(airZeilen[2].open && Array.prototype.some.call(airZeilen[2].querySelectorAll("[data-studio]"), sichtbar), "Studio: Suche findet Air-Übungen nicht (Gruppe nicht offen)");
+      pruefe(!sichtbar(airZeilen[0]), "Studio: Air-Gruppe ohne Treffer bleibt sichtbar");
+      eingeben($("#st-q"), "");
+      pruefe(airZeilen.every(function (d) { return !d.open && sichtbar(d); }), "Studio: nach der Suche stehen die Air-Gruppen nicht wieder zugeklappt da");
       eingeben($("#st-q"), "beinpresse");
       pruefe($$("[data-studio]").filter(sichtbar).length >= 3, "Suche „beinpresse“ findet zu wenig");
       eingeben($("#st-q"), "");
