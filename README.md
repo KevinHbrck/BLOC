@@ -17,16 +17,19 @@ Dieses Dokument beschreibt den **aktuellen Stand**. Die Geschichte der Änderung
 
 ## Aufbau der App
 
-**Unten eine Leiste** (nur auf den Hauptseiten): **Start · Suche · Statistik · Einstellungen**.
+**Unten eine Leiste: Start · Suche · Statistik · Einstellungen.** Auf den vier Hauptseiten ist der passende Eintrag markiert (kein Zurück-Pfeil in der Kopfzeile, die Zurück-Taste des Handys führt zur Startseite). Auf den Einstiegsseiten der sechs Bereiche steht sie in allen Reitern ohne markierten Eintrag. Weg ist sie im laufenden Training, Timer und Lauf, in Editoren und Baukästen, auf Detailseiten (Workout-Übersicht, Studio-Übung, Studio-Plan, Challenge, Lauf-Detail) und unter Fenstern von unten.
+
+**Plus (rund, unten rechts):** Es steht in jedem Reiter eines Bereichs, in dem man etwas Eigenes anlegen kann, und legt das an, was zum Reiter passt: Air › Workouts und Meine ein eigenes Workout, Air › Übungen eine eigene Übung; Studio › Übungen eine eigene Übung, Studio › Mein Plan ein Menü (Plan · Plan nach Gewichtung); Timer ein Menü (Timer-Workout · Block); Summit › Einheiten eine Einheit, › Programme ein Programm, › Meine ein Menü; Mobility & Stretch in allen Reitern ein eigenes Workout (für Aufwärmen bzw. Dehnen). Run hat nichts Eigenes anzulegen, dort steht kein Plus.
 
 **Startseite:** Wochenzeile (Trainings dieser Woche), Favoriten (☆, höchstens vier sichtbar) und die Bereiche in der
-Reihenfolge **Air, Studio, Summit, Run, Mobility & Stretch** (langes Drücken zum Sortieren). Welche Bereiche sichtbar sind,
+Reihenfolge **Air, Studio, Timer, Summit, Run, Mobility & Stretch** (langes Drücken zum Sortieren). Welche Bereiche sichtbar sind,
 stellt man unter **Einstellungen › Fokus** ein (ausgeblendete Bereiche bleiben über die Suche erreichbar).
 
 | Bereich | Inhalt |
 |---|---|
-| **Air** (intern `lib`) | Vier Reiter: Workouts · Übungen · Meine · **Timer** (Timer-Workouts und Blöcke). Suche, Kategorie-Kacheln, aufklappbare Filterzeile. „Überrasch mich“. **Meine** = Selbstgebautes (Baukasten, „Sinnvoll ordnen“) |
-| **Studio** (intern `timer`) | Geräte- und Hantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag (doppelte Progression), Mein Plan (mehrere Pläne, auch nach Muskelgruppen-Gewichtung), Timer |
+| **Air** (intern `lib`) | Drei Reiter: Workouts · Übungen · Meine. Suche, aufklappbare Filterkarte (Training, Ausrüstung, A–Z). „Überrasch mich“. **Meine** = Selbstgebautes (Baukasten, „Sinnvoll ordnen“) |
+| **Studio** (intern `timer`) | Geräte- und Hantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag (doppelte Progression), Mein Plan (mehrere Pläne, auch nach Muskelgruppen-Gewichtung). Filter ohne Doppelungen: **Gruppe** (Körperregion) und **Ausrüstung** (Gerät, Kabel, Kurzhantel & Kettlebell, Langhantel, Stange & Barren, Körpergewicht); die Air-Übungen stehen zugeklappt unter „Aus Air“ |
+| **Timer** (intern `intervall`) | Eigene Intervall-Timer ohne Übungsvorschläge: Blöcke (eine Übung mit Runden, Arbeit, Pause) und Timer-Workouts aus mehreren Blöcken; Plus-Menü zum Anlegen |
 | **Summit** (Challenges, intern `reps`) | Reiter Einheiten · Programme · Meine. Programme auf Zeit, Einheiten in drei Stufen; eigene Programme und eigene Einheiten (+ in Einheiten und Meine) |
 | **Run** (intern `run`) | GPS-Lauf: Countdown, Zeit, Strecke, Pace, Kilometer-Zwischenzeiten, Route (ohne Karte, nur als Linie), Ansagen, **Intervall-Lauf** (Laufen/Gehen), **Auto-Pause** (Stehzeit wird herausgerechnet), Abdunkeln, Name und Notiz, GPX-Export. Im Lauf lösen alle Knöpfe erst nach 3 s Halten aus |
 | **Mobility & Stretch** (intern `warm`) | Aufwärm- und Dehnprogramme und -übungen, Körperregionen als Filter |

@@ -79,18 +79,19 @@
   async function heim() { await laden(); await bis(function () { return $(".area-tile"); }, 5000, "Startseite"); }
 
   var TESTS = [
-    ["Einführung: nur beim ersten Start, fünf Seiten mit Zahlen, danach in den Einstellungen", async function () {
+    ["Einführung: nur beim ersten Start, sechs Seiten (mit Timer), danach in den Einstellungen", async function () {
       await heim();   // der Test startet ohne gespeicherte Daten - wie eine neue Installation
       await bis(function () { return $("#overlayRoot .intro-sheet"); }, 3000, "Einführung beim ersten Start");
       var titel = [];
-      for (var i = 0; i < 5; i++) {
+      for (var i = 0; i < 6; i++) {
         titel.push($(".intro-seite h2").textContent);
-        pruefe($$(".intro-punkte i").length === 5 && $$(".intro-punkte i")[i].classList.contains("an"), "Punkt " + (i + 1) + " nicht markiert");
+        pruefe($$(".intro-punkte i").length === 6 && $$(".intro-punkte i")[i].classList.contains("an"), "Punkt " + (i + 1) + " nicht markiert");
         pruefe(!/\{\w+\}/.test($(".intro-seite p").textContent), "Zahl fehlt: " + $(".intro-seite p").textContent);
-        if (i > 0) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));
+        if (i > 0 && i !== 3) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));   // der Timer (Seite 4) hat keine mitgelieferten Inhalte, also keine Zahl
+        if (i === 3) pruefe(/Timer/.test($(".intro-seite p").textContent) && /Zeitblöcke/.test($(".intro-seite p").textContent), "Timer-Seite der Einführung: " + $(".intro-seite p").textContent);
         klick("[data-introweiter]");
       }
-      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Air | Studio | Summit | Mobility & Stretch", "Seiten: " + titel.join(" | "));
+      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Air | Studio | Timer | Summit | Mobility & Stretch", "Seiten: " + titel.join(" | "));
       pruefe(!$("#overlayRoot .intro-sheet"), "„Los geht's“ schließt die Einführung nicht");
       await heim();
       await warte(500);
@@ -150,6 +151,14 @@
     ["Übungsinfo: Pull-ups mit zwei Ansichten", async function () {
       klick('[data-info="pull-ups"]');
       await bis(function () { return $$(".info-views figure").length === 2; }, 3000, "zwei Ansichten");
+      pruefe(!$(".info-diff"), "Pull-ups: der Abschnitt „Unterschied zu …“ gehört nur zu den Chin-ups");
+      klick("[data-close]");
+      // Chin-ups: eigener Abschnitt „Unterschied zu Pull-ups“ (Untergriff gegen Obergriff)
+      klick('[data-info="chin-ups"]');
+      await bis(function () { return $(".info-diff"); }, 3000, "Chin-ups: Abschnitt zum Unterschied");
+      pruefe($$(".info-title").some(function (e) { return /^Unterschied zu Pull-ups$/i.test(e.textContent.trim()); }), "Chin-ups: Überschrift „Unterschied zu Pull-ups“ fehlt");
+      pruefe($$(".info-diff .id-karte").length === 2 && $$(".info-diff .id-karte small").length === 4, "Chin-ups: erwartet zwei Karten (Chin-up, Pull-up) mit je Griff und Wirkung");
+      pruefe(/Untergriff/.test($(".info-diff").textContent) && /Obergriff/.test($(".info-diff").textContent), "Chin-ups: Text nennt Unter- und Obergriff nicht");
       klick("[data-close]");
     }],
     ["Überrasch mich: ohne Stretch, erzeugt ein Workout", async function () {
@@ -307,11 +316,18 @@
       await bis(function () { return $('[data-start="geraet"].on') && $('[data-stgr="brust"].on') && $(".af-body"); }, 2000, "Studio: Ausrüstung dazu, Karte bleibt offen");
       klick('[data-streset]');   // die Auswahl bleibt gespeichert - für die folgenden Tests zurücksetzen
       await bis(function () { return !$('[data-stgr].on') && !$('[data-start].on'); }, 2000, "Studio: Zurücksetzen");
-      // Air-Gruppe per Chip: steht dann offen als eigener Abschnitt, nicht mehr in „Aus Air“
-      klick('[data-stgr="stange"]');
-      await bis(function () { return $('[data-stgr="stange"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length > 5; }, 2000, "Studio: Chip „Stange & Barren“ zeigt die Übungen offen");
+      // keine Doppelungen: Gruppe = Körperregion, Ausrüstung = Gerät, Kabel, Kurzhantel & Kettlebell, Langhantel, Stange & Barren, Körpergewicht
+      var gruppen = $$("[data-stgr]").map(function (b) { return b.textContent.trim(); }), arten = $$("[data-start]").map(function (b) { return b.textContent.trim(); });
+      pruefe(arten.join(" | ") === "Gerät | Kabel | Kurzhantel & Kettlebell | Langhantel | Stange & Barren | Körpergewicht", "Studio: Ausrüstung ist " + arten.join(" | "));
+      pruefe(!gruppen.some(function (g) { return arten.indexOf(g) > -1; }) && gruppen.join(" | ") === "Beine & Po | Brust | Rücken | Schultern | Arme | Bauch", "Studio: Gruppe ist " + gruppen.join(" | ") + " (Doppelung mit Ausrüstung?)");
+      // Ausrüstung „Stange & Barren“: die Air-Übungen stehen dann offen als eigener Abschnitt, nicht mehr in „Aus Air“
+      klick('[data-start="stange"]');
+      await bis(function () { return $('[data-start="stange"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length > 5; }, 2000, "Studio: Ausrüstung „Stange & Barren“ zeigt die Übungen offen");
+      klick('[data-start="stange"]');   // wieder aus
+      klick('[data-start="koerper"]');
+      await bis(function () { return $('[data-start="koerper"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length > 20; }, 2000, "Studio: Ausrüstung „Körpergewicht“ zeigt die Körpergewicht-Übungen");
       klick('[data-streset]');
-      await bis(function () { return !$('[data-stgr].on') && $$("details.st-air-gr").length === 3; }, 2000, "Studio: Zurücksetzen bringt „Aus Air“ zurück");
+      await bis(function () { return !$('[data-start].on') && $$("details.st-air-gr").length === 3; }, 2000, "Studio: Zurücksetzen bringt „Aus Air“ zurück");
       // Mobility & Stretch › Dehnen: Körperregionen mehrfach
       await heim();
       klick('[data-nav="#warmstretch"]');
@@ -565,12 +581,16 @@
       Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cbs.push(f); return cbs.length; }, clearWatch: function () {} } });
       pruefe($('.area-tile[data-nav="#run"]').textContent.indexOf("BETA") < 0, "Lauf-Kachel trägt noch BETA");
       klick($('.area-tile[data-nav="#run"]'));
-      klick(await bis(function () { return $("[data-runstart]"); }, 3000, "Lauf starten"));
+      var runStartKnopf = await bis(function () { return $("[data-runstart]"); }, 3000, "Lauf starten");
+      pruefe($$(".tabbar .tab").length === 4 && !$(".tabbar .tab.active") && !$(".fab"), "Run: Startseite braucht die Leiste (ohne markierten Eintrag) und kein Plus");
+      klick(runStartKnopf);
       await bis(function () { return $("#run-vor") && +$("#run-vor").textContent >= 19; }, 3000, "Countdown ab 20 s");
+      pruefe(!$(".tabbar .tab"), "Run: im Countdown darf keine Leiste stehen");
       klick($("[data-runplus]"));
       await bis(function () { return +$("#run-vor").textContent >= 28; }, 2000, "+10 s im Countdown");
       klick($("[data-runjetzt]"));
       await bis(function () { return cbs.length >= 2 && $("#run-zeit"); }, 3000, "Aufzeichnung läuft");
+      pruefe(!$(".tabbar .tab"), "Run: im laufenden Lauf darf keine Leiste stehen");
       var lat = 48, ts = Date.now();
       for (var i = 0; i < 90; i++) { lat += 15 / 111320; ts += 3000; cb({ coords: { latitude: lat, longitude: 11, accuracy: 8 }, timestamp: ts }); }
       cb({ coords: { latitude: lat + 0.5, longitude: 11, accuracy: 8 }, timestamp: ts + 3000 });   // Sprung: wird ignoriert
@@ -589,6 +609,7 @@
       klick("[data-runend]");
       klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Beenden bestätigen"));
       await bis(function () { return /^#rundetail/.test(W.location.hash) && $(".run-svg") && $(".run-fertig"); }, 3000, "Lauf-Detail mit Abschlusskarte");
+      pruefe(!$(".tabbar .tab"), "Run: Lauf-Detail ohne Leiste");
       pruefe(/erster Lauf/.test($(".run-fertig").textContent), "Abschlusskarte ohne Highlight");
       pruefe($$(".run-kms .rk").length >= 1 && /\/km/.test($(".run-kms").textContent), "Pace je Kilometer fehlt");
       var nm = $("#run-name"); nm.value = "Intervalle"; nm.dispatchEvent(new W.Event("input", { bubbles: true }));
@@ -671,12 +692,127 @@
       klick('.tabbar [data-nav="#home"]');
       await bis(function () { return $(".area-tile") && !$('.area-tile[data-nav="#run"]'); }, 3000, "Run von der Startseite verschwunden");
       klick('.area-tile[data-nav="#reps"]');
-      await bis(function () { return /^#reps/.test(W.location.hash) && !$(".tabbar .tab"); }, 3000, "Leiste in Listen ausgeblendet");
+      await bis(function () { return /^#reps/.test(W.location.hash) && $$(".tabbar .tab").length === 4 && !$(".tabbar .tab.active"); }, 3000, "Leiste im Bereich Summit, ohne markierten Eintrag");
       klick("button.back");
       await bis(function () { return $(".woche"); }, 3000, "zurück auf der Startseite");
       klick('.tabbar [data-nav="#settings"]');
       klick(await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Einstellungen"));
       pruefe((daten().settings.fokusAus || []).indexOf("run") < 0, "Fokus nicht zurückgesetzt");
+    }],
+    ["Navigation: Leiste in den sechs Bereichen, Hauptseiten ohne Pfeil, Plus-Regel", async function () {
+      function leiste() { var l = $(".tabbar"); return $$(".tabbar .tab").length === 4 && l && !l.classList.contains("hidden"); }
+      function keine() { return !$(".tabbar .tab"); }
+      function ohneMarke() { return !$(".tabbar .tab.active"); }
+      function plusDa(was) { return $$(".fab").length === 1 && $(".fab[data-fabopt=\"" + was + "\"], .fab[data-fab]"); }
+      async function bereich(route, marker, was) { await heim(); klick('.area-tile[data-nav="' + route + '"]'); return bis(marker, 3000, was); }
+      async function reiter(attr, wert, was) { klick("[" + attr + "=\"" + wert + "\"]"); await bis(function () { return $("[" + attr + "=\"" + wert + "\"].active"); }, 2000, was); }
+      // Hauptseiten: gleichrangig, der passende Eintrag ist markiert, in der Kopfzeile steht kein Zurück-Pfeil
+      await heim();
+      pruefe(leiste() && $(".tabbar .tab.active") && !$(".topbar button.back"), "Start: Leiste, markierter Eintrag oder Pfeil stimmen nicht");
+      var haupt = [["#search", "#gs-q"], ["#stats", ".stat-hero, .stat-karte"], ["#settings", "[data-fokus]"]];
+      for (var h = 0; h < haupt.length; h++) {
+        klick('.tabbar [data-nav="' + haupt[h][0] + '"]');
+        await bis(function () { return $(haupt[h][1]); }, 3000, haupt[h][0]);
+        pruefe(!$(".topbar button.back"), haupt[h][0] + ": Zurück-Pfeil in der Kopfzeile");
+        pruefe($(".tabbar .tab.active") && $(".tabbar .tab.active").getAttribute("data-nav") === haupt[h][0], haupt[h][0] + ": Eintrag nicht markiert");
+      }
+      // Unterseiten der Einstellungen behalten ihren Pfeil
+      klick('[data-nav="#install"]');
+      await bis(function () { return /^#install/.test(W.location.hash) && $(".topbar button.back"); }, 3000, "Installationshilfe mit Pfeil");
+      pruefe(keine(), "Installationshilfe: keine Leiste erwartet");
+      klick("button.back");
+      await bis(function () { return $("[data-fokus]"); }, 3000, "zurück in die Einstellungen");
+      // Handy-Zurück führt von Suche und Einstellungen zur Startseite
+      W.history.back();
+      await bis(function () { return $(".woche") && /^#home/.test(W.location.hash); }, 3000, "Handy-Zurück aus den Einstellungen führt zur Startseite");
+      klick('.tabbar [data-nav="#search"]');
+      await bis(function () { return $("#gs-q"); }, 3000, "Suche");
+      W.history.back();
+      await bis(function () { return $(".woche") && /^#home/.test(W.location.hash); }, 3000, "Handy-Zurück aus der Suche führt zur Startseite");
+
+      // Air: Leiste ohne markierten Eintrag in allen Reitern; Plus überall (Übungen: eigene Übung, sonst eigenes Workout)
+      await bereich("#library", function () { return $$("[data-libtab]").length === 3; }, "Air");
+      var lt = ["workouts", "exercises", "mine"];
+      for (var a = 0; a < lt.length; a++) {
+        await reiter("data-libtab", lt[a], "Air › " + lt[a]);
+        pruefe(leiste() && ohneMarke(), "Air › " + lt[a] + ": Leiste fehlt oder ein Eintrag ist markiert");
+        pruefe(plusDa("new"), "Air › " + lt[a] + ": Plus fehlt");
+        pruefe($(".air-filter") || lt[a] === "mine", "Air › " + lt[a] + ": Filterkarte fehlt");   // die Filter bleiben, wie sie sind
+      }
+      await reiter("data-libtab", "exercises", "Air › Übungen");
+      klick(".fab");
+      await bis(function () { return /^#exedit/.test(W.location.hash) && keine(); }, 3000, "Air › Übungen: Plus führt zur neuen Übung, ohne Leiste");
+      await bereich("#library", function () { return $$("[data-libtab]").length === 3; }, "Air");
+      await reiter("data-libtab", "workouts", "Air › Workouts");
+      klick(".fab");
+      await bis(function () { return /^#mybuild/.test(W.location.hash) && keine(); }, 3000, "Air › Workouts: Plus führt zum neuen Workout, ohne Leiste");
+      await bereich("#library", function () { return $$("[data-libtab]").length === 3; }, "Air");
+      klick(await bis(function () { return $("[data-cover]"); }, 3000, "Workout-Karte"));
+      await bis(function () { return /^#cover/.test(W.location.hash) && keine(); }, 3000, "Workout-Übersicht ohne Leiste");
+
+      // Studio: Übungen (Plus = eigene Übung) und Mein Plan (Plus-Menü); Plan ansehen und bauen ohne Leiste, Übungskarte ohne Leiste
+      await bereich("#timers", function () { return $$("[data-sttab]").length === 2; }, "Studio");
+      await reiter("data-sttab", "uebungen", "Studio › Übungen");
+      pruefe(leiste() && ohneMarke() && plusDa("new") && $(".air-filter"), "Studio › Übungen: Leiste, Plus oder Filterkarte fehlt");
+      klick(".fab");
+      await bis(function () { return /^#exedit/.test(W.location.hash) && keine(); }, 3000, "Studio › Übungen: Plus führt zur neuen Übung");
+      await bereich("#timers", function () { return $$("[data-sttab]").length === 2; }, "Studio");
+      klick(await bis(function () { return $$("[data-studio]").filter(sichtbar)[0]; }, 3000, "Studio-Kachel"));
+      await bis(function () { return /^#studio\//.test(W.location.hash) && keine(); }, 3000, "Studio-Übung ohne Leiste");
+      await bereich("#timers", function () { return $$("[data-sttab]").length === 2; }, "Studio");
+      await reiter("data-sttab", "plan", "Studio › Mein Plan");
+      await bis(function () { return $("[data-fab]"); }, 3000, "Plus-Menü im Plan");
+      pruefe(leiste() && ohneMarke(), "Studio › Mein Plan: Leiste fehlt oder ein Eintrag ist markiert");
+      klick("[data-fab]");
+      klick(await bis(function () { return $('[data-fabopt="neu"]'); }, 2000, "Neuer Plan"));
+      await bis(function () { return $("#plan-name") && keine(); }, 3000, "Plan im Bau ohne Leiste");
+      klick("button.back");
+      await bis(function () { return $(".plan-item") && leiste(); }, 3000, "Plan-Liste mit Leiste");
+      klick($(".plan-item"));
+      await bis(function () { return $("[data-planedit]") && keine(); }, 3000, "Plan ansehen ohne Leiste");
+
+      // Timer: eine Seite, Plus-Menü
+      await bereich("#intervall", function () { return $(".timer-panel"); }, "Timer");
+      pruefe(leiste() && ohneMarke() && $("[data-fab]") && $('[data-fabopt="timerwo"]') && $('[data-fabopt="block"]'), "Timer: Leiste oder Plus-Menü fehlt");
+
+      // Summit: je Reiter ein Plus (Einheiten: Einheit, Programme: Programm, Meine: Menü); Challenge ohne Leiste
+      await bereich("#reps", function () { return $$('[data-repf^="tab:"]').length === 3; }, "Summit");
+      var rt = [["einheiten", "unit"], ["programme", "prog"], ["meine", null]];
+      for (var r = 0; r < rt.length; r++) {
+        klick('[data-repf="tab:' + rt[r][0] + '"]');
+        await bis(function () { return $('[data-repf="tab:' + rt[r][0] + '"].active'); }, 2000, "Summit › " + rt[r][0]);
+        pruefe(leiste() && ohneMarke(), "Summit › " + rt[r][0] + ": Leiste fehlt oder ein Eintrag ist markiert");
+        pruefe(rt[r][1] ? $('.fab[data-fabopt="' + rt[r][1] + '"]') : $('[data-fab]'), "Summit › " + rt[r][0] + ": Plus fehlt");
+      }
+      klick('[data-repf="tab:programme"]');
+      klick(await bis(function () { return $(".rep-karte"); }, 3000, "Challenge-Karte"));
+      await bis(function () { return /^#rep\//.test(W.location.hash) && keine(); }, 3000, "Challenge ohne Leiste");
+
+      // Mobility & Stretch: Plus in allen Reitern und für beide Seiten (Aufwärmen · Dehnen) = eigenes Workout
+      await bereich("#warmstretch", function () { return $$("[data-wstab]").length === 3; }, "Mobility & Stretch");
+      var arten = ["warm", "dehn"], wt = ["workouts", "uebungen", "meine"];
+      for (var w = 0; w < arten.length; w++) {
+        await reiter("data-wsart", arten[w], "Mobility & Stretch › " + arten[w]);
+        for (var k = 0; k < wt.length; k++) {
+          await reiter("data-wstab", wt[k], "Mobility & Stretch › " + arten[w] + " › " + wt[k]);
+          pruefe(leiste() && ohneMarke(), "Mobility & Stretch › " + arten[w] + " › " + wt[k] + ": Leiste fehlt oder ein Eintrag ist markiert");
+          pruefe(plusDa("new"), "Mobility & Stretch › " + arten[w] + " › " + wt[k] + ": Plus fehlt");
+        }
+      }
+      await reiter("data-wstab", "uebungen", "Mobility & Stretch › Übungen");
+      klick(".fab");
+      await bis(function () { return /^#mybuild/.test(W.location.hash) && keine(); }, 3000, "Mobility & Stretch: Plus führt zum neuen Workout, ohne Leiste");
+
+      // Run: Startseite mit Leiste und ohne Plus (nichts Eigenes anzulegen); Countdown, Lauf und Detail ohne Leiste prüft der Lauf-Test
+      await bereich("#run", function () { return $("[data-runstart]"); }, "Run");
+      pruefe(leiste() && ohneMarke() && !$(".fab"), "Run: Leiste fehlt, ein Eintrag ist markiert oder ein Plus steht da");
+
+      // Abstand unten: Plus und letzte Zeile liegen über der Leiste (auch mit Safe-Area)
+      await bereich("#library", function () { return $$("[data-libtab]").length === 3; }, "Air");
+      await reiter("data-libtab", "mine", "Air › Meine");
+      var fb = $(".fab").getBoundingClientRect(), lb = $(".tabbar").getBoundingClientRect();
+      pruefe(fb.bottom <= lb.top - 8, "Plus liegt zu nah an oder unter der Leiste (" + Math.round(fb.bottom) + " / " + Math.round(lb.top) + ")");
+      pruefe(parseFloat(W.getComputedStyle($("#app")).paddingBottom) >= lb.height, "Seitenabstand unten ist kleiner als die Leiste");
     }],
     ["Statistik: ein Training = Timer bis 60 Minuten Abstand, Woche · Monat · Jahr, Archiv", async function () {
       await heim();

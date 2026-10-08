@@ -1139,6 +1139,17 @@ var EX_INFO = {
 /* Haltung je Übung: [Haltung DE (a|b), Vermeiden DE, Haltung EN (a|b), Vermeiden EN]
    Grundlage: gängige Technikhinweise (u. a. ACE, NSCA, NASM): neutrale Wirbelsäule, Knie in Fußrichtung,
    Schultern weg von den Ohren, bei Bauchübungen den unteren Rücken am Boden halten. */
+/* Eigener Abschnitt „Unterschied zu …“ in der Übungskarte: Übung -> { zu:ähnliche Übung, de/en:{ Übungs-ID:[Griff, Wirkung] } }.
+   Angezeigt werden beide Übungen untereinander, die der Karte zuerst; bewusst kurz. Die Ausführung steht schon unter „So geht’s“. */
+var EX_UNTERSCHIED = {
+  "chin-ups":{ zu:"pull-ups",
+    de:{
+      "chin-ups":["Untergriff – Handflächen zu dir.", "Mehr Bizeps, dazu Rücken und Brust. Leichter, gut für den Einstieg."],
+      "pull-ups":["Obergriff – Handflächen von dir weg.", "Vor allem Rücken (Latissimus), weniger Bizeps. Schwerer, mehr Rückenkraft."] },
+    en:{
+      "chin-ups":["Underhand – palms face you.", "More biceps, plus back and chest. Easier, a good way in."],
+      "pull-ups":["Overhand – palms face away.", "Mainly back (lats), less biceps. Harder, more back strength."] } }
+};
 var EX_POSTURE = {
   "glute-machine":["Rücken gerade, Bauch fest.|Bewegung kommt aus der Hüfte.","Ins Hohlkreuz drücken, um weiter zu kommen.","Back straight, core tight.|Move from your hip.","Arching your lower back to go further."],
   "calf-press":["Knie leicht gebeugt, nicht durchdrücken.|Ganze Bewegung im Sprunggelenk.","Die Knie arbeiten mit oder die Füße rutschen.","Knees slightly bent, never locked.|All the movement at the ankle.","Bending the knees or letting the feet slip."],
@@ -1786,6 +1797,7 @@ window.BLOC_DATEN = {
   ILLU_VIEW2:ILLU_VIEW2,
   EX_INFO:EX_INFO,
   EX_POSTURE:EX_POSTURE,
+  EX_UNTERSCHIED:EX_UNTERSCHIED,
   EX_MUSCLES:EX_MUSCLES,
   REP_PSEUDO:REP_PSEUDO,
   AUFWAERM_IDS:AUFWAERM_IDS,

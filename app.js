@@ -26,7 +26,7 @@ var EX_ALIAS = BLOC_DATEN.EX_ALIAS, LIB_CATS = BLOC_DATEN.LIB_CATS, EXERCISE_ROW
     qSide = BLOC_DATEN.qSide, qTwist = BLOC_DATEN.qTwist, gBall = BLOC_DATEN.gBall, RT_SC = BLOC_DATEN.RT_SC, RT_ST = BLOC_DATEN.RT_ST,
     RT_BEINE = BLOC_DATEN.RT_BEINE, RT_FL = BLOC_DATEN.RT_FL, RT_FC = BLOC_DATEN.RT_FC, RT_FR = BLOC_DATEN.RT_FR, RT_FLC = BLOC_DATEN.RT_FLC,
     RT_FRC = BLOC_DATEN.RT_FRC, V_ARCH = BLOC_DATEN.V_ARCH, V_SNOW = BLOC_DATEN.V_SNOW, ILLU_VIEW2 = BLOC_DATEN.ILLU_VIEW2,
-    EX_INFO = BLOC_DATEN.EX_INFO, EX_POSTURE = BLOC_DATEN.EX_POSTURE, EX_MUSCLES = BLOC_DATEN.EX_MUSCLES;
+    EX_INFO = BLOC_DATEN.EX_INFO, EX_POSTURE = BLOC_DATEN.EX_POSTURE, EX_UNTERSCHIED = BLOC_DATEN.EX_UNTERSCHIED || {}, EX_MUSCLES = BLOC_DATEN.EX_MUSCLES;
 
 /* ============ Storage ============ */
 var DB_KEY = "sporttimer-data-v1";
@@ -1072,6 +1072,17 @@ function openExInfo(exId, live, lib){
       return '<div class="info-title">'+t("posture")+'</div><ul class="info-posture">'+cues+'</ul>'+
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(p[lang*2+1])+'</div>';
     })()+
+    (function(){   // Unterschied zu einer ähnlichen Übung (z. B. Chin-up gegen Pull-up): eigener Abschnitt, beide Übungen untereinander mit Griff und Wirkung
+      var u = EX_UNTERSCHIED[exId], zu = u && findExercise(u.zu);
+      if(!u || !zu) return "";
+      var z = u[lang ? "en" : "de"];
+      return '<div class="info-title">'+esc(t("diffTitel", { n:tplText(zu.name) }))+'</div><div class="info-diff">'+[exId, u.zu].map(function(id){
+        var d = z[id], e = findExercise(id);
+        if(!d || !e) return "";
+        return '<div class="id-karte'+(id === exId ? ' selbst' : '')+'"><b>'+esc(tplText(e.name))+'</b>'+
+          [["diffGriff", d[0]], ["diffWirkung", d[1]]].map(function(r){ return '<div><small>'+esc(t(r[0]))+'</small>'+esc(r[1])+'</div>'; }).join("")+'</div>';
+      }).join("")+'</div>';
+    })()+
     '<div class="info-tip"><b>'+t("tip")+':</b> '+esc(tplText(ex.hint))+'</div>'+
     (function(){   // Passt es nicht? Eine Zeile mit der leichteren und der schwereren Variante
       var lz = live ? null : leichterSchwerer(exId);
@@ -1264,13 +1275,16 @@ tonMischen(true);   // von Anfang an: Musik anderer Apps läuft weiter
 /* ============ Render dispatch ============ */
 var app = document.getElementById("app");
 
-/* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
+/* Leiste unten: Start · Suche · Statistik · Einstellungen. Auf den vier Hauptseiten ist der passende Eintrag markiert; auf den Einstiegsseiten der
+   sechs Bereiche (TAB_BEREICHE, in allen Reitern) steht sie auch, aber ohne markierten Eintrag. Weg ist sie im Training, in Editoren und Baukästen,
+   auf Detailseiten und in Fenstern von unten (die liegen darüber). Seiten mit eigenen Zuständen (Studio-Plan im Bau, Lauf) rufen tabLeiste("") selbst auf. */
 var TAB_ROUTEN = { home:"#home", search:"#search", stats:"#stats", settings:"#settings" };
+var TAB_BEREICHE = { library:1, timers:1, studioplan:1, intervall:1, blocks:1, reps:1, run:1, warmstretch:1 };
 function tabLeiste(route){
   var el = document.getElementById("tabbar");
   if(!el) return;
   var aktiv = TAB_ROUTEN[route];
-  if(!aktiv){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
+  if(!aktiv && !TAB_BEREICHE[route]){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
   var eintraege = [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],
@@ -1561,7 +1575,7 @@ function gesamtEintraege(){
 function renderSearch(){
   var alle = gesamtEintraege();
   app.innerHTML =
-    topbar(t("srTitle"), { back:"#home" }) +
+    topbar(t("srTitle"), {}) +
     searchHTML(gesamtQuery, "gs", t("srPh")) +
     '<div class="lib-chips sr-kats">'+SUCH_KATEGORIEN.map(function(k){
       return '<button type="button" class="lib-chip'+(suchKat === k ? ' active' : '')+'" data-srkat="'+k+'" aria-pressed="'+(suchKat === k)+'">'+esc(t("srKat_"+k))+'</button>';
@@ -1867,7 +1881,8 @@ function studioRun(ex){
 }
 function studioKg(v){ return (Math.round(v*100)/100).toLocaleString(currentLang()==="en" ? "en" : "de"); }
 function studioIds(){
-  var gruppen = STUDIO_GRUPPEN.map(function(g){ return { id:g.id, name:tplText(g), ids:g.ids.split(" ").filter(findExercise) }; });
+  // ausr: steht nur als Abschnitt in der Liste, nicht als Chip unter „Gruppe“ (Langhantel ist Ausrüstung und steht dort)
+  var gruppen = STUDIO_GRUPPEN.map(function(g){ return { id:g.id, name:tplText(g), ids:g.ids.split(" ").filter(findExercise), ausr:g.id === "lh" }; });
   var inGruppen = {};
   gruppen.forEach(function(g){ g.ids.forEach(function(id){ inGruppen[id] = true; }); });
   function mit(eq){ return EXERCISES.filter(function(ex){ return !ex.custom && !inGruppen[ex.id] && ex.main !== "stretch" && ex.equip.some(function(e){ return eq.indexOf(e) > -1; }); }).map(function(ex){ return ex.id; }); }
@@ -1912,15 +1927,30 @@ function studioAirSuche(q){
     d.style.display = !q || Array.prototype.some.call(d.querySelectorAll("[data-q]"), function(k){ return k.style.display !== "none"; }) ? "" : "none";
   });
 }
-/* Ausrüstung einer Studio-Übung - für die Chips über den Gruppen */
+/* Ausrüstung einer Studio-Übung - für die Chips unter „Ausrüstung“ (Gerät, Kabel, Kurzhantel & Kettlebell, Langhantel, Stange & Barren, Körpergewicht) */
 function studioArt(id){
   if(/cable|pulldown|pushdown|face-pull|woodchop|crossover/.test(id)) return "kabel";
   if(/^barbell|bench-press|t-bar|hip-thrust/.test(id)) return "lh";
   var eq = (findExercise(id) || {}).equip || [];
-  if(eq.indexOf("gym") < 0) return (eq.indexOf("bar") > -1 || eq.indexOf("dip") > -1) ? "stange" : "frei";
+  if(eq.indexOf("gym") < 0){
+    if(eq.indexOf("bar") > -1 || eq.indexOf("dip") > -1) return "stange";
+    return eq.indexOf("db") > -1 || eq.indexOf("kb") > -1 ? "frei" : "koerper";
+  }
   return eq.indexOf("db") > -1 ? "frei" : "geraet";
 }
-var STUDIO_ARTEN = ["geraet", "kabel", "frei", "lh", "stange"];
+var STUDIO_ARTEN = ["geraet", "kabel", "frei", "lh", "stange", "koerper"];
+/* Gewählte Studio-Filter: fGr = Gruppen (Körperregion, plus „Eigene“), fArt = Ausrüstung. Früher gab es Langhantel, Kurzhantel & Kettlebell, Stange & Barren
+   und Körpergewicht auch als Gruppen-Chips (doppelt); ein so gespeicherter Stand zählt jetzt als Ausrüstung (nur beim Lesen, nichts wird umgeschrieben). */
+var STUDIO_GRUPPE_ALT = { lh:"lh", frei:"frei", stange:"stange", air:"koerper" };
+function studioFilterLesen(){
+  var s = state.db.settings, fGr = [], fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+  selArr(s.stGruppen).forEach(function(g){
+    var art = STUDIO_GRUPPE_ALT[g];
+    if(!art) fGr.push(g);
+    else if(fArt.indexOf(art) < 0) fArt.push(art);
+  });
+  return { fGr:fGr, fArt:fArt };
+}
 var STUDIO_GRUPPEN_ICON = { beine:CAT_ICON.legs, brust:'<path d="M4 8c2.5-2 5.5-2 8 0 2.5-2 5.5-2 8 0v5c-2 3-5.5 4-8 1.5C9.5 17 6 16 4 13z"/>',
   ruecken:CAT_ICON.back, schulter:'<circle cx="12" cy="6" r="2.5"/><path d="M4 18c0-5 3.5-8.5 8-8.5s8 3.5 8 8.5"/>', arme:CAT_ICON.arms,
   bauch:CAT_ICON.core, lh:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, air:HOME_ICON.lib, eigene:'<path d="M12 5v14M5 12h14"/>' };
@@ -1941,7 +1971,9 @@ function studioAnzahl(gruppen, fGr, artOk){
   gruppen.forEach(function(g){ if(!fGr.length || fGr.indexOf(g.id) > -1) n += g.ids.filter(artOk).length; });
   return n;
 }
-/* Filter der Studio-Übungen (Gruppen inkl. der Air-Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
+/* Filter der Studio-Übungen - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air.
+   „Gruppe“ = Körperregion (Beine & Po, Brust, Rücken, Schultern, Arme, Bauch, Eigene), „Ausrüstung“ = Gerät, Kabel, Kurzhantel & Kettlebell, Langhantel,
+   Stange & Barren, Körpergewicht. Nichts steht in beiden. */
 function studioFilterHTML(gruppen, fGr, fArt, anzahl){
   var s = state.db.settings;
   var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
@@ -1949,7 +1981,7 @@ function studioFilterHTML(gruppen, fGr, fArt, anzahl){
   return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t("afAlleEx"),
     zeigen:filterZeigenText(anzahl, "Ex"),
-    inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+    inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length && !g.air && !g.ausr; }).map(function(g){
         return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
       filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.map(function(a){
         return filterChip("data-start", a, fArt.indexOf(a) > -1, "", t("stArt_"+a)); }).join("")) });
@@ -1963,13 +1995,16 @@ function studioFilterBinden(fGr, fArt, neuZeichnen){
   var zur = app.querySelector("[data-streset]");
   if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
 }
+/* Eigene Studio-Übung anlegen (Plus und Kachel „Eigene Übung“): Vorgaben Fitnessstudio, Gewicht, 3 × 40 s */
+function studioNeueUebung(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); }
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
   // Reiter oben: Übungen · Mein Plan · Timer
   if(s.stTab === "timer") s.stTab = "uebungen";   // der frühere Reiter „Timer“ ist jetzt eine eigene Seite
   if(s.stTab === "plan") return renderStudioPlan();
+  tabLeiste("timers");
   // Filter: Gruppen-Kacheln (mehrere möglich) und Ausrüstung (mehrere möglich)
-  var fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+  var fl = studioFilterLesen(), fGr = fl.fGr, fArt = fl.fArt;
   function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
   var zuletzt = Object.keys(alle).filter(function(id){ return alle[id].zuletzt && findExercise(id); })
     .sort(function(a, b){ return alle[b].zuletzt - alle[a].zuletzt; }).slice(0, 6);
@@ -1995,7 +2030,7 @@ function renderStudio(){
     if(fGr.length && fGr.indexOf(g.id) < 0) return;
     var ids = g.ids.filter(artOk);
     if(!ids.length && (!g.eigene || filterAn)) return;
-    if(g.air && !fGr.length){ airZu.push({ g:g, ids:ids }); return; }
+    if(g.air && !filterAn){ airZu.push({ g:g, ids:ids }); return; }   // mit Filter (Ausrüstung) stehen die Air-Gruppen offen wie die anderen
     html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+ids.length+'</span></div><div class="fig-grid">'+
       ids.map(studioKachel).join("")+
       (g.eigene ? '<button type="button" class="fig-karte st-neu" data-stnew>'+ICON_PLUS+'<span class="fig-name">'+esc(t("stOwnNew"))+'</span></button>' : '')+
@@ -2010,9 +2045,10 @@ function renderStudio(){
     kacheln +
     html +
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
-    '<div style="height:40px"></div>';
+    '<div style="height:90px"></div>'+fabMenuHTML([{ key:"new", label:t("exNew"), ico:ICON_PLUS, cls:"bl" }]);   // Plus: eigene Studio-Übung anlegen (wie die Kachel „Eigene Übung“)
   bindCommon();
   bindStudioTabs();
+  bindFabMenu({ "new": studioNeueUebung });
   app.querySelectorAll("[data-studio]").forEach(function(b){
     function oeffnen(){ go("#studio/"+b.getAttribute("data-studio")); }
     b.addEventListener("click", oeffnen);
@@ -2026,7 +2062,7 @@ function renderStudio(){
   function neuZeichnen(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
   studioFilterBinden(fGr, fArt, neuZeichnen);
   var neu = app.querySelector("[data-stnew]");
-  if(neu) neu.addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
+  if(neu) neu.addEventListener("click", studioNeueUebung);
   var q = app.querySelector("#st-q");
   studioAirBinden(function(){ return studioQuery; });
   function suchen(){
@@ -2109,9 +2145,10 @@ function studioUnter(id){
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
 function renderStudioPlan(){
-  if(stGen) return renderStudioPlanGen();
+  if(stGen){ tabLeiste(""); return renderStudioPlanGen(); }   // Plan nach Gewichtung: Baukasten, ohne Leiste
   var p = stPlanAktiv && stPlanFind(stPlanAktiv);
   if(!p){ stPlanAktiv = null; return renderStudioPlanListe(); }
+  tabLeiste("");   // ein Plan (ansehen oder bauen) ist Detailseite bzw. Baukasten: keine Leiste
   var ids = stPlanIds(p), pos = {}, html;
   ids.forEach(function(id, i){ pos[id] = [i+1]; });
   var hw = stPlanBauen ? hinweise("planbau", ["planTippen"]) : hinweise("", []);
@@ -2120,7 +2157,7 @@ function renderStudioPlan(){
     var gruppen = studioIds(), da = {};
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
     // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung); die Air-Gruppen stehen auch hier zugeklappt unter „Aus Air“
-    var s = state.db.settings, fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+    var fl = studioFilterLesen(), fGr = fl.fGr, fArt = fl.fArt;
     function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keiner Gruppe stehen
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
@@ -2138,7 +2175,7 @@ function renderStudioPlan(){
       if(!g.immer && fGr.length && fGr.indexOf(g.id) < 0) return;
       var gids = g.immer ? g.ids : g.ids.filter(artOk);
       if(!gids.length) return;
-      if(g.air && !fGr.length){ airZu.push({ g:g, ids:gids }); return; }
+      if(g.air && !fGr.length && !fArt.length){ airZu.push({ g:g, ids:gids }); return; }
       html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+gids.length+'</span></div><div class="fig-grid">'+gids.map(planKachel).join("")+'</div></div>';
     });
     html += studioAirBlockHTML(airZu, planKachel);
@@ -2180,7 +2217,7 @@ function renderStudioPlan(){
     p.ids = l; p.updatedAt = Date.now(); save(); neu();
   });
   kachelKlick(app, "[data-studio]", function(el){ go("#studio/"+el.getAttribute("data-studio")); });
-  if(stPlanBauen) studioFilterBinden(selArr(state.db.settings.stGruppen), selArr(state.db.settings.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; }), neu);
+  if(stPlanBauen){ var flb = studioFilterLesen(); studioFilterBinden(flb.fGr, flb.fArt, neu); }
   var q = app.querySelector("#pl-q");
   if(q){
     studioAirBinden(function(){ return stPlanQuery; });
@@ -2196,6 +2233,7 @@ function renderStudioPlan(){
   }
 }
 function renderStudioPlanListe(){
+  tabLeiste("timers");   // die Plan-Liste ist Einstiegsseite (der Plan selbst nicht)
   var pl = stPlaene().slice().sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); });
   var hw = hinweise("plan", ["planHint"]);
   var html = topbar(t("timers"), { back:"#home", right:hw.knopf }) + studioTabsHTML("plan") + hw.z(0, "page-hint")+
@@ -3366,8 +3404,8 @@ function renderLibrary(){
     });
     if(tab === "mine"){   // Timer-Workouts und Blöcke haben seit 2026-10 ihren eigenen Reiter „Timer“ - hier nur noch eigene Workouts
       if(!list) list = '<div class="empty" style="padding:30px 20px;">'+t("myEmpty")+'</div>';
-      fab = fabMenuHTML([{ key:"new", label:t("myNew"), ico:ICON_PLUS, cls:"tp" }]);
     }
+    fab = fabMenuHTML([{ key:"new", label:t("myNew"), ico:ICON_PLUS, cls:"tp" }]);   // Plus in Workouts und Meine: eigenes Workout anlegen
   } else {
     EXERCISES.forEach(function(ex){
       if(!fuerAir(ex) || !exPasses(ex, cat, equip, [])) return;
@@ -3412,7 +3450,7 @@ function renderLibrary(){
     applySearch(app, libQuery);
     lq.addEventListener("input", function(){ libQuery = lq.value; applySearch(app, libQuery); });
   }
-  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/new"); else go("#exedit/new"); } });
+  bindFabMenu({ "new": function(){ if(tab==="exercises") go("#exedit/new"); else go("#mybuild/new"); } });   // Übungen: eigene Übung, sonst eigenes Workout
 
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
@@ -4649,8 +4687,9 @@ function openSurprise(twId){
 }
 
 /* ============ Einführung ============
-   Fünf Seiten: Willkommen und je Bereich eine Seite in dessen Farbe mit dessen Symbol. Die Zahlen zählt die App
-   selbst, damit sie mit neuen Übungen und Programmen stimmen. Beim ersten Start von selbst, sonst über die Einstellungen. */
+   Sechs Seiten: Willkommen und je Bereich (Air, Studio, Timer, Summit, Mobility & Stretch) eine Seite in dessen Farbe mit dessen Symbol, in der Reihenfolge
+   der Startseite. Die Zahlen zählt die App selbst, damit sie mit neuen Übungen und Programmen stimmen (der Timer hat keine mitgelieferten Inhalte, also keine Zahl).
+   Beim ersten Start von selbst, sonst über die Einstellungen. */
 var ICON_BAUSTEINE = '<rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><rect x="8" y="3" width="8" height="8" rx="1.5"/>';
 function introSeiten(){
   var mitgeliefert = EXERCISES.filter(function(ex){ return !ex.custom; });
@@ -4663,6 +4702,7 @@ function introSeiten(){
     { ico:HOME_ICON.lib, farbe:"var(--tp-color)", titel:t("library"),
       text:t("in3", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:mitgeliefert.filter(fuerWorkout).length }) },
     { ico:HOME_ICON.timer, farbe:"var(--bl-color)", titel:t("timers"), text:t("in2", { s:Object.keys(STUDIO_NUR).length }) },
+    { ico:HOME_ICON.intervall, farbe:"var(--ti-color)", titel:t("tabTimer"), text:t("in6") },
     { ico:HOME_ICON.reps, farbe:"var(--rep-color)", titel:t("repTitle"), text:t("in4", { c:REP_WORKOUT_ROWS.length, u:einheiten }) },
     { ico:HOME_ICON.warm, farbe:"var(--ws-color)", titel:t("warmTitle"),
       text:t("in5", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length, d:Object.keys(wsEx).length }) }
@@ -5482,6 +5522,7 @@ function runDunkelWeg(){ var d = document.getElementById("run-dunkel"); if(d) d.
 /* Countdown vor dem Start: große Zahl, +10 s, sofort starten, abbrechen */
 function renderRunVor(){
   var v = runVor;
+  tabLeiste("");
   app.innerHTML =
     topbar(t("runTitle"), { back:"#home" }) +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runVorTitel"))+'</div><div id="run-vor" class="rg-zeit rg-vor">'+Math.max(1, Math.ceil((v.ende - Date.now())/1000))+'</div></div>'+
@@ -5505,6 +5546,7 @@ function renderRun(){
   if(!run && !runVor) runDunkelWeg();
   if(run) return renderRunLive();
   if(runVor) return renderRunVor();
+  tabLeiste("run");   // Startseite des Laufs: mit Leiste; Countdown und laufender Lauf ohne
   var runs = (s.runs || []).slice().sort(function(a, b){ return b.at - a.at; });
   var km = runs.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
   var live = s.runLive;
@@ -5561,6 +5603,7 @@ function renderRun(){
 }
 function renderRunLive(){
   var r = run;
+  tabLeiste("");
   app.innerHTML =
     topbar(t("runTitle"), { back:"#home" }) +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+'</div>'+
@@ -5679,8 +5722,8 @@ function renderWarmStretch(){
       liste += myWoCard(mw, exs, woMains(exs), workoutDuration(myRun(mw)));
     });
     if(!liste) liste = '<div class="empty" style="padding:30px 20px;">'+esc(t("wsMineEmpty"))+'</div>';
-    fab = fabMenuHTML([{ key:"new", label:t("wsNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
+  fab = fabMenuHTML([{ key:"new", label:t("wsNew"), ico:ICON_PLUS, cls:"tp" }]);   // Plus in jedem Reiter: eigenes Workout für Aufwärmen bzw. Dehnen (je nach Umschalter)
   function knopf(attr, wert, aktiv, text){ return '<button data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
   var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
@@ -6325,7 +6368,7 @@ function renderSettings(){
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   app.innerHTML =
-    topbar(t("settings"), { back:"#home" }) +
+    topbar(t("settings"), {}) +
     '<div class="section-title">'+esc(t("fokusTitel"))+'</div>'+
     '<div class="card"><div class="opt-label">'+esc(t("fokusLabel"))+'</div><div class="theme-pick">'+BEREICH_KEYS.map(function(k, i){
       return '<button type="button" data-fokus="'+k+'" aria-pressed="'+!fokusAus(k)+'" class="'+(i > 2 ? 'halb' : '')+(fokusAus(k) ? '' : ' active')+'">'+esc(bereichDaten(k)[1])+'</button>';
