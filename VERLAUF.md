@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-09 · Gesamtdurchgang (Inhalte, Texte, Bedienung, Figuren)
+
+- **Inhalte geprüft (automatisch über alle 227 Übungen)**: Name, Hinweis, Anleitung (3 Schritte), Haltung, Muskeln in Deutsch und Englisch vollständig und gleich lang, keine Doppelleerzeichen, Wortdopplungen oder Zeichenfehler, keine deutschen Umlaute im Englischen; Workouts, Studio-Gruppen, Ketten, Aliase und Aufwärm-Listen verweisen nur auf vorhandene Übungen; Zeiten, Runden und Pausen plausibel.
+- **Texte**: 897 Texte, Deutsch und Englisch haben dieselben Schlüssel und Platzhalter. „Air“ auf der Startseite heißt jetzt „Draußen und zu Hause“ (bisher „im Calisthenicspark“, passte seit Band und Kurzhanteln nicht mehr).
+- **Bedienung**: Die Statistik hat jetzt wie Suche und Einstellungen einen Zurück-Pfeil.
+- **Figuren (alle 227 durchgesehen)**: Kein Kopf mehr abgeschnitten (Wadenmaschine, Beinpresse 45°, einbeiniges Kreuzheben mit Band). L-Sit neu: Stütz auf zwei kleinen Parallettes, erst Beine unten, dann waagerecht (vorher sah es aus wie ein Sitz auf einem Hocker). Fassung 2026-10-09-31.
+- Offen/optional: rund 100 ungenutzte Textschlüssel aus früheren Funktionen in `texte.js` (z. B. `fig…`) könnten gelöscht werden; sie schaden nicht.
+
 ## 2026-10-09 · Figuren: Dehnen und Halteübungen bewegen sich
 
 - Alle **Dehnübungen** (19) und die **Halteübungen** Kniebeuge halten, Wandsitz, Dead Hang, Plank, Hollow Hold, Hängender L-Sit haben jetzt **zwei Posen: Ausgangsstellung → Dehnung bzw. Haltung**. Die Figur geht also in die Position hinein, statt nur zu stehen (vorher eine einzige Pose, bei manchen kaum zu erkennen).

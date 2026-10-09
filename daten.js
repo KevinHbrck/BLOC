@@ -667,6 +667,7 @@ var G_PB = gBar(50,40,70)+'<path class="ip" d="M44 50V89M66 50V89"/>';
 var G_SB = gBar(50,44,70)+'<path class="ip" d="M46 50V89"/>';
 var G_KB = gBar(50,30,50)+'<path class="ip" d="M34 50V89"/>';
 var G_PT = gBar(80,40,62)+'<path class="ip" d="M44 80V89M58 80V89"/>';
+var G_PL2 = '<path class="ip" d="M52 80H62M54 80V89M60 80V89"/>';   // zwei kleine Parallettes (Seitenansicht: eine) für den L-Sit
 var G_MONKEY = gBar(6,8,92)+'<path class="ip" d="M20 3v6M40 3v6M60 3v6M80 3v6"/>';
 Object.assign(ILLU_POSES, {
   "chin-ups":           [qWith(P_HANG,{ a:[[44,21,42,6],[56,21,58,6]] }), qWith(P_PULL,{ a:[[39,20,42,6],[61,20,58,6]] })],   // enger gegriffen
@@ -675,7 +676,7 @@ Object.assign(ILLU_POSES, {
   "hanging-knee-raise": [P_HANGS, qWith(P_HANGS,{ l:[[66,56,66,72,72,72]] })],
   "hanging-leg-raise":  [P_HANGS, qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] })],
   "hanging-l-sit":      [P_HANGS, qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] })],
-  "l-sit":              [Q(null,[48,44],[50,70],[[68,70,86,70,88,66]],[[52,58,54,80]], G_PT), null],
+  "l-sit":              [Q(null,[46,34],[49,60],[[66,66,70,84,76,89]],[[52,55,57,79]], G_PL2), Q(null,[46,34],[49,60],[[67,60,85,60,87,56]],[[52,55,57,79]], G_PL2)],   // Stütz auf zwei kleinen Parallettes: erst Beine unten, dann waagerecht
   "windshield-wipers":  [qWith(P_HANG,{ l:[[38,50,26,40],[40,54,28,44]] }), qWith(P_HANG,{ l:[[62,50,74,40],[60,54,72,44]] })],
   "muscle-ups":         [Q([56,36],[50,44],[50,70],[[50,82,50,88]],[[40,48,46,40]], gBar(40,28,72)), Q(null,[50,18],[50,46],[[50,62,50,76]],[[53,31,54,40]], gBar(40,28,72))],
   "monkey-bar-traverse":[Q([56,24],[50,30],[50,58],[[50,72,48,86]],[[42,18,38,6],[56,18,62,6]], G_MONKEY), Q([62,24],[56,30],[56,58],[[56,72,54,86]],[[62,18,68,6],[48,18,44,6]], G_MONKEY)],
@@ -847,16 +848,16 @@ Object.assign(ILLU_POSES, {
                         Q(null,[70,34],[50,54],[[38,66,26,78,22,72]],[[66,44,60,40]], gLinie("M20 86L52 58M16 80L26 86")+gRolle(55,57))],
   "leg-press":         [Q(null,[30,36],[44,62],[[56,44,70,58,72,50]],[[36,46,44,54]], gLinie("M6 72H66")+'<path class="ip gp" d="M75 40V72"/>'),
                         Q(null,[18,36],[32,62],[[51,59,70,58,72,50]],[[24,46,32,54]], gLinie("M6 72H66")+'<path class="ip gp" d="M75 40V72"/>')],
-  "leg-press-45":      [Q(null,[14,57],[36,74],[[34,54,54,56,58,50]],[[22,67,32,72]], gLinie("M50 86L90 46M8 60L30 80")+gPlatte(59,54,6,-6)),
-                        Q(null,[14,57],[36,74],[[50,60,64,46,69,41]],[[22,67,32,72]], gLinie("M50 86L90 46M8 60L30 80")+gPlatte(69,45,6,-6))],
+  "leg-press-45":      [Q([11,52],[14,57],[36,74],[[34,54,54,56,58,50]],[[22,67,32,72]], gLinie("M50 86L90 46M8 60L30 80")+gPlatte(59,54,6,-6)),
+                        Q([11,52],[14,57],[36,74],[[50,60,64,46,69,41]],[[22,67,32,72]], gLinie("M50 86L90 46M8 60L30 80")+gPlatte(69,45,6,-6))],
   "leg-extension":     [Q(null,[42,34],[44,63],[[62,65,60,84,66,88]],[[42,46,50,58]], gSitz(34,60,65)+gLinie("M36 28V65")+gPolster(65,80)),
                         Q(null,[42,34],[44,63],[[62,65,80,60,82,53]],[[42,46,50,58]], gSitz(34,60,65)+gLinie("M36 28V65")+gPolster(79,55))],
   "leg-curl":          [Q(null,[42,34],[44,63],[[62,65,80,63,82,56]],[[42,46,50,58]], gSitz(34,60,65)+gLinie("M36 28V65M52 58H68")+gPolster(80,68)),
                         Q(null,[42,34],[44,63],[[62,65,56,82,62,86]],[[42,46,50,58]], gSitz(34,60,65)+gLinie("M36 28V65M52 58H68")+gPolster(51,80))],
   "adductor-machine":  [Q(null,[50,32],[50,60],[[38,65,36,83],[62,65,64,83]],[[40,42,38,54],[60,42,62,54]], gLinie("M34 64H66M50 64V89")+gFuss(42,68,'<path class="ip gp" d="M42 62V74"/>')+gFuss(58,68,'<path class="ip gp" d="M58 62V74"/>'), true),
                         Q(null,[50,32],[50,60],[[46,71,46,89],[54,71,54,89]],[[40,42,38,54],[60,42,62,54]], gLinie("M34 64H66M50 64V89")+gFuss(49,74,'<path class="ip gp" d="M49 68V80"/>')+gFuss(51,74,'<path class="ip gp" d="M51 68V80"/>'), true)],
-  "calf-machine":      [Q(null,[50,15],[50,45],[[50,65,50,84,58,84]],[[58,24,58,16]], gLinie("M40 89V84H64V89")+gHand(58,16,'<path class="ip gp" d="M44 15H62"/>')),
-                        Q(null,[50,10],[50,40],[[50,60,50,77,57,84]],[[58,19,58,11]], gLinie("M40 89V84H64V89")+gHand(58,11,'<path class="ip gp" d="M44 10H62"/>'))],
+  "calf-machine":      [Q(null,[50,22],[50,50],[[50,68,50,84,58,84]],[[58,29,58,21]], gLinie("M40 89V84H64V89")+gHand(58,21,'<path class="ip gp" d="M44 20H62"/>')),
+                        Q(null,[50,16],[50,44],[[50,62,50,77,57,84]],[[58,25,58,17]], gLinie("M40 89V84H64V89")+gHand(58,17,'<path class="ip gp" d="M44 16H62"/>'))],
   "biceps-machine":    [Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,66,55]], gSitz(30,52,66)+gLinie("M47 45L61 54")+gGriff(66,55)),
                         Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,53,34]], gSitz(30,52,66)+gLinie("M47 45L61 54")+gGriff(53,34))],
   "triceps-pushdown":  [Q(null,[50,20],[50,50],[[50,70,50,89,58,89]],[[52,32,62,26]], gLinie("M72 0V89")+gRolle(68,4)+gQuer(62,26,3)),
@@ -2179,7 +2180,7 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     "Auf dem Band stehen, Hüfte nach hinten, Bein nach hinten", "Stand on the band, hips back, free leg back",
     2, 2, "kraft",
     [(function(){ var q = S([50,50], -90, STAND, [[90,90]]); q.x = bl([54,89], hand(q)); return q; })(),
-     (function(){ var q = S([44,52], -12, [[88,92],[183,178,[-7,0]]], [[95,92]]); q.x = bl([52,89], hand(q)); return q; })()],
+     (function(){ var q = S([47,52], -12, [[88,92],[183,178,[-7,0]]], [[95,92]]); q.x = bl([55,89], hand(q)); return q; })()],
     ["Mit einem Fuß auf das Band treten, die Enden greifen, Standbein leicht gebeugt.|Aus der Hüfte nach vorn beugen und das freie Bein gestreckt nach hinten heben, Rücken gerade.|Mit dem Gesäß wieder aufrichten. Nach der Hälfte die Seite wechseln.",
      "Stand on the band with one foot, hold the ends, standing knee slightly bent.|Hinge forward at the hips and lift the free leg straight behind you, back flat.|Rise back up using your glutes. Switch sides halfway."],
     ["Rücken gerade, Hüfte zeigt zum Boden.|Standbein leicht gebeugt, Blick leicht vor den Fuß.", "Den Rücken rund machen oder die Hüfte seitlich aufdrehen.",

@@ -251,7 +251,7 @@ function renderStats(){
   while(si >= 0 && voll[si].n){ serie++; si--; }
   var einheit = t(statGran === "woche" ? "statUWoche" : statGran === "monat" ? "statUMonat" : "statUJahr");
   var labels = reihe.map(function(b){ return b.label; });
-  var html = topbar(t("tabStats"), {});
+  var html = topbar(t("tabStats"), { back:"#home" });
   if(!aktiv.length){
     app.innerHTML = html + '<div class="card fokus-leer"><div>'+esc(t("statAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
     return bindCommon();
