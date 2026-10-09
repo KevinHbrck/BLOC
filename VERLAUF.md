@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-09 · Figuren: Dehnen und Halteübungen bewegen sich
+
+- Alle **Dehnübungen** (19) und die **Halteübungen** Kniebeuge halten, Wandsitz, Dead Hang, Plank, Hollow Hold, Hängender L-Sit haben jetzt **zwei Posen: Ausgangsstellung → Dehnung bzw. Haltung**. Die Figur geht also in die Position hinein, statt nur zu stehen (vorher eine einzige Pose, bei manchen kaum zu erkennen).
+- **Neu gezeichnet**: Nackendehnung (Kopf kippt zur Seite, Hand am Kopf), Schulter (Arm quer vor der Brust, andere Hand zieht), Trizeps (Ellbogen hoch, Hand im Nacken, andere Hand am Ellbogen), Seitbeuge (Oberkörper kippt über).
+- **Nachgeschärft**: Plank Shoulder Taps (eine Hand hebt ab und tippt die Schulter), Scapular Push-ups (die Brust sinkt ab).
+- Nur L-Sit und Stütz halten bleiben einzelne Posen (Reck und Barren lassen sich als Ausgangsstellung nicht klar zeichnen). Fassung 2026-10-09-29.
+
 ## 2026-10-09 · Programmlogik in 20 Teile aufgeteilt
 
 - `app.js` (fast 8.000 Zeilen) ist jetzt **`js/01-basis.js` … `js/20-walzen-start.js`**: ein Teil je Themenbereich (Basis/Speicher, Bibliothek, Router, Start, Suche, Studio, Körperkarte, Statistik, Editor, Lauf, Audio, Timer-Motor …), 100 bis 850 Zeilen. Kein Build nötig: gewöhnliche Skripte, die nacheinander im selben Gültigkeitsbereich laufen. Verhalten unverändert (Schnelltest 29/29).

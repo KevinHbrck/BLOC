@@ -561,7 +561,7 @@ var ILLU_POSES = {
   "swimmers":           [Q(null,[26,80],[52,84],[[70,82,88,77,92,78],[70,86,88,87,92,89]],[[16,74,6,70],[14,88,4,88]]),
                          Q(null,[26,80],[52,84],[[70,86,88,87,92,89],[70,82,88,77,92,78]],[[14,88,4,88],[16,74,6,70]])],
   "cobra-lift":         [qWith(P_LF,{ a:[[32,88,36,89]] }), Q(null,[24,66],[50,84],[[70,86,88,87,92,89]],[[26,77,28,89]])],
-  "scapular-push-ups":  [P_PH, qShift(P_PH,0,3)],
+  "scapular-push-ups":  [P_PH, qWith(P_PH,{ n:[71,65] })],   // Brust sinkt zwischen den Schulterblättern ab, Arme bleiben gestreckt
   /* Scapular Pull-ups von vorn: Arme bleiben gestreckt, der ganze Körper hebt sich nur ein Stück (die Hände rutschen minimal nach außen) */
   "scapular-pull-ups":  [Q(null,[50,31],[50,59],[[48,73,48,85],[52,73,52,85]],[[43,19,36,7],[57,19,64,7]], gBar(7,24,76), true),
                          Q(null,[50,27],[50,55],[[48,69,48,81],[52,69,52,81]],[[41,17,32,7],[59,17,68,7]], gBar(7,24,76), true)],
@@ -593,7 +593,7 @@ var ILLU_POSES = {
   "russian-twists":     [Q(null,[34,60],[46,84],[[60,70,74,74,80,72]],[[42,72,34,80]]), Q(null,[34,60],[46,84],[[60,70,74,74,80,72]],[[48,70,58,76]])],
   "sit-ups":            [qWith(P_LBK,{ a:[[30,80,36,78]] }), Q(null,[42,58],[46,86],[[60,70,70,89,78,89]],[[48,68,56,70]])],
   "toe-touches":        [qWith(P_LB,{ l:[[52,66,54,48,58,46]], a:[[22,72,22,62]] }), Q(null,[30,74],[50,84],[[52,66,54,48,58,46]],[[42,64,52,52]])],
-  "plank-shoulder-taps":[P_PH, qWith(P_PH,{ a:[[69,75,70,89],[62,70,70,64]] })],
+  "plank-shoulder-taps":[P_PH, qWith(P_PH,{ a:[[66,64,73,56],[69,75,70,89]] })],   // eine Hand hebt ab und tippt die Schulter an
   "toes-to-bar":        [Q([57,24],[50,30],[50,58],[[50,72,50,86]],[[47,19,46,6]], gBar(6,30,70)),
                          Q(null,[48,30],[56,55],[[58,41,55,27,52,23]],[[47,19,46,6]], gBar(6,30,70))]
 };
@@ -629,6 +629,38 @@ Object.assign(ILLU_POSES, {
   "worlds-greatest":    [Q(null,[60,48],[44,64],[[62,66,64,89,72,89],[30,84,16,88,14,89]],[[60,68,62,88]]),
                          Q(null,[60,48],[44,64],[[62,66,64,89,72,89],[30,84,16,88,14,89]],[[58,34,56,20],[60,68,62,88]])]
 });
+/* Dehnen und Halteübungen: jede hat jetzt zwei Posen - Ausgangsstellung und Dehnstellung (2026-10-09) -, die Figur bewegt sich also hinein, statt nur zu stehen.
+   Neu gezeichnet: Nackendehnung (Kopf zur Seite), Schulter (Arm quer vor der Brust), Trizeps (Ellbogen hoch, Hand im Nacken), Seitbeuge (Oberkörper kippt). */
+(function(){
+  var P = ILLU_POSES, S = P_FLEGS;
+  var ruhe = Q(null,[50,20],[50,52],S,[[44,34,42,48],[56,34,58,48]],"",true);
+  function mit(id, start){ P[id] = [start, P[id][0]]; }
+  P["neck-stretch"]       = [ruhe, Q([39,14],[50,21],[50,52],S,[[34,10,42,3],[58,38,60,54]],"",true)];
+  P["shoulder-stretch"]   = [ruhe, Q(null,[50,20],[50,52],S,[[62,24,40,28,22,28],[56,34,36,32]],"",true)];
+  P["triceps-stretch"]    = [ruhe, Q(null,[50,20],[50,52],S,[[62,10,50,16,44,22],[44,22,58,10]],"",true)];
+  P["side-bend"]          = [ruhe, Q(null,[39,22],[50,52],S,[[46,6,28,8],[40,40,44,50]],"",true)];
+  mit("biceps-stretch",     qWith(P["biceps-stretch"][0], { a:[[52,34,53,47]] }));
+  mit("chest-stretch",      qWith(P["chest-stretch"][0], { a:[[52,34,53,47]] }));
+  mit("wrist-stretch",      P_ST);
+  mit("calf-stretch",       qWith(P_ST, { x:gWall(81) }));
+  mit("quad-stretch",       P_ST);
+  mit("forward-fold",       P_ST);
+  mit("hip-flexor-stretch", P_ST);
+  mit("hamstring-stretch",  Q(null,[40,52],[34,84],[[60,84,80,88]],[[44,68,52,86]]));   // Langsitz, aufrecht
+  mit("childs-pose",        P_Q4);
+  mit("pigeon-stretch",     P_Q4);
+  mit("downward-dog",       P_Q4);
+  mit("sphinx-stretch",     P_LF);
+  mit("spinal-twist",       P_LBK);
+  mit("figure-four",        P_LBK);
+  mit("butterfly-stretch",  Q(null,[50,38],[50,82],[[34,80,48,88],[66,80,52,88]],[[44,70,48,86],[56,70,52,86]],"",true));   // aufrecht, dann nach vorn
+  /* Halteübungen: erst die Ausgangsstellung, dann die Haltung */
+  mit("squat-hold",    P_ST);
+  mit("wall-sit",      Q(null,[31,20],[31,50],[[31,70,31,89,39,89]],[[33,34,34,47]], gWall(24)));
+  mit("dead-hang",     Q(null,[50,26],[50,54],[[48,72,47,89,40,89],[52,72,53,89,60,89]],[[42,16,36,6],[58,16,64,6]], gBar(6,24,76), true));
+  mit("plank",         P_Q4);
+  mit("hollow-hold",   P_LB);
+})();
 var P_HANGS = Q([57,24],[50,30],[50,58],[[50,72,50,86]],[[47,19,46,6]], gBar(6,30,70));
 var G_ROW = gBar(57,26,62)+'<path class="ip" d="M32 57V89"/>';
 var G_PB = gBar(50,40,70)+'<path class="ip" d="M44 50V89M66 50V89"/>';
@@ -642,7 +674,7 @@ Object.assign(ILLU_POSES, {
   "support-hold":       [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB), null],
   "hanging-knee-raise": [P_HANGS, qWith(P_HANGS,{ l:[[66,56,66,72,72,72]] })],
   "hanging-leg-raise":  [P_HANGS, qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] })],
-  "hanging-l-sit":      [qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] }), null],
+  "hanging-l-sit":      [P_HANGS, qWith(P_HANGS,{ l:[[68,60,86,60,88,56]] })],
   "l-sit":              [Q(null,[48,44],[50,70],[[68,70,86,70,88,66]],[[52,58,54,80]], G_PT), null],
   "windshield-wipers":  [qWith(P_HANG,{ l:[[38,50,26,40],[40,54,28,44]] }), qWith(P_HANG,{ l:[[62,50,74,40],[60,54,72,44]] })],
   "muscle-ups":         [Q([56,36],[50,44],[50,70],[[50,82,50,88]],[[40,48,46,40]], gBar(40,28,72)), Q(null,[50,18],[50,46],[[50,62,50,76]],[[53,31,54,40]], gBar(40,28,72))],
