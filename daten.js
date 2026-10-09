@@ -2219,6 +2219,29 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     ["Oberschenkel vorn", "Gesäß, Hüftbeuger", "Quads", "Glutes, hip flexors"],
     "beinpresse beinstrecker liegend");
 
+  /* ===== zweite Ansicht (Info-Karte zeigt zwei Figuren) ===== */
+  function posen(id){ return BAND.filter(function(e){ return e.id === id; })[0].poses; }
+  /* Drehung im Sitzen von vorn: Hände links ↔ rechts, das Band läuft von den Füßen zu den Händen (zwei Posen mit je eigenem Band) */
+  function rtBand(q){ return qWith(q, { x:bl(fuss(q,0), hand(q))+bl(fuss(q,1), hand(q)) }); }
+  /* kniend von vorn: die Hände wandern von der Befestigung weg und zurück */
+  var KP = [50,66], KN = [50,38], KB = [[46,86,44,88],[54,86,56,88]];
+  function knieVorn(armen){ var q = Q(null, KN.slice(), KP.slice(), KB.map(function(l){ return l.slice(); }),
+    armen.map(function(a){ return arm(KP, KN, a[0], a[1]); }), "", true); q.x = anker(92,44)+bl([92,44], hand(q,0)); return q; }
+  /* Kniebeuge von vorn: Knie nach außen, Band unter den Füßen zu den Händen an den Schultern */
+  function squatVorn(tief){
+    var arme = [[150,-100],[30,-80]];
+    var q = tief ? Q(null, [50,36], [50,64], [[36,76,41,89,35,89],[64,76,59,89,65,89]], [], "", true)
+                 : Q(null, FN.slice(), FP.slice(), FL.map(function(l){ return l.slice(); }), [], "", true);
+    q.a = arme.map(function(a){ return arm(q.p, q.n, a[0], a[1]); });
+    q.x = bl([42,89], hand(q,0))+bl([58,89], hand(q,1));
+    return q;
+  }
+  ILLU_VIEW2["band-russian-twist"] = { typ:"front", p:[rtBand(RT_FL), rtBand(RT_FR)] };
+  ILLU_VIEW2["band-kneeling-twist"] = { typ:"front", p:[knieVorn([[5,-5],[-5,5]]), knieVorn([[185,175],[175,185]])] };
+  ILLU_VIEW2["band-squat"] = { typ:"front", p:[squatVorn(false), squatVorn(true)] };
+  ILLU_VIEW2["band-hammer-curl"] = { typ:"front", p:posen("band-biceps-curl") };
+  ILLU_VIEW2["band-biceps-curl"] = { typ:"side", haupt:"front", p:posen("band-hammer-curl") };
+
   /* ===== eintragen ===== */
   BAND.forEach(function(e){
     EXERCISE_ROWS.push([e.id, e.de, e.en, e.cats, e.rounds, e.work, e.side ? 1 : 0, e.hDe, e.hEn]);

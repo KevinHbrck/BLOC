@@ -9,6 +9,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **38 neue Übungen** in Air (Rücken 5, Brust 5, Schultern 5, Bauch 5, Bizeps 4, Trizeps 5, Gesäß 5, Beine 4), jeweils mit Figur (Band als dünne Linie, Befestigung als Ring), „So geht's“, Haltung und Vermeiden, Hauptmuskeln und Hilfsmuskeln – Deutsch und Englisch. Liste der Übungen nach einem Übungsplakat für Widerstandsband-Training; Texte und Figuren sind eigene Zusammenstellungen.
 - **4 Workouts**: Ganzkörper, Oberkörper, Beine & Po und Rumpf mit Band (je 3×40 s / 20 s).
 - „Leichter / Schwerer“: Push-ups → Liegestütze mit Band, Klimmzug mit Bandhilfe → Pull-ups, Air Squats → Kniebeuge mit Band.
+- **Zweite Ansichten** (Info-Karte): Rumpfdrehung im Sitzen und Kniende Rumpfdrehung von vorn, Kniebeuge von vorn, Hammer-Curl von vorn, Bizeps-Curl von der Seite. Band in der Akzentfarbe, Figuren nachgeschärft (Fassung 2026-10-09-6).
 - Technik: Block „Widerstandsband“ am Ende von `daten.js` (Posen aus Winkeln gebaut, trägt sich in die bestehenden Tabellen ein); `EQUIP_ICON.band` in `app.js`, Linienstil `.gb` in `app.css`. Fachprüfung offen (siehe `docs/FACHPRUEFUNG.md`).
 
 ## 2026-10-05 · Run moderner, GPS-Vergleich entfernt
