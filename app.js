@@ -789,7 +789,7 @@ function illuStillHTML(exId, cls){
    illuSetup() daraus ein Skelett, das zwischen den Posen nur die Gelenkwinkel dreht. */
 var illuReduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 /* Entwicklungshilfe zum Prüfen der Figuren: nur mit ?dev in der Adresse (kein Einfluss auf die App) */
-if(/[?&]dev\b/.test(location.search)) window.BLOC_DEV = { qSVG:qSVG, illuIds:illuIds, POSES:ILLU_POSES, SEQ:ILLU_SEQ };
+if(/[?&](dev|schnelltest)\b/.test(location.search)) window.BLOC_DEV = { qSVG:qSVG, illuIds:illuIds, POSES:ILLU_POSES, SEQ:ILLU_SEQ, kkUnbekannt:function(){ return kkUnbekannt(); } };   // schnelltest: der Test prüft damit die Muskelnamen
 function illuHTML(exId, cls, view2){
   var p = view2 ? ILLU2[exId] : ILLU[exId];
   if(!p) return "";
@@ -1641,13 +1641,30 @@ function renderSearch(){
     // je Gruppe zuerst die Treffer im Namen, danach die über Übungen/Hinweise (stabil)
     treffer = treffer.map(function(e, i){ return { e:e, i:i }; }).sort(function(a, b){
       return reihe.indexOf(a.e.g) - reihe.indexOf(b.e.g) || a.e.n - b.e.n || a.i - b.i; }).map(function(o){ return o.e; });
+    var kacheln = "", zeilen = "";   // Air-Übungen erscheinen als quadratische Kacheln wie unter Air › Übungen (zuerst), alles andere als Zeile
+    function raster(){ if(kacheln) html += '<div class="fig-grid">'+kacheln+'</div>'; html += zeilen; kacheln = ""; zeilen = ""; }
     treffer.forEach(function(e, i){
-      if(e.g !== gruppe){ gruppe = e.g; n = 0; html += '<div class="section-title">'+esc(gruppe)+'</div>'; }
+      if(e.g !== gruppe){ raster(); gruppe = e.g; n = 0; html += '<div class="section-title">'+esc(gruppe)+'</div>'; }
       if(!gewaehlt && ++n > 12) return;   // je Gruppe die ersten zwölf; genauer tippen grenzt ein (mit gewählter Kategorie alle)
-      html += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'"><div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
+      var ex = e.ex && findExercise(e.ex);
+      if(ex && fuerAir(ex) && ILLU[ex.id]){ kacheln += libExKachel(ex); return; }
+      zeilen += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'"><div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
         (e.sub ? '<div class="sub">'+esc(e.sub)+'</div>' : '')+'</div><span class="chip chev">'+ICON_CHEV+'</span></div>';
     });
+    raster();
     res.innerHTML = html;
+    // Kacheln wie in Air: antippen = Übungsinfo, ▶ = starten, ☆ = merken, lange drücken = in Workout oder Plan legen
+    res.querySelectorAll("[data-info]").forEach(function(el){
+      el.addEventListener("click", function(){ var id = el.getAttribute("data-info"); openExInfo(id, false, { onChange:zeigen, zu:function(){ exZuProgramm(id); } }); });
+    });
+    res.querySelectorAll("[data-playex]").forEach(function(el){
+      el.addEventListener("click", function(ev){ ev.stopPropagation(); go("#playex/"+el.getAttribute("data-playex")); });
+    });
+    res.querySelectorAll("[data-exfav]").forEach(function(el){
+      el.addEventListener("click", function(ev){ ev.stopPropagation(); toggleExFav(el.getAttribute("data-exfav")); zeigen(); });
+    });
+    res.querySelectorAll("[data-exlang]").forEach(function(el){ langDruck(el, function(){ exZuProgramm(el.getAttribute("data-exlang")); }); });
+    airKachelBinden();
     res.querySelectorAll("[data-sr]").forEach(function(el){
       function los(){ treffer[+el.getAttribute("data-sr")].fn(); }
       el.addEventListener("click", los);
@@ -2336,17 +2353,98 @@ function mgProzent(ids){   // Zeilen in fester Reihenfolge, Summe 100 (größter
   return { rows:rows, leer:!tot };
 }
 /* ============ Körperkarte ============
-   Zwei Silhouetten (vorn, hinten) mit den sechs Muskelgruppen der Auswertung. Verwendet in der Übungsinfo (trainiert / unterstützt),
-   in der Auswertung eines Workouts (Summe: je öfter, desto kräftiger) und als Filter in Air (Gruppen antippen). */
+   Zwei Silhouetten (vorn, hinten) mit 17 Muskelzonen. Verwendet in der Übungsinfo (trainiert / unterstützt), in der Auswertung eines
+   Workouts (Summe: je öfter, desto kräftiger) und als Filter in Air, Baukasten und Suche (Zonen antippen). Die Zuordnung läuft über die
+   Muskelnamen in EX_MUSCLES (KK_REGELN); die Balken der Auswertung bleiben bei den sechs groben Gruppen (MUSKEL_GRP). */
 var KK_ZONEN = {
   vorn:   { schulter:[[21,32,18,13,6],[61,32,18,13,6]], brust:[[39,34,22,21,8]],
-            arme:[[13,45,10,29,5],[77,45,10,29,5],[11,76,9,27,4.5],[80,76,9,27,4.5]], rumpf:[[40,57,20,30,8]],
-            beine:[[37,90,12,12,5],[51,90,12,12,5],[37,104,12,44,6],[51,104,12,44,6],[38,151,10,40,5],[52,151,10,40,5]] },
-  hinten: { schulter:[[21,32,18,13,6],[61,32,18,13,6]], ruecken:[[37,34,26,34,9]],
-            arme:[[13,45,10,29,5],[77,45,10,29,5],[11,76,9,27,4.5],[80,76,9,27,4.5]], rumpf:[[41,70,18,17,7]],
-            beine:[[37,90,12,14,6],[51,90,12,14,6],[37,106,12,42,6],[51,106,12,42,6],[38,151,10,40,5],[52,151,10,40,5]] }
+            bizeps:[[13,45,10,29,5],[77,45,10,29,5]], unterarm:[[11,76,9,27,4.5],[80,76,9,27,4.5]],
+            bauch:[[43,57,14,29,6]], schraeg:[[35.5,57,6.5,29,3],[58,57,6.5,29,3]], huefte:[[40,88,20,8,4]],
+            abduktor:[[32,90,4.5,13,2.2],[63.5,90,4.5,13,2.2]], quad:[[36,99,9.5,44,5],[54.5,99,9.5,44,5]],
+            adduktor:[[45.8,99,3.8,32,1.9],[50.4,99,3.8,32,1.9]], waden:[[38,147,10,44,5],[52,147,10,44,5]] },
+  hinten: { schulter:[[21,32,18,13,6],[61,32,18,13,6]], trapez:[[39,31,22,13,7]], lat:[[35,45,12,22,6],[53,45,12,22,6]],
+            ruecken_u:[[42,68,16,19,6]], trizeps:[[13,45,10,29,5],[77,45,10,29,5]], unterarm:[[11,76,9,27,4.5],[80,76,9,27,4.5]],
+            gesaess:[[37,89,13,17,7],[50,89,13,17,7]], abduktor:[[32,90,4.5,13,2.2],[63.5,90,4.5,13,2.2]],
+            hamstring:[[36,108,12,38,6],[52,108,12,38,6]], waden:[[38,148,10,43,5],[52,148,10,43,5]] }
 };
-function kkName(zone){ for(var i = 0; i < MUSKEL_GRP.length; i++) if(MUSKEL_GRP[i].id === zone) return t(MUSKEL_GRP[i].key); return zone; }
+/* Reihenfolge der Chips; wichtig = taucht in „Noch nicht dabei“ auf (kleine Hilfsmuskeln nicht) */
+var KK_REIHE = ["schulter", "brust", "bizeps", "trizeps", "unterarm", "trapez", "lat", "ruecken_u", "bauch", "schraeg", "huefte", "gesaess", "abduktor", "adduktor", "quad", "hamstring", "waden"];
+var KK_WICHTIG = { schulter:1, brust:1, bizeps:1, trizeps:1, trapez:1, lat:1, ruecken_u:1, bauch:1, schraeg:1, gesaess:1, quad:1, hamstring:1, waden:1 };
+/* Muskelname (kleingeschrieben) -> Zonen; die erste passende Regel gilt, mehrere Zonen teilen sich das Gewicht */
+var KK_REGELN = [
+  [/^(ausdauer|gleichgewicht|beweglichkeit|–|-)$/, []],
+  [/oberschenkel vorn und hinten/, ["quad", "hamstring"]],
+  [/tiefe und schräge bauch/, ["bauch", "schraeg"]],
+  [/schräg/, ["schraeg"]],
+  [/rotatorenmanschette/, ["schulter"]],
+  [/hüftrotatoren|piriformis/, ["gesaess"]],
+  [/hüftstabilisatoren|seitliche[rs]? gesäß|abduktoren|oberschenkel außen/, ["abduktor"]],
+  [/adduktoren|innenschenkel/, ["adduktor"]],
+  [/gesäß/, ["gesaess"]],
+  [/hüftbeuger|^hüfte$/, ["huefte"]],
+  [/oberschenkel vorn/, ["quad"]],
+  [/oberschenkel hinten/, ["hamstring"]],
+  [/oberschenkel/, ["quad", "hamstring"]],
+  [/waden|achilles|fuß|schollen|schienbein/, ["waden"]],
+  [/^beine$/, ["quad", "hamstring", "gesaess", "waden"]],
+  [/wirbelsäule|rückenstrecker|unterer rücken/, ["ruecken_u"]],
+  [/breiter rückenmuskel|latissimus/, ["lat"]],
+  [/trapez|rauten|oberer rücken|mittlerer rücken|nacken|schulterblatt/, ["trapez"]],
+  [/^rücken$/, ["trapez", "lat", "ruecken_u"]],
+  [/schulter/, ["schulter"]],
+  [/brust|sägemuskel/, ["brust"]],
+  [/trizeps/, ["trizeps"]],
+  [/bizeps|oberarmmuskel/, ["bizeps"]],
+  [/unterarm/, ["unterarm"]],
+  [/gerader bauch|tiefe bauch|^bauch$/, ["bauch"]],
+  [/rumpf|bauch/, ["bauch", "schraeg", "ruecken_u"]]
+];
+/* frühere, gröbere Auswahl (Gruppen der Auswertung) in Zonen übersetzen; Unbekanntes fällt weg */
+var KK_ALT = { arme:["bizeps", "trizeps", "unterarm"], rumpf:["bauch", "schraeg"], beine:["quad", "hamstring", "gesaess", "waden"], ruecken:["trapez", "lat", "ruecken_u"] };
+function kkNorm(zonen){
+  var out = [];
+  selArr(zonen).forEach(function(z){
+    (KK_ALT[z] || [z]).forEach(function(x){ if(KK_REIHE.indexOf(x) > -1 && out.indexOf(x) < 0) out.push(x); });
+  });
+  return out;
+}
+function kkName(zone){ return t("kkZ_"+zone); }
+/* Zonen eines Muskeltextes („Oberschenkel vorn, Gesäß“); gew = Gewicht je Muskelname; unb sammelt Namen ohne Regel */
+function kkZonenVon(text, gew, unb){
+  var res = {};
+  String(text || "").toLowerCase().split(/,\s*/).forEach(function(teil){
+    teil = teil.trim();
+    if(!teil) return;
+    for(var i = 0; i < KK_REGELN.length; i++){
+      if(KK_REGELN[i][0].test(teil)){
+        var z = KK_REGELN[i][1];
+        z.forEach(function(x){ res[x] = (res[x] || 0) + gew/z.length; });
+        return;
+      }
+    }
+    if(unb) unb.push(teil);
+  });
+  return res;
+}
+var KK_GRUPPE_ZONEN = { brust:["brust"], ruecken:["trapez", "lat", "ruecken_u"], schulter:["schulter"], arme:["bizeps", "trizeps", "unterarm"], rumpf:["bauch", "schraeg"], beine:["quad", "hamstring", "gesaess", "waden"] };
+/* Haupt- und Hilfszonen einer Übung; ohne Muskeltext entscheidet die grobe Gruppe (Kategorie) */
+function kkFein(ex){
+  var m = EX_MUSCLES[ex.id], haupt = {}, hilfe = {};
+  if(m){ haupt = kkZonenVon(m[0], 1); hilfe = kkZonenVon(m[1], .35); }
+  if(!Object.keys(haupt).length){
+    Object.keys(mgVerteilung(ex)).forEach(function(g){
+      var z = KK_GRUPPE_ZONEN[g] || [];
+      z.forEach(function(x){ haupt[x] = (haupt[x] || 0) + 1/z.length; });
+    });
+  }
+  return { haupt:haupt, hilfe:hilfe };
+}
+/* Muskelnamen in EX_MUSCLES, für die keine Regel passt (der Schnelltest prüft, dass es keine gibt) */
+function kkUnbekannt(){
+  var unb = [];
+  Object.keys(EX_MUSCLES).forEach(function(id){ kkZonenVon(EX_MUSCLES[id][0], 1, unb); kkZonenVon(EX_MUSCLES[id][1], 1, unb); });
+  return unb;
+}
 /* wert: { zone: 0..1 } (Anteil der Akzentfarbe); opt.sel: gewählte Zonen; opt.attr: z. B. "data-lfzone" macht die Zonen antippbar */
 function koerperSVG(seite, wert, opt){
   opt = opt || {}; wert = wert || {};
@@ -2363,18 +2461,17 @@ function koerperPaar(wert, opt){
   return '<div class="kk-paar"><figure>'+koerperSVG("vorn", wert, opt)+'<figcaption>'+esc(t("kkVorn"))+'</figcaption></figure>'+
     '<figure>'+koerperSVG("hinten", wert, opt)+'<figcaption>'+esc(t("kkHinten"))+'</figcaption></figure></div>';
 }
-/* Hauptgruppen und unterstützende Gruppen einer Übung (aus EX_MUSCLES, sonst nach Kategorie) */
+/* Hauptzonen und unterstützende Zonen einer Übung als Mengen */
 function kkTeile(ex){
-  var m = EX_MUSCLES[ex.id], haupt = {}, hilfe = {};
-  function gruppen(text){ return MUSKEL_GRP.filter(function(g){ return g.re.test(String(text || "").toLowerCase()); }).map(function(g){ return g.id; }); }
-  if(m){ gruppen(m[0]).forEach(function(g){ haupt[g] = 1; }); gruppen(m[1]).forEach(function(g){ if(!haupt[g]) hilfe[g] = 1; }); }
-  if(!Object.keys(haupt).length) Object.keys(mgVerteilung(ex)).forEach(function(g){ haupt[g] = 1; });
+  var f = kkFein(ex), haupt = {}, hilfe = {};
+  Object.keys(f.haupt).forEach(function(z){ if(f.haupt[z] > 0) haupt[z] = 1; });
+  Object.keys(f.hilfe).forEach(function(z){ if(f.hilfe[z] > 0 && !haupt[z]) hilfe[z] = 1; });
   return { haupt:haupt, hilfe:hilfe };
 }
 function kkInfoHTML(ex){
   var tl = kkTeile(ex), w = {};
-  Object.keys(tl.hilfe).forEach(function(g){ w[g] = .38; });
-  Object.keys(tl.haupt).forEach(function(g){ w[g] = 1; });
+  Object.keys(tl.hilfe).forEach(function(z){ w[z] = .38; });
+  Object.keys(tl.haupt).forEach(function(z){ w[z] = 1; });
   return koerperPaar(w);
 }
 /* Summe über mehrere Übungen: Hauptmuskeln zählen voll, Hilfsmuskeln mit 0,35 (wie die Auswertung); je höher die Summe, desto kräftiger */
@@ -2383,32 +2480,33 @@ function kkSumme(ids){
   ids.forEach(function(id){
     var ex = findExercise(id);
     if(!ex || ex.main === "stretch") return;
-    var v = mgVerteilung(ex);
-    Object.keys(v).forEach(function(g){ sum[g] = (sum[g] || 0) + v[g]; });
+    var f = kkFein(ex);
+    Object.keys(f.haupt).forEach(function(z){ sum[z] = (sum[z] || 0) + f.haupt[z]; });
+    Object.keys(f.hilfe).forEach(function(z){ sum[z] = (sum[z] || 0) + f.hilfe[z]; });
   });
   return sum;
 }
 function kkStufe(summe){ return 1 - Math.pow(.55, summe || 0); }
 function kkSummeHTML(ids){
   var sum = kkSumme(ids), w = {}, leer = [];
-  MUSKEL_GRP.forEach(function(g){ w[g.id] = kkStufe(sum[g.id]); if((sum[g.id] || 0) < .3) leer.push(t(g.key)); });
+  KK_REIHE.forEach(function(z){ w[z] = kkStufe(sum[z]); if(KK_WICHTIG[z] && (sum[z] || 0) < .3) leer.push(kkName(z)); });
   return '<div class="kk-summe">'+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p>'+
     '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div></div>';
 }
 /* Filter: Zonen antippen (mehrere möglich) */
 function zonePasst(ex, zonen){
-  zonen = selArr(zonen);
+  zonen = kkNorm(zonen);
   if(!zonen.length) return true;
   var h = kkTeile(ex).haupt;
   return zonen.some(function(z){ return h[z]; });
 }
 function kkFilterHTML(attr, sel){
-  sel = selArr(sel);
+  sel = kkNorm(sel);
   var w = {};
   sel.forEach(function(z){ w[z] = 1; });
   return '<div class="af-lbl">'+esc(t("kkFilter"))+' <span>'+esc(t("kkMehrere"))+'</span></div>'+
     '<div class="kk-filter">'+koerperPaar(w, { sel:sel, attr:attr })+'</div>'+
-    '<div class="fc-chips kk-chips">'+MUSKEL_GRP.map(function(g){ return filterChip(attr, g.id, sel.indexOf(g.id) > -1, "", t(g.key)); }).join("")+'</div>';
+    '<div class="fc-chips kk-chips">'+KK_REIHE.map(function(z){ return filterChip(attr, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div>';
 }
 function auswertungHTML(ids, opt){
   opt = opt || {};
@@ -3474,7 +3572,7 @@ function renderLibrary(){
   function ohneStretch(x){ return x !== "stretch"; }
   var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
   var equip = selArr(s.libEquips).filter(function(x){ return x !== "gym"; });   // Studio-Ausrüstung gibt es in Air nicht
-  var zonen = selArr(s.libZonen);   // Körperkarte: gewählte Muskelgruppen
+  var zonen = kkNorm(s.libZonen);   // Körperkarte: gewählte Muskelzonen
   var mains = [];   // die Kacheln der Hauptkategorien gibt es in Air nicht mehr; ein früher gespeicherter Wert wirkt nicht mehr
   var exSort = s.libSort === "az" ? "az" : "std";
   var woSort = s.libWoSort === "az" ? "az" : "dur";
@@ -4231,7 +4329,7 @@ function renderDraftPage(d, cfg){
   function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
   var cat = ohne(selArr(s.buildCats || s.buildCat), "stretch"), sort = s.libSort === "az" ? "az" : "std";
   var equip = ohne(selArr(s.buildEquips), "gym");
-  var zonen = selArr(s.buildZonen);
+  var zonen = kkNorm(s.buildZonen);
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
   var cats = [];

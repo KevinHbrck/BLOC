@@ -180,9 +180,9 @@
       klick('.tabbar [data-nav="#search"]');
       await bis(function () { return $("[data-srkk]"); }, 3000, "Suche mit Körper-Zeile");
       klick("[data-srkk]");
-      klick(await bis(function () { return $('.fc-chip[data-srzone="ruecken"]'); }, 2000, "Körperkarte in der Suche"));
-      await bis(function () { return $('.fc-chip[data-srzone="ruecken"].on') && $$("[data-sr]").length > 5; }, 2000, "Rücken-Übungen in der Suche");
-      pruefe($$("[data-sr]").length < 140, "Rücken-Filter filtert nicht");
+      klick(await bis(function () { return $('.fc-chip[data-srzone="lat"]'); }, 2000, "Körperkarte in der Suche"));
+      await bis(function () { return $('.fc-chip[data-srzone="lat"].on') && $$("[data-playex]").length > 5; }, 2000, "Rücken-Übungen als Kacheln in der Suche");
+      pruefe($$("[data-playex]").length < 140 && $$(".air-kachel").length === $$("[data-playex]").length, "Rücken-Filter filtert nicht oder Kacheln fehlen");
       await heim();   // zurück in die Bibliothek, wie der nächste Test sie erwartet
       klick('[data-nav="#library"]');
       await bis(function () { return $("[data-surprise]"); }, 3000, "Bibliothek");
@@ -198,6 +198,8 @@
         pruefe(m && m.length === 4 && m.every(Boolean), "Muskeln fehlen: " + id);
         pruefe(d.EX_EQUIP[id].split(" ").indexOf("band") > -1, "Gerät fehlt: " + id);
       });
+      var unb = W.BLOC_DEV ? W.BLOC_DEV.kkUnbekannt() : null;
+      pruefe(unb && unb.length === 0, "Muskelnamen ohne Zone: " + (unb ? unb.join(", ") : "BLOC_DEV fehlt"));
       pruefe(d.LIB_WORKOUT_ROWS.filter(function (x) { return x[0].indexOf("band-") === 0; }).every(function (x) {
         return x[4].split(" ").every(function (id) { return d.EXERCISE_ROWS.some(function (r) { return r[0] === id; }); });
       }), "ein Band-Workout enthält eine unbekannte Übung");
@@ -314,13 +316,13 @@
       klick('.tabbar [data-nav="#search"]');
       await bis(function () { return $$("[data-srkat]").length === 7; }, 3000, "sieben Kategorien");
       klick('[data-srkat="uebungen"]');
-      await bis(function () { return $$("[data-sr]").length > 100; }, 3000, "Kategorie Übungen zeigt alle Übungen");
+      await bis(function () { return $$("[data-sr]").length + $$(".air-kachel").length > 100; }, 3000, "Kategorie Übungen zeigt alle Übungen (Air als Kacheln, Studio als Zeilen)");
       eingeben($("#gs-q"), "burpee");
-      var n = await bis(function () { var l = $$("[data-sr]"); return l.length && l.length < 10 && l; }, 3000, "Suche in der Kategorie Übungen");
+      var n = await bis(function () { var l = $$("[data-sr]").concat($$(".air-kachel")); return l.length && l.length < 10 && l; }, 3000, "Suche in der Kategorie Übungen");
       pruefe(!$$(".section-title").some(function (e) { return /Bereiche|Challenges/.test(e.textContent); }), "Treffer anderer Kategorien in Übungen");
       klick('[data-srkat="alle"]');
       eingeben($("#gs-q"), "");
-      await bis(function () { return $(".rep-intro") && !$$("[data-sr]").length; }, 3000, "Alle + leer = Hinweistext");
+      await bis(function () { return $(".rep-intro") && !$$("[data-sr]").length && !$$(".air-kachel").length; }, 3000, "Alle + leer = Hinweistext");
     }],
     ["Filterkarte: Air ohne Kategorie-Kacheln und Studio-Übungen, bleibt beim Mehrfachwählen offen (auch Studio, Dehnen, Summit)", async function () {
       await heim();

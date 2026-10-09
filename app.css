@@ -2132,7 +2132,7 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .info-mus{ display:flex; align-items:center; gap:10px; }
 .info-mus-t{ flex:1; min-width:0; }
 .info-kk{ flex:none; }
-.info-kk .kk{ width:46px; height:92px; }
+.info-kk .kk{ width:50px; height:100px; }
 .info-kk .kk-paar{ gap:8px; margin:0; }
 .info-kk .kk-paar figcaption{ display:none; }
 .kk-summe{ padding:6px 0 10px; }
