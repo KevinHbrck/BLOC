@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-09 · Programmlogik in 20 Teile aufgeteilt
+
+- `app.js` (fast 8.000 Zeilen) ist jetzt **`js/01-basis.js` … `js/20-walzen-start.js`**: ein Teil je Themenbereich (Basis/Speicher, Bibliothek, Router, Start, Suche, Studio, Körperkarte, Statistik, Editor, Lauf, Audio, Timer-Motor …), 100 bis 850 Zeilen. Kein Build nötig: gewöhnliche Skripte, die nacheinander im selben Gültigkeitsbereich laufen. Verhalten unverändert (Schnelltest 29/29).
+- **Wichtig beim Aufteilen entdeckt:** `loadDB` ruft schon beim Laden `pruneHistory` auf. Stand das in einem späteren Teil, startete die App (wegen `try/catch` unbemerkt) mit leeren Daten. Die Verlauf-Hilfen (`pruneHistory`, `besuche`, `wocheKey` …) stehen deshalb am Ende von `01-basis.js`; die Regel steht in der README (Tabelle „Dateien“).
+- `sw.js` listet alle Teile im Offline-Speicher; `?v=` in `index.html` gilt für jede Zeile. Fassung 2026-10-09-28.
+
 ## 2026-10-09 · Körperkarte grob/fein, im Workout-Kopf und in Mobility & Stretch; Studio-Ausrüstung
 
 - **Grob · Fein**: überall, wo die Körperkarte steht (Übungsinfo, Workout-Kopf, Auswertung, Filter in Air, Studio, Baukasten, Suche, Mobility & Stretch), gibt es unter der Karte einen Schalter mit Unterstrich. **Grob** (Standard) = 10 Zonen, **Fein** = 21 Zonen und die Silhouetten größer, damit sich kleine Zonen am Handy antippen lassen. Die Wahl gilt für die ganze App (`settings.kkFein`); eine gewählte Zone wandert mit (z. B. „Hintere Schulter“ wird grob zu „Schultern“). Gerechnet wird immer fein, grob fasst zusammen (`KK_F2G`).

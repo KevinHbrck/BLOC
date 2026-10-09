@@ -38,7 +38,7 @@ Air/Studio: Muskelgruppen der letzten 7 Tage). Nur Bereiche, die im Fokus an sin
 und Mobility & Stretch immer unten.
 
 **Was ein „Training“ ist:** Alle Timer-Einträge mit höchstens 60 Minuten Abstand gelten als ein Besuch; die Trainingszeit
-läuft vom ersten Start bis zum Ende des letzten Timers (`besuche()` in `app.js`). Läufe zählen einzeln.
+läuft vom ersten Start bis zum Ende des letzten Timers (`besuche()` in `js/01-basis.js`). Läufe zählen einzeln.
 
 **Timer:** Vollbild mit Fortschrittsring (C60: Walzenzähler), Figur der Übung, Sprachansagen, Töne im Voraus geplant.
 Musik anderer Apps läuft weiter.
@@ -62,9 +62,9 @@ die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist r
 
 | Datei | Zweck |
 |---|---|
-| `index.html` | Gerüst (lädt `app.css`, `texte.js`, `daten.js`, `app.js`) |
+| `index.html` | Gerüst (lädt `app.css`, `texte.js`, `daten.js` und die Teile in `js/`) |
 | `app.css` | Gestaltung aller Designs |
-| `app.js` | Programmlogik (Oberfläche, Timer, Statistik, Run, Speicher) |
+| `js/01-basis.js` … `js/20-walzen-start.js` | Programmlogik in 20 Teilen (je ein Themenbereich: Basis und Speicher, Bibliothek, Router, Start, Suche, Studio, Körperkarte, Statistik, Editor, Lauf, Audio, Timer-Motor …). Es sind gewöhnliche Skripte, die **nacheinander im selben Gültigkeitsbereich** laufen (Reihenfolge = Reihenfolge der `<script>`-Zeilen in `index.html`). **Regel:** Code, der schon beim Laden ausgeführt wird (z. B. `var state = { db: loadDB() }`), darf nur Funktionen aus demselben oder einem früheren Teil aufrufen – beim Laden sind spätere Teile noch nicht da. Deshalb stehen die Verlauf-Hilfen für `loadDB` am Ende von `01-basis.js`. Funktionsaufrufe innerhalb von Funktionen sind unkritisch. |
 | `texte.js` | Alle Oberflächentexte Deutsch/Englisch, **ein Schlüssel pro Zeile** (gut zu vergleichen) |
 | `quellen.html` | Quellen und Hintergrund: woran sich BLOC orientiert, was eigene Zusammenstellung ist (aus der App verlinkt) |
 | `daten.js` | Inhalte: Übungen, Workouts, Challenges, Anleitungen, Muskeln, Figuren (`window.BLOC_DATEN`) |
@@ -75,7 +75,7 @@ die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist r
 
 ## Neue Fassung veröffentlichen
 
-1. `FASSUNG` in `sw.js` erhöhen und dieselbe Nummer als `?v=…` an `app.css`, `texte.js`, `daten.js`, `app.js` in `index.html`.
+1. `FASSUNG` in `sw.js` erhöhen und dieselbe Nummer als `?v=…` an `app.css`, `texte.js`, `daten.js` und alle `js/…`-Dateien in `index.html` (ein `sed` über die alte Nummer genügt); neue Teile in `js/` außerdem in `sw.js` (`GRUNDGERUEST`) eintragen.
 2. Schnelltest laufen lassen (siehe unten).
 3. Alle geänderten Dateien gemeinsam hochladen bzw. committen und nach `main` pushen. GitHub Pages: <https://kevinhbrck.github.io/BLOC/>
    (nach dem Push dauert die Auslieferung eine Minute).
