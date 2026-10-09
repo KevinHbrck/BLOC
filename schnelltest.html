@@ -167,6 +167,16 @@
       pruefe(!$('[data-playex="air-squats"]') && $('[data-playex="push-ups"]'), "Brust-Filter zeigt falsche Übungen");
       klick('[data-lfreset]');
       await bis(function () { return $$("[data-playex]").length === alle; }, 2000, "zurückgesetzt");
+      // Grob · Fein: fein = 21 Zonen, größer; die Auswahl wandert mit; danach wieder grob
+      pruefe($('[data-kkmodus="grob"].on') && $$(".kk-chips .fc-chip").length === 10, "Körperkarte ist nicht standardmäßig grob (10 Zonen)");
+      klick('[data-kkmodus="fein"]');
+      await bis(function () { return $$(".kk-chips .fc-chip").length === 21 && $(".kk-paar.fein") && $(".af-body"); }, 2000, "Körperkarte fein (21 Zonen)");
+      klick('.fc-chip[data-lfzone="schulter_h"]');
+      await bis(function () { var n = $$("[data-playex]").length; return $('.fc-chip[data-lfzone="schulter_h"].on') && n > 0 && n < alle; }, 2000, "Filter Hintere Schulter");
+      klick('[data-kkmodus="grob"]');
+      await bis(function () { return $$(".kk-chips .fc-chip").length === 10 && $('.fc-chip[data-lfzone="schulter"].on'); }, 2000, "zurück auf grob: Auswahl wird zu Schultern");
+      klick('[data-lfreset]');
+      await bis(function () { return $$("[data-playex]").length === alle; }, 2000, "zurückgesetzt (grob)");
       klick(".af-fuss .btn-primary");
       klick(await bis(function () { return $('[data-info="band-squat"]'); }, 2000, "Kachel Kniebeuge mit Band"));
       await bis(function () { return $(".info-kk-knopf .kk"); }, 2000, "Silhouetten in der Übungsinfo");
@@ -370,11 +380,19 @@
       pruefe($$("[data-studio]").length > 0, "Studio: Zone Brust zeigt nichts");
       klick('[data-streset]');
       await bis(function () { return !$('[data-stzone].on') && $$("[data-studio]").length === stAlle; }, 2000, "Studio: Zurücksetzen löscht auch die Zonen");
-      // Air-Gruppe per Chip: steht dann offen als eigener Abschnitt, nicht mehr in „Aus Air“
-      klick('[data-stgr="stange"]');
-      await bis(function () { return $('[data-stgr="stange"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length > 5; }, 2000, "Studio: Chip „Stange & Barren“ zeigt die Übungen offen");
+      // Langhantel, Kurzhantel & Kettlebell, Stange, Widerstandsband und Körpergewicht gehören zur Ausrüstung, nicht zu den Gruppen
+      pruefe(!$('[data-stgr="lh"]') && !$('[data-stgr="frei"]') && !$('[data-stgr="stange"]') && !$('[data-stgr="air"]') && !$('[data-stgr="band"]'), "Studio: Ausrüstung steht noch bei den Gruppen");
+      pruefe($('[data-start="lh"]') && $('[data-start="frei"]') && $('[data-start="stange"]') && $('[data-start="band"]') && $('[data-start="koerper"]'), "Studio: Ausrüstungs-Chips unvollständig");
+      pruefe($('[data-stgr="brust"]') && $$("[data-stgr]").length === 6, "Studio: sechs Muskelgruppen erwartet, gefunden " + $$("[data-stgr]").length);
+      klick('[data-start="band"]');
+      await bis(function () { return $('[data-start="band"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length >= 30; }, 2000, "Studio: Chip „Widerstandsband“ zeigt die Band-Übungen");
       klick('[data-streset]');
-      await bis(function () { return !$('[data-stgr].on') && $$("details.st-air-gr").length === 3; }, 2000, "Studio: Zurücksetzen bringt „Aus Air“ zurück");
+      await bis(function () { return !$('[data-start].on'); }, 2000, "Studio: Zurücksetzen (Band)");
+      // Air-Gruppe per Chip: steht dann offen als eigener Abschnitt, nicht mehr in „Aus Air“
+      klick('[data-start="stange"]');
+      await bis(function () { return $('[data-start="stange"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length > 5; }, 2000, "Studio: Chip „Stange & Barren“ zeigt die Übungen offen");
+      klick('[data-streset]');
+      await bis(function () { return !$('[data-stgr].on') && $$("details.st-air-gr").length === 4; }, 2000, "Studio: Zurücksetzen bringt „Aus Air“ zurück");
       // Mobility & Stretch › Dehnen: Körperregionen mehrfach
       await heim();
       klick('[data-nav="#warmstretch"]');
@@ -386,6 +404,16 @@
       await bis(function () { return $('[data-wsreg="beine"].on') && $('[data-wsreg="nacken"].on') && $(".af-body"); }, 2000, "Dehnen: Beine dazu, Karte bleibt offen");
       klick('[data-wsfreset]');
       await bis(function () { return !$('[data-wsreg].on'); }, 2000, "Dehnen: Zurücksetzen");
+      // Mobility & Stretch: auch die Körperkarte (Dehnen und Aufwärmen)
+      pruefe($$(".kk-filter .kk").length === 2 && $$(".kk-chips .fc-chip").length === 10, "Dehnen: Körperkarte im Filter fehlt");
+      klick('.fc-chip[data-wszone="waden"]');
+      await bis(function () { return $('.fc-chip[data-wszone="waden"].on') && $(".af-body"); }, 2000, "Dehnen: Zone Waden, Karte bleibt offen");
+      klick('[data-wsfreset]');
+      await bis(function () { return !$('[data-wszone].on'); }, 2000, "Dehnen: Zonen zurückgesetzt");
+      klick('[data-wsart="warm"]');
+      await bis(function () { return $('[data-wszone]') && !$('[data-wsreg]'); }, 2000, "Aufwärmen: Körperkarte ohne Regionen-Chips");
+      klick('[data-wsart="dehn"]');
+      await bis(function () { return $('[data-wsreg]'); }, 2000, "zurück auf Dehnen");
       // Summit: Stufe sichtbar über der Karte (ohne Aufklappen), Ausrüstung in der Karte
       await heim();
       klick('[data-nav="#reps"]');
@@ -438,7 +466,7 @@
       // Air-Übungen gibt es im Studio ohne Schalter: drei zugeklappte Zeilen unter „Aus Air“; Antippen, Suche und Gruppen-Chip zeigen sie
       pruefe(!$("#st-air"), "Studio: der Schalter „Air-Übungen“ ist noch da");
       var airZeilen = $$("details.st-air-gr");
-      pruefe(airZeilen.length === 3 && airZeilen.every(function (d) { return !d.open && sichtbar(d); }), "Studio: die drei Air-Gruppen stehen nicht zugeklappt am Ende (" + airZeilen.length + ")");
+      pruefe(airZeilen.length === 4 && airZeilen.every(function (d) { return !d.open && sichtbar(d); }), "Studio: die vier Air-Gruppen stehen nicht zugeklappt am Ende (" + airZeilen.length + ")");
       klick(airZeilen[2].querySelector("summary"));
       pruefe(airZeilen[2].open && sichtbar(airZeilen[2].querySelector("[data-studio]")), "Studio: Antippen klappt die Air-Gruppe nicht auf");
       klick(airZeilen[2].querySelector("summary"));

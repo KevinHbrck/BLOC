@@ -2153,6 +2153,19 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .kk-zeile.rand, .kk-zeile.ok{ color:var(--text-dim); }
 .kk-kopf .kk-skala{ justify-content:flex-start; margin-top:6px; }
 .kk-kopf .kk-skala i{ width:60px; }
+/* Umschalter Grob · Fein: Unterstrich wie die anderen Schalter */
+.kk-modus{ display:flex; justify-content:center; gap:22px; margin:4px 0 6px; flex-basis:100%; }
+.kk-modus button{ border:0; background:none; padding:4px 2px; font:inherit; font-size:13.5px; font-weight:600; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent; }
+.kk-modus button.on{ color:var(--text); border-bottom-color:var(--bereich, var(--accent)); }
+.kk-kopf .kk-modus{ justify-content:flex-start; margin:6px 0 0; }
+/* Fein: die Silhouetten größer, damit sich die kleinen Zonen am Handy antippen lassen */
+.kk-paar.fein{ gap:10px; }
+.kk-filter .kk-paar.fein .kk{ width:140px; height:280px; }
+.kk-summe .kk-paar.fein .kk{ width:112px; height:224px; }
+.kk-kopf .kk-paar.fein .kk{ width:64px; height:128px; }
+.info-kk-knopf.fein{ flex-basis:100%; }
+.info-kk-knopf.fein .kk{ width:96px; height:192px; }
+.info-mus.gross .info-kk-knopf.fein .kk{ width:130px; height:260px; }
 .kk-filter{ margin:4px 0 6px; }
 .kk-filter .kk{ width:84px; height:168px; }
 .kk-chips{ margin-top:6px; }

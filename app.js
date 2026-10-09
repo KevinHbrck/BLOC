@@ -589,24 +589,30 @@ function wsUebungen(art){
   return l.filter(function(ex){ return ex && !libHidden("ex:"+ex.id); });
 }
 /* Filterkarte der Körperregionen (Dehnen), dieselbe Karte wie in Air. anzahl: wie viele Einträge gerade zu sehen sind; art: Wo (Workouts) oder Ex (Übungen) */
-function wsRegionFilterHTML(sel, anzahl, art){
+function wsRegionFilterHTML(sel, anzahl, art, zonen, dehn){
+  zonen = kkNorm(zonen);
   var ico = { nacken:'<circle cx="12" cy="7" r="3"/><path d="M8 21v-5a4 4 0 0 1 8 0v5"/>', schulter:STUDIO_GRUPPEN_ICON.schulter, arme:CAT_ICON.arms, brust:STUDIO_GRUPPEN_ICON.brust,
     ruecken:CAT_ICON.back, rumpf:CAT_ICON.core, huefte:'<path d="M6 5c0 6 2 8 6 8s6-2 6-8M9 13l-2 8M15 13l2 8"/>', beine:CAT_ICON.legs };
-  return filterKarteHTML({ offen:!!state.db.settings.wsFilterOpen, toggle:"data-wstoggle", reset:"data-wsfreset", n:sel.length,
-    summe:sel.length ? sel.map(function(r){ return t("rg_"+r); }).join(", ") : t(art === "Ex" ? "afAlleEx" : "afAlleWo"),
+  var namen = sel.map(function(r){ return t("rg_"+r); }).concat(zonen.map(kkName));
+  return filterKarteHTML({ offen:!!state.db.settings.wsFilterOpen, toggle:"data-wstoggle", reset:"data-wsfreset", n:namen.length,
+    summe:namen.length ? namen.join(", ") : t(art === "Ex" ? "afAlleEx" : "afAlleWo"),
     zeigen:filterZeigenText(anzahl, art),
-    inhalt:filterChipsHTML(t("afRegion"), "", WS_REGIONEN.map(function(r){
-      return filterChip("data-wsreg", r, sel.indexOf(r) > -1, svgIcon(ico[r]), t("rg_"+r)); }).join("")) });
+    inhalt:(dehn ? filterChipsHTML(t("afRegion"), "", WS_REGIONEN.map(function(r){
+      return filterChip("data-wsreg", r, sel.indexOf(r) > -1, svgIcon(ico[r]), t("rg_"+r)); }).join("")) : '')+
+      kkFilterHTML("data-wszone", zonen) });
 }
 function wsRegionBinden(neu){
   app.querySelectorAll("[data-wsreg]").forEach(function(b){
     b.addEventListener("click", function(e){ e.stopPropagation(); var s = state.db.settings; s.wsRegionen = selToggle(s.wsRegionen, b.getAttribute("data-wsreg")); save(); neu(); });
   });
+  app.querySelectorAll("[data-wszone]").forEach(function(b){
+    b.addEventListener("click", function(e){ e.stopPropagation(); var s = state.db.settings; s.wsZonen = selToggle(kkNorm(s.wsZonen), b.getAttribute("data-wszone")); save(); neu(); });
+  });
   app.querySelectorAll("[data-wstoggle]").forEach(function(b){
     b.addEventListener("click", function(e){ e.stopPropagation(); var s = state.db.settings; s.wsFilterOpen = !s.wsFilterOpen; save(); neu(); });
   });
   var zur = app.querySelector("[data-wsfreset]");
-  if(zur) zur.addEventListener("click", function(e){ e.stopPropagation(); state.db.settings.wsRegionen = []; save(); neu(); });
+  if(zur) zur.addEventListener("click", function(e){ e.stopPropagation(); state.db.settings.wsRegionen = []; state.db.settings.wsZonen = []; save(); neu(); });
 }
 var coverDraft = null;   // das Workout auf dem Deckblatt - Änderungen gelten nur für dieses Training
 
@@ -1627,6 +1633,7 @@ function gesamtEintraege(){
 }
 function renderSearch(){
   var alle = gesamtEintraege();
+  suchZonen = kkNorm(suchZonen);   // nach dem Umschalten Grob · Fein passen
   app.innerHTML =
     topbar(t("srTitle"), { back:"#home" }) +
     searchHTML(gesamtQuery, "gs", t("srPh")) +
@@ -1973,7 +1980,11 @@ function studioIds(){
   gruppen.push({ id:"stange", name:t("stBar"), ids:mit(["bar", "dip"]).filter(function(id){ return gruppen[gruppen.length-1].ids.indexOf(id) < 0; }), air:true });
   var schon = {};
   gruppen.forEach(function(g){ g.ids.forEach(function(id){ schon[id] = true; }); });
-  gruppen.push({ id:"air", name:t("stAirGr"), ids:EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && fuerWorkout(ex); }).map(function(ex){ return ex.id; }), air:true });
+  var bandIds = EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && fuerWorkout(ex) && ex.equip.indexOf("band") > -1; }).map(function(ex){ return ex.id; });
+  var imBand = {};
+  bandIds.forEach(function(id){ imBand[id] = true; });
+  gruppen.push({ id:"air", name:t("stAirGr"), ids:EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && !imBand[ex.id] && fuerWorkout(ex); }).map(function(ex){ return ex.id; }), air:true });
+  gruppen.push({ id:"band", name:t("stBand"), ids:bandIds, air:true });
   return gruppen;
 }
 /* Welche Air-Gruppen gerade aufgeklappt sind - nur für diesen Besuch gemerkt, nichts davon wird gespeichert */
@@ -2013,13 +2024,24 @@ function studioArt(id){
   if(/cable|pulldown|pushdown|face-pull|woodchop|crossover/.test(id)) return "kabel";
   if(/^barbell|bench-press|t-bar|hip-thrust/.test(id)) return "lh";
   var eq = (findExercise(id) || {}).equip || [];
-  if(eq.indexOf("gym") < 0) return (eq.indexOf("bar") > -1 || eq.indexOf("dip") > -1) ? "stange" : "frei";
+  if(eq.indexOf("gym") < 0){
+    if(eq.indexOf("band") > -1) return "band";
+    if(eq.indexOf("bar") > -1 || eq.indexOf("dip") > -1) return "stange";
+    return (eq.indexOf("db") > -1 || eq.indexOf("kb") > -1) ? "frei" : "koerper";
+  }
   return eq.indexOf("db") > -1 ? "frei" : "geraet";
 }
-var STUDIO_ARTEN = ["geraet", "kabel", "frei", "lh", "stange"];
+var STUDIO_ARTEN = ["geraet", "kabel", "frei", "lh", "stange", "band", "koerper"];
+var STUDIO_ART_ICON = { frei:EQUIP_ICON.kb, lh:CAT_ICON.weight, stange:EQUIP_ICON.bar, band:EQUIP_ICON.band, koerper:EQUIP_ICON.none };
+/* Frühere Gruppen-Chips, die jetzt zur Ausrüstung gehören (Langhantel, Kurzhantel & Kettlebell, Stange & Barren, Körpergewicht), in die Ausrüstung umziehen */
+function studioFilterAlt(){
+  var s = state.db.settings, umzug = { lh:"lh", frei:"frei", stange:"stange", air:"koerper" }, gr = selArr(s.stGruppen), neu = [], arten = selArr(s.stArten);
+  gr.forEach(function(id){ if(umzug[id]){ if(arten.indexOf(umzug[id]) < 0) arten.push(umzug[id]); } else neu.push(id); });
+  if(neu.length !== gr.length){ s.stGruppen = neu; s.stArten = arten; save(); }
+}
 var STUDIO_GRUPPEN_ICON = { beine:CAT_ICON.legs, brust:'<path d="M4 8c2.5-2 5.5-2 8 0 2.5-2 5.5-2 8 0v5c-2 3-5.5 4-8 1.5C9.5 17 6 16 4 13z"/>',
   ruecken:CAT_ICON.back, schulter:'<circle cx="12" cy="6" r="2.5"/><path d="M4 18c0-5 3.5-8.5 8-8.5s8 3.5 8 8.5"/>', arme:CAT_ICON.arms,
-  bauch:CAT_ICON.core, lh:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, air:HOME_ICON.lib, eigene:'<path d="M12 5v14M5 12h14"/>' };
+  bauch:CAT_ICON.core, lh:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, band:EQUIP_ICON.band, air:HOME_ICON.lib, eigene:'<path d="M12 5v14M5 12h14"/>' };
 function studioKachel(id){
   var ex = findExercise(id);
   if(!ex) return "";
@@ -2045,10 +2067,10 @@ function studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen){
   return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t("afAlleEx"),
     zeigen:filterZeigenText(anzahl, "Ex"),
-    inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
+    inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length && !g.air; }).map(function(g){
         return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
       filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.map(function(a){
-        return filterChip("data-start", a, fArt.indexOf(a) > -1, "", t("stArt_"+a)); }).join(""))+
+        return filterChip("data-start", a, fArt.indexOf(a) > -1, STUDIO_ART_ICON[a] ? svgIcon(STUDIO_ART_ICON[a]) : "", t("stArt_"+a)); }).join(""))+
       kkFilterHTML("data-stzone", zonen) });
 }
 function studioFilterBinden(fGr, fArt, zonen, neuZeichnen){
@@ -2067,6 +2089,7 @@ function renderStudio(){
   if(s.stTab === "timer") s.stTab = "uebungen";   // der frühere Reiter „Timer“ ist jetzt eine eigene Seite
   if(s.stTab === "plan") return renderStudioPlan();
   // Filter: Gruppen-Kacheln (mehrere möglich) und Ausrüstung (mehrere möglich)
+  studioFilterAlt();
   var fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
   var zonen = kkNorm(s.stZonen);   // Körperkarte: gewählte Muskelzonen
   function artOk(id){ return (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(findExercise(id), zonen)); }
@@ -2094,7 +2117,7 @@ function renderStudio(){
     if(fGr.length && fGr.indexOf(g.id) < 0) return;
     var ids = g.ids.filter(artOk);
     if(!ids.length && (!g.eigene || filterAn)) return;
-    if(g.air && !fGr.length){ airZu.push({ g:g, ids:ids }); return; }
+    if(g.air && !fGr.length && !fArt.length){ airZu.push({ g:g, ids:ids }); return; }   // mit Ausrüstungs-Chip stehen sie offen
     html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+ids.length+'</span></div><div class="fig-grid">'+
       ids.map(studioKachel).join("")+
       (g.eigene ? '<button type="button" class="fig-karte st-neu" data-stnew>'+ICON_PLUS+'<span class="fig-name">'+esc(t("stOwnNew"))+'</span></button>' : '')+
@@ -2219,7 +2242,8 @@ function renderStudioPlan(){
     var gruppen = studioIds(), da = {};
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
     // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung); die Air-Gruppen stehen auch hier zugeklappt unter „Aus Air“
-    var s = state.db.settings, fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+    var s = state.db.settings; studioFilterAlt();
+    var fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
     var zonen = kkNorm(s.stZonen);
     function artOk(id){ return (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(findExercise(id), zonen)); }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keiner Gruppe stehen
@@ -2238,7 +2262,7 @@ function renderStudioPlan(){
       if(!g.immer && fGr.length && fGr.indexOf(g.id) < 0) return;
       var gids = g.immer ? g.ids : g.ids.filter(artOk);
       if(!gids.length) return;
-      if(g.air && !fGr.length){ airZu.push({ g:g, ids:gids }); return; }
+      if(g.air && !fGr.length && !fArt.length){ airZu.push({ g:g, ids:gids }); return; }
       html += '<div class="st-gruppe"><div class="section-title">'+esc(g.name)+' <span class="lbl-hint">'+gids.length+'</span></div><div class="fig-grid">'+gids.map(planKachel).join("")+'</div></div>';
     });
     html += studioAirBlockHTML(airZu, planKachel);
@@ -2368,10 +2392,11 @@ function mgProzent(ids){   // Zeilen in fester Reihenfolge, Summe 100 (größter
   return { rows:rows, leer:!tot };
 }
 /* ============ Körperkarte ============
-   Zwei Silhouetten (vorn, hinten) mit 17 Muskelzonen. Verwendet in der Übungsinfo (trainiert / unterstützt), in der Auswertung eines
-   Workouts (Summe: je öfter, desto kräftiger) und als Filter in Air, Baukasten und Suche (Zonen antippen). Die Zuordnung läuft über die
-   Muskelnamen in EX_MUSCLES (KK_REGELN); die Balken der Auswertung bleiben bei den sechs groben Gruppen (MUSKEL_GRP). */
-var KK_ZONEN = {
+   Zwei Silhouetten (vorn, hinten), wahlweise grob (10 Zonen) oder fein (21 Zonen, größer dargestellt); gespeichert in settings.kkFein, überall gleich.
+   Gerechnet wird immer fein (KK_REGELN über die Muskelnamen in EX_MUSCLES); die grobe Ansicht fasst die feinen Zonen zusammen (KK_F2G).
+   Verwendet in der Übungsinfo (trainiert / unterstützt), im Kopf und in der Auswertung eines Workouts (Summe: je öfter, desto kräftiger)
+   und als Filter in Air, Studio, Baukasten, Suche und Mobility & Stretch (Zonen antippen). Die Balken der Auswertung bleiben bei den sechs groben Gruppen (MUSKEL_GRP). */
+var KK_ZONEN_G = {
   vorn:   { schulter:[[21,32,18,13,6],[61,32,18,13,6]], brust:[[39,34,22,21,8]],
             arme:[[13,45,10,29,5],[77,45,10,29,5],[11,76,9,27,4.5],[80,76,9,27,4.5]],
             rumpf:[[36,57,28,31,9],[40,88,20,8,4]], quad:[[35,99,14,44,6],[51,99,14,44,6]],
@@ -2381,41 +2406,103 @@ var KK_ZONEN = {
             gesaess:[[34,89,16,18,7],[50,89,16,18,7]],
             hamstring:[[35,108,14,38,6],[51,108,14,38,6]], waden:[[37,148,12,43,5],[51,148,12,43,5]] }
 };
-/* Reihenfolge der Chips; wichtig = taucht in „Noch nicht dabei“ auf */
-var KK_REIHE = ["schulter", "brust", "arme", "ruecken", "ruecken_u", "rumpf", "gesaess", "quad", "hamstring", "waden"];
-var KK_WICHTIG = { schulter:1, brust:1, arme:1, ruecken:1, ruecken_u:1, rumpf:1, gesaess:1, quad:1, hamstring:1, waden:1 };
-/* Muskelname (kleingeschrieben) -> Zone; die erste passende Regel gilt, mehrere Zonen teilen sich das Gewicht */
+var KK_ZONEN_F = {
+  vorn:   { schulter_v:[[29,32,10,13,5],[61,32,10,13,5]], schulter_s:[[21,32,8,13,5],[71,32,8,13,5]],
+            brust_o:[[39,34,22,9,5]], brust:[[39,43,22,12,6]],
+            bizeps:[[13,45,10,29,5],[77,45,10,29,5]], unterarm:[[11,76,9,27,4.5],[80,76,9,27,4.5]],
+            bauch:[[43,57,14,29,6]], schraeg:[[35.5,57,6.5,29,3],[58,57,6.5,29,3]], huefte:[[40,88,20,8,4]],
+            abduktor:[[32,90,4.5,13,2.2],[63.5,90,4.5,13,2.2]], quad:[[36,99,9.5,44,5],[54.5,99,9.5,44,5]],
+            adduktor:[[45.8,99,3.8,32,1.9],[50.4,99,3.8,32,1.9]], waden:[[38,147,10,44,5],[52,147,10,44,5]] },
+  hinten: { schulter_s:[[21,32,7,13,5],[72,32,7,13,5]], schulter_h:[[28,32,11,13,5],[61,32,11,13,5]],
+            trapez_o:[[39,29,22,10,6]], rauten:[[41,40,18,16,5]], lat:[[33,47,9,23,4.5],[58,47,9,23,4.5]],
+            ruecken_u:[[42,68,16,19,6]], trizeps:[[13,45,10,29,5],[77,45,10,29,5]], unterarm:[[11,76,9,27,4.5],[80,76,9,27,4.5]],
+            gesaess:[[37,89,13,17,7],[50,89,13,17,7]], abduktor:[[32,90,4.5,13,2.2],[63.5,90,4.5,13,2.2]],
+            hamstring:[[36,108,12,38,6],[52,108,12,38,6]], waden:[[38,148,10,43,5],[52,148,10,43,5]] }
+};
+/* Reihenfolge der Chips; wichtig = taucht in „Noch nicht dabei“ auf (kleine Hilfsmuskeln nicht) */
+var KK_REIHE_G = ["schulter", "brust", "arme", "ruecken", "ruecken_u", "rumpf", "gesaess", "quad", "hamstring", "waden"];
+var KK_REIHE_F = ["schulter_v", "schulter_s", "schulter_h", "brust_o", "brust", "bizeps", "trizeps", "unterarm", "trapez_o", "rauten", "lat", "ruecken_u",
+                  "bauch", "schraeg", "huefte", "gesaess", "abduktor", "adduktor", "quad", "hamstring", "waden"];
+var KK_WICHTIG_G = { schulter:1, brust:1, arme:1, ruecken:1, ruecken_u:1, rumpf:1, gesaess:1, quad:1, hamstring:1, waden:1 };
+var KK_WICHTIG_F = { schulter_v:1, schulter_s:1, schulter_h:1, brust:1, bizeps:1, trizeps:1, rauten:1, lat:1, ruecken_u:1, bauch:1, schraeg:1, gesaess:1, quad:1, hamstring:1, waden:1 };
+/* feine Zone -> grobe Zone und zurück */
+var KK_F2G = { schulter_v:"schulter", schulter_s:"schulter", schulter_h:"schulter", brust_o:"brust", bizeps:"arme", trizeps:"arme", unterarm:"arme",
+               trapez_o:"ruecken", rauten:"ruecken", lat:"ruecken", bauch:"rumpf", schraeg:"rumpf", huefte:"rumpf", abduktor:"gesaess", adduktor:"quad" };
+var KK_G2F = { schulter:["schulter_v", "schulter_s", "schulter_h"], brust:["brust_o", "brust"], arme:["bizeps", "trizeps", "unterarm"], ruecken:["trapez_o", "rauten", "lat"],
+               rumpf:["bauch", "schraeg", "huefte"], gesaess:["gesaess", "abduktor"], quad:["quad", "adduktor"] };
+function kkFeinAn(){ return !!state.db.settings.kkFein; }
+function kkReihe(){ return kkFeinAn() ? KK_REIHE_F : KK_REIHE_G; }
+function kkKarte(){ return kkFeinAn() ? KK_ZONEN_F : KK_ZONEN_G; }
+function kkWichtig(z){ return !!(kkFeinAn() ? KK_WICHTIG_F : KK_WICHTIG_G)[z]; }
+var KK_SCHULTER = ["schulter_v", "schulter_s"];   // „Schultern“ ohne Zusatz: Drücken und Heben = vorn und seitlich
+/* Muskelname (kleingeschrieben) -> feine Zonen; die erste passende Regel gilt, mehrere Zonen teilen sich das Gewicht.
+   „§S“ = allgemeine Schultern: bei Ausnahmen (KK_AUSNAHME) werden die Zonen der Übung genommen, sonst KK_SCHULTER */
 var KK_REGELN = [
   [/^(ausdauer|gleichgewicht|beweglichkeit|–|-)$/, []],
   [/oberschenkel vorn und hinten/, ["quad", "hamstring"]],
-  [/hüftrotatoren|piriformis|hüftstabilisatoren|seitliche[rs]? gesäß|abduktoren|oberschenkel außen|gesäß/, ["gesaess"]],
-  [/adduktoren|innenschenkel|oberschenkel vorn/, ["quad"]],
-  [/hüftbeuger|^hüfte$/, ["rumpf"]],
+  [/tiefe und schräge bauch/, ["bauch", "schraeg"]],
+  [/schräg|sägemuskel/, ["schraeg"]],
+  [/seitliche und hintere schulter/, ["schulter_s", "schulter_h"]],
+  [/rotatorenmanschette/, ["schulter_h"]],
+  [/hüftrotatoren|piriformis/, ["gesaess"]],
+  [/hüftstabilisatoren|seitliche[rs]? gesäß|abduktoren|oberschenkel außen/, ["abduktor"]],
+  [/adduktoren|innenschenkel/, ["adduktor"]],
+  [/gesäß/, ["gesaess"]],
+  [/hüftbeuger|^hüfte$/, ["huefte"]],
+  [/oberschenkel vorn/, ["quad"]],
   [/oberschenkel hinten/, ["hamstring"]],
   [/oberschenkel/, ["quad", "hamstring"]],
   [/waden|achilles|fuß|schollen|schienbein/, ["waden"]],
   [/^beine$/, ["quad", "hamstring", "gesaess", "waden"]],
   [/wirbelsäule|rückenstrecker|unterer rücken/, ["ruecken_u"]],
-  [/schräg|sägemuskel|tiefe und schräge bauch|gerader bauch|tiefe bauch|^bauch$|rumpf|bauch/, ["rumpf"]],
-  [/breiter rückenmuskel|latissimus|trapez|rauten|oberer rücken|mittlerer rücken|nacken|schulterblatt|^rücken$/, ["ruecken"]],
-  [/schulter|rotatorenmanschette/, ["schulter"]],
+  [/breiter rückenmuskel|latissimus/, ["lat"]],
+  [/oberer trapez|nacken/, ["trapez_o"]],
+  [/mittlerer trapez|unterer trapez|rauten|mittlerer rücken|schulterblatt/, ["rauten"]],
+  [/trapez|oberer rücken/, ["trapez_o", "rauten"]],
+  [/^rücken$/, ["trapez_o", "rauten", "lat", "ruecken_u"]],
+  [/vordere schulter/, ["schulter_v"]],
+  [/seitliche schulter/, ["schulter_s"]],
+  [/hintere schulter/, ["schulter_h"]],
+  [/schulterstabilität|schulterbeweglichkeit/, ["schulter_v", "schulter_s", "schulter_h"]],
+  [/schnellkraft/, ["schulter_v", "schulter_s"]],
+  [/armschwung/, ["schulter_s"]],
+  [/schulter/, ["§S"]],
+  [/obere brust/, ["brust_o"]],
   [/brust/, ["brust"]],
-  [/trizeps|bizeps|oberarmmuskel|unterarm/, ["arme"]]
+  [/trizeps/, ["trizeps"]],
+  [/bizeps|oberarmmuskel/, ["bizeps"]],
+  [/unterarm/, ["unterarm"]],
+  [/gerader bauch|tiefe bauch|^bauch$/, ["bauch"]],
+  [/rumpf|bauch/, ["bauch", "schraeg"]]
 ];
-var KK_GRUPPE_ZONEN = { brust:["brust"], ruecken:["ruecken", "ruecken_u"], schulter:["schulter"], arme:["arme"], rumpf:["rumpf"], beine:["quad", "hamstring", "gesaess", "waden"] };
-/* frühere, feinere Auswahl in die heutigen Zonen übersetzen; Unbekanntes fällt weg */
-var KK_ALT = { bizeps:["arme"], trizeps:["arme"], unterarm:["arme"], trapez:["ruecken"], lat:["ruecken"], bauch:["rumpf"], schraeg:["rumpf"], huefte:["rumpf"],
-               abduktor:["gesaess"], adduktor:["quad"], beine:["quad", "hamstring", "gesaess", "waden"] };
+/* Übungen, bei denen „Schultern“ etwas Bestimmtes meint */
+var KK_AUSNAHME = {
+  "swimmers":["schulter_h"], "mountain-climbers":["schulter_v"], "bear-crawl":["schulter_v"], "plank-steps":["schulter_v"], "plank-shoulder-taps":["schulter_v"],
+  "burpees":["schulter_v"], "jump-forward-burpees":["schulter_v"], "muscle-ups":["schulter_v", "schulter_h"], "skin-the-cat":["schulter_v", "schulter_h"],
+  "archer-push-ups":["schulter_v"], "kb-clean":["schulter_v", "schulter_s"], "jumping-jacks":["schulter_s"]
+};
+/* gespeicherte Auswahl (egal ob grob oder fein, auch ältere Namen) in die Zonen der gewählten Ansicht übersetzen; Unbekanntes fällt weg */
+var KK_ALT = { trapez:["trapez_o", "rauten"], beine:["quad", "hamstring", "gesaess", "waden"] };
 function kkNorm(zonen){
-  var out = [];
+  var out = [], fein = kkFeinAn(), reihe = kkReihe();
   selArr(zonen).forEach(function(z){
-    (KK_ALT[z] || [z]).forEach(function(x){ if(KK_REIHE.indexOf(x) > -1 && out.indexOf(x) < 0) out.push(x); });
+    (KK_ALT[z] || [z]).forEach(function(x){
+      (fein ? (KK_G2F[x] || [x]) : [KK_F2G[x] || x]).forEach(function(y){ if(reihe.indexOf(y) > -1 && out.indexOf(y) < 0) out.push(y); });
+    });
   });
   return out;
 }
 function kkName(zone){ return t("kkZ_"+zone); }
-/* Zonen eines Muskeltextes („Oberschenkel vorn, Gesäß“); gew = Gewicht je Muskelname; unb sammelt Namen ohne Regel */
-function kkZonenVon(text, gew, unb){
+/* feine Werte in die gewählte Ansicht übertragen (grob: je Gruppe addiert) */
+function kkAgg(m){
+  if(kkFeinAn()) return m;
+  var o = {};
+  Object.keys(m).forEach(function(z){ var g = KK_F2G[z] || z; o[g] = (o[g] || 0) + m[z]; });
+  return o;
+}
+/* Zonen eines Muskeltextes („Oberschenkel vorn, Gesäß“); gew = Gewicht je Muskelname; unb sammelt Namen ohne Regel;
+   schulter = Zonen für allgemeine „Schultern“ (aus KK_AUSNAHME) */
+function kkZonenVon(text, gew, unb, schulter){
   var res = {};
   String(text || "").toLowerCase().split(/,\s*/).forEach(function(teil){
     teil = teil.trim();
@@ -2423,6 +2510,7 @@ function kkZonenVon(text, gew, unb){
     for(var i = 0; i < KK_REGELN.length; i++){
       if(KK_REGELN[i][0].test(teil)){
         var z = KK_REGELN[i][1];
+        if(z[0] === "§S") z = schulter || KK_SCHULTER;
         z.forEach(function(x){ res[x] = (res[x] || 0) + gew/z.length; });
         return;
       }
@@ -2431,10 +2519,11 @@ function kkZonenVon(text, gew, unb){
   });
   return res;
 }
-/* Haupt- und Hilfszonen einer Übung; ohne Muskeltext entscheidet die grobe Gruppe (Kategorie) */
+var KK_GRUPPE_ZONEN = { brust:["brust_o", "brust"], ruecken:["trapez_o", "rauten", "lat", "ruecken_u"], schulter:["schulter_v", "schulter_s"], arme:["bizeps", "trizeps", "unterarm"], rumpf:["bauch", "schraeg"], beine:["quad", "hamstring", "gesaess", "waden"] };
+/* Haupt- und Hilfszonen (fein) einer Übung; ohne Muskeltext entscheidet die grobe Gruppe (Kategorie) */
 function kkFein(ex){
-  var m = EX_MUSCLES[ex.id], haupt = {}, hilfe = {};
-  if(m){ haupt = kkZonenVon(m[0], 1); hilfe = kkZonenVon(m[1], .35); }
+  var m = EX_MUSCLES[ex.id], haupt = {}, hilfe = {}, sch = KK_AUSNAHME[ex.id];
+  if(m){ haupt = kkZonenVon(m[0], 1, null, sch); hilfe = kkZonenVon(m[1], .35, null, sch); }
   if(!Object.keys(haupt).length){
     Object.keys(mgVerteilung(ex)).forEach(function(g){
       var z = KK_GRUPPE_ZONEN[g] || [];
@@ -2452,24 +2541,31 @@ function kkUnbekannt(){
 /* wert: { zone: 0..1 } (Anteil der Akzentfarbe); opt.sel: gewählte Zonen; opt.attr: z. B. "data-lfzone" macht die Zonen antippbar */
 function koerperSVG(seite, wert, opt){
   opt = opt || {}; wert = wert || {};
-  var sel = selArr(opt.sel), s = '<svg class="kk" viewBox="0 0 100 200" role="img" aria-label="'+esc(t(seite === "vorn" ? "kkVorn" : "kkHinten"))+'">'+
+  var karte = kkKarte(), sel = selArr(opt.sel), s = '<svg class="kk" viewBox="0 0 100 200" role="img" aria-label="'+esc(t(seite === "vorn" ? "kkVorn" : "kkHinten"))+'">'+
     '<circle class="hd" cx="50" cy="14" r="10"/><rect class="hd" x="45" y="23" width="10" height="8" rx="3"/>';
-  Object.keys(KK_ZONEN[seite]).forEach(function(z){
+  Object.keys(karte[seite]).forEach(function(z){
     var v = Math.max(0, Math.min(1, wert[z] || 0)), an = sel.indexOf(z) > -1;
     s += '<g class="z'+(v ? ' an' : '')+(an ? ' sel' : '')+'" style="--p:'+Math.round(v*100)+'%"'+(opt.attr ? ' '+opt.attr+'="'+z+'" role="button" tabindex="0" aria-pressed="'+an+'" aria-label="'+esc(kkName(z))+'"' : '')+'>'+
-      KK_ZONEN[seite][z].map(function(r){ return '<rect x="'+r[0]+'" y="'+r[1]+'" width="'+r[2]+'" height="'+r[3]+'" rx="'+r[4]+'"/>'; }).join("")+'</g>';
+      karte[seite][z].map(function(r){ return '<rect x="'+r[0]+'" y="'+r[1]+'" width="'+r[2]+'" height="'+r[3]+'" rx="'+r[4]+'"/>'; }).join("")+'</g>';
   });
   return s+'</svg>';
 }
 function koerperPaar(wert, opt){
-  return '<div class="kk-paar"><figure>'+koerperSVG("vorn", wert, opt)+'<figcaption>'+esc(t("kkVorn"))+'</figcaption></figure>'+
+  return '<div class="kk-paar'+(kkFeinAn() ? ' fein' : '')+'"><figure>'+koerperSVG("vorn", wert, opt)+'<figcaption>'+esc(t("kkVorn"))+'</figcaption></figure>'+
     '<figure>'+koerperSVG("hinten", wert, opt)+'<figcaption>'+esc(t("kkHinten"))+'</figcaption></figure></div>';
 }
-/* Hauptzonen und unterstützende Zonen einer Übung als Mengen */
+/* Umschalter Grob · Fein (Unterstrich wie die anderen Schalter); gilt überall, ex = Übung, wenn er in einer Übungsinfo steht */
+function kkModusHTML(ex){
+  var f = kkFeinAn();
+  function knopf(wert, an, text){ return '<button type="button" data-kkmodus="'+wert+'" class="'+(an ? 'on' : '')+'" aria-pressed="'+an+'">'+esc(text)+'</button>'; }
+  return '<div class="kk-modus" role="group" aria-label="'+esc(t("kkDetail"))+'"'+(ex ? ' data-kkex="'+esc(ex.id)+'"' : '')+'>'+
+    knopf("grob", !f, t("kkGrob"))+knopf("fein", f, t("kkFein"))+'</div>';
+}
+/* Hauptzonen und unterstützende Zonen einer Übung als Mengen (in der gewählten Ansicht) */
 function kkTeile(ex){
-  var f = kkFein(ex), haupt = {}, hilfe = {};
-  Object.keys(f.haupt).forEach(function(z){ if(f.haupt[z] > 0) haupt[z] = 1; });
-  Object.keys(f.hilfe).forEach(function(z){ if(f.hilfe[z] > 0 && !haupt[z]) hilfe[z] = 1; });
+  var f = kkFein(ex), h = kkAgg(f.haupt), l = kkAgg(f.hilfe), haupt = {}, hilfe = {};
+  Object.keys(h).forEach(function(z){ if(h[z] > 0) haupt[z] = 1; });
+  Object.keys(l).forEach(function(z){ if(l[z] > 0 && !haupt[z]) hilfe[z] = 1; });
   return { haupt:haupt, hilfe:hilfe };
 }
 /* Übungsinfo: kleine Silhouetten; antippen vergrößert sie und nennt die Zonen beim Namen (kkInfoBinden) */
@@ -2477,10 +2573,11 @@ function kkInfoHTML(ex){
   var tl = kkTeile(ex), w = {};
   Object.keys(tl.hilfe).forEach(function(z){ w[z] = .38; });
   Object.keys(tl.haupt).forEach(function(z){ w[z] = 1; });
-  function namen(m){ return KK_REIHE.filter(function(z){ return m[z]; }).map(kkName).join(", "); }
-  return '<button type="button" class="info-kk-knopf" data-kkgross aria-expanded="false" aria-label="'+esc(t("kkGross"))+'">'+koerperPaar(w)+'</button>'+
+  function namen(m){ return kkReihe().filter(function(z){ return m[z]; }).map(kkName).join(", "); }
+  return '<button type="button" class="info-kk-knopf'+(kkFeinAn() ? ' fein' : '')+'" data-kkgross aria-expanded="false" aria-label="'+esc(t("kkGross"))+'">'+koerperPaar(w)+'</button>'+
     '<div class="info-kk-liste" hidden><div><span class="kk-punkt haupt"></span><b>'+esc(t("kkTrainiert"))+':</b> '+esc(namen(tl.haupt))+'</div>'+
-    (Object.keys(tl.hilfe).length ? '<div><span class="kk-punkt hilfe"></span><b>'+esc(t("musAssist"))+':</b> '+esc(namen(tl.hilfe))+'</div>' : '')+'</div>';
+    (Object.keys(tl.hilfe).length ? '<div><span class="kk-punkt hilfe"></span><b>'+esc(t("musAssist"))+':</b> '+esc(namen(tl.hilfe))+'</div>' : '')+'</div>'+
+    kkModusHTML(ex);
 }
 /* Ein Tipp auf die kleinen Silhouetten vergrößert sie und zeigt die Zonen mit Namen (gilt für alle Übungsinfos, auch im Studio) */
 document.addEventListener("click", function(e){
@@ -2491,46 +2588,65 @@ document.addEventListener("click", function(e){
   b.setAttribute("aria-expanded", String(auf));
   box.querySelector(".info-kk-liste").hidden = !auf;
 });
-/* Summe über mehrere Übungen: Hauptmuskeln zählen voll, Hilfsmuskeln mit 0,35 (wie die Auswertung); je höher die Summe, desto kräftiger */
-function kkSumme(ids){
+/* Grob · Fein umschalten: gilt für die ganze App; eine offene Übungsinfo wird an Ort und Stelle neu gezeichnet, sonst die Seite */
+document.addEventListener("click", function(e){
+  var b = e.target.closest && e.target.closest("[data-kkmodus]");
+  if(!b) return;
+  var fein = b.getAttribute("data-kkmodus") === "fein";
+  if(fein === kkFeinAn()) return;
+  state.db.settings.kkFein = fein; save();
+  var box = b.closest(".info-mus"), id = b.parentNode.getAttribute("data-kkex"), ex = id && findExercise(id);
+  if(box && ex){
+    var gross = box.classList.contains("gross");
+    ["info-kk-knopf", "info-kk-liste", "kk-modus"].forEach(function(c){ var el = box.querySelector("."+c); if(el) el.parentNode.removeChild(el); });
+    box.insertAdjacentHTML("beforeend", kkInfoHTML(ex));
+    if(gross){ box.querySelector(".info-kk-knopf").setAttribute("aria-expanded", "true"); box.querySelector(".info-kk-liste").hidden = false; }
+    return;
+  }
+  var y = window.scrollY; render(); window.scrollTo(0, y);
+});
+/* Summe über mehrere Übungen: Hauptmuskeln zählen voll, Hilfsmuskeln mit 0,35 (wie die Auswertung); je höher die Summe, desto kräftiger.
+   Dehnübungen zählen nur, wenn auchDehnen gesetzt ist (Mobility & Stretch) */
+function kkSumme(ids, auchDehnen){
   var sum = {};
   ids.forEach(function(id){
     var ex = findExercise(id);
-    if(!ex || ex.main === "stretch") return;
+    if(!ex || (ex.main === "stretch" && !auchDehnen)) return;
     var f = kkFein(ex);
     Object.keys(f.haupt).forEach(function(z){ sum[z] = (sum[z] || 0) + f.haupt[z]; });
     Object.keys(f.hilfe).forEach(function(z){ sum[z] = (sum[z] || 0) + f.hilfe[z]; });
   });
-  return sum;
+  return kkAgg(sum);
 }
 function kkStufe(summe){ return 1 - Math.pow(.55, summe || 0); }
 function kkSummeHTML(ids){
   var sum = kkSumme(ids), w = {}, leer = [];
-  KK_REIHE.forEach(function(z){ w[z] = kkStufe(sum[z]); if(KK_WICHTIG[z] && (sum[z] || 0) < .3) leer.push(kkName(z)); });
-  return '<div class="kk-summe">'+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p>'+
+  kkReihe().forEach(function(z){ w[z] = kkStufe(sum[z]); if(kkWichtig(z) && (sum[z] || 0) < .3) leer.push(kkName(z)); });
+  return '<div class="kk-summe">'+kkModusHTML()+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p>'+
     '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div></div>';
 }
 /* Kompakte Körperkarte für den Kopf eines Workouts (Deckblatt, Baukasten): Silhouetten plus drei Zeilen - viel trainiert, nur am Rande, Lücken */
-function kkKopfHTML(ids){
-  var sum = kkSumme(ids), w = {}, viel = [], rand = [], leer = [], max = 0;
-  KK_REIHE.forEach(function(z){ max = Math.max(max, sum[z] || 0); });
+function kkKopfHTML(ids, auchDehnen){
+  var sum = kkSumme(ids, auchDehnen), w = {}, viel = [], rand = [], leer = [], max = 0, reihe = kkReihe();
+  reihe.forEach(function(z){ max = Math.max(max, sum[z] || 0); });
   if(!max) return "";
   var schwelle = Math.max(1.8, max*.7);
-  KK_REIHE.forEach(function(z){
+  reihe.forEach(function(z){
     var v = sum[z] || 0;
     w[z] = kkStufe(v);
-    if(v >= schwelle) viel.push(z); else if(v < .3) leer.push(z); else if(v < 1) rand.push(z);
+    if(v >= schwelle) viel.push(z); else if(v < .3){ if(kkWichtig(z)) leer.push(z); } else if(v < 1) rand.push(z);
   });
   function zeile(kl, key, zonen){ return zonen.length ? '<div class="kk-zeile '+kl+'"><b>'+esc(t(key))+'</b> '+esc(zonen.map(kkName).join(", "))+'</div>' : ''; }
   return '<div class="kk-kopf">'+koerperPaar(w)+'<div class="kk-kopf-txt">'+
     zeile("viel", "kkViel", viel)+zeile("rand", "kkRand", rand)+
     (leer.length ? zeile("luecke", "kkLueckeKurz", leer) : '<div class="kk-zeile ok">'+esc(t("kkKeineLuecke"))+'</div>')+
-    '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div></div></div>';
+    '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div>'+kkModusHTML()+'</div></div>';
 }
 /* Filter: Zonen antippen (mehrere möglich) */
 function zonePasst(ex, zonen){
   zonen = kkNorm(zonen);
   if(!zonen.length) return true;
+  if(!ex) return false;
   var h = kkTeile(ex).haupt;
   return zonen.some(function(z){ return h[z]; });
 }
@@ -2538,9 +2654,9 @@ function kkFilterHTML(attr, sel){
   sel = kkNorm(sel);
   var w = {};
   sel.forEach(function(z){ w[z] = 1; });
-  return '<div class="af-lbl">'+esc(t("kkFilter"))+' <span>'+esc(t("kkMehrere"))+'</span></div>'+
+  return '<div class="af-lbl">'+esc(t("kkFilter"))+' <span>'+esc(t("kkMehrere"))+'</span></div>'+kkModusHTML()+
     '<div class="kk-filter">'+koerperPaar(w, { sel:sel, attr:attr })+'</div>'+
-    '<div class="fc-chips kk-chips">'+KK_REIHE.map(function(z){ return filterChip(attr, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div>';
+    '<div class="fc-chips kk-chips">'+kkReihe().map(function(z){ return filterChip(attr, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div>';
 }
 function auswertungHTML(ids, opt){
   opt = opt || {};
@@ -4428,13 +4544,14 @@ function renderDraftPage(d, cfg){
   var palHTML = "", hw = hinweise("", []);
   if(palOpen && d.ws){   // Mobility & Stretch: nur Aufwärm- bzw. Dehnübungen, bei Dehnen mit Körperregionen
     var wsSel = selArr(s.wsRegionen), wsAlle = wsUebungen(d.ws);
-    var wsListe = wsAlle.filter(function(ex){ return d.ws !== "dehn" || wsRegionOk(ex.id, wsSel); })
+    var wsZon = kkNorm(s.wsZonen);
+    var wsListe = wsAlle.filter(function(ex){ return (d.ws !== "dehn" || wsRegionOk(ex.id, wsSel)) && zonePasst(ex, wsZon); })
       .sort(function(a, b){ return (isExFav(b.id) ? 1 : 0) - (isExFav(a.id) ? 1 : 0); });
     hw = hinweise("bau", ["wbTippen"].concat(d.ws === "dehn" ? ["wsRegionHint"] : []));
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
-      (d.ws === "dehn" ? hw.z(1, "page-hint")+wsRegionFilterHTML(wsSel, wsListe.length, "Ex") : '')+
+      (d.ws === "dehn" ? hw.z(1, "page-hint") : '')+wsRegionFilterHTML(wsSel, wsListe.length, "Ex", wsZon, d.ws === "dehn")+
       '<div class="fig-grid" id="dz-pal">'+(wsListe.map(function(ex){ return kachel(ex); }).join("") ||
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
@@ -4471,7 +4588,7 @@ function renderDraftPage(d, cfg){
         '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+dauer+'</div>'+
         (exs.length ? '<div class="cat-tags">'+catTags(cats)+'</div>' : '')+
         (exs.length ? '<div class="cover-equip">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div>' : '')+
-        (exs.length && !warmDehn && !d.ws ? kkKopfHTML(d.items.map(function(it){ return it.ex; })) : '')+
+        (exs.length ? kkKopfHTML(d.items.map(function(it){ return it.ex; }), !!(warmDehn || d.ws)) : '')+
         '<button class="btn btn-primary" data-go'+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
         (d.src==="surprise" ? '<button class="btn btn-secondary wb-mischen" data-reroll>'+ICON_MISCHEN+' '+t("wbMischen")+'</button>' : '')+
         coverActs+
@@ -4479,7 +4596,7 @@ function renderDraftPage(d, cfg){
       '</div>'
     : '<div class="card"><label for="m-name">'+t("name")+'</label>'+
         '<input type="text" id="m-name" value="'+esc(d.name)+'" maxlength="40">'+
-        (exs.length && !d.ws ? kkKopfHTML(d.items.map(function(it){ return it.ex; })) : '')+'</div>';
+        (exs.length ? kkKopfHTML(d.items.map(function(it){ return it.ex; }), !!d.ws) : '')+'</div>';
 
   var ablaufHTML = cfg.cover
     ? '<div class="section-title wb-kopf"><span>'+t("myInWorkout", { n:exs.length, d:dauer })+'</span>'+
@@ -5941,6 +6058,7 @@ function renderWarmStretch(){
   var s = state.db.settings;
   var art = s.wsArt === "dehn" ? "dehn" : "warm", tab = ["uebungen", "meine"].indexOf(s.wsTab) > -1 ? s.wsTab : "workouts";
   var regSel = art === "dehn" && tab !== "meine" ? selArr(s.wsRegionen).filter(function(r){ return WS_REGIONEN.indexOf(r) > -1; }) : [];
+  var zonSel = tab !== "meine" ? kkNorm(s.wsZonen) : [];   // Körperkarte
   var liste = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
   if(tab === "workouts"){
     var wos = art === "warm" ? AUFWAERM_IDS.map(findLibWorkout).filter(Boolean)
@@ -5949,11 +6067,12 @@ function renderWarmStretch(){
       var exs = lw.exercises.map(findExercise).filter(Boolean);
       return { lw:lw, exs:exs, dur:workoutDuration(libWorkoutRun(lw)) };
     });
-    rows = rows.filter(function(r){ return !regSel.length || r.exs.some(function(ex){ return wsRegionOk(ex.id, regSel); }); }).sort(function(a, b){ return a.dur - b.dur; });
+    rows = rows.filter(function(r){ return (!regSel.length || r.exs.some(function(ex){ return wsRegionOk(ex.id, regSel); })) &&
+      (!zonSel.length || r.exs.some(function(ex){ return zonePasst(ex, zonSel); })); }).sort(function(a, b){ return a.dur - b.dur; });
     anzahl = rows.length;
     liste = rows.map(function(r){ return libWoCard(r.lw, r.exs, false, r.dur, woMains(r.exs)); }).join("");
   } else if(tab === "uebungen"){
-    var exl = wsUebungen(art).filter(function(ex){ return art !== "dehn" || wsRegionOk(ex.id, regSel); });
+    var exl = wsUebungen(art).filter(function(ex){ return (art !== "dehn" || wsRegionOk(ex.id, regSel)) && zonePasst(ex, zonSel); });
     anzahl = exl.length;
     liste = exl.length ? '<div class="fig-grid">'+exl.map(function(ex){ return libExKachel(ex); }).join("")+'</div>' : "";
   } else {
@@ -5976,7 +6095,7 @@ function renderWarmStretch(){
     hw.z(0, "rep-intro")+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
     (tab === "uebungen" ? hw.z(1, "page-hint") : '')+
-    (art === "dehn" && tab !== "meine" ? wsRegionFilterHTML(regSel, anzahl, tab === "uebungen" ? "Ex" : "Wo") : '')+
+    (tab !== "meine" ? wsRegionFilterHTML(regSel, anzahl, tab === "uebungen" ? "Ex" : "Wo", zonSel, art === "dehn") : '')+
     // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
     '<div style="--bereich:var(--ws-color)">'+(liste || '<div class="empty">'+t("libEmpty")+'</div>')+'</div>'+
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>'+

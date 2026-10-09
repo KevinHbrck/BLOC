@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-09 · Körperkarte grob/fein, im Workout-Kopf und in Mobility & Stretch; Studio-Ausrüstung
+
+- **Grob · Fein**: überall, wo die Körperkarte steht (Übungsinfo, Workout-Kopf, Auswertung, Filter in Air, Studio, Baukasten, Suche, Mobility & Stretch), gibt es unter der Karte einen Schalter mit Unterstrich. **Grob** (Standard) = 10 Zonen, **Fein** = 21 Zonen und die Silhouetten größer, damit sich kleine Zonen am Handy antippen lassen. Die Wahl gilt für die ganze App (`settings.kkFein`); eine gewählte Zone wandert mit (z. B. „Hintere Schulter“ wird grob zu „Schultern“). Gerechnet wird immer fein, grob fasst zusammen (`KK_F2G`).
+- **Workout-Kopf**: Deckblatt und Baukasten zeigen oben die Körperkarte mit **Viel**, **Nur am Rande** und **Lücken** (`kkKopfHTML`).
+- **Mobility & Stretch**: dieselbe Körperkarte als Filter (Dehnen und Aufwärmen, `settings.wsZonen`) und im Kopf von Aufwärm- und Dehn-Workouts (dort zählen Dehnübungen mit).
+- **Studio**: Langhantel, Kurzhantel & Kettlebell, Stange & Barren, Widerstandsband und Körpergewicht stehen jetzt bei **Ausrüstung**, nicht mehr bei den Gruppen. Die Gruppen sind nur noch die sechs Muskelgruppen; die Langhantel-Übungen stehen in ihrer Muskelgruppe (`STUDIO_GRUPPEN` in `daten.js`). Mit einem Ausrüstungs-Chip stehen die Air-Gruppen offen, sonst zugeklappt unter „Aus Air“ (jetzt vier, neu: Widerstandsband). Alte gespeicherte Gruppen-Chips ziehen automatisch in die Ausrüstung um (`studioFilterAlt`).
+- Fassung 2026-10-09-24.
+
 ## 2026-10-09 · Körperkarte auch im Studio, Unterer Rücken als eigene Zone
 
 - **Studio**: die Filterkarte (Studio › Übungen und beim Zusammenstellen eines Plans) hat jetzt dieselbe Zeile „Körper“ wie Air: Zonen antippen, mehrere möglich; „Zurücksetzen“ löscht sie mit. Gespeichert in `settings.stZonen`.

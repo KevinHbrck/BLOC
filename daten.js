@@ -940,13 +940,12 @@ ILLU_POSES["reverse-butterfly"] = [
   Q(null,[50,30],[50,60],[[43,64,40,82,36,86],[57,64,60,82,64,86]],[[38,35,26,35],[62,35,74,35]], gLinie("M36 62H64M50 62V89")+gGriff(26,35)+gGriff(74,35), true)];
 /* Gruppen im Reiter „Studio“ */
 var STUDIO_GRUPPEN = [
-  { id:"beine",   de:"Beine & Po", en:"Legs & glutes", ids:"leg-press leg-press-45 leg-press-single hack-squat smith-squat leg-extension leg-curl adductor-machine abductor-machine hip-thrust glute-kickback-cable calf-machine seated-calf glute-machine calf-press lying-leg-curl cable-pull-through" },
-  { id:"brust",   de:"Brust",   en:"Chest",  ids:"chest-press-machine incline-chest-press smith-bench-press butterfly cable-crossover assisted-dip incline-db-press db-fly pullover" },
-  { id:"ruecken", de:"Rücken",  en:"Back",   ids:"lat-pulldown close-grip-pulldown assisted-pullup row-machine high-row-machine cable-row t-bar-row face-pull straight-arm-pulldown reverse-butterfly back-extension back-extension-machine" },
-  { id:"schulter",de:"Schultern", en:"Shoulders", ids:"shoulder-press-machine lateral-raise-machine lateral-raise cable-lateral-raise shrugs" },
+  { id:"beine",   de:"Beine & Po", en:"Legs & glutes", ids:"leg-press leg-press-45 leg-press-single hack-squat smith-squat leg-extension leg-curl adductor-machine abductor-machine hip-thrust glute-kickback-cable calf-machine seated-calf glute-machine calf-press lying-leg-curl cable-pull-through barbell-squat barbell-deadlift barbell-rdl" },
+  { id:"brust",   de:"Brust",   en:"Chest",  ids:"chest-press-machine incline-chest-press smith-bench-press butterfly cable-crossover assisted-dip incline-db-press db-fly pullover bench-press" },
+  { id:"ruecken", de:"Rücken",  en:"Back",   ids:"lat-pulldown close-grip-pulldown assisted-pullup row-machine high-row-machine cable-row t-bar-row face-pull straight-arm-pulldown reverse-butterfly back-extension back-extension-machine barbell-row" },
+  { id:"schulter",de:"Schultern", en:"Shoulders", ids:"shoulder-press-machine lateral-raise-machine lateral-raise cable-lateral-raise shrugs barbell-overhead-press" },
   { id:"arme",    de:"Arme",    en:"Arms",   ids:"biceps-machine cable-curl hammer-curl barbell-curl triceps-pushdown overhead-cable-triceps triceps-machine triceps-extension-machine skull-crusher" },
-  { id:"bauch",   de:"Bauch",   en:"Abs",    ids:"ab-crunch-machine cable-crunch rotary-torso captains-chair cable-woodchop" },
-  { id:"lh",      de:"Langhantel", en:"Barbell", ids:"bench-press barbell-squat barbell-deadlift barbell-rdl barbell-row barbell-overhead-press" }
+  { id:"bauch",   de:"Bauch",   en:"Abs",    ids:"ab-crunch-machine cable-crunch rotary-torso captains-chair cable-woodchop" }
 ];
 STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){
   (ILLU_POSES[id] || []).forEach(function(q){ if(q && q.x) q.x = q.x.replace(/class="(ip|ipf)( gp)?"/g, 'class="$1$2 gm"'); });
