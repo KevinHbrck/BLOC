@@ -1713,10 +1713,17 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   function schulter(p, n){ return [p[0]+(n[0]-p[0])*.85, p[1]+(n[1]-p[1])*.85]; }
   function arm(p, n, a1, a2){ var e = J(schulter(p, n), a1, 11), h = J(e, a2, 12.5); return [r1(e[0]), r1(e[1]), r1(h[0]), r1(h[1])]; }
   function leg(p, a1, a2, zeh){ var k = J(p, a1, 20), a = J(k, a2, 19), z = zeh || [8, 0]; return [r1(k[0]), r1(k[1]), r1(a[0]), r1(a[1]), r1(a[0]+z[0]), r1(a[1]+z[1])]; }
-  function hand(q, i){ var a = q.a[i || 0]; return [a[a.length-2], a[a.length-1]]; }
-  function fuss(q, i){ var l = q.l[i || 0]; return [l[2], l[3]]; }
+  /* Punkte tragen eine Marke (.t): Hand h, Fuß f, Knie k + Nummer - damit das Band in der Animation mitläuft und sich dehnt */
+  function hand(q, i){ var a = q.a[i || 0], r = [a[a.length-2], a[a.length-1]]; r.t = "h"+(i || 0); return r; }
+  function fuss(q, i){ var l = q.l[i || 0], r = [l[2], l[3]]; r.t = "f"+(i || 0); return r; }
+  function knie(q, i){ var l = q.l[i || 0], r = [l[0], l[1]]; r.t = "k"+(i || 0); return r; }
   /* Band als Linienzug durch die Punkte; mehrere Linien: mehrere bl()-Aufrufe aneinanderhängen */
-  function bl(){ var d = ""; for(var i=0;i<arguments.length;i++) d += (i ? "L" : "M")+pt(arguments[i]); return '<path class="ip gb" d="'+d+'"/>'; }
+  /* data-bd: dieselbe Linie als Marken (Hand/Fuß/Knie oder fester Punkt) - die Animation zeichnet sie neu, wenn sich die Glieder bewegen */
+  function bl(){
+    var d = "", bd = [];
+    for(var i=0;i<arguments.length;i++){ var p = arguments[i]; d += (i ? "L" : "M")+pt(p); bd.push(p.t || (r1(p[0])+","+r1(p[1]))); }
+    return '<path class="ip gb" d="'+d+'" data-bd="'+bd.join("|")+'"/>';
+  }
   function anker(x, y){ return '<circle class="ip" cx="'+x+'" cy="'+y+'" r="2.4"/>'; }
   /* Seitenansicht: Hüfte p, Rumpfwinkel deg, Beine/Arme als Winkelpaare, gear(q) liefert das Band */
   function S(p, deg, legs, arms, gear, o){
@@ -2114,8 +2121,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-clamshell", "Muschel mit Band", "Band Clamshell", "legs", 3, 30, 1,
     "Seitlich liegen, Knie öffnen, Füße bleiben zusammen", "Lie on your side, open your knees, keep your feet together",
     1, 1, "kraft",
-    [(function(){ var q = S([46,83], 185, [[-28,172],[-18,172]], [], null, { len:26 }); q.x = bl(q.l[0].slice(0,2), q.l[1].slice(0,2)); return q; })(),
-     (function(){ var q = S([46,83], 185, [[-74,145],[-18,172]], [], null, { len:26 }); q.x = bl(q.l[0].slice(0,2), q.l[1].slice(0,2)); return q; })()],
+    [(function(){ var q = S([46,83], 185, [[-28,172],[-18,172]], [], null, { len:26 }); q.x = bl(knie(q,0), knie(q,1)); return q; })(),
+     (function(){ var q = S([46,83], 185, [[-74,145],[-18,172]], [], null, { len:26 }); q.x = bl(knie(q,0), knie(q,1)); return q; })()],
     ["Auf die Seite legen, die Knie angewinkelt, das Band um beide Oberschenkel knapp über den Knien.|Die Füße bleiben aufeinander, das Becken stabil.|Das obere Knie gegen das Band öffnen, kurz halten und langsam schließen. Nach der Hälfte die Seite wechseln.",
      "Lie on your side with your knees bent and the band around both thighs just above the knees.|Keep your feet together and your pelvis steady.|Open your top knee against the band, pause and close slowly. Switch sides halfway."],
     ["Becken bleibt stabil, nicht nach hinten rollen.|Bauch leicht angespannt.", "Mit dem Becken mitkippen, statt aus der Hüfte zu öffnen.",

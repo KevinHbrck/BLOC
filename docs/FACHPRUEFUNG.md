@@ -16,7 +16,7 @@ Stand: 2026-10-06 · Fassung 2026-10-02-46
 | Summit-Programme (Challenges auf Zeit) und Einheiten | 52 Programme, 12 Einheiten à 3 Stufen | `daten.js` (`REP_WORKOUT_ROWS`, `REP_EINHEITEN`) | Sind Wiederholungszahlen und Pausen für die angegebene Stufe vertretbar? (Das sind bewusst harte Selbstvergleichs-Challenges.) |
 | „Überrasch mich“-Regeln | Generator | `app.js` (Suche „spDauerTreffen“, Überrasch-Regeln in der README) | Ist die Mischung (Muskelgruppen reihum, Drücken/Ziehen, Burpee-Variante) vertretbar? |
 | „Leichter / Schwerer“-Ketten | 9 Ketten, ca. 35 Übungen | `daten.js` (`LZ_KETTEN`) | Ist die Reihenfolge von leicht nach schwer fachlich richtig? Fehlen sinnvolle Zwischenstufen (z. B. Knie-Liegestütze)? |
-| Zuordnung Muskelgruppen und Körperregionen | `EX_MUSCLES`, Dehnen-Regionen | `daten.js` | Stimmen Haupt- und Hilfsmuskeln? |
+| Zuordnung Muskelgruppen und Körperregionen | `EX_MUSCLES`, Dehnen-Regionen, Körperkarte (`MUSKEL_GRP`, `KK_ZONEN` in `app.js`) | `daten.js` | Stimmen Haupt- und Hilfsmuskeln? Passen die sechs Gruppen auf der Körperkarte (Gesäß liegt bei „Beine & Po“)? |
 | Figuren | Strichfiguren je Übung | `daten.js` (`ILLU_POSES`, `ILLU_SEQ`) | Zeigen sie die Ausführung im Wesentlichen richtig? (Prüfansicht: `index.html?dev` und in der Konsole `BLOC_DEV`) |
 | Bewegungsempfehlung in der Statistik | Statistik-Karte | `app.js` (`statWho…`) | Ist die Darstellung (150 min, 2 Krafttage) richtig und nicht irreführend? |
 

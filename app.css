@@ -2117,3 +2117,35 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .lz-leer{ flex:1; }
 /* Suche: Kategorien */
 .sr-kats{ margin-top:10px; }
+
+/* Körperkarte: zwei Silhouetten (vorn/hinten), die Muskelgruppen färben sich in der Akzentfarbe, je kräftiger desto öfter */
+.kk-paar{ display:flex; justify-content:center; gap:16px; margin:2px 0 4px; }
+.kk-paar figure{ margin:0; text-align:center; }
+.kk-paar figcaption{ font-size:11px; color:var(--text-dim); margin-top:2px; }
+:root{ --kk-grau:color-mix(in srgb, var(--text) 14%, var(--bg)); }
+.kk{ width:64px; height:128px; display:block; }
+.kk .hd{ fill:var(--kk-grau); }
+.kk .z rect{ fill:color-mix(in srgb, var(--bereich, var(--accent)) var(--p, 0%), var(--kk-grau)); transition:fill .25s ease; }
+.kk .z.sel rect{ stroke:var(--bereich, var(--accent)); stroke-width:2.2; }
+.kk .z[role="button"]{ cursor:pointer; }
+.kk .z[role="button"]:focus-visible rect{ stroke:var(--text); stroke-width:2; }
+.info-mus{ display:flex; align-items:center; gap:10px; }
+.info-mus-t{ flex:1; min-width:0; }
+.info-kk{ flex:none; }
+.info-kk .kk{ width:46px; height:92px; }
+.info-kk .kk-paar{ gap:8px; margin:0; }
+.info-kk .kk-paar figcaption{ display:none; }
+.kk-summe{ padding:6px 0 10px; }
+.kk-summe .kk{ width:72px; height:144px; }
+.kk-note{ margin:4px 0 8px; font-size:13px; color:var(--text-dim); text-align:center; }
+.kk-skala{ display:flex; align-items:center; justify-content:center; gap:8px; font-size:11px; color:var(--text-dim); }
+.kk-skala i{ width:90px; height:8px; border-radius:4px; background:linear-gradient(90deg, var(--kk-grau, #ddd), var(--bereich, var(--accent))); }
+.kk-filter{ margin:4px 0 6px; }
+.kk-filter .kk{ width:84px; height:168px; }
+.kk-chips{ margin-top:6px; }
+/* Suche: Körperkarte als aufklappbare Zeile unter den Kategorien */
+.sr-koerper-knopf{ display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; margin:8px 0 4px; padding:10px 14px; border:1px solid var(--border); border-radius:12px;
+  background:var(--surface); color:var(--text); font:inherit; font-size:14px; font-weight:600; text-align:left; cursor:pointer; }
+.sr-koerper{ margin:0 0 8px; padding:6px 12px 10px; border:1px solid var(--border); border-radius:12px; background:var(--surface); }
+.sr-koerper[hidden]{ display:none; }
+.sr-koerper .af-lbl{ margin-top:4px; }

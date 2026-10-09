@@ -152,6 +152,41 @@
       await bis(function () { return $$(".info-views figure").length === 2; }, 3000, "zwei Ansichten");
       klick("[data-close]");
     }],
+    ["Körperkarte: Gruppe antippen filtert die Übungen, Info mit Silhouetten, Auswertung mit Summe", async function () {
+      await heim();
+      klick('[data-nav="#library"]');
+      klick(await bis(function () { return $('[data-libtab="exercises"]'); }, 3000, "Reiter Übungen"));
+      await bis(function () { return $$("[data-playex]").length > 50; }, 3000, "Übungen in Air");
+      var alle = $$("[data-playex]").length;
+      await filterAuf();
+      pruefe($$(".kk-filter .kk").length === 2 && $$("[data-lfzone]").length >= 12, "Körperkarte im Filter fehlt");
+      klick('.fc-chip[data-lfzone="brust"]');
+      await bis(function () { return $('.fc-chip[data-lfzone="brust"].on') && $(".af-body"); }, 2000, "Brust gewählt, Karte bleibt offen");
+      var brust = $$("[data-playex]").length;
+      pruefe(brust > 0 && brust < alle, "Filter Brust: " + brust + " von " + alle);
+      pruefe(!$('[data-playex="air-squats"]') && $('[data-playex="push-ups"]'), "Brust-Filter zeigt falsche Übungen");
+      klick('[data-lfreset]');
+      await bis(function () { return $$("[data-playex]").length === alle; }, 2000, "zurückgesetzt");
+      klick(".af-fuss .btn-primary");
+      klick(await bis(function () { return $('[data-info="band-squat"]'); }, 2000, "Kachel Kniebeuge mit Band"));
+      await bis(function () { return $(".info-kk .kk"); }, 2000, "Silhouetten in der Übungsinfo");
+      pruefe($$(".info-kk .z.an").length > 0, "keine Muskelgruppe gefärbt");
+      klick("[data-close]");
+      klick('[data-libtab="workouts"]');
+      klick(await bis(function () { return $("[data-cover]"); }, 3000, "Workout"));
+      await bis(function () { return $(".ausw .kk-summe .kk"); }, 3000, "Körperkarte in der Auswertung");
+      // Suche: Körperkarte aufklappen, Muskelgruppe wählen -> nur passende Übungen
+      await heim();
+      klick('.tabbar [data-nav="#search"]');
+      await bis(function () { return $("[data-srkk]"); }, 3000, "Suche mit Körper-Zeile");
+      klick("[data-srkk]");
+      klick(await bis(function () { return $('.fc-chip[data-srzone="ruecken"]'); }, 2000, "Körperkarte in der Suche"));
+      await bis(function () { return $('.fc-chip[data-srzone="ruecken"].on') && $$("[data-sr]").length > 5; }, 2000, "Rücken-Übungen in der Suche");
+      pruefe($$("[data-sr]").length < 140, "Rücken-Filter filtert nicht");
+      await heim();   // zurück in die Bibliothek, wie der nächste Test sie erwartet
+      klick('[data-nav="#library"]');
+      await bis(function () { return $("[data-surprise]"); }, 3000, "Bibliothek");
+    }],
     ["Widerstandsband: 38 Übungen vollständig (zwei Posen, Anleitung, Haltung, Muskeln, Gerät)", async function () {
       var d = W.BLOC_DATEN, ids = d.EXERCISE_ROWS.map(function (x) { return x[0]; }).filter(function (id) { return id.indexOf("band-") === 0; });
       pruefe(ids.length === 38, "erwartet 38 Band-Übungen, gefunden " + ids.length);

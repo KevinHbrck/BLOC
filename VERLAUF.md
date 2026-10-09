@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-09 · Körperkarte und Band-Animation
+
+- **Körperkarte** (zwei Silhouetten vorn/hinten, sechs Muskelgruppen wie in der Auswertung): in der **Übungsinfo** (Air und Studio) zeigt sie, was trainiert (kräftig) und unterstützt wird (hell); in der **Auswertung** eines Workouts, Plans und der Woche addieren sich die Gruppen – je öfter, desto kräftiger, darunter steht, was noch fehlt. Beim Workout-Bauen ist die Auswertung gleich aufgeklappt.
+- **Filter nach Körperbereich**: in Air › Übungen und im Baukasten (Filterkarte, Zeile „Körper“) sowie in der **Suche** (aufklappbare Zeile): Gruppen antippen, mehrere möglich; es erscheinen Übungen, die diese Gruppen als Hauptmuskeln haben.
+- **Band wird gedehnt**: in der Animation läuft das Band mit Händen, Füßen und Knien mit; je länger, desto dünner, kürzer als in Ruhe hängt es durch. Technik: Band-Linien tragen `data-bd` (Marken), `bandSplit` in `app.js` löst sie aus den festen Geräteteilen und zeichnet sie je Bild neu.
+- Schnelltest 29 Prüfungen (neu: Körperkarte in Info, Filter, Auswertung und Suche). Fassung 2026-10-09-11.
+
 ## 2026-10-09 · Air: Widerstandsband als Gerät
 
 - Neues Gerät **Widerstandsband** (`band`) in der Ausrüstung (Filter in Air › Übungen, Gerät-Symbol auf der Kachel). Die Übung „Klimmzug mit Bandhilfe“ braucht zusätzlich die Stange.

@@ -712,11 +712,11 @@ function applySearch(root, q){
 var libQuery = "", buildQuery = "";
 /* Übungen gefiltert und sortiert (Standard = Reihenfolge der Liste, A–Z = alphabetisch) */
 /* Filterreihenfolge: erst die Hauptkategorie (Kacheln), dann Fokus und Ausrüstung */
-function exPasses(ex, cat, equip, mains){
-  return mainMatch(mains, ex.main) && catMatch(cat, ex.cats) && equipMatch(equip, ex) && gearOk(ex, cat, equip, mains);
+function exPasses(ex, cat, equip, mains, zonen){
+  return mainMatch(mains, ex.main) && catMatch(cat, ex.cats) && equipMatch(equip, ex) && gearOk(ex, cat, equip, mains) && zonePasst(ex, zonen);
 }
-function sortedExercises(cat, sort, equip, mains){
-  var list = EXERCISES.filter(function(ex){ return !libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, mains); });
+function sortedExercises(cat, sort, equip, mains, zonen){
+  var list = EXERCISES.filter(function(ex){ return !libHidden("ex:"+ex.id) && exPasses(ex, cat, equip, mains, zonen); });
   if(sort==="az") list = list.slice().sort(function(a, b){
     return tplText(a.name).localeCompare(tplText(b.name), currentLang());
   });
@@ -876,6 +876,48 @@ function ptsD(start, pts){
   pts.forEach(function(q){ d += "L"+q[0].toFixed(1)+" "+q[1].toFixed(1); });
   return d;
 }
+/* Widerstandsband in der Animation: Linien mit data-bd (Marken: h = Hand, f = Fuß, k = Knie, sonst fester Punkt) werden aus den festen Geräteteilen
+   gelöst und in jedem Bild neu gezeichnet. Je länger das Band, desto dünner (gedehnt); ist es kürzer als in Ruhe, hängt es leicht durch. */
+function bandSplit(gs){
+  var re = /<path class="ip gb" d="[^"]*" data-bd="([^"]+)"\/>/g, alle = [];
+  gs.forEach(function(g){
+    var l = [];
+    g.fest.replace(re, function(m, d){
+      l.push(d.split("|").map(function(s){
+        var m2 = /^([hfk])(\d)$/.exec(s);
+        if(m2) return { a:m2[1], i:+m2[2] };
+        var xy = s.split(","); return { x:+xy[0], y:+xy[1] };
+      }));
+      return m;
+    });
+    alle.push(l);
+  });
+  var n = alle[0].length;
+  if(!n || alle.some(function(l){ return l.length !== n || l.some(function(b, i){ return b.length !== alle[0][i].length; }); })) return null;
+  gs.forEach(function(g){ g.fest = g.fest.replace(re, ""); });
+  return alle;   // alle[Pose][Band] = Marken
+}
+function bandPunkte(spez, P){
+  return spez.map(function(m){
+    if(m.a === "h"){ var a = P.arms[m.i] || P.arms[0]; return a[a.length-1]; }
+    if(m.a === "f"){ var l = P.legs[m.i] || P.legs[0]; return l[Math.min(1, l.length-1)]; }
+    if(m.a === "k"){ var l2 = P.legs[m.i] || P.legs[0]; return l2[0]; }
+    return [m.x, m.y];
+  });
+}
+function bandLaenge(pts){ var L = 0; for(var i=1;i<pts.length;i++) L += Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]); return L; }
+function bandPfad(pts, ruhe){
+  var L = bandLaenge(pts), hang = Math.max(0, ruhe*1.08 - L)*.5, d = "M"+pts[0][0].toFixed(1)+" "+pts[0][1].toFixed(1);
+  for(var i=1;i<pts.length;i++){
+    var a = pts[i-1], b = pts[i], sl = Math.hypot(b[0]-a[0], b[1]-a[1]) || 1;
+    if(hang > .6){
+      var nx = -(b[1]-a[1])/sl, ny = (b[0]-a[0])/sl, s = hang*sl/(L || 1);
+      if(ny < 0){ nx = -nx; ny = -ny; }   // Durchhang nach unten
+      d += "Q"+((a[0]+b[0])/2 + nx*s).toFixed(1)+" "+((a[1]+b[1])/2 + ny*s).toFixed(1)+" "+b[0].toFixed(1)+" "+b[1].toFixed(1);
+    } else d += "L"+b[0].toFixed(1)+" "+b[1].toFixed(1);
+  }
+  return { d:d, w:Math.max(1.5, Math.min(2.8, 2.6*Math.pow(ruhe*1.08/Math.max(L, 1), .9))) };
+}
 var illuFigs = [], illuRaf = 0, illuIO = null, illuSeq = 0;
 function illuSetup(svg){
   svg.setAttribute("data-rig", "1");
@@ -889,6 +931,7 @@ function illuSetup(svg){
   var R = qs.map(rigFromPose);
   for(var pass=0; pass<2; pass++) for(var k=1; k<R.length; k++) rigAlign(R[0], R[k]);
   var gs = qs.map(function(q){ return gearSplit(q.x); });
+  var bands = bandSplit(gs);   // Band-Linien laufen mit den Gliedern mit (siehe bandSplit)
   var P = R.map(function(r){ return rigPoints(r, r, 0); });
   function naechsteHand(pts, at){
     var best = 0, bd = Infinity;
@@ -923,6 +966,7 @@ function illuSetup(svg){
   var gleich = gs.every(function(g){ return g.fest === gs[0].fest; });
   if(gleich || gs.length > 2) html += gs[0].fest;
   else html += '<g class="gx-a">'+gs[0].fest+'</g><g class="gx-b" style="opacity:0">'+gs[1].fest+'</g>';
+  if(bands) bands[0].forEach(function(b, i){ html += '<path class="ip gb" data-band="'+i+'"/>'; });
   var vorn = "";
   gears.forEach(function(g, i){
     var el = '<g class="gear" data-g="'+i+'">'+g.svg+'</g>';
@@ -949,10 +993,14 @@ function illuSetup(svg){
               legs:[], arms:[], gearEls:[],
               spine:svg.querySelector("[data-spine]"), head:svg.querySelector("[data-head]"),
               neck:svg.querySelector("[data-neck]"), brust:svg.querySelector("[data-brust]"), fersen:[], halo:svg.querySelector("[data-halo]"), hands:[],
-              gxa:svg.querySelector(".gx-a"), gxb:svg.querySelector(".gx-b") };
+              gxa:svg.querySelector(".gx-a"), gxb:svg.querySelector(".gx-b"), bands:bands, bandEls:[], bandRuhe:[] };
   A.legs.forEach(function(k, i){ fig.legs[i] = svg.querySelector('[data-leg="'+i+'"]'); fig.fersen[i] = svg.querySelector('[data-ferse="'+i+'"]'); });
   A.arms.forEach(function(k, i){ fig.arms[i] = svg.querySelector('[data-arm="'+i+'"]'); fig.hands[i] = svg.querySelector('[data-hand="'+i+'"]'); });
   gears.forEach(function(g, i){ fig.gearEls[i] = svg.querySelector('[data-g="'+i+'"]'); });
+  if(bands) bands[0].forEach(function(b, i){
+    fig.bandEls[i] = svg.querySelector('[data-band="'+i+'"]');
+    fig.bandRuhe[i] = Math.min.apply(null, bands.map(function(sp, k){ return bandLaenge(bandPunkte(sp[i], P[k])); }));
+  });
   illuDraw(fig, { i:0, j:1 % R.length, t:0 });
   illuFigs.push(fig);
   if(illuIO) illuIO.observe(svg);
@@ -979,6 +1027,11 @@ function illuDraw(f, b){
     var hand = g.leg != null ? P.legs[g.leg][g.pt] : P.arms[g.arm][P.arms[g.arm].length-1], oa = g.o[b.i], ob = g.o[b.j];
     var ox = oa[0] + (ob[0]-oa[0])*t, oy = oa[1] + (ob[1]-oa[1])*t;
     f.gearEls[i].setAttribute("transform", "translate("+(hand[0]+ox-g.at[0]).toFixed(1)+" "+(hand[1]+oy-g.at[1]).toFixed(1)+")");
+  });
+  if(f.bands) f.bandEls.forEach(function(el, n){
+    var a = bandPunkte(f.bands[b.i][n], P), c = bandPunkte(f.bands[b.j][n], P), pts = a.map(function(p, m){ return [p[0] + (c[m][0]-p[0])*t, p[1] + (c[m][1]-p[1])*t]; });
+    var r = bandPfad(pts, f.bandRuhe[n]);
+    el.setAttribute("d", r.d); el.style.strokeWidth = r.w.toFixed(2);
   });
   if(f.gxa){ var x = b.i === 0 ? t : 1-t; f.gxa.style.opacity = (1-x).toFixed(2); f.gxb.style.opacity = x.toFixed(2); }
 }
@@ -1063,8 +1116,9 @@ function openExInfo(exId, live, lib){
       ? '<div class="info-views"><figure>'+illuHTML(exId, "info-illu")+'<figcaption>'+t(ILLU_VIEW2[exId].haupt === "front" ? "viewFront" : "viewSide")+'</figcaption></figure>'+
         '<figure>'+illuHTML(exId, "info-illu", true)+'<figcaption>'+t({ top:"viewTop", side:"viewSide" }[ILLU_VIEW2[exId].typ] || "viewFront")+'</figcaption></figure></div>'
       : illuHTML(exId, "info-illu"))+
-    (EX_MUSCLES[exId] ? '<div class="info-mus"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
-      (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>' : '')+
+    (EX_MUSCLES[exId] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
+      (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>'+
+      '<div class="info-kk">'+kkInfoHTML(ex)+'</div></div>' : '')+
     '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+steps+'</ol>'+
     (function(){
       var p = EX_POSTURE[exId];
@@ -1495,7 +1549,7 @@ function reiterZeileHTML(farbe, knoepfe){ return '<div class="rz" style="--rz:'+
    Timer-Workouts, Blöcke, die Bereiche und Aktionen wie „Neuer Block“. Das Feld bleibt stehen, nur die Treffer werden neu gezeichnet. */
 var gesamtQuery = "";
 /* Kategorien der Suche: ordnet die Gruppen der Treffer sechs Kategorien zu (Chips unter dem Suchfeld) */
-var suchKat = "alle";
+var suchKat = "alle", suchZonen = [], suchKoerperAuf = false;   // Körper-Filter der Suche: gewählte Muskelgruppen, Karte offen
 var SUCH_KATEGORIEN = ["alle", "uebungen", "workouts", "challenges", "timer", "bereiche", "erstellen"];
 function suchKategorie(gruppe){
   if(gruppe === t("libExercises")) return "uebungen";
@@ -1539,6 +1593,7 @@ function gesamtEintraege(){
       if(EX_INFO[ex.id]) openExInfo(ex.id, false, {});
       else go(ex.custom ? "#exedit/"+ex.id : "#playex/"+ex.id);
     });
+    l[l.length-1].ex = ex.id;   // für den Körper-Filter der Suche
   });
   // Summit: Einheiten, Programme, eigene Challenges
   function rep(id, gruppe){
@@ -1567,13 +1622,19 @@ function renderSearch(){
     '<div class="lib-chips sr-kats">'+SUCH_KATEGORIEN.map(function(k){
       return '<button type="button" class="lib-chip'+(suchKat === k ? ' active' : '')+'" data-srkat="'+k+'" aria-pressed="'+(suchKat === k)+'">'+esc(t("srKat_"+k))+'</button>';
     }).join("")+'</div>'+
+    '<button type="button" class="sr-koerper-knopf" data-srkk aria-expanded="'+suchKoerperAuf+'">'+esc(t("kkFilter"))+(suchZonen.length ? ' · '+suchZonen.map(kkName).join(', ') : '')+'<span class="tpl-chev'+(suchKoerperAuf ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>'+
+    '<div class="sr-koerper" id="sr-kk"'+(suchKoerperAuf ? '' : ' hidden')+'>'+kkFilterHTML('data-srzone', suchZonen)+'</div>'+
     '<div id="gs-res"></div><div style="height:40px"></div>';
   bindCommon();
   var feld = app.querySelector("#gs-q"), res = app.querySelector("#gs-res");
   function zeigen(){
-    var w = suchNorm(gesamtQuery), gewaehlt = suchKat !== "alle";
+    var w = suchNorm(gesamtQuery), zon = suchZonen.length > 0, gewaehlt = suchKat !== "alle" || zon;
     if(!w && !gewaehlt){ res.innerHTML = '<div class="rep-intro">'+esc(t("srHint"))+'</div>'; return; }
-    var treffer = alle.filter(function(e){ return (!gewaehlt || e.k === suchKat) && (!w || suchPasst(e.text, gesamtQuery)); });   // ohne Suchwort zeigt eine Kategorie alle ihre Einträge
+    // Muskelgruppen gewählt: nur Übungen, die diese Gruppen als Hauptmuskeln haben
+    var treffer = alle.filter(function(e){
+      if(zon && !(e.ex && zonePasst(findExercise(e.ex), suchZonen))) return false;
+      return (suchKat === "alle" || e.k === suchKat) && (!w || suchPasst(e.text, gesamtQuery));   // ohne Suchwort zeigt eine Kategorie alle ihre Einträge
+    });
     if(!treffer.length){ res.innerHTML = '<div class="empty" style="padding:30px 20px;">'+esc(t("noResult"))+'</div>'; return; }
     var html = "", gruppe = null, n = 0, reihe = [];
     treffer.forEach(function(e){ if(reihe.indexOf(e.g) < 0) reihe.push(e.g); e.n = suchPasst(e.titel, gesamtQuery) ? 0 : 1; });
@@ -1601,8 +1662,14 @@ function renderSearch(){
       zeigen();
     });
   });
+  // Körperkarte der Suche: aufklappen, Muskelgruppen antippen (mehrere möglich)
+  var kkKnopf = app.querySelector("[data-srkk]");
+  kkKnopf.addEventListener("click", function(){ suchKoerperAuf = !suchKoerperAuf; renderSearch(); });
+  app.querySelectorAll("[data-srzone]").forEach(function(el){
+    el.addEventListener("click", function(){ suchZonen = selToggle(suchZonen, el.getAttribute("data-srzone")); renderSearch(); });
+  });
   zeigen();
-  if(!gesamtQuery) feld.focus();
+  if(!gesamtQuery && !suchKoerperAuf) feld.focus();
 }
 /* Startseite: Favoriten als Kacheln, „Überrasch mich“, darunter die zwei Bereiche Timer und Bibliothek */
 function renderHome(){
@@ -2268,6 +2335,81 @@ function mgProzent(ids){   // Zeilen in fester Reihenfolge, Summe 100 (größter
   rows.slice().sort(function(a, b){ return b.rest - a.rest; }).slice(0, diff).forEach(function(r){ r.pct++; });
   return { rows:rows, leer:!tot };
 }
+/* ============ Körperkarte ============
+   Zwei Silhouetten (vorn, hinten) mit den sechs Muskelgruppen der Auswertung. Verwendet in der Übungsinfo (trainiert / unterstützt),
+   in der Auswertung eines Workouts (Summe: je öfter, desto kräftiger) und als Filter in Air (Gruppen antippen). */
+var KK_ZONEN = {
+  vorn:   { schulter:[[21,32,18,13,6],[61,32,18,13,6]], brust:[[39,34,22,21,8]],
+            arme:[[13,45,10,29,5],[77,45,10,29,5],[11,76,9,27,4.5],[80,76,9,27,4.5]], rumpf:[[40,57,20,30,8]],
+            beine:[[37,90,12,12,5],[51,90,12,12,5],[37,104,12,44,6],[51,104,12,44,6],[38,151,10,40,5],[52,151,10,40,5]] },
+  hinten: { schulter:[[21,32,18,13,6],[61,32,18,13,6]], ruecken:[[37,34,26,34,9]],
+            arme:[[13,45,10,29,5],[77,45,10,29,5],[11,76,9,27,4.5],[80,76,9,27,4.5]], rumpf:[[41,70,18,17,7]],
+            beine:[[37,90,12,14,6],[51,90,12,14,6],[37,106,12,42,6],[51,106,12,42,6],[38,151,10,40,5],[52,151,10,40,5]] }
+};
+function kkName(zone){ for(var i = 0; i < MUSKEL_GRP.length; i++) if(MUSKEL_GRP[i].id === zone) return t(MUSKEL_GRP[i].key); return zone; }
+/* wert: { zone: 0..1 } (Anteil der Akzentfarbe); opt.sel: gewählte Zonen; opt.attr: z. B. "data-lfzone" macht die Zonen antippbar */
+function koerperSVG(seite, wert, opt){
+  opt = opt || {}; wert = wert || {};
+  var sel = selArr(opt.sel), s = '<svg class="kk" viewBox="0 0 100 200" role="img" aria-label="'+esc(t(seite === "vorn" ? "kkVorn" : "kkHinten"))+'">'+
+    '<circle class="hd" cx="50" cy="14" r="10"/><rect class="hd" x="45" y="23" width="10" height="8" rx="3"/>';
+  Object.keys(KK_ZONEN[seite]).forEach(function(z){
+    var v = Math.max(0, Math.min(1, wert[z] || 0)), an = sel.indexOf(z) > -1;
+    s += '<g class="z'+(v ? ' an' : '')+(an ? ' sel' : '')+'" style="--p:'+Math.round(v*100)+'%"'+(opt.attr ? ' '+opt.attr+'="'+z+'" role="button" tabindex="0" aria-pressed="'+an+'" aria-label="'+esc(kkName(z))+'"' : '')+'>'+
+      KK_ZONEN[seite][z].map(function(r){ return '<rect x="'+r[0]+'" y="'+r[1]+'" width="'+r[2]+'" height="'+r[3]+'" rx="'+r[4]+'"/>'; }).join("")+'</g>';
+  });
+  return s+'</svg>';
+}
+function koerperPaar(wert, opt){
+  return '<div class="kk-paar"><figure>'+koerperSVG("vorn", wert, opt)+'<figcaption>'+esc(t("kkVorn"))+'</figcaption></figure>'+
+    '<figure>'+koerperSVG("hinten", wert, opt)+'<figcaption>'+esc(t("kkHinten"))+'</figcaption></figure></div>';
+}
+/* Hauptgruppen und unterstützende Gruppen einer Übung (aus EX_MUSCLES, sonst nach Kategorie) */
+function kkTeile(ex){
+  var m = EX_MUSCLES[ex.id], haupt = {}, hilfe = {};
+  function gruppen(text){ return MUSKEL_GRP.filter(function(g){ return g.re.test(String(text || "").toLowerCase()); }).map(function(g){ return g.id; }); }
+  if(m){ gruppen(m[0]).forEach(function(g){ haupt[g] = 1; }); gruppen(m[1]).forEach(function(g){ if(!haupt[g]) hilfe[g] = 1; }); }
+  if(!Object.keys(haupt).length) Object.keys(mgVerteilung(ex)).forEach(function(g){ haupt[g] = 1; });
+  return { haupt:haupt, hilfe:hilfe };
+}
+function kkInfoHTML(ex){
+  var tl = kkTeile(ex), w = {};
+  Object.keys(tl.hilfe).forEach(function(g){ w[g] = .38; });
+  Object.keys(tl.haupt).forEach(function(g){ w[g] = 1; });
+  return koerperPaar(w);
+}
+/* Summe über mehrere Übungen: Hauptmuskeln zählen voll, Hilfsmuskeln mit 0,35 (wie die Auswertung); je höher die Summe, desto kräftiger */
+function kkSumme(ids){
+  var sum = {};
+  ids.forEach(function(id){
+    var ex = findExercise(id);
+    if(!ex || ex.main === "stretch") return;
+    var v = mgVerteilung(ex);
+    Object.keys(v).forEach(function(g){ sum[g] = (sum[g] || 0) + v[g]; });
+  });
+  return sum;
+}
+function kkStufe(summe){ return 1 - Math.pow(.55, summe || 0); }
+function kkSummeHTML(ids){
+  var sum = kkSumme(ids), w = {}, leer = [];
+  MUSKEL_GRP.forEach(function(g){ w[g.id] = kkStufe(sum[g.id]); if((sum[g.id] || 0) < .3) leer.push(t(g.key)); });
+  return '<div class="kk-summe">'+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p>'+
+    '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div></div>';
+}
+/* Filter: Zonen antippen (mehrere möglich) */
+function zonePasst(ex, zonen){
+  zonen = selArr(zonen);
+  if(!zonen.length) return true;
+  var h = kkTeile(ex).haupt;
+  return zonen.some(function(z){ return h[z]; });
+}
+function kkFilterHTML(attr, sel){
+  sel = selArr(sel);
+  var w = {};
+  sel.forEach(function(z){ w[z] = 1; });
+  return '<div class="af-lbl">'+esc(t("kkFilter"))+' <span>'+esc(t("kkMehrere"))+'</span></div>'+
+    '<div class="kk-filter">'+koerperPaar(w, { sel:sel, attr:attr })+'</div>'+
+    '<div class="fc-chips kk-chips">'+MUSKEL_GRP.map(function(g){ return filterChip(attr, g.id, sel.indexOf(g.id) > -1, "", t(g.key)); }).join("")+'</div>';
+}
 function auswertungHTML(ids, opt){
   opt = opt || {};
   var r = mgProzent(ids), notiz;
@@ -2276,7 +2418,8 @@ function auswertungHTML(ids, opt){
     var wenig = r.rows.filter(function(x){ return x.pct < 8; }).map(function(x){ return t(x.key); });
     notiz = wenig.length ? t(opt.woche ? "ausWoNote" : "ausAllNote", { n:wenig.join(", ") }) : t(opt.woche ? "ausWoOk" : "ausAllOk");
   } else notiz = t("ausNote");
-  return '<details class="ausw card"><summary><span class="ausw-t">'+esc(opt.titel || t("ausTitle"))+'</span><span class="ausw-s">'+esc(opt.sub || t("ausSum"))+'</span></summary>'+
+  return '<details class="ausw card"'+(opt.offen ? ' open' : '')+'><summary><span class="ausw-t">'+esc(opt.titel || t("ausTitle"))+'</span><span class="ausw-s">'+esc(opt.sub || t("ausSum"))+'</span></summary>'+
+    (r.leer ? '' : kkSummeHTML(ids))+
     (r.leer ? '' : r.rows.map(function(x){
       return '<div class="ausw-row'+(x.pct ? '' : ' null')+'"><span class="ausw-n">'+esc(t(x.key))+'</span>'+
         '<span class="ausw-bar"><i style="width:'+x.pct+'%"></i></span><b>'+x.pct+'%</b></div>';
@@ -2492,8 +2635,8 @@ function studioTimerBinden(id, eintrag){
 function studioInfoHTML(id, ex){
   var info = EX_INFO[id], lang = currentLang()==="en" ? 1 : 0;
   return info ? '<div class="section-title">'+esc(t("stInfo"))+'</div><div class="card st-info">'+
-      (EX_MUSCLES[id] ? '<div class="info-mus"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
-        (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>' : '')+
+      (EX_MUSCLES[id] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
+        (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div><div class="info-kk">'+kkInfoHTML(ex)+'</div></div>' : '')+
       '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+info[lang].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
       (EX_POSTURE[id] ? '<div class="info-title">'+t("posture")+'</div><ul class="info-posture">'+EX_POSTURE[id][lang*2].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'+
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(EX_POSTURE[id][lang*2+1])+'</div>' : '')+
@@ -3286,16 +3429,17 @@ function filterChip(attr, wert, an, ico, text){
 /* Text des unteren Knopfes: „12 Workouts anzeigen“. art: Wo (Workouts) · Ex (Übungen) · Ei (Einheiten) · Pr (Programme) */
 function filterZeigenText(n, art){ return n ? t("af"+art+(n === 1 ? "1" : "N"), { n:n }) : t("afNull"); }
 /* Air (Bibliothek und Baukasten): Training, Ausrüstung, Sortierung. Studio-Ausrüstung („Fitnessstudio“) gibt es hier nicht. */
-function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung){
-  cat = selArr(cat); equip = selArr(equip);
-  var namen = cat.map(catName).concat(equip.map(equipName));
+function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung, zonen){
+  cat = selArr(cat); equip = selArr(equip); var mitZonen = zonen !== undefined; zonen = selArr(zonen);
+  var namen = cat.map(catName).concat(equip.map(equipName), zonen.map(kkName));
   return filterKarteHTML({ offen:offen, toggle:'data-'+pre+'toggle', reset:'data-'+pre+'freset', n:namen.length,
     summe:namen.length ? namen.join(", ") : t(uebung ? "afAlleEx" : "afAlleWo"),
     zeigen:filterZeigenText(n, uebung ? "Ex" : "Wo"),
     inhalt:filterChipsHTML(t("afTraining"), "", LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
         return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join(""))+
       filterChipsHTML(t("equipHave"), "", EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
-        return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join("")),
+        return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join(""))+
+      (mitZonen ? kkFilterHTML('data-'+pre+'fzone', zonen) : ''),
     /* Sortierung: kein Block mehr in der Karte, nur ein Schalter „A–Z“ neben der Kopfzeile (aus = die Standardreihenfolge der Liste: Standard bzw. Dauer) */
     extra:'<button type="button" class="af-az'+(sort === "az" ? ' on' : '')+'" data-'+pre+'fsort="'+(sort === "az" ? sortOpts[0][0] : "az")+'" aria-pressed="'+(sort === "az")+
       '" title="'+esc(t("afSortAz"))+'" aria-label="'+esc(t("afSortAz"))+'">A&ndash;Z</button>' });
@@ -3330,6 +3474,7 @@ function renderLibrary(){
   function ohneStretch(x){ return x !== "stretch"; }
   var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
   var equip = selArr(s.libEquips).filter(function(x){ return x !== "gym"; });   // Studio-Ausrüstung gibt es in Air nicht
+  var zonen = selArr(s.libZonen);   // Körperkarte: gewählte Muskelgruppen
   var mains = [];   // die Kacheln der Hauptkategorien gibt es in Air nicht mehr; ein früher gespeicherter Wert wirkt nicht mehr
   var exSort = s.libSort === "az" ? "az" : "std";
   var woSort = s.libWoSort === "az" ? "az" : "dur";
@@ -3371,11 +3516,11 @@ function renderLibrary(){
     }
   } else {
     EXERCISES.forEach(function(ex){
-      if(!fuerAir(ex) || !exPasses(ex, cat, equip, [])) return;
+      if(!fuerAir(ex) || !exPasses(ex, cat, equip, [], zonen)) return;
       if(libHidden("ex:"+ex.id)){ hiddenCount++; hiddenCards += libExCard(ex, true, exSubText(ex)); }
     });
     var kacheln = "";
-    sortedExercises(cat, exSort, equip, mains).forEach(function(ex){ if(fuerAir(ex)){ kacheln += libExKachel(ex); anzahl++; } });
+    sortedExercises(cat, exSort, equip, mains, zonen).forEach(function(ex){ if(fuerAir(ex)){ kacheln += libExKachel(ex); anzahl++; } });
     if(kacheln) list = '<div class="fig-grid">'+kacheln+'</div>';
     fab = fabMenuHTML([{ key:"new", label:t("exNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
@@ -3393,7 +3538,7 @@ function renderLibrary(){
     suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
     (tab === "exercises" ? hw.z(0, "page-hint") : '')+
     airFilterHTML("l", open, cat, equip, tab==="exercises" ? exSort : woSort,
-      tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], anzahl, tab==="exercises"))+
+      tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], anzahl, tab==="exercises", tab==="exercises" ? zonen : undefined))+
     list + hiddenBlockHTML(hiddenCount, hiddenCards) +
     '<div style="height:90px"></div>' + fab;
   bindCommon();
@@ -3404,8 +3549,9 @@ function renderLibrary(){
   on("[data-ltoggle]", function(){ s.libFilterOpen = !open; save(); neu(); });
   on("[data-lfcat]", function(el){ s.libCats = selToggle(cat, el.getAttribute("data-lfcat")); save(); neu(); });
   on("[data-lfequip]", function(el){ s.libEquips = selToggle(equip, el.getAttribute("data-lfequip")); save(); neu(); });
+  on("[data-lfzone]", function(el){ s.libZonen = selToggle(zonen, el.getAttribute("data-lfzone")); save(); neu(); });
   on("[data-lfsort]", function(el){ if(tab==="exercises") s.libSort = el.getAttribute("data-lfsort"); else s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
-  on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; save(); neu(); });
+  on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; s.libZonen = []; save(); neu(); });
   on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
   bindTrash(neu);
   var lq = app.querySelector("#l-q");
@@ -4085,6 +4231,7 @@ function renderDraftPage(d, cfg){
   function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
   var cat = ohne(selArr(s.buildCats || s.buildCat), "stretch"), sort = s.libSort === "az" ? "az" : "std";
   var equip = ohne(selArr(s.buildEquips), "gym");
+  var zonen = selArr(s.buildZonen);
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
   var cats = [];
@@ -4160,12 +4307,12 @@ function renderDraftPage(d, cfg){
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   } else if(palOpen){
-    var palListe = sortedExercises(cat, sort, equip, []).filter(fuerAir);
+    var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(fuerAir);
     hw = hinweise("bau", ["wbTippen"]);
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
-      airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true)+
+      airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true, zonen)+
       '<div class="fig-grid" id="dz-pal">'+(palListe.map(function(ex){ return kachel(ex); }).join("") ||
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
@@ -4214,7 +4361,7 @@ function renderDraftPage(d, cfg){
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: hw.knopf + (palOpen ? lupeHTML("b", buildQuery) : "") + (cfg.cover ? "" :
       '<button class="iconbtn" data-share title="'+t("shareWo")+'" aria-label="'+t("shareWo")+'" '+(d.items.length?'':'disabled style="opacity:.35"')+'>'+ICON_SHARE+'</button>') }) +
     // Aufwärm- und Dehnprogramme: Überschrift, Kacheln und Figuren in der Farbe von Aufwärmen & Dehnen
-    (warmDehn ? '<div style="--bereich:var(--ws-color)">' : '<div>') + head + ablaufHTML + (warmDehn || !exs.length ? '' : auswertungHTML(d.items.map(function(it){ return it.ex; }))) + optionsHTML + palHTML + '</div>' +
+    (warmDehn ? '<div style="--bereich:var(--ws-color)">' : '<div>') + head + ablaufHTML + (warmDehn || !exs.length ? '' : auswertungHTML(d.items.map(function(it){ return it.ex; }), { offen:palOpen })) + optionsHTML + palHTML + '</div>' +
     (cfg.cover || cfg.bau.neu ? '' : '<button class="btn btn-danger" data-mydel style="margin-top:18px;">'+ICON_TRASH+' '+t("myDelete")+'</button>')+
     '<div style="height:'+(cfg.cover ? 40 : 96)+'px"></div>'+
     (cfg.cover ? '' : '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+t("exCount", { n:exs.length })+'</b><br>'+dauer+'</span>'+
@@ -4309,8 +4456,9 @@ function renderDraftPage(d, cfg){
   on("[data-btoggle]", function(){ s.buildFilterOpen = !s.buildFilterOpen; save(); neu(); });
   on("[data-bfcat]", function(el){ s.buildCats = selToggle(cat, el.getAttribute("data-bfcat")); save(); neu(); });
   on("[data-bfequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bfequip")); save(); neu(); });
+  on("[data-bfzone]", function(el){ s.buildZonen = selToggle(zonen, el.getAttribute("data-bfzone")); save(); neu(); });
   on("[data-bfsort]", function(el){ s.libSort = el.getAttribute("data-bfsort"); save(); neu(); });
-  on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; save(); neu(); });
+  on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; s.buildZonen = []; save(); neu(); });
   wsRegionBinden(neu);
   var bq = app.querySelector("#b-q");
   if(bq){
