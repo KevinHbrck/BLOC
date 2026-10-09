@@ -9,6 +9,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu gezeichnet**: Nackendehnung (Kopf kippt zur Seite, Hand am Kopf), Schulter (Arm quer vor der Brust, andere Hand zieht), Trizeps (Ellbogen hoch, Hand im Nacken, andere Hand am Ellbogen), Seitbeuge (Oberkörper kippt über).
 - **Nachgeschärft**: Plank Shoulder Taps (eine Hand hebt ab und tippt die Schulter), Scapular Push-ups (die Brust sinkt ab).
 - Nur L-Sit und Stütz halten bleiben einzelne Posen (Reck und Barren lassen sich als Ausgangsstellung nicht klar zeichnen). Fassung 2026-10-09-29.
+- **Suche**: Dehnübungen erscheinen jetzt ebenfalls als quadratische Kacheln (in der Farbe von Mobility & Stretch), nicht mehr als Zeilen. Fassung 2026-10-09-30.
 
 ## 2026-10-09 · Programmlogik in 20 Teile aufgeteilt
 

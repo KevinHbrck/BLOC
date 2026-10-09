@@ -97,13 +97,13 @@ function renderSearch(){
     // je Gruppe zuerst die Treffer im Namen, danach die über Übungen/Hinweise (stabil)
     treffer = treffer.map(function(e, i){ return { e:e, i:i }; }).sort(function(a, b){
       return reihe.indexOf(a.e.g) - reihe.indexOf(b.e.g) || a.e.n - b.e.n || a.i - b.i; }).map(function(o){ return o.e; });
-    var kacheln = "", zeilen = "";   // Air-Übungen erscheinen als quadratische Kacheln wie unter Air › Übungen (zuerst), alles andere als Zeile
+    var kacheln = "", zeilen = "";   // Air-, Studio- und Dehnübungen erscheinen als quadratische Kacheln wie unter Air › Übungen (zuerst), alles andere als Zeile
     function raster(){ if(kacheln) html += '<div class="fig-grid">'+kacheln+'</div>'; html += zeilen; kacheln = ""; zeilen = ""; }
     treffer.forEach(function(e, i){
       if(e.g !== gruppe){ raster(); gruppe = e.g; n = 0; html += '<div class="section-title">'+esc(gruppe)+'</div>'; }
       if(!gewaehlt && ++n > 12) return;   // je Gruppe die ersten zwölf; genauer tippen grenzt ein (mit gewählter Kategorie alle)
       var ex = e.ex && findExercise(e.ex);
-      if(ex && fuerAir(ex) && ILLU[ex.id]){ kacheln += libExKachel(ex); return; }
+      if(ex && (fuerAir(ex) || ex.main === "stretch") && ILLU[ex.id]){ kacheln += ex.main === "stretch" ? '<div style="display:contents;--bereich:var(--ws-color)">'+libExKachel(ex)+'</div>' : libExKachel(ex); return; }   // Dehnübungen in der Farbe von Mobility & Stretch
       if(ex && STUDIO_NUR[ex.id]){ kacheln += studioKachel(ex.id); return; }   // Studio-Übungen ebenfalls als Kacheln (antippen = Studio-Seite)
       zeilen += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'"><div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
         (e.sub ? '<div class="sub">'+esc(e.sub)+'</div>' : '')+'</div><span class="chip chev">'+ICON_CHEV+'</span></div>';
