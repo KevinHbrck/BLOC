@@ -2654,10 +2654,23 @@ function kkFilterHTML(attr, sel){
   sel = kkNorm(sel);
   var w = {};
   sel.forEach(function(z){ w[z] = 1; });
-  return '<div class="af-lbl">'+esc(t("kkFilter"))+' <span>'+esc(t("kkMehrere"))+'</span></div>'+kkModusHTML()+
+  /* Aufgeräumt: Überschrift mit Grob · Fein in einer Zeile, darunter die Silhouetten; die Zonen stehen als Liste (zugeklappt) zur Wahl,
+     eine Zeile darunter zeigt die Auswahl bzw. den Hinweis */
+  var auf = !!state.db.settings.kkListeAuf;
+  return '<div class="af-lbl kk-lblzeile"><span>'+esc(t("kkFilter"))+'</span>'+kkModusHTML()+'</div>'+
     '<div class="kk-filter">'+koerperPaar(w, { sel:sel, attr:attr })+'</div>'+
-    '<div class="fc-chips kk-chips">'+kkReihe().map(function(z){ return filterChip(attr, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div>';
+    '<div class="kk-hinweis'+(sel.length ? ' an' : '')+'">'+esc(sel.length ? sel.map(kkName).join(", ") : t("kkTippen"))+'</div>'+
+    '<details class="kk-liste-box"'+(auf ? ' open' : '')+'><summary data-kklistetoggle>'+esc(t("kkListe"))+'<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+    '<div class="fc-chips kk-chips">'+kkReihe().map(function(z){ return filterChip(attr, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div></details>';
 }
+/* Zonenliste im Filter auf/zu (der Zustand wird gemerkt, weil der Filter nach jedem Antippen neu gezeichnet wird) */
+document.addEventListener("click", function(e){
+  var sm = e.target.closest && e.target.closest("[data-kklistetoggle]");
+  if(!sm) return;
+  e.preventDefault();
+  var d = sm.parentNode; d.open = !d.open;
+  state.db.settings.kkListeAuf = d.open; save();
+});
 function auswertungHTML(ids, opt){
   opt = opt || {};
   var r = mgProzent(ids), notiz;

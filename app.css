@@ -2153,6 +2153,29 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .kk-zeile.rand, .kk-zeile.ok{ color:var(--text-dim); }
 .kk-kopf .kk-skala{ justify-content:flex-start; margin-top:6px; }
 .kk-kopf .kk-skala i{ width:60px; }
+/* Filterkarte aufgeräumt: ruhige Chips ohne Symbole, klare Abschnitte, Körperkarte mit Zonenliste zum Aufklappen */
+.air-filter .af-body{ padding:4px 16px 16px; }
+.air-filter .af-lbl{ margin:22px 0 10px; padding:0; font-size:11.5px; }
+.air-filter .af-body > .af-lbl:first-child{ margin-top:14px; }
+.air-filter .fc-chips{ gap:8px; }
+.air-filter .fc-chip{ padding:7px 14px; border-radius:999px; background:transparent; font-size:14px; }
+.air-filter .fc-chip .ico{ display:none; }
+.air-filter .fc-chip.on{ background:var(--sel-bg); border-color:var(--bereich, var(--accent)); box-shadow:inset 0 0 0 1px var(--bereich, var(--accent)); font-weight:600; }
+.air-filter .af-fuss{ margin-top:22px; padding-top:16px; border-top:1px solid var(--border); }
+.kk-lblzeile{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.kk-lblzeile > span:first-child{ margin:0; font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.air-filter .af-fuss{ gap:8px; }
+.air-filter .af-fuss .btn{ font-size:14.5px; padding:14px 8px; min-width:0; }
+.air-filter .af-fuss .af-reset{ padding:14px 12px; }
+.kk-lblzeile .kk-modus{ margin:0; flex-basis:auto; gap:16px; text-transform:none; letter-spacing:0; }
+.kk-hinweis{ text-align:center; font-size:13px; color:var(--text-dim); min-height:18px; margin:2px 0 6px; }
+.kk-hinweis.an{ color:var(--text); font-weight:600; }
+.kk-liste-box{ margin-top:2px; }
+.kk-liste-box > summary{ list-style:none; display:flex; align-items:center; justify-content:center; gap:6px; padding:8px 4px; font-size:13.5px; color:var(--text-dim); cursor:pointer; }
+.kk-liste-box > summary::-webkit-details-marker{ display:none; }
+.kk-liste-box > summary .tpl-chev{ margin-left:0; transition:transform .2s ease; }
+.kk-liste-box[open] > summary .tpl-chev{ transform:rotate(180deg); }
+.kk-liste-box .kk-chips{ margin-top:6px; }
 /* Umschalter Grob · Fein: Unterstrich wie die anderen Schalter */
 .kk-modus{ display:flex; justify-content:center; gap:22px; margin:4px 0 6px; flex-basis:100%; }
 .kk-modus button{ border:0; background:none; padding:4px 2px; font:inherit; font-size:13.5px; font-weight:600; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent; }
@@ -2167,7 +2190,7 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .info-kk-knopf.fein .kk{ width:96px; height:192px; }
 .info-mus.gross .info-kk-knopf.fein .kk{ width:130px; height:260px; }
 .kk-filter{ margin:4px 0 6px; }
-.kk-filter .kk{ width:84px; height:168px; }
+.kk-filter .kk{ width:72px; height:144px; }
 .kk-chips{ margin-top:6px; }
 /* Suche: Körperkarte als aufklappbare Zeile unter den Kategorien */
 .sr-koerper-knopf{ display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; margin:8px 0 4px; padding:10px 14px; border:1px solid var(--border); border-radius:12px;
