@@ -2163,3 +2163,4 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .info-kk-liste[hidden]{ display:none; }
 .kk-punkt{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; background:var(--bereich, var(--accent)); }
 .kk-punkt.hilfe{ background:color-mix(in srgb, var(--bereich, var(--accent)) 38%, var(--kk-grau)); }
+.info-band li::before{ content:"\2022"; }

@@ -16,7 +16,7 @@ Stand: 2026-10-06 · Fassung 2026-10-02-46
 | Summit-Programme (Challenges auf Zeit) und Einheiten | 52 Programme, 12 Einheiten à 3 Stufen | `daten.js` (`REP_WORKOUT_ROWS`, `REP_EINHEITEN`) | Sind Wiederholungszahlen und Pausen für die angegebene Stufe vertretbar? (Das sind bewusst harte Selbstvergleichs-Challenges.) |
 | „Überrasch mich“-Regeln | Generator | `app.js` (Suche „spDauerTreffen“, Überrasch-Regeln in der README) | Ist die Mischung (Muskelgruppen reihum, Drücken/Ziehen, Burpee-Variante) vertretbar? |
 | „Leichter / Schwerer“-Ketten | 9 Ketten, ca. 35 Übungen | `daten.js` (`LZ_KETTEN`) | Ist die Reihenfolge von leicht nach schwer fachlich richtig? Fehlen sinnvolle Zwischenstufen (z. B. Knie-Liegestütze)? |
-| Zuordnung Muskelgruppen und Körperregionen | `EX_MUSCLES`, Dehnen-Regionen, Körperkarte (`MUSKEL_GRP`, `KK_ZONEN` in `app.js`) | `daten.js` | Stimmen Haupt- und Hilfsmuskeln? Passen die 21 Zonen der Körperkarte und die Ausnahmen für „Schultern“ (`KK_AUSNAHME`) und die Zuordnung der Muskelnamen (`KK_REGELN`)? |
+| Zuordnung Muskelgruppen und Körperregionen | `EX_MUSCLES`, Dehnen-Regionen, Körperkarte (`MUSKEL_GRP`, `KK_ZONEN` in `app.js`) | `daten.js` | Stimmen Haupt- und Hilfsmuskeln? Passen die 17 Zonen der Körperkarte und die Zuordnung der Muskelnamen (`KK_REGELN`)? |
 | Figuren | Strichfiguren je Übung | `daten.js` (`ILLU_POSES`, `ILLU_SEQ`) | Zeigen sie die Ausführung im Wesentlichen richtig? (Prüfansicht: `index.html?dev` und in der Konsole `BLOC_DEV`) |
 | Bewegungsempfehlung in der Statistik | Statistik-Karte | `app.js` (`statWho…`) | Ist die Darstellung (150 min, 2 Krafttage) richtig und nicht irreführend? |
 
@@ -33,3 +33,21 @@ Stand: 2026-10-06 · Fassung 2026-10-02-46
   Trennung von dynamischem Aufwärmen und Dehnen: mit Quellen belegt (siehe `quellen.html`).
 - Technik-Hinweise sind allgemein üblich formuliert (z. B. „Knie in Fußrichtung“). Einzelne Hinweise wurden **nicht** Satz für Satz gegen
   eine Quelle geprüft.
+
+## Stand 2026-10-09: Plausibilitätsprüfung der Band-Übungen (keine Fachprüfung)
+
+Die 38 Band-Übungen (`daten.js`, Block „Widerstandsband“) wurden per Online-Recherche gegen die ACE-Übungsbibliothek, ACE-Fachartikel, THERABAND „Care & Safety“ und eine NHS-Wales-Patienteninformation abgeglichen (Quellen: `quellen.html`, [11]–[13]). Daraus ergaben sich diese Änderungen:
+
+- **Aufrechtes Rudern**: ACE warnt wegen der Schulter (Innenrotation, Engpass); im „Vermeiden“-Text steht jetzt der Hinweis, bei Schulterschmerzen wegzulassen, Seitheben ist die schonendere Alternative.
+- **Seitheben**: Ellbogen führen, Hände etwas tiefer, nicht über Schulterhöhe (ACE-Hinweise).
+- **Beinheben zur Seite**: nur so hoch, wie das Becken ruhig bleibt (ca. 45°, ACE: seitlicher Gesäßmuskel arbeitet nur in diesem Bereich).
+- **Muschel**: Hauptmuskel seitlicher Gesäßmuskel, unterstützt von tiefen Hüftrotatoren und großem Gesäßmuskel.
+- **Einbeiniges Kreuzheben**: Hilfsmuskeln um Breiten Rückenmuskel ergänzt.
+- **Hammer-Curl**: Oberarmmuskel (Brachialis) zuerst genannt (ACE: Brachialis als Hauptbeuger).
+- **Trizeps-Drücken**: Ellbogen nicht nach vorn schwingen lassen (dann zieht der Rücken mit), oben nicht höher als die Brust.
+- **Crunch kniend**: Rippen zum Becken, nicht auf die Fersen setzen.
+- **Rumpfdrehung im Sitzen**: bei Rückenbeschwerden kleiner drehen, Füße am Boden.
+- **Klimmzug mit Bandhilfe**: Band am Anfang kräftig auf festen Sitz prüfen, die Hilfe ist unten am größten und lässt nach oben nach, nicht vom Band hochschleudern lassen.
+- **Alle Band-Übungen**: neuer Abschnitt „Mit dem Band“ in der Übungsinfo (Band prüfen, Befestigung, nie unter Spannung loslassen, Dehnungsgrenze).
+
+Offen bleibt weiterhin die Prüfung durch eine Fachperson (Trainerin, Sportwissenschaftler, Physiotherapeutin) – insbesondere Rehabilitation und Vorerkrankungen sind nicht abgedeckt.

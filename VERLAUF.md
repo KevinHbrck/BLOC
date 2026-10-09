@@ -3,9 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-09 · Körperkarte zurück auf 17 Zonen, Band-Inhalte gegengeprüft, Figuren nachgeschärft
+
+- **Körperkarte wieder 17 Zonen** (die 21er-Aufteilung war zu fein). Neu bleibt: Tippen auf die Silhouetten in der Übungsinfo vergrößert sie und nennt die Zonen mit Namen.
+- **Band-Inhalte gegen Quellen abgeglichen** (ACE-Übungsbibliothek und -Artikel, THERABAND, NHS Wales; Plausibilitätsprüfung, keine Fachprüfung): u. a. Hinweis zur Schulter beim Aufrechten Rudern, 45°-Grenze beim Beinheben, Hammer-Curl mit Brachialis zuerst, Hinweise beim Klimmzug mit Bandhilfe. Neuer Abschnitt **„Mit dem Band“** in jeder Band-Übungsinfo (Band prüfen, Befestigung, nie unter Spannung loslassen, Dehnungsgrenze). Quellen [12] und [13] in `quellen.html`, Liste der Änderungen in `docs/FACHPRUEFUNG.md`.
+- **Figuren**: Band zwischen den Händen liegt bei Reverse Fly jetzt vor dem Körper (Klasse `gv`), Pull-Apart oben als V, Seitbeuge mit Hüftversatz, Muschel (Knie hebt sich deutlich), Beinstrecken im Liegen mit Fußspitze.
+- Fassung 2026-10-09-19.
+
 ## 2026-10-09 · Körperkarte und Band-Animation
 
-- **Körperkarte** (zwei Silhouetten vorn/hinten, 21 Muskelzonen – u. a. Schultern in vorn/seitlich/hinten, Brust oben/mitte, Trapez und Rauten getrennt –: u. a. Gesäß, seitliches Gesäß, Oberschenkel vorn/hinten, Adduktoren, Waden, Bizeps, Trizeps, Breiter Rückenmuskel, Unterer Rücken, Gerader Bauch, Schräge Bauchmuskeln; die Balken der Auswertung bleiben bei den sechs Gruppen): in der **Übungsinfo** (Air und Studio) zeigt sie, was trainiert (kräftig) und unterstützt wird (hell); in der **Auswertung** eines Workouts, Plans und der Woche addieren sich die Gruppen – je öfter, desto kräftiger, darunter steht, was noch fehlt. Beim Workout-Bauen ist die Auswertung gleich aufgeklappt.
+- **Körperkarte** (zwei Silhouetten vorn/hinten, 17 Muskelzonen: u. a. Gesäß, seitliches Gesäß, Oberschenkel vorn/hinten, Adduktoren, Waden, Bizeps, Trizeps, Breiter Rückenmuskel, Unterer Rücken, Gerader Bauch, Schräge Bauchmuskeln; die Balken der Auswertung bleiben bei den sechs Gruppen): in der **Übungsinfo** (Air und Studio) zeigt sie, was trainiert (kräftig) und unterstützt wird (hell); in der **Auswertung** eines Workouts, Plans und der Woche addieren sich die Gruppen – je öfter, desto kräftiger, darunter steht, was noch fehlt. Beim Workout-Bauen ist die Auswertung gleich aufgeklappt.
 - **Filter nach Körperbereich**: in Air › Übungen und im Baukasten (Filterkarte, Zeile „Körper“) sowie in der **Suche** (aufklappbare Zeile): Gruppen antippen, mehrere möglich; es erscheinen Übungen, die diese Gruppen als Hauptmuskeln haben.
 - **Band wird gedehnt**: in der Animation läuft das Band mit Händen, Füßen und Knien mit; je länger, desto dünner, kürzer als in Ruhe hängt es durch. Technik: Band-Linien tragen `data-bd` (Marken), `bandSplit` in `app.js` löst sie aus den festen Geräteteilen und zeichnet sie je Bild neu.
 - **Suche**: Air-Übungen erscheinen als quadratische Kacheln wie unter Air › Übungen (antippen = Info, ▶, ☆, lange drücken); Studio-Übungen und alle anderen Treffer bleiben Zeilen.

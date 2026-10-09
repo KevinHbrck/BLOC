@@ -1724,6 +1724,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     for(var i=0;i<arguments.length;i++){ var p = arguments[i]; d += (i ? "L" : "M")+pt(p); bd.push(p.t || (r1(p[0])+","+r1(p[1]))); }
     return '<path class="ip gb" d="'+d+'" data-bd="'+bd.join("|")+'"/>';
   }
+  /* wie bl(), aber vor dem Körper gezeichnet (z. B. Band zwischen den Händen vor der Brust) */
+  function blv(){ return bl.apply(null, arguments).replace('class="ip gb"', 'class="ip gb gv"'); }
   function anker(x, y){ return '<circle class="ip" cx="'+x+'" cy="'+y+'" r="2.4"/>'; }
   /* Seitenansicht: Hüfte p, Rumpfwinkel deg, Beine/Arme als Winkelpaare, gear(q) liefert das Band */
   function S(p, deg, legs, arms, gear, o){
@@ -1791,7 +1793,7 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-lat-pull-apart", "Band auseinanderziehen über Kopf", "Overhead Band Pull-apart", "back", 6, 30, 0,
     "Arme über Kopf, Band bis zu den Schultern öffnen", "Arms overhead, open the band down to your shoulders",
     1, 1, "kraft",
-    [F(M(-120,-100), function(q){ return bl(hand(q,0), [50,9], hand(q,1)); }),
+    [F(M(-150,-105), function(q){ return bl(hand(q,0), [50,9], hand(q,1)); }),
      F(M(160,195), function(q){ return bl(hand(q,0), hand(q,1)); })],
     ["Das Band mit beiden Händen etwas mehr als schulterbreit greifen und die Arme über den Kopf strecken.|Das Band auseinanderziehen und dabei die Arme seitlich bis auf Schulterhöhe absenken.|Kontrolliert wieder nach oben führen.",
      "Hold the band a little wider than shoulder width and reach your arms overhead.|Pull the band apart and lower your arms out to the sides down to shoulder height.|Return to the top under control."],
@@ -1817,11 +1819,11 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     2, 3, "stange",
     [qWith(P_HANG, { x:gBar(6,24,76)+bl([42,6], [42,80], [48,86]) }),
      qWith(P_PULL, { x:gBar(6,24,76)+bl([42,6], [42,66], [48,72]) })],
-    ["Ein Loop-Band fest um eine stabile Stange legen, ein Ende durchziehen und den Fuß oder das Knie hineinsetzen.|Die Stange etwas mehr als schulterbreit greifen, ruhig hängen.|Das Kinn über die Stange ziehen und kontrolliert wieder ablassen.",
-     "Loop a band firmly around a sturdy bar, pull one end through and put your foot or knee in it.|Grip the bar a little wider than shoulder width and hang still.|Pull your chin over the bar and lower back down under control."],
-    ["Schultern vom Ohr weg, Ellbogen nach unten.|Körper ruhig, Blick nach vorn.", "Mit Schwung aus den Beinen hochkommen.",
-     "Shoulders away from your ears, elbows down.|Keep your body still, eyes forward.", "Kicking or swinging up with your legs."],
-    ["Breiter Rückenmuskel, oberer Rücken", "Bizeps, Unterarme, Rumpf", "Lats, upper back", "Biceps, forearms, core"],
+    ["Ein Loop-Band fest um eine stabile Stange legen, ein Ende durchziehen, festziehen und kräftig daran ziehen, ob es hält. Dann den Fuß oder das Knie hineinsetzen (Knie = weniger Hilfe).|Die Stange etwas mehr als schulterbreit greifen und ruhig hängen. Das Band hilft unten am meisten und lässt nach oben nach.|Das Kinn über die Stange ziehen und langsam wieder ablassen – nicht vom Band hochschleudern lassen.",
+     "Loop a band firmly around a sturdy bar, pull one end through, cinch it and give it a hard tug to check it holds. Then put your foot or knee in it (knee = less help).|Grip the bar a little wider than shoulder width and hang still. The band helps most at the bottom and less as you rise.|Pull your chin over the bar and lower slowly – don't let the band catapult you up."],
+    ["Schultern vom Ohr weg, Ellbogen nach unten.|Körper ruhig, Blick nach vorn.", "Mit Schwung aus den Beinen hochkommen oder im Band federn.",
+     "Shoulders away from your ears, elbows down.|Keep your body still, eyes forward.", "Kicking or bouncing in the band to get up."],
+    ["Breiter Rückenmuskel, oberer Rücken", "Bizeps, Unterarme, Rauten, Rumpf", "Lats, upper back", "Biceps, forearms, rhomboids, core"],
     "klimmzug pull up unterstützung");
 
   /* ===== Brust ===== */
@@ -1851,8 +1853,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-reverse-fly", "Reverse Fly mit Band", "Band Reverse Fly", "back arms", 6, 30, 0,
     "Arme gestreckt, Band vor dem Körper auseinanderziehen", "Arms straight, pull the band apart in front of you",
     1, 1, "kraft",
-    [F(M(130,50), function(q){ return bl(hand(q,0), [50,43], hand(q,1)); }),
-     F(M(178,180), function(q){ return bl(hand(q,0), hand(q,1)); })],
+    [F(M(130,50), function(q){ return blv(hand(q,0), [50,43], hand(q,1)); }),
+     F(M(178,180), function(q){ return blv(hand(q,0), hand(q,1)); })],
     ["Das Band mit beiden Händen schulterbreit greifen und die Arme vor der Brust ausstrecken.|Das Band auseinanderziehen, bis die Arme seitlich auf Schulterhöhe sind.|Kontrolliert zurückführen.",
      "Hold the band shoulder-width apart and reach your arms out in front of your chest.|Pull the band apart until your arms are out to the sides at shoulder height.|Return under control."],
     ["Ellbogen leicht gebeugt, Schulterblätter zusammenziehen.|Hals lang, Blick geradeaus.", "Die Schultern zu den Ohren ziehen oder den Rücken hohl machen.",
@@ -1892,8 +1894,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      F(M(190,190), function(q){ return bl([43,89], hand(q,0))+bl([57,89], hand(q,1)); })],
     ["Mit beiden Füßen auf die Mitte des Bandes treten und die Enden greifen.|Die Arme mit leicht gebeugten Ellbogen seitlich bis auf Schulterhöhe heben.|Langsam wieder senken.",
      "Stand with both feet on the middle of the band and hold the ends.|Raise your arms out to the sides to shoulder height, elbows slightly bent.|Lower slowly."],
-    ["Rumpf fest, Blick geradeaus.|Nicht höher als Schulterhöhe heben.", "Mit Schwung aus dem Rücken heben oder die Schultern hochziehen.",
-     "Core braced, eyes forward.|Lift no higher than shoulder height.", "Swinging from your back or shrugging."],
+    ["Rumpf fest, Schulterblätter tief.|Ellbogen führen, die Hände bleiben etwas tiefer; nicht höher als Schulterhöhe.", "Mit Schwung aus dem Rücken heben oder die Schultern hochziehen.",
+     "Core braced, shoulder blades down.|Lead with your elbows, hands stay a little lower; no higher than shoulder height.", "Swinging from your back or shrugging."],
     ["Seitliche Schulter", "Trapez, Rumpf", "Side delts", "Traps, core"],
     "seitheben schulter");
 
@@ -1904,8 +1906,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      F([[200,60],[-20,120]], function(q){ return bl([45,89], hand(q,0))+bl([55,89], hand(q,1)); })],
     ["Mit beiden Füßen auf das Band treten und die Enden vor dem Körper greifen.|Die Hände eng am Körper entlang bis zur Brust ziehen, die Ellbogen führen nach oben.|Langsam wieder senken.",
      "Stand on the band with both feet and hold the ends in front of your body.|Pull your hands up close to your body to chest height, elbows leading upwards.|Lower slowly."],
-    ["Ellbogen höher als die Hände, Schultern tief.|Rumpf fest, Blick geradeaus.", "Höher als Brusthöhe ziehen oder die Schultern hochziehen.",
-     "Elbows higher than your hands, shoulders low.|Core braced, eyes forward.", "Pulling above chest height or shrugging."],
+    ["Ellbogen höher als die Hände, Schultern tief.|Rumpf fest, Blick geradeaus.", "Höher als Brusthöhe ziehen oder die Schultern hochziehen. Bei Schulterschmerzen weglassen – Seitheben ist die schonendere Alternative.",
+     "Elbows higher than your hands, shoulders low.|Core braced, eyes forward.", "Pulling above chest height or shrugging. Skip it if your shoulders hurt – lateral raises are the gentler alternative."],
     ["Seitliche Schulter, Trapez", "Bizeps, Unterarme", "Side delts, traps", "Biceps, forearms"],
     "aufrechtes rudern upright row");
 
@@ -1952,8 +1954,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     [qWith(RT_SC, { x:bl([79,75], [47,68]) }), qWith(RT_ST, { x:bl([79,75], [39,85]) })],
     ["Auf den Boden setzen, das Band um beide Füße legen und die Enden mit den Händen vor der Brust greifen.|Mit geradem Rücken leicht zurücklehnen, die Füße am Boden oder angehoben.|Den Oberkörper abwechselnd nach links und rechts drehen, die Hände wandern mit.",
      "Sit on the floor, loop the band around both feet and hold the ends in front of your chest.|Lean back slightly with a straight back, feet on the floor or lifted.|Rotate your torso alternately to the left and right, your hands moving with it."],
-    ["Brustbein aufrecht, Rücken lang.|Gedreht wird der Oberkörper, das Becken bleibt ruhig.", "Mit rundem Rücken zurückkippen oder nur die Arme bewegen.",
-     "Chest up, long spine.|Rotate your torso, keep your hips still.", "Slumping back with a rounded spine or moving only your arms."],
+    ["Brustbein aufrecht, Rücken lang.|Gedreht wird der Oberkörper, das Becken bleibt ruhig.", "Mit rundem Rücken zurückkippen oder nur die Arme bewegen. Bei Rückenbeschwerden kleiner drehen und die Füße am Boden lassen.",
+     "Chest up, long spine.|Rotate your torso, keep your hips still.", "Slumping back with a rounded spine or moving only your arms. With back pain, rotate less and keep your feet on the floor."],
     ["Schräge Bauchmuskeln", "Gerader Bauch, Hüftbeuger, Schultern", "Obliques", "Abs, hip flexors, shoulders"],
     "russian twist drehung");
 
@@ -1974,8 +1976,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     1, 1, "rumpf",
     [(function(){ var q = Q(null, [50,20], [50,52], FL.map(function(l){ return l.slice(); }),
                      [arm([50,52],[50,20],-45,200), arm([50,52],[50,20],115,100)], "", true); q.x = bl([43,89], hand(q,1)); return q; })(),
-     (function(){ var n = [40,22], q = Q(null, n, [50,52], FL.map(function(l){ return l.slice(); }),
-                     [arm([50,52],n,-60,205), arm([50,52],n,100,95)], "", true); q.x = bl([43,89], hand(q,1)); return q; })()],
+     (function(){ var n = [37,23], p = [53,52], q = Q(null, n, p, FL.map(function(l){ return l.slice(); }),
+                     [arm(p,n,-62,205), arm(p,n,92,92)], "", true); q.x = bl([43,89], hand(q,1)); return q; })()],
     ["Mit einem Fuß auf das Band treten, das Ende in die Hand auf dieser Seite nehmen. Die andere Hand an den Kopf legen.|Aufrecht stehen, Bauch fest.|Den Oberkörper seitlich zur Bandseite beugen, kurz halten und wieder aufrichten. Nach der Hälfte die Seite wechseln.",
      "Stand with one foot on the band and hold the end in the hand on that side. Place your other hand by your head.|Stand tall, core braced.|Bend your torso sideways towards the band side, pause and straighten up. Switch sides halfway."],
     ["Seitlich bleiben, nicht nach vorn oder hinten kippen.|Becken ruhig, Blick geradeaus.", "Mit Schwung zur Seite fallen lassen.",
@@ -1990,8 +1992,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      (function(){ var q = S([48,66], -40, [[90,170,[-6,0]]], [[30,-160]]); q.x = anker(70,1)+bl([70,1], hand(q)); return q; })()],
     ["Das Band oben an einer Tür oder Stange befestigen, kniend davor setzen und die Enden neben den Kopf halten.|Aufrecht knien, Bauch anspannen.|Den Oberkörper aus dem Bauch heraus nach unten einrollen, kurz halten und langsam wieder aufrichten.",
      "Anchor the band overhead on a door or bar, kneel in front of it and hold the ends beside your head.|Kneel tall, core braced.|Curl your torso downwards using your abs, pause and rise slowly."],
-    ["Der Rücken rollt rund ein, die Hüfte bleibt oben.|Ellbogen zeigen Richtung Boden.", "Aus der Hüfte nach vorn abknicken oder an den Armen ziehen.",
-     "Your spine curls round, hips stay up.|Elbows point towards the floor.", "Folding at the hips or pulling with your arms."],
+    ["Der Rücken rollt rund ein, die Hüfte bleibt oben.|Die Rippen rollen zum Becken, Ellbogen zeigen Richtung Boden.", "Aus der Hüfte nach vorn abknicken, auf die Fersen setzen oder an den Armen ziehen.",
+     "Your spine curls round, hips stay up.|Roll your ribs towards your pelvis, elbows point towards the floor.", "Folding at the hips, sitting back on your heels or pulling with your arms."],
     ["Gerader Bauchmuskel", "Schräge Bauchmuskeln, Hüftbeuger", "Abs", "Obliques, hip flexors"],
     "crunch kabel bauch");
 
@@ -2017,7 +2019,7 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      "Stand on the band with both feet and hold the ends with your palms facing in.|Keep your elbows by your sides and curl your hands up to your shoulders.|Lower slowly."],
     ["Ellbogen fest an den Rippen, Handgelenke gerade.|Oberkörper ruhig.", "Mit dem Rücken Schwung holen oder die Ellbogen nach vorn schieben.",
      "Elbows pinned to your ribs, wrists straight.|Torso still.", "Swinging with your back or pushing your elbows forward."],
-    ["Bizeps, Oberarmmuskel", "Unterarme, vordere Schulter", "Biceps, brachialis", "Forearms, front delts"],
+    ["Oberarmmuskel, Bizeps", "Unterarme, vordere Schulter", "Brachialis, biceps", "Forearms, front delts"],
     "hammer curl bizeps");
 
   E("band-one-arm-curl", "Einarm-Curl mit Band", "One-arm Band Curl", "arms", 3, 30, 1,
@@ -2076,8 +2078,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      S([50,50], -90, STAND, [[90,90]], function(q){ return anker(88,2)+bl([88,2], hand(q)); })],
     ["Das Band oben an einer Tür oder Stange befestigen, die Enden greifen und davor stehen.|Die Ellbogen an die Rippen legen, die Unterarme zeigen nach vorn.|Die Hände nach unten drücken, bis die Arme gestreckt sind, und langsam zurückkehren.",
      "Anchor the band overhead on a door or bar, hold the ends and stand in front of it.|Place your elbows by your ribs, forearms pointing forward.|Press your hands down until your arms are straight and return slowly."],
-    ["Ellbogen bleiben fest am Körper.|Handgelenke gerade, Schultern tief.", "Die Ellbogen nach vorn schwingen lassen oder mit dem Oberkörper nachhelfen.",
-     "Elbows stay fixed at your sides.|Wrists straight, shoulders low.", "Letting your elbows swing forward or helping with your torso."],
+    ["Ellbogen bleiben fest am Körper, oben nicht höher als die Brust.|Handgelenke gerade, Schultern tief.", "Die Ellbogen nach vorn schwingen lassen (dann zieht der Rücken mit) oder mit dem Oberkörper nachhelfen.",
+     "Elbows stay fixed at your sides, no higher than chest level at the top.|Wrists straight, shoulders low.", "Letting your elbows swing forward (your back starts to pull) or helping with your torso."],
     ["Trizeps", "Schultern, Unterarme", "Triceps", "Shoulders, forearms"],
     "trizeps pushdown pressdown");
 
@@ -2121,13 +2123,13 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-clamshell", "Muschel mit Band", "Band Clamshell", "legs", 3, 30, 1,
     "Seitlich liegen, Knie öffnen, Füße bleiben zusammen", "Lie on your side, open your knees, keep your feet together",
     1, 1, "kraft",
-    [(function(){ var q = S([46,83], 185, [[-28,172],[-18,172]], [], null, { len:26 }); q.x = bl(knie(q,0), knie(q,1)); return q; })(),
-     (function(){ var q = S([46,83], 185, [[-74,145],[-18,172]], [], null, { len:26 }); q.x = bl(knie(q,0), knie(q,1)); return q; })()],
+    [(function(){ var q = S([48,80], 187, [[2,178],[18,180]], [[40,5]], null, { len:24 }); q.x = bl(knie(q,0), knie(q,1)); return q; })(),
+     (function(){ var q = S([48,80], 187, [[-35,142],[18,180]], [[40,5]], null, { len:24 }); q.x = bl(knie(q,0), knie(q,1)); return q; })()],
     ["Auf die Seite legen, die Knie angewinkelt, das Band um beide Oberschenkel knapp über den Knien.|Die Füße bleiben aufeinander, das Becken stabil.|Das obere Knie gegen das Band öffnen, kurz halten und langsam schließen. Nach der Hälfte die Seite wechseln.",
      "Lie on your side with your knees bent and the band around both thighs just above the knees.|Keep your feet together and your pelvis steady.|Open your top knee against the band, pause and close slowly. Switch sides halfway."],
     ["Becken bleibt stabil, nicht nach hinten rollen.|Bauch leicht angespannt.", "Mit dem Becken mitkippen, statt aus der Hüfte zu öffnen.",
      "Keep your pelvis stable, don't roll back.|Core lightly braced.", "Rolling your pelvis instead of opening from the hip."],
-    ["Seitlicher Gesäßmuskel", "Großer Gesäßmuskel, Rumpf", "Glute medius", "Glute max, core"],
+    ["Seitlicher Gesäßmuskel", "Tiefe Hüftrotatoren, Großer Gesäßmuskel, Rumpf", "Glute medius", "Deep hip rotators, glute max, core"],
     "muschel clamshell");
 
   E("band-leg-abduction", "Beinheben zur Seite mit Band", "Standing Band Leg Abduction", "legs", 3, 30, 1,
@@ -2137,8 +2139,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      (function(){ var q = Q(null, FN.slice(), FP.slice(), [[46,70,45,89,39,89],[60,69,72,81,78,83]], [arm(FP,FN,150,60), arm(FP,FN,30,120)], "", true); q.x = bl([45,86], [72,81]); return q; })()],
     ["Das Band um beide Knöchel legen und aufrecht hinstellen, eine Hand an einer Wand oder Stuhllehne.|Das Standbein leicht gebeugt, den Oberkörper aufrecht.|Das andere Bein gestreckt seitlich anheben, kurz halten und kontrolliert zurückführen. Nach der Hälfte die Seite wechseln.",
      "Put the band around both ankles and stand tall, one hand on a wall or chair back.|Keep the standing knee soft and your torso upright.|Lift the other leg out to the side with a straight knee, pause and return under control. Switch sides halfway."],
-    ["Oberkörper aufrecht, Becken gerade.|Fußspitze zeigt nach vorn.", "Zur Seite lehnen, um das Bein höher zu bekommen.",
-     "Torso upright, hips level.|Toes point forward.", "Leaning sideways to get the leg higher."],
+    ["Oberkörper aufrecht, Becken gerade.|Fußspitze zeigt nach vorn, das Bein nur so hoch, wie das Becken ruhig bleibt (etwa 45°).", "Zur Seite lehnen oder das Bein höher heben – dann arbeitet nicht mehr der seitliche Gesäßmuskel.",
+     "Torso upright, hips level.|Toes point forward; lift only as high as your pelvis stays still (about 45°).", "Leaning sideways or lifting higher – the side glute no longer does the work."],
     ["Seitlicher Gesäßmuskel", "Großer Gesäßmuskel, Oberschenkel außen", "Glute medius", "Glute max, outer thigh"],
     "abduktion beinheben seitlich");
 
@@ -2151,7 +2153,7 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      "Stand on the band with one foot, hold the ends, standing knee slightly bent.|Hinge forward at the hips and lift the free leg straight behind you, back flat.|Rise back up using your glutes. Switch sides halfway."],
     ["Rücken gerade, Hüfte zeigt zum Boden.|Standbein leicht gebeugt, Blick leicht vor den Fuß.", "Den Rücken rund machen oder die Hüfte seitlich aufdrehen.",
      "Back flat, hips square to the floor.|Standing knee soft, eyes slightly ahead of your foot.", "Rounding your back or opening your hips sideways."],
-    ["Oberschenkel hinten, Großer Gesäßmuskel", "Rückenstrecker, Rumpf", "Hamstrings, glutes", "Lower back, core"],
+    ["Oberschenkel hinten, Großer Gesäßmuskel", "Rückenstrecker, Breiter Rückenmuskel, Rumpf", "Hamstrings, glutes", "Lower back, lats, core"],
     "kreuzheben einbeinig rdl");
 
   E("band-glute-bridge", "Glute Bridge mit Band", "Band Glute Bridge", "legs", 6, 30, 0,
@@ -2217,8 +2219,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-lying-leg-press", "Beinstrecken im Liegen mit Band", "Lying Band Leg Press", "legs", 3, 30, 1,
     "Band um den Fuß, Bein gegen den Widerstand strecken", "Band around your foot, press your leg out against the resistance",
     1, 1, "kraft",
-    [(function(){ var q = S([46,86], 180, [[-60,-120],[-49,62]], [[-70,-20]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })(),
-     (function(){ var q = S([46,86], 180, [[-70,-70],[-49,62]], [[-70,-20]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })()],
+    [(function(){ var q = S([46,86], 180, [[-60,-120,[-6,-4]],[-49,62]], [[-70,-20]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })(),
+     (function(){ var q = S([46,86], 180, [[-70,-70,[-6,-4]],[-49,62]], [[-70,-20]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })()],
     ["Auf den Rücken legen, ein Bein anwinkeln und das Band um den Fuß legen. Die Enden mit beiden Händen nah an der Brust halten.|Das andere Bein bleibt angewinkelt am Boden.|Das Bein nach oben strecken, kurz halten und langsam wieder beugen. Nach der Hälfte die Seite wechseln.",
      "Lie on your back, bend one leg and loop the band around the foot. Hold the ends in both hands close to your chest.|The other leg stays bent on the floor.|Extend your leg upwards, pause and bend slowly. Switch sides halfway."],
     ["Rücken und Kopf bleiben am Boden.|Bein langsam strecken, Knie nicht durchdrücken.", "Das Becken vom Boden heben oder das Knie überstrecken.",
