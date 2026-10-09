@@ -196,6 +196,7 @@
       klick(await bis(function () { return $('.fc-chip[data-srzone="ruecken"]'); }, 2000, "Körperkarte in der Suche"));
       await bis(function () { return $('.fc-chip[data-srzone="ruecken"].on') && $$("[data-playex]").length > 5; }, 2000, "Rücken-Übungen als Kacheln in der Suche");
       pruefe($$("[data-playex]").length < 140 && $$(".air-kachel").length === $$("[data-playex]").length, "Rücken-Filter filtert nicht oder Kacheln fehlen");
+      pruefe($$(".st-kachel[data-studio]").length > 5, "Rücken-Filter: Studio-Übungen fehlen als Kacheln");
       await heim();   // zurück in die Bibliothek, wie der nächste Test sie erwartet
       klick('[data-nav="#library"]');
       await bis(function () { return $("[data-surprise]"); }, 3000, "Bibliothek");

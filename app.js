@@ -1666,6 +1666,7 @@ function renderSearch(){
       if(!gewaehlt && ++n > 12) return;   // je Gruppe die ersten zwölf; genauer tippen grenzt ein (mit gewählter Kategorie alle)
       var ex = e.ex && findExercise(e.ex);
       if(ex && fuerAir(ex) && ILLU[ex.id]){ kacheln += libExKachel(ex); return; }
+      if(ex && STUDIO_NUR[ex.id]){ kacheln += studioKachel(ex.id); return; }   // Studio-Übungen ebenfalls als Kacheln (antippen = Studio-Seite)
       zeilen += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'"><div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
         (e.sub ? '<div class="sub">'+esc(e.sub)+'</div>' : '')+'</div><span class="chip chev">'+ICON_CHEV+'</span></div>';
     });
@@ -1682,6 +1683,12 @@ function renderSearch(){
       el.addEventListener("click", function(ev){ ev.stopPropagation(); toggleExFav(el.getAttribute("data-exfav")); zeigen(); });
     });
     res.querySelectorAll("[data-exlang]").forEach(function(el){ langDruck(el, function(){ exZuProgramm(el.getAttribute("data-exlang")); }); });
+    res.querySelectorAll("[data-studio]").forEach(function(el){
+      function oeffnen(){ go("#studio/"+el.getAttribute("data-studio")); }
+      el.addEventListener("click", oeffnen);
+      el.addEventListener("keydown", function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); oeffnen(); } });
+      langDruck(el, function(){ exZuProgramm(el.getAttribute("data-studio")); });
+    });
     airKachelBinden();
     res.querySelectorAll("[data-sr]").forEach(function(el){
       function los(){ treffer[+el.getAttribute("data-sr")].fn(); }
@@ -6725,8 +6732,25 @@ function appUrl(){
 /* Einstellungen: oben offen, was man regelmäßig braucht („Wichtig“), darunter thematisch gruppiert und zugeklappt („Mehr“).
    Aufgeklappte Gruppen bleiben offen, solange man auf der Seite bleibt (die Seite zeichnet sich bei jeder Änderung neu). */
 var einstOffen = {};
-function einstMehr(key, titel, unter, inhalt, ico){
-  return '<details class="opt-mehr" data-mehr="'+key+'"'+(einstOffen[key] ? ' open' : '')+'>'+
+/* Einstellungen: alle Gruppen und Zeilen nach demselben Muster - Symbol links, Titel (+ Zeile darunter), rechts Pfeil */
+var EINST_ICON = {
+  fokus:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+  darstellung:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+  training:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+  daten:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/>',
+  quellen:'<path d="M5 4.5h10a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M5 16.5a3 3 0 0 1 3-3h10"/>',
+  schutz:'<path d="M12 3l7 3v5.5c0 4.3-2.9 7.6-7 9.5-4.1-1.9-7-5.2-7-9.5V6z"/><path d="M9 12l2 2 4-4"/>'
+};
+var ICON_UPLOAD = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 19h16"/></svg>';
+function einstKopf(ico, titel){
+  return '<div class="opt-kopf"><span class="om-ico">'+svgIcon(ico)+'</span><span class="opt-t">'+esc(titel)+'</span></div>';
+}
+function einstLink(href, titel, unter, ico){
+  return '<a class="opt-mehr opt-link" href="'+href+'" target="_blank" rel="noopener"><span class="opt-zeile"><span class="om-ico">'+svgIcon(ico)+'</span>'+
+    '<span class="meta"><span class="name">'+esc(titel)+'</span><span class="sub">'+esc(unter)+'</span></span><span class="om-chev">'+ICON_CHEV+'</span></span></a>';
+}
+function einstMehr(key, titel, unter, inhalt, ico, cls){
+  return '<details class="opt-mehr'+(cls ? ' '+cls : '')+'" data-mehr="'+key+'"'+(einstOffen[key] ? ' open' : '')+'>'+
     '<summary>'+(ico ? '<span class="om-ico">'+svgIcon(ico)+'</span>' : '')+
       '<span class="meta"><span class="name">'+esc(titel)+'</span><span class="sub">'+esc(unter)+'</span></span>'+
       '<span class="om-chev">'+ICON_CHEV+'</span></summary>'+
@@ -6742,28 +6766,28 @@ function renderSettings(){
   app.innerHTML =
     topbar(t("settings"), { back:"#home" }) +
     '<div class="section-title">'+esc(t("fokusTitel"))+'</div>'+
-    '<div class="card"><div class="opt-label">'+esc(t("fokusLabel"))+'</div><div class="theme-pick">'+BEREICH_KEYS.map(function(k, i){
+    '<div class="card">'+einstKopf(EINST_ICON.fokus, t("fokusLabel"))+'<div class="theme-pick">'+BEREICH_KEYS.map(function(k, i){
       return '<button type="button" data-fokus="'+k+'" aria-pressed="'+!fokusAus(k)+'" class="'+(i > 2 ? 'halb' : '')+(fokusAus(k) ? '' : ' active')+'">'+esc(bereichDaten(k)[1])+'</button>';
     }).join("")+'</div><div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t("fokusHint"))+'</div></div>'+
     '<div class="section-title">'+t("optWichtig")+'</div>'+
-    '<div class="card"><div class="opt-label">'+t("appearance")+'</div><div class="theme-pick">'+
+    '<div class="card">'+einstKopf(EINST_ICON.darstellung, t("appearance"))+'<div class="theme-pick">'+
       themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+
       themeBtn("nacht",t("thNacht"),"halb")+themeBtn("kodak",t("thKodak"),"vintage halb")+
     '</div>'+
     '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+t("themeInfo")+'</div>'+
     '</div>'+
-    '<div class="card"><div class="opt-label">'+t("optTraining")+'</div>'+
+    '<div class="card">'+einstKopf(EINST_ICON.training, t("optTraining"))+
       '<div class="range-row"><div class="label">'+t("volume")+' <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
       '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'">'+
       '<div class="range-scale"><span>0</span><span>100</span></div>'+
       '<div class="range-hint">'+t("volMusicHint")+'</div></div>'+
       toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
     '</div>'+
-    '<div class="card"><div class="opt-label">'+t("data")+'</div>'+
+    '<div class="card">'+einstKopf(EINST_ICON.daten, t("data"))+
       '<div class="snap-zeile" id="snap-zeile">'+snapZeileHTML()+'</div>'+
       (kannBackupTeilen() ? '<button class="btn btn-secondary" data-sharebackup>'+ICON_SHARE+' '+t("shareBackup")+'</button>' : '')+
-      '<button class="btn btn-secondary" data-export>'+t("exportBackup")+'</button>'+
-      '<button class="btn btn-secondary" data-import>'+t("importBackup")+'</button>'+
+      '<button class="btn btn-secondary" data-export>'+ICON_DOWNLOAD+' '+t("exportBackup")+'</button>'+
+      '<button class="btn btn-secondary" data-import>'+ICON_UPLOAD+' '+t("importBackup")+'</button>'+
       '<input type="file" id="import-file" style="display:none">'+
     '</div>'+
     '<div class="section-title">'+t("optMehr")+'</div>'+
@@ -6787,18 +6811,10 @@ function renderSettings(){
       '<div class="share-card"><div class="share-url" id="share-url">'+esc(appUrl())+'</div>'+
       '<button type="button" class="btn btn-secondary" data-sharecopy>'+t("shareCopy")+'</button></div>',
       '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>')+
-    '<a class="list-item" href="quellen.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
-      '<div class="meta"><div class="name">'+t("sourcesRow")+'</div>'+
-      '<div class="sub">'+t("sourcesRowSub")+'</div></div>'+
-      '<span class="chip chev">'+ICON_CHEV+'</span>'+
-    '</a>'+
-    '<a class="list-item" href="privacy.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">'+
-      '<div class="meta"><div class="name">'+t("privacyRow")+'</div>'+
-      '<div class="sub">'+t("privacyRowSub")+'</div></div>'+
-      '<span class="chip chev">'+ICON_CHEV+'</span>'+
-    '</a>'+
+    einstLink("quellen.html", t("sourcesRow"), t("sourcesRowSub"), EINST_ICON.quellen)+
+    einstLink("privacy.html", t("privacyRow"), t("privacyRowSub"), EINST_ICON.schutz)+
     einstMehr("loeschen", t("deleteAll"), t("mehrLoeschenSub"),
-      '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>', '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/>')+
+      '<button class="btn btn-danger" data-reset>'+t("deleteAll")+'</button>', '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/>', "opt-danger")+
     '<div class="empty" style="padding:20px 8px;">'+t("localNote")+'<br><small class="app-version" id="app-version"></small></div>';
   app.querySelectorAll("details[data-mehr]").forEach(function(d){
     d.addEventListener("toggle", function(){ einstOffen[d.getAttribute("data-mehr")] = d.open; });

@@ -11,6 +11,8 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Studio**: Langhantel, Kurzhantel & Kettlebell, Stange & Barren, Widerstandsband und Körpergewicht stehen jetzt bei **Ausrüstung**, nicht mehr bei den Gruppen. Die Gruppen sind nur noch die sechs Muskelgruppen; die Langhantel-Übungen stehen in ihrer Muskelgruppe (`STUDIO_GRUPPEN` in `daten.js`). Mit einem Ausrüstungs-Chip stehen die Air-Gruppen offen, sonst zugeklappt unter „Aus Air“ (jetzt vier, neu: Widerstandsband). Alte gespeicherte Gruppen-Chips ziehen automatisch in die Ausrüstung um (`studioFilterAlt`).
 - Fassung 2026-10-09-24.
 - **Filterkarte aufgeräumt** (alle Filter): Chips ohne Symbole und rund, klarer Abstand zwischen den Abschnitten, Fuß mit Trennlinie. Körper: Überschrift und Grob · Fein in einer Zeile, Silhouetten etwas kleiner, darunter die Auswahl bzw. „Zonen antippen“; die Zonen-Chips stehen unter „Als Liste wählen“ (zugeklappt, Zustand wird gemerkt, `settings.kkListeAuf`). Fassung 2026-10-09-25.
+- **Einstellungen einheitlich**: jede Gruppe (Bereiche, Darstellung, Training, Daten) hat Symbol-Kachel + Titel wie die Zeilen unter „Mehr“; Quellen und Datenschutz sehen aus wie die anderen Zeilen (Symbol, gleicher Pfeil); die drei Sicherungs-Knöpfe haben alle ein Symbol; „Alle Daten löschen“ steht abgesetzt und rot am Ende.
+- **Suche**: Wer eine Körperzone wählt, sieht auch die **Studio-Übungen als Kacheln** (antippen = Studio-Seite, lange drücken = in Plan legen). Fassung 2026-10-09-27.
 
 ## 2026-10-09 · Körperkarte auch im Studio, Unterer Rücken als eigene Zone
 
