@@ -2372,14 +2372,14 @@ var KK_ZONEN = {
             arme:[[13,45,10,29,5],[77,45,10,29,5],[11,76,9,27,4.5],[80,76,9,27,4.5]],
             rumpf:[[36,57,28,31,9],[40,88,20,8,4]], quad:[[35,99,14,44,6],[51,99,14,44,6]],
             waden:[[37,147,12,44,5],[51,147,12,44,5]] },
-  hinten: { schulter:[[21,32,18,13,6],[61,32,18,13,6]], ruecken:[[35,31,30,38,9]],
+  hinten: { schulter:[[21,32,18,13,6],[61,32,18,13,6]], ruecken:[[35,31,30,34,9]], ruecken_u:[[40,67,20,20,7]],
             arme:[[13,45,10,29,5],[77,45,10,29,5],[11,76,9,27,4.5],[80,76,9,27,4.5]],
-            rumpf:[[40,69,20,19,7]], gesaess:[[34,89,16,18,7],[50,89,16,18,7]],
+            gesaess:[[34,89,16,18,7],[50,89,16,18,7]],
             hamstring:[[35,108,14,38,6],[51,108,14,38,6]], waden:[[37,148,12,43,5],[51,148,12,43,5]] }
 };
 /* Reihenfolge der Chips; wichtig = taucht in „Noch nicht dabei“ auf */
-var KK_REIHE = ["schulter", "brust", "arme", "ruecken", "rumpf", "gesaess", "quad", "hamstring", "waden"];
-var KK_WICHTIG = { schulter:1, brust:1, arme:1, ruecken:1, rumpf:1, gesaess:1, quad:1, hamstring:1, waden:1 };
+var KK_REIHE = ["schulter", "brust", "arme", "ruecken", "ruecken_u", "rumpf", "gesaess", "quad", "hamstring", "waden"];
+var KK_WICHTIG = { schulter:1, brust:1, arme:1, ruecken:1, ruecken_u:1, rumpf:1, gesaess:1, quad:1, hamstring:1, waden:1 };
 /* Muskelname (kleingeschrieben) -> Zone; die erste passende Regel gilt, mehrere Zonen teilen sich das Gewicht */
 var KK_REGELN = [
   [/^(ausdauer|gleichgewicht|beweglichkeit|–|-)$/, []],
@@ -2391,15 +2391,16 @@ var KK_REGELN = [
   [/oberschenkel/, ["quad", "hamstring"]],
   [/waden|achilles|fuß|schollen|schienbein/, ["waden"]],
   [/^beine$/, ["quad", "hamstring", "gesaess", "waden"]],
-  [/schräg|sägemuskel|tiefe und schräge bauch|wirbelsäule|rückenstrecker|unterer rücken|gerader bauch|tiefe bauch|^bauch$|rumpf|bauch/, ["rumpf"]],
+  [/wirbelsäule|rückenstrecker|unterer rücken/, ["ruecken_u"]],
+  [/schräg|sägemuskel|tiefe und schräge bauch|gerader bauch|tiefe bauch|^bauch$|rumpf|bauch/, ["rumpf"]],
   [/breiter rückenmuskel|latissimus|trapez|rauten|oberer rücken|mittlerer rücken|nacken|schulterblatt|^rücken$/, ["ruecken"]],
   [/schulter|rotatorenmanschette/, ["schulter"]],
   [/brust/, ["brust"]],
   [/trizeps|bizeps|oberarmmuskel|unterarm/, ["arme"]]
 ];
-var KK_GRUPPE_ZONEN = { brust:["brust"], ruecken:["ruecken"], schulter:["schulter"], arme:["arme"], rumpf:["rumpf"], beine:["quad", "hamstring", "gesaess", "waden"] };
+var KK_GRUPPE_ZONEN = { brust:["brust"], ruecken:["ruecken", "ruecken_u"], schulter:["schulter"], arme:["arme"], rumpf:["rumpf"], beine:["quad", "hamstring", "gesaess", "waden"] };
 /* frühere, feinere Auswahl in die heutigen Zonen übersetzen; Unbekanntes fällt weg */
-var KK_ALT = { bizeps:["arme"], trizeps:["arme"], unterarm:["arme"], trapez:["ruecken"], lat:["ruecken"], ruecken_u:["rumpf"], bauch:["rumpf"], schraeg:["rumpf"], huefte:["rumpf"],
+var KK_ALT = { bizeps:["arme"], trizeps:["arme"], unterarm:["arme"], trapez:["ruecken"], lat:["ruecken"], bauch:["rumpf"], schraeg:["rumpf"], huefte:["rumpf"],
                abduktor:["gesaess"], adduktor:["quad"], beine:["quad", "hamstring", "gesaess", "waden"] };
 function kkNorm(zonen){
   var out = [];
