@@ -631,6 +631,7 @@ var EQUIP_ICON = {
   none:'<circle cx="12" cy="4.5" r="2"/><path d="M12 7v7M7.5 10h9M12 14l-3.5 6M12 14l3.5 6"/>',
   db:'<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
   kb:'<circle cx="12" cy="15" r="5.5"/><path d="M8.5 11V8.5a3.5 3.5 0 0 1 7 0V11"/>',
+  band:'<path d="M4 12c0-3.5 3.5-6 8-6s8 2.5 8 6-3.5 6-8 6-8-2.5-8-6z"/><path d="M8 12c2-2 6-2 8 0"/>',
   bar:'<path d="M3 6h18M7 6v4M17 6v4M7 10v9M17 10v9"/>',
   dip:'<path d="M3 9h7M14 9h7M5 9v10M8 9v10M16 9v10M19 9v10"/>',
   gym:'<path d="M5 21V3M5 7h9M14 3v10M10 13h8v3h-8zM5 17h6"/>'

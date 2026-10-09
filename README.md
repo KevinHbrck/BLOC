@@ -25,7 +25,7 @@ stellt man unter **Einstellungen › Fokus** ein (ausgeblendete Bereiche bleiben
 
 | Bereich | Inhalt |
 |---|---|
-| **Air** (intern `lib`) | Vier Reiter: Workouts · Übungen · Meine · **Timer** (Timer-Workouts und Blöcke). Suche, Kategorie-Kacheln, aufklappbare Filterzeile. „Überrasch mich“. **Meine** = Selbstgebautes (Baukasten, „Sinnvoll ordnen“) |
+| **Air** (intern `lib`) | Vier Reiter: Workouts · Übungen · Meine · **Timer** (Timer-Workouts und Blöcke). Suche, Kategorie-Kacheln, aufklappbare Filterzeile (Training und Ausrüstung: Ohne Geräte, Kurzhantel, Kettlebell, **Widerstandsband**, Stange, Dip-Barren). „Überrasch mich“. **Meine** = Selbstgebautes (Baukasten, „Sinnvoll ordnen“) |
 | **Studio** (intern `timer`) | Geräte- und Hantelübungen, Gewicht × Wiederholungen eintragen, Pause mit Countdown, Verlauf, Steigerungsvorschlag (doppelte Progression), Mein Plan (mehrere Pläne, auch nach Muskelgruppen-Gewichtung), Timer |
 | **Summit** (Challenges, intern `reps`) | Reiter Einheiten · Programme · Meine. Programme auf Zeit, Einheiten in drei Stufen; eigene Programme und eigene Einheiten (+ in Einheiten und Meine) |
 | **Run** (intern `run`) | GPS-Lauf: Countdown, Zeit, Strecke, Pace, Kilometer-Zwischenzeiten, Route (ohne Karte, nur als Linie), Ansagen, **Intervall-Lauf** (Laufen/Gehen), **Auto-Pause** (Stehzeit wird herausgerechnet), Abdunkeln, Name und Notiz, GPX-Export. Im Lauf lösen alle Knöpfe erst nach 3 s Halten aus |

@@ -152,6 +152,21 @@
       await bis(function () { return $$(".info-views figure").length === 2; }, 3000, "zwei Ansichten");
       klick("[data-close]");
     }],
+    ["Widerstandsband: 38 Übungen vollständig (zwei Posen, Anleitung, Haltung, Muskeln, Gerät)", async function () {
+      var d = W.BLOC_DATEN, ids = d.EXERCISE_ROWS.map(function (x) { return x[0]; }).filter(function (id) { return id.indexOf("band-") === 0; });
+      pruefe(ids.length === 38, "erwartet 38 Band-Übungen, gefunden " + ids.length);
+      ids.forEach(function (id) {
+        var p = d.ILLU_POSES[id], i = d.EX_INFO[id], h = d.EX_POSTURE[id], m = d.EX_MUSCLES[id];
+        pruefe(p && p[0] && p[1], "Figur fehlt: " + id);
+        pruefe(i && i.length === 2 && i[0].split("|").length === 3 && i[1].split("|").length === 3, "Anleitung (3 Schritte, DE/EN) fehlt: " + id);
+        pruefe(h && h.length === 4 && h.every(Boolean), "Haltung fehlt: " + id);
+        pruefe(m && m.length === 4 && m.every(Boolean), "Muskeln fehlen: " + id);
+        pruefe(d.EX_EQUIP[id].split(" ").indexOf("band") > -1, "Gerät fehlt: " + id);
+      });
+      pruefe(d.LIB_WORKOUT_ROWS.filter(function (x) { return x[0].indexOf("band-") === 0; }).every(function (x) {
+        return x[4].split(" ").every(function (id) { return d.EXERCISE_ROWS.some(function (r) { return r[0] === id; }); });
+      }), "ein Band-Workout enthält eine unbekannte Übung");
+    }],
     ["Überrasch mich: ohne Stretch, erzeugt ein Workout", async function () {
       klick("[data-surprise]");
       await bis(function () { return $("[data-spgo]"); }, 3000, "Einstellungen");
@@ -282,7 +297,7 @@
       pruefe($(".af-kopf") && !$(".af-body"), "Filterkarte ist nicht standardmäßig zu");
       await filterAuf();
       pruefe(!$('[data-lfequip="gym"]'), "Chip „Fitnessstudio“ in Air");
-      pruefe($$('[data-lfcat]').length === 8 && $$('[data-lfequip]').length === 5, "Training- und Ausrüstungs-Chips: " + $$('[data-lfcat]').length + "/" + $$('[data-lfequip]').length);
+      pruefe($$('[data-lfcat]').length === 8 && $$('[data-lfequip]').length === 6, "Training- und Ausrüstungs-Chips: " + $$('[data-lfcat]').length + "/" + $$('[data-lfequip]').length);
       klick('[data-lfcat="legs"]');
       await bis(function () { return $('[data-lfcat="legs"].on') && $(".af-body"); }, 2000, "Beine gewählt, Karte bleibt offen");
       klick('[data-lfcat="core"]');

@@ -705,6 +705,9 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .illu .br{ stroke-width:12.5; }
 .illu .ip{ stroke-width:4; }
 .illu .ipf{ fill:currentColor; stroke:none; }
+/* Widerstandsband: dünne Linie in der Gerätefarbe */
+.illu .gb{ stroke-width:2.2; stroke:var(--geraet); }
+.player .illu .gb{ stroke:currentColor; opacity:.7; }
 /* Studio-Geräte: blau, damit man sieht, wogegen man drückt; Ringe (Rollen, Stangenenden) hohl */
 .illu circle.ip{ fill:none; }
 .illu .gm{ stroke:var(--geraet); }
