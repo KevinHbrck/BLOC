@@ -2149,3 +2149,17 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .sr-koerper{ margin:0 0 8px; padding:6px 12px 10px; border:1px solid var(--border); border-radius:12px; background:var(--surface); }
 .sr-koerper[hidden]{ display:none; }
 .sr-koerper .af-lbl{ margin-top:4px; }
+/* Übungsinfo: Silhouetten antippbar, groß mit Namen */
+.info-mus{ flex-wrap:wrap; }
+.info-kk-knopf{ flex:none; padding:0; border:0; background:none; color:inherit; font:inherit; cursor:pointer; }
+.info-kk-knopf .kk{ width:50px; height:100px; }
+.info-kk-knopf .kk-paar{ gap:8px; margin:0; }
+.info-kk-knopf .kk-paar figcaption{ display:none; }
+.info-mus.gross .info-kk-knopf{ flex-basis:100%; }
+.info-mus.gross .info-kk-knopf .kk{ width:84px; height:168px; }
+.info-mus.gross .info-kk-knopf .kk-paar{ gap:24px; }
+.info-mus.gross .info-kk-knopf .kk-paar figcaption{ display:block; }
+.info-kk-liste{ flex-basis:100%; font-size:13px; line-height:1.45; display:flex; flex-direction:column; gap:4px; }
+.info-kk-liste[hidden]{ display:none; }
+.kk-punkt{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; background:var(--bereich, var(--accent)); }
+.kk-punkt.hilfe{ background:color-mix(in srgb, var(--bereich, var(--accent)) 38%, var(--kk-grau)); }

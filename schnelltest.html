@@ -169,8 +169,10 @@
       await bis(function () { return $$("[data-playex]").length === alle; }, 2000, "zurückgesetzt");
       klick(".af-fuss .btn-primary");
       klick(await bis(function () { return $('[data-info="band-squat"]'); }, 2000, "Kachel Kniebeuge mit Band"));
-      await bis(function () { return $(".info-kk .kk"); }, 2000, "Silhouetten in der Übungsinfo");
-      pruefe($$(".info-kk .z.an").length > 0, "keine Muskelgruppe gefärbt");
+      await bis(function () { return $(".info-kk-knopf .kk"); }, 2000, "Silhouetten in der Übungsinfo");
+      pruefe($$(".info-kk-knopf .z.an").length > 0, "keine Muskelgruppe gefärbt");
+      klick("[data-kkgross]");
+      await bis(function () { return $(".info-mus.gross") && $(".info-kk-liste") && !$(".info-kk-liste").hidden; }, 2000, "Silhouetten groß mit Namen");
       klick("[data-close]");
       klick('[data-libtab="workouts"]');
       klick(await bis(function () { return $("[data-cover]"); }, 3000, "Workout"));

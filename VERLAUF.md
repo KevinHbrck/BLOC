@@ -5,11 +5,11 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 ## 2026-10-09 · Körperkarte und Band-Animation
 
-- **Körperkarte** (zwei Silhouetten vorn/hinten, 17 Muskelzonen: u. a. Gesäß, seitliches Gesäß, Oberschenkel vorn/hinten, Adduktoren, Waden, Bizeps, Trizeps, Breiter Rückenmuskel, Unterer Rücken, Gerader Bauch, Schräge Bauchmuskeln; die Balken der Auswertung bleiben bei den sechs Gruppen): in der **Übungsinfo** (Air und Studio) zeigt sie, was trainiert (kräftig) und unterstützt wird (hell); in der **Auswertung** eines Workouts, Plans und der Woche addieren sich die Gruppen – je öfter, desto kräftiger, darunter steht, was noch fehlt. Beim Workout-Bauen ist die Auswertung gleich aufgeklappt.
+- **Körperkarte** (zwei Silhouetten vorn/hinten, 21 Muskelzonen – u. a. Schultern in vorn/seitlich/hinten, Brust oben/mitte, Trapez und Rauten getrennt –: u. a. Gesäß, seitliches Gesäß, Oberschenkel vorn/hinten, Adduktoren, Waden, Bizeps, Trizeps, Breiter Rückenmuskel, Unterer Rücken, Gerader Bauch, Schräge Bauchmuskeln; die Balken der Auswertung bleiben bei den sechs Gruppen): in der **Übungsinfo** (Air und Studio) zeigt sie, was trainiert (kräftig) und unterstützt wird (hell); in der **Auswertung** eines Workouts, Plans und der Woche addieren sich die Gruppen – je öfter, desto kräftiger, darunter steht, was noch fehlt. Beim Workout-Bauen ist die Auswertung gleich aufgeklappt.
 - **Filter nach Körperbereich**: in Air › Übungen und im Baukasten (Filterkarte, Zeile „Körper“) sowie in der **Suche** (aufklappbare Zeile): Gruppen antippen, mehrere möglich; es erscheinen Übungen, die diese Gruppen als Hauptmuskeln haben.
 - **Band wird gedehnt**: in der Animation läuft das Band mit Händen, Füßen und Knien mit; je länger, desto dünner, kürzer als in Ruhe hängt es durch. Technik: Band-Linien tragen `data-bd` (Marken), `bandSplit` in `app.js` löst sie aus den festen Geräteteilen und zeichnet sie je Bild neu.
 - **Suche**: Air-Übungen erscheinen als quadratische Kacheln wie unter Air › Übungen (antippen = Info, ▶, ☆, lange drücken); Studio-Übungen und alle anderen Treffer bleiben Zeilen.
-- Schnelltest 29 Prüfungen (neu: Körperkarte in Info, Filter, Auswertung und Suche, Muskelnamen ohne Zone). Fassung 2026-10-09-16.
+- Schnelltest 29 Prüfungen (neu: Körperkarte in Info, Filter, Auswertung und Suche, Muskelnamen ohne Zone). Fassung 2026-10-09-17.
 
 ## 2026-10-09 · Air: Widerstandsband als Gerät
 

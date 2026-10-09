@@ -1118,7 +1118,7 @@ function openExInfo(exId, live, lib){
       : illuHTML(exId, "info-illu"))+
     (EX_MUSCLES[exId] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
       (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>'+
-      '<div class="info-kk">'+kkInfoHTML(ex)+'</div></div>' : '')+
+      kkInfoHTML(ex)+'</div>' : '')+
     '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+steps+'</ol>'+
     (function(){
       var p = EX_POSTURE[exId];
@@ -2353,30 +2353,37 @@ function mgProzent(ids){   // Zeilen in fester Reihenfolge, Summe 100 (größter
   return { rows:rows, leer:!tot };
 }
 /* ============ Körperkarte ============
-   Zwei Silhouetten (vorn, hinten) mit 17 Muskelzonen. Verwendet in der Übungsinfo (trainiert / unterstützt), in der Auswertung eines
-   Workouts (Summe: je öfter, desto kräftiger) und als Filter in Air, Baukasten und Suche (Zonen antippen). Die Zuordnung läuft über die
-   Muskelnamen in EX_MUSCLES (KK_REGELN); die Balken der Auswertung bleiben bei den sechs groben Gruppen (MUSKEL_GRP). */
+   Zwei Silhouetten (vorn, hinten) mit 21 Muskelzonen. Verwendet in der Übungsinfo (trainiert / unterstützt, antippen = groß mit Namen),
+   in der Auswertung eines Workouts (Summe: je öfter, desto kräftiger) und als Filter in Air, Baukasten und Suche (Zonen antippen). Die Zuordnung läuft
+   über die Muskelnamen in EX_MUSCLES (KK_REGELN); wo ein Name zu allgemein ist („Schultern“), entscheidet KK_AUSNAHME je Übung.
+   Die Balken der Auswertung bleiben bei den sechs groben Gruppen (MUSKEL_GRP). */
 var KK_ZONEN = {
-  vorn:   { schulter:[[21,32,18,13,6],[61,32,18,13,6]], brust:[[39,34,22,21,8]],
+  vorn:   { schulter_v:[[29,32,10,13,5],[61,32,10,13,5]], schulter_s:[[21,32,8,13,5],[71,32,8,13,5]],
+            brust_o:[[39,34,22,9,5]], brust:[[39,43,22,12,6]],
             bizeps:[[13,45,10,29,5],[77,45,10,29,5]], unterarm:[[11,76,9,27,4.5],[80,76,9,27,4.5]],
             bauch:[[43,57,14,29,6]], schraeg:[[35.5,57,6.5,29,3],[58,57,6.5,29,3]], huefte:[[40,88,20,8,4]],
             abduktor:[[32,90,4.5,13,2.2],[63.5,90,4.5,13,2.2]], quad:[[36,99,9.5,44,5],[54.5,99,9.5,44,5]],
             adduktor:[[45.8,99,3.8,32,1.9],[50.4,99,3.8,32,1.9]], waden:[[38,147,10,44,5],[52,147,10,44,5]] },
-  hinten: { schulter:[[21,32,18,13,6],[61,32,18,13,6]], trapez:[[39,31,22,13,7]], lat:[[35,45,12,22,6],[53,45,12,22,6]],
+  hinten: { schulter_s:[[21,32,7,13,5],[72,32,7,13,5]], schulter_h:[[28,32,11,13,5],[61,32,11,13,5]],
+            trapez_o:[[39,29,22,10,6]], rauten:[[41,40,18,16,5]], lat:[[33,47,9,23,4.5],[58,47,9,23,4.5]],
             ruecken_u:[[42,68,16,19,6]], trizeps:[[13,45,10,29,5],[77,45,10,29,5]], unterarm:[[11,76,9,27,4.5],[80,76,9,27,4.5]],
             gesaess:[[37,89,13,17,7],[50,89,13,17,7]], abduktor:[[32,90,4.5,13,2.2],[63.5,90,4.5,13,2.2]],
             hamstring:[[36,108,12,38,6],[52,108,12,38,6]], waden:[[38,148,10,43,5],[52,148,10,43,5]] }
 };
 /* Reihenfolge der Chips; wichtig = taucht in „Noch nicht dabei“ auf (kleine Hilfsmuskeln nicht) */
-var KK_REIHE = ["schulter", "brust", "bizeps", "trizeps", "unterarm", "trapez", "lat", "ruecken_u", "bauch", "schraeg", "huefte", "gesaess", "abduktor", "adduktor", "quad", "hamstring", "waden"];
-var KK_WICHTIG = { schulter:1, brust:1, bizeps:1, trizeps:1, trapez:1, lat:1, ruecken_u:1, bauch:1, schraeg:1, gesaess:1, quad:1, hamstring:1, waden:1 };
-/* Muskelname (kleingeschrieben) -> Zonen; die erste passende Regel gilt, mehrere Zonen teilen sich das Gewicht */
+var KK_REIHE = ["schulter_v", "schulter_s", "schulter_h", "brust_o", "brust", "bizeps", "trizeps", "unterarm", "trapez_o", "rauten", "lat", "ruecken_u",
+                "bauch", "schraeg", "huefte", "gesaess", "abduktor", "adduktor", "quad", "hamstring", "waden"];
+var KK_WICHTIG = { schulter_v:1, schulter_s:1, schulter_h:1, brust:1, bizeps:1, trizeps:1, rauten:1, lat:1, ruecken_u:1, bauch:1, schraeg:1, gesaess:1, quad:1, hamstring:1, waden:1 };
+var KK_SCHULTER = ["schulter_v", "schulter_s"];   // „Schultern“ ohne Zusatz: Drücken und Heben = vorn und seitlich
+/* Muskelname (kleingeschrieben) -> Zonen; die erste passende Regel gilt, mehrere Zonen teilen sich das Gewicht.
+   „§S“ = allgemeine Schultern: bei Ausnahmen (KK_AUSNAHME) werden die Zonen der Übung genommen, sonst KK_SCHULTER */
 var KK_REGELN = [
   [/^(ausdauer|gleichgewicht|beweglichkeit|–|-)$/, []],
   [/oberschenkel vorn und hinten/, ["quad", "hamstring"]],
   [/tiefe und schräge bauch/, ["bauch", "schraeg"]],
-  [/schräg/, ["schraeg"]],
-  [/rotatorenmanschette/, ["schulter"]],
+  [/schräg|sägemuskel/, ["schraeg"]],
+  [/seitliche und hintere schulter/, ["schulter_s", "schulter_h"]],
+  [/rotatorenmanschette/, ["schulter_h"]],
   [/hüftrotatoren|piriformis/, ["gesaess"]],
   [/hüftstabilisatoren|seitliche[rs]? gesäß|abduktoren|oberschenkel außen/, ["abduktor"]],
   [/adduktoren|innenschenkel/, ["adduktor"]],
@@ -2389,18 +2396,34 @@ var KK_REGELN = [
   [/^beine$/, ["quad", "hamstring", "gesaess", "waden"]],
   [/wirbelsäule|rückenstrecker|unterer rücken/, ["ruecken_u"]],
   [/breiter rückenmuskel|latissimus/, ["lat"]],
-  [/trapez|rauten|oberer rücken|mittlerer rücken|nacken|schulterblatt/, ["trapez"]],
-  [/^rücken$/, ["trapez", "lat", "ruecken_u"]],
-  [/schulter/, ["schulter"]],
-  [/brust|sägemuskel/, ["brust"]],
+  [/oberer trapez|nacken/, ["trapez_o"]],
+  [/mittlerer trapez|unterer trapez|rauten|mittlerer rücken|schulterblatt/, ["rauten"]],
+  [/trapez|oberer rücken/, ["trapez_o", "rauten"]],
+  [/^rücken$/, ["trapez_o", "rauten", "lat", "ruecken_u"]],
+  [/vordere schulter/, ["schulter_v"]],
+  [/seitliche schulter/, ["schulter_s"]],
+  [/hintere schulter/, ["schulter_h"]],
+  [/schulterstabilität|schulterbeweglichkeit/, ["schulter_v", "schulter_s", "schulter_h"]],
+  [/schnellkraft/, ["schulter_v", "schulter_s"]],
+  [/armschwung/, ["schulter_s"]],
+  [/schulter/, ["§S"]],
+  [/obere brust/, ["brust_o"]],
+  [/brust/, ["brust"]],
   [/trizeps/, ["trizeps"]],
   [/bizeps|oberarmmuskel/, ["bizeps"]],
   [/unterarm/, ["unterarm"]],
   [/gerader bauch|tiefe bauch|^bauch$/, ["bauch"]],
   [/rumpf|bauch/, ["bauch", "schraeg", "ruecken_u"]]
 ];
-/* frühere, gröbere Auswahl (Gruppen der Auswertung) in Zonen übersetzen; Unbekanntes fällt weg */
-var KK_ALT = { arme:["bizeps", "trizeps", "unterarm"], rumpf:["bauch", "schraeg"], beine:["quad", "hamstring", "gesaess", "waden"], ruecken:["trapez", "lat", "ruecken_u"] };
+/* Übungen, bei denen „Schultern“ etwas Bestimmtes meint */
+var KK_AUSNAHME = {
+  "swimmers":["schulter_h"], "mountain-climbers":["schulter_v"], "bear-crawl":["schulter_v"], "plank-steps":["schulter_v"], "plank-shoulder-taps":["schulter_v"],
+  "burpees":["schulter_v"], "jump-forward-burpees":["schulter_v"], "muscle-ups":["schulter_v", "schulter_h"], "skin-the-cat":["schulter_v", "schulter_h"],
+  "archer-push-ups":["schulter_v"], "kb-clean":["schulter_v", "schulter_s"], "jumping-jacks":["schulter_s"]
+};
+/* frühere, gröbere Auswahl in Zonen übersetzen; Unbekanntes fällt weg */
+var KK_ALT = { schulter:["schulter_v", "schulter_s", "schulter_h"], trapez:["trapez_o", "rauten"],
+               arme:["bizeps", "trizeps", "unterarm"], rumpf:["bauch", "schraeg"], beine:["quad", "hamstring", "gesaess", "waden"], ruecken:["trapez_o", "rauten", "lat", "ruecken_u"] };
 function kkNorm(zonen){
   var out = [];
   selArr(zonen).forEach(function(z){
@@ -2409,8 +2432,9 @@ function kkNorm(zonen){
   return out;
 }
 function kkName(zone){ return t("kkZ_"+zone); }
-/* Zonen eines Muskeltextes („Oberschenkel vorn, Gesäß“); gew = Gewicht je Muskelname; unb sammelt Namen ohne Regel */
-function kkZonenVon(text, gew, unb){
+/* Zonen eines Muskeltextes („Oberschenkel vorn, Gesäß“); gew = Gewicht je Muskelname; unb sammelt Namen ohne Regel;
+   schulter = Zonen für allgemeine „Schultern“ (aus KK_AUSNAHME) */
+function kkZonenVon(text, gew, unb, schulter){
   var res = {};
   String(text || "").toLowerCase().split(/,\s*/).forEach(function(teil){
     teil = teil.trim();
@@ -2418,6 +2442,7 @@ function kkZonenVon(text, gew, unb){
     for(var i = 0; i < KK_REGELN.length; i++){
       if(KK_REGELN[i][0].test(teil)){
         var z = KK_REGELN[i][1];
+        if(z[0] === "§S") z = schulter || KK_SCHULTER;
         z.forEach(function(x){ res[x] = (res[x] || 0) + gew/z.length; });
         return;
       }
@@ -2426,11 +2451,11 @@ function kkZonenVon(text, gew, unb){
   });
   return res;
 }
-var KK_GRUPPE_ZONEN = { brust:["brust"], ruecken:["trapez", "lat", "ruecken_u"], schulter:["schulter"], arme:["bizeps", "trizeps", "unterarm"], rumpf:["bauch", "schraeg"], beine:["quad", "hamstring", "gesaess", "waden"] };
+var KK_GRUPPE_ZONEN = { brust:["brust_o", "brust"], ruecken:["trapez_o", "rauten", "lat", "ruecken_u"], schulter:["schulter_v", "schulter_s"], arme:["bizeps", "trizeps", "unterarm"], rumpf:["bauch", "schraeg"], beine:["quad", "hamstring", "gesaess", "waden"] };
 /* Haupt- und Hilfszonen einer Übung; ohne Muskeltext entscheidet die grobe Gruppe (Kategorie) */
 function kkFein(ex){
-  var m = EX_MUSCLES[ex.id], haupt = {}, hilfe = {};
-  if(m){ haupt = kkZonenVon(m[0], 1); hilfe = kkZonenVon(m[1], .35); }
+  var m = EX_MUSCLES[ex.id], haupt = {}, hilfe = {}, sch = KK_AUSNAHME[ex.id];
+  if(m){ haupt = kkZonenVon(m[0], 1, null, sch); hilfe = kkZonenVon(m[1], .35, null, sch); }
   if(!Object.keys(haupt).length){
     Object.keys(mgVerteilung(ex)).forEach(function(g){
       var z = KK_GRUPPE_ZONEN[g] || [];
@@ -2468,12 +2493,25 @@ function kkTeile(ex){
   Object.keys(f.hilfe).forEach(function(z){ if(f.hilfe[z] > 0 && !haupt[z]) hilfe[z] = 1; });
   return { haupt:haupt, hilfe:hilfe };
 }
+/* Übungsinfo: kleine Silhouetten; antippen vergrößert sie und nennt die Zonen beim Namen (kkInfoBinden) */
 function kkInfoHTML(ex){
   var tl = kkTeile(ex), w = {};
   Object.keys(tl.hilfe).forEach(function(z){ w[z] = .38; });
   Object.keys(tl.haupt).forEach(function(z){ w[z] = 1; });
-  return koerperPaar(w);
+  function namen(m){ return KK_REIHE.filter(function(z){ return m[z]; }).map(kkName).join(", "); }
+  return '<button type="button" class="info-kk-knopf" data-kkgross aria-expanded="false" aria-label="'+esc(t("kkGross"))+'">'+koerperPaar(w)+'</button>'+
+    '<div class="info-kk-liste" hidden><div><span class="kk-punkt haupt"></span><b>'+esc(t("kkTrainiert"))+':</b> '+esc(namen(tl.haupt))+'</div>'+
+    (Object.keys(tl.hilfe).length ? '<div><span class="kk-punkt hilfe"></span><b>'+esc(t("musAssist"))+':</b> '+esc(namen(tl.hilfe))+'</div>' : '')+'</div>';
 }
+/* Ein Tipp auf die kleinen Silhouetten vergrößert sie und zeigt die Zonen mit Namen (gilt für alle Übungsinfos, auch im Studio) */
+document.addEventListener("click", function(e){
+  var b = e.target.closest && e.target.closest("[data-kkgross]");
+  if(!b) return;
+  var box = b.closest(".info-mus"), auf = !box.classList.contains("gross");
+  box.classList.toggle("gross", auf);
+  b.setAttribute("aria-expanded", String(auf));
+  box.querySelector(".info-kk-liste").hidden = !auf;
+});
 /* Summe über mehrere Übungen: Hauptmuskeln zählen voll, Hilfsmuskeln mit 0,35 (wie die Auswertung); je höher die Summe, desto kräftiger */
 function kkSumme(ids){
   var sum = {};
@@ -2734,7 +2772,7 @@ function studioInfoHTML(id, ex){
   var info = EX_INFO[id], lang = currentLang()==="en" ? 1 : 0;
   return info ? '<div class="section-title">'+esc(t("stInfo"))+'</div><div class="card st-info">'+
       (EX_MUSCLES[id] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
-        (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div><div class="info-kk">'+kkInfoHTML(ex)+'</div></div>' : '')+
+        (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>'+kkInfoHTML(ex)+'</div>' : '')+
       '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+info[lang].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
       (EX_POSTURE[id] ? '<div class="info-title">'+t("posture")+'</div><ul class="info-posture">'+EX_POSTURE[id][lang*2].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'+
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(EX_POSTURE[id][lang*2+1])+'</div>' : '')+
