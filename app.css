@@ -2140,6 +2140,19 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .kk-note{ margin:4px 0 8px; font-size:13px; color:var(--text-dim); text-align:center; }
 .kk-skala{ display:flex; align-items:center; justify-content:center; gap:8px; font-size:11px; color:var(--text-dim); }
 .kk-skala i{ width:90px; height:8px; border-radius:4px; background:linear-gradient(90deg, var(--kk-grau, #ddd), var(--bereich, var(--accent))); }
+/* Kopf eines Workouts: kleine Silhouetten links, rechts viel / nur am Rande / Lücken */
+.kk-kopf{ display:flex; align-items:center; gap:14px; margin:12px 0 6px; padding:10px 12px; border-radius:14px; background:color-mix(in srgb, var(--text) 5%, var(--surface)); }
+.kk-kopf .kk-paar{ flex:none; gap:6px; margin:0; }
+.kk-kopf .kk{ width:42px; height:84px; }
+.kk-kopf .kk-paar figcaption{ display:none; }
+.kk-kopf-txt{ flex:1; min-width:0; font-size:13.5px; line-height:1.4; }
+.kk-zeile{ margin:0 0 4px; color:var(--text); }
+.kk-zeile b{ font-weight:700; }
+.kk-zeile.viel b{ color:var(--bereich, var(--accent)); }
+.kk-zeile.luecke b{ color:#d9534f; }
+.kk-zeile.rand, .kk-zeile.ok{ color:var(--text-dim); }
+.kk-kopf .kk-skala{ justify-content:flex-start; margin-top:6px; }
+.kk-kopf .kk-skala i{ width:60px; }
 .kk-filter{ margin:4px 0 6px; }
 .kk-filter .kk{ width:84px; height:168px; }
 .kk-chips{ margin-top:6px; }

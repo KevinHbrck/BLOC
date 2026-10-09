@@ -177,6 +177,7 @@
       klick('[data-libtab="workouts"]');
       klick(await bis(function () { return $("[data-cover]"); }, 3000, "Workout"));
       await bis(function () { return $(".ausw .kk-summe .kk"); }, 3000, "Körperkarte in der Auswertung");
+      pruefe($$(".cover-hero .kk-kopf .kk").length === 2 && $(".cover-hero .kk-kopf .kk-zeile"), "Körperkarte oben im Workout-Deckblatt fehlt");
       // Suche: Körperkarte aufklappen, Muskelgruppe wählen -> nur passende Übungen
       await heim();
       klick('.tabbar [data-nav="#search"]');

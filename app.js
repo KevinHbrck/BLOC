@@ -2510,6 +2510,23 @@ function kkSummeHTML(ids){
   return '<div class="kk-summe">'+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p>'+
     '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div></div>';
 }
+/* Kompakte Körperkarte für den Kopf eines Workouts (Deckblatt, Baukasten): Silhouetten plus drei Zeilen - viel trainiert, nur am Rande, Lücken */
+function kkKopfHTML(ids){
+  var sum = kkSumme(ids), w = {}, viel = [], rand = [], leer = [], max = 0;
+  KK_REIHE.forEach(function(z){ max = Math.max(max, sum[z] || 0); });
+  if(!max) return "";
+  var schwelle = Math.max(1.8, max*.7);
+  KK_REIHE.forEach(function(z){
+    var v = sum[z] || 0;
+    w[z] = kkStufe(v);
+    if(v >= schwelle) viel.push(z); else if(v < .3) leer.push(z); else if(v < 1) rand.push(z);
+  });
+  function zeile(kl, key, zonen){ return zonen.length ? '<div class="kk-zeile '+kl+'"><b>'+esc(t(key))+'</b> '+esc(zonen.map(kkName).join(", "))+'</div>' : ''; }
+  return '<div class="kk-kopf">'+koerperPaar(w)+'<div class="kk-kopf-txt">'+
+    zeile("viel", "kkViel", viel)+zeile("rand", "kkRand", rand)+
+    (leer.length ? zeile("luecke", "kkLueckeKurz", leer) : '<div class="kk-zeile ok">'+esc(t("kkKeineLuecke"))+'</div>')+
+    '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div></div></div>';
+}
 /* Filter: Zonen antippen (mehrere möglich) */
 function zonePasst(ex, zonen){
   zonen = kkNorm(zonen);
@@ -4454,13 +4471,15 @@ function renderDraftPage(d, cfg){
         '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+dauer+'</div>'+
         (exs.length ? '<div class="cat-tags">'+catTags(cats)+'</div>' : '')+
         (exs.length ? '<div class="cover-equip">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div>' : '')+
-        '<button class="btn btn-primary" data-go '+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
+        (exs.length && !warmDehn && !d.ws ? kkKopfHTML(d.items.map(function(it){ return it.ex; })) : '')+
+        '<button class="btn btn-primary" data-go'+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
         (d.src==="surprise" ? '<button class="btn btn-secondary wb-mischen" data-reroll>'+ICON_MISCHEN+' '+t("wbMischen")+'</button>' : '')+
         coverActs+
         '<div class="cover-note">'+t(d._dirty ? "coverDirty" : "coverHint")+'</div>'+
       '</div>'
     : '<div class="card"><label for="m-name">'+t("name")+'</label>'+
-        '<input type="text" id="m-name" value="'+esc(d.name)+'" maxlength="40"></div>';
+        '<input type="text" id="m-name" value="'+esc(d.name)+'" maxlength="40">'+
+        (exs.length && !d.ws ? kkKopfHTML(d.items.map(function(it){ return it.ex; })) : '')+'</div>';
 
   var ablaufHTML = cfg.cover
     ? '<div class="section-title wb-kopf"><span>'+t("myInWorkout", { n:exs.length, d:dauer })+'</span>'+
