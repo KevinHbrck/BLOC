@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-09 · Körperkarte auch im Studio, Unterer Rücken als eigene Zone
+
+- **Studio**: die Filterkarte (Studio › Übungen und beim Zusammenstellen eines Plans) hat jetzt dieselbe Zeile „Körper“ wie Air: Zonen antippen, mehrere möglich; „Zurücksetzen“ löscht sie mit. Gespeichert in `settings.stZonen`.
+- **Körperkarte jetzt 10 Zonen**: neu **Unterer Rücken** (hinten, eigene Zone neben Rücken).
+- Schnelltest prüft den Studio-Zonenfilter. Fassung 2026-10-09-22.
+
 ## 2026-10-09 · Körperkarte zurück auf 17 Zonen, Band-Inhalte gegengeprüft, Figuren nachgeschärft
 
 - **Körperkarte jetzt 9 Zonen** (17 und 21 waren am Handy zu fein). Neu bleibt: Tippen auf die Silhouetten in der Übungsinfo vergrößert sie und nennt die Zonen mit Namen.

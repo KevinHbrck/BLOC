@@ -361,6 +361,14 @@
       await bis(function () { return $('[data-start="geraet"].on') && $('[data-stgr="brust"].on') && $(".af-body"); }, 2000, "Studio: Ausrüstung dazu, Karte bleibt offen");
       klick('[data-streset]');   // die Auswahl bleibt gespeichert - für die folgenden Tests zurücksetzen
       await bis(function () { return !$('[data-stgr].on') && !$('[data-start].on'); }, 2000, "Studio: Zurücksetzen");
+      // Studio: Körperkarte – Muskelzone antippen filtert die Übungen
+      var stAlle = $$("[data-studio]").length;
+      pruefe($$(".kk-filter .kk").length === 2 && $$("[data-stzone]").length >= 12, "Studio: Körperkarte im Filter fehlt");
+      klick('.fc-chip[data-stzone="brust"]');
+      await bis(function () { return $('.fc-chip[data-stzone="brust"].on') && $(".af-body") && $$("[data-studio]").length < stAlle; }, 2000, "Studio: Zone Brust filtert, Karte bleibt offen");
+      pruefe($$("[data-studio]").length > 0, "Studio: Zone Brust zeigt nichts");
+      klick('[data-streset]');
+      await bis(function () { return !$('[data-stzone].on') && $$("[data-studio]").length === stAlle; }, 2000, "Studio: Zurücksetzen löscht auch die Zonen");
       // Air-Gruppe per Chip: steht dann offen als eigener Abschnitt, nicht mehr in „Aus Air“
       klick('[data-stgr="stange"]');
       await bis(function () { return $('[data-stgr="stange"].on') && !$("details.st-air-gr") && $$("[data-studio]").filter(sichtbar).length > 5; }, 2000, "Studio: Chip „Stange & Barren“ zeigt die Übungen offen");

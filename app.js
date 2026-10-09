@@ -2038,26 +2038,28 @@ function studioAnzahl(gruppen, fGr, artOk){
   return n;
 }
 /* Filter der Studio-Übungen (Gruppen inkl. der Air-Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
-function studioFilterHTML(gruppen, fGr, fArt, anzahl){
+function studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen){
   var s = state.db.settings;
   var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
-    .concat(fArt.map(function(a){ return t("stArt_"+a); }));
+    .concat(fArt.map(function(a){ return t("stArt_"+a); }), zonen.map(kkName));
   return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t("afAlleEx"),
     zeigen:filterZeigenText(anzahl, "Ex"),
     inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length; }).map(function(g){
         return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
       filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.map(function(a){
-        return filterChip("data-start", a, fArt.indexOf(a) > -1, "", t("stArt_"+a)); }).join("")) });
+        return filterChip("data-start", a, fArt.indexOf(a) > -1, "", t("stArt_"+a)); }).join(""))+
+      kkFilterHTML("data-stzone", zonen) });
 }
-function studioFilterBinden(fGr, fArt, neuZeichnen){
+function studioFilterBinden(fGr, fArt, zonen, neuZeichnen){
   var s = state.db.settings;
+  app.querySelectorAll("[data-stzone]").forEach(function(b){ b.addEventListener("click", function(){ s.stZonen = selToggle(zonen, b.getAttribute("data-stzone")); save(); neuZeichnen(); }); });
   app.querySelectorAll("[data-stgr]").forEach(function(b){ b.addEventListener("click", function(){ s.stGruppen = selToggle(fGr, b.getAttribute("data-stgr")); save(); neuZeichnen(); }); });
   app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
   // Auf/zu steht in den Einstellungen, damit die Karte beim Neuzeichnen (nach jedem Antippen) offen bleibt - Mehrfachauswahl ohne ständiges Aufklappen
   app.querySelectorAll("[data-sttoggle]").forEach(function(b){ b.addEventListener("click", function(){ s.stFilterOpen = !s.stFilterOpen; save(); neuZeichnen(); }); });
   var zur = app.querySelector("[data-streset]");
-  if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; save(); neuZeichnen(); });
+  if(zur) zur.addEventListener("click", function(){ s.stGruppen = []; s.stArten = []; s.stZonen = []; save(); neuZeichnen(); });
 }
 function renderStudio(){
   var s = state.db.settings, alle = studioAlle();
@@ -2066,7 +2068,8 @@ function renderStudio(){
   if(s.stTab === "plan") return renderStudioPlan();
   // Filter: Gruppen-Kacheln (mehrere möglich) und Ausrüstung (mehrere möglich)
   var fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
-  function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
+  var zonen = kkNorm(s.stZonen);   // Körperkarte: gewählte Muskelzonen
+  function artOk(id){ return (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(findExercise(id), zonen)); }
   var zuletzt = Object.keys(alle).filter(function(id){ return alle[id].zuletzt && findExercise(id); })
     .sort(function(a, b){ return alle[b].zuletzt - alle[a].zuletzt; }).slice(0, 6);
   var gruppen = studioIds(), imStudio = {};
@@ -2079,8 +2082,8 @@ function renderStudio(){
     var ex = findExercise(id); return !!ex && fuerWorkout(ex) && artOk(id);   // Air-Übung mit ★
   });
   zuletzt = zuletzt.filter(function(id){ return favs.indexOf(id) < 0 && passt(id); });
-  var filterAn = fGr.length || fArt.length;
-  var kacheln = studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk));
+  var filterAn = fGr.length || fArt.length || zonen.length;
+  var kacheln = studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk), zonen);
   var hw = hinweise("studio", ["studioHint"]);
   var html = '<div class="st-gruppe"><div class="section-title">'+esc(t("stFavs"))+'</div>'+
       (favs.length ? '<div class="fig-grid">'+favs.map(studioKachel).join("")+'</div>' : '<div class="fav-empty">'+esc(t("stFavHint"))+'</div>')+'</div>'+
@@ -2120,7 +2123,7 @@ function renderStudio(){
     var y = window.scrollY; renderStudio(); window.scrollTo(0, y);
   }); });
   function neuZeichnen(){ var y = window.scrollY; renderStudio(); window.scrollTo(0, y); }
-  studioFilterBinden(fGr, fArt, neuZeichnen);
+  studioFilterBinden(fGr, fArt, zonen, neuZeichnen);
   var neu = app.querySelector("[data-stnew]");
   if(neu) neu.addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
   var q = app.querySelector("#st-q");
@@ -2217,11 +2220,12 @@ function renderStudioPlan(){
     gruppen.forEach(function(g){ g.ids.forEach(function(id){ da[id] = true; }); });
     // dieselben Filter wie bei Studio › Übungen (Gruppen, Ausrüstung); die Air-Gruppen stehen auch hier zugeklappt unter „Aus Air“
     var s = state.db.settings, fGr = selArr(s.stGruppen), fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
-    function artOk(id){ return !fArt.length || fArt.indexOf(studioArt(id)) > -1; }
+    var zonen = kkNorm(s.stZonen);
+    function artOk(id){ return (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(findExercise(id), zonen)); }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keiner Gruppe stehen
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
       hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
-      studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk));
+      studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk), zonen);
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
     function planKachel(id){
       var ex = findExercise(id);
@@ -2276,7 +2280,7 @@ function renderStudioPlan(){
     p.ids = l; p.updatedAt = Date.now(); save(); neu();
   });
   kachelKlick(app, "[data-studio]", function(el){ go("#studio/"+el.getAttribute("data-studio")); });
-  if(stPlanBauen) studioFilterBinden(selArr(state.db.settings.stGruppen), selArr(state.db.settings.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; }), neu);
+  if(stPlanBauen) studioFilterBinden(selArr(state.db.settings.stGruppen), selArr(state.db.settings.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; }), kkNorm(state.db.settings.stZonen), neu);
   var q = app.querySelector("#pl-q");
   if(q){
     studioAirBinden(function(){ return stPlanQuery; });
