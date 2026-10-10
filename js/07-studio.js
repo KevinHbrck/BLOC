@@ -65,25 +65,25 @@ function studioIds(){
   gruppen.push({ id:"band", name:t("stBand"), ids:bandIds, air:true });
   return gruppen;
 }
-/* Ausrüstung einer Studio-Übung - für die Chips über den Gruppen */
+/* Ausrüstung einer Übung - für die Chips im Filter. „Fitnessstudio“ fasst alles zusammen, was es dort gibt (Geräte, Kabel, Langhantel,
+   Bank mit Kurzhanteln); die übrigen Arten sind das, was man auch zuhause oder draußen hat. */
 function studioArt(id){
-  if(/cable|pulldown|pushdown|face-pull|woodchop|crossover/.test(id)) return "kabel";
-  if(/^barbell|bench-press|t-bar|hip-thrust/.test(id)) return "lh";
   var eq = (findExercise(id) || {}).equip || [];
-  if(eq.indexOf("gym") < 0){
-    if(eq.indexOf("band") > -1) return "band";
-    if(eq.indexOf("bar") > -1 || eq.indexOf("dip") > -1) return "stange";
-    return (eq.indexOf("db") > -1 || eq.indexOf("kb") > -1) ? "frei" : "koerper";
-  }
-  return eq.indexOf("db") > -1 ? "frei" : "geraet";
+  if(eq.indexOf("gym") > -1) return "geraet";
+  if(eq.indexOf("band") > -1) return "band";
+  if(eq.indexOf("bar") > -1 || eq.indexOf("dip") > -1) return "stange";
+  return (eq.indexOf("db") > -1 || eq.indexOf("kb") > -1) ? "frei" : "koerper";
 }
-var STUDIO_ARTEN = ["geraet", "kabel", "frei", "lh", "stange", "band", "koerper"];
-var STUDIO_ART_ICON = { frei:EQUIP_ICON.kb, lh:CAT_ICON.weight, stange:EQUIP_ICON.bar, band:EQUIP_ICON.band, koerper:EQUIP_ICON.none };
-/* Frühere Gruppen-Chips, die jetzt zur Ausrüstung gehören (Langhantel, Kurzhantel & Kettlebell, Stange & Barren, Körpergewicht), in die Ausrüstung umziehen */
+var STUDIO_ARTEN = ["geraet", "frei", "stange", "band", "koerper"];
+var STUDIO_ART_ICON = { geraet:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, band:EQUIP_ICON.band, koerper:EQUIP_ICON.none };
+/* Frühere Gruppen-Chips, die jetzt zur Ausrüstung gehören (Langhantel, Kurzhantel & Kettlebell, Stange & Barren, Körpergewicht), in die Ausrüstung umziehen;
+   die früheren Chips „Kabel“ und „Langhantel“ stehen jetzt unter „Fitnessstudio“ */
 function studioFilterAlt(){
-  var s = state.db.settings, umzug = { lh:"lh", frei:"frei", stange:"stange", air:"koerper" }, gr = selArr(s.stGruppen), neu = [], arten = selArr(s.stArten);
-  gr.forEach(function(id){ if(umzug[id]){ if(arten.indexOf(umzug[id]) < 0) arten.push(umzug[id]); } else neu.push(id); });
-  if(neu.length !== gr.length){ s.stGruppen = neu; s.stArten = arten; save(); }
+  var s = state.db.settings, umzug = { lh:"geraet", frei:"frei", stange:"stange", air:"koerper" }, gr = selArr(s.stGruppen), neu = [], arten = selArr(s.stArten), geaendert = false;
+  gr.forEach(function(id){ if(umzug[id]){ if(arten.indexOf(umzug[id]) < 0) arten.push(umzug[id]); geaendert = true; } else neu.push(id); });
+  var arten2 = [];
+  arten.forEach(function(a){ var n = (a === "kabel" || a === "lh") ? "geraet" : a; if(n !== a) geaendert = true; if(arten2.indexOf(n) < 0) arten2.push(n); });
+  if(geaendert){ s.stGruppen = neu; s.stArten = arten2; save(); }
 }
 var STUDIO_GRUPPEN_ICON = { beine:CAT_ICON.legs, brust:'<path d="M4 8c2.5-2 5.5-2 8 0 2.5-2 5.5-2 8 0v5c-2 3-5.5 4-8 1.5C9.5 17 6 16 4 13z"/>',
   ruecken:CAT_ICON.back, schulter:'<circle cx="12" cy="6" r="2.5"/><path d="M4 18c0-5 3.5-8.5 8-8.5s8 3.5 8 8.5"/>', arme:CAT_ICON.arms,

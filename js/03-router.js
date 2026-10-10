@@ -141,11 +141,14 @@ var app = document.getElementById("app");
 
 /* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
 var TAB_ROUTEN = { home:"#home", search:"#search", stats:"#stats", settings:"#settings" };
+/* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
+var BEREICH_LEISTE = { katalog:1, library:1, timers:1 };
 function tabLeiste(route){
   var el = document.getElementById("tabbar");
   if(!el) return;
   var aktiv = TAB_ROUTEN[route];
-  if(!aktiv){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
+  var imBereich = !!BEREICH_LEISTE[route] && !stGen && !(stPlanAktiv && stPlanFind(stPlanAktiv));
+  if(!aktiv && !imBereich){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
   var eintraege = [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],

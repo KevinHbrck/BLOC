@@ -112,8 +112,8 @@ function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
   return topbar(t("katalog"), { back:"#home", right:right || "" }) +
     '<div class="rz kat-rz" style="--rz:var(--tp-color)">'+b("workouts", t("katTabKatalog"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))+'</div>' +
-    (tab === "workouts" ? katOrtHTML() : '') +   // ganz vorn im Katalog: Fitnessstudio oder Freiluft
-    '<div class="kat-start">'+surpriseLeisteHTML()+katPlanLeisteHTML()+'</div>';   // zwei klare Einstiege: lass dir eins zusammenstellen oder plane selbst
+    // Katalog: ganz vorn der Ort (Fitnessstudio oder Freiluft), sonst nichts; Übungen und Meine: Überrasch mich und Workout planen
+    (tab === "workouts" ? katOrtHTML() : '<div class="kat-start">'+surpriseLeisteHTML()+katPlanLeisteHTML()+'</div>');
 }
 /* Ort: Fitnessstudio (Workouts mit Geräten oder Langhantel) oder Freiluft (alles andere: zuhause, draußen, mit Kurzhantel, Band, Stange) */
 var KAT_ICON_STUDIO = '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>';
@@ -179,6 +179,8 @@ function katKopfBinden(){
 /* ---------- Einstieg: die richtige Seite zum Reiter ---------- */
 function renderKatalog(){
   katPlanAufraeumen();
+  if(stPlanAktiv && !stPlanFind(stPlanAktiv)){ stPlanAktiv = null; stPlanBauen = false; }
+  tabLeiste("katalog");   // untere Leiste auf den Listen des Bereichs, nicht im Plan-Bau (Reiterwechsel rendern nicht über render())
   if(stGen) return renderStudioPlanGen();
   if(stPlanAktiv && stPlanFind(stPlanAktiv)) return renderStudioPlan();
   stPlanAktiv = null; stPlanBauen = false;

@@ -127,9 +127,8 @@
       pruefe(gr[0].open && $$(".lib-card").filter(sichtbar).length >= 1, "Antippen klappt den Bereich nicht auf");
       klick(gr[0].querySelector("summary"));
       pruefe(!gr[0].open, "zweites Antippen klappt nicht zu");
-      var sl = $(".sp-leiste[data-surprise]");
-      pruefe(sl && !$(".topbar .sp-leiste"), "Überrasch mich fehlt als Leiste unter den Reitern (Workouts)");
-      pruefe(sl.getBoundingClientRect().height <= 50, "Überrasch-mich-Leiste ist nicht schmal: " + Math.round(sl.getBoundingClientRect().height) + " px");
+      pruefe($(".kat-ort") && !$("[data-surprise]") && !$("[data-katplanneu]"), "Im Katalog sollen nur der Ort-Schalter, aber nicht Überrasch mich und Workout planen stehen");
+      pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Katalog");
       // Sortierung A–Z: kleiner Schalter in der Kopfzeile der Filterkarte; sortiert wird innerhalb der Bereiche
       pruefe($(".air-filter .af-az") && !$(".air-filter .fc-seg"), "A–Z-Schalter fehlt oder der Sortier-Block steht noch in der Karte");
       klick(".af-az");
@@ -142,11 +141,16 @@
       klick(".af-az");
       await bis(function () { return !$(".af-az.on"); }, 2000, "A–Z aus");
       klick('[data-kattab="uebungen"]');
-      await bis(function () { return $(".sp-leiste[data-surprise]") && $$("[data-studio]").length > 150; }, 3000, "Überrasch mich auch im Reiter Übungen");
+      await bis(function () { return $(".sp-leiste[data-surprise]") && $$("[data-studio]").length > 150; }, 3000, "Überrasch mich im Reiter Übungen");
+      var sl = $(".sp-leiste[data-surprise]");
+      pruefe(sl && !$(".topbar .sp-leiste") && sl.getBoundingClientRect().height <= 50, "Überrasch-mich-Leiste fehlt oder ist nicht schmal");
+      pruefe(!/gradient/.test(W.getComputedStyle(sl).backgroundImage) && W.getComputedStyle(sl).boxShadow === "none", "Überrasch mich soll nicht glänzen (kein Verlauf, kein Schatten)");
+      pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt bei den Übungen");
       var ug = $$("details.kat-gr");
       pruefe(ug.length >= 7 && ug.every(function (d) { return !d.open && sichtbar(d); }), "Übungen: zu Beginn sollen nur die Überschriften stehen (" + ug.length + " Bereiche)");
       klick('[data-kattab="meine"]');
       await bis(function () { return $(".sp-leiste[data-surprise]") && !$("#l-q") && $(".plan-item, .fav-empty"); }, 3000, "Überrasch mich auch im Reiter Meine");
+      pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt unter Meine");
       klick('[data-kattab="workouts"]');
     }],
     ["Suche: „pull ups“, „klimmzug“, „liegestutz“", async function () {
@@ -218,7 +222,8 @@
       pruefe($$(".air-kachel [data-playex]").length + $$("[data-info]").length > 0 && $$("[data-info]").some(function (el) { var e = W.findExercise(el.getAttribute("data-info")); return e && e.main === "stretch"; }), "Rücken-Filter: Dehnübungen fehlen als Kacheln");
       await heim();   // zurück in den Katalog, wie der nächste Test ihn erwartet
       klick('[data-nav="#katalog"]');
-      await bis(function () { return $("[data-surprise]"); }, 3000, "Katalog");
+      klick(await bis(function () { return $('[data-kattab="uebungen"]'); }, 3000, "Reiter Übungen"));
+      await bis(function () { return $("[data-surprise]"); }, 3000, "Übungen mit Überrasch mich");
     }],
     ["Widerstandsband: 38 Übungen vollständig (zwei Posen, Anleitung, Haltung, Muskeln, Gerät)", async function () {
       var d = W.BLOC_DATEN, ids = d.EXERCISE_ROWS.map(function (x) { return x[0]; }).filter(function (id) { return id.indexOf("band-") === 0; });
@@ -367,7 +372,7 @@
       await filterAuf();
       // derselbe Filter wie bei den Übungen: Gruppe, Ausrüstung („Fitnessstudio“ statt „Gerät“), Körperkarte
       pruefe(!$('[data-lfcat]') && !$('[data-lfequip]'), "Training-Chips stehen noch im Katalog");
-      pruefe($$("[data-stgr]").length === 7 && $$("[data-start]").length === 7 && $$("[data-stzone]").length >= 12, "Katalog: Filter ist nicht derselbe wie bei den Übungen");
+      pruefe($$("[data-stgr]").length === 7 && $$("[data-start]").length === 5 && $$("[data-stzone]").length >= 12, "Katalog: Filter ist nicht derselbe wie bei den Übungen");
       pruefe(/Fitnessstudio/.test($('[data-start="geraet"]').textContent), "Chip „Fitnessstudio“ fehlt: " + $('[data-start="geraet"]').textContent);
       klick('[data-stgr="beine"]');
       await bis(function () { return $('[data-stgr="beine"].on') && $(".af-body"); }, 2000, "Beine gewählt, Karte bleibt offen");
@@ -404,7 +409,7 @@
       await bis(function () { return !$('[data-stzone].on') && $$("[data-studio]").length === stAlle; }, 2000, "Übungen: Zurücksetzen löscht auch die Zonen");
       // Langhantel, Kurzhantel & Kettlebell, Stange, Widerstandsband und Körpergewicht gehören zur Ausrüstung, nicht zu den Gruppen
       pruefe(!$('[data-stgr="lh"]') && !$('[data-stgr="frei"]') && !$('[data-stgr="stange"]') && !$('[data-stgr="air"]') && !$('[data-stgr="band"]'), "Übungen: Ausrüstung steht noch bei den Gruppen");
-      pruefe($('[data-start="lh"]') && $('[data-start="frei"]') && $('[data-start="stange"]') && $('[data-start="band"]') && $('[data-start="koerper"]'), "Übungen: Ausrüstungs-Chips unvollständig");
+      pruefe($('[data-start="geraet"]') && $('[data-start="frei"]') && $('[data-start="stange"]') && $('[data-start="band"]') && $('[data-start="koerper"]') && !$('[data-start="kabel"]') && !$('[data-start="lh"]'), "Übungen: Ausrüstungs-Chips sollen Fitnessstudio, Kurzhantel, Stange, Band und Körpergewicht sein");
       pruefe($('[data-stgr="brust"]') && $('[data-stgr="cardio"]') && $$("[data-stgr]").length === 7, "Übungen: sieben Bereiche erwartet (mit Cardio), gefunden " + $$("[data-stgr]").length);
       // Air- und Studio-Übungen gemeinsam: ein Chip „Widerstandsband“ zeigt alle Band-Übungen, offen
       klick('[data-start="band"]');
@@ -610,19 +615,30 @@
       pruefe(frei >= 40 && !$('[data-cover="lib/gym-legday"]'), "Freiluft zeigt " + frei + " Workouts oder ein Fitnessstudio-Programm");
       klick('[data-katort="studio"]');
       await bis(function () { return $('[data-katort="studio"].on') && $('[data-cover="lib/gym-legday"]'); }, 2000, "Fitnessstudio zeigt die Programme");
-      ["gym-fullbody", "gym-legday", "gym-arms", "gym-deepcore"].forEach(function (id) { pruefe($('[data-cover="lib/' + id + '"]'), "Programm fehlt: " + id); });
-      pruefe($$(".lib-card").length === 4, "Fitnessstudio: erwartet 4 Programme, gefunden " + $$(".lib-card").length);
+      ["gym-fullbody", "gym-fullbody-b", "gym-upper", "gym-lower", "gym-legday", "gym-chest", "gym-back", "gym-shoulders", "gym-arms", "gym-glutes", "gym-core", "gym-posture", "gym-deepcore"].forEach(function (id) { pruefe($('[data-cover="lib/' + id + '"]'), "Programm fehlt: " + id); });
+      pruefe($$(".lib-card").length === 13, "Fitnessstudio: erwartet 13 Programme, gefunden " + $$(".lib-card").length);
       pruefe(!$('[data-cover="lib/leg-day"]'), "Freiluft-Workout im Fitnessstudio");
       // derselbe Filter wirkt auch hier
       await filterAuf();
       klick('[data-stgr="beine"]');
-      await bis(function () { var n = $$(".lib-card").length; return n >= 1 && n < 4 && $('[data-cover="lib/gym-legday"]') && !$('[data-cover="lib/gym-arms"]'); }, 2000, "Gruppe Beine: Legday (und Ganzkörper), nicht Arme");
+      await bis(function () { var n = $$(".lib-card").length; return n >= 3 && n < 13 && $('[data-cover="lib/gym-legday"]') && !$('[data-cover="lib/gym-arms"]'); }, 2000, "Gruppe Beine: Beinprogramme, nicht Arme");
       klick('[data-streset]');
-      await bis(function () { return $$(".lib-card").length === 4; }, 2000, "Zurücksetzen");
+      await bis(function () { return $$(".lib-card").length === 13; }, 2000, "Zurücksetzen");
       // Programm öffnen: Übungen aus dem Fitnessstudio laufen als Workout
       klick($('[data-cover="lib/gym-fullbody"]'));
       await bis(function () { return $$(".wb-ablauf").length >= 6; }, 3000, "Deckblatt mit sechs Übungen");
-      pruefe($('[data-wbitem], .wb-ablauf'), "Deckblatt ohne Ablauf");
+      pruefe($(".cover-info") && /12 Wiederholungen/.test($(".cover-info").textContent), "Deckblatt ohne Hinweis „3 × 12“: " + ($(".cover-info") ? $(".cover-info").textContent : "fehlt"));
+      // Daten: jedes Fitnessstudio-Programm hat nur bekannte Übungen, einen Hinweis in beiden Sprachen und liegt im Fitnessstudio
+      var rows = W.BLOC_DATEN.LIB_WORKOUT_ROWS.filter(function (x) { return x[0].indexOf("gym-") === 0; });
+      var ex = W.BLOC_DATEN.EXERCISE_ROWS.map(function (x) { return x[0]; });
+      pruefe(rows.length === 13, "erwartet 13 Programme in den Daten, gefunden " + rows.length);
+      rows.forEach(function (x) {
+        var ids = x[4].split(" ");
+        pruefe(ids.length >= 5 && ids.every(function (id) { return ex.indexOf(id) > -1; }), "unbekannte Übung in " + x[0]);
+        pruefe(W.katWoOrt(ids.map(W.findExercise)) === "studio", x[0] + " liegt nicht im Fitnessstudio");
+        var info = W.BLOC_DATEN.LIB_WORKOUT_INFO[x[0]];
+        pruefe(info && info[0] && info[1], "Hinweis (Deutsch/Englisch) fehlt: " + x[0]);
+      });
       var d1 = JSON.parse(W.localStorage.getItem(KEY)); d1.settings.katOrt = "frei"; W.localStorage.setItem(KEY, JSON.stringify(d1));
     }],
     ["Katalog › Planer: Workout planen, Bereiche mit „n gewählt“, Körperkarte, Mit Timer starten (Air und Studio gemischt)", async function () {
@@ -636,6 +652,7 @@
       var plaene0 = (JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length;
       klick("[data-katplanneu]");
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau (leer)");
+      pruefe($("#tabbar").classList.contains("hidden"), "Im Plan-Bau soll die untere Leiste weg sein (dort steht die Fertig-Leiste)");
       pruefe((JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length === plaene0 + 1, "Plan wurde nicht sofort angelegt (kein Speichern nötig)");
       klick("button.back");
       await bis(function () { return $('[data-kattab="meine"]'); }, 3000, "zurück unter Meine");

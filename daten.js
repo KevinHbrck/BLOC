@@ -1634,6 +1634,7 @@ var EX_MUSCLES = {
 /* Kachel „Aufwärmen & Dehnen“: diese Programme stehen unter Aufwärmen, alle übrigen Dehnprogramme unter Dehnen */
 /* Fokus-Filter der Bibliothek: diese Workouts stehen unter „Bauch / Core“ statt unter „Arme“
    (sonst zählen die Liegestütz-Varianten sie automatisch zu den Armen) */
+var LIB_WORKOUT_INFO = {};   // Hinweis auf dem Deckblatt eines fertigen Workouts: id -> [Deutsch, Englisch] (Einträge folgen am Ende dieser Datei)
 var LIB_FOKUS_TAUSCH = {
   "chest-bw":    { weg:"arms", dazu:"core" },
   "upper-power": { weg:"arms", dazu:"core" }
@@ -2313,14 +2314,55 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     ["band-legs-glutes","Beine & Po mit Band","Legs & Glutes with Band","legs","band-squat band-lunge-squat band-glute-bridge band-donkey-kick band-leg-abduction band-clamshell",20,"3/40/20"],
     ["band-core","Rumpf mit Band","Core with Band","core","band-russian-twist band-kneeling-twist band-side-bend band-crunch band-kneeling-crunch",20,"3/40/20"]
   );
-  /* Programme fürs Fitnessstudio (2026-10-10): Geräte und Langhantel, 3 Sätze × 40 s, 60 s Pause, dazwischen Zeit zum Umsetzen;
-     die Muskelgruppen wechseln sich ab. Tiefenmuskulatur mit vier Runden, damit die Seitenübungen links und rechts gleich oft laufen. */
+  /* Programme fürs Fitnessstudio (2026-10-10), nach Empfehlungen aus der Trainingswissenschaft (siehe quellen.html):
+     - Einsteiger: Ganzkörper 2-3 Mal pro Woche, 3 Sätze mit 8-12 Wiederholungen (ACSM), zu Beginn gern 3 × 12; vier Tage: Ober-/Unterkörper
+     - Reihenfolge: große vor kleinen Muskeln, mehrgelenkige vor eingelenkigen Übungen, Drücken und Ziehen im Wechsel
+     - Pausen je Übung aus der Bibliothek (60 s an Geräten, 90 s bei schweren Grundübungen); 3 Sätze à 40 s Arbeit entsprechen etwa 12 Wiederholungen
+     Ohne Zeitvorgabe (tm): jede Übung läuft mit ihren eigenen Werten. Tiefenmuskulatur mit vier Runden, damit Seitenübungen gleich oft laufen. */
   LIB_WORKOUT_ROWS.push(
-    ["gym-fullbody","Ganzkörper (Fitnessstudio)","Full Body (Gym)","mix","leg-press chest-press-machine lat-pulldown leg-curl shoulder-press-machine ab-crunch-machine",90,"3/40/60"],
-    ["gym-legday","Legday (Fitnessstudio)","Leg Day (Gym)","legs","barbell-squat leg-curl leg-press hip-thrust leg-extension calf-machine",90,"3/40/60"],
-    ["gym-arms","Arme (Fitnessstudio)","Arms (Gym)","arms","barbell-curl skull-crusher hammer-curl triceps-pushdown cable-curl overhead-cable-triceps",60,"3/40/60"],
+    ["gym-fullbody","Ganzkörper A (Fitnessstudio)","Full Body A (Gym)","mix","leg-press chest-press-machine lat-pulldown leg-curl shoulder-press-machine ab-crunch-machine",60],
+    ["gym-fullbody-b","Ganzkörper B (Fitnessstudio)","Full Body B (Gym)","mix","hip-thrust incline-chest-press cable-row leg-extension lateral-raise-machine triceps-pushdown cable-crunch",60],
+    ["gym-upper","Oberkörper (Fitnessstudio)","Upper Body (Gym)","mix","chest-press-machine lat-pulldown shoulder-press-machine cable-row triceps-pushdown cable-curl",60],
+    ["gym-lower","Unterkörper (Fitnessstudio)","Lower Body (Gym)","legs","leg-press leg-curl hip-thrust leg-extension abductor-machine calf-machine",60],
+    ["gym-legday","Legday (Fitnessstudio)","Leg Day (Gym)","legs","barbell-squat leg-curl leg-press hip-thrust leg-extension calf-machine",60],
+    ["gym-chest","Brust & Trizeps (Fitnessstudio)","Chest & Triceps (Gym)","weight","chest-press-machine incline-chest-press butterfly cable-crossover triceps-pushdown overhead-cable-triceps",60],
+    ["gym-back","Rücken & Bizeps (Fitnessstudio)","Back & Biceps (Gym)","back","lat-pulldown row-machine face-pull back-extension cable-curl hammer-curl",60],
+    ["gym-shoulders","Schultern (Fitnessstudio)","Shoulders (Gym)","weight","shoulder-press-machine lateral-raise-machine reverse-butterfly face-pull shrugs",60],
+    ["gym-arms","Arme (Fitnessstudio)","Arms (Gym)","arms","barbell-curl skull-crusher hammer-curl triceps-pushdown cable-curl overhead-cable-triceps",60],
+    ["gym-glutes","Po & Beine (Fitnessstudio)","Glutes & Legs (Gym)","legs","hip-thrust leg-press cable-pull-through abductor-machine glute-kickback-cable adductor-machine",60],
+    ["gym-core","Bauch & Rumpf (Fitnessstudio)","Abs & Core (Gym)","core","captains-chair cable-crunch ab-crunch-machine rotary-torso cable-woodchop back-extension-machine",60],
+    ["gym-posture","Haltung & Rücken (Fitnessstudio)","Posture & Back (Gym)","back","row-machine reverse-butterfly face-pull close-grip-pulldown back-extension-machine plank",60],
     ["gym-deepcore","Tiefenmuskulatur (Fitnessstudio)","Deep Core (Gym)","core","dead-bug bird-dog plank side-plank rotary-torso back-extension cable-woodchop",60,"4/40/30"]
   );
+  /* Kurzer Hinweis auf dem Deckblatt: für wen, wie oft, wie. [Deutsch, Englisch] */
+  Object.assign(LIB_WORKOUT_INFO, {
+    "gym-fullbody": ["Für Einsteiger: 3 Sätze mit je 12 Wiederholungen, 2–3 Mal pro Woche im Wechsel mit Ganzkörper B, dazwischen ein Ruhetag. Das Gewicht so wählen, dass die letzten Wiederholungen anstrengend, aber sauber gehen. Schaffst du alle 3 × 12, nimm beim nächsten Mal etwas mehr.",
+      "For beginners: 3 sets of 12 reps, 2–3 times a week, alternating with Full Body B and a rest day in between. Pick a weight that makes the last reps hard but clean. Once you manage 3 × 12, add a little next time."],
+    "gym-fullbody-b": ["Gegenstück zu Ganzkörper A mit anderen Übungen für dieselben Muskelgruppen. A und B im Wechsel, 2–3 Mal pro Woche, 3 × 12.",
+      "The counterpart to Full Body A with different exercises for the same muscle groups. Alternate A and B, 2–3 times a week, 3 × 12."],
+    "gym-upper": ["Teil eines Plans für vier Tage pro Woche: zum Beispiel Mo Oberkörper, Di Unterkörper, Do Oberkörper, Fr Unterkörper. Drücken und Ziehen wechseln sich ab. 3 × 10–12.",
+      "Part of a four-day plan: for example Mon upper, Tue lower, Thu upper, Fri lower. Pushing and pulling alternate. 3 × 10–12."],
+    "gym-lower": ["Gegenstück zum Oberkörper-Tag (vier Tage pro Woche). Erst die großen Beinübungen, dann Hüfte und Waden. 3 × 10–12.",
+      "The counterpart to the upper-body day (four days a week). Big leg exercises first, then hips and calves. 3 × 10–12."],
+    "gym-legday": ["Die schwere Kniebeuge kommt zuerst, solange die Beine frisch sind. 3 × 8–12, nach der Kniebeuge 90 Sekunden Pause. Einmal pro Woche reicht am Anfang. Mit der Beinpresse statt Kniebeuge wird es einsteigerfreundlicher.",
+      "The heavy squat comes first while your legs are fresh. 3 × 8–12, 90 seconds rest after squats. Once a week is enough at first. Swap the squat for the leg press to make it beginner-friendly."],
+    "gym-chest": ["Erst das große Drücken, dann die Schräge für die obere Brust, danach die Fliegende und zuletzt der Trizeps (er hat beim Drücken schon mitgearbeitet). 3 × 10–12, ein bis zwei Mal pro Woche.",
+      "Big press first, then the incline for the upper chest, then the fly, triceps last (they already worked during the presses). 3 × 10–12, once or twice a week."],
+    "gym-back": ["Einmal senkrecht ziehen (Latzug), einmal waagerecht (Rudern), dazu hintere Schulter und unterer Rücken; der Bizeps kommt zuletzt. Mit den Ellbogen ziehen, nicht mit den Händen. 3 × 10–12.",
+      "One vertical pull (pulldown), one horizontal (row), plus rear shoulders and lower back; biceps come last. Pull with your elbows, not your hands. 3 × 10–12."],
+    "gym-shoulders": ["Erst drücken, dann seitlich und nach hinten: so bleibt die Schulter ausgewogen. Leichte Gewichte, saubere Bewegung, 3 × 12–15.",
+      "Press first, then out to the side and back: that keeps the shoulder balanced. Light weights, clean movement, 3 × 12–15."],
+    "gym-arms": ["Bizeps und Trizeps im Wechsel, so kann sich der jeweils andere erholen. 3 × 10–12, am besten nach einem Ganzkörper- oder Oberkörpertag, nicht an zwei Tagen hintereinander.",
+      "Biceps and triceps alternate so the other one can recover. 3 × 10–12, best after a full-body or upper-body day, not on two days in a row."],
+    "gym-glutes": ["Hip Thrust zuerst, dann Beinpresse und die Hüftübungen. 3 × 10–15, oben kurz anspannen und langsam zurück.",
+      "Hip thrust first, then leg press and the hip exercises. 3 × 10–15, squeeze briefly at the top and come back slowly."],
+    "gym-core": ["Bauch und Rumpf mit Geräten: Beinheben, Crunch, Drehungen und der Rückenstrecker als Gegenspieler. 3 × 12–15, zwei bis drei Mal pro Woche.",
+      "Abs and core on machines: knee raises, crunches, rotations and the back extension as the counterpart. 3 × 12–15, two to three times a week."],
+    "gym-posture": ["Für lange Schreibtischtage: mehr ziehen als drücken, hintere Schulter und Rückenstrecker. Leicht, kontrolliert, 3 × 12–15.",
+      "For long desk days: more pulling than pushing, rear shoulders and back extensors. Light, controlled, 3 × 12–15."],
+    "gym-deepcore": ["Die tiefen Bauch- und Rückenmuskeln stabilisieren die Wirbelsäule. Langsam und kontrolliert, bei der Anstrengung ausatmen. Vier Runden à 40 Sekunden. Ergänzt das Krafttraining, ersetzt es nicht.",
+      "The deep abdominal and back muscles stabilise the spine. Slow and controlled, breathe out on the effort. Four rounds of 40 seconds. Complements strength training, does not replace it."]
+  });
 })();
 window.BLOC_DATEN = {
   EX_ALIAS:EX_ALIAS,
@@ -2417,6 +2459,7 @@ window.BLOC_DATEN = {
   EX_INT:EX_INT,
   STUDIO_GRUPPEN:STUDIO_GRUPPEN,
   STUDIO_ZIEL:STUDIO_ZIEL,
-  LIB_FOKUS_TAUSCH:LIB_FOKUS_TAUSCH
+  LIB_FOKUS_TAUSCH:LIB_FOKUS_TAUSCH,
+  LIB_WORKOUT_INFO:LIB_WORKOUT_INFO
 };
 })();

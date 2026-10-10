@@ -321,6 +321,7 @@ function renderDraftPage(d, cfg){
         '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+dauer+'</div>'+
         (exs.length ? '<div class="cat-tags">'+catTags(cats)+'</div>' : '')+
         (exs.length ? '<div class="cover-equip">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div>' : '')+
+        (d.src === "lib" && LIB_WORKOUT_INFO[d.key.slice(4)] ? '<p class="cover-info">'+esc(LIB_WORKOUT_INFO[d.key.slice(4)][currentLang() === "en" ? 1 : 0])+'</p>' : '')+
         (exs.length ? kkKopfHTML(d.items.map(function(it){ return it.ex; }), !!(warmDehn || d.ws)) : '')+
         '<button class="btn btn-primary" data-go'+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
         (d.src==="surprise" ? '<button class="btn btn-secondary wb-mischen" data-reroll>'+ICON_MISCHEN+' '+t("wbMischen")+'</button>' : '')+

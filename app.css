@@ -1810,9 +1810,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .kat-ort button.on{ color:var(--text); border-color:var(--tp-color); background:color-mix(in srgb, var(--tp-color) 14%, var(--surface)); box-shadow:0 0 0 1px var(--tp-color) inset; }
 .kat-ort button.on .ico{ color:var(--tp-color); }
 .kat-start .sp-leiste{ height:46px; border-radius:14px; }
-.kat-start .sp-leiste[data-surprise]{ border:0; color:var(--on-accent, #fff);
-  background:linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 65%, #ffb020)); box-shadow:0 4px 14px color-mix(in srgb, var(--accent) 32%, transparent); }
-.kat-start .sp-leiste[data-surprise] .ico{ color:inherit; }
 .kat-gr{ border-radius:18px; border:1px solid color-mix(in srgb, var(--text) 7%, transparent); box-shadow:none; margin-bottom:10px; }
 .kat-gr > summary{ min-height:62px; padding:10px 14px; gap:14px; }
 .kat-gr .sag-ico{ width:42px; height:42px; border-radius:14px; background:color-mix(in srgb, var(--hue, var(--tp-color)) 18%, transparent); color:var(--hue, var(--tp-color)); }
@@ -2275,3 +2272,7 @@ a.opt-mehr{ display:block; color:inherit; text-decoration:none; }
 .opt-danger .om-ico, .opt-danger > summary .name{ color:var(--danger); }
 .card > .btn .ico, .card > .btn svg{ flex:none; }
 .kat-start .kat-plan > svg{ width:20px; height:20px; flex:none; color:var(--text); }
+/* Workout-Bereich mit unterer Leiste: Plus-Knopf und Menü stehen darüber */
+body.mit-tabs .fab{ bottom:calc(88px + env(safe-area-inset-bottom)); }
+body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
+.cover-hero .cover-info{ font-size:13.5px; line-height:1.45; color:var(--text-dim); margin:8px 0 6px; padding:10px 12px; border-radius:12px; background:color-mix(in srgb, var(--text) 5%, transparent); }

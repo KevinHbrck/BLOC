@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-10 · Workout: 13 Programme fürs Fitnessstudio, „Fitnessstudio“ zusammengefasst, untere Leiste
+
+- **Ausrüstung zusammengefasst**: „Fitnessstudio“ umfasst jetzt Geräte, Kabel, Langhantel und die Bank mit Kurzhanteln (vorher drei Chips: Gerät, Kabel, Langhantel). Fünf Chips: Fitnessstudio · Kurzhantel & Kettlebell · Stange & Barren · Widerstandsband · Körpergewicht. Gespeicherte Auswahl wird mitgenommen (`studioFilterAlt`). Der Ort-Schalter bleibt nur im Katalog.
+- **13 Programme fürs Fitnessstudio** nach Online-Recherche (ACSM, Fachartikel; siehe `quellen.html`): Ganzkörper A und B (Einsteiger, 3 × 12, 2–3 Tage), Oberkörper und Unterkörper (4 Tage), Legday, **Brust & Trizeps**, **Rücken & Bizeps**, Schultern, Arme, Po & Beine, Bauch & Rumpf, Haltung & Rücken, Tiefenmuskulatur. Reihenfolge: große vor kleinen Muskeln, Drücken und Ziehen im Wechsel; Pausen je Übung aus der Bibliothek (60 s an Geräten, 90 s bei schweren Grundübungen). Auf dem Deckblatt steht ein kurzer Hinweis (`LIB_WORKOUT_INFO`): für wen, wie oft, wie.
+- **Katalog ohne „Überrasch mich“ und „Workout planen“** (beides bleibt bei Übungen und Meine); „Überrasch mich“ ist flächig und ruhig statt mit Verlauf und Schatten.
+- **Untere Leiste (Start · Suche · Statistik · Einstellungen)** steht jetzt auch im Katalog, bei Übungen und bei Meine; im Plan-Bau nicht (dort steht die Fertig-Leiste). Der Plus-Knopf sitzt darüber.
+- Fassung 2026-10-10-36.
+
 ## 2026-10-10 · Workout: Politur (selbst speichern, Fitnessstudio · Freiluft, neue Programme, modernere Gestaltung)
 
 - **Speichert selbst**: Der Baukasten („Workout mit Timer bauen“) sichert jede Änderung sofort, sobald eine Übung drin ist; kein Speichern-Knopf, keine Nachfrage beim Zurück (die Anzeige zeigt „Gespeichert“). Ein neues Workout ohne Übung bleibt unangelegt. Ein neuer Plan ist sofort da; bleibt er leer, wird er beim Verlassen wieder entfernt.
