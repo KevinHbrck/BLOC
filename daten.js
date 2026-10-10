@@ -629,7 +629,8 @@ Object.assign(ILLU_POSES, {
   "worlds-greatest":    [Q(null,[60,48],[44,64],[[62,66,64,89,72,89],[30,84,16,88,14,89]],[[60,68,62,88]]),
                          Q(null,[60,48],[44,64],[[62,66,64,89,72,89],[30,84,16,88,14,89]],[[58,34,56,20],[60,68,62,88]])]
 });
-/* Dehnen und Halteübungen: jede hat jetzt zwei Posen - Ausgangsstellung und Dehnstellung (2026-10-09) -, die Figur bewegt sich also hinein, statt nur zu stehen.
+/* Dehnen und Halteübungen: zwei Posen - Ausgangsstellung und Dehnstellung (2026-10-09) -, die Figur bewegt sich also hinein, statt nur zu stehen.
+   Gehaltene Dehnungen zeigen seit 2026-10-10 nur noch die Endstellung (siehe am Ende dieses Blocks).
    Neu gezeichnet: Nackendehnung (Kopf zur Seite), Schulter (Arm quer vor der Brust), Trizeps (Ellbogen hoch, Hand im Nacken), Seitbeuge (Oberkörper kippt). */
 (function(){
   var P = ILLU_POSES, S = P_FLEGS;
@@ -660,6 +661,11 @@ Object.assign(ILLU_POSES, {
   mit("dead-hang",     Q(null,[50,26],[50,54],[[48,72,47,89,40,89],[52,72,53,89,60,89]],[[42,16,36,6],[58,16,64,6]], gBar(6,24,76), true));
   mit("plank",         P_Q4);
   mit("hollow-hold",   P_LB);
+  /* Dehnungen, die man hält, zeigen nur die Endstellung (ein Standbild statt Hin-und-her); in Bewegung bleiben nur Katze-Kuh,
+     Kobra und World's Greatest Stretch (2026-10-10) */
+  ["neck-stretch","shoulder-stretch","triceps-stretch","biceps-stretch","chest-stretch","wrist-stretch","side-bend","childs-pose","sphinx-stretch",
+   "downward-dog","spinal-twist","forward-fold","hip-flexor-stretch","quad-stretch","hamstring-stretch","calf-stretch","figure-four",
+   "pigeon-stretch","butterfly-stretch"].forEach(function(id){ P[id] = [P[id][1], null]; });
 })();
 var P_HANGS = Q([57,24],[50,30],[50,58],[[50,72,50,86]],[[47,19,46,6]], gBar(6,30,70));
 var G_ROW = gBar(57,26,62)+'<path class="ip" d="M32 57V89"/>';

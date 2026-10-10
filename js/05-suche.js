@@ -71,7 +71,7 @@ function gesamtEintraege(){
 }
 function renderSearch(){
   var alle = gesamtEintraege();
-  suchZonen = kkNorm(suchZonen);   // nach dem Umschalten Grob · Fein passen
+  suchZonen = kkNorm(suchZonen);   // nach dem Umschalten der Detailansicht passen
   app.innerHTML =
     topbar(t("srTitle"), { back:"#home" }) +
     searchHTML(gesamtQuery, "gs", t("srPh")) +

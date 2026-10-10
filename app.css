@@ -2138,8 +2138,6 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .kk-summe{ padding:6px 0 10px; }
 .kk-summe .kk{ width:72px; height:144px; }
 .kk-note{ margin:4px 0 8px; font-size:13px; color:var(--text-dim); text-align:center; }
-.kk-skala{ display:flex; align-items:center; justify-content:center; gap:8px; font-size:11px; color:var(--text-dim); }
-.kk-skala i{ width:90px; height:8px; border-radius:4px; background:linear-gradient(90deg, var(--kk-grau, #ddd), var(--bereich, var(--accent))); }
 /* Kopf eines Workouts: kleine Silhouetten links, rechts viel / nur am Rande / Lücken */
 .kk-kopf{ display:flex; align-items:center; gap:14px; margin:12px 0 6px; padding:10px 12px; border-radius:14px; background:color-mix(in srgb, var(--text) 5%, var(--surface)); }
 .kk-kopf .kk-paar{ flex:none; gap:6px; margin:0; }
@@ -2151,8 +2149,6 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .kk-zeile.viel b{ color:var(--bereich, var(--accent)); }
 .kk-zeile.luecke b{ color:#d9534f; }
 .kk-zeile.rand, .kk-zeile.ok{ color:var(--text-dim); }
-.kk-kopf .kk-skala{ justify-content:flex-start; margin-top:6px; }
-.kk-kopf .kk-skala i{ width:60px; }
 /* Filterkarte aufgeräumt: ruhige Chips ohne Symbole, klare Abschnitte, Körperkarte mit Zonenliste zum Aufklappen */
 .air-filter .af-body{ padding:4px 16px 16px; }
 .air-filter .af-lbl{ margin:22px 0 10px; padding:0; font-size:11.5px; }
@@ -2176,10 +2172,14 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .kk-liste-box > summary .tpl-chev{ margin-left:0; transition:transform .2s ease; }
 .kk-liste-box[open] > summary .tpl-chev{ transform:rotate(180deg); }
 .kk-liste-box .kk-chips{ margin-top:6px; }
-/* Umschalter Grob · Fein: Unterstrich wie die anderen Schalter */
-.kk-modus{ display:flex; justify-content:center; gap:22px; margin:4px 0 6px; flex-basis:100%; }
-.kk-modus button{ border:0; background:none; padding:4px 2px; font:inherit; font-size:13.5px; font-weight:600; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent; }
-.kk-modus button.on{ color:var(--text); border-bottom-color:var(--bereich, var(--accent)); }
+/* Schalter „Detailansicht“: kleiner Kippschalter mit Beschriftung */
+.kk-modus{ display:flex; justify-content:center; margin:4px 0 6px; flex-basis:100%; }
+.kk-modus button{ display:inline-flex; align-items:center; gap:8px; border:0; background:none; padding:4px 2px; font:inherit; font-size:13.5px; font-weight:600; color:var(--text-dim); cursor:pointer; }
+.kk-modus button.on{ color:var(--text); }
+.kk-sw{ position:relative; flex:none; width:30px; height:18px; border-radius:99px; background:var(--border); transition:background .15s; }
+.kk-sw::after{ content:""; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.3); transition:transform .15s; }
+.kk-modus button.on .kk-sw{ background:var(--bereich, var(--accent)); }
+.kk-modus button.on .kk-sw::after{ transform:translateX(12px); }
 .kk-kopf .kk-modus{ justify-content:flex-start; margin:6px 0 0; }
 /* Fein: die Silhouetten größer, damit sich die kleinen Zonen am Handy antippen lassen */
 .kk-paar.fein{ gap:10px; }

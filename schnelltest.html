@@ -167,16 +167,16 @@
       pruefe(!$('[data-playex="air-squats"]') && $('[data-playex="push-ups"]'), "Brust-Filter zeigt falsche Übungen");
       klick('[data-lfreset]');
       await bis(function () { return $$("[data-playex]").length === alle; }, 2000, "zurückgesetzt");
-      // Grob · Fein: fein = 21 Zonen, größer; die Auswahl wandert mit; danach wieder grob
-      pruefe($('[data-kkmodus="grob"].on') && $$(".kk-chips .fc-chip").length === 10, "Körperkarte ist nicht standardmäßig grob (10 Zonen)");
+      // Detailansicht: an = 21 Zonen, größer; die Auswahl wandert mit; danach wieder aus (10 Zonen)
+      pruefe($('.kk-modus button[role="switch"][aria-checked="false"]') && $$(".kk-chips .fc-chip").length === 10, "Detailansicht ist nicht standardmäßig aus (10 Zonen)");
       klick('[data-kkmodus="fein"]');
-      await bis(function () { return $$(".kk-chips .fc-chip").length === 21 && $(".kk-paar.fein") && $(".af-body"); }, 2000, "Körperkarte fein (21 Zonen)");
+      await bis(function () { return $$(".kk-chips .fc-chip").length === 21 && $(".kk-paar.fein") && $(".kk-modus button[aria-checked=\"true\"]") && $(".af-body"); }, 2000, "Detailansicht an (21 Zonen)");
       klick('.fc-chip[data-lfzone="schulter_h"]');
       await bis(function () { var n = $$("[data-playex]").length; return $('.fc-chip[data-lfzone="schulter_h"].on') && n > 0 && n < alle; }, 2000, "Filter Hintere Schulter");
       klick('[data-kkmodus="grob"]');
-      await bis(function () { return $$(".kk-chips .fc-chip").length === 10 && $('.fc-chip[data-lfzone="schulter"].on'); }, 2000, "zurück auf grob: Auswahl wird zu Schultern");
+      await bis(function () { return $$(".kk-chips .fc-chip").length === 10 && $('.fc-chip[data-lfzone="schulter"].on'); }, 2000, "Detailansicht aus: Auswahl wird zu Schultern");
       klick('[data-lfreset]');
-      await bis(function () { return $$("[data-playex]").length === alle; }, 2000, "zurückgesetzt (grob)");
+      await bis(function () { return $$("[data-playex]").length === alle; }, 2000, "zurückgesetzt (Detailansicht aus)");
       klick(".af-fuss .btn-primary");
       klick(await bis(function () { return $('[data-info="band-squat"]'); }, 2000, "Kachel Kniebeuge mit Band"));
       await bis(function () { return $(".info-kk-knopf .kk"); }, 2000, "Silhouetten in der Übungsinfo");

@@ -38,8 +38,8 @@ function mgProzent(ids){   // Zeilen in fester Reihenfolge, Summe 100 (größter
   return { rows:rows, leer:!tot };
 }
 /* ============ Körperkarte ============
-   Zwei Silhouetten (vorn, hinten), wahlweise grob (10 Zonen) oder fein (21 Zonen, größer dargestellt); gespeichert in settings.kkFein, überall gleich.
-   Gerechnet wird immer fein (KK_REGELN über die Muskelnamen in EX_MUSCLES); die grobe Ansicht fasst die feinen Zonen zusammen (KK_F2G).
+   Zwei Silhouetten (vorn, hinten), wahlweise einfach (10 Zonen) oder mit Detailansicht (21 Zonen, größer dargestellt); gespeichert in settings.kkFein, überall gleich.
+   Gerechnet wird immer fein (KK_REGELN über die Muskelnamen in EX_MUSCLES); die einfache Ansicht fasst die feinen Zonen zusammen (KK_F2G).
    Verwendet in der Übungsinfo (trainiert / unterstützt), im Kopf und in der Auswertung eines Workouts (Summe: je öfter, desto kräftiger)
    und als Filter in Air, Studio, Baukasten, Suche und Mobility & Stretch (Zonen antippen). Die Balken der Auswertung bleiben bei den sechs groben Gruppen (MUSKEL_GRP). */
 var KK_ZONEN_G = {
@@ -200,12 +200,12 @@ function koerperPaar(wert, opt){
   return '<div class="kk-paar'+(kkFeinAn() ? ' fein' : '')+'"><figure>'+koerperSVG("vorn", wert, opt)+'<figcaption>'+esc(t("kkVorn"))+'</figcaption></figure>'+
     '<figure>'+koerperSVG("hinten", wert, opt)+'<figcaption>'+esc(t("kkHinten"))+'</figcaption></figure></div>';
 }
-/* Umschalter Grob · Fein (Unterstrich wie die anderen Schalter); gilt überall, ex = Übung, wenn er in einer Übungsinfo steht */
+/* Schalter „Detailansicht“ (aus = 10 Zonen, an = 21 Zonen); gilt überall, ex = Übung, wenn er in einer Übungsinfo steht.
+   data-kkmodus nennt den Modus, in den der Tipp wechselt */
 function kkModusHTML(ex){
-  var f = kkFeinAn();
-  function knopf(wert, an, text){ return '<button type="button" data-kkmodus="'+wert+'" class="'+(an ? 'on' : '')+'" aria-pressed="'+an+'">'+esc(text)+'</button>'; }
-  return '<div class="kk-modus" role="group" aria-label="'+esc(t("kkDetail"))+'"'+(ex ? ' data-kkex="'+esc(ex.id)+'"' : '')+'>'+
-    knopf("grob", !f, t("kkGrob"))+knopf("fein", f, t("kkFein"))+'</div>';
+  var an = kkFeinAn();
+  return '<div class="kk-modus"'+(ex ? ' data-kkex="'+esc(ex.id)+'"' : '')+'>'+
+    '<button type="button" role="switch" aria-checked="'+an+'" data-kkmodus="'+(an ? "grob" : "fein")+'" class="'+(an ? 'on' : '')+'"><i class="kk-sw" aria-hidden="true"></i>'+esc(t("kkDetail"))+'</button></div>';
 }
 /* Hauptzonen und unterstützende Zonen einer Übung als Mengen (in der gewählten Ansicht) */
 function kkTeile(ex){
@@ -234,7 +234,7 @@ document.addEventListener("click", function(e){
   b.setAttribute("aria-expanded", String(auf));
   box.querySelector(".info-kk-liste").hidden = !auf;
 });
-/* Grob · Fein umschalten: gilt für die ganze App; eine offene Übungsinfo wird an Ort und Stelle neu gezeichnet, sonst die Seite */
+/* Detailansicht umschalten: gilt für die ganze App; eine offene Übungsinfo wird an Ort und Stelle neu gezeichnet, sonst die Seite */
 document.addEventListener("click", function(e){
   var b = e.target.closest && e.target.closest("[data-kkmodus]");
   if(!b) return;
@@ -268,8 +268,7 @@ function kkStufe(summe){ return 1 - Math.pow(.55, summe || 0); }
 function kkSummeHTML(ids){
   var sum = kkSumme(ids), w = {}, leer = [];
   kkReihe().forEach(function(z){ w[z] = kkStufe(sum[z]); if(kkWichtig(z) && (sum[z] || 0) < .3) leer.push(kkName(z)); });
-  return '<div class="kk-summe">'+kkModusHTML()+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p>'+
-    '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div></div>';
+  return '<div class="kk-summe">'+kkModusHTML()+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p></div>';
 }
 /* Kompakte Körperkarte für den Kopf eines Workouts (Deckblatt, Baukasten): Silhouetten plus drei Zeilen - viel trainiert, nur am Rande, Lücken */
 function kkKopfHTML(ids, auchDehnen){
@@ -286,7 +285,7 @@ function kkKopfHTML(ids, auchDehnen){
   return '<div class="kk-kopf">'+koerperPaar(w)+'<div class="kk-kopf-txt">'+
     zeile("viel", "kkViel", viel)+zeile("rand", "kkRand", rand)+
     (leer.length ? zeile("luecke", "kkLueckeKurz", leer) : '<div class="kk-zeile ok">'+esc(t("kkKeineLuecke"))+'</div>')+
-    '<div class="kk-skala" aria-hidden="true"><span>'+esc(t("kkWenig"))+'</span><i></i><span>'+esc(t("kkOft"))+'</span></div>'+kkModusHTML()+'</div></div>';
+    kkModusHTML()+'</div></div>';
 }
 /* Filter: Zonen antippen (mehrere möglich) */
 function zonePasst(ex, zonen){
@@ -300,7 +299,7 @@ function kkFilterHTML(attr, sel){
   sel = kkNorm(sel);
   var w = {};
   sel.forEach(function(z){ w[z] = 1; });
-  /* Aufgeräumt: Überschrift mit Grob · Fein in einer Zeile, darunter die Silhouetten; die Zonen stehen als Liste (zugeklappt) zur Wahl,
+  /* Aufgeräumt: Überschrift mit dem Schalter Detailansicht in einer Zeile, darunter die Silhouetten; die Zonen stehen als Liste (zugeklappt) zur Wahl,
      eine Zeile darunter zeigt die Auswahl bzw. den Hinweis */
   var auf = !!state.db.settings.kkListeAuf;
   return '<div class="af-lbl kk-lblzeile"><span>'+esc(t("kkFilter"))+'</span>'+kkModusHTML()+'</div>'+
