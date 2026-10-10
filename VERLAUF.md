@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-10 · Rückmeldungen: Dehnen als Standbild, Detailansicht, verständlicher Installationshinweis
+
+- **Dehnen**: Die 19 gehaltenen Dehnübungen zeigen nur noch die **Endstellung** als Standbild (kein Hin-und-her mehr). In Bewegung bleiben Katze-Kuh, Kobra, World's Greatest Stretch und Armkreisen. Die Halteübungen (Plank, Wandsitz, Dead Hang …) sind unverändert.
+- **Körperkarte**: „Grob · Fein“ heißt jetzt **Detailansicht** und ist ein einzelner Schalter (aus = 10 Zonen, an = 21 Zonen; Einstellung `settings.kkFein` bleibt). Die Skala „selten – oft“ unter der Karte in Auswertung und Workout-Kopf entfällt.
+- **Installationshinweis** (Startseite, Einstellungen, Anleitung): statt „Für dauerhaften Speicher installieren“ jetzt „Damit deine Daten nicht verloren gehen“ mit einem Satz, warum, und einem, wie.
+- Schnelltest an den neuen Schalter angepasst (29/29). Fassung 2026-10-10-32.
+
 ## 2026-10-09 · Gesamtdurchgang (Inhalte, Texte, Bedienung, Figuren)
 
 - **Inhalte geprüft (automatisch über alle 227 Übungen)**: Name, Hinweis, Anleitung (3 Schritte), Haltung, Muskeln in Deutsch und Englisch vollständig und gleich lang, keine Doppelleerzeichen, Wortdopplungen oder Zeichenfehler, keine deutschen Umlaute im Englischen; Workouts, Studio-Gruppen, Ketten, Aliase und Aufwärm-Listen verweisen nur auf vorhandene Übungen; Zeiten, Runden und Pausen plausibel.
