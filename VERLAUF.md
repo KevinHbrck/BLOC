@@ -3,6 +3,15 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-10 · Workout: Politur (selbst speichern, Fitnessstudio · Freiluft, neue Programme, modernere Gestaltung)
+
+- **Speichert selbst**: Der Baukasten („Workout mit Timer bauen“) sichert jede Änderung sofort, sobald eine Übung drin ist; kein Speichern-Knopf, keine Nachfrage beim Zurück (die Anzeige zeigt „Gespeichert“). Ein neues Workout ohne Übung bleibt unangelegt. Ein neuer Plan ist sofort da; bleibt er leer, wird er beim Verlassen wieder entfernt.
+- **Katalog mit demselben Filter wie die Übungen** (Gruppe, Ausrüstung, Körperkarte, Detailansicht; die Auswahl gilt für beide Reiter). Gruppe und Körperkarte: mindestens ein Drittel der Übungen passt; Ausrüstung: jede Übung geht mit dem Gewählten (Körpergewicht braucht nichts). Die Workouts stehen unter denselben Bereichen wie die Übungen, dazu **Ganzkörper**.
+- **Ganz vorn im Katalog der Schalter Fitnessstudio · Freiluft** (mit Anzahl; gemerkt in `settings.katOrt`, Standard Freiluft). Fitnessstudio = Workouts mit Geräten oder Langhantel, Freiluft = alles andere.
+- **Vier neue Programme fürs Fitnessstudio**: Ganzkörper, Legday, Arme, Tiefenmuskulatur (3 × 40 s, 60 s Pause; Tiefenmuskulatur mit 4 Runden, damit Seitenübungen gleich oft laufen).
+- **„Gerät“ heißt „Fitnessstudio“** in der Ausrüstung des Filters.
+- **Moderner**: Kapsel-Reiter, größere Ort-Karten, farbige Bereiche (je Körperregion eine Farbe), ruhigere Karten, „Überrasch mich“ als gefüllter Knopf. Schnelltest 31 Prüfungen. Fassung 2026-10-10-35.
+
 ## 2026-10-10 · Workout: Air und Studio unter einem Dach (Katalog, Übungen, Meine)
 
 - **Ein Bereich „Workout“** (intern `katalog`) ersetzt die Karten Air und Studio auf der Startseite (`js/11b-katalog.js`; gespeicherte Reihenfolge und Fokus werden gelesen, nichts wird umgeschrieben). Die Routen `#library` und `#timers` führen weiter hierher, die Statistik kennt Air und Studio weiter getrennt.

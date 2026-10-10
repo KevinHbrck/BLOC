@@ -106,13 +106,14 @@ function studioAnzahl(gruppen, fGr, artOk){
   return n;
 }
 /* Filter der Studio-Übungen (Gruppen inkl. der Air-Gruppen, Ausrüstung) - auch beim Zusammenstellen eines Plans; dieselbe Filterkarte wie in Air */
-function studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen){
+function studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen, opt){
   var s = state.db.settings;
+  opt = opt || {};   // opt.art: "Wo" für die fertigen Workouts (Katalog), opt.extra: Schalter neben der Kopfzeile (A–Z)
   var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
     .concat(fArt.map(function(a){ return t("stArt_"+a); }), zonen.map(kkName));
   return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
-    summe:namen.length ? namen.join(", ") : t("afAlleEx"),
-    zeigen:filterZeigenText(anzahl, "Ex"),
+    summe:namen.length ? namen.join(", ") : t(opt.art === "Wo" ? "afAlleWo" : "afAlleEx"),
+    zeigen:filterZeigenText(anzahl, opt.art || "Ex"), extra:opt.extra,
     inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length && !g.air; }).map(function(g){
         return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
       filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.map(function(a){

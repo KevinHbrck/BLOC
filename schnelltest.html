@@ -365,19 +365,21 @@
       pruefe(!$(".main-tile"), "Kategorie-Kacheln sind noch da");
       pruefe($(".af-kopf") && !$(".af-body"), "Filterkarte ist nicht standardmäßig zu");
       await filterAuf();
-      pruefe(!$('[data-lfequip="gym"]'), "Chip „Fitnessstudio“ bei den fertigen Workouts");
-      pruefe($$('[data-lfcat]').length === 8 && $$('[data-lfequip]').length === 6, "Training- und Ausrüstungs-Chips: " + $$('[data-lfcat]').length + "/" + $$('[data-lfequip]').length);
-      klick('[data-lfcat="legs"]');
-      await bis(function () { return $('[data-lfcat="legs"].on') && $(".af-body"); }, 2000, "Beine gewählt, Karte bleibt offen");
-      klick('[data-lfcat="core"]');
-      await bis(function () { return $('[data-lfcat="legs"].on') && $('[data-lfcat="core"].on') && $(".af-body"); }, 2000, "zwei Gruppen gewählt, Karte bleibt offen");
+      // derselbe Filter wie bei den Übungen: Gruppe, Ausrüstung („Fitnessstudio“ statt „Gerät“), Körperkarte
+      pruefe(!$('[data-lfcat]') && !$('[data-lfequip]'), "Training-Chips stehen noch im Katalog");
+      pruefe($$("[data-stgr]").length === 7 && $$("[data-start]").length === 7 && $$("[data-stzone]").length >= 12, "Katalog: Filter ist nicht derselbe wie bei den Übungen");
+      pruefe(/Fitnessstudio/.test($('[data-start="geraet"]').textContent), "Chip „Fitnessstudio“ fehlt: " + $('[data-start="geraet"]').textContent);
+      klick('[data-stgr="beine"]');
+      await bis(function () { return $('[data-stgr="beine"].on') && $(".af-body"); }, 2000, "Beine gewählt, Karte bleibt offen");
+      klick('[data-stgr="bauch"]');
+      await bis(function () { return $('[data-stgr="beine"].on') && $('[data-stgr="bauch"].on') && $(".af-body"); }, 2000, "zwei Gruppen gewählt, Karte bleibt offen");
       var knopf = $(".af-fuss .btn-primary").textContent;
       pruefe(/^\d+ Workouts anzeigen$/.test(knopf), "Knopf unten: " + knopf);
       var karten = $$(".lib-card").filter(function (c) { return !c.classList.contains("is-hidden"); }).length;
       pruefe(parseInt(knopf, 10) === karten, "Zahl am Knopf (" + knopf + ") passt nicht zu den " + karten + " Karten");
       pruefe($$("details.kat-gr").length > 0 && $$("details.kat-gr").every(function (d) { return d.open; }), "Mit Filter sollen die passenden Bereiche offen stehen");
-      klick('[data-lfreset]');
-      await bis(function () { return !$('[data-lfcat].on'); }, 2000, "Zurücksetzen");
+      klick('[data-streset]');
+      await bis(function () { return !$('[data-stgr].on'); }, 2000, "Zurücksetzen");
       klick(".af-fuss .btn-primary");
       await bis(function () { return !$(".af-body"); }, 2000, "„anzeigen“ klappt die Karte zu");
       // Übungen: Gruppen und Ausrüstung nacheinander wählen, ohne dass die Karte zuklappt
@@ -547,20 +549,18 @@
       klick('[data-wbex="plank"] [data-exfav]');
       pruefe($(".wb-leiste [data-tocover]") && !$(".wb-leiste [data-tocover]").disabled, "Start-Leiste fehlt");
       pruefe(!$('[data-wbex="leg-press"]') && !$('[data-wbex="cobra-lift"]'), "Studio- oder Dehnübung in der Auswahl");
-      // Speichern-Knopf: erst Speichern legt das Workout an, Zurück ohne Speichern verwirft
+      // Der Baukasten speichert selbst: kein Speichern-Knopf nötig, zurück ohne Nachfrage
       var sk = $(".wb-leiste [data-wbsave]");
-      pruefe(sk && !sk.disabled, "Speichern-Knopf fehlt");
-      klick(sk);
-      pruefe($(".wb-leiste [data-wbsave]").disabled, "nach dem Speichern nicht als gespeichert markiert");
+      pruefe(sk && sk.disabled && /Gespeichert/.test(sk.textContent), "Anzeige „Gespeichert“ fehlt: " + (sk && sk.textContent));
+      var ges = JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || [];
+      pruefe(ges.length === 1 && ges[0].items.length === 3, "Workout wurde nicht von selbst gespeichert: " + JSON.stringify(ges.map(function (m) { return m.items.length; })));
       klick("button.back");
       await bis(function () { return $$(".my-item").length === 1; }, 3000, "gespeichertes Workout in Meine");
       klick('[data-fabopt="timer"]');
       await bis(function () { return $("[data-wbex]"); }, 3000, "Baukasten");
-      klick('[data-wbex="air-squats"]');
-      klick("button.back");
-      klick(await bis(function () { return $("[data-ok]"); }, 3000, "Nachfrage beim Verwerfen"));
-      await bis(function () { return $('[data-kattab="meine"]'); }, 3000, "zurück im Katalog");
-      pruefe($$(".my-item").length === 1, "ungespeichertes Workout wurde angelegt: " + $$(".my-item").length);
+      klick("button.back");   // neues Workout ohne Übung: nichts angelegt, keine Nachfrage
+      await bis(function () { return $('[data-kattab="meine"]') && !$("#overlayRoot [data-ok]"); }, 3000, "zurück im Katalog");
+      pruefe($$(".my-item").length === 1, "leeres Workout wurde angelegt: " + $$(".my-item").length);
     }],
     ["Langdruck: Übung in Workout bzw. Plan legen, Plan-Bau mit Filtern, Gesamtsuche", async function () {
       function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }
@@ -597,6 +597,34 @@
       eingeben(f, "neuer block");
       pruefe($$("#gs-res [data-sr]").length >= 1, "Gesamtsuche findet „Neuer Block“ nicht");
     }],
+    ["Workout › Katalog: Fitnessstudio · Freiluft, neue Programme, derselbe Filter wie bei den Übungen", async function () {
+      var d0 = JSON.parse(W.localStorage.getItem(KEY));   // Filter und Ort zurücksetzen
+      d0.settings.stGruppen = []; d0.settings.stArten = []; d0.settings.stZonen = []; d0.settings.katOrt = "frei"; d0.settings.katTab = "workouts";
+      W.localStorage.setItem(KEY, JSON.stringify(d0));
+      await heim();
+      klick('[data-nav="#katalog"]');
+      await bis(function () { return $$("[data-katort]").length === 2; }, 3000, "Ort-Umschalter ganz vorn im Katalog");
+      pruefe($(".kat-rz") && $(".kat-ort") && $('[data-katort="frei"].on'), "Freiluft sollte vorgewählt sein");
+      pruefe(/Fitnessstudio/.test($('[data-katort="studio"]').textContent) && /Freiluft/.test($('[data-katort="frei"]').textContent), "Beschriftung: " + $(".kat-ort").textContent);
+      var frei = $$(".lib-card").length;
+      pruefe(frei >= 40 && !$('[data-cover="lib/gym-legday"]'), "Freiluft zeigt " + frei + " Workouts oder ein Fitnessstudio-Programm");
+      klick('[data-katort="studio"]');
+      await bis(function () { return $('[data-katort="studio"].on') && $('[data-cover="lib/gym-legday"]'); }, 2000, "Fitnessstudio zeigt die Programme");
+      ["gym-fullbody", "gym-legday", "gym-arms", "gym-deepcore"].forEach(function (id) { pruefe($('[data-cover="lib/' + id + '"]'), "Programm fehlt: " + id); });
+      pruefe($$(".lib-card").length === 4, "Fitnessstudio: erwartet 4 Programme, gefunden " + $$(".lib-card").length);
+      pruefe(!$('[data-cover="lib/leg-day"]'), "Freiluft-Workout im Fitnessstudio");
+      // derselbe Filter wirkt auch hier
+      await filterAuf();
+      klick('[data-stgr="beine"]');
+      await bis(function () { var n = $$(".lib-card").length; return n >= 1 && n < 4 && $('[data-cover="lib/gym-legday"]') && !$('[data-cover="lib/gym-arms"]'); }, 2000, "Gruppe Beine: Legday (und Ganzkörper), nicht Arme");
+      klick('[data-streset]');
+      await bis(function () { return $$(".lib-card").length === 4; }, 2000, "Zurücksetzen");
+      // Programm öffnen: Übungen aus dem Fitnessstudio laufen als Workout
+      klick($('[data-cover="lib/gym-fullbody"]'));
+      await bis(function () { return $$(".wb-ablauf").length >= 6; }, 3000, "Deckblatt mit sechs Übungen");
+      pruefe($('[data-wbitem], .wb-ablauf'), "Deckblatt ohne Ablauf");
+      var d1 = JSON.parse(W.localStorage.getItem(KEY)); d1.settings.katOrt = "frei"; W.localStorage.setItem(KEY, JSON.stringify(d1));
+    }],
     ["Katalog › Planer: Workout planen, Bereiche mit „n gewählt“, Körperkarte, Mit Timer starten (Air und Studio gemischt)", async function () {
       var d0 = JSON.parse(W.localStorage.getItem(KEY));   // Filter aus früheren Tests zurücksetzen (mit Filter stehen die Bereiche offen)
       d0.settings.stGruppen = []; d0.settings.stArten = []; d0.settings.stZonen = [];
@@ -605,7 +633,15 @@
       klick('[data-nav="#katalog"]');
       klick(await bis(function () { return $('[data-kattab="uebungen"]'); }, 3000, "Reiter Übungen"));
       pruefe($(".kat-start [data-surprise]") && $(".kat-start [data-katplanneu]"), "Die beiden Einstiege (Überrasch mich, Workout planen) fehlen");
+      var plaene0 = (JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length;
       klick("[data-katplanneu]");
+      await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau (leer)");
+      pruefe((JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length === plaene0 + 1, "Plan wurde nicht sofort angelegt (kein Speichern nötig)");
+      klick("button.back");
+      await bis(function () { return $('[data-kattab="meine"]'); }, 3000, "zurück unter Meine");
+      pruefe((JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length === plaene0, "leerer Plan bleibt liegen");
+      klick('[data-kattab="uebungen"]');
+      klick(await bis(function () { return $("[data-katplanneu]"); }, 3000, "Workout planen"));
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau");
       pruefe($$("details.kat-gr").length >= 7 && $$("details.kat-gr").every(function (d) { return !d.open; }), "Plan-Bau: zu Beginn sollen nur die Überschriften stehen");
       klick($('details[data-katgr="pl-beine"] > summary'));

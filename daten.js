@@ -2313,6 +2313,14 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     ["band-legs-glutes","Beine & Po mit Band","Legs & Glutes with Band","legs","band-squat band-lunge-squat band-glute-bridge band-donkey-kick band-leg-abduction band-clamshell",20,"3/40/20"],
     ["band-core","Rumpf mit Band","Core with Band","core","band-russian-twist band-kneeling-twist band-side-bend band-crunch band-kneeling-crunch",20,"3/40/20"]
   );
+  /* Programme fürs Fitnessstudio (2026-10-10): Geräte und Langhantel, 3 Sätze × 40 s, 60 s Pause, dazwischen Zeit zum Umsetzen;
+     die Muskelgruppen wechseln sich ab. Tiefenmuskulatur mit vier Runden, damit die Seitenübungen links und rechts gleich oft laufen. */
+  LIB_WORKOUT_ROWS.push(
+    ["gym-fullbody","Ganzkörper (Fitnessstudio)","Full Body (Gym)","mix","leg-press chest-press-machine lat-pulldown leg-curl shoulder-press-machine ab-crunch-machine",90,"3/40/60"],
+    ["gym-legday","Legday (Fitnessstudio)","Leg Day (Gym)","legs","barbell-squat leg-curl leg-press hip-thrust leg-extension calf-machine",90,"3/40/60"],
+    ["gym-arms","Arme (Fitnessstudio)","Arms (Gym)","arms","barbell-curl skull-crusher hammer-curl triceps-pushdown cable-curl overhead-cable-triceps",60,"3/40/60"],
+    ["gym-deepcore","Tiefenmuskulatur (Fitnessstudio)","Deep Core (Gym)","core","dead-bug bird-dog plank side-plank rotary-torso back-extension cable-woodchop",60,"4/40/30"]
+  );
 })();
 window.BLOC_DATEN = {
   EX_ALIAS:EX_ALIAS,

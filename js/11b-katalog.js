@@ -111,19 +111,48 @@ function katSuche(q, standard){
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
   return topbar(t("katalog"), { back:"#home", right:right || "" }) +
-    reiterZeileHTML("var(--tp-color)", b("workouts", t("katTabKatalog"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))) +
+    '<div class="rz kat-rz" style="--rz:var(--tp-color)">'+b("workouts", t("katTabKatalog"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))+'</div>' +
+    (tab === "workouts" ? katOrtHTML() : '') +   // ganz vorn im Katalog: Fitnessstudio oder Freiluft
     '<div class="kat-start">'+surpriseLeisteHTML()+katPlanLeisteHTML()+'</div>';   // zwei klare Einstiege: lass dir eins zusammenstellen oder plane selbst
 }
-function katPlanLeisteHTML(){
-  return '<button type="button" class="sp-leiste kat-plan" data-katplanneu title="'+esc(t("katFabPlan"))+'">'+svgIcon(ICON_PLUS)+'<b>'+esc(t("katFabPlan"))+'</b></button>';
+/* Ort: Fitnessstudio (Workouts mit Geräten oder Langhantel) oder Freiluft (alles andere: zuhause, draußen, mit Kurzhantel, Band, Stange) */
+var KAT_ICON_STUDIO = '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>';
+var KAT_ICON_FREI = '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>';
+function katOrt(){ return state.db.settings.katOrt === "studio" ? "studio" : "frei"; }
+function katWoOrt(exs){ return exs.some(function(ex){ return ex.equip.indexOf("gym") > -1; }) ? "studio" : "frei"; }
+function katOrtHTML(){
+  var o = katOrt(), n = { studio:0, frei:0 };
+  LIB_WORKOUTS.forEach(function(lw){
+    if(libIstWarmDehn(lw) || libHidden("wo:"+lw.id)) return;
+    n[katWoOrt(lw.exercises.map(findExercise).filter(Boolean))]++;
+  });
+  function b(k, label, ico){
+    return '<button type="button" data-katort="'+k+'" class="'+(o === k ? 'on' : '')+'" aria-pressed="'+(o === k)+'">'+svgIcon(ico)+
+      '<span class="ko-t"><b>'+esc(label)+'</b><small>'+esc(t("katOrtAnz", { n:n[k] }))+'</small></span></button>';
+  }
+  return '<div class="kat-ort" role="group" aria-label="'+esc(t("katOrt"))+'">'+b("studio", t("katOrtStudio"), KAT_ICON_STUDIO)+b("frei", t("katOrtFrei"), KAT_ICON_FREI)+'</div>';
 }
-/* Neuer Plan: leer anlegen und gleich im Plan-Bau öffnen */
+function katPlanLeisteHTML(){
+  return '<button type="button" class="sp-leiste kat-plan" data-katplanneu title="'+esc(t("katFabPlan"))+'">'+ICON_PLUS+'<b>'+esc(t("katFabPlan"))+'</b></button>';
+}
+/* Neuer Plan: sofort angelegt (es muss nichts gespeichert werden) und gleich im Plan-Bau geöffnet.
+   Bleibt er ohne Übung liegen, wird er beim Verlassen wieder entfernt, damit keine leeren Pläne herumliegen. */
+var stPlanNeuId = null;
 function katPlanNeu(){
+  katPlanAufraeumen();
   var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[], updatedAt:Date.now() };
   stPlaene().push(p); save();
+  stPlanNeuId = p.id;
   state.db.settings.katTab = "meine";
   stPlanAktiv = p.id; stPlanBauen = true; stPlanQuery = ""; stGen = null;
   renderKatalog(); window.scrollTo(0, 0);
+}
+function katPlanAufraeumen(){
+  var id = stPlanNeuId;
+  if(!id || stPlanAktiv === id) return;
+  stPlanNeuId = null;
+  var p = stPlanFind(id);
+  if(p && !stPlanIds(p).length){ state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== id; }); save(); }
 }
 function katKopfBinden(){
   app.querySelectorAll("[data-kattab]").forEach(function(b){
@@ -137,14 +166,24 @@ function katKopfBinden(){
   if(sp) sp.addEventListener("click", function(){ openSurprise(); });
   var pn = app.querySelector("[data-katplanneu]");
   if(pn) pn.addEventListener("click", katPlanNeu);
+  app.querySelectorAll("[data-katort]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var o = b.getAttribute("data-katort");
+      if(o === katOrt()) return;
+      state.db.settings.katOrt = o; save(); katOffen = {};
+      renderKatalog(); window.scrollTo(0, 0);
+    });
+  });
 }
 
 /* ---------- Einstieg: die richtige Seite zum Reiter ---------- */
 function renderKatalog(){
+  katPlanAufraeumen();
   if(stGen) return renderStudioPlanGen();
   if(stPlanAktiv && stPlanFind(stPlanAktiv)) return renderStudioPlan();
   stPlanAktiv = null; stPlanBauen = false;
-  return katTab() === "uebungen" ? renderKatalogUebungen() : renderLibrary();
+  var tab = katTab();
+  return tab === "uebungen" ? renderKatalogUebungen() : tab === "meine" ? renderLibrary() : renderKatalogWorkouts();
 }
 
 /* ---------- Übungen ---------- */
@@ -257,5 +296,102 @@ function katFabBinden(){
     "gen": function(){ stGen = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8 }; renderKatalog(); window.scrollTo(0, 0); },
     "timer": function(){ go("#mybuild/new"); },
     "uebung": function(){ go("#exedit/new"); }
+  });
+}
+
+/* ---------- Katalog: fertige Workouts (derselbe Filter wie bei den Übungen) ----------
+   Überschriften sind dieselben Bereiche wie bei den Übungen, dazu „Ganzkörper“. Ein Workout steht dort, wohin sein Fokus zeigt
+   (Cardio, Beine, Rücken, Arme, Bauch) oder wo klar die meisten seiner Übungen liegen (mindestens 40 % und mehr als im zweiten Bereich); sonst unter Ganzkörper.
+   Filter (gespeichert wie bei den Übungen: settings.stGruppen, stArten, stZonen):
+   - Gruppe und Körperkarte: mindestens ein Drittel der Übungen passt
+   - Ausrüstung: jede Übung geht mit der gewählten Ausrüstung (Körpergewicht braucht nichts) - „was hast du dabei?“ */
+var KAT_WO_FOKUS_BEREICH = { cardio:"cardio", legs:"beine", back:"ruecken", arms:"arme", core:"bauch" };
+var KAT_WO_BEREICHE = ["ganz", "brust", "ruecken", "schulter", "arme", "bauch", "beine", "cardio"];
+function katWoBereich(lw, exs){
+  var f = KAT_WO_FOKUS_BEREICH[lw.focus];
+  if(f) return f;
+  var n = {};
+  exs.forEach(function(ex){ var g = katGruppeVon(ex); n[g] = (n[g] || 0) + 1; });
+  var l = Object.keys(n).sort(function(a, b){ return n[b] - n[a]; });
+  var best = l[0], bn = n[best] || 0, zweit = l[1] ? n[l[1]] : 0;
+  // klar vorn: mindestens 40 % und mehr als der zweite - sonst ein Workout für den ganzen Körper
+  return exs.length && bn >= exs.length*0.4 && bn > zweit && KAT_WO_BEREICHE.indexOf(best) > -1 ? best : "ganz";
+}
+function katWoPasst(exs, fGr, fArt, zonen){
+  var n = exs.length;
+  if(!n) return false;
+  var drittel = Math.max(1, n/3);
+  if(fGr.length && exs.filter(function(ex){ return fGr.indexOf(katGruppeVon(ex)) > -1; }).length < drittel) return false;
+  if(zonen.length && exs.filter(function(ex){ return zonePasst(ex, zonen); }).length < drittel) return false;
+  if(fArt.length && !exs.every(function(ex){ var a = studioArt(ex.id); return a === "koerper" || fArt.indexOf(a) > -1; })) return false;
+  return true;
+}
+function renderKatalogWorkouts(){
+  var s = state.db.settings;
+  studioFilterAlt();
+  var gruppen = katalogGruppen(), gueltig = {};
+  gruppen.forEach(function(g){ gueltig[g.id] = true; });
+  var fGr = selArr(s.stGruppen).filter(function(id){ return gueltig[id]; });
+  var fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+  var zonen = kkNorm(s.stZonen), ort = katOrt();
+  var filterAn = !!(fGr.length || fArt.length || zonen.length);
+  var woSort = s.libWoSort === "az" ? "az" : "dur";
+  var hw = hinweise("katwo", ["katWoHint"]);
+
+  var rows = [];
+  LIB_WORKOUTS.forEach(function(lw){
+    if(libIstWarmDehn(lw)) return;
+    var exs = lw.exercises.map(findExercise).filter(Boolean);
+    rows.push({ lw:lw, exs:exs, name:tplText(lw.name), dur:workoutDuration(libWorkoutRun(lw)), hidden:libHidden("wo:"+lw.id),
+      ort:katWoOrt(exs), bereich:katWoBereich(lw, exs), mains:woMains(exs) });
+  });
+  var sichtbar = rows.filter(function(r){ return !r.hidden && r.ort === ort && katWoPasst(r.exs, fGr, fArt, zonen); });
+  var versteckt = rows.filter(function(r){ return r.hidden; });
+  libWoSort(sichtbar, woSort);
+  var je = {};
+  sichtbar.forEach(function(r){ (je[r.bereich] = je[r.bereich] || []).push(libWoCard(r.lw, r.exs, false, r.dur, r.mains)); });
+  var liste = "";
+  KAT_WO_BEREICHE.forEach(function(b){
+    if(!je[b]) return;
+    var name = b === "ganz" ? t("katGanz") : t(KAT_GRUPPEN.filter(function(g){ return g.id === b; })[0].key);
+    liste += katZeileHTML("wo-"+b, b === "ganz" ? HOME_ICON.katalog : katIcon(b), name, je[b].length, '<div class="kat-inhalt">'+je[b].join("")+'</div>', katOffenStd("wo-"+b, filterAn));
+  });
+  if(!liste) liste = '<div class="empty" style="padding:34px 20px;">'+esc(t("katWoNone"))+'</div>';
+  liste += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("noResult"))+'</div>';
+  var az = '<button type="button" class="af-az'+(woSort === "az" ? ' on' : '')+'" data-lfsort="'+(woSort === "az" ? "dur" : "az")+'" aria-pressed="'+(woSort === "az")+
+    '" title="'+esc(t("afSortAz"))+'" aria-label="'+esc(t("afSortAz"))+'">A&ndash;Z</button>';
+
+  app.innerHTML =
+    katKopfHTML("workouts", hw.knopf + lupeHTML("l", libQuery)) +
+    suchFeldHTML(libQuery, "l", t("searchWoPh")) +
+    hw.z(0, "page-hint") +
+    studioFilterHTML(gruppen, fGr, fArt, sichtbar.length, zonen, { art:"Wo", extra:az }) +
+    liste +
+    hiddenBlockHTML(versteckt.length, versteckt.map(function(r){ return libWoCard(r.lw, r.exs, true, r.dur, r.mains); }).join("")) +
+    '<div style="height:60px"></div>';
+  bindCommon();
+  katKopfBinden();
+  function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
+  function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
+  studioFilterBinden(fGr, fArt, zonen, neu);
+  on("[data-lfsort]", function(el){ s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
+  katBinden(function(){ return libQuery; });
+  var lq = app.querySelector("#l-q");
+  if(lq){
+    var suchen = function(){ applySearch(app, libQuery); katSuche(libQuery, filterAn); };
+    lq.addEventListener("input", function(){ libQuery = lq.value; suchen(); });
+    if(libQuery) suchen();
+  }
+  on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
+  on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
+  on("[data-unhideone]", function(el){
+    var k = el.getAttribute("data-unhideone");
+    s.hiddenLib = (s.hiddenLib || []).filter(function(x){ return x !== k; });
+    save(); neu();
+  });
+  on("[data-womore]", function(el){ var lw = findLibWorkout(el.getAttribute("data-womore")); if(lw) woMenue(lw, neu); });
+  app.querySelectorAll(".lib-card [data-womore]").forEach(function(b){   // langes Drücken auf eine Karte = dasselbe Menü wie ⋯
+    var lw = findLibWorkout(b.getAttribute("data-womore"));
+    if(lw) langDruck(b.closest(".lib-card"), function(){ woMenue(lw, neu); });
   });
 }

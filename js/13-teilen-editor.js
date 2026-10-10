@@ -130,8 +130,8 @@ function adoptSharedCustoms(d){
 /* ============ Eigenes Workout und Deckblatt: gemeinsamer Editor mit Drag & Drop ============ */
 var ICON_GRIP = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg>';
 
-/* Baukasten: Arbeitskopie - erst „Speichern“ (oder Start) legt das Workout an bzw. überschreibt es.
-   Zurück ohne Speichern verwirft die Änderungen; neu = noch nicht in der Liste. */
+/* Baukasten: Arbeitskopie, die sich selbst speichert - sobald mindestens eine Übung drin ist, wird jede Änderung sofort gesichert
+   (kein „Speichern“-Knopf nötig). Ein neues Workout ohne Übung bleibt unangelegt (neu = noch nicht in der Liste). */
 var bauEntwurf = null;
 function renderMyBuild(id){
   if(!bauEntwurf || bauEntwurf.key !== id){
@@ -351,27 +351,19 @@ function renderDraftPage(d, cfg){
     (cfg.cover ? '' : '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+t("exCount", { n:exs.length })+'</b><br>'+dauer+'</span>'+
       '<span class="wb-knoepfe">'+speicherKnopf()+
       '<button type="button" class="btn '+(cfg.bau.dirty ? 'btn-secondary' : 'btn-primary')+'" data-tocover'+(d.items.length ? '' : ' disabled')+'>'+ICON_PLAY+' '+t("start")+'</button></span></div></div>');
-  function speicherKnopf(){
-    var offen = cfg.bau.dirty;
-    return '<button type="button" class="btn '+(offen ? 'btn-primary' : 'btn-secondary')+'" data-wbsave'+(offen ? '' : ' disabled')+'>'+
-      ICON_SAVE+' '+t(offen ? "save" : "wbGespeichert")+'</button>';
+  function speicherKnopf(){   // nur Anzeige: der Baukasten speichert selbst
+    return '<button type="button" class="btn btn-secondary" data-wbsave disabled>'+ICON_SAVE+' '+t(cfg.bau.neu ? "wbAutoSpeichern" : "wbGespeichert")+'</button>';
   }
-  if(!cfg.cover){   // Zurück mit ungespeicherten Änderungen: erst nachfragen
+  if(!cfg.cover){   // Zurück: es gibt nichts zu verwerfen, alles ist schon gesichert
     var zur = app.querySelector("[data-back]");
-    if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
-      if(!cfg.bau.dirty) return goBack(cfg.back);
-      confirmSheet(t("wbVerwerfenQ"), t("wbVerwerfenText"), t("wbVerwerfen"), function(){ bauEntwurf = null; goBack(cfg.back); });
-    }); }
+    if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ bauEntwurf = null; goBack(cfg.back); }); }
   }
   bindCommon();
 
   function speichern(){
-    if(cfg.cover) d._dirty = true;
-    else {
-      cfg.bau.dirty = true;
-      var alt = app.querySelector("[data-wbsave]");   // Knopf sofort umstellen (z. B. beim Tippen des Namens)
-      if(alt && alt.disabled){ alt.outerHTML = speicherKnopf(); app.querySelector("[data-wbsave]").addEventListener("click", sichern); }
-    }
+    if(cfg.cover){ d._dirty = true; return; }
+    if(cfg.bau.neu && !d.items.length) return;   // ein neues Workout ohne Übung wird erst mit der ersten Übung angelegt
+    bauSpeichern(cfg.bau);
   }
   function sichern(){ bauSpeichern(cfg.bau); showToast(t("wbGespeichert")); neu(); }
   function neu(){ var y = window.scrollY; renderDraftPage(d, cfg); window.scrollTo(0, y); }

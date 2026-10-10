@@ -243,101 +243,29 @@ function libWoSort(list, sort){
     : function(a, b){ return (a.dur - b.dur) || a.name.localeCompare(b.name, currentLang()); });
 }
 
-/* Katalog › Workouts (fertige Workouts nach Fokus, zugeklappt) und Meine (eigene Workouts und Pläne).
-   Die Übungen stehen in renderKatalogUebungen (js/11b-katalog.js). Darunter die Suche und die einklappbare Filterkarte (Training, Ausrüstung, Sortierung). */
-var KAT_WO_FOKUS = ["cardio", "weight", "bw", "calis", "legs", "back", "core", "arms", "mix"];   // Reihenfolge der Bereiche bei den fertigen Workouts
+/* Workout › Meine: eigene Workouts mit Timer und Pläne. Der Katalog (fertige Workouts) steht in renderKatalogWorkouts, die Übungen in
+   renderKatalogUebungen (js/11b-katalog.js). */
 function renderLibrary(){
-  var s = state.db.settings, tab = katTab();
-  if(tab === "uebungen") return renderKatalog();
-  /* Dehnen und Aufwärmen stehen seit 2026-09 unter „Aufwärmen & Dehnen“ - hier nicht mehr */
-  function ohneStretch(x){ return x !== "stretch"; }
-  var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
-  var equip = selArr(s.libEquips).filter(function(x){ return x !== "gym"; });   // Studio-Ausrüstung gibt es bei den fertigen Workouts nicht
-  var mains = [];
-  var woSort = s.libWoSort === "az" ? "az" : "dur";
-  var open = !!s.libFilterOpen;
-  var hiddenCount = 0, hiddenCards = "", list = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
-  var hw = tab === "workouts" ? hinweise("katwo", ["katWoHint"]) : hinweise("", []);
-  var filterAn = !!(cat.length || equip.length);
-
-  if(tab === "workouts"){
-    var rows = [];
-    LIB_WORKOUTS.forEach(function(lw){
-      if(libIstWarmDehn(lw)) return;
-      var exs = lw.exercises.map(findExercise).filter(Boolean);
-      rows.push({ lw:lw, exs:exs, name:tplText(lw.name), focus:lw.focus, dur:workoutDuration(libWorkoutRun(lw)), hidden:libHidden("wo:"+lw.id) });
-    });
-    rows = rows.filter(function(r){
-      r.mains = woMains(r.exs);
-      return woFocusOk(r.focus, r.exs, cat, r.lw && r.lw.id) && woFits(r.exs, equip) && woGearOk(r.exs, cat, equip, mains);
-    });
-    var je = {};   // Fokus -> Karten
-    libWoSort(rows, woSort).forEach(function(r){
-      if(r.hidden){ hiddenCount++; hiddenCards += libWoCard(r.lw, r.exs, true, r.dur, r.mains); return; }
-      var f = KAT_WO_FOKUS.indexOf(r.focus) > -1 ? r.focus : "mix";
-      (je[f] = je[f] || []).push(libWoCard(r.lw, r.exs, false, r.dur, r.mains));
-      anzahl++;
-    });
-    KAT_WO_FOKUS.forEach(function(f){
-      if(!je[f]) return;
-      list += katZeileHTML("wo-"+f, CAT_ICON[f] || CAT_ICON.weight, catName(f), je[f].length, '<div class="kat-inhalt">'+je[f].join("")+'</div>', katOffenStd("wo-"+f, filterAn));
-    });
-  } else {
-    var eigene = "";
-    (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
-      if(mw.ws) return;   // Aufwärm- und Dehn-Workouts liegen unter Mobility & Stretch › Meine
-      var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
-      eigene += myWoCard(mw, exs, woMains(exs), workoutDuration(myRun(mw)));
-    });
-    list = '<div class="section-title">'+esc(t("katEigeneWo"))+'</div>'+(eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+katPlaeneHTML();
-    fab = katFabHTML();
-  }
-  if(!list) list = '<div class="empty" style="padding:40px 20px;">'+t("libEmpty")+'</div>';
-  list += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>';
-
+  var s = state.db.settings;
+  if(katTab() !== "meine") return renderKatalog();
+  var hw = hinweise("", []);
+  var eigene = "";
+  (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
+    if(mw.ws) return;   // Aufwärm- und Dehn-Workouts liegen unter Mobility & Stretch › Meine
+    var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
+    eigene += myWoCard(mw, exs, woMains(exs), workoutDuration(myRun(mw)));
+  });
+  var list = '<div class="section-title">'+esc(t("katEigeneWo"))+'</div>'+(eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+katPlaeneHTML();
   app.innerHTML =
-    katKopfHTML(tab, hw.knopf + (tab === "meine" ? '' : lupeHTML("l", libQuery))) +
-    (tab === "meine" ? '' :
-    suchFeldHTML(libQuery, "l", t("searchWoPh"))+
-    hw.z(0, "page-hint")+
-    airFilterHTML("l", open, cat, equip, woSort, [["dur", t("sortDur")], ["az", "A&ndash;Z"]], anzahl, false, undefined))+
-    list + hiddenBlockHTML(hiddenCount, hiddenCards) +
-    '<div style="height:90px"></div>' + fab;
+    katKopfHTML("meine", hw.knopf) +
+    list + '<div style="height:90px"></div>' + katFabHTML();
   bindCommon();
   katKopfBinden();
-
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
-  function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
-  on("[data-ltoggle]", function(){ s.libFilterOpen = !open; save(); neu(); });
-  on("[data-lfcat]", function(el){ s.libCats = selToggle(cat, el.getAttribute("data-lfcat")); save(); neu(); });
-  on("[data-lfequip]", function(el){ s.libEquips = selToggle(equip, el.getAttribute("data-lfequip")); save(); neu(); });
-  on("[data-lfsort]", function(el){ s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
-  on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; save(); neu(); });
   bindTrash(neu);
-  katBinden(function(){ return libQuery; });
-  var lq = app.querySelector("#l-q");
-  if(lq){
-    var suchen = function(){ applySearch(app, libQuery); katSuche(libQuery, filterAn); };
-    lq.addEventListener("input", function(){ libQuery = lq.value; suchen(); });
-    if(libQuery) suchen();
-  }
-  if(tab === "meine"){ katFabBinden(); katPlaeneBinden(); }
-  on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
-
-  on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
-  on("[data-unhideone]", function(el){
-    var k = el.getAttribute("data-unhideone");
-    s.hiddenLib = (s.hiddenLib||[]).filter(function(x){ return x !== k; });
-    save(); neu();
-  });
-  on("[data-womore]", function(el){
-    var lw = findLibWorkout(el.getAttribute("data-womore"));
-    if(lw) woMenue(lw, neu);
-  });
-  // langes Drücken auf eine fertige Workout-Karte = dasselbe Menü wie ⋯
-  app.querySelectorAll(".lib-card [data-womore]").forEach(function(b){
-    var lw = findLibWorkout(b.getAttribute("data-womore"));
-    if(lw) langDruck(b.closest(".lib-card"), function(){ woMenue(lw, neu); });
-  });
+  katFabBinden(); katPlaeneBinden();
+  app.querySelectorAll("[data-fav]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neu(); }); });
+  app.querySelectorAll("[data-cover]").forEach(function(el){ el.addEventListener("click", function(e){
+    e.stopPropagation(); if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover"));
+  }); });
 }
-
