@@ -196,7 +196,7 @@ function wbTauschKandidat(d, i){
   var drin = {}; d.items.forEach(function(it){ drin[it.ex] = true; });
   var p = d._params, equips = p && p.equips ? p.equips : null, reg = exProfile(alt).region;
   var pool = EXERCISES.filter(function(ex){
-    return !drin[ex.id] && !STUDIO_NUR[ex.id] && !libHidden("ex:"+ex.id) && ex.main === alt.main && (!equips || equipMatch(equips, ex));
+    return !drin[ex.id] && fuerBau(ex) && exIstStudio(ex) === exIstStudio(alt) && !libHidden("ex:"+ex.id) && ex.main === alt.main && (!equips || equipMatch(equips, ex));   // Fitnessstudio tauscht gegen Fitnessstudio, Freiluft gegen Freiluft
   });
   var gleich = pool.filter(function(ex){ return exProfile(ex).region === reg; });
   var wahl = gleich.length ? gleich : pool;
@@ -211,7 +211,7 @@ function renderDraftPage(d, cfg){
   }
   function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
   var cat = ohne(selArr(s.buildCats || s.buildCat), "stretch"), sort = s.libSort === "az" ? "az" : "std";
-  var equip = ohne(selArr(s.buildEquips), "gym");
+  var equip = selArr(s.buildEquips);
   var zonen = kkNorm(s.buildZonen);
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
@@ -224,7 +224,7 @@ function renderDraftPage(d, cfg){
   var pos = {};
   d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
   function kachel(ex){
-    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:'var(--bereich, '+catVar(ex.cats[0])+')', nr:pos[ex.id] || [], unter:kachelMuskel(ex),
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:exFarbe(ex), nr:pos[ex.id] || [], unter:kachelMuskel(ex),
       innen:'<button type="button" class="wb-i" data-exinfo="'+ex.id+'" aria-label="'+esc(t("info"))+'">i</button>'+exFavBtn(ex.id) });
   }
   // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen
@@ -232,13 +232,14 @@ function renderDraftPage(d, cfg){
     var ex = findExercise(it.ex);
     if(!ex) return "";
     var tm = itemTiming(d, it);
-    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbitem="'+i+'"', cat:'var(--bereich, '+catVar(ex.cats[0])+')', klasse:"wb-ablauf",
-      innen:'<span class="wb-nr">'+(i+1)+'</span>', unter:'<span class="st-sub">'+timingText(tm, ex.perSide)+'</span>' });
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbitem="'+i+'"', cat:exFarbe(ex), klasse:"wb-ablauf",
+      innen:'<span class="wb-nr">'+(i+1)+'</span>',
+      unter:exIstStudio(ex) ? '<span class="st-sub an">'+esc(gymSatzText(ex.id))+'</span>' : '<span class="st-sub">'+timingText(tm, ex.perSide)+'</span>' });   // Fitnessstudio: Gewicht × Wiederholungen vorn
   }
   var streifen = d.items.map(function(it, i){
     var ex = findExercise(it.ex);
     if(!ex) return "";
-    return '<button type="button" class="wb-mini" data-wbitem="'+i+'" style="--cat:var(--bereich, '+catVar(ex.cats[0])+')" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
+    return '<button type="button" class="wb-mini" data-wbitem="'+i+'" style="--cat:'+exFarbe(ex)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
       (ILLU[ex.id] ? illuStillHTML(ex.id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span>'+
       '<span class="wb-mini-name">'+esc(tplText(ex.name))+'</span></button>';
   }).join("");
@@ -289,7 +290,7 @@ function renderDraftPage(d, cfg){
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   } else if(palOpen){
-    var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(fuerAir);
+    var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(fuerBau);
     hw = hinweise("bau", ["wbTippen"]);
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       hw.z(0, "page-hint")+
@@ -314,6 +315,8 @@ function renderDraftPage(d, cfg){
   '</div>';
   var kind = d.src==="lib" ? "kindLib" : d.src==="surprise" ? "kindSurprise" : d.src==="shared" ? "kindShared" : "kindMy";
   var warmDehn = d.src==="lib" && libIstWarmDehn(findLibWorkout(d.key.slice(4)));
+  /* Überwiegend Fitnessstudio-Übungen: Gewicht × Wiederholungen steht vorn (Plan), der Timer ist ein zweiter, optionaler Knopf */
+  var gymLastig = !d.ws && !warmDehn && exs.length > 0 && exs.filter(exIstStudio).length*2 >= exs.length;
   var head = cfg.cover
     ? '<div class="card cover-hero">'+
         '<div class="cover-kicker">'+t(kind)+'</div>'+
@@ -323,7 +326,10 @@ function renderDraftPage(d, cfg){
         (exs.length ? '<div class="cover-equip">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div>' : '')+
         (d.src === "lib" && LIB_WORKOUT_INFO[d.key.slice(4)] ? '<p class="cover-info">'+esc(LIB_WORKOUT_INFO[d.key.slice(4)][currentLang() === "en" ? 1 : 0])+'</p>' : '')+
         (exs.length ? kkKopfHTML(d.items.map(function(it){ return it.ex; }), !!(warmDehn || d.ws)) : '')+
-        '<button class="btn btn-primary" data-go'+(exs.length?'':'disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>'+
+        (gymLastig
+          ? '<button class="btn btn-primary" data-goplan'+(exs.length?'':' disabled')+'>'+svgIcon(CAT_ICON.weight)+' '+t("coverGewichte")+'</button>'+
+            '<button class="btn btn-secondary" data-go'+(exs.length?'':' disabled')+'>'+ICON_PLAY+' '+t("katPlanStart")+'</button>'
+          : '<button class="btn btn-primary" data-go'+(exs.length?'':' disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>')+
         (d.src==="surprise" ? '<button class="btn btn-secondary wb-mischen" data-reroll>'+ICON_MISCHEN+' '+t("wbMischen")+'</button>' : '')+
         coverActs+
         '<div class="cover-note">'+t(d._dirty ? "coverDirty" : "coverHint")+'</div>'+
@@ -409,6 +415,7 @@ function renderDraftPage(d, cfg){
     var it = d.items[i], ex = findExercise(it.ex);
     if(!ex) return;
     var acts = [];
+    if(exIstStudio(ex)) acts.push({ ico:ICON_EDIT, label:t("gymEintragen"), fn:function(){ go("#studio/"+ex.id); } });   // Fitnessstudio: Gewicht × Wiederholungen eintragen
     if(d.mode === "individual" || exIsStretch(it.ex)) acts.push({ ico:ICON_TIMERBLOCK, label:t("wbZeiten"), fn:function(){ openTimingSheet(d, i, function(){ speichern(); neu(); }); } });
     if(i > 0) acts.push({ ico:'<path d="M12 19V5M5 12l7-7 7 7"/>', label:t("wbNachVorn"), fn:function(){ var x = d.items.splice(i, 1)[0]; d.items.splice(i-1, 0, x); speichern(); neu(); } });
     if(i < d.items.length-1) acts.push({ ico:'<path d="M12 5v14M5 12l7 7 7-7"/>', label:t("wbNachHinten"), fn:function(){ var x = d.items.splice(i, 1)[0]; d.items.splice(i+1, 0, x); speichern(); neu(); } });
@@ -463,6 +470,7 @@ function renderDraftPage(d, cfg){
       }
       go("#playdraft");
     });
+    on("[data-goplan]", function(){ katPlanAusDraft(d); });
     on("[data-savemy]", function(){
       if(!d.items.length) return;
       if(d.src==="shared") adoptSharedCustoms(d);
@@ -558,6 +566,8 @@ function spNormalize(p){
   if(!p.equips) p.equips = selArr(p.equip && p.equip!=="all" ? [p.equip] : ["none"]);
   return p;
 }
+/* Welche Übungen „Überrasch mich“ ziehen darf: alles außer Dehnen; Fitnessstudio-Übungen nur, wenn „Fitnessstudio“ bei der Ausrüstung gewählt ist */
+function spErlaubt(ex, equips){ return fuerBau(ex) && (!STUDIO_NUR[ex.id] || selArr(equips).indexOf("gym") > -1); }
 function spDuration(it){ return it.reps*it.work + Math.max(0, it.reps-1)*it.rest; }
 function buildSurprise(p){
   p = spNormalize(p);
@@ -583,7 +593,7 @@ function buildSurprise(p){
     var trainSec = Math.max(block, total - stretchBudget);
     var n = anzahl ? Math.max(1, anzahl - stretchAnzahl) : Math.max(2, Math.round((trainSec + tm.blockRest) / (block + tm.blockRest)));
     var pool = EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && fuerWorkout(ex) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
+      return !libHidden("ex:"+ex.id) && spErlaubt(ex, equips) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
         equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains);
     });
     if(!pool.length && !stretchPool.length) return null;
@@ -639,7 +649,7 @@ function buildSurprise(p){
     var istBurpee = function(ex){ return /burpee/.test(ex.id); };
     if(st.spZahl % 2 === 0 && !picked.some(istBurpee)){
       var bur = EXERCISES.filter(function(ex){
-        return istBurpee(ex) && fuerWorkout(ex) && !libHidden("ex:"+ex.id) && equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains) &&
+        return istBurpee(ex) && spErlaubt(ex, equips) && !libHidden("ex:"+ex.id) && equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains) &&
           (p.level !== 1 || (EX_INT[ex.id] || 2) < 3);   // locker: nur die sanften
       });
       var frisch = bur.filter(function(ex){ return !recent[ex.id]; });
@@ -729,7 +739,7 @@ function openSurprise(twId){
       '<label>'+t("mainCat")+'</label>'+
       mainTilesHTML(p.mains, null, "data-spmain", ["stretch"])+
       '<div class="tm-hint" style="margin-top:-4px;">'+esc(t("spMainHint"))+'</div>'+
-      '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
+      '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.map(function(e){
         return '<button type="button" class="fc-chip'+(p.equips.indexOf(e.id)>-1?' on':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>'+
       // Fokus, Intensität und die Regeln sind selten nötig: zugeklappt, die Zusammenfassung zeigt die aktuelle Wahl
       '<button type="button" class="sp-more'+(spFeinOffen?' open':'')+'" data-spmore aria-expanded="'+spFeinOffen+'">'+

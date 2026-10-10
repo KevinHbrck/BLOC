@@ -553,7 +553,7 @@
       pruefe($('[data-wbex="plank"] .ex-fav.on'), "Stern lässt sich nicht setzen");
       klick('[data-wbex="plank"] [data-exfav]');
       pruefe($(".wb-leiste [data-tocover]") && !$(".wb-leiste [data-tocover]").disabled, "Start-Leiste fehlt");
-      pruefe(!$('[data-wbex="leg-press"]') && !$('[data-wbex="cobra-lift"]'), "Studio- oder Dehnübung in der Auswahl");
+      pruefe($('[data-wbex="leg-press"]') && /gym-color/.test($('[data-wbex="leg-press"]').getAttribute("style")) && !$('[data-wbex="cobra-lift"]'), "Fitnessstudio-Übung fehlt (oder ist nicht grün) bzw. Dehnübung in der Auswahl");
       // Der Baukasten speichert selbst: kein Speichern-Knopf nötig, zurück ohne Nachfrage
       var sk = $(".wb-leiste [data-wbsave]");
       pruefe(sk && sk.disabled && /Gespeichert/.test(sk.textContent), "Anzeige „Gespeichert“ fehlt: " + (sk && sk.textContent));
@@ -584,7 +584,8 @@
       klick(await bis(function () { return $('[data-kattab="uebungen"]'); }, 3000, "Reiter Übungen"));
       var kachel = await bis(function () { return $("[data-studio=\"leg-press\"]"); }, 3000, "Studio-Kachel");
       await lang(kachel);
-      pruefe($$("#overlayRoot .act-opt").length === 1 && /Plan/.test($("#overlayRoot .act-opt").textContent), "Studio-Gerät darf nur in einen Plan");
+      var o2 = $$("#overlayRoot .act-opt").map(function (b) { return b.textContent; });
+      pruefe(o2.length === 2 && /Plan/.test(o2[0]) && /Workout/.test(o2[1]), "Fitnessstudio-Übung: erst Plan, dann Workout mit Timer: " + o2.join(" | "));
       klick("#overlayRoot [data-act]");
       klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neuer Plan"));
       await bis(function () { var p = JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene; return p && p.length === 1 && p[0].ids.indexOf("leg-press") > -1; }, 2000, "Plan mit Beinpresse");
@@ -901,6 +902,69 @@
       pruefe(wo && sw[wo].bn === 1 && sw[wo].bs === 2100, "alte Einträge sollten als ein Besuch von 35 min archiviert sein: " + JSON.stringify(sw));
       klick('.tabbar [data-nav="#home"]');
       await bis(function () { return $(".woche") && /[12] Training/.test($(".woche").getAttribute("aria-label")); }, 3000, "Wochenzeile zählt Besuche");
+    }],
+    ["Fitnessstudio überall: hellgrüne Symbole, Gewicht × Wiederholungen vorn, Plan aus dem Cover, Überrasch mich und Plan nach Gewichtung mit Ort", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      var db = daten();
+      db.settings.stGruppen = []; db.settings.stArten = []; db.settings.stZonen = []; db.settings.katTab = "workouts"; db.settings.katOrt = "studio"; db.settings.stPlaene = [];
+      db.settings.surprise = { dur: 20, mains: ["kraft", "rumpf"], cats: [], level: 2, equips: ["none"] };
+      W.localStorage.setItem(KEY, JSON.stringify(db));
+      await heim();
+      klick('[data-nav="#katalog"]');
+      await bis(function () { return $(".kat-gr") && $('[data-katort="studio"].on'); }, 3000, "Katalog mit Fitnessstudio");
+      pruefe($$(".kat-gr").length > 0 && $$(".kat-gr").every(function (e) { return e.classList.contains("kat-gym"); }), "Fitnessstudio: die Symbole der Bereiche sollen hellgrün sein");
+      klick('[data-katort="frei"]');
+      await bis(function () { return $('[data-katort="frei"].on') && $(".kat-gr"); }, 2000, "Freiluft");
+      pruefe(!$(".kat-gr.kat-gym"), "Freiluft: die Symbole der Bereiche sollen einheitlich blau sein");
+      klick('[data-katort="studio"]');
+      // Cover: Gewichte vorn, Timer als zweiter Knopf; in der Liste Gewicht × Wiederholungen statt Sekunden
+      klick(await bis(function () { return $('[data-cover="lib/gym-chest"]'); }, 3000, "Brust-Programm"));
+      await bis(function () { return $("[data-goplan]") && $$(".wb-ablauf").length === 6; }, 3000, "Deckblatt mit Gewichten");
+      pruefe($("[data-goplan]").classList.contains("btn-primary") && $("[data-go]").classList.contains("btn-secondary"), "Deckblatt: „Mit Gewichten trainieren“ soll vorn stehen, der Timer dahinter");
+      var subs = $$(".wb-ablauf .st-sub").map(function (e) { return e.textContent; });
+      pruefe(subs.length === 6 && subs.every(function (x) { return /\d × \d/.test(x) && !/s\//.test(x); }), "Ablauf zeigt Gewicht × Wiederholungen: " + subs.join(" | "));
+      klick($("[data-goplan]"));
+      await bis(function () { return $("[data-planwo]") && $$("[data-studio]").length === 6; }, 3000, "Plan mit sechs Übungen");
+      var pl = daten().settings.stPlaene;
+      pruefe(pl.length === 1 && pl[0].ids.length === 6 && pl[0].fromWo === "lib:gym-chest", "Plan aus dem Deckblatt nicht angelegt: " + JSON.stringify(pl));
+      pruefe(/3 × 12/.test($('[data-studio="chest-press-machine"]').textContent), "Plan-Kachel ohne Ziel „3 × 12“: " + $('[data-studio="chest-press-machine"]').textContent);
+      // „Mit Timer starten“ aus dem Plan: im Timer steht Gewicht × Wiederholungen unter dem Namen
+      klick($("[data-planwo]"));
+      klick(await bis(function () { return $("[data-go]"); }, 3000, "Mit Timer starten auf dem Deckblatt"));
+      await bis(function () { return $("#pl-body .pl-kg"); }, 3000, "Gewicht im Timer");
+      pruefe(/\d × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Gewicht × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
+      // Überrasch mich: Chip Fitnessstudio, danach nur Fitnessstudio-Übungen
+      await heim();
+      klick('[data-nav="#katalog"]');
+      klick(await bis(function () { return $('[data-kattab="uebungen"]'); }, 3000, "Reiter Übungen"));
+      klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
+      var gymChip = await bis(function () { return $('#overlayRoot [data-spequip="gym"]'); }, 2000, "Chip Fitnessstudio");
+      klick(gymChip);
+      klick(await bis(function () { return $('#overlayRoot [data-spequip="none"].on'); }, 2000, "Ohne Geräte war gewählt"));
+      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los"));
+      await bis(function () { return /^#cover/.test(W.location.hash) && $$(".wb-ablauf").length > 0; }, 3000, "Überrasch-mich-Deckblatt");
+      var cd = W.coverDraft;
+      pruefe(cd && cd.items.length > 2 && cd.items.every(function (it) { return W.exIstStudio(W.findExercise(it.ex)); }), "Überrasch mich mit Fitnessstudio zieht auch andere Übungen");
+      // Plan nach Gewichtung: Ort Fitnessstudio zieht Geräte, Freiluft keine
+      await heim();
+      klick('[data-nav="#katalog"]');
+      klick(await bis(function () { return $('[data-kattab="meine"]'); }, 3000, "Reiter Meine"));
+      klick(await bis(function () { return $('[data-fabopt="gen"]'); }, 3000, "Plan nach Gewichtung"));
+      klick(await bis(function () { return $('[data-genort="studio"]'); }, 3000, "Ort-Schalter im Generator"));
+      klick(await bis(function () { return $("[data-genmake]"); }, 2000, "Plan anlegen"));
+      await bis(function () { return $("[data-planwo]") && $$("[data-studio]").length > 2; }, 3000, "Plan nach Gewichtung (Fitnessstudio)");
+      var l1 = daten().settings.stPlaene, p1 = l1[l1.length - 1];
+      pruefe(p1.ids.length > 2 && p1.ids.every(function (id) { return W.exIstStudio(W.findExercise(id)); }), "Plan nach Gewichtung (Fitnessstudio) enthält Übungen ohne Gerät");
+      await heim();
+      klick('[data-nav="#katalog"]');
+      klick(await bis(function () { return $('[data-kattab="meine"]'); }, 3000, "Reiter Meine"));
+      klick(await bis(function () { return $('[data-fabopt="gen"]'); }, 3000, "Plan nach Gewichtung"));
+      klick(await bis(function () { return $('[data-genort="frei"]'); }, 3000, "Ort Freiluft"));
+      klick(await bis(function () { return $("[data-genmake]"); }, 2000, "Plan anlegen"));
+      await bis(function () { return $("[data-planwo]") && daten().settings.stPlaene.length === 3; }, 3000, "Plan nach Gewichtung (Freiluft)");
+      var l2 = daten().settings.stPlaene, p2 = l2[l2.length - 1];
+      pruefe(p2.ids.length > 2 && p2.ids.every(function (id) { return !W.exIstStudio(W.findExercise(id)); }), "Plan nach Gewichtung (Freiluft) enthält Geräte");
     }],
     ["Kleine Hilfen: „Was ist was?“, Bestleistung, Leichter/Schwerer", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }

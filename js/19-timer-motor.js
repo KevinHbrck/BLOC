@@ -3,7 +3,7 @@
 function buildSteps(w){
   var steps = [];
   var b0 = findBlock(w.items[0] ? w.items[0].blockId : null);
-  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", exNr:1 });
+  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", kg: gymSatzText(b0 && b0.ex || ""), exNr:1 });
   var exNr = 0;   // die wievielte Übung (Block) im Workout - nur für die Anzeige oben
   for(var i=0;i<w.items.length;i++){
     var it = w.items[i];
@@ -13,15 +13,15 @@ function buildSteps(w){
     for(var r=0;r<b.reps;r++){
       var bn = b.sides ? b.name+" · "+(r%2===0 ? t("left") : t("right")) : b.name;
       steps.push({ phase:"work", label:b.name, blockName:bn, duration:b.workSec, rep:r+1, totalReps:b.reps,
-                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), exNr:exNr });
+                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || ""), exNr:exNr });
       if(r < b.reps-1){
         steps.push({ phase:"rest", label:b.name, blockName:b.name, duration:b.restSec, rep:r+1, totalReps:b.reps, ex:b.ex||"",
-                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), exNr:exNr });
+                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || ""), exNr:exNr });
       }
     }
     if(i < w.items.length-1 && it.restAfterSec>0){
       var nb = findBlock(w.items[i+1].blockId);
-      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec, ex: nb && nb.ex || "", exNr:exNr+1 });
+      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec, ex: nb && nb.ex || "", kg: gymSatzText(nb && nb.ex || ""), exNr:exNr+1 });
     }
   }
   steps.push({ phase:"done", label:"Fertig", duration:0, exNr:exNr+1 });
@@ -202,7 +202,7 @@ function stepBodyHTML(step){
      steht die Uhr links, Beschriftung und Tasten rechts daneben */
   return '<div class="pl-a"><div class="phase-label">'+phLabel+'</div>'+
     '<div class="block-label">'+esc(step.blockName||"")+
-      (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+'</div>'+
+      (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+(step.kg ? '<small class="pl-kg">'+esc(step.kg)+'</small>' : '')+'</div>'+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+
     (vorschau && isVintageTheme() ? illuHTML(step.ex, "pl-illu pl-vorschau-v") : "")+
     '</div>'+   // Hinweis zur Übung steht in der Info (ⓘ), im Timer bleibt es ruhig

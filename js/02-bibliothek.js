@@ -96,12 +96,18 @@ EXERCISES.forEach(function(ex){ ex.main = EX_MAIN[ex.id] || "kraft"; });
 function mainCat(id){ for(var i=0;i<MAIN_CATS.length;i++) if(MAIN_CATS[i].id===id) return MAIN_CATS[i]; return MAIN_CATS[0]; }
 function mainMatch(sel, main){ sel = selArr(sel); return !sel.length || sel.indexOf(main) > -1; }
 /* Dehn- und Mobility-Übungen stehen in gemischten Workouts immer am Ende (Reihenfolge sonst unverändert) */
-/* Workouts bauen: ohne Übungen aus dem Freien Training (Studio - dort trägt man Gewicht ein) und ohne Dehnen */
+/* fuerWorkout: ohne Fitnessstudio-Übungen (für die Air-Gruppen und die Summit-Auswahl) und ohne Dehnen; Workouts mit Timer und Pläne nehmen alles außer Dehnen (fuerBau) */
 var STUDIO_NUR = {};
 STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){ STUDIO_NUR[id] = true; }); });
 function fuerWorkout(ex){ return !STUDIO_NUR[ex.id] && ex.main !== "stretch"; }
-/* Air zeigt keine Studio-Übungen (Geräte, Langhantel, alles mit Ausrüstung „Fitnessstudio“) - die gehören nur zu Studio */
+/* Freiluft-Übungen (ohne Ausrüstung „Fitnessstudio“) */
 function fuerAir(ex){ return fuerWorkout(ex) && ex.equip.indexOf("gym") < 0; }
+/* Fitnessstudio-Übungen (Geräte, Kabel, Langhantel, alles mit Ausrüstung „Fitnessstudio“): hier stehen Gewicht × Wiederholungen vorn, ein Timer ist optional */
+function exIstStudio(ex){ return !!ex && (!!STUDIO_NUR[ex.id] || (ex.equip || []).indexOf("gym") > -1); }
+/* Was in Workouts mit Timer, Plänen und Überrasch mich vorkommen darf: alle Übungen außer Dehnen (die haben ihren eigenen Bereich) */
+function fuerBau(ex){ return ex.main !== "stretch"; }
+/* Farbe der Kachel: Fitnessstudio hellgrün, sonst Air blau (bzw. die Farbe des Bereichs, z. B. Mobility & Stretch) */
+function exFarbe(ex){ return exIstStudio(ex) ? "var(--gym-color)" : 'var(--bereich, '+catVar(ex.cats[0])+')'; }
 function exIsMobility(id){ var ex = id && findExercise(id); return !!(ex && ex.main === "stretch"); }
 function stretchLast(items, idOf){
   var a = [], b = [];
@@ -310,7 +316,7 @@ var coverDraft = null;   // das Workout auf dem Deckblatt - Änderungen gelten n
 function exIsStretch(id){ var ex = id && findExercise(id); return !!(ex && ex.cats.indexOf("stretch") > -1); }
 function catVar(id){ return id==="mix" || id==="all" ? "var(--tp-color)" : "var(--c-"+id+")"; }
 /* Farbe einer Übung im Studio: Geräte und eigene Studio-Übungen violett, Air-Übungen (z. B. mit ★) in Air-Blau */
-function studioFarbe(ex){ return STUDIO_NUR[ex.id] || (ex.custom && ex.equip.indexOf("gym") > -1) ? "var(--bl-color)" : catVar(ex.cats[0]); }
+function studioFarbe(ex){ return exIstStudio(ex) ? "var(--gym-color)" : catVar(ex.cats[0]); }
 var CAT_ICON = {
   cardio:'<path d="M3 12h4l2-5 4 10 2-5h6"/>',
   weight:'<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
@@ -808,7 +814,7 @@ function leichterSchwerer(id){
   return null;
 }
 function openExInfo(exId, live, lib){
-  var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe() || (ex && studioFarbe(ex) === "var(--bl-color)" ? "var(--bl-color)" : "");
+  var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe() || (ex && studioFarbe(ex) === "var(--gym-color)" ? "var(--gym-color)" : "");
   if(!ex || !info) return;
   var lang = currentLang()==="en" ? 1 : 0;
   var steps = info[lang].split("|").map(function(s){ return '<li>'+esc(s)+'</li>'; }).join("");

@@ -200,9 +200,9 @@ function renderWorkoutEdit(id){
   w.items.forEach(function(it, i){ var b = findBlock(it.blockId); if(b && b.ex) (exPos[b.ex] = exPos[b.ex] || []).push(i+1); });
   var libPickHTML = catChipsHTML(pickCat, "data-pickcat", ["stretch"]) +
     '<div class="fig-grid">'+EXERCISES.filter(function(ex){
-      return fuerWorkout(ex) && !libHidden("ex:"+ex.id) && (pickCat==="all" || ex.cats.indexOf(pickCat) > -1);
+      return fuerBau(ex) && !libHidden("ex:"+ex.id) && (pickCat==="all" || ex.cats.indexOf(pickCat) > -1);
     }).map(function(ex){
-      return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-addex="'+ex.id+'"', cat:catVar(ex.cats[0]), nr:exPos[ex.id] || [],
+      return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-addex="'+ex.id+'"', cat:studioFarbe(ex), nr:exPos[ex.id] || [],
         unter:'<span class="st-sub">'+blockSpec(exBlock(ex))+'</span>' });
     }).join("")+'</div>';
 

@@ -178,11 +178,20 @@ function studioSub(id){
   if(studioNurBlock(ex)){ var tb = studioTimer(id); return tb.reps+" × "+tb.work+" s"; }
   return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
 }
+/* Fitnessstudio-Übung in einem Workout mit Timer: vorn steht Gewicht × Wiederholungen („40 kg · 3 × 12“, ohne Eintrag das Ziel „3 × 12“);
+   leer bei allen anderen Übungen */
+function gymSatzText(id){
+  var ex = findExercise(id);
+  if(!exIstStudio(ex)) return "";
+  var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null, z = studioZiel(id);
+  return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : z.saetze+" × "+z.wdh;
+}
 /* Unter dem Namen einer Kachel: wofür die Übung da ist - die ersten zwei Hauptmuskeln in Kurzform, klein. Ohne Muskeldaten (eigene Übungen) entfällt die Zeile. */
 function kachelMuskel(ex){ var m = ex && musclesMain(ex); return m ? '<span class="st-mus">'+esc(m.split(", ").slice(0, 2).join(", "))+'</span>' : ''; }
 /* Studio-Kacheln im Plan: Muskeln und - falls schon eingetragen - der letzte Satz bzw. die Zeit (kein „–“ mehr ohne Daten) */
 function studioUnter(id){
   var sub = studioSub(id);
+  if(sub === t("stNoData")) sub = gymSatzText(id) || sub;   // Fitnessstudio-Übung ohne Eintrag: das Ziel (3 × 12) statt nichts
   return kachelMuskel(findExercise(id))+(sub === t("stNoData") ? '' : '<span class="st-sub">'+esc(sub)+'</span>');
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
@@ -223,7 +232,8 @@ function renderStudioPlan(){
       var gewaehlt = gids.filter(function(id){ return pos[id]; }).length;
       html += katZeileHTML("pl-"+g.id, katIcon(g.id), g.name, gids.length,
         '<div class="fig-grid">'+gids.map(planKachel).join("")+'</div>', katOffenStd("pl-"+g.id, filterAn || !!g.immer),
-        gewaehlt ? '<span class="kat-n">'+esc(t("katGewaehlt", { n:gewaehlt }))+'</span>' : '');
+        gewaehlt ? '<span class="kat-n">'+esc(t("katGewaehlt", { n:gewaehlt }))+'</span>' : '',
+        gids.every(function(id){ return exIstStudio(findExercise(id)); }));
     });
     html += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
       '<button type="button" class="btn btn-danger" data-plandel style="margin-top:18px;">'+ICON_TRASH+' '+t("planDel")+'</button>'+

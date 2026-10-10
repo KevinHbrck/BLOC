@@ -1,27 +1,33 @@
 "use strict";
-/* Plan nach Gewichtung: Reglerwerte 0-10 je Gruppe, Anzahl der Übungen; verteilt nach größtem Rest und zieht passende Studio-Übungen */
-var stGen = null;   // { w:{gruppe:0-10}, n } solange die Seite offen ist
-function stGenBauen(w, n){
+/* Plan nach Gewichtung: Reglerwerte je Muskelgruppe (zusammen 100 %), Anzahl der Übungen und Ort; verteilt nach größtem Rest und zieht passende Übungen (Fitnessstudio oder Freiluft) */
+var stGen = null;   // { w:{gruppe:0-100}, n, ort } solange die Seite offen ist
+/* Übungen, aus denen „Plan nach Gewichtung“ zieht: Fitnessstudio = Geräte, Kabel, Langhantel (und eigene Studio-Übungen), Freiluft = alles andere;
+   ohne Dehnübungen und ausgeblendete */
+function stGenPool(ort){
+  return EXERCISES.filter(function(ex){
+    return ex.main !== "stretch" && !libHidden("ex:"+ex.id) && (ort === "studio" ? exIstStudio(ex) : !exIstStudio(ex));
+  });
+}
+function stGenBauen(w, n, ort){
   var tot = MUSKEL_GRP.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0);
   if(!tot) return [];
   var q = MUSKEL_GRP.map(function(g){ var raw = (w[g.id] || 0)*n/tot; return { g:g.id, k:Math.floor(raw), rest:raw - Math.floor(raw) }; });
   var diff = n - q.reduce(function(a, x){ return a + x.k; }, 0);
   q.slice().sort(function(a, b){ return b.rest - a.rest; }).slice(0, diff).forEach(function(x){ x.k++; });
-  var pools = {}, dazu = {};
-  studioIds().filter(function(gr){ return !gr.air; }).forEach(function(gr){ gr.ids.forEach(function(id){   // nur Studio-Übungen, keine Air-Gruppen
-    var ex = findExercise(id); if(!ex || ex.main === "stretch" || dazu[id]) return;
-    dazu[id] = true;
+  var pools = {};
+  stGenPool(ort).forEach(function(ex){
     var v = mgVerteilung(ex), best = null;
     Object.keys(v).forEach(function(g){ if(best === null || v[g] > v[best]) best = g; });
-    if(best) (pools[best] = pools[best] || []).push(id);
-  }); });
+    if(best) (pools[best] = pools[best] || []).push(ex.id);
+  });
   var aus = [];
   q.forEach(function(x){ shuffle(pools[x.g] || []).slice(0, x.k).forEach(function(id){ aus.push(id); }); });
   return aus;
 }
 function renderStudioPlanGen(){
   var w = stGen.w;
-  var html = topbar(t("genTitle"), { back:"#katalog" }) + '<div class="page-hint">'+esc(t("genHint"))+'</div><div class="card gen-card">'+
+  var zahlen = { studio:stGenPool("studio").length, frei:stGenPool("frei").length };
+  var html = topbar(t("genTitle"), { back:"#katalog" }) + '<div class="page-hint">'+esc(t("genHint"))+'</div>'+katOrtHTML(stGen.ort || katOrt(), zahlen, "data-genort", "katOrtUebAnz")+'<div class="card gen-card">'+
     MUSKEL_GRP.map(function(g){
       return '<div class="gen-row"><label for="gw-'+g.id+'">'+esc(t(g.key))+'</label><input type="range" id="gw-'+g.id+'" data-gw="'+g.id+'" min="0" max="100" step="1" value="'+(w[g.id] || 0)+'">'+
         '<b data-gp="'+g.id+'">'+(w[g.id] || 0)+'%</b></div>';
@@ -32,6 +38,9 @@ function renderStudioPlanGen(){
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ stGen = null; renderStudio(); window.scrollTo(0, 0); }); }
   bindCommon();
+  app.querySelectorAll("[data-genort]").forEach(function(o){ o.addEventListener("click", function(){
+    stGen.ort = o.getAttribute("data-genort"); var y = window.scrollY; renderStudioPlanGen(); window.scrollTo(0, y);
+  }); });
   /* Es sind immer genau 100 % zu verteilen: Wer einen Regler verschiebt, nimmt den anderen im gleichen Verhältnis etwas weg bzw. gibt ihnen etwas */
   function verteilen(id, v){
     var andere = MUSKEL_GRP.filter(function(g){ return g.id !== id; }), rest = 100 - v;
@@ -52,7 +61,7 @@ function renderStudioPlanGen(){
   app.querySelectorAll("[data-gw]").forEach(function(el){ el.addEventListener("input", function(){ verteilen(el.getAttribute("data-gw"), +el.value); }); });  var nn = app.querySelector("#gw-n");
   nn.addEventListener("input", function(){ stGen.n = +nn.value; app.querySelector("[data-gn]").textContent = nn.value; });
   app.querySelector("[data-genmake]").addEventListener("click", function(){
-    var ids = stGenBauen(w, stGen.n);
+    var ids = stGenBauen(w, stGen.n, stGen.ort || katOrt());
     if(!ids.length){ showToast(t("genZero")); return; }
     var p = { id:uid(), name:t("genName"), ids:ids, updatedAt:Date.now() };
     stPlaene().push(p); save();

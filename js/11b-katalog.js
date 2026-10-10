@@ -80,9 +80,9 @@ function katGruppeIds(gruppen){   // Übungs-ID -> Bereich
 }
 
 /* ---------- Aufklappbare Bereiche ---------- */
-/* extra: HTML vor der Anzahl (z. B. „2 gewählt“) */
-function katZeileHTML(id, ico, name, n, inhalt, offen, extra){
-  return '<details class="st-air-gr kat-gr" data-katgr="'+esc(id)+'"'+(offen ? ' open' : '')+'><summary>'+
+/* extra: HTML vor der Anzahl (z. B. „2 gewählt“); gym: nur Fitnessstudio-Inhalt - das Symbol ist dann hellgrün, sonst blau (Freiluft) */
+function katZeileHTML(id, ico, name, n, inhalt, offen, extra, gym){
+  return '<details class="st-air-gr kat-gr'+(gym ? ' kat-gym' : '')+'" data-katgr="'+esc(id)+'"'+(offen ? ' open' : '')+'><summary>'+
     '<span class="sag-ico">'+svgIcon(ico)+'</span><b>'+esc(name)+'</b>'+(extra || '')+
     '<span class="lbl-hint">'+n+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+inhalt+'</details>';
 }
@@ -120,15 +120,21 @@ var KAT_ICON_STUDIO = '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h
 var KAT_ICON_FREI = '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>';
 function katOrt(){ return state.db.settings.katOrt === "studio" ? "studio" : "frei"; }
 function katWoOrt(exs){ return exs.some(function(ex){ return ex.equip.indexOf("gym") > -1; }) ? "studio" : "frei"; }
-function katOrtHTML(){
-  var o = katOrt(), n = { studio:0, frei:0 };
-  LIB_WORKOUTS.forEach(function(lw){
-    if(libIstWarmDehn(lw) || libHidden("wo:"+lw.id)) return;
-    n[katWoOrt(lw.exercises.map(findExercise).filter(Boolean))]++;
-  });
+/* Schalter Fitnessstudio · Freiluft. Ohne Angaben: der Ort des Katalogs mit der Zahl der Workouts je Ort; für „Plan nach Gewichtung“ mit
+   eigenem Ort (attr = "data-genort") und Zahl der Übungen */
+function katOrtHTML(sel, zahl, attr, textKey){
+  var o = sel || katOrt(), n = zahl;
+  attr = attr || "data-katort"; textKey = textKey || "katOrtAnz";
+  if(!n){
+    n = { studio:0, frei:0 };
+    LIB_WORKOUTS.forEach(function(lw){
+      if(libIstWarmDehn(lw) || libHidden("wo:"+lw.id)) return;
+      n[katWoOrt(lw.exercises.map(findExercise).filter(Boolean))]++;
+    });
+  }
   function b(k, label, ico){
-    return '<button type="button" data-katort="'+k+'" class="'+(o === k ? 'on' : '')+'" aria-pressed="'+(o === k)+'">'+svgIcon(ico)+
-      '<span class="ko-t"><b>'+esc(label)+'</b><small>'+esc(t("katOrtAnz", { n:n[k] }))+'</small></span></button>';
+    return '<button type="button" '+attr+'="'+k+'" class="'+(o === k ? 'on' : '')+'" aria-pressed="'+(o === k)+'">'+svgIcon(ico)+
+      '<span class="ko-t"><b>'+esc(label)+'</b><small>'+esc(t(textKey, { n:n[k] }))+'</small></span></button>';
   }
   return '<div class="kat-ort" role="group" aria-label="'+esc(t("katOrt"))+'">'+b("studio", t("katOrtStudio"), KAT_ICON_STUDIO)+b("frei", t("katOrtFrei"), KAT_ICON_FREI)+'</div>';
 }
@@ -208,7 +214,8 @@ function renderKatalogUebungen(){
   var hw = hinweise("katueb", ["katUebHint"]);
   var html = "";
   function zeile(id, ico, name, ids, offen, extra, innenPlus){
-    return katZeileHTML(id, ico, name, ids.length, '<div class="fig-grid">'+ids.map(studioKachel).join("")+(innenPlus || "")+'</div>', katOffenStd(id, offen), extra);
+    var gym = ids.length > 0 && ids.every(function(id){ return exIstStudio(findExercise(id)); });   // nur Fitnessstudio: hellgrünes Symbol
+    return katZeileHTML(id, ico, name, ids.length, '<div class="fig-grid">'+ids.map(studioKachel).join("")+(innenPlus || "")+'</div>', katOffenStd(id, offen), extra, gym);
   }
   if(favs.length) html += zeile("fav", ICON_STAR, t("stFavs"), favs, filterAn);
   if(zuletzt.length) html += zeile("zuletzt", KAT_ICON_UHR, t("stRecent"), zuletzt, filterAn);
@@ -283,6 +290,30 @@ function katPlaeneBinden(){
     el.addEventListener("keydown", function(e){ if(e.target === el && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); los(); } });
   });
 }
+/* Deckblatt eines Fitnessstudio-Workouts: „Mit Gewichten trainieren“ legt einen Plan mit denselben Übungen an (einmal je Workout, danach wird er
+   nur geöffnet) und zeigt ihn - dort stehen Gewicht × Wiederholungen vorn, „Mit Timer starten“ ist der optionale zweite Knopf */
+function katPlanAusDraft(d){
+  var ids = [];
+  d.items.forEach(function(it){ var ex = findExercise(it.ex); if(ex && ex.main !== "stretch" && ids.indexOf(it.ex) < 0) ids.push(it.ex); });
+  if(!ids.length) return;
+  var l = stPlaene(), p = null;
+  l.forEach(function(x){ if(x.fromWo === d.key) p = x; });
+  if(!p){
+    p = { id:uid(), name:d.name || t("planDefault", { n:l.length+1 }), ids:ids, updatedAt:Date.now(), fromWo:d.key };
+    l.push(p);
+  }
+  save();
+  state.db.settings.katTab = "meine";
+  stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = ""; stGen = null;
+  go("#katalog");
+}
+/* Plan nach Gewichtung: Seite mit den Reglern; der Ort (Fitnessstudio oder Freiluft) entscheidet, aus welchen Übungen gezogen wird */
+function katPlanGenNeu(){
+  stPlanAktiv = null; stPlanBauen = false;
+  stGen = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8, ort:katOrt() };
+  state.db.settings.katTab = "meine";
+  renderKatalog(); window.scrollTo(0, 0);
+}
 /* Das Plus unter „Meine“: Workout planen (Plan aus dem Katalog), nach Gewichtung, Workout mit Timer, eigene Übung */
 function katFabHTML(){
   return fabMenuHTML([
@@ -295,7 +326,7 @@ function katFabHTML(){
 function katFabBinden(){
   bindFabMenu({
     "plan": katPlanNeu,
-    "gen": function(){ stGen = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8 }; renderKatalog(); window.scrollTo(0, 0); },
+    "gen": katPlanGenNeu,
     "timer": function(){ go("#mybuild/new"); },
     "uebung": function(){ go("#exedit/new"); }
   });
@@ -356,7 +387,7 @@ function renderKatalogWorkouts(){
   KAT_WO_BEREICHE.forEach(function(b){
     if(!je[b]) return;
     var name = b === "ganz" ? t("katGanz") : t(KAT_GRUPPEN.filter(function(g){ return g.id === b; })[0].key);
-    liste += katZeileHTML("wo-"+b, b === "ganz" ? HOME_ICON.katalog : katIcon(b), name, je[b].length, '<div class="kat-inhalt">'+je[b].join("")+'</div>', katOffenStd("wo-"+b, filterAn));
+    liste += katZeileHTML("wo-"+b, b === "ganz" ? HOME_ICON.katalog : katIcon(b), name, je[b].length, '<div class="kat-inhalt">'+je[b].join("")+'</div>', katOffenStd("wo-"+b, filterAn), "", ort === "studio");
   });
   if(!liste) liste = '<div class="empty" style="padding:34px 20px;">'+esc(t("katWoNone"))+'</div>';
   liste += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("noResult"))+'</div>';

@@ -20,8 +20,10 @@ function gesamtEintraege(){
   var s = state.db.settings, neu = t("create");
   // Aktionen (auch Erstellen von Blöcken, Timer-Workouts, Workouts, Übungen, Challenges)
   add(neu, t("newBlock"), t("mineBlocks"), "block timer intervall erstellen anlegen neu create new", function(){ go("#block/"+createBlock().id); });
-  add(neu, t("newWorkout"), t("mineTimer"), "timer workout intervall erstellen anlegen neu create new", function(){ go("#workout/"+createTimerWorkout().id); });
-  add(neu, t("myNew"), t("tabMine"), "workout bauen baukasten erstellen anlegen neu create build", function(){ go("#mybuild/new"); });
+  add(neu, t("fabTimerWo"), t("mineTimer"), "timer workout intervall bloecke blöcke erstellen anlegen neu create new", function(){ go("#workout/"+createTimerWorkout().id); });
+  add(neu, t("katFabPlan"), t("katalog"), "workout planen plan gewicht wiederholungen erstellen anlegen neu create plan weight reps", function(){ go("#katalog"); katPlanNeu(); });
+  add(neu, t("genNew"), t("katalog"), "plan gewichtung nach erstellen anlegen neu create weighting", function(){ go("#katalog"); katPlanGenNeu(); });
+  add(neu, t("myNew"), t("katalog"), "workout timer bauen baukasten erstellen anlegen neu create build timer workout", function(){ go("#mybuild/new"); });
   add(neu, t("exNew"), t("libExercises"), "uebung übung erstellen anlegen neu create exercise", function(){ go("#exedit/new"); });
   add(neu, t("repNew"), t("repTitle"), "challenge summit erstellen anlegen neu create", function(){
     var c = { id:"my-"+uid(), name:t("reDefaultName"), runden:3, zeilen:[], updatedAt:Date.now() };

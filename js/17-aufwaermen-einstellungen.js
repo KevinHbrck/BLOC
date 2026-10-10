@@ -41,7 +41,7 @@ function renderWarmStretch(){
       knopf("wsart", "warm", art === "warm", t("wsWarm"))+knopf("wsart", "dehn", art === "dehn", t("wsDehn"))+
     '</div>'+
     reiterZeileHTML("var(--ws-color)",
-      knopf("wstab", "workouts", tab === "workouts", t("tabWorkouts"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+knopf("wstab", "meine", tab === "meine", t("tabMine")))+
+      knopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+knopf("wstab", "meine", tab === "meine", t("tabMine")))+
     hw.z(0, "rep-intro")+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
     (tab === "uebungen" ? hw.z(1, "page-hint") : '')+

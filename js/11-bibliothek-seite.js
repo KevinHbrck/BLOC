@@ -47,8 +47,8 @@ function openActionSheet(title, acts){
   root.querySelector("[data-actclose]").addEventListener("click", close);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) close(); });
 }
-/* Übung per Langdruck in ein bestehendes Programm legen: Air-Übungen in eigene Air-Workouts und in Studio-Pläne,
-   Studio-Geräte (nur im Studio) ausschließlich in Studio-Pläne - Air bekommt nie Studio-Übungen */
+/* Übung per Langdruck in ein bestehendes Programm legen: in ein eigenes Workout mit Timer oder in einen Plan (Gewicht × Wiederholungen).
+   Alle Übungen außer Dehnen gehen in beides; bei Fitnessstudio-Übungen steht der Plan vorn. */
 function exZuProgramm(id, ws){   // ws: „warm“ / „dehn“ aus Mobility & Stretch - dann nur eigene Workouts dieses Bereichs
   var ex = findExercise(id);
   if(!ex || (ex.main === "stretch" && !ws)) return;
@@ -84,8 +84,9 @@ function exZuProgramm(id, ws){   // ws: „warm“ / „dehn“ aus Mobility & S
   }
   if(ws) return workoutWahl();   // Mobility & Stretch: direkt die eigenen Workouts dieses Bereichs
   var acts = [];
-  if(fuerWorkout(ex)) acts.push({ ico:HOME_ICON.lib, label:t("zpAir"), fn:workoutWahl });
-  acts.push({ ico:HOME_ICON.timer, label:t("zpStudio"), fn:planWahl });
+  // Fitnessstudio-Übungen: erst der Plan (Gewicht × Wiederholungen), dann das Workout mit Timer; sonst umgekehrt
+  var wo = { ico:HOME_ICON.lib, label:t("zpAir"), fn:workoutWahl }, pl = { ico:HOME_ICON.timer, label:t("zpStudio"), fn:planWahl };
+  if(exIstStudio(ex)) acts.push(pl, wo); else acts.push(wo, pl);
   openActionSheet(name, acts);
 }
 function moreBtn(attr, val, label){
@@ -207,7 +208,7 @@ function filterChip(attr, wert, an, ico, text){
 }
 /* Text des unteren Knopfes: „12 Workouts anzeigen“. art: Wo (Workouts) · Ex (Übungen) · Ei (Einheiten) · Pr (Programme) */
 function filterZeigenText(n, art){ return n ? t("af"+art+(n === 1 ? "1" : "N"), { n:n }) : t("afNull"); }
-/* Air (Bibliothek und Baukasten): Training, Ausrüstung, Sortierung. Studio-Ausrüstung („Fitnessstudio“) gibt es hier nicht. */
+/* Filter des Baukastens: Training, Ausrüstung (auch „Fitnessstudio“), Sortierung */
 function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung, zonen){
   cat = selArr(cat); equip = selArr(equip); var mitZonen = zonen !== undefined; zonen = selArr(zonen);
   var namen = cat.map(catName).concat(equip.map(equipName), zonen.map(kkName));
@@ -216,7 +217,7 @@ function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung, zonen)
     zeigen:filterZeigenText(n, uebung ? "Ex" : "Wo"),
     inhalt:filterChipsHTML(t("afTraining"), "", LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
         return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join(""))+
-      filterChipsHTML(t("equipHave"), "", EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
+      filterChipsHTML(t("equipHave"), "", EQUIPS.map(function(e){
         return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join(""))+
       (mitZonen ? kkFilterHTML('data-'+pre+'fzone', zonen) : ''),
     /* Sortierung: kein Block mehr in der Karte, nur ein Schalter „A–Z“ neben der Kopfzeile (aus = die Standardreihenfolge der Liste: Standard bzw. Dauer) */

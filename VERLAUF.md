@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-10 · Fitnessstudio-Übungen überall, hellgrüne Symbole, einheitliche Namen
+
+- **Fitnessstudio-Übungen gehen überall hinein**: Baukasten („Workout mit Timer bauen“, mit Chip „Fitnessstudio“ im Filter), Langdruck (bei Geräten steht „Zu Plan hinzufügen“ vorn), Tauschen (Fitnessstudio gegen Fitnessstudio), Timer-Workout aus Blöcken, **Überrasch mich** (Chip „Fitnessstudio“, Geräte nur wenn gewählt) und **Plan nach Gewichtung** (neuer Schalter Fitnessstudio · Freiluft, zieht aus dem jeweiligen Ort).
+- **Gewicht × Wiederholungen bleibt vorn**: im Ablauf eines Workouts steht bei Geräten „40 kg · 3 × 12“ (letzter Satz, sonst das Ziel) statt der Sekunden; Tipp auf die Übung bietet „Gewicht & Wiederholungen eintragen“; das Deckblatt eines überwiegend aus Geräten bestehenden Workouts hat **„Mit Gewichten trainieren“** als großen Knopf (legt einen Plan an und öffnet ihn) und **„Mit Timer starten“** als zweiten; im Timer steht die Zeile „40 kg · 3 × 12“ unter dem Namen.
+- **Farben, nur die Symbole**: Fitnessstudio hellgrün (`--gym-color`), Freiluft einheitlich blau; die bunten Bereichs-Symbole (Brust rot, Rücken blau …) sind weg, die Symbole stehen auf neutralem Grund. Studio-Übungen waren violett, jetzt hellgrün.
+- **Namen**: „Workout mit Timer bauen“ überall (Suche, Plus, Langdruck-Auswahl), „Workouts mit Timer“ und „Pläne (Gewicht × Wiederholungen)“ unter Meine, in der Suche zusätzlich „Workout planen“ und „Plan nach Gewichtung“, „Timer-Workout aus Blöcken“ statt „Neues Workout“; Mobility & Stretch heißt jetzt auch „Katalog · Übungen · Meine“; Summit „Mit Stange“ statt „Alle Geräte“.
+- Schnelltest 32 Prüfungen. Fassung 2026-10-10-39.
+
 ## 2026-10-10 · Durchsicht: Statistik und Wortlaut passend zum Workout-Bereich
 
 - **Statistik**: Air und Studio stehen jetzt auf **einer** Karte „Workout“ (ein Besuch aus beiden zählt einmal, ein Block „Muskelgruppen – letzte 7 Tage“). Gespeichert wird weiter getrennt (`b` = lib/timer), nur die Anzeige fasst zusammen; Statistik-Karten: Workout · Timer · Summit · Run · Mobility & Stretch.
