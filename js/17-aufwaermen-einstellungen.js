@@ -696,8 +696,8 @@ function renderSettings(){
   app.innerHTML =
     topbar(t("settings"), { back:"#home" }) +
     '<div class="section-title">'+esc(t("fokusTitel"))+'</div>'+
-    '<div class="card">'+einstKopf(EINST_ICON.fokus, t("fokusLabel"))+'<div class="theme-pick">'+BEREICH_KEYS.map(function(k, i){
-      return '<button type="button" data-fokus="'+k+'" aria-pressed="'+!fokusAus(k)+'" class="'+(i > 2 ? 'halb' : '')+(fokusAus(k) ? '' : ' active')+'">'+esc(bereichDaten(k)[1])+'</button>';
+    '<div class="card">'+einstKopf(EINST_ICON.fokus, t("fokusLabel"))+'<div class="theme-pick">'+HOME_KEYS.map(function(k, i){
+      return '<button type="button" data-fokus="'+k+'" aria-pressed="'+!fokusAus(k)+'" class="'+(i > 1 ? 'halb' : '')+(fokusAus(k) ? '' : ' active')+'">'+esc(bereichDaten(k)[1])+'</button>';
     }).join("")+'</div><div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t("fokusHint"))+'</div></div>'+
     '<div class="section-title">'+t("optWichtig")+'</div>'+
     '<div class="card">'+einstKopf(EINST_ICON.darstellung, t("appearance"))+'<div class="theme-pick">'+
@@ -754,8 +754,9 @@ function renderSettings(){
   app.querySelectorAll("[data-fokus]").forEach(function(b){
     b.addEventListener("click", function(){
       var k = b.getAttribute("data-fokus"), an = !b.classList.contains("active");
-      var aus = selArr(s.fokusAus).filter(function(x){ return x !== k; });
-      if(!an) aus.push(k);
+      var ks = k === "katalog" ? ["lib", "timer"] : [k];   // der Katalog schaltet Air und Studio zusammen
+      var aus = selArr(s.fokusAus).filter(function(x){ return ks.indexOf(x) < 0; });
+      if(!an) ks.forEach(function(x){ aus.push(x); });
       s.fokusAus = aus; save();
       b.classList.toggle("active", an); b.setAttribute("aria-pressed", String(an));
     });

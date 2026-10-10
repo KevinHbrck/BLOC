@@ -28,7 +28,7 @@ function gesamtEintraege(){
     (s.myReps || (s.myReps = [])).push(c); save(); go("#repedit/"+c.id);
   });
   // Bereiche
-  [["#library", t("library")], ["#intervall", t("tabTimer")], ["#reps", t("repTitle")], ["#run", t("runTitle")], ["#timers", t("timers")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
+  [["#katalog", t("katalog")], ["#intervall", t("tabTimer")], ["#reps", t("repTitle")], ["#run", t("runTitle")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
     add(t("srAreas"), p[1], "", "", function(){ go(p[0]); });
   });
   // Workouts aus Air und eigene Workouts
@@ -182,7 +182,7 @@ function openWasIstWas(){
   var root = document.getElementById("overlayRoot");
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet wi-sheet" role="dialog" aria-label="'+esc(t("wiTitel"))+'">'+
     '<h3>'+esc(t("wiTitel"))+'</h3>'+
-    BEREICH_KEYS.map(function(k){
+    HOME_KEYS.map(function(k){
       var d = bereichDaten(k);
       return '<div class="wi-zeile" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><div><b>'+esc(d[1])+'</b><small>'+esc(t("wi_"+k))+'</small></div></div>';
     }).join("")+

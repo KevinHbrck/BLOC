@@ -11,9 +11,8 @@ function introSeiten(){
   var einheiten = Array.isArray(REP_EINHEITEN) ? REP_EINHEITEN.length : Object.keys(REP_EINHEITEN).length;
   return [
     { ico:ICON_BAUSTEINE, farbe:"var(--accent)", titel:t("in1T"), text:t("in1"), notiz:t("in1N") },
-    { ico:HOME_ICON.lib, farbe:"var(--tp-color)", titel:t("library"),
-      text:t("in3", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:mitgeliefert.filter(fuerWorkout).length }) },
-    { ico:HOME_ICON.timer, farbe:"var(--bl-color)", titel:t("timers"), text:t("in2", { s:Object.keys(STUDIO_NUR).length }) },
+    { ico:HOME_ICON.katalog, farbe:"var(--tp-color)", titel:t("katalog"),
+      text:t("inKat", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:mitgeliefert.filter(function(ex){ return ex.main !== "stretch"; }).length }) },
     { ico:HOME_ICON.reps, farbe:"var(--rep-color)", titel:t("repTitle"), text:t("in4", { c:REP_WORKOUT_ROWS.length, u:einheiten }) },
     { ico:HOME_ICON.warm, farbe:"var(--ws-color)", titel:t("warmTitle"),
       text:t("in5", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length, d:Object.keys(wsEx).length }) }

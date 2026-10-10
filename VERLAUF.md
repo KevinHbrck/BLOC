@@ -3,6 +3,17 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-10 · Katalog: Air und Studio unter einem Dach (Branch `katalog`, noch nicht auf `main`)
+
+- **Ein Bereich „Katalog“** ersetzt die Karten Air und Studio auf der Startseite (`js/11b-katalog.js`; gespeicherte Reihenfolge und Fokus werden gelesen, nichts wird umgeschrieben). Die Routen `#library` und `#timers` führen weiter hierher, die Statistik kennt Air und Studio weiter getrennt.
+- **Drei Reiter**: **Workouts** (fertige Workouts nach Fokus: Cardio, Gewicht, Bodyweight, Calisthenics, Beine, Rücken, Bauch / Core, Arme, Gemischt) · **Übungen** (alle 204 Übungen nach Bereichen: Brust, Rücken, Schultern, Arme, Bauch & Rumpf, Beine & Po, Cardio & Ausdauer, Eigene) · **Meine** (eigene Workouts mit Timer und Pläne).
+- **Zu Beginn nur die Überschriften**: Bereiche sind zugeklappt (mit Anzahl); mit Filter oder Suche stehen die Treffer offen, Antippen klappt auf und zu, beim nächsten Besuch ist wieder alles zu.
+- **Zuordnung**: Studio-Übungen behalten ihre Gruppe, Air-Übungen kommen dorthin, wo ihr erster Hauptmuskel liegt, Ausdauerübungen in Cardio (`katGruppeVon`). Die Gruppen-Chips des Filters gelten damit für Air und Studio gemeinsam; der Filter ist der bekannte (Gruppe, Ausrüstung, Körperkarte, Detailansicht).
+- **Zwei Einstiege** unter den Reitern: **Überrasch mich** (fragt wie bisher Zeit und Ausrüstung) und **Workout planen**.
+- **Plan-Bau** auf den Bereichen: oben die Körperkarte des Plans (viel, am Rande, Lücken), zugeklappte Bereiche zeigen „n gewählt“. **Mit Timer starten** macht aus einem Plan ein Workout mit Timer (Air- und Studio-Übungen hintereinander; eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird).
+- Einführung auf vier Seiten (Air und Studio sind eine), „Was ist was?“, Suche und Einstellungen › Fokus kennen den Katalog. Schnelltest angepasst und um den Planer ergänzt (30/30). Fassung 2026-10-10-33.
+- **Offen für den Feinschliff**: Plan nach Gewichtung zieht weiter nur Studio-Übungen; Übungen neu ausblenden geht im Katalog noch nicht (schon ausgeblendete stehen unten bei „Ausgeblendet“ mit „Einblenden“); Texte mit „Air“/„Studio“ in Hinweisen und Statistik; Zuordnung einzelner Übungen zu Bereichen.
+
 ## 2026-10-10 · Rückmeldungen: Dehnen als Standbild, Detailansicht, verständlicher Installationshinweis
 
 - **Dehnen**: Die 19 gehaltenen Dehnübungen zeigen nur noch die **Endstellung** als Standbild (kein Hin-und-her mehr). In Bewegung bleiben Katze-Kuh, Kobra, World's Greatest Stretch und Armkreisen. Die Halteübungen (Plank, Wandsitz, Dead Hang …) sind unverändert.

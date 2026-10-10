@@ -21,7 +21,7 @@ function stGenBauen(w, n){
 }
 function renderStudioPlanGen(){
   var w = stGen.w;
-  var html = topbar(t("genTitle"), { back:"#timers" }) + studioTabsHTML("plan") + '<div class="page-hint">'+esc(t("genHint"))+'</div><div class="card gen-card">'+
+  var html = topbar(t("genTitle"), { back:"#katalog" }) + '<div class="page-hint">'+esc(t("genHint"))+'</div><div class="card gen-card">'+
     MUSKEL_GRP.map(function(g){
       return '<div class="gen-row"><label for="gw-'+g.id+'">'+esc(t(g.key))+'</label><input type="range" id="gw-'+g.id+'" data-gw="'+g.id+'" min="0" max="100" step="1" value="'+(w[g.id] || 0)+'">'+
         '<b data-gp="'+g.id+'">'+(w[g.id] || 0)+'%</b></div>';
@@ -31,7 +31,7 @@ function renderStudioPlanGen(){
   app.innerHTML = html;
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ stGen = null; renderStudio(); window.scrollTo(0, 0); }); }
-  bindCommon(); bindStudioTabs();
+  bindCommon();
   /* Es sind immer genau 100 % zu verteilen: Wer einen Regler verschiebt, nimmt den anderen im gleichen Verhältnis etwas weg bzw. gibt ihnen etwas */
   function verteilen(id, v){
     var andere = MUSKEL_GRP.filter(function(g){ return g.id !== id; }), rest = 100 - v;

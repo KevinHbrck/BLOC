@@ -1781,6 +1781,20 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   background:color-mix(in srgb, var(--tp-color) 14%, transparent); color:var(--tp-color); }
 .sag-ico .ico{ width:19px; height:19px; }
 .st-air-gr .fig-grid{ padding:6px 12px 12px; }
+/* Katalog: aufklappbare Bereiche (Übungen, fertige Workouts, Plan-Bau); „n gewählt“ zeigt im zugeklappten Bereich, dass darin etwas ausgewählt ist */
+.kat-gr > summary .lbl-hint{ margin-left:0; }
+.kat-gr .kat-inhalt{ padding:2px 10px 10px; }
+.kat-gr .kat-inhalt .list-item{ margin-bottom:6px; box-shadow:none; background:color-mix(in srgb, var(--text) 4%, var(--surface)); }
+.kat-gr .kat-inhalt .list-item:last-child{ margin-bottom:0; }
+.kat-n{ flex:none; font-size:12px; font-weight:700; padding:2px 9px; border-radius:999px; color:var(--on-accent, #fff); background:var(--accent); }
+/* Katalog: zwei Einstiege unter den Reitern (Überrasch mich, Workout planen) und der Start-Knopf im Plan */
+.kat-start{ display:flex; gap:8px; margin:0 0 10px; }
+.kat-start .sp-leiste{ flex:1; min-width:0; width:auto; margin:0; padding:0 10px; gap:8px; }
+.kat-start .sp-leiste b{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.kat-start .sp-leiste .sp-chev{ display:none; }
+.kat-start .kat-plan{ border-color:var(--border); background:var(--surface); }
+.kat-start .kat-plan .ico{ color:var(--text); }
+.plan-start{ margin:4px 0 12px; }
 :root[data-vintage] .st-air-gr{ border-radius:8px; background:var(--raised, var(--surface)); }
 /* Studio: Filterkasten zum Einklappen */
 .st-filter{ margin-bottom:14px; }

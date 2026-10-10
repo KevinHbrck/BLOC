@@ -174,6 +174,7 @@ function render(){
   if(route==="home"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
     var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.repFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
     hinweisBesucht = {};   // Erklärtexte: der nächste Besuch einer Seite zählt wieder
+    katOffen = {};         // Katalog: beim nächsten Besuch stehen wieder nur die Überschriften
   }
   if(repRun && route !== "repplay") repStop();   // Rep-Workout verlassen: Stoppuhr aus
   if(studioPause && route !== "studio") studioPauseStop();
@@ -192,13 +193,13 @@ function render(){
       navStack[navStack.length-1] = "#intervall"; setUrl("#intervall");
       return renderIntervall();
     }
-    return renderTimers();
+    return renderKatalog();   // Studio ist jetzt der Katalog
   }
-  if(route==="studioplan"){   // Favorit auf der Startseite: Studio › Plan direkt geöffnet
+  if(route==="studioplan"){   // Favorit auf der Startseite: Katalog › Meine › Plan direkt geöffnet
     var sp0 = state.db.settings;
-    if(stPlanFind(parts[1])){ sp0.stTab = "plan"; stPlanAktiv = parts[1]; stPlanBauen = false; stGen = null; stPlanQuery = ""; }
-    navStack[navStack.length-1] = "#timers"; setUrl("#timers");
-    return renderTimers();
+    if(stPlanFind(parts[1])){ sp0.katTab = "meine"; stPlanAktiv = parts[1]; stPlanBauen = false; stGen = null; stPlanQuery = ""; }
+    navStack[navStack.length-1] = "#katalog"; setUrl("#katalog");
+    return renderKatalog();
   }
   if(route==="blocks"){ navStack[navStack.length-1] = "#intervall"; setUrl("#intervall"); return renderIntervall(); }
   if(route==="block") return renderBlockEdit(parts[1]);
@@ -210,7 +211,7 @@ function render(){
   if(route==="install") return renderInstallGuide();
   if(route==="play") return startPlayer(parts[1]);
   if(route==="playblock") return startBlockPlayer(parts[1]);
-  if(route==="library") return renderLibrary();
+  if(route==="katalog" || route==="library") return renderKatalog();   // „#library“ (Air) und „#timers“ (Studio) sind jetzt der Katalog
   if(route==="exedit") return renderExEdit(parts[1]);
   if(route==="import") return renderImport(parts[1]);
   if(route==="mybuild") return renderMyBuild(parts[1]);

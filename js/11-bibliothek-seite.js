@@ -243,111 +243,88 @@ function libWoSort(list, sort){
     : function(a, b){ return (a.dur - b.dur) || a.name.localeCompare(b.name, currentLang()); });
 }
 
-/* Bibliothek: Reiter Workouts (fertige Programme) · Übungen · Meine.
-   Darunter die Suche und die einklappbare Filterkarte (Training, Ausrüstung, Sortierung). */
+/* Katalog › Workouts (fertige Workouts nach Fokus, zugeklappt) und Meine (eigene Workouts und Pläne).
+   Die Übungen stehen in renderKatalogUebungen (js/11b-katalog.js). Darunter die Suche und die einklappbare Filterkarte (Training, Ausrüstung, Sortierung). */
+var KAT_WO_FOKUS = ["cardio", "weight", "bw", "calis", "legs", "back", "core", "arms", "mix"];   // Reihenfolge der Bereiche bei den fertigen Workouts
 function renderLibrary(){
-  var s = state.db.settings;
-  if(s.libTab === "calis" || s.libTab === "stretch") s.libTab = "workouts";   // frühere Reiter Calisthenics und Dehnen
-  var tab = ["exercises","mine"].indexOf(s.libTab) > -1 ? s.libTab : "workouts";   // der frühere Reiter „Timer“ ist jetzt eine eigene Seite
+  var s = state.db.settings, tab = katTab();
+  if(tab === "uebungen") return renderKatalog();
   /* Dehnen und Aufwärmen stehen seit 2026-09 unter „Aufwärmen & Dehnen“ - hier nicht mehr */
   function ohneStretch(x){ return x !== "stretch"; }
   var cat = selArr(s.libCats || s.libCat).filter(ohneStretch);
-  var equip = selArr(s.libEquips).filter(function(x){ return x !== "gym"; });   // Studio-Ausrüstung gibt es in Air nicht
-  var zonen = kkNorm(s.libZonen);   // Körperkarte: gewählte Muskelzonen
-  var mains = [];   // die Kacheln der Hauptkategorien gibt es in Air nicht mehr; ein früher gespeicherter Wert wirkt nicht mehr
-  var exSort = s.libSort === "az" ? "az" : "std";
+  var equip = selArr(s.libEquips).filter(function(x){ return x !== "gym"; });   // Studio-Ausrüstung gibt es bei den fertigen Workouts nicht
+  var mains = [];
   var woSort = s.libWoSort === "az" ? "az" : "dur";
   var open = !!s.libFilterOpen;
   var hiddenCount = 0, hiddenCards = "", list = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
-  var hw = tab === "exercises" ? hinweise("air", ["zpHint"]) : hinweise("", []);
+  var hw = tab === "workouts" ? hinweise("katwo", ["katWoHint"]) : hinweise("", []);
+  var filterAn = !!(cat.length || equip.length);
 
-  if(tab === "workouts" || tab === "mine"){
+  if(tab === "workouts"){
     var rows = [];
-    if(tab === "workouts"){
-      LIB_WORKOUTS.forEach(function(lw){
-        if(libIstWarmDehn(lw)) return;
-        var exs = lw.exercises.map(findExercise).filter(Boolean);
-        rows.push({ lw:lw, exs:exs, name:tplText(lw.name), focus:lw.focus, dur:workoutDuration(libWorkoutRun(lw)), hidden:libHidden("wo:"+lw.id) });
-      });
-    } else {
-      (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
-        if(mw.ws) return;   // Aufwärm- und Dehn-Workouts liegen unter Mobility & Stretch › Meine
-        var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
-        rows.push({ mw:mw, exs:exs, name:mw.name, focus:"", dur:workoutDuration(myRun(mw)) });
-      });
-    }
+    LIB_WORKOUTS.forEach(function(lw){
+      if(libIstWarmDehn(lw)) return;
+      var exs = lw.exercises.map(findExercise).filter(Boolean);
+      rows.push({ lw:lw, exs:exs, name:tplText(lw.name), focus:lw.focus, dur:workoutDuration(libWorkoutRun(lw)), hidden:libHidden("wo:"+lw.id) });
+    });
     rows = rows.filter(function(r){
       r.mains = woMains(r.exs);
-      if(tab === "mine") return true;   // eigene Programme: ungefiltert
       return woFocusOk(r.focus, r.exs, cat, r.lw && r.lw.id) && woFits(r.exs, equip) && woGearOk(r.exs, cat, equip, mains);
     });
+    var je = {};   // Fokus -> Karten
     libWoSort(rows, woSort).forEach(function(r){
-      if(r.lw){
-        if(r.hidden){ hiddenCount++; hiddenCards += libWoCard(r.lw, r.exs, true, r.dur, r.mains); }
-        else { list += libWoCard(r.lw, r.exs, false, r.dur, r.mains); anzahl++; }
-      } else {
-        list += myWoCard(r.mw, r.exs, r.mains, r.dur);
-      }
+      if(r.hidden){ hiddenCount++; hiddenCards += libWoCard(r.lw, r.exs, true, r.dur, r.mains); return; }
+      var f = KAT_WO_FOKUS.indexOf(r.focus) > -1 ? r.focus : "mix";
+      (je[f] = je[f] || []).push(libWoCard(r.lw, r.exs, false, r.dur, r.mains));
+      anzahl++;
     });
-    if(tab === "mine"){   // Timer-Workouts und Blöcke haben seit 2026-10 ihren eigenen Reiter „Timer“ - hier nur noch eigene Workouts
-      if(!list) list = '<div class="empty" style="padding:30px 20px;">'+t("myEmpty")+'</div>';
-      fab = fabMenuHTML([{ key:"new", label:t("myNew"), ico:ICON_PLUS, cls:"tp" }]);
-    }
+    KAT_WO_FOKUS.forEach(function(f){
+      if(!je[f]) return;
+      list += katZeileHTML("wo-"+f, CAT_ICON[f] || CAT_ICON.weight, catName(f), je[f].length, '<div class="kat-inhalt">'+je[f].join("")+'</div>', katOffenStd("wo-"+f, filterAn));
+    });
   } else {
-    EXERCISES.forEach(function(ex){
-      if(!fuerAir(ex) || !exPasses(ex, cat, equip, [], zonen)) return;
-      if(libHidden("ex:"+ex.id)){ hiddenCount++; hiddenCards += libExCard(ex, true, exSubText(ex)); }
+    var eigene = "";
+    (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
+      if(mw.ws) return;   // Aufwärm- und Dehn-Workouts liegen unter Mobility & Stretch › Meine
+      var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
+      eigene += myWoCard(mw, exs, woMains(exs), workoutDuration(myRun(mw)));
     });
-    var kacheln = "";
-    sortedExercises(cat, exSort, equip, mains, zonen).forEach(function(ex){ if(fuerAir(ex)){ kacheln += libExKachel(ex); anzahl++; } });
-    if(kacheln) list = '<div class="fig-grid">'+kacheln+'</div>';
-    fab = fabMenuHTML([{ key:"new", label:t("exNew"), ico:ICON_PLUS, cls:"tp" }]);
+    list = '<div class="section-title">'+esc(t("katEigeneWo"))+'</div>'+(eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+katPlaeneHTML();
+    fab = katFabHTML();
   }
   if(!list) list = '<div class="empty" style="padding:40px 20px;">'+t("libEmpty")+'</div>';
   list += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>';
 
   app.innerHTML =
-    topbar(t("library"), { back:"#home", right: hw.knopf + (tab === "mine" ? '' : lupeHTML("l", libQuery)) }) +
-    reiterZeileHTML("var(--tp-color)",
-      '<button data-libtab="workouts" class="'+(tab==="workouts"?"active":"")+'">'+t("tabWorkouts")+'</button>'+
-      '<button data-libtab="exercises" class="'+(tab==="exercises"?"active":"")+'">'+t("libExercises")+'</button>'+
-      '<button data-libtab="mine" class="'+(tab==="mine"?"active":"")+'">'+t("tabMine")+'</button>')+
-    surpriseLeisteHTML() +   // das Alleinstellungsmerkmal von Air: eine schmale Zeile unter den Reitern
-    (tab === "mine" ? '' :
-    suchFeldHTML(libQuery, "l", tab==="exercises" ? t("searchPh") : t("searchWoPh"))+
-    (tab === "exercises" ? hw.z(0, "page-hint") : '')+
-    airFilterHTML("l", open, cat, equip, tab==="exercises" ? exSort : woSort,
-      tab==="exercises" ? [["std", t("sortStd")], ["az", "A&ndash;Z"]] : [["dur", t("sortDur")], ["az", "A&ndash;Z"]], anzahl, tab==="exercises", tab==="exercises" ? zonen : undefined))+
+    katKopfHTML(tab, hw.knopf + (tab === "meine" ? '' : lupeHTML("l", libQuery))) +
+    (tab === "meine" ? '' :
+    suchFeldHTML(libQuery, "l", t("searchWoPh"))+
+    hw.z(0, "page-hint")+
+    airFilterHTML("l", open, cat, equip, woSort, [["dur", t("sortDur")], ["az", "A&ndash;Z"]], anzahl, false, undefined))+
     list + hiddenBlockHTML(hiddenCount, hiddenCards) +
     '<div style="height:90px"></div>' + fab;
   bindCommon();
+  katKopfBinden();
 
-  function neu(){ var y = window.scrollY; renderLibrary(); window.scrollTo(0, y); }
+  function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
-  on("[data-libtab]", function(el){ s.libTab = el.getAttribute("data-libtab"); save(); renderLibrary(); window.scrollTo(0,0); });
   on("[data-ltoggle]", function(){ s.libFilterOpen = !open; save(); neu(); });
   on("[data-lfcat]", function(el){ s.libCats = selToggle(cat, el.getAttribute("data-lfcat")); save(); neu(); });
   on("[data-lfequip]", function(el){ s.libEquips = selToggle(equip, el.getAttribute("data-lfequip")); save(); neu(); });
-  on("[data-lfzone]", function(el){ s.libZonen = selToggle(zonen, el.getAttribute("data-lfzone")); save(); neu(); });
-  on("[data-lfsort]", function(el){ if(tab==="exercises") s.libSort = el.getAttribute("data-lfsort"); else s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
-  on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; s.libZonen = []; save(); neu(); });
-  on("[data-exfav]", function(el){ toggleExFav(el.getAttribute("data-exfav")); neu(); });
+  on("[data-lfsort]", function(el){ s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
+  on("[data-lfreset]", function(){ s.libCats = []; s.libEquips = []; save(); neu(); });
   bindTrash(neu);
+  katBinden(function(){ return libQuery; });
   var lq = app.querySelector("#l-q");
   if(lq){
-    applySearch(app, libQuery);
-    lq.addEventListener("input", function(){ libQuery = lq.value; applySearch(app, libQuery); });
+    var suchen = function(){ applySearch(app, libQuery); katSuche(libQuery, filterAn); };
+    lq.addEventListener("input", function(){ libQuery = lq.value; suchen(); });
+    if(libQuery) suchen();
   }
-  bindFabMenu({ "new": function(){ if(tab==="mine") go("#mybuild/new"); else go("#exedit/new"); } });
+  if(tab === "meine"){ katFabBinden(); katPlaeneBinden(); }
+  on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
 
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
-  on("[data-playex]", function(el){ go("#playex/"+el.getAttribute("data-playex")); });
-  on("[data-exedit]", function(el){ go("#exedit/"+el.getAttribute("data-exedit")); });
-  app.querySelectorAll("[data-exlang]").forEach(function(el){ langDruck(el, function(){ exZuProgramm(el.getAttribute("data-exlang")); }); });   // lange drücken: in Workout oder Plan legen
-  on("[data-surprise]", function(){ openSurprise(); });
-  on("[data-info]", function(el){ var id = el.getAttribute("data-info"); openExInfo(id, false, { onChange:neu, zu:function(){ exZuProgramm(id); } }); });
-  airKachelBinden();
-  on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   on("[data-unhideone]", function(el){
     var k = el.getAttribute("data-unhideone");
     s.hiddenLib = (s.hiddenLib||[]).filter(function(x){ return x !== k; });
@@ -361,17 +338,6 @@ function renderLibrary(){
   app.querySelectorAll(".lib-card [data-womore]").forEach(function(b){
     var lw = findLibWorkout(b.getAttribute("data-womore"));
     if(lw) langDruck(b.closest(".lib-card"), function(){ woMenue(lw, neu); });
-  });
-  on("[data-exmore]", function(el){
-    var ex = findExercise(el.getAttribute("data-exmore"));
-    if(!ex) return;
-    var acts = [];
-    if(ex.custom) acts.push({ ico:ICON_EDIT, label:t("edit"), fn:function(){ go("#exedit/"+ex.id); } });
-    if(EX_INFO[ex.id]) acts.push({ ico:ICON_INFO, label:t("infoLong"), fn:function(){ openExInfo(ex.id, false, { onChange:neu }); } });
-    acts.push({ ico:P_PLUS, label:t("zpAdd"), fn:function(){ exZuProgramm(ex.id); } });
-    acts.push({ ico:ICON_TIMERBLOCK, label:t("adoptBlockTitle"), fn:function(){ adoptExercise(ex); showToast(t("adoptedBlock", { n:tplText(ex.name) })); } });
-    acts.push({ ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ libHide("ex:"+ex.id); showToast(t("hiddenToast")); neu(); } });
-    openActionSheet(tplText(ex.name), acts);
   });
 }
 
