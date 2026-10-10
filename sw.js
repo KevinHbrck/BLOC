@@ -7,7 +7,7 @@
  */
 
 /* Einzige Stelle für die Versionsnummer - die App fragt sie per postMessage ab (Einstellungen, ganz unten) */
-var FASSUNG = "2026-10-10-36";
+var FASSUNG = "2026-10-10-37";
 var NETZ_WARTEN = 2500;   // ms - so lange wartet der Start höchstens aufs Netz, wenn es eine gespeicherte Fassung gibt
 var SPEICHER = "sporttimer-" + FASSUNG;
 var GRUNDGERUEST = ["./", "./index.html", "./texte.js", "./quellen.html", "./daten.js", "./js/01-basis.js", "./js/02-bibliothek.js", "./js/03-router.js", "./js/04-start.js", "./js/05-suche.js", "./js/06-timer-listen.js", "./js/07-studio.js", "./js/08-koerperkarte.js", "./js/09-studio-karte.js", "./js/10-gemeinsam.js", "./js/11-bibliothek-seite.js", "./js/11b-katalog.js", "./js/12-uebung-statistik.js", "./js/13-teilen-editor.js", "./js/14-einfuehrung-sicherung.js", "./js/15-rep-workouts.js", "./js/16-lauf.js", "./js/17-aufwaermen-einstellungen.js", "./js/18-audio.js", "./js/19-timer-motor.js", "./js/20-walzen-start.js", "./app.css", "./manifest.json", "./icon.png", "./icon-180.png", "./privacy.html"];

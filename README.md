@@ -1,6 +1,6 @@
 # BLOC – Modular Training Builder
 
-Trainings-App für Intervall-Workouts, Studio-Training, Challenges, Aufwärmen & Dehnen und GPS-Läufe. Läuft als PWA direkt
+Trainings-App für Intervall-Workouts, Krafttraining im Fitnessstudio und Freiluft, Challenges, Aufwärmen & Dehnen und GPS-Läufe. Läuft als PWA direkt
 im Browser (Android und iOS), ohne App Store, ohne Konto – **alle Daten bleiben auf dem Gerät, es gibt keinen eigenen
 Server** (das ist das Alleinstellungsmerkmal; siehe „Grundsätze“). Deutsch und Englisch.
 
@@ -33,7 +33,7 @@ stellt man unter **Einstellungen › Fokus** ein (ausgeblendete Bereiche bleiben
 **Statistik** (alles lokal berechnet): Kopf mit Trainings der letzten 7 Tage und Serie, Verlauf als Balken (Zeit oder
 Anzahl, **Woche · Monat · Jahr**, nach links wischen für früher, so weit Daten da sind), Kalender der letzten 4 Wochen
 (einklappbar), je Bereich eine Karte (Run: Kilometer pro Zeitraum, Pace-Verlauf, Rekorde; Summit: verbesserte Bestzeiten;
-Air/Studio: Muskelgruppen der letzten 7 Tage). Nur Bereiche, die im Fokus an sind; der am meisten genutzte steht oben, Run
+Workout: Muskelgruppen der letzten 7 Tage; Air und Studio laufen hier seit 2026-10-10 als eine Karte). Nur Bereiche, die im Fokus an sind; der am meisten genutzte steht oben, Run
 und Mobility & Stretch immer unten.
 
 **Was ein „Training“ ist:** Alle Timer-Einträge mit höchstens 60 Minuten Abstand gelten als ein Besuch; die Trainingszeit

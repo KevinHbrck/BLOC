@@ -144,6 +144,9 @@ var statKalOffen = false;   // Kalender startet zugeklappt (nur innerhalb des Be
 var statModus = "zeit";   // Verlauf-Diagramm: "zeit" | "n"
 var statGran = "woche";   // Zeitraum je Balken: "woche" | "monat" | "jahr"
 function statTage(n){ return n <= 0 ? t("statHeute") : n === 1 ? t("statGestern") : t("statVorTagen", { n:n }); }
+/* Air (lib) und Studio (timer) sind seit dem Workout-Bereich eine Karte; gespeichert wird weiter getrennt, die Statistik fasst beim Anzeigen zusammen */
+function statGruppe(k){ return k === "lib" || k === "timer" ? "katalog" : k; }
+function statGruppen(keys){ var out = []; keys.forEach(function(k){ var g = statGruppe(k); if(out.indexOf(g) < 0) out.push(g); }); return out; }
 /* Ein „Besuch“ (= ein Training): alle Timer-Einträge, zwischen denen höchstens BESUCH_LUECKE liegt; die Zeit läuft vom ersten Start bis zum Ende des letzten.
    Spanne eines Eintrags: Studio und Run speichern den Start (at), Air, Summit und Mobility das Ende. Läufe zählen immer einzeln. */
 function besucheAlle(list){
@@ -156,7 +159,7 @@ function statWochenReihe(n, aktiv){
   var ohneRun = ["lib", "intervall", "timer", "reps", "warm"].every(function(k){ return aktiv.indexOf(k) > -1; });
   for(var i = n-1; i >= 0; i--){
     var d = new Date(mo); d.setDate(d.getDate() - 7*i); var key = wocheKey(d.getTime()), src = sw[key] || {}, ar = src.a || {}, w = { key:key, ab:d.getTime(), n:0, s:0, a:{} };
-    Object.keys(ar).forEach(function(b){ if(aktiv.indexOf(b) > -1) w.a[b] = { n:ar[b].n || 0, s:ar[b].s || 0 }; });
+    Object.keys(ar).forEach(function(b){ if(aktiv.indexOf(b) > -1){ var g = statGruppe(b), x = w.a[g] || (w.a[g] = { n:0, s:0 }); x.n += ar[b].n || 0; x.s += ar[b].s || 0; } });
     if(ohneRun && src.bn != null){   // archivierte Besuche (alle Bereiche außer Run zusammengefasst)
       w.n = src.bn; w.s = src.bs || 0;
       if(aktiv.indexOf("run") > -1 && ar.run){ w.n += ar.run.n || 0; w.s += ar.run.s || 0; }
@@ -164,8 +167,8 @@ function statWochenReihe(n, aktiv){
     idx[key] = w; out.push(w);
   }
   var live = (state.db.history || []).filter(function(e){ return e && aktiv.indexOf(bereichVonEintrag(e)) > -1; });
-  aktiv.forEach(function(k){
-    besuche(live.filter(function(e){ return bereichVonEintrag(e) === k; })).forEach(function(b){
+  statGruppen(aktiv).forEach(function(k){
+    besuche(live.filter(function(e){ return statGruppe(bereichVonEintrag(e)) === k; })).forEach(function(b){
       var w = idx[wocheKey(b.von)]; if(!w) return;
       var a = w.a[k] || (w.a[k] = { n:0, s:0 }); a.n++; a.s += b.s;
     });
@@ -227,8 +230,8 @@ function renderStats(){
   pruneHistory(state.db);
   var aktiv = BEREICH_KEYS.filter(function(k){ return !fokusAus(k); });
   var hist = (state.db.history || []).filter(function(e){ return e && aktiv.indexOf(bereichVonEintrag(e)) > -1; });
-  function eintraege(k, tage){ return hist.filter(function(e){ return bereichVonEintrag(e) === k && e.at >= jetzt - tage*tag; }); }
-  function bes(k, tage){ return besuche(hist.filter(function(e){ return bereichVonEintrag(e) === k; })).filter(function(b){ return b.von >= jetzt - tage*tag; }); }
+  function eintraege(k, tage){ return hist.filter(function(e){ return statGruppe(bereichVonEintrag(e)) === k && e.at >= jetzt - tage*tag; }); }
+  function bes(k, tage){ return besuche(hist.filter(function(e){ return statGruppe(bereichVonEintrag(e)) === k; })).filter(function(b){ return b.von >= jetzt - tage*tag; }); }
   function summe(l){ return l.reduce(function(a, b){ return a + b.s; }, 0); }
   function dauer(sek){ return sek >= 60 ? fmtDuration(Math.round(sek/60)*60) : sek > 0 ? "<1 Min" : "–"; }
   var besA = besucheAlle(hist);
@@ -303,7 +306,7 @@ function renderStats(){
       '<div class="heat-legende"><small>'+esc(t("statWeniger2"))+'</small><i class="hz l0"></i><i class="hz l1"></i><i class="hz l2"></i><i class="hz l3"></i><small>'+esc(t("statMehr2"))+'</small></div></div></details>';
   }
   // Bereiche: Run und Mobility & Stretch immer ganz unten (Run zweitletzter), davor der in den letzten 4 Wochen am meisten genutzte zuerst
-  var folge = aktiv.map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
+  var folge = statGruppen(aktiv).map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
     var fix = function(k){ return k === "run" ? 1 : k === "warm" ? 2 : 0; };
     return fix(a.k) - fix(b.k) || b.n - a.n || a.i - b.i;
   });
@@ -352,7 +355,7 @@ function renderStats(){
       if(vb.length) html += '<div class="sk-unter titel">'+esc(t("statVerb"))+'</div><div class="rekorde verb">'+vb.slice(0, 3).map(function(x){
         return '<div><span>'+esc(x.name)+'</span><b>'+esc(repUhr(x.erst)+" → "+repUhr(x.best))+'</b><small>−'+esc(repUhr(x.erst - x.best))+'</small></div>'; }).join("")+'</div>';
     }
-    if(k === "lib" || k === "timer"){
+    if(k === "katalog"){
       var ids = []; eintraege(k, 7).forEach(function(e){ (e.ex || []).forEach(function(id){ ids.push(id); }); });
       if(ids.length) html += auswertungHTML(ids, { woche:true, titel:t("ausWoche"), sub:t("ausWocheSum") });
     }

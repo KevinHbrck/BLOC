@@ -3,7 +3,7 @@
 var HOME_ICON = {
   timer:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',   /* Freies Training: Hantel */
   intervall:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 3h5M18 7l1.5-1.5"/>',   /* Timer: Stoppuhr */
-  lib:'<path d="M3 8.5h10a3 3 0 1 0-3-3"/><path d="M3 12.5h15a3 3 0 1 1-3 3"/><path d="M3 16.5h6"/>',   /* Air: Wind (nur noch Statistik) */
+  lib:'<path d="M3 8.5h10a3 3 0 1 0-3-3"/><path d="M3 12.5h15a3 3 0 1 1-3 3"/><path d="M3 16.5h6"/>',   /* Air: Wind (Menüs beim langen Drücken) */
   katalog:'<rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/>',   /* Katalog: vier Kacheln */
   reps:'<path d="M2.5 20l6.5-11.5 3.8 6.3 2.7-4.3 6 9.5z"/><path d="M9 8.5V3.5l3.5 1.5L9 6.5"/>',   /* Summit: Gipfel mit Fahne */
   warm:'<circle cx="12" cy="4.5" r="2"/><path d="M5 8.5l7 2 7-2M12 10.5v4.5l-4.5 5.5M12 15l4.5 5.5"/>',   /* Mobility & Stretch: Figur streckt sich */
@@ -22,15 +22,12 @@ function areaTile(key, href, titel, unter, farbe, art){
     '</div>';
 }
 /* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
-var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Bereiche der Statistik (Verlauf kennt Air und Studio weiter getrennt)
+var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Bereiche im Verlauf (gespeichert bleibt Air = lib und Studio = timer); die Statistik zeigt beide gemeinsam als „Workout“
 var HOME_KEYS = ["katalog", "intervall", "reps", "run", "warm"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--tp-color)"];
-  if(k === "lib") return ["#library", t("library"), t("htLibN", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
-    e:EXERCISES.filter(function(ex){ return !ex.custom && fuerWorkout(ex); }).length }), "var(--tp-color)"];
   if(k === "intervall"){ var tw = state.db.workouts.length, tb = state.db.blocks.length; return ["#intervall", t("tabTimer"), tw || tb ? t("tmQuick", { w:tw, b:tb }) : t("tmQuickLeer"), "var(--ti-color)"]; }
-  if(k === "timer") return ["#timers", t("timers"), t("htTimers", { n:Object.keys(STUDIO_NUR).length }), "var(--bl-color)"];
   if(k === "reps") return ["#reps", t("repTitle"), t("htReps"), "var(--rep-color)"];
   if(k === "run") return ["#run", t("runTitle"), run ? t("runLaeuft", { km:runKm(run.dist) }) : t("runTeaser"), "var(--run-color, #e5573f)"];
   return ["#warmstretch", t("warmTitle"), t("htWarm", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length }), "var(--ws-color)"];
@@ -46,7 +43,7 @@ function bereichReihe(){
   return r;
 }
 /* Fokus (Einstellungen): Bereiche, die man nicht braucht, verschwinden von der Startseite (settings.fokusAus = Liste der Schlüssel); die Daten bleiben, die Suche findet weiterhin alles.
-   Der Katalog ist nur aus, wenn Air und Studio beide aus sind (die Statistik kennt die beiden weiter einzeln). */
+   Der Katalog ist nur aus, wenn Air und Studio beide aus sind (im Verlauf bleiben sie getrennt gespeichert). */
 function fokusAusRoh(k){ return selArr(state.db.settings.fokusAus).indexOf(k) > -1; }
 function fokusAus(k){ return k === "katalog" ? fokusAusRoh("lib") && fokusAusRoh("timer") : fokusAusRoh(k); }
 function bereicheHTML(){
@@ -101,10 +98,10 @@ function openBereicheSheet(){
   function schliessen(){ root.innerHTML = ""; }
   zeichnen();
 }
-/* „Überrasch mich“: schmale Leiste (eine Zeile) direkt unter den Reitern von Air - das Alleinstellungsmerkmal, aber ohne viel Höhe zu kosten */
+/* „Überrasch mich“: schmale Leiste (eine Zeile) direkt unter den Reitern vom Workout-Bereich - das Alleinstellungsmerkmal, aber ohne viel Höhe zu kosten */
 function surpriseLeisteHTML(){
   return '<button type="button" class="sp-leiste" data-surprise title="'+esc(t("spSub"))+'">'+svgIcon(ICON_UEBERRASCH)+'<b>'+esc(t("surprise"))+'</b>'+
     '<span class="sp-chev">'+ICON_CHEV+'</span></button>';
 }
-/* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Air, Studio, Mobility & Stretch, Summit) */
+/* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Workout, Mobility & Stretch, Summit) */
 function reiterZeileHTML(farbe, knoepfe){ return '<div class="rz" style="--rz:'+farbe+'">'+knoepfe+'</div>'; }

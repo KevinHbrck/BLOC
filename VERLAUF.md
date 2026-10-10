@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-10 · Durchsicht: Statistik und Wortlaut passend zum Workout-Bereich
+
+- **Statistik**: Air und Studio stehen jetzt auf **einer** Karte „Workout“ (ein Besuch aus beiden zählt einmal, ein Block „Muskelgruppen – letzte 7 Tage“). Gespeichert wird weiter getrennt (`b` = lib/timer), nur die Anzeige fasst zusammen; Statistik-Karten: Workout · Timer · Summit · Run · Mobility & Stretch.
+- **Wortlaut**: „In der Bibliothek ausblenden“ → „Im Katalog ausblenden“, „Aus der Bibliothek“ → „Aus dem Katalog“, Einführung „im Fitnessstudio“, `quellen.html` und README ohne „Studio/Air“ als Bereichsnamen; ungenutzte Texte (Air/Studio-Namen, `in2`, `in3`, `zpHint` …) entfernt.
+- Schnelltest: Statistik prüft fünf (mit Fokus ohne Run: vier) Karten und dass ein Studio-Eintrag zur Karte „Workout“ zählt. Fassung 2026-10-10-37.
+
 ## 2026-10-10 · Workout: 13 Programme fürs Fitnessstudio, „Fitnessstudio“ zusammengefasst, untere Leiste
 
 - **Ausrüstung zusammengefasst**: „Fitnessstudio“ umfasst jetzt Geräte, Kabel, Langhantel und die Bank mit Kurzhanteln (vorher drei Chips: Gerät, Kabel, Langhantel). Fünf Chips: Fitnessstudio · Kurzhantel & Kettlebell · Stange & Barren · Widerstandsband · Körpergewicht. Gespeicherte Auswahl wird mitgenommen (`studioFilterAlt`). Der Ort-Schalter bleibt nur im Katalog.

@@ -851,7 +851,7 @@
       pruefe($$(".tabbar .tab").length === 4 && !$(".topbar [data-nav=\"#settings\"]"), "Leiste mit vier Einträgen fehlt oder Zahnrad noch oben");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent) && $(".tabbar .tab.active") && /Statistik/.test($(".tabbar .tab.active").textContent); }, 3000, "Statistik-Seite mit aktiver Leiste");
-      pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 6 && !$(".woche"), "Statistik ohne Kopf, ohne sechs Bereiche oder mit Wochenzeile");
+      pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 5 && !$(".woche") && /Workout/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")) && !/Air|Studio/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")), "Statistik ohne Kopf, ohne fünf Bereiche (Air und Studio als Workout), oder mit Wochenzeile");
       klick('.tabbar [data-nav="#settings"]');
       var fk = await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Fokus in den Einstellungen");
       pruefe(/Fokus/.test($$(".section-title")[0].textContent) && $$("[data-fokus]").length === 5, "Fokus steht nicht ganz oben oder nicht als Chips");
@@ -859,7 +859,7 @@
       pruefe((daten().settings.fokusAus || []).indexOf("run") > -1, "Fokus nicht gespeichert");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent); }, 3000, "Statistik");
-      pruefe(!$$(".stat-bereichkarte").some(function (e) { return /Run/.test(e.querySelector(".sb-name").textContent); }) && $$(".stat-bereichkarte").length === 5, "Statistik zeigt ausgeblendeten Bereich oder falsche Anzahl");
+      pruefe(!$$(".stat-bereichkarte").some(function (e) { return /Run/.test(e.querySelector(".sb-name").textContent); }) && $$(".stat-bereichkarte").length === 4, "Statistik zeigt ausgeblendeten Bereich oder falsche Anzahl");
       klick('.tabbar [data-nav="#home"]');
       await bis(function () { return $(".area-tile") && !$('.area-tile[data-nav="#run"]'); }, 3000, "Run von der Startseite verschwunden");
       klick('.area-tile[data-nav="#reps"]');
@@ -875,7 +875,7 @@
       var db = JSON.parse(W.localStorage.getItem(KEY)), M = 60000, D = 86400000, n = Date.now();
       db.history = [
         { at: n - 120 * M, dur: 600, ex: ["burpees"], b: "lib" }, { at: n - 135 * M, dur: 600, ex: ["push-ups"], b: "lib" }, { at: n - 150 * M, dur: 600, ex: ["air-squats"], b: "lib" },   // ein Besuch (40 min)
-        { at: n - 1 * D, dur: 1200, ex: ["burpees"], b: "lib" },                                                                                                                      // ein zweiter
+        { at: n - 1 * D, dur: 1200, ex: ["burpees"], b: "lib" }, { at: n - 148 * M, dur: 300, ex: ["leg-press"], b: "timer" },   // ein Studio-Eintrag mitten im ersten Besuch                                                                                                                      // ein zweiter
         { at: n - 50 * D, dur: 900, ex: ["a"], b: "lib" }, { at: n - 50 * D + 20 * M, dur: 900, ex: ["b"], b: "lib" }                                                                  // älter als 31 Tage: ein Besuch im Archiv
       ];
       db.settings = db.settings || {}; db.settings.statW = {}; db.settings.fokusAus = []; db.settings.runs = [];
@@ -885,6 +885,8 @@
       await bis(function () { return $(".sr-mitte b"); }, 3000, "Statistik");
       var erwartet = new Date().getDay() === 1 ? "1" : "2";   // diese Woche (ab Montag): montags liegt der Vortag in der Vorwoche
       pruefe($(".sr-mitte b").textContent === erwartet, "drei Timer in 40 Minuten sind ein Training: " + $(".sr-mitte b").textContent);
+      var wokarten = $$(".stat-bereichkarte").filter(function (e) { return /Workout/.test(e.querySelector(".sb-name").textContent); });
+      pruefe(wokarten.length === 1 && $$(".stat-bereichkarte").length === 5 && wokarten[0].querySelector(".chips-stat b").textContent === "2", "Air- und Studio-Einträge gehören auf eine Karte „Workout“ (zwei Trainings): " + wokarten.length + " Karten, " + (wokarten[0] && wokarten[0].querySelector(".chips-stat b").textContent));
       pruefe(/^(40|60)$/.test($(".stat-karte .bchart .bc.jetzt .bw").textContent), "Zeit der laufenden Woche sollte 60 min sein (40 + 20), montags nur 40: " + $(".stat-karte .bchart .bc.jetzt .bw").textContent);
       klick('[data-statgran="monat"]');
       await bis(function () { return $(".stat-karte .bchart .bc small") && /\d\d$/.test($(".stat-karte .bchart .bc small").textContent); }, 2000, "Monatsansicht");
