@@ -90,7 +90,7 @@
         if (i > 0) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));
         klick("[data-introweiter]");
       }
-      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Katalog | Summit | Mobility & Stretch", "Seiten: " + titel.join(" | "));
+      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Workout | Summit | Mobility & Stretch", "Seiten: " + titel.join(" | "));
       pruefe(!$("#overlayRoot .intro-sheet"), "„Los geht's“ schließt die Einführung nicht");
       await heim();
       await warte(500);
@@ -105,20 +105,20 @@
       await heim();
       pruefe($$(".area-tile[data-bereich]").length === 5, "erwartet 5 Bereichs-Kacheln, gefunden " + $$(".area-tile[data-bereich]").length);
       pruefe($('.area-tile[data-bereich="intervall"][data-nav="#intervall"]'), "Timer fehlt als Bereich auf der Startseite");
-      pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#katalog", "Der Katalog steht nicht hervorgehoben vorn");
+      pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#katalog", "Workout steht nicht hervorgehoben vorn");
       pruefe($$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "katalog,intervall,reps,run,warm", "Reihenfolge der Bereiche: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
       pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").length === 4, "die übrigen vier Bereiche fehlen in der Liste");
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
     }],
-    ["Katalog: Reiterzeile Workouts · Übungen · Meine, zu Beginn nur die Überschriften, Überrasch mich in der ersten Leiste", async function () {
+    ["Workout: Reiterzeile Katalog · Übungen · Meine, zu Beginn nur die Überschriften, Überrasch mich in der ersten Leiste", async function () {
       klick('[data-nav="#katalog"]');
       await bis(function () { return $$("[data-kattab]").length === 3; }, 3000, "Reiter");
       var tabs = $$("[data-kattab]").map(function (b) { return b.textContent.trim(); }).join(" · ");
-      pruefe(tabs === "Workouts · Übungen · Meine", "Reihenfolge ist " + tabs);
+      pruefe(tabs === "Katalog · Übungen · Meine", "Reihenfolge ist " + tabs);
       pruefe($(".rz") && !$(".lib-tabs-card") && !$(".surprise-card"), "Reiterzeile fehlt oder die große Karte steht noch da");
-      pruefe(/Katalog/.test($(".topbar h1").textContent), "Titel ist nicht „Katalog“");
+      pruefe(/^Workout$/.test($(".topbar h1").textContent.trim()), "Titel ist nicht „Workout“");
       klick('[data-kattab="workouts"]');
       pruefe($$(".lib-card").length >= 20, "zu wenige Workouts: " + $$(".lib-card").length);
       var gr = $$("details.kat-gr");

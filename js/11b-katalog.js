@@ -111,7 +111,7 @@ function katSuche(q, standard){
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
   return topbar(t("katalog"), { back:"#home", right:right || "" }) +
-    reiterZeileHTML("var(--tp-color)", b("workouts", t("tabWorkouts"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))) +
+    reiterZeileHTML("var(--tp-color)", b("workouts", t("katTabKatalog"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))) +
     '<div class="kat-start">'+surpriseLeisteHTML()+katPlanLeisteHTML()+'</div>';   // zwei klare Einstiege: lass dir eins zusammenstellen oder plane selbst
 }
 function katPlanLeisteHTML(){
