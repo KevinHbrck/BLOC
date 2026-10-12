@@ -1,21 +1,28 @@
 "use strict";
 /* ============ Katalog ============
-   Air und Studio unter einem Dach (2026-10-10): eine Seite „Katalog“ mit den Reitern Workouts · Übungen · Meine.
-   - Übungen: alle Übungen (Air und Studio) nach Bereichen; zu Beginn stehen nur die Überschriften. Filter wie im Studio
-     (Gruppe, Ausrüstung, Körperkarte, Detailansicht).
-   - Workouts: fertige Workouts nach Fokus, ebenfalls zugeklappt; Filter wie in Air (Training, Ausrüstung).
-   - Meine: eigene Workouts (Timer) und Pläne (Gewicht × Wiederholungen).
-   Die Seiten selbst liegen weiter in renderLibrary (Workouts, Meine) und renderKatalogUebungen (Übungen); die Plan-Seiten
+   Air und Studio unter einem Dach (2026-10-10), seit 2026-10-12 mit den Reitern Katalog · Baukasten:
+   - Katalog: zwei Abteilungen „Meine“ (eigene Workouts mit Timer und Pläne mit Gewicht × Wiederholungen) und „Workout-Katalog“
+     (fertige Workouts nach Fokus, mit Ort-Schalter und Filter); dazu eine Karte „Übungskatalog“ (eigene Seite #uebungskatalog:
+     alle Übungen nach Bereichen, Filter, eigene Übung anlegen).
+   - Baukasten: „Überrasch mich“ (Zufall oder nach Gewichtung) oder „Selber bauen“ (mit Timer oder mit Gewicht), groß und vorn.
+   Die Seiten selbst liegen in renderKatalogWorkouts, renderLibrary (Meine), renderKatalogUebungen und renderKatalogBaukasten; die Plan-Seiten
    (renderStudioPlan, renderStudioPlanGen) öffnen sich aus „Meine“. Hier stehen Kopf, Reiter, aufklappbare Bereiche und die Zuordnung. */
-var KAT_TABS = ["workouts", "uebungen", "meine"];
+var KAT_TABS = ["workouts", "baukasten"];
 var katOffen = {};   // Bereiche: true = aufgeklappt, false = zugeklappt, fehlt = Standard (offen bei Filter oder Suche, sonst zu); nur für diesen Besuch
 
 /* Letzter Reiter; Nutzer der früheren Seiten Air und Studio landen dort, wo sie zuletzt waren */
 function katTab(){
   var s = state.db.settings;
+  // frühere Reiter: „Meine“ ist jetzt eine Abteilung des Katalogs, „Übungen“ heißt Baukasten
+  if(s.katTab === "meine"){ s.katTab = "workouts"; s.katAbt = "meine"; }
+  else if(s.katTab === "uebungen") s.katTab = "baukasten";
   if(KAT_TABS.indexOf(s.katTab) > -1) return s.katTab;
-  return s.libTab === "mine" ? "meine" : s.libTab === "exercises" ? "uebungen" : "workouts";
+  if(s.libTab === "mine"){ s.katAbt = "meine"; return "workouts"; }
+  return s.libTab === "exercises" ? "baukasten" : "workouts";
 }
+/* Abteilung im Katalog: „workouts“ (Workout-Katalog) oder „meine“ (eigene Workouts und Pläne) */
+function katAbt(){ return state.db.settings.katAbt === "meine" ? "meine" : "workouts"; }
+function katZuMeine(){ var s = state.db.settings; s.katTab = "workouts"; s.katAbt = "meine"; }
 function katTabSetzen(tab){
   var s = state.db.settings;
   s.katTab = tab; stPlanAktiv = null; stPlanBauen = false; stGen = null; stPlanQuery = "";
@@ -110,10 +117,17 @@ function katSuche(q, standard){
 /* ---------- Kopf: Titel, Reiter, Überrasch mich ---------- */
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
-  return topbar(t("katalog"), { back:"#home", right:right || "" }) +
-    '<div class="rz kat-rz" style="--rz:var(--text)">'+b("workouts", t("katTabKatalog"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))+'</div>' +
-    // Katalog: ganz vorn der Ort (Fitnessstudio oder Freiluft), sonst nichts; Übungen und Meine: Überrasch mich und Workout planen
-    (tab === "workouts" ? katOrtHTML() : '<div class="kat-start">'+surpriseLeisteHTML()+katPlanLeisteHTML()+'</div>');
+  var kopf = topbar(t("katalog"), { back:"#home", right:right || "" }) +
+    '<div class="rz kat-rz" style="--rz:var(--text)">'+b("workouts", t("katTabKatalog"))+b("baukasten", t("katTabBaukasten"))+'</div>';
+  if(tab !== "workouts") return kopf;
+  // Katalog: Abteilungen Meine · Workout-Katalog, die Karte zum Übungskatalog, im Workout-Katalog ganz vorn der Ort
+  var abt = katAbt();
+  function a(k, label){ return '<button type="button" data-katabt="'+k+'" class="'+(abt === k ? 'active' : '')+'" aria-pressed="'+(abt === k)+'">'+esc(label)+'</button>'; }
+  var anz = EXERCISES.filter(function(ex){ return ex.main !== "stretch" && !libHidden("ex:"+ex.id); }).length;
+  return kopf +
+    '<div class="seg-row kat-abt" role="group">'+a("meine", t("tabMine"))+a("workouts", t("katAbtWorkouts"))+'</div>' +
+    '<button type="button" class="kat-ueb-karte" data-katueb>'+svgIcon(CAT_ICON.weight)+'<span class="kuk-t"><b>'+esc(t("katUebKatalog"))+'</b><small>'+esc(t("katUebKatalogSub", { n:anz }))+'</small></span><span class="kuk-pfeil">'+ICON_CHEV+'</span></button>' +
+    (abt === "workouts" ? katOrtHTML() : '');
 }
 /* Ort: Fitnessstudio (Workouts mit Geräten oder Langhantel) oder Freiluft (alles andere: zuhause, draußen, mit Kurzhantel, Band, Stange) */
 var KAT_ICON_STUDIO = '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>';
@@ -138,9 +152,6 @@ function katOrtHTML(sel, zahl, attr, textKey){
   }
   return '<div class="kat-ort" role="group" aria-label="'+esc(t("katOrt"))+'">'+b("studio", t("katOrtStudio"), KAT_ICON_STUDIO)+b("frei", t("katOrtFrei"), KAT_ICON_FREI)+'</div>';
 }
-function katPlanLeisteHTML(){
-  return '<button type="button" class="sp-leiste kat-plan" data-katplanneu title="'+esc(t("katFabPlan"))+'">'+ICON_PLUS+'<b>'+esc(t("katFabPlan"))+'</b></button>';
-}
 /* Neuer Plan: sofort angelegt (es muss nichts gespeichert werden) und gleich im Plan-Bau geöffnet.
    Bleibt er ohne Übung liegen, wird er beim Verlassen wieder entfernt, damit keine leeren Pläne herumliegen. */
 var stPlanNeuId = null;
@@ -149,7 +160,7 @@ function katPlanNeu(){
   var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[], updatedAt:Date.now() };
   stPlaene().push(p); save();
   stPlanNeuId = p.id;
-  state.db.settings.katTab = "meine";
+  katZuMeine();
   stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; stGen = null;
   renderKatalog(); window.scrollTo(0, 0);
 }
@@ -168,10 +179,17 @@ function katKopfBinden(){
       katTabSetzen(k); renderKatalog(); window.scrollTo(0, 0);
     });
   });
-  var sp = app.querySelector("[data-surprise]");
-  if(sp) sp.addEventListener("click", function(){ openSurprise(); });
-  var pn = app.querySelector("[data-katplanneu]");
-  if(pn) pn.addEventListener("click", katPlanNeu);
+  // Abteilung des Katalogs: Meine · Workout-Katalog
+  app.querySelectorAll("[data-katabt]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var a = b.getAttribute("data-katabt");
+      if(a === katAbt()) return;
+      state.db.settings.katAbt = a; save(); katOffen = {};
+      renderKatalog(); window.scrollTo(0, 0);
+    });
+  });
+  var ub = app.querySelector("[data-katueb]");
+  if(ub) ub.addEventListener("click", function(){ go("#uebungskatalog"); });
   app.querySelectorAll("[data-katort]").forEach(function(b){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-katort");
@@ -191,11 +209,37 @@ function renderKatalog(){
   if(stPlanAktiv && stPlanFind(stPlanAktiv)) return renderStudioPlan();
   stPlanAktiv = null; stPlanBauen = false;
   var tab = katTab();
-  return tab === "uebungen" ? renderKatalogUebungen() : tab === "meine" ? renderLibrary() : renderKatalogWorkouts();
+  return tab === "baukasten" ? renderKatalogBaukasten() : katAbt() === "meine" ? renderLibrary() : renderKatalogWorkouts();
 }
 
-/* ---------- Übungen ---------- */
+/* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
+function renderKatalogBaukasten(){
+  var s = state.db.settings, modus = s.bauModus === "gewicht" ? "gewicht" : "timer";
+  var hw = hinweise("bau2", ["katBauHint"]);
+  app.innerHTML =
+    katKopfHTML("baukasten", hw.knopf) +
+    hw.z(0, "page-hint") +
+    '<div class="seg-row bau-modus" role="group" aria-label="'+esc(t("bauModusTitel"))+'">'+
+      '<button type="button" data-baumodus="timer" class="'+(modus === "timer" ? 'active' : '')+'" aria-pressed="'+(modus === "timer")+'">'+esc(t("bauModusTimer"))+'</button>'+
+      '<button type="button" data-baumodus="gewicht" class="'+(modus === "gewicht" ? 'active' : '')+'" aria-pressed="'+(modus === "gewicht")+'">'+esc(t("bauModusGewicht"))+'</button></div>'+
+    '<div class="bau-hinweis">'+esc(t(modus === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>'+
+    '<button type="button" class="bau-karte bau-sp" data-surprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+esc(t("bauUeberraschSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<button type="button" class="bau-karte" data-bauselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<div style="height:40px"></div>';
+  bindCommon();
+  katKopfBinden();
+  app.querySelectorAll("[data-baumodus]").forEach(function(b){
+    b.addEventListener("click", function(){ s.bauModus = b.getAttribute("data-baumodus"); save(); renderKatalog(); });
+  });
+  app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
+  app.querySelector("[data-bauselber]").addEventListener("click", function(){
+    if(modus === "timer") go("#mybuild/new"); else katPlanNeu();
+  });
+}
+
+/* ---------- Übungskatalog (eigene Seite #uebungskatalog) ---------- */
 function renderKatalogUebungen(){
+  tabLeiste("katalog");
   var s = state.db.settings, alle = studioAlle();
   studioFilterAlt();
   var gruppen = katalogGruppen(), vonId = katGruppeIds(gruppen), gueltig = {};
@@ -229,7 +273,8 @@ function renderKatalogUebungen(){
   // früher (in Air) ausgeblendete Übungen: unten gesammelt, mit „Einblenden“
   var verborgen = EXERCISES.filter(function(ex){ return ex.main !== "stretch" && libHidden("ex:"+ex.id); });
   app.innerHTML =
-    katKopfHTML("uebungen", hw.knopf+lupeHTML("st", studioQuery)) +
+    topbar(t("katUebKatalog"), { back:"#katalog", right:hw.knopf+lupeHTML("st", studioQuery) }) +
+    '<button type="button" class="btn btn-secondary kat-eigene" data-stnew2>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' +
     hw.z(0, "page-hint") +
     suchFeldHTML(studioQuery, "st", t("stSearch")) +
     studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen) +
@@ -244,7 +289,7 @@ function renderKatalogUebungen(){
       e.stopPropagation();
       var k = b.getAttribute("data-unhideone");
       s.hiddenLib = (s.hiddenLib || []).filter(function(x){ return x !== k; });
-      save(); var y = window.scrollY; renderKatalog(); window.scrollTo(0, y);
+      save(); var y = window.scrollY; renderKatalogUebungen(); window.scrollTo(0, y);
     });
   });
   app.querySelectorAll("[data-studio]").forEach(function(b){
@@ -255,12 +300,14 @@ function renderKatalogUebungen(){
   });
   app.querySelectorAll("[data-exfav]").forEach(function(b){ b.addEventListener("click", function(e){
     e.stopPropagation(); toggleExFav(b.getAttribute("data-exfav"));
-    var y = window.scrollY; renderKatalog(); window.scrollTo(0, y);
+    var y = window.scrollY; renderKatalogUebungen(); window.scrollTo(0, y);
   }); });
-  function neuZeichnen(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
+  function neuZeichnen(){ var y = window.scrollY; renderKatalogUebungen(); window.scrollTo(0, y); }
   studioFilterBinden(fGr, fArt, zonen, neuZeichnen);
   var neu = app.querySelector("[data-stnew]");
   if(neu) neu.addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
+  var neu2 = app.querySelector("[data-stnew2]");   // oben auf der Seite: eigene Übung anlegen
+  if(neu2) neu2.addEventListener("click", function(){ go("#exedit/new"); });
   katBinden(function(){ return studioQuery; });
   var q = app.querySelector("#st-q");
   function suchen(){
@@ -303,7 +350,7 @@ function katPlanAusDraft(d){
     l.push(p);
   }
   save();
-  state.db.settings.katTab = "meine";
+  katZuMeine();
   stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = ""; stGen = null;
   go("#katalog");
 }
@@ -311,27 +358,9 @@ function katPlanAusDraft(d){
 function katPlanGenNeu(){
   stPlanAktiv = null; stPlanBauen = false;
   stGen = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8, ort:katOrt() };
-  state.db.settings.katTab = "meine";
+  katZuMeine();
   renderKatalog(); window.scrollTo(0, 0);
 }
-/* Das Plus unter „Meine“: Workout planen (Plan aus dem Katalog), nach Gewichtung, Workout mit Timer, eigene Übung */
-function katFabHTML(){
-  return fabMenuHTML([
-    { key:"plan", label:t("katFabPlan"), ico:ICON_PLUS, cls:"tp" },
-    { key:"gen", label:t("genNew"), ico:ICON_PLUS, cls:"tp" },
-    { key:"timer", label:t("katFabTimer"), ico:ICON_PLUS, cls:"tp" },
-    { key:"uebung", label:t("exNew"), ico:ICON_PLUS, cls:"tp" }
-  ]);
-}
-function katFabBinden(){
-  bindFabMenu({
-    "plan": katPlanNeu,
-    "gen": katPlanGenNeu,
-    "timer": function(){ go("#mybuild/new"); },
-    "uebung": function(){ go("#exedit/new"); }
-  });
-}
-
 /* ---------- Katalog: fertige Workouts (derselbe Filter wie bei den Übungen) ----------
    Überschriften sind dieselben Bereiche wie bei den Übungen, dazu „Ganzkörper“. Ein Workout steht dort, wohin sein Fokus zeigt
    (Cardio, Beine, Rücken, Arme, Bauch) oder wo klar die meisten seiner Übungen liegen (mindestens 40 % und mehr als im zweiten Bereich); sonst unter Ganzkörper.

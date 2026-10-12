@@ -142,7 +142,7 @@ var app = document.getElementById("app");
 /* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
 var TAB_ROUTEN = { home:"#home", search:"#search", stats:"#stats", settings:"#settings" };
 /* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
-var BEREICH_LEISTE = { katalog:1, library:1, timers:1 };
+var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
   var el = document.getElementById("tabbar");
   if(!el) return;
@@ -200,7 +200,7 @@ function render(){
   }
   if(route==="studioplan"){   // Favorit auf der Startseite: Katalog › Meine › Plan direkt geöffnet
     var sp0 = state.db.settings;
-    if(stPlanFind(parts[1])){ sp0.katTab = "meine"; stPlanAktiv = parts[1]; stPlanBauen = false; stGen = null; stPlanQuery = ""; }
+    if(stPlanFind(parts[1])){ sp0.katTab = "workouts"; sp0.katAbt = "meine"; stPlanAktiv = parts[1]; stPlanBauen = false; stGen = null; stPlanQuery = ""; }
     navStack[navStack.length-1] = "#katalog"; setUrl("#katalog");
     return renderKatalog();
   }
@@ -215,6 +215,7 @@ function render(){
   if(route==="play") return startPlayer(parts[1]);
   if(route==="playblock") return startBlockPlayer(parts[1]);
   if(route==="katalog" || route==="library") return renderKatalog();   // „#library“ (Air) und „#timers“ (Studio) sind jetzt der Katalog
+  if(route==="uebungskatalog") return renderKatalogUebungen();
   if(route==="exedit") return renderExEdit(parts[1]);
   if(route==="import") return renderImport(parts[1]);
   if(route==="mybuild") return renderMyBuild(parts[1]);

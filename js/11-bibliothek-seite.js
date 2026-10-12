@@ -251,7 +251,7 @@ function libWoSort(list, sort){
    renderKatalogUebungen (js/11b-katalog.js). */
 function renderLibrary(){
   var s = state.db.settings;
-  if(katTab() !== "meine") return renderKatalog();
+  if(katTab() !== "workouts" || katAbt() !== "meine") return renderKatalog();
   var hw = hinweise("", []);
   var eigene = "";
   (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
@@ -261,13 +261,13 @@ function renderLibrary(){
   });
   var list = '<div class="section-title">'+esc(t("katEigeneWo"))+'</div>'+(eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+katPlaeneHTML();
   app.innerHTML =
-    katKopfHTML("meine", hw.knopf) +
-    list + '<div style="height:90px"></div>' + katFabHTML();
+    katKopfHTML("workouts", hw.knopf) +
+    list + '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   bindTrash(neu);
-  katFabBinden(); katPlaeneBinden();
+  katPlaeneBinden();
   app.querySelectorAll("[data-fav]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neu(); }); });
   app.querySelectorAll("[data-cover]").forEach(function(el){ el.addEventListener("click", function(e){
     e.stopPropagation(); if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover"));

@@ -731,6 +731,7 @@ function openSurprise(twId){
     var alt = root.querySelector(".sp-sheet"), scrollAlt = alt ? alt.scrollTop : 0;
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet">'+
       '<h3>'+svgIcon(ICON_UEBERRASCH, "ico sp-h-ico")+' '+t("surprise")+'</h3>'+
+      (tw ? '' : '<div class="seg-row sp-art" role="group"><button type="button" class="active" aria-pressed="true">'+esc(t("spArtZufall"))+'</button><button type="button" data-spgewicht aria-pressed="false">'+esc(t("spArtGewichtung"))+'</button></div>')+
       (tw ? '<div class="tm-hint" style="margin-top:0">'+esc(t("spFillHint", { n:tw.name || t("untitled") }))+'</div>'+
             '<label>'+t("spCount")+'</label><div class="sp-chips">'+[4,6,8,10,12,15].map(function(v){
         return '<button type="button" class="fc-chip'+(p.anzahl===v?' on':'')+'" data-spanz="'+v+'">'+v+' '+t("spCountUnit")+'</button>'; }).join("")+'</div>'
@@ -758,6 +759,8 @@ function openSurprise(twId){
     '</div></div>';
     root.querySelector(".sp-sheet").scrollTop = scrollAlt;
     function on(sel, fn){ root.querySelectorAll(sel).forEach(function(b){ b.addEventListener("click", function(){ fn(b); draw(); }); }); }
+    var gw = root.querySelector("[data-spgewicht]");   // Nach Gewichtung: die Seite mit den Reglern je Muskelgruppe (statt Zufall nach Zeit und Ausrüstung)
+    if(gw) gw.addEventListener("click", function(){ root.innerHTML = ""; go("#katalog"); katPlanGenNeu(); });
     on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; });
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
     on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
