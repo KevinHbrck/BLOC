@@ -422,3 +422,46 @@ function bindFavItems(refresh){
   });
 }
 
+
+/* Satz eintragen aus dem Timer: kleines Fenster mit Gewicht und Wiederholungen (vorausgefüllt), schreibt in dasselbe Protokoll wie die Übungs-Karte */
+function studioSatzLog(id, kg, w){
+  var alle = studioAlle(), en = alle[id] || (alle[id] = { log:[] }), jetzt = Date.now();
+  if(!en.log) en.log = [];
+  var l = en.log.length && studioTag(en.log[en.log.length-1].at) === studioTag(jetzt) ? en.log[en.log.length-1] : null;
+  if(!l){ l = { at:jetzt, s:[] }; en.log.push(l); if(en.log.length > 60) en.log = en.log.slice(-60); }
+  l.s.push([kg, w]);
+  en.kg = kg; en.zuletzt = jetzt;
+  studioVerlauf(id, jetzt);
+  save();
+}
+function openGewichtSheet(id, nachher){
+  var ex = findExercise(id), root = document.getElementById("overlayRoot");
+  if(!ex) return;
+  var v = studioVorschlag(id), z = studioZiel(id), e0 = studioEintrag(id);
+  if(e0 && e0.kg != null) v.kg = e0.kg;
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet pg-sheet" role="dialog" aria-label="'+esc(tplText(ex.name))+'">'+
+    '<h3>'+esc(tplText(ex.name))+'</h3>'+
+    '<div class="st-eingabe">'+
+      '<div class="st-feld"><label>'+esc(t("stKg"))+'</label><div class="stepper st-step"><button type="button" data-kgminus>&minus;</button>'+
+        '<input type="text" inputmode="decimal" id="pg-kg" value="'+studioKg(v.kg)+'"><button type="button" data-kgplus>&plus;</button></div></div>'+
+      '<div class="st-feld"><label>'+esc(t("stReps"))+'</label><div class="stepper st-step"><button type="button" data-wminus>&minus;</button>'+
+        '<input type="number" inputmode="numeric" id="pg-w" value="'+v.wdh+'"><button type="button" data-wplus>&plus;</button></div></div>'+
+    '</div>'+
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button>'+
+    '<button class="btn btn-primary" data-ok>&#10003; '+esc(t("stSetDone"))+'</button></div></div></div>';
+  var kgIn = root.querySelector("#pg-kg"), wIn = root.querySelector("#pg-w");
+  function kgWert(){ var x = parseFloat(String(kgIn.value).replace(",", ".")); return isFinite(x) && x >= 0 ? Math.min(500, x) : 0; }
+  function zu(){ root.innerHTML = ""; }
+  root.querySelector("[data-kgminus]").addEventListener("click", function(){ kgIn.value = studioKg(Math.max(0, kgWert() - z.schritt)); });
+  root.querySelector("[data-kgplus]").addEventListener("click", function(){ kgIn.value = studioKg(kgWert() + z.schritt); });
+  root.querySelector("[data-wminus]").addEventListener("click", function(){ wIn.value = Math.max(1, (parseInt(wIn.value) || 0) - 1); });
+  root.querySelector("[data-wplus]").addEventListener("click", function(){ wIn.value = Math.min(100, (parseInt(wIn.value) || 0) + 1); });
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+  root.querySelector("[data-ok]").addEventListener("click", function(){
+    var kg = kgWert(), w = Math.max(1, Math.min(100, parseInt(wIn.value) || 1));
+    studioSatzLog(id, kg, w); zu();
+    showToast(studioKg(kg)+" kg × "+w);
+    if(nachher) nachher();
+  });
+}

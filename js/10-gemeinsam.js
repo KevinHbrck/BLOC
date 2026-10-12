@@ -192,7 +192,7 @@ function renderWorkoutEdit(id){
     return '<div class="block-pick" data-addblock="'+b.id+'">'+
       '<div class="meta"><div class="name">'+esc(b.name)+'</div><div class="sub">'+blockSpec(b)+'</div></div>'+
       '<span class="chip">+</span></div>';
-  }).join("") || '<div class="empty">'+t("noBlocksAvail")+' <br><a href="#blocks" style="color:var(--accent)">'+t("createBlockFirst")+'</a></div>';
+  }).join("") || '<div class="empty">'+t("noBlocksAvail")+' <br><a href="#blocks" style="color:var(--accent-ink, var(--accent))">'+t("createBlockFirst")+'</a></div>';
 
   var pickCat = state.db.settings.libPickCat || "all";
   if(pickCat === "stretch") pickCat = "all";

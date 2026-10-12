@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Liste abgearbeitet: Kontraste, Plan verschieben, Timer-Eintrag, Suche nach Ort, Aufräumen
+
+- **Klein**: Schalter „Mobility · Stretch“ grün; Deckblatt-Text für eigene Workouts („Dauerhaft ändern: unter Meine öffnen“); Fitnessstudio-Rot **tiefer** (`#c9201a`, im Dunkeln `#ff4f45`) und damit von der Koralle abgesetzt; Plan-Name bis 60 Zeichen; Einführung in der Reihenfolge der Startseite (Workout, Mobility & Stretch, Summit).
+- **Mittel**: Übungen lassen sich per langem Drücken **ausblenden** (Übungen und Suche); im Plan-Bau **verschieben** ◀ ▶ und entfernen direkt im klebenden Plan; im Timer **„Satz eintragen“** (Gewicht und Wiederholungen, schreibt ins Protokoll der Übungs-Karte); **Suche** mit Ort-Filter (Beide · Freiluft · Fitnessstudio) für Workouts und Übungen; Statistik-Karte „Workout“ im BLOC-Orange; Kodak-Design folgt der ruhigen Farbwelt (Gelb für Fitnessstudio und Grün für Mobility bleiben).
+- **Kontrast**: neue `--accent-ink` (Koralle auf Weiß hatte 3,1:1, jetzt kleine Schrift 4,6:1); Fitnessstudio-Rot im Dunkeln 5,8:1. Die großen Hauptknöpfe bleiben in der Marken-Koralle (weiß auf Koralle 3,1:1, nur für große Schrift ausreichend).
+- **Aufräumen**: `.gitattributes` (LF), 101 ungenutzte Texte entfernt (DE und EN), `repos\spiegeln.ps1` kopiert die Git-Dateien in `BLOC-main` bzw. `Vokabelkasten-main`.
+- Schnelltest 33 Prüfungen. Fassung 2026-10-12-8.
+
 ## 2026-10-12 · Ruhige Farbwelt, Startseite ohne „vorausgewählt“-Look, Plan klebt oben
 
 - **Weniger Farbe**: Symbole der Startseite, der Körperregionen (Brust, Rücken …) und der übrigen Bereiche (Timer, Summit, Run, Mobility & Stretch) sind schwarz/weiß (Textfarbe); die Bereichsfarben `--ti-color`, `--rep-color`, `--ws-color`, `--bl-color`, `--run-color` sind am Ende von `app.css` auf die Textfarbe gesetzt (Kodak behält seine Palette). Farbe tragen nur die Hauptaktion (Koralle) und die beiden Orte: **Freiluft blau, Fitnessstudio orange** (`--gym-color`, vorher hellgrün) - bei Ort-Schalter, Kacheln, Workout-Karten und in der Suche.

@@ -90,7 +90,7 @@
         if (i > 0) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));
         klick("[data-introweiter]");
       }
-      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Workout | Summit | Mobility & Stretch", "Seiten: " + titel.join(" | "));
+      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Workout | Mobility & Stretch | Summit", "Seiten: " + titel.join(" | "));
       pruefe(!$("#overlayRoot .intro-sheet"), "„Los geht's“ schließt die Einführung nicht");
       await heim();
       await warte(500);
@@ -575,7 +575,7 @@
       var karte = await bis(function () { return $('[data-studio="air-squats"]'); }, 3000, "Übungskarte");
       await lang(karte);
       var opts = $$("#overlayRoot .act-opt").map(function (b) { return b.textContent; });
-      pruefe(opts.length === 2 && /Workout/.test(opts[0]) && /Plan/.test(opts[1]), "Langdruck-Menü: " + opts.join(" | "));
+      pruefe(opts.length === 3 && /Workout/.test(opts[0]) && /Plan/.test(opts[1]) && /Ausblenden/.test(opts[2]), "Langdruck-Menü: " + opts.join(" | "));
       klick("#overlayRoot [data-act]");
       klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neues Workout"));
       await bis(function () { return (JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || []).length === 1; }, 2000, "Workout angelegt");
@@ -585,7 +585,7 @@
       var kachel = await bis(function () { return $("[data-studio=\"leg-press\"]"); }, 3000, "Studio-Kachel");
       await lang(kachel);
       var o2 = $$("#overlayRoot .act-opt").map(function (b) { return b.textContent; });
-      pruefe(o2.length === 2 && /Plan/.test(o2[0]) && /Workout/.test(o2[1]), "Fitnessstudio-Übung: erst Plan, dann Workout mit Timer: " + o2.join(" | "));
+      pruefe(o2.length === 3 && /Plan/.test(o2[0]) && /Workout/.test(o2[1]) && /Ausblenden/.test(o2[2]), "Fitnessstudio-Übung: erst Plan, dann Workout mit Timer: " + o2.join(" | "));
       klick("#overlayRoot [data-act]");
       klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neuer Plan"));
       await bis(function () { var p = JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene; return p && p.length === 1 && p[0].ids.indexOf("leg-press") > -1; }, 2000, "Plan mit Beinpresse");
@@ -667,12 +667,16 @@
       await bis(function () { return $('details[data-katgr="pl-beine"] .kat-n'); }, 2000, "„1 gewählt“ am Bereich");
       klick($('[data-planex="leg-press"]'));
       await bis(function () { return $(".kk-kopf .kk-zeile"); }, 2000, "Körperkarte oben im Plan");
-      await bis(function () { return $$(".plan-sticky [data-planex]").length === 2; }, 2000, "Der Plan zeigt oben die gewählten Übungen");
+      await bis(function () { return $$(".plan-sticky [data-plansel]").length === 2; }, 2000, "Der Plan zeigt oben die gewählten Übungen");
       pruefe(/Plan/.test($(".plan-sticky-kopf").textContent) && /2/.test($(".plan-sticky-kopf").textContent), "Überschrift „Plan“ mit Anzahl: " + $(".plan-sticky-kopf").textContent);
-      klick($('.plan-sticky [data-planex="air-squats"]'));   // im Plan antippen nimmt die Übung wieder heraus
-      await bis(function () { return $$(".plan-sticky [data-planex]").length === 1; }, 2000, "Übung aus dem Plan genommen");
+      klick($('.plan-sticky [data-plansel="0"]'));   // im Plan antippen wählt aus, der Papierkorb nimmt die Übung heraus
+      klick(await bis(function () { return $("[data-plandelsel]"); }, 2000, "Steuerung im Plan"));
+      await bis(function () { return $$(".plan-sticky [data-plansel]").length === 1; }, 2000, "Übung aus dem Plan genommen");
       klick($('details[data-katgr="pl-beine"] [data-planex="air-squats"]'));
-      await bis(function () { return $$(".plan-sticky [data-planex]").length === 2; }, 2000, "Übung wieder im Plan");
+      await bis(function () { return $$(".plan-sticky [data-plansel]").length === 2; }, 2000, "Übung wieder im Plan");
+      klick($('.plan-sticky [data-plansel="1"]'));   // Reihenfolge: die zweite Übung (Air Squats) nach vorn schieben
+      klick(await bis(function () { return $('[data-planmv="-1"]'); }, 2000, "◀ im Plan"));
+      await bis(function () { var n = $$(".plan-sticky .wb-mini-name"); return n.length === 2 && /Squat/i.test(n[0].textContent); }, 2000, "Air Squats steht jetzt vorn");
       W.scrollTo(0, 2500); await warte(250);   // weit nach unten: der Plan bleibt oben stehen
       var rs = $("#plan-sticky").getBoundingClientRect();
       pruefe(rs.top >= 0 && rs.top < 160 && W.scrollY > 300, "Der Plan soll beim Scrollen oben stehen bleiben: Abstand " + Math.round(rs.top) + ", gescrollt " + Math.round(W.scrollY));
@@ -944,6 +948,11 @@
       klick(await bis(function () { return $("[data-go]"); }, 3000, "Mit Timer starten auf dem Deckblatt"));
       await bis(function () { return $("#pl-body .pl-kg"); }, 3000, "Gewicht im Timer");
       pruefe(/\d × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Gewicht × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
+      // Satz direkt im Timer eintragen: Fenster mit Gewicht und Wiederholungen, danach steht das neue Gewicht unter dem Namen
+      klick(await bis(function () { return $("#pl-body [data-plkg]"); }, 3000, "Satz eintragen im Timer"));
+      eingeben(await bis(function () { return $("#overlayRoot #pg-kg"); }, 2000, "Fenster für das Gewicht"), "47,5");
+      klick("#overlayRoot [data-ok]");
+      await bis(function () { return /47,5 kg/.test($("#pl-body .pl-kg").textContent); }, 2000, "Gewicht im Timer aktualisiert: " + ($("#pl-body .pl-kg") ? $("#pl-body .pl-kg").textContent : ""));
       // Überrasch mich: Chip Fitnessstudio, danach nur Fitnessstudio-Übungen
       await heim();
       klick('[data-nav="#katalog"]');
@@ -996,6 +1005,9 @@
       await bis(function () { return $(".sr-welt"); }, 3000, "Suche zeigt den Ort bei Workouts");
       var farben = $$(".sr-welt").map(function (e) { return e.style.getPropertyValue("--w"); });
       pruefe(farben.length > 0 && farben.every(function (f) { return /gym-color|tp-color/.test(f); }), "Ort-Zeichen in der Suche: " + farben.join(", "));
+      klick('[data-srort="studio"]');   // Ort-Filter der Suche: nur Fitnessstudio
+      await bis(function () { var z = $$(".sr-welt"); return z.length > 0 && z.every(function (e) { return /gym-color/.test(e.style.getPropertyValue("--w")); }); }, 3000, "Ort-Filter Fitnessstudio in der Suche");
+      klick('[data-srort=""]');
     }],
     ["Kleine Hilfen: „Was ist was?“, Bestleistung, Leichter/Schwerer", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }

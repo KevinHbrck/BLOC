@@ -150,7 +150,7 @@ function katPlanNeu(){
   stPlaene().push(p); save();
   stPlanNeuId = p.id;
   state.db.settings.katTab = "meine";
-  stPlanAktiv = p.id; stPlanBauen = true; stPlanQuery = ""; stGen = null;
+  stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; stGen = null;
   renderKatalog(); window.scrollTo(0, 0);
 }
 function katPlanAufraeumen(){
@@ -285,7 +285,7 @@ function katPlaeneHTML(){
 }
 function katPlaeneBinden(){
   app.querySelectorAll("[data-plan]").forEach(function(el){
-    function los(){ stPlanAktiv = el.getAttribute("data-plan"); stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); }
+    function los(){ stPlanAktiv = el.getAttribute("data-plan"); stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); }
     el.addEventListener("click", los);
     el.addEventListener("keydown", function(e){ if(e.target === el && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); los(); } });
   });

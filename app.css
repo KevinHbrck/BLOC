@@ -19,7 +19,7 @@
   --wo-text:var(--accent-text);
   --bl-color:#7a4fd6;
   --bl-text:#ffffff;
-  --gym-color:#e1251b;   /* Fitnessstudio: das Rot des C60-Designs (Freiluft = --tp-color, blau; Workout selbst = Akzent, das BLOC-Orange) */
+  --gym-color:#c9201a;   /* Fitnessstudio: tiefes Rot (C60-Familie), von der Akzent-Koralle gut zu unterscheiden */
   --gym-text:#ffffff;
   --tp-color:#3867e8;
   --tp-text:#ffffff;
@@ -58,7 +58,7 @@
   --danger:#ff5c60;
   --bl-color:#a98bff;
   --bl-text:#170b33;
-  --gym-color:#e1251b;   /* Fitnessstudio: das Rot des C60-Designs */
+  --gym-color:#ff4f45;   /* Fitnessstudio im Dunkeln: helleres Rot für Kontrast */
   --gym-text:#ffffff;
   --tp-color:#6f92ff;
   --ti-color:#58b6f4;
@@ -86,7 +86,7 @@
     --danger:#ff5c60;
     --bl-color:#a98bff;
     --bl-text:#170b33;
-    --gym-color:#e1251b;
+    --gym-color:#ff4f45;
     --gym-text:#ffffff;
     --tp-color:#6f92ff;
   --ti-color:#58b6f4;
@@ -871,7 +871,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .installtip{
   background:var(--surface-2); border-radius:var(--radius); padding:14px 16px; margin:14px 0; font-size:13px; color:var(--text-dim); display:flex; gap:10px; align-items:flex-start;
 }
-.installtip a{ color:var(--accent); font-weight:600; text-decoration:none; }
+.installtip a{ color:var(--accent-ink, var(--accent)); font-weight:600; text-decoration:none; }
 .installtip button{ border:none; background:transparent; color:var(--text-dim); font-size:20px; cursor:pointer; padding:0 0 0 6px; width:28px; height:28px; flex-shrink:0; }
 
 .step-row{ display:flex; gap:12px; margin-bottom:16px; }
@@ -2285,8 +2285,8 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 
 /* ===== Ruhige Farbwelt (2026-10-12) =====
    Symbole und Bereichsfarben sind Schwarz/Weiß (Textfarbe), außer Mobility & Stretch (grün). Farbe tragen sonst nur die Hauptaktion (Akzent, Koralle) und die beiden Orte:
-   Freiluft = blau (--tp-color), Fitnessstudio = C60-Rot (--gym-color). Das Kodak-Design behält seine eigene Palette. */
-:root:not([data-vintage]){
+   Freiluft = blau (--tp-color), Fitnessstudio = C60-Rot (--gym-color). Gilt auch im Kodak-Design (dort bleiben Gelb für Fitnessstudio und Grün für Mobility). */
+:root:root{
   --ti-color:var(--text); --ti-text:var(--bg);
   --rep-color:var(--text);
   --bl-color:var(--text); --bl-text:var(--bg);
@@ -2315,3 +2315,20 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 /* Workout: das BLOC-Orange (Akzent) als Farbe des Bereichs - Symbol auf der Startseite, im Sortieren und in „Was ist was?“ */
 .area-tile[data-bereich="katalog"] .at-ico, .bs-zeile[data-bereich="katalog"] .at-ico, .wi-zeile[data-bereich="katalog"] .at-ico{
   background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent); }
+/* Kontrast: kleine Schrift in der Akzentfarbe nimmt --accent-ink (Koralle auf Weiß hat nur 3,1:1; so 4,6:1) */
+:root{ --accent-ink:#d93a14; }
+:root[data-theme="dark"], :root[data-theme="nacht"]{ --accent-ink:var(--accent); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme]){ --accent-ink:var(--accent); } }
+:root[data-theme="kodak"]{ --accent-ink:#e0661a; }
+/* Mobility & Stretch: der Schalter Mobility · Stretch ist grün getönt wie der Rest des Bereichs */
+.ws-art button.active{ background:color-mix(in srgb, var(--ws-color) 14%, var(--surface)); border-color:var(--ws-color); color:var(--text); box-shadow:inset 0 0 0 1px var(--ws-color); }
+/* Plan-Bau: ausgewählte Übung im Plan, Steuerung zum Verschieben */
+.wb-mini.sel{ box-shadow:0 0 0 2px var(--text), var(--shadow); }
+.plan-ctrl{ display:flex; gap:8px; justify-content:center; padding:0 0 8px; }
+.plan-ctrl button{ font:inherit; font-size:14px; font-weight:700; border:1px solid var(--border); background:var(--surface); color:var(--text); border-radius:12px; min-height:40px; padding:0 16px; cursor:pointer; display:flex; align-items:center; gap:6px; }
+.plan-ctrl button[disabled]{ opacity:.35; cursor:default; }
+.plan-ctrl .del{ color:var(--danger); }
+.plan-ctrl .del .ico{ width:16px; height:16px; }
+/* Timer: Satz eintragen (Fitnessstudio-Übung) */
+.pl-kg-btn{ display:inline-block; margin:-14px 0 18px; padding:8px 16px; border-radius:12px; border:1.5px solid color-mix(in srgb, var(--phase-text, #fff) 70%, transparent); background:transparent; color:var(--phase-text, #fff); font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+.pg-sheet .st-eingabe{ margin:6px 0 4px; }

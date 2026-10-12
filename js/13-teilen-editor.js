@@ -332,7 +332,7 @@ function renderDraftPage(d, cfg){
           : '<button class="btn btn-primary" data-go'+(exs.length?'':' disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>')+
         (d.src==="surprise" ? '<button class="btn btn-secondary wb-mischen" data-reroll>'+ICON_MISCHEN+' '+t("wbMischen")+'</button>' : '')+
         coverActs+
-        '<div class="cover-note">'+t(d._dirty ? "coverDirty" : "coverHint")+'</div>'+
+        '<div class="cover-note">'+t(d._dirty ? "coverDirty" : d.src==="my" ? "coverHintMy" : "coverHint")+'</div>'+
       '</div>'
     : '<div class="card"><label for="m-name">'+t("name")+'</label>'+
         '<input type="text" id="m-name" value="'+esc(d.name)+'" maxlength="40">'+

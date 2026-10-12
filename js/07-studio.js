@@ -166,7 +166,7 @@ function renderIntervall(){
    Mehrere eigene Pläne aus Studio-Übungen: settings.stPlaene = [{ id, name, ids:[Übungs-IDs in Reihenfolge], updatedAt }].
    Das Plus legt einen neuen Plan an; Übungen werden wie im Workout-Baukasten von Air durch Antippen gewählt (Nummer = Reihenfolge,
    nochmal antippen = raus). Ein Tipp auf eine Übung im fertigen Plan öffnet ihre Karte zum Eintragen. */
-var stPlanAktiv = null, stPlanBauen = false, stPlanQuery = "";
+var stPlanAktiv = null, stPlanBauen = false, stPlanQuery = "", stPlanSel = -1;   // stPlanSel: im Plan-Bau ausgewählte Übung des Plans (zum Verschieben)
 function stPlaene(){ var s = state.db.settings; if(!Array.isArray(s.stPlaene)) s.stPlaene = []; return s.stPlaene; }
 function stPlanFind(id){ var l = stPlaene(); for(var i=0;i<l.length;i++) if(l[i].id === id) return l[i]; return null; }
 function stPlanIds(p){   // nur Übungen, die es noch gibt, jede nur einmal
@@ -214,15 +214,19 @@ function renderStudioPlan(){
     var zonen = kkNorm(s.stZonen), filterAn = !!(fGr.length || fArt.length || zonen.length);
     function artOk(id){ return (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(findExercise(id), zonen)); }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keinem Bereich stehen (z. B. ausgeblendete)
-    html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
+    html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="60"></div>'+
       (ids.length ? kkKopfHTML(ids) : '')+
-      // Der Plan selbst: die gewählten Übungen in ihrer Reihenfolge. Bleibt beim Scrollen oben stehen, antippen nimmt eine Übung wieder heraus.
+      // Der Plan selbst: die gewählten Übungen in ihrer Reihenfolge. Bleibt beim Scrollen oben stehen; antippen wählt eine Übung aus,
+      // dann verschieben ◀ ▶ sie und ✕ nimmt sie heraus.
       '<div class="plan-sticky" id="plan-sticky"><div class="plan-sticky-kopf"><b>'+esc(t("planKopf"))+'</b><span>'+esc(ids.length ? planAnzahl(ids.length) : t("planNochLeer"))+'</span></div>'+
         (ids.length ? '<div class="wb-streifen">'+ids.map(function(id, i){
           var ex = findExercise(id);
-          return ex ? '<button type="button" class="wb-mini" data-planex="'+id+'" style="--cat:'+studioFarbe(ex)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
+          return ex ? '<button type="button" class="wb-mini'+(stPlanSel === i ? ' sel' : '')+'" data-plansel="'+i+'" style="--cat:'+studioFarbe(ex)+'" aria-pressed="'+(stPlanSel === i)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
             (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span></button>' : "";
-        }).join("")+'</div>' : '')+'</div>'+
+        }).join("")+'</div>'+
+          (stPlanSel > -1 && stPlanSel < ids.length ? '<div class="plan-ctrl"><button type="button" data-planmv="-1" aria-label="'+esc(t("moveLeft"))+'"'+(stPlanSel === 0 ? ' disabled' : '')+'>&#9664;</button>'+
+            '<button type="button" class="del" data-plandelsel>'+ICON_TRASH+' '+esc(t("planRaus"))+'</button>'+
+            '<button type="button" data-planmv="1" aria-label="'+esc(t("moveRight"))+'"'+(stPlanSel === ids.length-1 ? ' disabled' : '')+'>&#9654;</button></div>' : '') : '')+'</div>'+
       hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
       studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk), zonen);
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
@@ -264,8 +268,8 @@ function renderStudioPlan(){
   bindCommon();
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
-  an("[data-planedit]", function(){ stPlanBauen = true; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
-  an("[data-plandone]", function(){ stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
+  an("[data-planedit]", function(){ stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
+  an("[data-plandone]", function(){ stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */
   an("[data-planwo]", function(){
@@ -290,7 +294,25 @@ function renderStudioPlan(){
   kachelKlick(app, "[data-planex]", function(el){
     var id = el.getAttribute("data-planex"), l = stPlanIds(p), i = l.indexOf(id);
     if(i > -1) l.splice(i, 1); else l.push(id);
+    stPlanSel = -1;
     p.ids = l; p.updatedAt = Date.now(); save(); neu();
+  });
+  // Plan oben: Übung antippen = auswählen, ◀ ▶ verschieben, Papierkorb nimmt sie heraus
+  app.querySelectorAll("[data-plansel]").forEach(function(b){
+    b.addEventListener("click", function(){ var i = +b.getAttribute("data-plansel"); stPlanSel = stPlanSel === i ? -1 : i; neu(); });
+  });
+  app.querySelectorAll("[data-planmv]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var l = stPlanIds(p), j = stPlanSel + (+b.getAttribute("data-planmv"));
+      if(stPlanSel < 0 || j < 0 || j >= l.length) return;
+      var x = l.splice(stPlanSel, 1)[0]; l.splice(j, 0, x);
+      p.ids = l; p.updatedAt = Date.now(); stPlanSel = j; save(); neu();
+    });
+  });
+  an("[data-plandelsel]", function(){
+    var l = stPlanIds(p);
+    if(stPlanSel > -1 && stPlanSel < l.length){ l.splice(stPlanSel, 1); p.ids = l; p.updatedAt = Date.now(); save(); }
+    stPlanSel = -1; neu();
   });
   kachelKlick(app, "[data-studio]", function(el){ go("#studio/"+el.getAttribute("data-studio")); });
   if(stPlanBauen){

@@ -203,6 +203,7 @@ function stepBodyHTML(step){
   return '<div class="pl-a"><div class="phase-label">'+phLabel+'</div>'+
     '<div class="block-label">'+esc(step.blockName||"")+
       (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+(step.kg ? '<small class="pl-kg">'+esc(step.kg)+'</small>' : '')+'</div>'+
+    (step.kg && step.ex && step.phase !== "done" ? '<button type="button" class="pl-kg-btn" data-plkg="'+step.ex+'">'+esc(t("stSetDone"))+'</button>' : '')+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+
     (vorschau && isVintageTheme() ? illuHTML(step.ex, "pl-illu pl-vorschau-v") : "")+
     '</div>'+   // Hinweis zur Übung steht in der Info (ⓘ), im Timer bleibt es ruhig
@@ -254,6 +255,16 @@ function enterStep(idx, opt){
   body.innerHTML = stepBodyHTML(step);
   body.classList.remove("step-in"); void body.offsetWidth; body.classList.add("step-in");   // neuer Schritt blendet ein
   ringSet(1);
+  // Fitnessstudio-Übung im Timer: Satz direkt eintragen (Gewicht × Wiederholungen); danach steht der neue letzte Satz unter dem Namen
+  var kgBtn = document.querySelector("#pl-body [data-plkg]");
+  if(kgBtn) kgBtn.addEventListener("click", function(){
+    var exId = kgBtn.getAttribute("data-plkg");
+    openGewichtSheet(exId, function(){
+      var txt = gymSatzText(exId);
+      playerState.steps.forEach(function(s){ if(s.ex === exId) s.kg = txt; });
+      var el = document.querySelector("#pl-body .pl-kg"); if(el) el.textContent = txt;
+    });
+  });
   var infoBtn = document.querySelector("#pl-body [data-plinfo]");
   if(infoBtn) infoBtn.addEventListener("click", function(){ openExInfo(infoBtn.getAttribute("data-plinfo"), true); });
   if(step.phase!=="done" && isVintageTheme()) odoInit(document.getElementById("pl-time"), step.duration);

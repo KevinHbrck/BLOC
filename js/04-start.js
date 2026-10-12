@@ -27,7 +27,7 @@ var HOME_KEYS = ["katalog", "warm", "intervall", "reps", "run"];   // Startseite
 var HOME_GROSS = ["katalog", "warm"];   // die zwei großen Felder oben (Workout, Mobility & Stretch); Timer, Summit und Run stehen darunter als Liste
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
-    e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--text)"];
+    e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--accent)"];
   if(k === "intervall"){ var tw = state.db.workouts.length, tb = state.db.blocks.length; return ["#intervall", t("tabTimer"), tw || tb ? t("tmQuick", { w:tw, b:tb }) : t("tmQuickLeer"), "var(--ti-color)"]; }
   if(k === "reps") return ["#reps", t("repTitle"), t("htReps"), "var(--rep-color)"];
   if(k === "run") return ["#run", t("runTitle"), run ? t("runLaeuft", { km:runKm(run.dist) }) : t("runTeaser"), "var(--run-color, #e5573f)"];
