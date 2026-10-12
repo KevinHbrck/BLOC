@@ -1,7 +1,7 @@
 "use strict";
 /* ============ Katalog ============
    Air und Studio unter einem Dach (2026-10-10), seit 2026-10-12 mit den Reitern Katalog · Baukasten:
-   - Katalog: zwei Abteilungen „Meine“ (eigene Workouts mit Timer und Pläne mit Gewicht × Wiederholungen) und „Workout-Katalog“
+   - Katalog: zwei Abteilungen „Meine“ (eigene Workouts mit Timer und Pläne mit Gewicht × Wiederholungen) und „Workoutkatalog“
      (fertige Workouts nach Fokus, mit Ort-Schalter und Filter); dazu eine Karte „Übungskatalog“ (eigene Seite #uebungskatalog:
      alle Übungen nach Bereichen, Filter, eigene Übung anlegen).
    - Baukasten: „Überrasch mich“ (Zufall oder nach Gewichtung) oder „Selber bauen“ (mit Timer oder mit Gewicht), groß und vorn.
@@ -20,8 +20,8 @@ function katTab(){
   if(s.libTab === "mine"){ s.katAbt = "meine"; return "workouts"; }
   return s.libTab === "exercises" ? "baukasten" : "workouts";
 }
-/* Abteilung im Katalog: „workouts“ (Workout-Katalog) oder „meine“ (eigene Workouts und Pläne) */
-function katAbt(){ return state.db.settings.katAbt === "meine" ? "meine" : "workouts"; }
+/* Abteilung im Katalog: „workouts“ (Workoutkatalog) oder „meine“ (eigene Workouts und Pläne) */
+function katAbt(){ var a = state.db.settings.katAbt; return a === "meine" || a === "uebungen" ? a : "workouts"; }   // „meine“ | „workouts“ (Workoutkatalog) | „uebungen“ (Übungskatalog)
 function katZuMeine(){ var s = state.db.settings; s.katTab = "workouts"; s.katAbt = "meine"; }
 function katTabSetzen(tab){
   var s = state.db.settings;
@@ -120,13 +120,11 @@ function katKopfHTML(tab, right){
   var kopf = topbar(t("katalog"), { back:"#home", right:right || "" }) +
     '<div class="rz kat-rz" style="--rz:var(--text)">'+b("workouts", t("katTabKatalog"))+b("baukasten", t("katTabBaukasten"))+'</div>';
   if(tab !== "workouts") return kopf;
-  // Katalog: Abteilungen Meine · Workout-Katalog, die Karte zum Übungskatalog, im Workout-Katalog ganz vorn der Ort
+  // Katalog: drei gleichrangige Abteilungen Meine · Workoutkatalog · Übungskatalog, im Workoutkatalog ganz vorn der Ort
   var abt = katAbt();
   function a(k, label){ return '<button type="button" data-katabt="'+k+'" class="'+(abt === k ? 'active' : '')+'" aria-pressed="'+(abt === k)+'">'+esc(label)+'</button>'; }
-  var anz = EXERCISES.filter(function(ex){ return ex.main !== "stretch" && !libHidden("ex:"+ex.id); }).length;
   return kopf +
-    '<div class="seg-row kat-abt" role="group">'+a("meine", t("tabMine"))+a("workouts", t("katAbtWorkouts"))+'</div>' +
-    '<button type="button" class="kat-ueb-karte" data-katueb>'+svgIcon(CAT_ICON.weight)+'<span class="kuk-t"><b>'+esc(t("katUebKatalog"))+'</b><small>'+esc(t("katUebKatalogSub", { n:anz }))+'</small></span><span class="kuk-pfeil">'+ICON_CHEV+'</span></button>' +
+    '<div class="seg-row kat-abt" role="group">'+a("meine", t("tabMine"))+a("workouts", t("katAbtWorkouts"))+a("uebungen", t("katUebKatalog"))+'</div>' +
     (abt === "workouts" ? katOrtHTML() : '');
 }
 /* Ort: Fitnessstudio (Workouts mit Geräten oder Langhantel) oder Freiluft (alles andere: zuhause, draußen, mit Kurzhantel, Band, Stange) */
@@ -179,7 +177,7 @@ function katKopfBinden(){
       katTabSetzen(k); renderKatalog(); window.scrollTo(0, 0);
     });
   });
-  // Abteilung des Katalogs: Meine · Workout-Katalog
+  // Abteilung des Katalogs: Meine · Workoutkatalog
   app.querySelectorAll("[data-katabt]").forEach(function(b){
     b.addEventListener("click", function(){
       var a = b.getAttribute("data-katabt");
@@ -188,8 +186,6 @@ function katKopfBinden(){
       renderKatalog(); window.scrollTo(0, 0);
     });
   });
-  var ub = app.querySelector("[data-katueb]");
-  if(ub) ub.addEventListener("click", function(){ go("#uebungskatalog"); });
   app.querySelectorAll("[data-katort]").forEach(function(b){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-katort");
@@ -209,7 +205,9 @@ function renderKatalog(){
   if(stPlanAktiv && stPlanFind(stPlanAktiv)) return renderStudioPlan();
   stPlanAktiv = null; stPlanBauen = false;
   var tab = katTab();
-  return tab === "baukasten" ? renderKatalogBaukasten() : katAbt() === "meine" ? renderLibrary() : renderKatalogWorkouts();
+  if(tab === "baukasten") return renderKatalogBaukasten();
+  var abt = katAbt();
+  return abt === "meine" ? renderLibrary() : abt === "uebungen" ? renderKatalogUebungen() : renderKatalogWorkouts();
 }
 
 /* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
@@ -237,7 +235,7 @@ function renderKatalogBaukasten(){
   });
 }
 
-/* ---------- Übungskatalog (eigene Seite #uebungskatalog) ---------- */
+/* ---------- Übungskatalog (dritte Abteilung des Katalogs; #uebungskatalog führt dorthin) ---------- */
 function renderKatalogUebungen(){
   tabLeiste("katalog");
   var s = state.db.settings, alle = studioAlle();
@@ -273,7 +271,7 @@ function renderKatalogUebungen(){
   // früher (in Air) ausgeblendete Übungen: unten gesammelt, mit „Einblenden“
   var verborgen = EXERCISES.filter(function(ex){ return ex.main !== "stretch" && libHidden("ex:"+ex.id); });
   app.innerHTML =
-    topbar(t("katUebKatalog"), { back:"#katalog", right:hw.knopf+lupeHTML("st", studioQuery) }) +
+    katKopfHTML("workouts", hw.knopf+lupeHTML("st", studioQuery)) +
     '<button type="button" class="btn btn-secondary kat-eigene" data-stnew2>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' +
     hw.z(0, "page-hint") +
     suchFeldHTML(studioQuery, "st", t("stSearch")) +

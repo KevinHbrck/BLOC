@@ -77,7 +77,7 @@
     await bis(function () { return $(".af-body"); }, 2000, "Filterkarte offen");
   }
   async function heim() { await laden(); await bis(function () { return $(".area-tile"); }, 5000, "Startseite"); }
-  // Katalog-Wege (seit 2026-10-12: Reiter Katalog · Baukasten; im Katalog die Abteilungen Meine · Workout-Katalog und die Karte Übungskatalog)
+  // Katalog-Wege (seit 2026-10-12: Reiter Katalog · Baukasten; im Katalog die Abteilungen Meine · Workoutkatalog und die Karte Übungskatalog)
   async function zuKatalogTab() {
     if (!$("[data-kattab]")) {   // auf einer Unterseite (Übungskatalog, Plan): zurück
       if ($("button.back")) klick("button.back");
@@ -89,9 +89,9 @@
   }
   async function zuWorkoutKatalog() {
     await zuKatalogTab();
-    var b = await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Abteilung Workout-Katalog");
+    var b = await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Abteilung Workoutkatalog");
     if (!b.classList.contains("active")) klick(b);
-    await bis(function () { return $('[data-katabt="workouts"].active') && $(".kat-ort"); }, 3000, "Workout-Katalog mit Ort-Schalter");
+    await bis(function () { return $('[data-katabt="workouts"].active') && $(".kat-ort"); }, 3000, "Workoutkatalog mit Ort-Schalter");
   }
   async function zuMeine() {
     await zuKatalogTab();
@@ -100,8 +100,8 @@
   }
   async function zuUebungskatalog() {
     await zuKatalogTab();
-    klick(await bis(function () { return $("[data-katueb]"); }, 3000, "Karte Übungskatalog"));
-    await bis(function () { return $$("[data-studio]").length > 0 && /^#uebungskatalog/.test(W.location.hash); }, 3000, "Übungskatalog");
+    klick(await bis(function () { return $('[data-katabt="uebungen"]'); }, 3000, "Abteilung Übungskatalog"));
+    await bis(function () { return $('[data-katabt="uebungen"].active') && $$("[data-studio]").length > 0; }, 3000, "Übungskatalog");
   }
   async function zuBaukasten(modus) {
     if (!$("[data-kattab]")) { if ($("button.back")) klick("button.back"); }
@@ -149,7 +149,7 @@
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
     }],
-    ["Workout: Reiter Katalog · Baukasten, Abteilungen Meine · Workout-Katalog, Übungskatalog, Überrasch mich im Baukasten", async function () {
+    ["Workout: Reiter Katalog · Baukasten, Abteilungen Meine · Workoutkatalog, Übungskatalog, Überrasch mich im Baukasten", async function () {
       klick('[data-nav="#katalog"]');
       await bis(function () { return $$("[data-kattab]").length === 2; }, 3000, "Reiter");
       var tabs = $$("[data-kattab]").map(function (b) { return b.textContent.trim(); }).join(" · ");
@@ -158,18 +158,17 @@
       pruefe(/^Workout$/.test($(".topbar h1").textContent.trim()), "Titel ist nicht „Workout“");
       await zuKatalogTab();
       var abt = $$("[data-katabt]").map(function (b) { return b.textContent.trim(); }).join(" · ");
-      pruefe(abt === "Meine · Workout-Katalog", "Abteilungen: " + abt);
-      pruefe($("[data-katueb]") && /Übungskatalog/.test($("[data-katueb]").textContent), "Karte „Übungskatalog“ fehlt");
+      pruefe(abt === "Meine · Workoutkatalog · Übungskatalog", "Abteilungen: " + abt);
       pruefe(!$(".fab") && !$("[data-fab]"), "Das Plus ist weg: es darf kein Plus-Knopf mehr da sein");
       klick('[data-katabt="workouts"]');
-      await bis(function () { return $(".kat-ort") && $$(".lib-card").length >= 20; }, 3000, "Workout-Katalog");
+      await bis(function () { return $(".kat-ort") && $$(".lib-card").length >= 20; }, 3000, "Workoutkatalog");
       var gr = $$("details.kat-gr");
       pruefe(gr.length >= 6 && gr.every(function (d) { return !d.open && sichtbar(d); }), "Workouts: zu Beginn sollen nur die Überschriften stehen (" + gr.length + " Bereiche)");
       klick(gr[0].querySelector("summary"));
       pruefe(gr[0].open && $$(".lib-card").filter(sichtbar).length >= 1, "Antippen klappt den Bereich nicht auf");
       klick(gr[0].querySelector("summary"));
       pruefe(!gr[0].open, "zweites Antippen klappt nicht zu");
-      pruefe($(".kat-ort") && !$("[data-surprise]") && !$("[data-bauselber]"), "Im Workout-Katalog sollen nur der Ort-Schalter, aber nicht Überrasch mich und Selber bauen stehen");
+      pruefe($(".kat-ort") && !$("[data-surprise]") && !$("[data-bauselber]"), "Im Workoutkatalog sollen nur der Ort-Schalter, aber nicht Überrasch mich und Selber bauen stehen");
       pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Katalog");
       // Sortierung A–Z: kleiner Schalter in der Kopfzeile der Filterkarte; sortiert wird innerhalb der Bereiche
       pruefe($(".air-filter .af-az") && !$(".air-filter .fc-seg"), "A–Z-Schalter fehlt oder der Sortier-Block steht noch in der Karte");
@@ -191,11 +190,9 @@
       // Übungskatalog: eigene Seite, alle Übungen zugeklappt nach Bereichen, „Eigene Übung anlegen“ oben
       await zuUebungskatalog();
       pruefe($("[data-stnew2]") && /Eigene Übung/.test($("[data-stnew2]").textContent), "„Eigene Übung anlegen“ fehlt im Übungskatalog");
-      pruefe(/Übungskatalog/.test($(".topbar h1").textContent), "Titel „Übungskatalog“ fehlt");
+      pruefe($('[data-katabt="uebungen"].active') && $$("[data-katabt]").length === 3, "Übungskatalog ist eine gleichrangige Abteilung neben Meine und Workoutkatalog");
       var ug = $$("details.kat-gr");
       pruefe(ug.length >= 7 && ug.every(function (d) { return !d.open && sichtbar(d); }), "Übungen: zu Beginn sollen nur die Überschriften stehen (" + ug.length + " Bereiche)");
-      klick("button.back");
-      await bis(function () { return $('[data-kattab="workouts"]'); }, 3000, "zurück im Katalog");
     }],
     ["Suche: „pull ups“, „klimmzug“, „liegestutz“", async function () {
       await zuUebungskatalog();
@@ -1042,7 +1039,7 @@
       pruefe($$(".area-tile:not([data-bereich=\"warm\"]):not([data-bereich=\"katalog\"]) .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen (außer Workout in Orange und Mobility & Stretch in Grün)");
       klick('[data-nav="#katalog"]');
       await zuKatalogTab();
-      klick(await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Workout-Katalog"));
+      klick(await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Workoutkatalog"));
       await bis(function () { return $(".kat-gr .sag-ico"); }, 3000, "Bereiche");
       pruefe($$(".kat-gr .sag-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Körperregionen sollen schwarz/weiß sein");
       await zuBaukasten();   // „Überrasch mich“ im BLOC-Orange (Symbol und Hintergrund), „Selber bauen“ in der Standardfarbe

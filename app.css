@@ -2334,11 +2334,6 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .pg-sheet .st-eingabe{ margin:6px 0 4px; }
 /* Katalog: Abteilungen Meine · Workout-Katalog, Karte zum Übungskatalog; Baukasten mit zwei großen Wegen */
 .seg-row.kat-abt, .seg-row.bau-modus{ margin:2px 0 10px; }
-.kat-ueb-karte{ display:flex; align-items:center; gap:12px; width:100%; margin:0 0 10px; padding:12px 14px; border-radius:16px; border:1px solid var(--border); background:var(--surface); color:var(--text); font:inherit; text-align:left; cursor:pointer; }
-.kat-ueb-karte > .ico{ width:26px; height:26px; flex:none; }
-.kat-ueb-karte .kuk-t{ flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.25; }
-.kat-ueb-karte .kuk-t b{ font-size:16px; } .kat-ueb-karte .kuk-t small{ font-size:12.5px; color:var(--text-dim); }
-.kat-ueb-karte .kuk-pfeil{ color:var(--text-dim); display:flex; }
 .kat-eigene{ margin:0 0 12px; display:flex; align-items:center; justify-content:center; gap:8px; }
 .kat-eigene .ico, .kat-eigene svg{ width:20px; height:20px; }
 .bau-hinweis{ font-size:13px; color:var(--text-dim); margin:0 2px 12px; }

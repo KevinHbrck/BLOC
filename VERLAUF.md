@@ -3,9 +3,9 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-12 · Workout umgebaut: Katalog (Meine · Workout-Katalog · Übungskatalog) und Baukasten
+## 2026-10-12 · Workout umgebaut: Katalog (Meine · Workoutkatalog · Übungskatalog) und Baukasten
 
-- **Zwei Reiter**: **Katalog** und **Baukasten**. Der Reiter „Meine“ ist weg: im Katalog stehen die Abteilungen **Meine** (eigene Workouts mit Timer und Pläne) und **Workout-Katalog** (Ort-Schalter, Filter); dazu die Karte **Übungskatalog** (eigene Seite `#uebungskatalog`, oben „Eigene Übung anlegen“).
+- **Zwei Reiter**: **Katalog** und **Baukasten**. Der Reiter „Meine“ ist weg: im Katalog stehen drei gleichrangige Abteilungen **Meine** (eigene Workouts mit Timer und Pläne), **Workoutkatalog** (Ort-Schalter, Filter) und **Übungskatalog** (alle Übungen nach Bereichen, oben „Eigene Übung anlegen“; `#uebungskatalog` führt dorthin).
 - **Baukasten** (früher „Übungen“): groß und vorn **Überrasch mich** und **Selber bauen**, darüber der Schalter „Mit Timer · Mit Gewicht“ (Selber bauen öffnet den Baukasten bzw. den Plan-Bau).
 - **Das Plus ist weg**. **Plan nach Gewichtung** steht im Fenster „Überrasch mich“ (Umschalter „Zufall · Nach Gewichtung“); eigene Übungen legt man im Übungskatalog an.
 - Alte Einstellungen werden übernommen (`katTab` „meine“ → Katalog/Meine, „uebungen“ → Baukasten). Schnelltest 33 Prüfungen. Fassung 2026-10-12-10.

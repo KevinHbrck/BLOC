@@ -215,7 +215,7 @@ function render(){
   if(route==="play") return startPlayer(parts[1]);
   if(route==="playblock") return startBlockPlayer(parts[1]);
   if(route==="katalog" || route==="library") return renderKatalog();   // „#library“ (Air) und „#timers“ (Studio) sind jetzt der Katalog
-  if(route==="uebungskatalog") return renderKatalogUebungen();
+  if(route==="uebungskatalog"){ state.db.settings.katTab = "workouts"; state.db.settings.katAbt = "uebungen"; return renderKatalog(); }
   if(route==="exedit") return renderExEdit(parts[1]);
   if(route==="import") return renderImport(parts[1]);
   if(route==="mybuild") return renderMyBuild(parts[1]);
