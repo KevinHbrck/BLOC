@@ -19,8 +19,8 @@
   --wo-text:var(--accent-text);
   --bl-color:#7a4fd6;
   --bl-text:#ffffff;
-  --gym-color:#f08a1c;   /* Fitnessstudio: Orangeton (Freiluft = --tp-color, blau) */
-  --gym-text:#ffffff;
+  --gym-color:var(--accent);   /* Fitnessstudio: dasselbe Orange wie das BLOC-Logo (Freiluft = --tp-color, blau) */
+  --gym-text:var(--accent-text);
   --tp-color:#3867e8;
   --tp-text:#ffffff;
   --ti-color:#1e8fd5;   /* Timer (Blöcke und Timer-Workouts): ein leicht anderes, helleres Blau als Air */
@@ -58,8 +58,8 @@
   --danger:#ff5c60;
   --bl-color:#a98bff;
   --bl-text:#170b33;
-  --gym-color:#ffa24d;   /* Fitnessstudio: Orangeton (Freiluft = --tp-color, blau) */
-  --gym-text:#1d1006;
+  --gym-color:var(--accent);   /* Fitnessstudio: dasselbe Orange wie das BLOC-Logo */
+  --gym-text:var(--accent-text);
   --tp-color:#6f92ff;
   --ti-color:#58b6f4;
   --tp-text:#0b1330;
@@ -86,8 +86,8 @@
     --danger:#ff5c60;
     --bl-color:#a98bff;
     --bl-text:#170b33;
-    --gym-color:#ffa24d;
-    --gym-text:#1d1006;
+    --gym-color:var(--accent);
+    --gym-text:var(--accent-text);
     --tp-color:#6f92ff;
   --ti-color:#58b6f4;
     --tp-text:#0b1330;
@@ -144,7 +144,7 @@
   --danger:#e1251b;
   --wo-color:#ef7b17; --wo-text:#ffffff;
   --bl-color:#f6b01e; --bl-text:#ffffff;
-  --gym-color:#f6b01e; --gym-text:#ffffff;   /* Kodak-Gelb bleibt das Fitnessstudio */
+  --gym-color:var(--accent); --gym-text:var(--accent-text);   /* Fitnessstudio: Akzent des Designs */
   --ti-color:#2a86b8; --ti-text:#ffffff;
   --tp-color:#2f5fa7; --tp-text:#ffffff;   /* Air auch hier blau (Kassetten-Blau), Mobility & Stretch grün */
   --rep-color:#8a5a2b; --ws-color:#4f8f3a; --ws-text:#ffffff;   /* Gelb ist hier schon Studio: Summit in Bandbraun */
@@ -1746,7 +1746,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   --accent:#ff8f3f; --accent-text:#1d1006;
   --rest:#a8c46a; --rest-text:#1a2208; --blockrest:#d99ac6; --danger:#ff7a6b;
   --bl-color:#d99ac6; --bl-text:#241018;
-  --gym-color:#f2a24a; --gym-text:#1d1006;   /* Fitnessstudio: Orangeton */
+  --gym-color:var(--accent); --gym-text:var(--accent-text);   /* Fitnessstudio: Akzent des Designs */
   --ti-color:#7fb4d6; --ti-text:#0d1a24;
   --tp-color:#8fa8d8; --tp-text:#0f1626;   /* Air: gedämpftes Blau */
   --rep-color:#e8c05a;
@@ -1818,6 +1818,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .kat-ort .ko-t small{ font-size:11.5px; opacity:.8; margin-top:1px; }
 .kat-ort button.on{ color:var(--text); border-color:var(--tp-color); background:color-mix(in srgb, var(--tp-color) 14%, var(--surface)); box-shadow:0 0 0 1px var(--tp-color) inset; }
 .kat-ort button.on .ico{ color:var(--tp-color); }
+.kat-ort button.on[data-katort="studio"] .ico, .kat-ort button.on[data-genort="studio"] .ico{ color:var(--gym-color); }   /* ausgewählt: Symbol im Orange des Ortes (nicht Blau) */
 .kat-ort [data-katort="studio"] .ico, .kat-ort [data-genort="studio"] .ico{ color:var(--gym-color); }
 .kat-ort [data-katort="frei"] .ico, .kat-ort [data-genort="frei"] .ico{ color:var(--tp-color); }
 .kat-ort button.on[data-katort="studio"], .kat-ort button.on[data-genort="studio"]{ border-color:var(--gym-color); background:color-mix(in srgb, var(--gym-color) 12%, var(--surface)); box-shadow:0 0 0 1px var(--gym-color) inset; }
@@ -2283,12 +2284,11 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .cover-hero .cover-info{ font-size:13.5px; line-height:1.45; color:var(--text-dim); margin:8px 0 6px; padding:10px 12px; border-radius:12px; background:color-mix(in srgb, var(--text) 5%, transparent); }
 
 /* ===== Ruhige Farbwelt (2026-10-12) =====
-   Symbole und Bereichsfarben sind Schwarz/Weiß (Textfarbe). Farbe tragen nur die Hauptaktion (Akzent, Koralle) und die beiden Orte:
+   Symbole und Bereichsfarben sind Schwarz/Weiß (Textfarbe), außer Mobility & Stretch (grün). Farbe tragen sonst nur die Hauptaktion (Akzent, Koralle) und die beiden Orte:
    Freiluft = blau (--tp-color), Fitnessstudio = orange (--gym-color). Das Kodak-Design behält seine eigene Palette. */
 :root:not([data-vintage]){
   --ti-color:var(--text); --ti-text:var(--bg);
   --rep-color:var(--text);
-  --ws-color:var(--text); --ws-text:var(--bg);
   --bl-color:var(--text); --bl-text:var(--bg);
   --run-color:var(--text);
 }
@@ -2309,3 +2309,6 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .plan-sticky-kopf span{ font-size:13px; color:var(--text-dim); }
 .plan-sticky .wb-streifen{ margin-bottom:0; padding-bottom:8px; }
 :root[data-vintage] .plan-sticky{ background-color:var(--bg); background-image:var(--paper); }
+/* Mobility & Stretch: das einzige Grün der Startseite (großes Feld direkt unter Workout); seine Übungen und Programme sind ebenfalls grün */
+.area-tile[data-bereich="warm"] .at-ico, .bs-zeile[data-bereich="warm"] .at-ico, .wi-zeile[data-bereich="warm"] .at-ico{
+  background:color-mix(in srgb, var(--ws-color) 14%, transparent); color:var(--ws-color); }

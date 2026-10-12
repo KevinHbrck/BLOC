@@ -238,7 +238,7 @@ function renderStudioPlan(){
       if(!gids.length) return;
       var gewaehlt = gids.filter(function(id){ return pos[id]; }).length;
       html += katZeileHTML("pl-"+g.id, katIcon(g.id), g.name, gids.length,
-        '<div class="fig-grid">'+gids.map(planKachel).join("")+'</div>', katOffenStd("pl-"+g.id, filterAn || !!g.immer),
+        '<div class="fig-grid">'+gids.map(planKachel).join("")+'</div>', katOffenStd("pl-"+g.id, !!g.immer),
         gewaehlt ? '<span class="kat-n">'+esc(t("katGewaehlt", { n:gewaehlt }))+'</span>' : '',
         gids.every(function(id){ return exIstStudio(findExercise(id)); }));
     });
@@ -306,7 +306,7 @@ function renderStudioPlan(){
     if(q){
       var suchen = function(){
         applySearch(app, stPlanQuery);
-        katSuche(stPlanQuery, filterB);
+        katSuche(stPlanQuery, false);
       };
       q.addEventListener("input", function(){ stPlanQuery = q.value; suchen(); });
       if(stPlanQuery) suchen();

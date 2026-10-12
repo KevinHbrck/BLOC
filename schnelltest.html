@@ -105,9 +105,9 @@
       await heim();
       pruefe($$(".area-tile[data-bereich]").length === 5, "erwartet 5 Bereichs-Kacheln, gefunden " + $$(".area-tile[data-bereich]").length);
       pruefe($('.area-tile[data-bereich="intervall"][data-nav="#intervall"]'), "Timer fehlt als Bereich auf der Startseite");
-      pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#katalog", "Workout steht nicht hervorgehoben vorn");
-      pruefe($$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "katalog,intervall,reps,run,warm", "Reihenfolge der Bereiche: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
-      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").length === 4, "die übrigen vier Bereiche fehlen in der Liste");
+      pruefe($(".area-tile.gross") && $(".area-tile.gross").getAttribute("data-nav") === "#katalog" && $$(".area-tile.gross").length === 2 && $$(".area-tile.gross")[1].getAttribute("data-nav") === "#warmstretch", "Workout und direkt darunter Mobility & Stretch sollen die großen Felder sein");
+      pruefe($$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "katalog,warm,intervall,reps,run", "Reihenfolge der Bereiche: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
+      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "intervall,reps,run", "Timer, Summit und Run sollen die Liste darunter sein");
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
@@ -382,7 +382,7 @@
       pruefe(/^\d+ Workouts anzeigen$/.test(knopf), "Knopf unten: " + knopf);
       var karten = $$(".lib-card").filter(function (c) { return !c.classList.contains("is-hidden"); }).length;
       pruefe(parseInt(knopf, 10) === karten, "Zahl am Knopf (" + knopf + ") passt nicht zu den " + karten + " Karten");
-      pruefe($$("details.kat-gr").length > 0 && $$("details.kat-gr").every(function (d) { return d.open; }), "Mit Filter sollen die passenden Bereiche offen stehen");
+      pruefe($$("details.kat-gr").length > 0 && $$("details.kat-gr").every(function (d) { return !d.open; }), "Auch mit Filter stehen die Bereiche zugeklappt da (nur eine Suche klappt sie auf)");
       klick('[data-streset]');
       await bis(function () { return !$('[data-stgr].on'); }, 2000, "Zurücksetzen");
       klick(".af-fuss .btn-primary");
@@ -413,11 +413,11 @@
       pruefe($('[data-stgr="brust"]') && $('[data-stgr="cardio"]') && $$("[data-stgr]").length === 7, "Übungen: sieben Bereiche erwartet (mit Cardio), gefunden " + $$("[data-stgr]").length);
       // Air- und Studio-Übungen gemeinsam: ein Chip „Widerstandsband“ zeigt alle Band-Übungen, offen
       klick('[data-start="band"]');
-      await bis(function () { return $('[data-start="band"].on') && $$("[data-studio]").filter(sichtbar).length >= 30; }, 2000, "Übungen: Chip „Widerstandsband“ zeigt die Band-Übungen offen");
+      await bis(function () { return $('[data-start="band"].on') && $$("[data-studio]").length >= 30; }, 2000, "Übungen: Chip „Widerstandsband“ zeigt die Band-Übungen offen");
       klick('[data-streset]');
       await bis(function () { return !$('[data-start].on'); }, 2000, "Übungen: Zurücksetzen (Band)");
       klick('[data-start="stange"]');
-      await bis(function () { return $('[data-start="stange"].on') && $$("[data-studio]").filter(sichtbar).length > 5; }, 2000, "Übungen: Chip „Stange & Barren“ zeigt die Übungen offen");
+      await bis(function () { return $('[data-start="stange"].on') && $$("[data-studio]").length > 5; }, 2000, "Übungen: Chip „Stange & Barren“ zeigt die Übungen offen");
       klick('[data-streset]');
       await bis(function () { return !$('[data-stgr].on') && $$("details.kat-gr").every(function (d) { return !d.open; }); }, 2000, "Übungen: Zurücksetzen klappt die Bereiche wieder zu");      // Mobility & Stretch › Dehnen: Körperregionen mehrfach
       await heim();
@@ -981,7 +981,7 @@
       var body = W.getComputedStyle(W.document.body).color;
       var gross = $(".area-tile.gross");
       pruefe(gross && parseFloat(W.getComputedStyle(gross).borderTopWidth) === 0, "Das erste Bereichs-Feld soll keine farbige Kontur haben (sah vorausgewählt aus)");
-      pruefe($$(".area-tile .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen");
+      pruefe($$(".area-tile:not([data-bereich=\"warm\"]) .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen (außer Mobility & Stretch in Grün)");
       klick('[data-nav="#katalog"]');
       klick(await bis(function () { return $('[data-kattab="workouts"]'); }, 3000, "Reiter Katalog"));
       await bis(function () { return $(".kat-gr .sag-ico"); }, 3000, "Bereiche");

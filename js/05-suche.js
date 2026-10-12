@@ -189,7 +189,7 @@ function openWasIstWas(){
     '<h3>'+esc(t("wiTitel"))+'</h3>'+
     HOME_KEYS.map(function(k){
       var d = bereichDaten(k);
-      return '<div class="wi-zeile" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><div><b>'+esc(d[1])+'</b><small>'+esc(t("wi_"+k))+'</small></div></div>';
+      return '<div class="wi-zeile" data-bereich="'+k+'" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><div><b>'+esc(d[1])+'</b><small>'+esc(t("wi_"+k))+'</small></div></div>';
     }).join("")+
     '<p class="hw-zeile" style="margin-top:12px">'+esc(t("wiSort"))+'</p>'+
     '<button class="btn btn-secondary" data-ok style="margin-top:12px">'+esc(t("wiOk"))+'</button>'+

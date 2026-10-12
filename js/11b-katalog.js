@@ -217,14 +217,14 @@ function renderKatalogUebungen(){
     var gym = ids.length > 0 && ids.every(function(id){ return exIstStudio(findExercise(id)); });   // nur Fitnessstudio: hellgrünes Symbol
     return katZeileHTML(id, ico, name, ids.length, '<div class="fig-grid">'+ids.map(studioKachel).join("")+(innenPlus || "")+'</div>', katOffenStd(id, offen), extra, gym);
   }
-  if(favs.length) html += zeile("fav", ICON_STAR, t("stFavs"), favs, filterAn);
-  if(zuletzt.length) html += zeile("zuletzt", KAT_ICON_UHR, t("stRecent"), zuletzt, filterAn);
+  if(favs.length) html += zeile("fav", ICON_STAR, t("stFavs"), favs, false);
+  if(zuletzt.length) html += zeile("zuletzt", KAT_ICON_UHR, t("stRecent"), zuletzt, false);
   gruppen.forEach(function(g){
     if(fGr.length && fGr.indexOf(g.id) < 0) return;
     var ids = g.ids.filter(artOk);
     if(!ids.length && (!g.eigene || filterAn)) return;
     var neu = g.eigene ? '<button type="button" class="fig-karte st-neu" data-stnew>'+ICON_PLUS+'<span class="fig-name">'+esc(t("stOwnNew"))+'</span></button>' : '';
-    html += zeile(g.id, katIcon(g.id), g.name, ids, filterAn, "", neu);
+    html += zeile(g.id, katIcon(g.id), g.name, ids, false, "", neu);   // Bereiche stehen immer zugeklappt da (auch mit Filter); nur eine Suche klappt Treffer auf
   });
   // früher (in Air) ausgeblendete Übungen: unten gesammelt, mit „Einblenden“
   var verborgen = EXERCISES.filter(function(ex){ return ex.main !== "stretch" && libHidden("ex:"+ex.id); });
@@ -265,7 +265,7 @@ function renderKatalogUebungen(){
   var q = app.querySelector("#st-q");
   function suchen(){
     applySearch(app, studioQuery);
-    katSuche(studioQuery, filterAn);   // bei einer Suche alle Bereiche mit Treffern offen, die übrigen weg
+    katSuche(studioQuery, false);   // bei einer Suche alle Bereiche mit Treffern offen, die übrigen weg
   }
   q.addEventListener("input", function(){ studioQuery = q.value; suchen(); });
   if(studioQuery) suchen();
@@ -387,7 +387,7 @@ function renderKatalogWorkouts(){
   KAT_WO_BEREICHE.forEach(function(b){
     if(!je[b]) return;
     var name = b === "ganz" ? t("katGanz") : t(KAT_GRUPPEN.filter(function(g){ return g.id === b; })[0].key);
-    liste += katZeileHTML("wo-"+b, b === "ganz" ? HOME_ICON.katalog : katIcon(b), name, je[b].length, '<div class="kat-inhalt">'+je[b].join("")+'</div>', katOffenStd("wo-"+b, filterAn), "", ort === "studio");
+    liste += katZeileHTML("wo-"+b, b === "ganz" ? HOME_ICON.katalog : katIcon(b), name, je[b].length, '<div class="kat-inhalt">'+je[b].join("")+'</div>', katOffenStd("wo-"+b, false), "", ort === "studio");
   });
   if(!liste) liste = '<div class="empty" style="padding:34px 20px;">'+esc(t("katWoNone"))+'</div>';
   liste += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("noResult"))+'</div>';
@@ -411,7 +411,7 @@ function renderKatalogWorkouts(){
   katBinden(function(){ return libQuery; });
   var lq = app.querySelector("#l-q");
   if(lq){
-    var suchen = function(){ applySearch(app, libQuery); katSuche(libQuery, filterAn); };
+    var suchen = function(){ applySearch(app, libQuery); katSuche(libQuery, false); };
     lq.addEventListener("input", function(){ libQuery = lq.value; suchen(); });
     if(libQuery) suchen();
   }

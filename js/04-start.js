@@ -23,7 +23,8 @@ function areaTile(key, href, titel, unter, farbe, art){
 }
 /* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
 var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Bereiche im Verlauf (gespeichert bleibt Air = lib und Studio = timer); die Statistik zeigt beide gemeinsam als „Workout“
-var HOME_KEYS = ["katalog", "intervall", "reps", "run", "warm"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
+var HOME_KEYS = ["katalog", "warm", "intervall", "reps", "run"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
+var HOME_GROSS = ["katalog", "warm"];   // die zwei großen Felder oben (Workout, Mobility & Stretch); Timer, Summit und Run stehen darunter als Liste
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--text)"];
@@ -50,8 +51,10 @@ function bereicheHTML(){
   var r = bereichReihe().filter(function(k){ return !fokusAus(k); });
   if(!r.length) return '<div class="card fokus-leer"><div>'+esc(t("fokusAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
   function kachel(k, art){ var d = bereichDaten(k); return areaTile(k, d[0], d[1], d[2], d[3], art); }
-  return '<div class="area-bereiche">'+kachel(r[0], "gross")+
-    '<div class="area-gruppe">'+r.slice(1).map(function(k){ return kachel(k, "zeile"); }).join("")+'</div></div>';
+  /* Oben die großen Felder (Workout, direkt darunter Mobility & Stretch), darunter Timer, Summit und Run als ruhige Liste in der gewählten Reihenfolge */
+  var gross = HOME_GROSS.filter(function(k){ return r.indexOf(k) > -1; }), klein = r.filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
+  return '<div class="area-bereiche">'+gross.map(function(k){ return kachel(k, "gross"); }).join("")+
+    (klein.length ? '<div class="area-gruppe">'+klein.map(function(k){ return kachel(k, "zeile"); }).join("")+'</div>' : '')+'</div>';
 }
 /* Langes Drücken (0,5 s, ohne zu wischen); der Klick danach wird geschluckt, damit die Seite nicht wechselt */
 var langDruckSperre = 0;
@@ -72,13 +75,14 @@ function langDruck(el, fn){
   el.addEventListener("contextmenu", function(e){ e.preventDefault(); });
 }
 function openBereicheSheet(){
-  var root = document.getElementById("overlayRoot"), r = bereichReihe();
+  /* sortiert werden nur Timer, Summit und Run; Workout und Mobility & Stretch stehen fest oben */
+  var root = document.getElementById("overlayRoot"), r = bereichReihe().filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
   function zeichnen(){
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bereiche-sheet">'+
       '<h3>'+esc(t("areasSort"))+'</h3><p>'+esc(t("areasSortHint"))+'</p>'+
       '<div class="bs-liste">'+r.map(function(k, i){
         var d = bereichDaten(k);
-        return '<div class="bs-zeile" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><b>'+esc(d[1])+'</b>'+
+        return '<div class="bs-zeile" data-bereich="'+k+'" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><b>'+esc(d[1])+'</b>'+
           '<button type="button" class="bs-pfeil" data-hoch="'+i+'"'+(i === 0 ? ' disabled' : '')+' aria-label="'+esc(t("moveUp"))+'">&#8593;</button>'+
           '<button type="button" class="bs-pfeil" data-runter="'+i+'"'+(i === r.length-1 ? ' disabled' : '')+' aria-label="'+esc(t("moveDown"))+'">&#8595;</button></div>';
       }).join("")+'</div>'+
@@ -91,7 +95,7 @@ function openBereicheSheet(){
     root.querySelector("[data-cancel]").addEventListener("click", schliessen);
     root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) schliessen(); });
     root.querySelector("[data-ok]").addEventListener("click", function(){
-      state.db.settings.bereiche = r.slice(); save(); schliessen();
+      state.db.settings.bereiche = HOME_GROSS.concat(r); save(); schliessen();
       if((parseHash()[0] || "home") === "home") renderHome();
     });
   }
