@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Namen und Verweise zwischen Workout und Mobility & Stretch
+
+- Der Bereich Workout heißt auf der Seite **Katalog** (Reiter Katalog | Baukasten); die Kachel auf der Startseite bleibt „Workout“.
+- In Mobility & Stretch heißt die Abteilung **Abläufe** (statt „Workoutkatalog“).
+- **Verweise**: unter der Liste in Mobility „Mehr Übungen im Workout-Katalog“ (öffnet den Übungskatalog), im Übungskatalog des Workouts „Aufwärmen und Dehnen: Mobility & Stretch“. Fassung 2026-10-12-16.
+
+## 2026-10-12 · Baukasten: Art folgt dem Ort
+
+- Im Baukasten läuft **Freiluft standardmäßig „Mit Timer“, Fitnessstudio „Mit Gewicht“**. Wer selbst umschaltet, behält die Wahl für diesen Ort; beim Ortswechsel gilt wieder der Standard (`bauModus()` in `js/11b-katalog.js`, `settings.bauModusOrt`). Schnelltest 33 Prüfungen.
+
 ## 2026-10-12 · Mobility & Stretch mit der Katalog-Logik des Workouts
 
 - **Reiter Katalog | Baukasten**; im Katalog die gleichrangigen Abteilungen **Meine · Workoutkatalog · Übungskatalog**, darunter wie beim Ort die Art **Aufwärmen | Dehnen** (Körperregionen und Körperkarte als Filter bleiben). Das Plus ist weg, „Eigene Übung anlegen“ steht im Übungskatalog.

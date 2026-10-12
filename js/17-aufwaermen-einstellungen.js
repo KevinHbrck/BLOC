@@ -19,7 +19,7 @@ function wsKopfHTML(tab, art){
   var abt = wsAbt();
   return reiterZeileHTML("var(--ws-color)", wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten")))+
     (tab === "workouts" ? '<div class="seg-row kat-abt ws-abt" role="group">'+wsKnopf("wsabt", "meine", abt === "meine", t("tabMine"))+
-      wsKnopf("wsabt", "workouts", abt === "workouts", t("katAbtWorkouts"))+wsKnopf("wsabt", "uebungen", abt === "uebungen", t("katUebKatalog"))+'</div>' : '')+
+      wsKnopf("wsabt", "workouts", abt === "workouts", t("wsAbtWorkouts"))+wsKnopf("wsabt", "uebungen", abt === "uebungen", t("katUebKatalog"))+'</div>' : '')+
     '<div class="theme-pick lib-tabs seg-2 ws-art">'+wsKnopf("wsart", "warm", art === "warm", t("wsWarm"))+wsKnopf("wsart", "dehn", art === "dehn", t("wsDehn"))+'</div>';
 }
 function wsKopfBinden(){
@@ -140,11 +140,14 @@ function renderWarmStretch(){
     // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
     '<div style="--bereich:var(--ws-color)">'+(liste || '<div class="empty">'+t("libEmpty")+'</div>')+'</div>'+
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>'+
-    "<div style=\"height:40px\"></div>";
+    (tab !== "meine" ? '<button type="button" class="btn btn-secondary kat-link" data-wslink>'+svgIcon(HOME_ICON.katalog)+' '+esc(t("wsLinkWorkout"))+'</button>' : '')+
+    '<div style="height:40px"></div>';
   bindCommon();
   function neu(){ var y = window.scrollY; renderWarmStretch(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   wsKopfBinden();
+  var wl = app.querySelector("[data-wslink]");
+  if(wl) wl.addEventListener("click", function(){ go("#uebungskatalog"); });
   wsRegionBinden(neu);
   var wq = app.querySelector("#ws-q");
   if(wq){

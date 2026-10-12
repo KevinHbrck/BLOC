@@ -117,7 +117,7 @@ function katSuche(q, standard){
 /* ---------- Kopf: Titel, Reiter, Überrasch mich ---------- */
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
-  var kopf = topbar(t("katalog"), { back:"#home", right:right || "" }) +
+  var kopf = topbar(t("katTitel"), { back:"#home", right:right || "" }) +
     '<div class="rz kat-rz" style="--rz:var(--text)">'+b("workouts", t("katTabKatalog"))+b("baukasten", t("katTabBaukasten"))+'</div>';
   if(tab !== "workouts") return kopf;
   // Katalog: drei gleichrangige Abteilungen Meine · Workoutkatalog · Übungskatalog, im Workoutkatalog ganz vorn der Ort
@@ -164,7 +164,7 @@ function bauOrtBinden(neu, box){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-bauort");
       if(o === katOrt()) return;
-      state.db.settings.katOrt = o; save(); neu();
+      state.db.settings.katOrt = o; delete state.db.settings.bauModusOrt; save(); neu();
     });
   });
 }
@@ -208,7 +208,7 @@ function katKopfBinden(){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-katort");
       if(o === katOrt()) return;
-      state.db.settings.katOrt = o; save(); katOffen = {};
+      state.db.settings.katOrt = o; delete state.db.settings.bauModusOrt; save(); katOffen = {};
       renderKatalog(); window.scrollTo(0, 0);
     });
   });
@@ -228,9 +228,16 @@ function renderKatalog(){
   return abt === "meine" ? renderLibrary() : abt === "uebungen" ? renderKatalogUebungen() : renderKatalogWorkouts();
 }
 
+/* Art des Workouts im Baukasten: Freiluft läuft standardmäßig mit Timer, Fitnessstudio mit Gewicht. Wer selbst umschaltet, behält das für diesen Ort;
+   wechselt der Ort, gilt wieder der Standard. */
+function bauModus(){
+  var s = state.db.settings;
+  if(s.bauModusOrt === katOrt() && (s.bauModus === "gewicht" || s.bauModus === "timer")) return s.bauModus;
+  return katOrt() === "studio" ? "gewicht" : "timer";
+}
 /* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
 function renderKatalogBaukasten(){
-  var s = state.db.settings, modus = s.bauModus === "gewicht" ? "gewicht" : "timer";
+  var s = state.db.settings, modus = bauModus();
   var hw = hinweise("bau2", ["katBauHint"]);
   app.innerHTML =
     katKopfHTML("baukasten", hw.knopf) +
@@ -246,7 +253,7 @@ function renderKatalogBaukasten(){
   bindCommon();
   katKopfBinden();
   app.querySelectorAll("[data-baumodus]").forEach(function(b){
-    b.addEventListener("click", function(){ s.bauModus = b.getAttribute("data-baumodus"); save(); renderKatalog(); });
+    b.addEventListener("click", function(){ s.bauModus = b.getAttribute("data-baumodus"); s.bauModusOrt = katOrt(); save(); renderKatalog(); });
   });
   bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
@@ -299,6 +306,7 @@ function renderKatalogUebungen(){
     html +
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>' +
     hiddenBlockHTML(verborgen.length, verborgen.map(function(ex){ return libExCard(ex, true, exSubText(ex)); }).join("")) +
+    '<button type="button" class="btn btn-secondary kat-link" data-nav="#warmstretch">'+svgIcon(HOME_ICON.warm)+' '+esc(t("katLinkMobility"))+'</button>' +
     '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();

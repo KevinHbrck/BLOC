@@ -2357,3 +2357,6 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .bau-karte.bau-sp.ws-bau{ border-color:color-mix(in srgb, var(--ws-color) 40%, transparent); background:color-mix(in srgb, var(--ws-color) 9%, var(--surface)); }
 .bau-karte.ws-bau .bk-ico{ background:color-mix(in srgb, var(--ws-color) 16%, transparent); color:var(--ws-color); }
 .ws-abt button.active{ background:color-mix(in srgb, var(--ws-color) 14%, var(--surface)); border-color:var(--ws-color); color:var(--text); box-shadow:inset 0 0 0 1px var(--ws-color); }
+/* Verweis zwischen Workout und Mobility & Stretch, unter der Liste */
+.kat-link{ display:flex; align-items:center; justify-content:center; gap:8px; margin:18px 0 0; width:100%; }
+.kat-link .ico, .kat-link svg{ width:20px; height:20px; }

@@ -155,7 +155,7 @@
       var tabs = $$("[data-kattab]").map(function (b) { return b.textContent.trim(); }).join(" · ");
       pruefe(tabs === "Katalog · Baukasten", "Reihenfolge ist " + tabs);
       pruefe($(".rz") && !$(".lib-tabs-card") && !$(".surprise-card"), "Reiterzeile fehlt oder die große Karte steht noch da");
-      pruefe(/^Workout$/.test($(".topbar h1").textContent.trim()), "Titel ist nicht „Workout“");
+      pruefe(/^Katalog$/.test($(".topbar h1").textContent.trim()), "Titel ist nicht „Katalog“");
       await zuKatalogTab();
       var abt = $$("[data-katabt]").map(function (b) { return b.textContent.trim(); }).join(" · ");
       pruefe(abt === "Meine · Workoutkatalog · Übungskatalog", "Abteilungen: " + abt);
@@ -700,6 +700,17 @@
       await heim();
       klick('[data-nav="#katalog"]');
       await zuBaukasten("gewicht");
+      // Standard der Art: Freiluft = Mit Timer, Fitnessstudio = Mit Gewicht; wer selbst umschaltet, behält es für diesen Ort bis zum Wechsel
+      klick('[data-bauort="studio"]');
+      await bis(function () { return $('[data-bauort="studio"].on') && $('[data-baumodus="gewicht"].active'); }, 2000, "Fitnessstudio: Mit Gewicht ist der Standard");
+      klick('[data-bauort="frei"]');
+      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-baumodus="timer"].active'); }, 2000, "Freiluft: Mit Timer ist der Standard");
+      klick('[data-baumodus="gewicht"]');   // eigene Wahl bleibt für diesen Ort ...
+      await bis(function () { return $('[data-baumodus="gewicht"].active'); }, 2000, "eigene Wahl Mit Gewicht in Freiluft");
+      klick('[data-bauort="studio"]');      // ... beim Wechsel des Ortes gilt wieder der Standard
+      klick('[data-bauort="frei"]');
+      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-baumodus="timer"].active'); }, 2000, "nach dem Ortswechsel wieder Mit Timer");
+      await zuBaukasten("gewicht");
       pruefe($(".bau-karte[data-surprise]") && $("[data-bauselber]"), "Die beiden Wege im Baukasten (Überrasch mich, Selber bauen) fehlen");
       var plaene0 = (JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length;
       klick("[data-bauselber]");   // mit Gewicht: der Plan-Bau
@@ -755,6 +766,13 @@
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
       pruefe($$("[data-wstab]").length === 2 && $$("[data-wsabt]").length === 3 && $('[data-wstab="baukasten"]'), "Mobility & Stretch: Reiter Katalog · Baukasten und Abteilungen Meine · Workoutkatalog · Übungskatalog fehlen");
+      pruefe(/Abläufe/.test($('[data-wsabt="workouts"]').textContent) && !/Workoutkatalog/.test($('[data-wsabt="workouts"]').textContent), "Mobility: die Abteilung heißt „Abläufe“, nicht „Workoutkatalog\"");
+      // Verweise zwischen den Bereichen: Mobility → Workout › Übungskatalog (Titel „Katalog“), von dort zurück nach Mobility & Stretch
+      klick(await bis(function () { return $("[data-wslink]"); }, 2000, "Verweis zum Workout-Katalog"));
+      await bis(function () { return $('[data-katabt="uebungen"].active'); }, 3000, "Workout › Übungskatalog");
+      pruefe(/Katalog/.test($(".topbar").textContent) && !/^Workout/.test($(".topbar").textContent.trim()), "Titel im Workout-Bereich: " + $(".topbar").textContent);
+      klick(await bis(function () { return $('.kat-link[data-nav="#warmstretch"]'); }, 2000, "Verweis nach Mobility & Stretch"));
+      await bis(function () { return $("[data-wsabt]") && /Mobility/.test($(".topbar").textContent); }, 3000, "zurück in Mobility & Stretch");
       klick('[data-wsabt="uebungen"]');
       await filterAuf();
       await bis(function () { return $$("[data-wsreg]").length === 8; }, 3000, "acht Körperregionen");
