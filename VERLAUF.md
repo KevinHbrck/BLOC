@@ -7,7 +7,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - **Reiter Katalog | Baukasten**; im Katalog die gleichrangigen Abteilungen **Meine · Workoutkatalog · Übungskatalog**, darunter wie beim Ort die Art **Aufwärmen | Dehnen** (Körperregionen und Körperkarte als Filter bleiben). Das Plus ist weg, „Eigene Übung anlegen“ steht im Übungskatalog.
 - **Baukasten**: **Überrasch mich** (Dauer 5–30 Min, bei Dehnen mit Körperregionen; ergibt einen Ablauf mit „Neu würfeln“) und **Selber bauen**.
-- Alte Einstellung (Reiter Übungen/Meine) wird als Abteilung übernommen. Schnelltest 33 Prüfungen. Fassung 2026-10-12-13.
+- Alte Einstellung (Reiter Übungen/Meine) wird als Abteilung übernommen. Schnelltest 33 Prüfungen. Fassung 2026-10-12-14 (aktive Abteilung grün).
 
 ## 2026-10-12 · Beim Bauen immer nach Ort getrennt, Körpermodell bei „Plan nach Gewichtung“
 

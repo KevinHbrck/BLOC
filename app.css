@@ -2356,3 +2356,4 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 /* Mobility & Stretch: Baukasten in der Farbe des Bereichs */
 .bau-karte.bau-sp.ws-bau{ border-color:color-mix(in srgb, var(--ws-color) 40%, transparent); background:color-mix(in srgb, var(--ws-color) 9%, var(--surface)); }
 .bau-karte.ws-bau .bk-ico{ background:color-mix(in srgb, var(--ws-color) 16%, transparent); color:var(--ws-color); }
+.ws-abt button.active{ background:color-mix(in srgb, var(--ws-color) 14%, var(--surface)); border-color:var(--ws-color); color:var(--text); box-shadow:inset 0 0 0 1px var(--ws-color); }

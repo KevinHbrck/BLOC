@@ -18,7 +18,7 @@ function wsKnopf(attr, wert, aktiv, text){ return '<button type="button" data-'+
 function wsKopfHTML(tab, art){
   var abt = wsAbt();
   return reiterZeileHTML("var(--ws-color)", wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten")))+
-    (tab === "workouts" ? '<div class="seg-row kat-abt" role="group">'+wsKnopf("wsabt", "meine", abt === "meine", t("tabMine"))+
+    (tab === "workouts" ? '<div class="seg-row kat-abt ws-abt" role="group">'+wsKnopf("wsabt", "meine", abt === "meine", t("tabMine"))+
       wsKnopf("wsabt", "workouts", abt === "workouts", t("katAbtWorkouts"))+wsKnopf("wsabt", "uebungen", abt === "uebungen", t("katUebKatalog"))+'</div>' : '')+
     '<div class="theme-pick lib-tabs seg-2 ws-art">'+wsKnopf("wsart", "warm", art === "warm", t("wsWarm"))+wsKnopf("wsart", "dehn", art === "dehn", t("wsDehn"))+'</div>';
 }
