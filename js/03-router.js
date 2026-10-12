@@ -61,7 +61,9 @@ window.addEventListener("popstate", function(){
     syncGuard();
     return;
   }
-  // 1b. Plan-Bau und Gewichtung liegen auf der Katalogseite: Zurück geht erst zur Liste (wie der Pfeil oben), nicht gleich zur Startseite
+  // 1b. Neues, nicht gespeichertes Workout: erst fragen (Speichern · Verwerfen)
+  if(bauVerlassenFrage()){ syncGuard(); return; }
+  // 1c. Plan-Bau und Gewichtung liegen auf der Katalogseite: Zurück geht erst zur Liste (wie der Pfeil oben), nicht gleich zur Startseite
   if(katPlanVerlassen()){ syncGuard(); return; }
   // 2. laufender Timer: nicht einfach weg - erst nachfragen
   if(document.getElementById("playerRoot").innerHTML && playerState){
@@ -221,9 +223,9 @@ function render(){
   if(route==="exedit") return renderExEdit(parts[1]);
   if(route==="import") return renderImport(parts[1]);
   if(route==="mybuild") return renderMyBuild(parts[1]);
-  bauEntwurf = null;   // Baukasten verlassen: nicht gespeicherte Änderungen verwerfen
+  if(!(coverDraft && coverDraft.src === "neu" && (route === "cover" || route === "playdraft"))) bauEntwurf = null;   // Baukasten verlassen (das Deckblatt eines noch nicht gespeicherten Workouts behält den Entwurf zum Zurückkehren)
   if(route==="playmy") return launchFromSource({ type:"mine", id:parts[1] });
-  if(route==="cover") return parts[1]==="surprise" || parts[1]==="shared"
+  if(route==="cover") return parts[1]==="surprise" || parts[1]==="shared" || parts[1]==="neu"
     ? (coverDraft && coverDraft.src===parts[1] ? renderDraftPage(coverDraft, { cover:true, back:"#library" }) : go("#library"))
     : renderCover(parts[1], parts[2]);
   if(route==="playdraft") return launchFromSource({ type:"draft" });

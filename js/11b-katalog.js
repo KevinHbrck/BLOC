@@ -168,24 +168,36 @@ function bauOrtBinden(neu, box){
     });
   });
 }
-/* Neuer Plan: sofort angelegt (es muss nichts gespeichert werden) und gleich im Plan-Bau geöffnet.
-   Bleibt er ohne Übung liegen, wird er beim Verlassen wieder entfernt, damit keine leeren Pläne herumliegen. */
+/* Neuer Plan: wird erst mit „Speichern“ (unten im Plan-Bau) in „Meine“ aufgenommen; bis dahin ist er ein Entwurf (p.entwurf), den die Listen nicht zeigen.
+   Beim Verlassen fragt BLOC nach (Speichern oder Verwerfen); ein leerer Entwurf verschwindet ohne Frage. */
 var stPlanNeuId = null;
 function katPlanNeu(){
   katPlanAufraeumen();
-  var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[], updatedAt:Date.now() };
+  var p = { id:uid(), name:t("planDefault", { n:stPlaene().filter(function(x){ return !x.entwurf; }).length+1 }), ids:[], updatedAt:Date.now(), entwurf:true };
   stPlaene().push(p); save();
-  stPlanNeuId = p.id;
   katZuMeine();
   stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; stGen = null;
   renderKatalog(); window.scrollTo(0, 0);
 }
+/* Entwürfe, die gerade nicht offen sind (z. B. nach einem Abbruch), und leere neue Pläne werden entfernt */
 function katPlanAufraeumen(){
+  var l = stPlaene(), rest = l.filter(function(x){ return !x.entwurf || x.id === stPlanAktiv; });
+  if(rest.length !== l.length){ state.db.settings.stPlaene = rest; save(); }
   var id = stPlanNeuId;
   if(!id || stPlanAktiv === id) return;
   stPlanNeuId = null;
   var p = stPlanFind(id);
   if(p && !stPlanIds(p).length){ state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== id; }); save(); }
+}
+/* Plan-Bau verlassen: ein neuer Plan mit Übungen fragt erst nach (Speichern · Verwerfen · Abbrechen), ein leerer Entwurf geht ohne Frage */
+function planVerlassen(p, weiter){
+  if(!p || !p.entwurf){ weiter(); return; }
+  function weg(){ state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; }); save(); }
+  if(!stPlanIds(p).length){ weg(); weiter(); return; }
+  openActionSheet(t("planNichtGespeichert", { n:p.name }), [
+    { ico:P_CHECK, label:t("save"), fn:function(){ delete p.entwurf; p.updatedAt = Date.now(); save(); showToast(t("planGespeichert")); weiter(); } },
+    { ico:P_TRASH, label:t("verwerfen"), danger:true, fn:function(){ weg(); weiter(); } }
+  ]);
 }
 function katKopfBinden(){
   app.querySelectorAll("[data-kattab]").forEach(function(b){
@@ -232,8 +244,11 @@ function renderKatalog(){
 function katPlanVerlassen(){
   var r = parseHash()[0];
   if((r !== "katalog" && r !== "library" && r !== "timers") || (!stPlanAktiv && !stGen)) return false;
-  stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; stGen = null;
-  renderKatalog(); window.scrollTo(0, 0);
+  var p = stPlanAktiv ? stPlanFind(stPlanAktiv) : null;
+  planVerlassen(p, function(){
+    stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+    renderKatalog(); window.scrollTo(0, 0);
+  });
   return true;
 }
 /* Art im Baukasten: Freiluft läuft standardmäßig nach Zeit (Timer), Fitnessstudio nach Sätzen (Gewicht × Wiederholungen). Die zwei Knöpfe
@@ -261,25 +276,23 @@ function bauArtBinden(modus, fn){
     });
   });
 }
-/* Zeit → Sätze: das Workout mit Timer wird zum Plan (Gewicht × Wiederholungen) mit denselben Übungen. Ein erst beim Bauen angelegtes Workout
-   wandert dabei (es wird nicht doppelt aufgehoben); ein schon vorhandenes bleibt, der Plan wird einmal je Workout angelegt. */
+/* Zeit → Sätze: das Workout mit Timer wird zum Plan (Sätze × Wiederholungen) mit denselben Übungen. Der Plan ist ein Entwurf (erst „Speichern“ nimmt ihn
+   in Meine auf); ein noch nicht gespeichertes Workout wandert dabei in den Plan, ein gespeichertes bleibt. */
 function bauNachSaetzen(b){
   var d = b.d, ids = [];
   d.items.forEach(function(it){ var ex = findExercise(it.ex); if(ex && ex.main !== "stretch" && ids.indexOf(it.ex) < 0) ids.push(it.ex); });
   katPlanAufraeumen();
-  var l = stPlaene(), gespeichert = !b.neu, weg = gespeichert && b.angelegt, key = "my:"+d.id, p = null;
-  if(gespeichert && !weg) l.forEach(function(x){ if(x.fromWo === key) p = x; });
+  var l = stPlaene(), key = "my:"+d.id, p = null;
+  if(!b.neu) l.forEach(function(x){ if(x.fromWo === key && !x.entwurf) p = x; });
   if(p){   // vorhandener Plan zu diesem Workout: fehlende Übungen kommen dazu
     var pl = stPlanIds(p);
     ids.forEach(function(id){ if(pl.indexOf(id) < 0) pl.push(id); });
     p.ids = pl; p.updatedAt = Date.now();
   } else {
-    p = { id:uid(), name:d.name && d.name !== t("myDefaultName") ? d.name : t("planDefault", { n:l.length+1 }), ids:ids, updatedAt:Date.now() };
-    if(gespeichert && !weg) p.fromWo = key;
+    p = { id:uid(), name:d.name && d.name !== t("myDefaultName") ? d.name : t("planDefault", { n:l.filter(function(x){ return !x.entwurf; }).length+1 }), ids:ids, updatedAt:Date.now(), entwurf:true };
+    if(!b.neu) p.fromWo = key;
     l.push(p);
-    stPlanNeuId = p.id;   // bleibt er leer, wird er beim Verlassen wieder entfernt
   }
-  if(weg) deleteMyNow(d.id);
   save();
   bauEntwurf = null;
   katZuMeine();
@@ -288,28 +301,25 @@ function bauNachSaetzen(b){
   if(navTop() !== "#katalog") navStack.push("#katalog");
   syncGuard(); render(); window.scrollTo(0, 0);
 }
-/* Sätze → Zeit: der Plan wird zum Workout mit Timer (Satz- und Pausenwerte der Übungen). Ein erst beim Bauen angelegter Plan wandert dabei. */
+/* Sätze → Zeit: der Plan wird zum Workout mit Timer (Satz- und Pausenwerte der Übungen), zunächst als ungespeicherter Entwurf im Baukasten.
+   Ein noch nicht gespeicherter Plan wandert dabei, ein gespeicherter bleibt; ein schon verknüpftes Workout wird aktualisiert und geöffnet. */
 function planNachZeit(p){
-  var ids = stPlanIds(p), mw = null, neu = false;
-  if(ids.length){
-    var items = ids.map(function(id){
-      var ex = findExercise(id), tm = studioTimer(id);
-      return { ex:id, reps:ex.perSide ? tm.reps*2 : tm.reps, work:tm.work, rest:tm.rest };
-    });
-    mw = (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
-    var teil = t("planDefault", { n:"#" }).split("#"), nm = p.name;   // ein Standardname „Plan 3“ wird zu „Mein Workout“, eigene Namen bleiben
-    if(nm.indexOf(teil[0]) === 0 && nm.length >= teil[0].length+teil[1].length && /^\d+$/.test(nm.slice(teil[0].length, nm.length-teil[1].length)) && nm.slice(nm.length-teil[1].length) === teil[1]) nm = t("myDefaultName");
-    if(mw){ mw.items = items; mw.updatedAt = Date.now(); }
-    else { mw = createMyFromDraft({ name:nm, mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:items }); mw.fromPlan = p.id; neu = true; }
-  }
-  if(stPlanNeuId === p.id && !p.fromWo){   // erst beim Bauen angelegt: wandert ins Workout
-    state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });
-    if(mw) delete mw.fromPlan;
-  }
-  stPlanNeuId = null;
+  var ids = stPlanIds(p);
+  var items = ids.map(function(id){
+    var ex = findExercise(id), tm = studioTimer(id);
+    return { ex:id, reps:ex.perSide ? tm.reps*2 : tm.reps, work:tm.work, rest:tm.rest };
+  });
+  var teil = t("planDefault", { n:"#" }).split("#"), nm = p.name;   // ein Standardname „Plan 3“ wird zu „Mein Workout“, eigene Namen bleiben
+  if(nm.indexOf(teil[0]) === 0 && nm.length >= teil[0].length+teil[1].length && /^\d+$/.test(nm.slice(teil[0].length, nm.length-teil[1].length)) && nm.slice(nm.length-teil[1].length) === teil[1]) nm = t("myDefaultName");
+  var mw = p.entwurf ? null : (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
+  if(p.entwurf){ state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; }); }
+  if(mw){ mw.items = items; mw.updatedAt = Date.now(); }
   save();
   stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; stGen = null;
-  bauAngelegtNext = mw && neu ? mw.id : null;
+  if(!mw){
+    bauEntwurf = { key:"new", neu:true, d:{ id:uid(), name:nm, mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:items } };
+    if(!p.entwurf) bauEntwurf.d.fromPlan = p.id;
+  }
   go(mw ? "#mybuild/"+mw.id : "#mybuild/new");
 }
 /* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
@@ -421,7 +431,7 @@ function renderKatalogUebungen(){
 
 /* ---------- Meine: Pläne ---------- */
 function katPlaeneHTML(){
-  var pl = stPlaene().slice().sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); });
+  var pl = stPlaene().filter(function(x){ return !x.entwurf; }).sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); });
   return '<div class="section-title">'+esc(t("katPlaene"))+'</div>'+
     (pl.length ? pl.map(function(p){
       var ids = stPlanIds(p), namen = ids.slice(0, 3).map(function(id){ return tplText(findExercise(id).name); }).join(", ")+(ids.length > 3 ? " …" : "");

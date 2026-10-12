@@ -271,10 +271,10 @@ function renderStudioPlan(){
         gids.every(function(id){ return exIstStudio(findExercise(id)); }));
     });
     html += '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+esc(t("stNone"))+'</div>'+
-      '<button type="button" class="btn btn-danger" data-plandel style="margin-top:18px;">'+ICON_TRASH+' '+t("planDel")+'</button>'+
+      (p.entwurf ? '' : '<button type="button" class="btn btn-danger" data-plandel style="margin-top:18px;">'+ICON_TRASH+' '+t("planDel")+'</button>')+
       '<div style="height:96px"></div>'+
       '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+esc(planAnzahl(ids.length))+'</b></span>'+
-      '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone>'+ICON_SAVE+' '+t("planDone")+'</button></span></div></div>';
+      '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone'+(p.entwurf && !ids.length ? ' disabled' : '')+'>'+ICON_SAVE+' '+t(p.entwurf ? "save" : "planDone")+'</button></span></div></div>';
   } else {
     html += '<div class="plan-kopf"><b>'+esc(planAnzahl(ids.length))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
       (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("katPlanStart"))+'</button>' : '')+
@@ -288,12 +288,17 @@ function renderStudioPlan(){
   app.innerHTML = html;
   // Zurück führt zur Liste unter „Meine“, nicht aus dem Katalog heraus
   var zur = app.querySelector("[data-back]");
-  if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ stPlanAktiv = null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); }); }
+  if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
+    planVerlassen(p, function(){ stPlanAktiv = null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });   // ein neuer, nicht gespeicherter Plan fragt nach
+  }); }
   bindCommon();
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
   an("[data-planedit]", function(){ stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
-  an("[data-plandone]", function(){ stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
+  an("[data-plandone]", function(){
+    if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); showToast(t("planGespeichert")); }   // erst jetzt steht der neue Plan unter Meine
+    stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);
+  });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */
   an("[data-planwo]", function(){

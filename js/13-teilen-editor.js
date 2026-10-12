@@ -133,18 +133,28 @@ var ICON_GRIP = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentCo
 /* Baukasten: Arbeitskopie, die sich selbst speichert - sobald mindestens eine Übung drin ist, wird jede Änderung sofort gesichert
    (kein „Speichern“-Knopf nötig). Ein neues Workout ohne Übung bleibt unangelegt (neu = noch nicht in der Liste). */
 var bauEntwurf = null;
-var bauAngelegtNext = null;   // Workout, das gerade aus einem Plan entstanden ist (darf beim Zurückwechseln wandern)
 function renderMyBuild(id){
   if(!bauEntwurf || bauEntwurf.key !== id){
     if(id === "new"){
-      bauEntwurf = { key:id, neu:true, angelegt:true, d:{ id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[] } };
+      bauEntwurf = { key:id, neu:true, d:{ id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[] } };
       if(bauNeuWs){ bauEntwurf.d.ws = bauNeuWs; if(bauNeuWs === "dehn") bauEntwurf.d.work = 30; }
       bauNeuWs = "";
     }
-    else { var mw = findMy(id); if(!mw){ go("#library"); return; } bauEntwurf = { key:id, angelegt:bauAngelegtNext === id, d:draftCopy(mw) }; }
-    bauAngelegtNext = null;
+    else { var mw = findMy(id); if(!mw){ go("#library"); return; } bauEntwurf = { key:id, d:draftCopy(mw) }; }
   }
   renderDraftPage(bauEntwurf.d, { cover:false, back:bauEntwurf.d.ws ? "#warmstretch" : "#library", id:bauEntwurf.d.id, bau:bauEntwurf });
+}
+/* Ein neues Workout steht erst mit „Speichern“ in Meine. Wer es mit Übungen verlässt (Pfeil oben oder Zurück-Geste), wird gefragt;
+   gibt true zurück, wenn die Frage gezeigt wurde (dann wartet die Seite auf die Antwort). */
+function bauVerlassenFrage(){
+  var b = bauEntwurf;
+  if(parseHash()[0] !== "mybuild" || !b || !b.neu || !b.d.items.length) return false;
+  var zurueck = b.d.ws ? "#warmstretch" : "#library";
+  openActionSheet(t("bauNichtGespeichert"), [
+    { ico:P_CHECK, label:t("save"), fn:function(){ bauSpeichern(b); bauEntwurf = null; showToast(t("wbGespeichert")); goBack(zurueck); } },
+    { ico:P_TRASH, label:t("verwerfen"), danger:true, fn:function(){ bauEntwurf = null; goBack(zurueck); } }
+  ]);
+  return true;
 }
 function bauSpeichern(b){
   var d = b.d, l = state.db.myWorkouts || (state.db.myWorkouts = []), mw = null;
@@ -152,6 +162,7 @@ function bauSpeichern(b){
   if(!mw){ mw = { id:d.id }; l.push(mw); }
   mw.name = d.name; mw.mode = d.mode; mw.reps = d.reps; mw.work = d.work; mw.rest = d.rest; mw.blockRest = d.blockRest;
   mw.items = draftCopy(d.items); mw.updatedAt = Date.now();
+  if(d.fromPlan) mw.fromPlan = d.fromPlan;   // aus einem Plan („Nach Zeit“) entstanden: bleibt mit ihm verknüpft
   if(d.ws) mw.ws = d.ws; else delete mw.ws;
   save();
   if(b.neu){   // ab jetzt ein normales Workout: Adresse und Zurück-Verlauf zeigen darauf
@@ -324,7 +335,7 @@ function renderDraftPage(d, cfg){
   var ICON_MISCHEN = svgIcon('<path d="M3 7h3c2.6 0 4 1.6 5.2 3.9l1.6 3C14 16.3 15.5 17 18 17h3M3 17h3c1.5 0 2.6-.5 3.4-1.5M14.3 7.9C15.2 7.3 16.4 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3"/>');
   var favOn = isFav(d.key);
   var coverActs = '<div class="cover-acts">'+
-    (d.src!=="surprise" && d.src!=="shared" ? coverAct('data-fav="'+d.key+'" aria-pressed="'+favOn+'"', favOn ? '★' : '☆', t("favorite"), favOn ? 'on' : '') : '')+
+    (d.src!=="surprise" && d.src!=="shared" && d.src!=="neu" ? coverAct('data-fav="'+d.key+'" aria-pressed="'+favOn+'"', favOn ? '★' : '☆', t("favorite"), favOn ? 'on' : '') : '')+
     coverAct('data-savemy', svgIcon(ICON_COPY), t(d.src==="my" ? "actCopy" : "actSave"))+
     coverAct('data-share', ICON_SHARE, t("share"))+
     (d.src==="lib" ? coverAct('data-coverhide', svgIcon(ICON_EYE_OFF), t("hideShort")) : '')+
@@ -376,13 +387,15 @@ function renderDraftPage(d, cfg){
     '<div style="height:'+(cfg.cover ? 40 : 96)+'px"></div>'+
     (cfg.cover ? '' : '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+t("exCount", { n:exs.length })+'</b><br>'+dauer+'</span>'+
       '<span class="wb-knoepfe">'+speicherKnopf()+
-      '<button type="button" class="btn '+(cfg.bau.dirty ? 'btn-secondary' : 'btn-primary')+'" data-tocover'+(d.items.length ? '' : ' disabled')+'>'+ICON_PLAY+' '+t("start")+'</button></span></div></div>');
-  function speicherKnopf(){   // nur Anzeige: der Baukasten speichert selbst
-    return '<button type="button" class="btn btn-secondary" data-wbsave disabled>'+ICON_SAVE+' '+t(cfg.bau.neu ? "wbAutoSpeichern" : "wbGespeichert")+'</button>';
+      '<button type="button" class="btn '+(cfg.bau.neu ? 'btn-secondary' : 'btn-primary')+'" data-tocover'+(d.items.length ? '' : ' disabled')+'>'+ICON_PLAY+' '+t("start")+'</button></span></div></div>');
+  function speicherKnopf(){   // neues Workout: „Speichern“ nimmt es in Meine auf; ein gespeichertes sichert jede Änderung selbst und zeigt nur „Gespeichert“
+    return cfg.bau.neu
+      ? '<button type="button" class="btn btn-primary" data-wbsave'+(d.items.length ? '' : ' disabled')+'>'+ICON_SAVE+' '+t("save")+'</button>'
+      : '<button type="button" class="btn btn-secondary" data-wbsave disabled>'+ICON_SAVE+' '+t("wbGespeichert")+'</button>';
   }
-  if(!cfg.cover){   // Zurück: es gibt nichts zu verwerfen, alles ist schon gesichert
+  if(!cfg.cover){   // Zurück: ein neues, nicht gespeichertes Workout fragt erst nach (Speichern · Verwerfen)
     var zur = app.querySelector("[data-back]");
-    if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ bauEntwurf = null; goBack(cfg.back); }); }
+    if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ if(!bauVerlassenFrage()){ bauEntwurf = null; goBack(cfg.back); } }); }
   }
   bindCommon();
   var stK = app.querySelector("#plan-sticky"), tbK = app.querySelector(".topbar");   // der Ablauf klebt direkt unter der Kopfzeile
@@ -391,7 +404,7 @@ function renderDraftPage(d, cfg){
 
   function speichern(){
     if(cfg.cover){ d._dirty = true; return; }
-    if(cfg.bau.neu && !d.items.length) return;   // ein neues Workout ohne Übung wird erst mit der ersten Übung angelegt
+    if(cfg.bau.neu){ cfg.bau.dirty = true; return; }   // neues Workout: erst mit „Speichern“ in Meine
     bauSpeichern(cfg.bau);
   }
   function sichern(){ bauSpeichern(cfg.bau); showToast(t("wbGespeichert")); neu(); }
@@ -480,7 +493,15 @@ function renderDraftPage(d, cfg){
   on("[data-palopen]", function(){ d._pal = true; neu(); });
   on("[data-share]", function(){ shareDraft(d); });
   on("[data-wbsave]", sichern);
-  on("[data-tocover]", function(){ if(d.items.length){ if(cfg.bau.dirty || cfg.bau.neu) bauSpeichern(cfg.bau); coverDraft = null; go("#cover/my/"+cfg.id); } });
+  on("[data-tocover]", function(){
+    if(!d.items.length) return;
+    if(cfg.bau.neu){   // noch nicht gespeichert: das Deckblatt zeigt eine Kopie, dort steht „Speichern“
+      var cd = draftCopy(d); cd.key = "neu:"+d.id; cd.src = "neu"; coverDraft = cd;
+      go("#cover/neu"); return;
+    }
+    if(cfg.bau.dirty) bauSpeichern(cfg.bau);
+    coverDraft = null; go("#cover/my/"+cfg.id);
+  });
   on("[data-mydel]", function(){
     confirmSheet(t("myDeleteQ"), t("cantUndo"), t("del"), function(){
       deleteMyNow(cfg.id); bauEntwurf = null; go("#library");
@@ -502,7 +523,12 @@ function renderDraftPage(d, cfg){
     on("[data-savemy]", function(){
       if(!d.items.length) return;
       if(d.src==="shared") adoptSharedCustoms(d);
-      createMyFromDraft(d);
+      var gesp = createMyFromDraft(d);
+      if(d.src === "neu"){   // das Gebaute ist jetzt gespeichert: Zurück führt zum gespeicherten Workout, nicht zu einem leeren Entwurf
+        var iNeu = navStack.lastIndexOf("#mybuild/new");
+        if(iNeu > -1) navStack[iNeu] = "#mybuild/"+gesp.id;
+        bauEntwurf = null;
+      }
       showToast(t("savedMy"));
     });
     on("[data-reroll]", function(){

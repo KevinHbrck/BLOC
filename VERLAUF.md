@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Neue Workouts und Pläne erst mit „Speichern“
+
+- **Explizit speichern**: Ein neues Workout mit Timer (Baukasten) und ein neuer Plan (nach Sätzen) stehen erst mit **„Speichern“** in Meine. Bis dahin sind sie Entwürfe (Plan: `p.entwurf`, von den Listen ausgeblendet; Workout: `bauEntwurf` nur im Speicher). Unten steht „Speichern“, bei bereits gespeicherten „Gespeichert“ (Änderungen daran sichern sich weiter selbst).
+- **Verlassen fragt nach**: Pfeil oben und Zurück-Geste zeigen „Speichern · Verwerfen“ (leere Entwürfe gehen ohne Frage). `bauVerlassenFrage` (Workout), `planVerlassen` (Plan).
+- **Start** aus einem ungespeicherten Workout zeigt ein Deckblatt mit „Speichern“ (`src:"neu"`), ohne etwas anzulegen; „Nach Zeit ↔ Nach Sätzen“ nimmt die Übungen als Entwurf mit. Fassung 2026-10-12-21.
+
 ## 2026-10-12 · Sätze sichtbar, Statistik-Reihenfolge
 
 - **Nach Sätzen** zeigt die Funktion: Plan-Kacheln und Plan-Karte „3 Sätze × 12“ (ohne Eintrag das Ziel, mit Eintrag „40 kg · 3 Sätze × 12“; ohne Gewicht „3 Sätze × 40 s“), im klebenden Plan-Streifen kurz „3×12“; Fitnessstudio-Übungen zeigen es auch auf den Kacheln im Baukasten, auf dem Deckblatt und im Timer. Texte `satzEins`/`satzMehr`, Funktionen `satzName`/`satzZiel`/`satzKurz`/`satzLetzter` in `js/07-studio.js`.

@@ -605,19 +605,32 @@
       pruefe($$(".wb-mini").length === 3, "Beim Ortswechsel bleibt der Ablauf: " + $$(".wb-mini").length);
       pruefe(!$('[data-bfequip="gym"]'), "Der Filter „Fitnessstudio“ bei der Ausrüstung ist durch den Ort ersetzt");
       klick('[data-bauort="frei"]');
-      // Der Baukasten speichert selbst: kein Speichern-Knopf nötig, zurück ohne Nachfrage
+      // Ein neues Workout steht erst mit „Speichern“ in Meine: Zurück fragt nach (Verwerfen), Speichern nimmt es auf
       var sk = $(".wb-leiste [data-wbsave]");
-      pruefe(sk && sk.disabled && /Gespeichert/.test(sk.textContent), "Anzeige „Gespeichert“ fehlt: " + (sk && sk.textContent));
+      pruefe(sk && !sk.disabled && /Speichern/.test(sk.textContent), "Knopf „Speichern“ fehlt: " + (sk && sk.textContent));
       var ges = JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || [];
-      pruefe(ges.length === 1 && ges[0].items.length === 3, "Workout wurde nicht von selbst gespeichert: " + JSON.stringify(ges.map(function (m) { return m.items.length; })));
+      pruefe(ges.length === 0, "Ein neues Workout darf erst mit „Speichern“ in Meine stehen: " + ges.length);
       klick("button.back");
+      await bis(function () { return $('#overlayRoot [data-act="1"]'); }, 2000, "Frage „nicht gespeichert“");
+      klick('#overlayRoot [data-act="1"]');   // Verwerfen
+      await zuMeine();
+      pruefe($$(".my-item").length === 0, "Verworfenes Workout steht in Meine: " + $$(".my-item").length);
+      await zuBaukasten("timer");
+      klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
+      await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
+      ["air-squats", "push-ups", "plank"].forEach(function (id) { klick('[data-wbex="' + id + '"]'); });
+      klick(await bis(function () { return $(".wb-leiste [data-wbsave]:not([disabled])"); }, 2000, "Speichern"));
+      await bis(function () { var s2 = $(".wb-leiste [data-wbsave]"); return s2 && s2.disabled && /Gespeichert/.test(s2.textContent); }, 2000, "Anzeige „Gespeichert“");
+      ges = JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || [];
+      pruefe(ges.length === 1 && ges[0].items.length === 3, "Workout wurde nicht gespeichert: " + JSON.stringify(ges.map(function (m) { return m.items.length; })));
+      klick("button.back");   // gespeichert: keine Nachfrage
       await zuMeine();
       await bis(function () { return $$(".my-item").length === 1; }, 3000, "gespeichertes Workout in Meine");
       await zuBaukasten("timer");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
       await bis(function () { return $("[data-wbex]"); }, 3000, "Baukasten");
       klick("button.back");   // neues Workout ohne Übung: nichts angelegt, keine Nachfrage
-      await bis(function () { return $("[data-bauselber]") && !$("#overlayRoot [data-ok]"); }, 3000, "zurück im Baukasten");
+      await bis(function () { return $("[data-bauselber]") && !$("#overlayRoot [data-act]"); }, 3000, "zurück im Baukasten");
       await zuMeine();
       pruefe($$(".my-item").length === 1, "leeres Workout wurde angelegt: " + $$(".my-item").length);
     }],
@@ -654,12 +667,25 @@
       await bis(function () { return $$("[data-wbex]").length > 50 && $("#plan-sticky"); }, 3000, "Workout mit Timer");
       pruefe($$("#plan-sticky .wb-mini").length === 2, "Zurück nach Zeit: Übungen fehlen");
       var b = zaehle();
-      pruefe(b.wo === vor.wo + 1 && b.pl === vor.pl, "Plan soll wieder zum Workout werden: " + JSON.stringify(b));
-      // System-Zurück im Plan-Bau führt zur Liste, nicht zur Startseite
+      pruefe(b.wo === vor.wo && b.pl === vor.pl, "Der Entwurf soll wandern, nichts gespeichert werden: " + JSON.stringify(b));
+      // System-Zurück im Plan-Bau führt zur Liste (nicht zur Startseite); ein neuer Plan mit Übungen fragt vorher nach
       klick('[data-bauart="gewicht"]');
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau (zweites Mal)");
+      pruefe(/Speichern/.test($("[data-plandone]").textContent) && !$("[data-plandel]"), "Neuer Plan: Knopf „Speichern“ statt „Fertig“ erwartet");
       W.dispatchEvent(new W.PopStateEvent("popstate"));
+      klick(await bis(function () { return $('#overlayRoot [data-act="1"]'); }, 2000, "Frage „Plan nicht gespeichert“"));   // Verwerfen
       await bis(function () { return $("[data-kattab]") && !$("#plan-name"); }, 3000, "System-Zurück: Liste des Katalogs");
+      var c = zaehle();
+      pruefe(c.wo === vor.wo && c.pl === vor.pl, "Verworfener Plan steht noch im Speicher: " + JSON.stringify(c));
+      // Plan speichern: erst „Speichern“ nimmt ihn in Meine auf
+      await zuBaukasten("gewicht");
+      klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen (Sätze)"));
+      await bis(function () { return $("#plan-name") && $$("[data-planex]").length > 20; }, 3000, "Plan-Bau");
+      klick($$("[data-planex]")[0]);
+      klick($("[data-plandone]"));
+      await bis(function () { return $("[data-planedit]"); }, 3000, "Plan gespeichert, Ansicht");
+      var dd = JSON.parse(W.localStorage.getItem(KEY));
+      pruefe((dd.settings.stPlaene || []).length === vor.pl + 1 && !(dd.settings.stPlaene || []).some(function (p) { return p.entwurf; }), "Gespeicherter Plan fehlt oder ist noch Entwurf");
     }],
     ["Langdruck: Übung in Workout bzw. Plan legen, Plan-Bau mit Filtern, Gesamtsuche", async function () {
       function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }

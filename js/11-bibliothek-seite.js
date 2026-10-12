@@ -74,10 +74,10 @@ function exZuProgramm(id, ws){   // ws: „warm“ / „dehn“ aus Mobility & S
     openActionSheet(t("zpPickWo"), acts);
   }
   function planWahl(){
-    var acts = stPlaene().slice().sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); })
+    var acts = stPlaene().filter(function(x){ return !x.entwurf; }).sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); })
       .map(function(p){ return { ico:HOME_ICON.timer, label:p.name, fn:function(){ inPlan(p); } }; });
     acts.push({ ico:P_PLUS, label:t("planNew"), fn:function(){
-      var p = { id:uid(), name:t("planDefault", { n:stPlaene().length+1 }), ids:[id], updatedAt:Date.now() };
+      var p = { id:uid(), name:t("planDefault", { n:stPlaene().filter(function(x){ return !x.entwurf; }).length+1 }), ids:[id], updatedAt:Date.now() };
       stPlaene().push(p); save(); fertig(p.name);
     } });
     openActionSheet(t("zpPickPlan"), acts);
