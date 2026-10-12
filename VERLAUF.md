@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Mobility & Stretch mit der Katalog-Logik des Workouts
+
+- **Reiter Katalog | Baukasten**; im Katalog die gleichrangigen Abteilungen **Meine · Workoutkatalog · Übungskatalog**, darunter wie beim Ort die Art **Aufwärmen | Dehnen** (Körperregionen und Körperkarte als Filter bleiben). Das Plus ist weg, „Eigene Übung anlegen“ steht im Übungskatalog.
+- **Baukasten**: **Überrasch mich** (Dauer 5–30 Min, bei Dehnen mit Körperregionen; ergibt einen Ablauf mit „Neu würfeln“) und **Selber bauen**.
+- Alte Einstellung (Reiter Übungen/Meine) wird als Abteilung übernommen. Schnelltest 33 Prüfungen. Fassung 2026-10-12-13.
+
 ## 2026-10-12 · Beim Bauen immer nach Ort getrennt, Körpermodell bei „Plan nach Gewichtung“
 
 - **Selber bauen und Überrasch mich unterscheiden immer zwischen Fitnessstudio und Freiluft**: ein Ort-Schalter (derselbe wie im Katalog, `settings.katOrt`) steht auf der Baukasten-Seite, im Timer-Baukasten, im Plan-Bau (Gewicht) und im Fenster „Überrasch mich“. Die Auswahl zeigt nur Übungen des gewählten Ortes, schon Gewähltes bleibt im Ablauf. Beim Öffnen eines Entwurfs bzw. Plans richtet sich der Ort einmal nach seinen Übungen. Der Ausrüstungs-Chip „Fitnessstudio“ entfällt (der Ort ersetzt ihn); Überrasch mich im Fitnessstudio braucht keine Ausrüstung.

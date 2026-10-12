@@ -491,7 +491,7 @@ function renderDraftPage(d, cfg){
       showToast(t("savedMy"));
     });
     on("[data-reroll]", function(){
-      var nd = buildSurprise(d._params);
+      var nd = d.ws ? buildWsSurprise(d._params) : buildSurprise(d._params);
       if(nd){ coverDraft = nd; renderDraftPage(nd, cfg); window.scrollTo(0,0); }
     });
   }

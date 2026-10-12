@@ -1,15 +1,111 @@
 "use strict";
-/* ============ Aufwärmen & Dehnen ============
-   Eigene Kachel, weil beides zu Workouts und Challenges passt. Aufbau wie Air: Lupe oben rechts, oben Aufwärmen | Dehnen,
-   darunter Workouts | Übungen | Meine. Bei Dehnen mit Körperregionen als Filter (Nacken, Schultern, Rücken, Hüfte, Beine …).
+/* ============ Mobility & Stretch ============
+   Aufbau wie das Workout: oben die Reiter Katalog | Baukasten. Im Katalog drei gleichrangige Abteilungen Meine · Workoutkatalog ·
+   Übungskatalog; darunter wie beim Ort die Art (Aufwärmen | Dehnen), bei Dehnen mit Körperregionen als Filter (Nacken, Schultern, Rücken, Hüfte, Beine …).
+   Im Baukasten: Überrasch mich (nach Zeit und Körperregion) oder Selber bauen.
    Meine = eigene Workouts dieses Bereichs (mw.ws = „warm“ / „dehn“); Übungen lassen sich per langem Drücken oder ⋯ dort einbauen. */
 var wsQuery = "";
+/* settings.wsTab: „workouts“ (Katalog) oder „baukasten“; settings.wsAbt: „meine“ · „workouts“ · „uebungen“.
+   Ältere Fassungen hatten die Reiter Workouts · Übungen · Meine in wsTab - die werden hier übernommen. */
+function wsTab(){
+  var s = state.db.settings;
+  if(s.wsTab === "meine" || s.wsTab === "uebungen"){ s.wsAbt = s.wsTab; s.wsTab = "workouts"; save(); }
+  return s.wsTab === "baukasten" ? "baukasten" : "workouts";
+}
+function wsAbt(){ var a = state.db.settings.wsAbt; return a === "meine" || a === "uebungen" ? a : "workouts"; }
+function wsKnopf(attr, wert, aktiv, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'" aria-pressed="'+(!!aktiv)+'">'+esc(text)+'</button>'; }
+/* Kopf unter der Titelleiste: Reiter, im Katalog die Abteilungen, darunter die Art (Aufwärmen | Dehnen) */
+function wsKopfHTML(tab, art){
+  var abt = wsAbt();
+  return reiterZeileHTML("var(--ws-color)", wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten")))+
+    (tab === "workouts" ? '<div class="seg-row kat-abt" role="group">'+wsKnopf("wsabt", "meine", abt === "meine", t("tabMine"))+
+      wsKnopf("wsabt", "workouts", abt === "workouts", t("katAbtWorkouts"))+wsKnopf("wsabt", "uebungen", abt === "uebungen", t("katUebKatalog"))+'</div>' : '')+
+    '<div class="theme-pick lib-tabs seg-2 ws-art">'+wsKnopf("wsart", "warm", art === "warm", t("wsWarm"))+wsKnopf("wsart", "dehn", art === "dehn", t("wsDehn"))+'</div>';
+}
+function wsKopfBinden(){
+  var s = state.db.settings;
+  function neuZeichnen(){ renderWarmStretch(); window.scrollTo(0, 0); }
+  app.querySelectorAll("[data-wstab]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); s.wsTab = el.getAttribute("data-wstab"); save(); neuZeichnen(); }); });
+  app.querySelectorAll("[data-wsabt]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); s.wsAbt = el.getAttribute("data-wsabt"); save(); neuZeichnen(); }); });
+  app.querySelectorAll("[data-wsart]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); s.wsArt = el.getAttribute("data-wsart"); save(); neuZeichnen(); }); });
+}
+/* Baukasten: Überrasch mich oder Selber bauen (wie im Workout) */
+function renderWsBaukasten(art){
+  var hw = hinweise("wsbau", ["wsBauHint"]);
+  app.innerHTML =
+    topbar(t("warmTitle"), { back:"#home", right:hw.knopf }) +
+    wsKopfHTML("baukasten", art) +
+    hw.z(0, "page-hint") +
+    '<div style="--bereich:var(--ws-color)">'+
+    '<button type="button" class="bau-karte bau-sp ws-bau" data-wssurprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+
+      esc(t(art === "dehn" ? "wsBauUeberraschDehn" : "wsBauUeberraschWarm"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<button type="button" class="bau-karte ws-bau" data-wsselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+
+      esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button></div>'+
+    '<div style="height:40px"></div>';
+  bindCommon();
+  wsKopfBinden();
+  app.querySelector("[data-wssurprise]").addEventListener("click", function(){ openWsSurprise(art); });
+  app.querySelector("[data-wsselber]").addEventListener("click", function(){ bauNeuWs = art; go("#mybuild/new"); });
+}
+/* Überrasch mich für Mobility & Stretch: Dauer (und bei Dehnen die Körperregionen) wählen, daraus entsteht ein Ablauf zum Prüfen und Starten */
+var WS_SP_DAUER = [5, 10, 15, 20, 30];
+function buildWsSurprise(p){
+  var art = p.art === "dehn" ? "dehn" : "warm", sel = art === "dehn" ? selArr(p.regionen) : [];
+  var pool = wsUebungen(art).filter(function(ex){ return wsRegionOk(ex.id, sel); });
+  if(!pool.length) return null;
+  var recent = recentExercises(7), ziel = (p.dur || 10)*60;
+  shuffle(pool);
+  pool.sort(function(a, b){ return (recent[a.id] ? 1 : 0) - (recent[b.id] ? 1 : 0); });   // erst das, was länger nicht dran war (die Reihenfolge davor ist gemischt)
+  var d = { key:"surprise:", src:"surprise", name:"", mode:"individual", reps:6, work:30, rest:10, blockRest:art === "dehn" ? 10 : 20, items:[], ws:art, _params:p };
+  for(var i = 0; i < pool.length; i++){
+    var it = itemFromEx(pool[i].id);
+    it.after = 10;
+    d.items.push(it);
+    if(d.items.length > 2 && workoutDuration(draftRun(d)) > ziel){ d.items.pop(); break; }
+  }
+  d.name = t("spName", { n:Math.max(1, Math.round(workoutDuration(draftRun(d))/60)) });
+  return d;
+}
+function openWsSurprise(art){
+  var s = state.db.settings, root = document.getElementById("overlayRoot");
+  var p = JSON.parse(JSON.stringify(s.wsSurprise || {}));
+  p.art = art;
+  if(WS_SP_DAUER.indexOf(p.dur) < 0) p.dur = 10;
+  p.regionen = selArr(p.regionen).filter(function(r){ return WS_REGIONEN.indexOf(r) > -1; });
+  function zu(){ root.innerHTML = ""; }
+  function draw(){
+    var alt = root.querySelector(".sp-sheet"), scrollAlt = alt ? alt.scrollTop : 0;
+    root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet" style="--bereich:var(--ws-color)">'+
+      '<h3>'+svgIcon(ICON_UEBERRASCH, "ico sp-h-ico")+' '+esc(t("surprise"))+' · '+esc(t(art === "dehn" ? "wsDehn" : "wsWarm"))+'</h3>'+
+      '<label>'+t("spDur")+'</label><div class="sp-chips">'+WS_SP_DAUER.map(function(v){
+        return '<button type="button" class="fc-chip'+(p.dur === v ? ' on' : '')+'" data-wsspdur="'+v+'">'+v+' Min</button>'; }).join("")+'</div>'+
+      (art === "dehn" ? '<label>'+esc(t("afRegion"))+' <span class="lbl-hint">'+esc(t("wsSpRegionHint"))+'</span></label><div class="sp-chips">'+WS_REGIONEN.map(function(r){
+        return '<button type="button" class="fc-chip'+(p.regionen.indexOf(r) > -1 ? ' on' : '')+'" data-wsspreg="'+r+'">'+esc(t("rg_"+r))+'</button>'; }).join("")+'</div>' : '')+
+      '<div class="btn-row sp-foot"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
+      '<button class="btn btn-primary" data-spgo>'+t("spGo")+'</button></div>'+
+    '</div></div>';
+    root.querySelector(".sp-sheet").scrollTop = scrollAlt;
+    root.querySelectorAll("[data-wsspdur]").forEach(function(b){ b.addEventListener("click", function(){ p.dur = parseInt(b.getAttribute("data-wsspdur")); draw(); }); });
+    root.querySelectorAll("[data-wsspreg]").forEach(function(b){ b.addEventListener("click", function(){ p.regionen = selToggle(p.regionen, b.getAttribute("data-wsspreg")); draw(); }); });
+    root.querySelector("[data-cancel]").addEventListener("click", zu);
+    root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+    root.querySelector("[data-spgo]").addEventListener("click", function(){
+      s.wsSurprise = { dur:p.dur, regionen:p.regionen }; save();
+      var d = buildWsSurprise(p);
+      if(!d){ showToast(t("spNone")); return; }
+      zu(); coverDraft = d; go("#cover/surprise");
+    });
+  }
+  draw();
+}
 function renderWarmStretch(){
   var s = state.db.settings;
-  var art = s.wsArt === "dehn" ? "dehn" : "warm", tab = ["uebungen", "meine"].indexOf(s.wsTab) > -1 ? s.wsTab : "workouts";
+  var art = s.wsArt === "dehn" ? "dehn" : "warm", wtab = wsTab();
+  if(wtab === "baukasten") return renderWsBaukasten(art);
+  var tab = wsAbt();   // „workouts“ (Workoutkatalog) · „uebungen“ (Übungskatalog) · „meine“
   var regSel = art === "dehn" && tab !== "meine" ? selArr(s.wsRegionen).filter(function(r){ return WS_REGIONEN.indexOf(r) > -1; }) : [];
   var zonSel = tab !== "meine" ? kkNorm(s.wsZonen) : [];   // Körperkarte
-  var liste = "", fab = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
+  var liste = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
   if(tab === "workouts"){
     var wos = art === "warm" ? AUFWAERM_IDS.map(findLibWorkout).filter(Boolean)
                              : LIB_WORKOUTS.filter(function(lw){ return lw.focus === "stretch" && AUFWAERM_IDS.indexOf(lw.id) < 0; });
@@ -31,17 +127,12 @@ function renderWarmStretch(){
       liste += myWoCard(mw, exs, woMains(exs), workoutDuration(myRun(mw)));
     });
     if(!liste) liste = '<div class="empty" style="padding:30px 20px;">'+esc(t("wsMineEmpty"))+'</div>';
-    fab = fabMenuHTML([{ key:"new", label:t("wsNew"), ico:ICON_PLUS, cls:"tp" }]);
   }
-  function knopf(attr, wert, aktiv, text){ return '<button data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
   var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
     topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) }) +
-    '<div class="theme-pick lib-tabs seg-2 ws-art">'+
-      knopf("wsart", "warm", art === "warm", t("wsWarm"))+knopf("wsart", "dehn", art === "dehn", t("wsDehn"))+
-    '</div>'+
-    reiterZeileHTML("var(--ws-color)",
-      knopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+knopf("wstab", "uebungen", tab === "uebungen", t("libExercises"))+knopf("wstab", "meine", tab === "meine", t("tabMine")))+
+    wsKopfHTML("workouts", art) +
+    (tab === "uebungen" ? '<button type="button" class="btn btn-secondary kat-eigene" data-wsnewex>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' : '')+
     hw.z(0, "rep-intro")+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
     (tab === "uebungen" ? hw.z(1, "page-hint") : '')+
@@ -49,19 +140,19 @@ function renderWarmStretch(){
     // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
     '<div style="--bereich:var(--ws-color)">'+(liste || '<div class="empty">'+t("libEmpty")+'</div>')+'</div>'+
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>'+
-    '<div style="height:'+(fab ? 90 : 40)+'px"></div>'+fab;
+    "<div style=\"height:40px\"></div>";
   bindCommon();
   function neu(){ var y = window.scrollY; renderWarmStretch(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
-  on("[data-wsart]", function(el){ s.wsArt = el.getAttribute("data-wsart"); save(); renderWarmStretch(); window.scrollTo(0, 0); });
-  on("[data-wstab]", function(el){ s.wsTab = el.getAttribute("data-wstab"); save(); renderWarmStretch(); window.scrollTo(0, 0); });
+  wsKopfBinden();
   wsRegionBinden(neu);
   var wq = app.querySelector("#ws-q");
   if(wq){
     applySearch(app, wsQuery);
     wq.addEventListener("input", function(){ wsQuery = wq.value; applySearch(app, wsQuery); });
   }
-  bindFabMenu({ "new": function(){ bauNeuWs = art; go("#mybuild/new"); } });
+  var neuEx = app.querySelector("[data-wsnewex]");
+  if(neuEx) neuEx.addEventListener("click", function(){ go("#exedit/new"); });
   on("[data-cover]", function(el){ if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover")); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   on("[data-womore]", function(el){

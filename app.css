@@ -2353,3 +2353,6 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .gen-figur .kk-paar figcaption{ display:none; }
 .gen-figur small{ display:block; margin-top:2px; font-size:12px; color:var(--text-dim); }
 :root[data-vintage] .gen-figur{ background-color:var(--bg); background-image:var(--paper); }
+/* Mobility & Stretch: Baukasten in der Farbe des Bereichs */
+.bau-karte.bau-sp.ws-bau{ border-color:color-mix(in srgb, var(--ws-color) 40%, transparent); background:color-mix(in srgb, var(--ws-color) 9%, var(--surface)); }
+.bau-karte.ws-bau .bk-ico{ background:color-mix(in srgb, var(--ws-color) 16%, transparent); color:var(--ws-color); }

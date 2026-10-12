@@ -358,7 +358,7 @@
     ["Mobility & Stretch: Kobra unter Stretch", async function () {
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Reiter Dehnen"));
-      klick('[data-wstab="uebungen"]');
+      klick('[data-wsabt="uebungen"]');
       pruefe(/Kobra/.test(D.body.textContent), "Kobra fehlt");
     }],
     ["Timer-Workouts und Blöcke auf der Timer-Seite, Einstellungen öffnen", async function () {
@@ -754,8 +754,8 @@
       await heim();
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
-      pruefe($$("[data-wstab]").length === 3 && $('[data-wstab="meine"]'), "Reiter Workouts · Übungen · Meine fehlen");
-      klick('[data-wstab="uebungen"]');
+      pruefe($$("[data-wstab]").length === 2 && $$("[data-wsabt]").length === 3 && $('[data-wstab="baukasten"]'), "Mobility & Stretch: Reiter Katalog · Baukasten und Abteilungen Meine · Workoutkatalog · Übungskatalog fehlen");
+      klick('[data-wsabt="uebungen"]');
       await filterAuf();
       await bis(function () { return $$("[data-wsreg]").length === 8; }, 3000, "acht Körperregionen");
       var alle = $$("[data-exlang]").length;
@@ -764,12 +764,35 @@
       await lang($("[data-exlang]"));
       klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neues Workout"));
       await bis(function () { return daten().myWorkouts.some(function (m) { return m.ws === "dehn" && m.items.length === 1; }); }, 2000, "Dehn-Workout angelegt");
-      klick('[data-wstab="meine"]');
+      klick('[data-wsabt="meine"]');
       await bis(function () { return $$(".my-item").length === 1; }, 2000, "Meine in Mobility");
-      klick('[data-fabopt="new"]');
+      pruefe(!$("[data-fab]"), "Mobility: das Plus ist weg (der Baukasten übernimmt)");
+      klick('[data-wstab="baukasten"]');
+      klick(await bis(function () { return $("[data-wsselber]"); }, 3000, "Selber bauen im Mobility-Baukasten"));
       await filterAuf();
       await bis(function () { return $$("[data-wsreg]").length === 8 && $$("[data-wbex]").length > 0; }, 3000, "Baukasten mit Dehnübungen und Regionen");
       pruefe(!$('[data-wbex="push-ups"]'), "Kraftübung im Dehn-Baukasten");
+      // Überrasch mich in Mobility & Stretch: Dauer und Körperregion, daraus ein Dehn-Ablauf nur mit passenden Dehnübungen
+      await heim();
+      klick('[data-nav="#warmstretch"]');
+      klick(await bis(function () { return $("[data-wssurprise]"); }, 3000, "Überrasch mich in Mobility & Stretch (der Baukasten bleibt offen)"));
+      klick(await bis(function () { return $('#overlayRoot [data-wsspreg="huefte"]'); }, 2000, "Körperregion Hüfte"));
+      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los"));
+      await bis(function () { return /^#cover/.test(W.location.hash) && $$(".wb-ablauf").length > 0; }, 3000, "Deckblatt Überrasch mich (Dehnen)");
+      var wd = W.coverDraft;
+      pruefe(wd && wd.ws === "dehn" && wd.items.length >= 2 && wd.items.every(function (it) { return W.exIsStretch(it.ex) && W.wsRegionOk(it.ex, ["huefte"]); }),
+        "Überrasch mich (Dehnen, Hüfte): " + JSON.stringify(wd && wd.items.map(function (it) { return it.ex; })));
+      await heim();
+      klick('[data-nav="#warmstretch"]');
+      klick(await bis(function () { return $('[data-wsart="warm"]'); }, 3000, "Aufwärmen"));
+      klick(await bis(function () { return $("[data-wssurprise]"); }, 3000, "Überrasch mich (Aufwärmen)"));
+      pruefe(!$('#overlayRoot [data-wsspreg]'), "Aufwärmen kennt keine Körperregionen");
+      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los (Aufwärmen)"));
+      await bis(function () { return /^#cover/.test(W.location.hash) && $$(".wb-ablauf").length > 0; }, 3000, "Deckblatt Überrasch mich (Aufwärmen)");
+      pruefe(W.coverDraft && W.coverDraft.ws === "warm" && W.coverDraft.items.length >= 2, "Überrasch mich (Aufwärmen): " + JSON.stringify(W.coverDraft && W.coverDraft.ws));
+      // ältere Einstellung (Reiter Übungen / Meine) wird als Abteilung übernommen
+      W.state.db.settings.wsTab = "meine";
+      pruefe(W.wsTab() === "workouts" && W.wsAbt() === "meine", "Ältere Einstellung der Mobility-Reiter wird nicht übernommen");
       await heim();
       klick('[data-nav="#katalog"]');
       await zuMeine();
