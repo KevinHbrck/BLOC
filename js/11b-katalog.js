@@ -111,7 +111,7 @@ function katSuche(q, standard){
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
   return topbar(t("katalog"), { back:"#home", right:right || "" }) +
-    '<div class="rz kat-rz" style="--rz:var(--tp-color)">'+b("workouts", t("katTabKatalog"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))+'</div>' +
+    '<div class="rz kat-rz" style="--rz:var(--text)">'+b("workouts", t("katTabKatalog"))+b("uebungen", t("libExercises"))+b("meine", t("tabMine"))+'</div>' +
     // Katalog: ganz vorn der Ort (Fitnessstudio oder Freiluft), sonst nichts; Übungen und Meine: Überrasch mich und Workout planen
     (tab === "workouts" ? katOrtHTML() : '<div class="kat-start">'+surpriseLeisteHTML()+katPlanLeisteHTML()+'</div>');
 }

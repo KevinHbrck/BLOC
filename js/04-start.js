@@ -26,7 +26,7 @@ var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Be
 var HOME_KEYS = ["katalog", "intervall", "reps", "run", "warm"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
-    e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--tp-color)"];
+    e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--text)"];
   if(k === "intervall"){ var tw = state.db.workouts.length, tb = state.db.blocks.length; return ["#intervall", t("tabTimer"), tw || tb ? t("tmQuick", { w:tw, b:tb }) : t("tmQuickLeer"), "var(--ti-color)"]; }
   if(k === "reps") return ["#reps", t("repTitle"), t("htReps"), "var(--rep-color)"];
   if(k === "run") return ["#run", t("runTitle"), run ? t("runLaeuft", { km:runKm(run.dist) }) : t("runTeaser"), "var(--run-color, #e5573f)"];

@@ -667,6 +667,16 @@
       await bis(function () { return $('details[data-katgr="pl-beine"] .kat-n'); }, 2000, "„1 gewählt“ am Bereich");
       klick($('[data-planex="leg-press"]'));
       await bis(function () { return $(".kk-kopf .kk-zeile"); }, 2000, "Körperkarte oben im Plan");
+      await bis(function () { return $$(".plan-sticky [data-planex]").length === 2; }, 2000, "Der Plan zeigt oben die gewählten Übungen");
+      pruefe(/Plan/.test($(".plan-sticky-kopf").textContent) && /2/.test($(".plan-sticky-kopf").textContent), "Überschrift „Plan“ mit Anzahl: " + $(".plan-sticky-kopf").textContent);
+      klick($('.plan-sticky [data-planex="air-squats"]'));   // im Plan antippen nimmt die Übung wieder heraus
+      await bis(function () { return $$(".plan-sticky [data-planex]").length === 1; }, 2000, "Übung aus dem Plan genommen");
+      klick($('details[data-katgr="pl-beine"] [data-planex="air-squats"]'));
+      await bis(function () { return $$(".plan-sticky [data-planex]").length === 2; }, 2000, "Übung wieder im Plan");
+      W.scrollTo(0, 2500); await warte(250);   // weit nach unten: der Plan bleibt oben stehen
+      var rs = $("#plan-sticky").getBoundingClientRect();
+      pruefe(rs.top >= 0 && rs.top < 160 && W.scrollY > 300, "Der Plan soll beim Scrollen oben stehen bleiben: Abstand " + Math.round(rs.top) + ", gescrollt " + Math.round(W.scrollY));
+      W.scrollTo(0, 0);
       klick("[data-plandone]");
       klick(await bis(function () { return $("[data-planwo]"); }, 3000, "Mit Timer starten"));
       await bis(function () { return /^#cover\/my\//.test(W.location.hash); }, 3000, "Deckblatt des Workouts");
@@ -965,6 +975,27 @@
       await bis(function () { return $("[data-planwo]") && daten().settings.stPlaene.length === 3; }, 3000, "Plan nach Gewichtung (Freiluft)");
       var l2 = daten().settings.stPlaene, p2 = l2[l2.length - 1];
       pruefe(p2.ids.length > 2 && p2.ids.every(function (id) { return !W.exIstStudio(W.findExercise(id)); }), "Plan nach Gewichtung (Freiluft) enthält Geräte");
+    }],
+    ["Ruhige Farbwelt: Symbole schwarz/weiß, Startseite ohne farbige Kontur, Suche unterscheidet den Ort", async function () {
+      await heim();
+      var body = W.getComputedStyle(W.document.body).color;
+      var gross = $(".area-tile.gross");
+      pruefe(gross && parseFloat(W.getComputedStyle(gross).borderTopWidth) === 0, "Das erste Bereichs-Feld soll keine farbige Kontur haben (sah vorausgewählt aus)");
+      pruefe($$(".area-tile .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen");
+      klick('[data-nav="#katalog"]');
+      klick(await bis(function () { return $('[data-kattab="workouts"]'); }, 3000, "Reiter Katalog"));
+      await bis(function () { return $(".kat-gr .sag-ico"); }, 3000, "Bereiche");
+      pruefe($$(".kat-gr .sag-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Körperregionen sollen schwarz/weiß sein");
+      var sp = $(".sp-leiste");   // „Überrasch mich“ steht bei Übungen und Meine
+      klick('[data-kattab="uebungen"]');
+      await bis(function () { return $(".sp-leiste[data-surprise]"); }, 3000, "Überrasch mich");
+      var le = $(".sp-leiste[data-surprise]");
+      pruefe(W.getComputedStyle(le).backgroundColor === W.getComputedStyle($(".kat-plan")).backgroundColor, "Überrasch mich soll die Standardfarbe haben wie „Workout planen“");
+      klick('.tabbar [data-nav="#search"]');
+      eingeben(await bis(function () { return $("#gs-q"); }, 3000, "Suchfeld"), "ganzk");
+      await bis(function () { return $(".sr-welt"); }, 3000, "Suche zeigt den Ort bei Workouts");
+      var farben = $$(".sr-welt").map(function (e) { return e.style.getPropertyValue("--w"); });
+      pruefe(farben.length > 0 && farben.every(function (f) { return /gym-color|tp-color/.test(f); }), "Ort-Zeichen in der Suche: " + farben.join(", "));
     }],
     ["Kleine Hilfen: „Was ist was?“, Bestleistung, Leichter/Schwerer", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }

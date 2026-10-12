@@ -3,6 +3,15 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Ruhige Farbwelt, Startseite ohne „vorausgewählt“-Look, Plan klebt oben
+
+- **Weniger Farbe**: Symbole der Startseite, der Körperregionen (Brust, Rücken …) und der übrigen Bereiche (Timer, Summit, Run, Mobility & Stretch) sind schwarz/weiß (Textfarbe); die Bereichsfarben `--ti-color`, `--rep-color`, `--ws-color`, `--bl-color`, `--run-color` sind am Ende von `app.css` auf die Textfarbe gesetzt (Kodak behält seine Palette). Farbe tragen nur die Hauptaktion (Koralle) und die beiden Orte: **Freiluft blau, Fitnessstudio orange** (`--gym-color`, vorher hellgrün) - bei Ort-Schalter, Kacheln, Workout-Karten und in der Suche.
+- **Startseite**: das erste Feld („Workout“) hat keine blaue Kontur und keinen blauen Symbolgrund mehr (sah vorausgewählt aus) - es ist nur größer; untere Leiste: aktiver Eintrag neutral.
+- **Überrasch mich** in der Standardfarbe (wie „Workout planen“), nicht mehr im Akzent.
+- **Suche**: Workouts tragen ein Ort-Zeichen (Freiluft blau, Fitnessstudio orange); Aufwärm-/Dehn-Workouts nicht.
+- **Plan-Bau**: der Plan mit den gewählten Übungen (kleine Kacheln, nummeriert, antippen = herausnehmen) steht unter der Körperkarte und **bleibt beim Scrollen unter der Kopfzeile stehen**.
+- Schnelltest 33 Prüfungen. Fassung 2026-10-12-3.
+
 ## 2026-10-10 · Fitnessstudio-Übungen überall, hellgrüne Symbole, einheitliche Namen
 
 - **Fitnessstudio-Übungen gehen überall hinein**: Baukasten („Workout mit Timer bauen“, mit Chip „Fitnessstudio“ im Filter), Langdruck (bei Geräten steht „Zu Plan hinzufügen“ vorn), Tauschen (Fitnessstudio gegen Fitnessstudio), Timer-Workout aus Blöcken, **Überrasch mich** (Chip „Fitnessstudio“, Geräte nur wenn gewählt) und **Plan nach Gewichtung** (neuer Schalter Fitnessstudio · Freiluft, zieht aus dem jeweiligen Ort).

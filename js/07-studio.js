@@ -216,6 +216,13 @@ function renderStudioPlan(){
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keinem Bereich stehen (z. B. ausgeblendete)
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="30"></div>'+
       (ids.length ? kkKopfHTML(ids) : '')+
+      // Der Plan selbst: die gewählten Übungen in ihrer Reihenfolge. Bleibt beim Scrollen oben stehen, antippen nimmt eine Übung wieder heraus.
+      '<div class="plan-sticky" id="plan-sticky"><div class="plan-sticky-kopf"><b>'+esc(t("planKopf"))+'</b><span>'+esc(ids.length ? planAnzahl(ids.length) : t("planNochLeer"))+'</span></div>'+
+        (ids.length ? '<div class="wb-streifen">'+ids.map(function(id, i){
+          var ex = findExercise(id);
+          return ex ? '<button type="button" class="wb-mini" data-planex="'+id+'" style="--cat:'+studioFarbe(ex)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
+            (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span></button>' : "";
+        }).join("")+'</div>' : '')+'</div>'+
       hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
       studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk), zonen);
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
@@ -287,6 +294,8 @@ function renderStudioPlan(){
   });
   kachelKlick(app, "[data-studio]", function(el){ go("#studio/"+el.getAttribute("data-studio")); });
   if(stPlanBauen){
+    var stPl = app.querySelector("#plan-sticky"), tbPl = app.querySelector(".topbar");   // der Plan klebt direkt unter der Kopfzeile
+    if(stPl && tbPl) stPl.style.top = Math.max(0, Math.round(tbPl.getBoundingClientRect().height) - 2)+"px";
     var sb = state.db.settings, gb = katalogGruppen(), gv = {}, filterB;
     gb.forEach(function(g){ gv[g.id] = true; });
     var fgB = selArr(sb.stGruppen).filter(function(id){ return gv[id]; }), faB = selArr(sb.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });

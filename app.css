@@ -19,7 +19,7 @@
   --wo-text:var(--accent-text);
   --bl-color:#7a4fd6;
   --bl-text:#ffffff;
-  --gym-color:#4fa534;   /* Fitnessstudio: leichtes Grün (Mobility & Stretch ist das kräftigere Mint) */
+  --gym-color:#f08a1c;   /* Fitnessstudio: Orangeton (Freiluft = --tp-color, blau) */
   --gym-text:#ffffff;
   --tp-color:#3867e8;
   --tp-text:#ffffff;
@@ -33,7 +33,7 @@
   --sel-text:var(--text);
   --sel-border:color-mix(in srgb, var(--tint) 50%, var(--border));
   /* Die vier Bereiche der Startseite haben je eine Farbe - Favoriten, Start-Knöpfe und Übersicht tragen die Farbe ihres Bereichs:
-     Studio (Fitnessstudio) = --gym-color (hellgrün), Air = --tp-color (blau), Summit = --rep-color (gold), Mobility & Stretch = --ws-color (grün) */
+     Fitnessstudio = --gym-color (orange), Freiluft = --tp-color (blau); die übrigen Bereichsfarben sind am Ende dieser Datei auf Schwarz/Weiß gesetzt (ruhige Farbwelt) */
   --rep-color:#c98a00;
   --ws-color:#1f9d6b;
   --ws-text:#ffffff;
@@ -58,8 +58,8 @@
   --danger:#ff5c60;
   --bl-color:#a98bff;
   --bl-text:#170b33;
-  --gym-color:#8fd16b;   /* Fitnessstudio: leichtes Grün (Mobility & Stretch ist das kräftigere Mint) */
-  --gym-text:#10200a;
+  --gym-color:#ffa24d;   /* Fitnessstudio: Orangeton (Freiluft = --tp-color, blau) */
+  --gym-text:#1d1006;
   --tp-color:#6f92ff;
   --ti-color:#58b6f4;
   --tp-text:#0b1330;
@@ -86,8 +86,8 @@
     --danger:#ff5c60;
     --bl-color:#a98bff;
     --bl-text:#170b33;
-    --gym-color:#8fd16b;
-    --gym-text:#10200a;
+    --gym-color:#ffa24d;
+    --gym-text:#1d1006;
     --tp-color:#6f92ff;
   --ti-color:#58b6f4;
     --tp-text:#0b1330;
@@ -1746,7 +1746,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   --accent:#ff8f3f; --accent-text:#1d1006;
   --rest:#a8c46a; --rest-text:#1a2208; --blockrest:#d99ac6; --danger:#ff7a6b;
   --bl-color:#d99ac6; --bl-text:#241018;
-  --gym-color:#9fd18b; --gym-text:#10200a;   /* Fitnessstudio: helles, weiches Grün */
+  --gym-color:#f2a24a; --gym-text:#1d1006;   /* Fitnessstudio: Orangeton */
   --ti-color:#7fb4d6; --ti-text:#0d1a24;
   --tp-color:#8fa8d8; --tp-text:#0f1626;   /* Air: gedämpftes Blau */
   --rep-color:#e8c05a;
@@ -1830,8 +1830,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .kat-gr > summary .lbl-hint{ font-size:12.5px; font-weight:700; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--text) 8%, transparent); }
 .kat-gr[open]{ border-color:color-mix(in srgb, var(--text) 14%, transparent); }
 .kat-gr[open] > summary{ border-bottom:1px solid color-mix(in srgb, var(--text) 6%, transparent); }
-.kat-gr{ --hue:var(--tp-color); }   /* nur das Symbol trägt Farbe: Freiluft (Air) einheitlich blau, Fitnessstudio hellgrün */
-.kat-gr.kat-gym{ --hue:var(--gym-color); }
+.kat-gr{ --hue:var(--text); }   /* nur Schwarz/Weiß: die Farbe tragen Ort-Schalter und Kacheln (Freiluft blau, Fitnessstudio orange) */
 .kat-gr[data-katgr="fav"]{ --hue:#f2b01e; }
 :root[data-vintage] .kat-gr{ --hue:var(--accent) !important; border-radius:8px; }
 :root[data-vintage] .rz.kat-rz{ border-radius:8px; }
@@ -2009,7 +2008,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .tabbar .tab{ flex:1; max-width:140px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 4px 6px; border:0; border-radius:14px; background:none; color:var(--text-dim); font:inherit; font-size:11px; font-weight:600; cursor:pointer; }
 .tabbar .tab .ico{ width:24px; height:24px; display:block; }
 .tabbar .tab .ico svg{ width:24px; height:24px; }
-.tabbar .tab.active{ color:var(--text); background:var(--sel-bg); }
+.tabbar .tab.active{ color:var(--text); background:color-mix(in srgb, var(--text) 8%, transparent); }
 body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .fokus-card .toggle-row{ padding:8px 0; }
 .fokus-leer{ text-align:center; display:grid; gap:12px; }
@@ -2139,8 +2138,8 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .ws-art{ margin:0 0 4px; }
 /* „Überrasch mich“: schmale Leiste unter den Reitern von Air (eine Zeile) */
 .sp-leiste{ display:flex; align-items:center; gap:10px; width:100%; height:42px; margin:0 0 10px; padding:0 14px; border-radius:12px; cursor:pointer;
-  border:1px solid color-mix(in srgb, var(--accent) 34%, transparent); background:color-mix(in srgb, var(--accent) 10%, var(--surface)); color:var(--text); font:inherit; text-align:left; }
-.sp-leiste .ico{ width:20px; height:20px; color:var(--accent); flex:none; }
+  border:1px solid var(--border); background:var(--surface); color:var(--text); font:inherit; text-align:left; }
+.sp-leiste .ico{ width:20px; height:20px; color:var(--text); flex:none; }
 .sp-leiste b{ flex:1; font-size:14.5px; font-weight:700; }
 .sp-leiste .sp-chev{ display:flex; color:var(--text-dim); font-size:16px; }
 /* Filterkarte: Kopfzeile mit dem kleinen Schalter A–Z rechts */
@@ -2282,3 +2281,31 @@ a.opt-mehr{ display:block; color:inherit; text-decoration:none; }
 body.mit-tabs .fab{ bottom:calc(88px + env(safe-area-inset-bottom)); }
 body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .cover-hero .cover-info{ font-size:13.5px; line-height:1.45; color:var(--text-dim); margin:8px 0 6px; padding:10px 12px; border-radius:12px; background:color-mix(in srgb, var(--text) 5%, transparent); }
+
+/* ===== Ruhige Farbwelt (2026-10-12) =====
+   Symbole und Bereichsfarben sind Schwarz/Weiß (Textfarbe). Farbe tragen nur die Hauptaktion (Akzent, Koralle) und die beiden Orte:
+   Freiluft = blau (--tp-color), Fitnessstudio = orange (--gym-color). Das Kodak-Design behält seine eigene Palette. */
+:root:not([data-vintage]){
+  --ti-color:var(--text); --ti-text:var(--bg);
+  --rep-color:var(--text);
+  --ws-color:var(--text); --ws-text:var(--bg);
+  --bl-color:var(--text); --bl-text:var(--bg);
+  --run-color:var(--text);
+}
+/* Startseite: alle Bereiche gleich - neutraler Symbolgrund, Symbol in der Textfarbe, der erste ohne farbige Kontur
+   (sah „vorausgewählt“ aus); der erste ist nur größer */
+.at-ico, .bs-zeile .at-ico, .wi-zeile .at-ico{ background:color-mix(in srgb, var(--text) 7%, transparent); color:var(--text); }
+.area-tile.gross{ border:none; }
+/* Plus-Menü: neutrale Kreise statt Blau */
+.fab-opt .ico.tp{ background:var(--text); color:var(--bg); }
+/* Suche: Workouts tragen den Ort als Farbe (Freiluft blau, Fitnessstudio orange) */
+.sr-welt{ width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex:none; margin-right:12px;
+  background:color-mix(in srgb, var(--w) 14%, transparent); color:var(--w); }
+.sr-welt .ico{ width:21px; height:21px; }
+/* Plan-Bau: die gewählten Übungen kleben beim Scrollen unter der Kopfzeile (top setzt der Plan-Bau nach der Höhe der Kopfzeile) */
+.plan-sticky{ position:sticky; top:82px; z-index:4; background:var(--bg); margin:0 -16px 10px; padding:6px 16px 2px; border-bottom:1px solid var(--border); }
+.plan-sticky-kopf{ display:flex; align-items:baseline; gap:8px; margin-bottom:6px; }
+.plan-sticky-kopf b{ font-size:15px; }
+.plan-sticky-kopf span{ font-size:13px; color:var(--text-dim); }
+.plan-sticky .wb-streifen{ margin-bottom:0; padding-bottom:8px; }
+:root[data-vintage] .plan-sticky{ background-color:var(--bg); background-image:var(--paper); }

@@ -38,10 +38,12 @@ function gesamtEintraege(){
     if(libHidden("wo:"+lw.id)) return;
     var exs = lw.exercises.map(findExercise).filter(Boolean);
     add(t("workouts"), tplText(lw.name), t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(libWorkoutRun(lw))), woSearchText("", exs), function(){ go("#cover/lib/"+lw.id); });
+    if(!libIstWarmDehn(lw)) l[l.length-1].welt = katWoOrt(exs);   // Freiluft blau, Fitnessstudio orange (Aufwärmen und Dehnen gehören zu Mobility & Stretch)
   });
   (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
     var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
     add(t("mineMy"), mw.name, t("exCount", { n:exs.length }), woSearchText("", exs), function(){ go("#mybuild/"+mw.id); });
+    if(!mw.ws) l[l.length-1].welt = katWoOrt(exs);
   });
   // Übungen
   EXERCISES.forEach(function(ex){
@@ -107,7 +109,8 @@ function renderSearch(){
       var ex = e.ex && findExercise(e.ex);
       if(ex && (fuerAir(ex) || ex.main === "stretch") && ILLU[ex.id]){ kacheln += ex.main === "stretch" ? '<div style="display:contents;--bereich:var(--ws-color)">'+libExKachel(ex)+'</div>' : libExKachel(ex); return; }   // Dehnübungen in der Farbe von Mobility & Stretch
       if(ex && STUDIO_NUR[ex.id]){ kacheln += studioKachel(ex.id); return; }   // Studio-Übungen ebenfalls als Kacheln (antippen = Studio-Seite)
-      zeilen += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'"><div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
+      var weltZeichen = e.welt ? '<span class="sr-welt" style="--w:'+(e.welt === "studio" ? "var(--gym-color)" : "var(--tp-color)")+'" title="'+esc(t(e.welt === "studio" ? "katOrtStudio" : "katOrtFrei"))+'">'+svgIcon(e.welt === "studio" ? KAT_ICON_STUDIO : KAT_ICON_FREI)+'</span>' : '';
+      zeilen += '<div class="list-item entry" role="button" tabindex="0" data-sr="'+i+'">'+weltZeichen+'<div class="meta"><div class="name">'+esc(e.titel)+'</div>'+
         (e.sub ? '<div class="sub">'+esc(e.sub)+'</div>' : '')+'</div><span class="chip chev">'+ICON_CHEV+'</span></div>';
     });
     raster();

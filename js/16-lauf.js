@@ -547,8 +547,8 @@ function renderRunDetail(id){
 
 /* Eigenes Workout als Karte (Air › Meine und Mobility & Stretch › Meine) */
 function myWoCard(mw, exs, mains, dur){
-  return '<div class="list-item entry tpl-item lib-card my-item" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, exs))+'">'+
-    '<button class="playbtn tp" data-cover="my/'+mw.id+'" '+(exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
+  return '<div class="list-item entry tpl-item lib-card my-item" style="--cat:'+woFarbe(exs)+'" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, exs))+'">'+
+    '<button class="playbtn cat" data-cover="my/'+mw.id+'" '+(exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
     '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDauerKurz(dur)+'</div>'+
     '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';

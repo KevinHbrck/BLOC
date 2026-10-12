@@ -109,9 +109,11 @@ function woSearchText(name, exs){
 function mainTagsHTML(mains){
   return mains.map(function(m){ var c = mainCat(m); return '<span class="main-dot" title="'+esc(tplText(c))+'">'+svgIcon(c.ico)+'</span>'; }).join("");
 }
+/* Farbe eines Workouts nach Ort: Fitnessstudio orange, Freiluft blau (auf Seiten eines anderen Bereichs dessen Farbe) */
+function woFarbe(exs){ return katWoOrt(exs) === "studio" ? "var(--gym-color)" : "var(--bereich, var(--tp-color))"; }
 function libWoCard(lw, exs, hidden, dur, mains){
   // --bereich: gesetzt auf Seiten eines anderen Bereichs (Aufwärmen & Dehnen), sonst Workouts-Grün
-  return '<div class="list-item entry tpl-item lib-card'+(hidden?' is-hidden':'')+'" style="--cat:var(--bereich, var(--tp-color))" data-cover="lib/'+lw.id+'" data-q="'+esc(woSearchText(lw.name.de+" "+lw.name.en, exs))+'">'+
+  return '<div class="list-item entry tpl-item lib-card'+(hidden?' is-hidden':'')+'" style="--cat:'+woFarbe(exs)+'" data-cover="lib/'+lw.id+'" data-q="'+esc(woSearchText(lw.name.de+" "+lw.name.en, exs))+'">'+
     '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
     '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDauerKurz(dur)+'</div>'+
