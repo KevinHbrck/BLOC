@@ -164,7 +164,7 @@ function bauOrtBinden(neu, box){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-bauort");
       if(o === katOrt()) return;
-      state.db.settings.katOrt = o; save(); neu();
+      state.db.settings.katOrt = o; delete state.db.settings.bauModusOrt; save(); neu();
     });
   });
 }
@@ -208,7 +208,7 @@ function katKopfBinden(){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-katort");
       if(o === katOrt()) return;
-      state.db.settings.katOrt = o; save(); katOffen = {};
+      state.db.settings.katOrt = o; delete state.db.settings.bauModusOrt; save(); katOffen = {};
       renderKatalog(); window.scrollTo(0, 0);
     });
   });
@@ -228,20 +228,28 @@ function renderKatalog(){
   return abt === "meine" ? renderLibrary() : abt === "uebungen" ? renderKatalogUebungen() : renderKatalogWorkouts();
 }
 
+/* Art im Baukasten: Freiluft läuft standardmäßig mit Timer (Zeit pro Übung), Fitnessstudio mit Gewicht. Der Kippschalter „Mit Gewicht“ stellt um (auch
+   Freiluft mit Gewicht, Fitnessstudio mit Zeit); die Wahl gilt für den gewählten Ort, beim Ortswechsel gilt wieder der Standard. */
+function bauModus(){
+  var s = state.db.settings;
+  if(s.bauModusOrt === katOrt() && (s.bauModus === "gewicht" || s.bauModus === "timer")) return s.bauModus;
+  return katOrt() === "studio" ? "gewicht" : "timer";
+}
 /* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
 function renderKatalogBaukasten(){
-  var modus = katOrt() === "studio" ? "gewicht" : "timer";   // Art ergibt sich aus dem Ort: Freiluft mit Timer, Fitnessstudio mit Gewicht
+  var s = state.db.settings, modus = bauModus();
   var hw = hinweise("bau2", ["katBauHint"]);
   app.innerHTML =
     katKopfHTML("baukasten", hw.knopf) +
     hw.z(0, "page-hint") +
     bauOrtHTML() +
-    '<div class="bau-hinweis">'+esc(t(modus === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>'+
+    '<div class="bau-toggle">'+toggleRow("bau-gewicht", esc(t("bauGewichtToggle")), esc(t(modus === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub")), modus === "gewicht")+'</div>'+
     '<button type="button" class="bau-karte bau-sp" data-surprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+esc(t("bauUeberraschSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte" data-bauselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();
+  bindToggle("bau-gewicht", function(v){ s.bauModus = v ? "gewicht" : "timer"; s.bauModusOrt = katOrt(); save(); renderKatalog(); });
   bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
   app.querySelector("[data-bauselber]").addEventListener("click", function(){

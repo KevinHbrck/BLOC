@@ -2360,3 +2360,6 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 /* Verweis zwischen Workout und Mobility & Stretch, unter der Liste */
 .kat-link{ display:flex; align-items:center; justify-content:center; gap:8px; margin:18px 0 0; width:100%; }
 .kat-link .ico, .kat-link svg{ width:20px; height:20px; }
+/* Kippschalter „Mit Gewicht“ im Baukasten */
+.bau-toggle{ margin:0 0 12px; padding:0 14px; border:1px solid var(--border); border-radius:16px; background:var(--surface); }
+.bau-toggle .toggle-row{ border:none; padding:12px 0; }

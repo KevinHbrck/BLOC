@@ -3,9 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Baukasten: Kippschalter „Mit Gewicht“
+
+- Statt des Zwei-Knöpfe-Schalters ein **Kippschalter „Mit Gewicht“**: Freiluft steht auf Timer, Fitnessstudio auf Gewicht, beides lässt sich umstellen (Freiluft mit Gewicht, Fitnessstudio mit Zeit). Die Wahl gilt für den Ort; beim Ortswechsel gilt wieder der Standard. Fassung 2026-10-12-18.
+
 ## 2026-10-12 · Baukasten ohne Schalter „Mit Timer · Mit Gewicht“
 
-- Der Schalter entfällt: die Art ergibt sich aus dem Ort (**Freiluft = Timer, Fitnessstudio = Gewicht**); eine Zeile darunter erklärt sie. Fassung 2026-10-12-17.
+- Der Zwei-Knöpfe-Schalter entfällt (ersetzt durch den Kippschalter, siehe oben). Fassung 2026-10-12-17.
 
 ## 2026-10-12 · Namen und Verweise zwischen Workout und Mobility & Stretch
 

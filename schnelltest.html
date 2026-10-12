@@ -113,6 +113,8 @@
       var m = await bis(function () { return $('[data-bauort="' + ort + '"]'); }, 2000, "Ort im Baukasten");
       if (!m.classList.contains("on")) klick(m);
       await bis(function () { return $('[data-bauort="' + ort + '"].on'); }, 2000, "Ort gewählt");
+      var tg = await bis(function () { return $("#bau-gewicht"); }, 2000, "Kippschalter Mit Gewicht");
+      if (tg.checked !== (modus === "gewicht")) { klick(tg); await bis(function () { return $("#bau-gewicht").checked === (modus === "gewicht"); }, 2000, "Kippschalter gestellt"); }
     }
   }
 
@@ -701,12 +703,16 @@
       await heim();
       klick('[data-nav="#katalog"]');
       await zuBaukasten("gewicht");
-      // Die Art ergibt sich aus dem Ort (kein Schalter mehr): Freiluft = Zeit pro Übung mit Timer, Fitnessstudio = Gewicht
-      pruefe(!$("[data-baumodus]"), "Der Schalter „Mit Timer · Mit Gewicht“ ist noch da");
-      klick('[data-bauort="frei"]');
-      await bis(function () { return $('[data-bauort="frei"].on') && /Timer/.test($(".bau-hinweis").textContent); }, 2000, "Freiluft: Timer");
+      // Art: Freiluft standardmäßig mit Timer, Fitnessstudio mit Gewicht; der Kippschalter „Mit Gewicht“ stellt um (auch Freiluft mit Gewicht, Fitnessstudio mit Zeit)
       klick('[data-bauort="studio"]');
-      await bis(function () { return $('[data-bauort="studio"].on') && /Gewicht/.test($(".bau-hinweis").textContent); }, 2000, "Fitnessstudio: Gewicht");
+      await bis(function () { return $('[data-bauort="studio"].on') && $("#bau-gewicht").checked; }, 2000, "Fitnessstudio: Mit Gewicht ist der Standard");
+      klick('[data-bauort="frei"]');
+      await bis(function () { return $('[data-bauort="frei"].on') && !$("#bau-gewicht").checked && /Timer/.test($(".bau-toggle .desc").textContent); }, 2000, "Freiluft: Timer ist der Standard");
+      klick("#bau-gewicht");
+      await bis(function () { return $("#bau-gewicht").checked && /Gewicht/.test($(".bau-toggle .desc").textContent) && $('[data-bauort="frei"].on'); }, 2000, "Freiluft mit Gewicht umgestellt");
+      klick('[data-bauort="studio"]');
+      klick('[data-bauort="frei"]');
+      await bis(function () { return $('[data-bauort="frei"].on') && !$("#bau-gewicht").checked; }, 2000, "nach dem Ortswechsel wieder der Standard");
       await zuBaukasten("gewicht");
       pruefe($(".bau-karte[data-surprise]") && $("[data-bauselber]"), "Die beiden Wege im Baukasten (Überrasch mich, Selber bauen) fehlen");
       var plaene0 = (JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length;
