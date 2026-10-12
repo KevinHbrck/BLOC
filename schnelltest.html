@@ -645,6 +645,8 @@
       klick('[data-bauart="gewicht"]');
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau");
       pruefe($('[data-bauart="gewicht"].active') && $$("#plan-sticky .wb-mini").length === 2, "Plan: Art oder Übungen fehlen: " + $$("#plan-sticky .wb-mini").length);
+      pruefe($$("[data-planex] .st-sub").some(function (e) { return /\d+ Sätze × \d+/.test(e.textContent); }), "Plan-Kacheln sollen „3 Sätze × 12“ zeigen");
+      pruefe($$("#plan-sticky .wb-mini-sub").length === 2 && /^\d+×\d+/.test($("#plan-sticky .wb-mini-sub").textContent), "Plan-Streifen soll „3×12“ zeigen");
       var a = zaehle();
       pruefe(a.wo === vor.wo && a.pl === vor.pl + 1, "Workout soll zum Plan werden, nicht doppelt bleiben: " + JSON.stringify(a));
       // und zurück nach Zeit
@@ -1076,17 +1078,17 @@
       await bis(function () { return $("[data-goplan]") && $$(".wb-ablauf").length === 6; }, 3000, "Deckblatt mit Gewichten");
       pruefe($("[data-goplan]").classList.contains("btn-primary") && $("[data-go]").classList.contains("btn-secondary"), "Deckblatt: „Mit Gewichten trainieren“ soll vorn stehen, der Timer dahinter");
       var subs = $$(".wb-ablauf .st-sub").map(function (e) { return e.textContent; });
-      pruefe(subs.length === 6 && subs.every(function (x) { return /\d × \d/.test(x) && !/s\//.test(x); }), "Ablauf zeigt Gewicht × Wiederholungen: " + subs.join(" | "));
+      pruefe(subs.length === 6 && subs.every(function (x) { return /\d+ Sätze × \d/.test(x) && !/s\//.test(x); }), "Ablauf zeigt Sätze × Wiederholungen: " + subs.join(" | "));
       klick($("[data-goplan]"));
       await bis(function () { return $("[data-planwo]") && $$("[data-studio]").length === 6; }, 3000, "Plan mit sechs Übungen");
       var pl = daten().settings.stPlaene;
       pruefe(pl.length === 1 && pl[0].ids.length === 6 && pl[0].fromWo === "lib:gym-chest", "Plan aus dem Deckblatt nicht angelegt: " + JSON.stringify(pl));
-      pruefe(/3 × 12/.test($('[data-studio="chest-press-machine"]').textContent), "Plan-Kachel ohne Ziel „3 × 12“: " + $('[data-studio="chest-press-machine"]').textContent);
+      pruefe(/3 Sätze × 12/.test($('[data-studio="chest-press-machine"]').textContent), "Plan-Kachel ohne Ziel „3 Sätze × 12“: " + $('[data-studio="chest-press-machine"]').textContent);
       // „Mit Timer starten“ aus dem Plan: im Timer steht Gewicht × Wiederholungen unter dem Namen
       klick($("[data-planwo]"));
       klick(await bis(function () { return $("[data-go]"); }, 3000, "Mit Timer starten auf dem Deckblatt"));
       await bis(function () { return $("#pl-body .pl-kg"); }, 3000, "Gewicht im Timer");
-      pruefe(/\d × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Gewicht × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
+      pruefe(/\d+ Sätze × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Sätze × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
       // Satz direkt im Timer eintragen: Fenster mit Gewicht und Wiederholungen, danach steht das neue Gewicht unter dem Namen
       klick(await bis(function () { return $("#pl-body [data-plkg]"); }, 3000, "Satz eintragen im Timer"));
       eingeben(await bis(function () { return $("#overlayRoot #pg-kg"); }, 2000, "Fenster für das Gewicht"), "47,5");

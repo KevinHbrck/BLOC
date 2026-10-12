@@ -236,7 +236,8 @@ function renderDraftPage(d, cfg){
   var pos = {};
   d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
   function kachel(ex){
-    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:exFarbe(ex), nr:pos[ex.id] || [], unter:kachelMuskel(ex),
+    return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:exFarbe(ex), nr:pos[ex.id] || [],
+      unter:kachelMuskel(ex)+(exIstStudio(ex) ? '<span class="st-sub an">'+esc(gymSatzText(ex.id))+'</span>' : ''),   // Fitnessstudio-Übung: „3 Sätze × 12“ gleich auf der Kachel
       innen:'<span class="wb-i" aria-hidden="true">i</span>'+exFavBtn(ex.id) });   // das i zeigt nur: lange drücken = Info
   }
   // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen

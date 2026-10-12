@@ -290,7 +290,7 @@ function renderStudioKarte(id){
     '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
       studioStatsLeiste(id)+
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
-      '<div class="st-ziel">'+esc(t("stGoal"))+' '+z.saetze+' × '+z.wdh+
+      '<div class="st-ziel">'+esc(t("stGoal"))+' '+satzName(z.saetze)+' × '+z.wdh+
         (e.kg != null ? SEP+esc(t("stWeight"))+' '+studioKg(e.kg)+' kg' : '')+'</div>'+
       (stg ? '<div class="st-steigern"><span>'+esc(t("stSuggest", { z:stg.ziel, kg:studioKg(stg.kg) }))+'</span>'+
         '<button type="button" class="btn btn-primary" data-stup>'+esc(t("stSuggestYes"))+'</button></div>' : '')+

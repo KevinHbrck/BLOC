@@ -2371,4 +2371,5 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .bau-schritt span{ width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--text) 12%, transparent); color:var(--text); font-size:11px; }
 .topbar:has([data-lupe]) h1{ font-size:18px; }
 .plan-sticky .wb-mini{ width:66px; }
+.wb-mini-sub{ font-size:10.5px; font-weight:700; color:var(--text-dim); line-height:1.2; white-space:nowrap; }
 .plan-sticky .wb-mini-illu{ width:44px; height:44px; }

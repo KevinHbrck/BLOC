@@ -305,9 +305,9 @@ function renderStats(){
       '<div class="heat"><div class="heat-tage">'+namen.map(function(x){ return '<small>'+esc(x)+'</small>'; }).join("")+'</div><div class="heat-raster">'+zellen+'</div>'+
       '<div class="heat-legende"><small>'+esc(t("statWeniger2"))+'</small><i class="hz l0"></i><i class="hz l1"></i><i class="hz l2"></i><i class="hz l3"></i><small>'+esc(t("statMehr2"))+'</small></div></div></details>';
   }
-  // Bereiche: Run und Mobility & Stretch immer ganz unten (Run zweitletzter), davor der in den letzten 4 Wochen am meisten genutzte zuerst
+  // Bereiche wie auf der Startseite: Workout, dann Mobility & Stretch, danach Timer und Summit (der in den letzten 4 Wochen am meisten genutzte zuerst), Run zuletzt
   var folge = statGruppen(aktiv).map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
-    var fix = function(k){ return k === "run" ? 1 : k === "warm" ? 2 : 0; };
+    var fix = function(k){ return k === "katalog" ? 0 : k === "warm" ? 1 : k === "run" ? 3 : 2; };
     return fix(a.k) - fix(b.k) || b.n - a.n || a.i - b.i;
   });
   folge.forEach(function(r){

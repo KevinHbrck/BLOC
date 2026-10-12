@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Sätze sichtbar, Statistik-Reihenfolge
+
+- **Nach Sätzen** zeigt die Funktion: Plan-Kacheln und Plan-Karte „3 Sätze × 12“ (ohne Eintrag das Ziel, mit Eintrag „40 kg · 3 Sätze × 12“; ohne Gewicht „3 Sätze × 40 s“), im klebenden Plan-Streifen kurz „3×12“; Fitnessstudio-Übungen zeigen es auch auf den Kacheln im Baukasten, auf dem Deckblatt und im Timer. Texte `satzEins`/`satzMehr`, Funktionen `satzName`/`satzZiel`/`satzKurz`/`satzLetzter` in `js/07-studio.js`.
+- Wörter: „Nach Sätzen trainieren“ (statt „Mit Gewichten trainieren“), „Sätze & Gewicht eintragen“, „Nach Sätzen · Pläne“. Gewicht und Sätze werden weiter zusammen eingetragen (Karte der Übung, Satz im Timer).
+- **Statistik**: Mobility & Stretch steht direkt unter Workout, vor Timer, Summit und Run (wie auf der Startseite). Fassung 2026-10-12-20.
+
 ## 2026-10-12 · Baukasten: Nach Zeit · Nach Sätzen, Info per Langdruck, Ablauf bleibt sichtbar, Politur
 
 - **Art wieder als zwei Knöpfe** „Nach Zeit · Nach Sätzen“ (ersetzt den Kippschalter) – im Baukasten und unter dem Ort auf beiden Bauseiten (Workout mit Timer, Plan). Auf den Bauseiten wandern die gewählten Übungen mit: ein erst beim Bauen angelegtes Workout bzw. ein neuer Plan wird dabei umgewandelt, nicht doppelt aufgehoben (`bauNachSaetzen`, `planNachZeit` in `js/11b-katalog.js`).

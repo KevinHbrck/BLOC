@@ -174,25 +174,42 @@ function stPlanIds(p){   // nur Übungen, die es noch gibt, jede nur einmal
   var da = {};
   return (Array.isArray(p.ids) ? p.ids : []).filter(function(id){ if(da[id] || !findExercise(id)) return false; da[id] = true; return true; });
 }
+/* So heißen Sätze überall: „3 Sätze × 12“ (mit Gewicht) bzw. „3 Sätze × 40 s“ (ohne Gewicht, Block); nach einem Eintrag „40 kg · 3 Sätze × 12“ */
+function satzName(n){ return n === 1 ? t("satzEins") : t("satzMehr", { n:n }); }
+function satzZiel(id){
+  var ex = findExercise(id);
+  if(studioNurBlock(ex)){ var tb = studioTimer(id); return satzName(tb.reps)+" × "+tb.work+" s"; }
+  var z = studioZiel(id);
+  return satzName(z.saetze)+" × "+z.wdh;
+}
+function satzKurz(id){   // „3×12“ bzw. „3×40 s“ für die kleinen Plan-Kacheln
+  var ex = findExercise(id);
+  if(studioNurBlock(ex)){ var tb = studioTimer(id); return tb.reps+"×"+tb.work+" s"; }
+  var z = studioZiel(id);
+  return z.saetze+"×"+z.wdh;
+}
+function satzLetzter(id){
+  var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
+  return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+satzName(last.s.length)+" × "+last.s[0][1] : "";
+}
 function studioSub(id){
-  var ex = findExercise(id), e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
-  if(studioNurBlock(ex)){ var tb = studioTimer(id); return tb.reps+" × "+tb.work+" s"; }
-  return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
+  var ex = findExercise(id);
+  if(studioNurBlock(ex)) return satzZiel(id);
+  return satzLetzter(id) || t("stNoData");
 }
 /* Fitnessstudio-Übung in einem Workout mit Timer: vorn steht Gewicht × Wiederholungen („40 kg · 3 × 12“, ohne Eintrag das Ziel „3 × 12“);
    leer bei allen anderen Übungen */
 function gymSatzText(id){
   var ex = findExercise(id);
   if(!exIstStudio(ex)) return "";
-  var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null, z = studioZiel(id);
-  return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : z.saetze+" × "+z.wdh;
+  return satzLetzter(id) || satzZiel(id);
 }
 /* Unter dem Namen einer Kachel: wofür die Übung da ist - die ersten zwei Hauptmuskeln in Kurzform, klein. Ohne Muskeldaten (eigene Übungen) entfällt die Zeile. */
 function kachelMuskel(ex){ var m = ex && musclesMain(ex); return m ? '<span class="st-mus">'+esc(m.split(", ").slice(0, 2).join(", "))+'</span>' : ''; }
 /* Studio-Kacheln im Plan: Muskeln und - falls schon eingetragen - der letzte Satz bzw. die Zeit (kein „–“ mehr ohne Daten) */
 function studioUnter(id){
   var sub = studioSub(id);
-  if(sub === t("stNoData")) sub = gymSatzText(id) || sub;   // Fitnessstudio-Übung ohne Eintrag: das Ziel (3 × 12) statt nichts
+  if(sub === t("stNoData")) sub = satzZiel(id);   // ohne Eintrag: das Ziel („3 Sätze × 12“) statt nichts
   return kachelMuskel(findExercise(id))+(sub === t("stNoData") ? '' : '<span class="st-sub">'+esc(sub)+'</span>');
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
@@ -228,8 +245,8 @@ function renderStudioPlan(){
       '<div class="plan-sticky" id="plan-sticky"><div class="plan-sticky-kopf"><b>'+esc(t("planKopf"))+'</b><span>'+esc(ids.length ? planAnzahl(ids.length) : t("planNochLeer"))+'</span></div>'+
         (ids.length ? '<div class="wb-streifen">'+ids.map(function(id, i){
           var ex = findExercise(id);
-          return ex ? '<button type="button" class="wb-mini'+(stPlanSel === i ? ' sel' : '')+'" data-plansel="'+i+'" style="--cat:'+studioFarbe(ex)+'" aria-pressed="'+(stPlanSel === i)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
-            (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span></button>' : "";
+          return ex ? '<button type="button" class="wb-mini'+(stPlanSel === i ? ' sel' : '')+'" data-plansel="'+i+'" style="--cat:'+studioFarbe(ex)+'" aria-pressed="'+(stPlanSel === i)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name)+", "+satzZiel(id))+'">'+
+            (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span><span class="wb-mini-sub">'+esc(satzKurz(id))+'</span></button>' : "";
         }).join("")+'</div>'+
           (stPlanSel > -1 && stPlanSel < ids.length ? '<div class="plan-ctrl"><button type="button" data-planmv="-1" aria-label="'+esc(t("moveLeft"))+'"'+(stPlanSel === 0 ? ' disabled' : '')+'>&#9664;</button>'+
             '<button type="button" class="del" data-plandelsel>'+ICON_TRASH+' '+esc(t("planRaus"))+'</button>'+
