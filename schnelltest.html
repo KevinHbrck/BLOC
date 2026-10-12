@@ -981,7 +981,7 @@
       var body = W.getComputedStyle(W.document.body).color;
       var gross = $(".area-tile.gross");
       pruefe(gross && parseFloat(W.getComputedStyle(gross).borderTopWidth) === 0, "Das erste Bereichs-Feld soll keine farbige Kontur haben (sah vorausgewählt aus)");
-      pruefe($$(".area-tile:not([data-bereich=\"warm\"]) .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen (außer Mobility & Stretch in Grün)");
+      pruefe($$(".area-tile:not([data-bereich=\"warm\"]):not([data-bereich=\"katalog\"]) .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen (außer Workout in Orange und Mobility & Stretch in Grün)");
       klick('[data-nav="#katalog"]');
       klick(await bis(function () { return $('[data-kattab="workouts"]'); }, 3000, "Reiter Katalog"));
       await bis(function () { return $(".kat-gr .sag-ico"); }, 3000, "Bereiche");
