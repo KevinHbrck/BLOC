@@ -113,8 +113,8 @@
       var m = await bis(function () { return $('[data-bauort="' + ort + '"]'); }, 2000, "Ort im Baukasten");
       if (!m.classList.contains("on")) klick(m);
       await bis(function () { return $('[data-bauort="' + ort + '"].on'); }, 2000, "Ort gewählt");
-      var tg = await bis(function () { return $("#bau-gewicht"); }, 2000, "Kippschalter Mit Gewicht");
-      if (tg.checked !== (modus === "gewicht")) { klick(tg); await bis(function () { return $("#bau-gewicht").checked === (modus === "gewicht"); }, 2000, "Kippschalter gestellt"); }
+      var art = await bis(function () { return $('[data-bauart="' + modus + '"]'); }, 2000, "Knopf Nach Zeit / Nach Sätzen");
+      if (!art.classList.contains("active")) { klick(art); await bis(function () { return $('[data-bauart="' + modus + '"].active'); }, 2000, "Art gestellt"); }
     }
   }
 
@@ -621,6 +621,44 @@
       await zuMeine();
       pruefe($$(".my-item").length === 1, "leeres Workout wurde angelegt: " + $$(".my-item").length);
     }],
+    ["Workout bauen: Info nur per Langdruck, Ablauf klebt, Nach Zeit ↔ Nach Sätzen nimmt die Übungen mit, Zurück im Plan", async function () {
+      function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }
+      function zaehle() { var d = JSON.parse(W.localStorage.getItem(KEY)); return { wo: (d.myWorkouts || []).length, pl: (d.settings.stPlaene || []).length }; }
+      await heim();
+      var vor = zaehle();
+      klick('[data-nav="#katalog"]');
+      await zuBaukasten("timer");
+      pruefe($$(".bau-schritt").length === 3 && $('[data-bauart="timer"].active'), "Baukasten: drei Schritte und die Art „Nach Zeit“ fehlen");
+      klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
+      await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
+      pruefe(!$("button[data-exinfo]") && $(".wb-kachel .wb-i"), "Das „i“ soll nur ein Hinweis sein, kein Knopf");
+      klick('[data-wbex="air-squats"]');
+      pruefe(!$("#overlayRoot .info-sheet") && $$(".wb-kachel.gewaehlt").length === 1, "Ein Tipp wählt die Übung aus und öffnet keine Info");
+      await lang($('[data-wbex="push-ups"]'));
+      await bis(function () { return $("#overlayRoot .info-sheet"); }, 2000, "Info per Langdruck");
+      pruefe($$(".wb-kachel.gewaehlt").length === 1, "Der Langdruck darf nichts auswählen");
+      klick($("#overlayRoot [data-close]"));
+      klick('[data-wbex="plank"]');
+      var st = $("#plan-sticky");
+      pruefe(st && W.getComputedStyle(st).position === "sticky" && $$("#plan-sticky .wb-mini").length === 2, "Der Ablauf soll beim Scrollen unter der Kopfzeile kleben");
+      // Nach Sätzen: dieselben Übungen im Plan, das beim Bauen angelegte Workout wandert
+      klick('[data-bauart="gewicht"]');
+      await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau");
+      pruefe($('[data-bauart="gewicht"].active') && $$("#plan-sticky .wb-mini").length === 2, "Plan: Art oder Übungen fehlen: " + $$("#plan-sticky .wb-mini").length);
+      var a = zaehle();
+      pruefe(a.wo === vor.wo && a.pl === vor.pl + 1, "Workout soll zum Plan werden, nicht doppelt bleiben: " + JSON.stringify(a));
+      // und zurück nach Zeit
+      klick('[data-bauart="timer"]');
+      await bis(function () { return $$("[data-wbex]").length > 50 && $("#plan-sticky"); }, 3000, "Workout mit Timer");
+      pruefe($$("#plan-sticky .wb-mini").length === 2, "Zurück nach Zeit: Übungen fehlen");
+      var b = zaehle();
+      pruefe(b.wo === vor.wo + 1 && b.pl === vor.pl, "Plan soll wieder zum Workout werden: " + JSON.stringify(b));
+      // System-Zurück im Plan-Bau führt zur Liste, nicht zur Startseite
+      klick('[data-bauart="gewicht"]');
+      await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau (zweites Mal)");
+      W.dispatchEvent(new W.PopStateEvent("popstate"));
+      await bis(function () { return $("[data-kattab]") && !$("#plan-name"); }, 3000, "System-Zurück: Liste des Katalogs");
+    }],
     ["Langdruck: Übung in Workout bzw. Plan legen, Plan-Bau mit Filtern, Gesamtsuche", async function () {
       function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }
       await heim();
@@ -703,16 +741,16 @@
       await heim();
       klick('[data-nav="#katalog"]');
       await zuBaukasten("gewicht");
-      // Art: Freiluft standardmäßig mit Timer, Fitnessstudio mit Gewicht; der Kippschalter „Mit Gewicht“ stellt um (auch Freiluft mit Gewicht, Fitnessstudio mit Zeit)
+      // Art: Freiluft standardmäßig nach Zeit, Fitnessstudio nach Sätzen; die zwei Knöpfe stellen um (auch Freiluft nach Sätzen, Fitnessstudio nach Zeit)
       klick('[data-bauort="studio"]');
-      await bis(function () { return $('[data-bauort="studio"].on') && $("#bau-gewicht").checked; }, 2000, "Fitnessstudio: Mit Gewicht ist der Standard");
+      await bis(function () { return $('[data-bauort="studio"].on') && $('[data-bauart="gewicht"].active'); }, 2000, "Fitnessstudio: nach Sätzen ist der Standard");
       klick('[data-bauort="frei"]');
-      await bis(function () { return $('[data-bauort="frei"].on') && !$("#bau-gewicht").checked && /Timer/.test($(".bau-toggle .desc").textContent); }, 2000, "Freiluft: Timer ist der Standard");
-      klick("#bau-gewicht");
-      await bis(function () { return $("#bau-gewicht").checked && /Gewicht/.test($(".bau-toggle .desc").textContent) && $('[data-bauort="frei"].on'); }, 2000, "Freiluft mit Gewicht umgestellt");
+      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-bauart="timer"].active') && /Timer/.test($(".bau-hinweis").textContent); }, 2000, "Freiluft: nach Zeit ist der Standard");
+      klick('[data-bauart="gewicht"]');
+      await bis(function () { return $('[data-bauart="gewicht"].active') && /Gewicht/.test($(".bau-hinweis").textContent) && $('[data-bauort="frei"].on'); }, 2000, "Freiluft nach Sätzen umgestellt");
       klick('[data-bauort="studio"]');
       klick('[data-bauort="frei"]');
-      await bis(function () { return $('[data-bauort="frei"].on') && !$("#bau-gewicht").checked; }, 2000, "nach dem Ortswechsel wieder der Standard");
+      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-bauart="timer"].active'); }, 2000, "nach dem Ortswechsel wieder der Standard");
       await zuBaukasten("gewicht");
       pruefe($(".bau-karte[data-surprise]") && $("[data-bauselber]"), "Die beiden Wege im Baukasten (Überrasch mich, Selber bauen) fehlen");
       var plaene0 = (JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length;

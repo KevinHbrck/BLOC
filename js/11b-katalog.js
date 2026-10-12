@@ -228,28 +228,108 @@ function renderKatalog(){
   return abt === "meine" ? renderLibrary() : abt === "uebungen" ? renderKatalogUebungen() : renderKatalogWorkouts();
 }
 
-/* Art im Baukasten: Freiluft läuft standardmäßig mit Timer (Zeit pro Übung), Fitnessstudio mit Gewicht. Der Kippschalter „Mit Gewicht“ stellt um (auch
-   Freiluft mit Gewicht, Fitnessstudio mit Zeit); die Wahl gilt für den gewählten Ort, beim Ortswechsel gilt wieder der Standard. */
+/* System-Zurück (Geste, Taste) im Plan-Bau, im geöffneten Plan oder in der Gewichtung: erst zurück zur Liste, genau wie der Pfeil oben */
+function katPlanVerlassen(){
+  var r = parseHash()[0];
+  if((r !== "katalog" && r !== "library" && r !== "timers") || (!stPlanAktiv && !stGen)) return false;
+  stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+  renderKatalog(); window.scrollTo(0, 0);
+  return true;
+}
+/* Art im Baukasten: Freiluft läuft standardmäßig nach Zeit (Timer), Fitnessstudio nach Sätzen (Gewicht × Wiederholungen). Die zwei Knöpfe
+   „Nach Zeit · Nach Sätzen“ stellen um (auch Freiluft nach Sätzen, Fitnessstudio nach Zeit); die Wahl gilt für den gewählten Ort, beim Ortswechsel gilt
+   wieder der Standard. Dieselben Knöpfe stehen in beiden Bauseiten unter dem Ort; dort wandern die gewählten Übungen mit. */
 function bauModus(){
   var s = state.db.settings;
   if(s.bauModusOrt === katOrt() && (s.bauModus === "gewicht" || s.bauModus === "timer")) return s.bauModus;
   return katOrt() === "studio" ? "gewicht" : "timer";
 }
+function bauArtHTML(modus, mitHinweis){
+  function b(k, key){ return '<button type="button" data-bauart="'+k+'" class="'+(modus === k ? 'active' : '')+'" aria-pressed="'+(modus === k)+'">'+esc(t(key))+'</button>'; }
+  return '<div class="seg-row bau-modus" role="group" aria-label="'+esc(t("bauArtTitel"))+'">'+b("timer", "bauArtZeit")+b("gewicht", "bauArtSaetze")+'</div>'+
+    (mitHinweis ? '<div class="bau-hinweis">'+esc(t(modus === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>' : '');
+}
+/* fn(neueArt) läuft nur, wenn die andere Art gewählt wurde; die Wahl wird für den Ort gemerkt */
+function bauArtBinden(modus, fn){
+  app.querySelectorAll("[data-bauart]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var k = b.getAttribute("data-bauart");
+      if(k === modus) return;
+      var s = state.db.settings;
+      s.bauModus = k; s.bauModusOrt = katOrt(); save();
+      fn(k);
+    });
+  });
+}
+/* Zeit → Sätze: das Workout mit Timer wird zum Plan (Gewicht × Wiederholungen) mit denselben Übungen. Ein erst beim Bauen angelegtes Workout
+   wandert dabei (es wird nicht doppelt aufgehoben); ein schon vorhandenes bleibt, der Plan wird einmal je Workout angelegt. */
+function bauNachSaetzen(b){
+  var d = b.d, ids = [];
+  d.items.forEach(function(it){ var ex = findExercise(it.ex); if(ex && ex.main !== "stretch" && ids.indexOf(it.ex) < 0) ids.push(it.ex); });
+  katPlanAufraeumen();
+  var l = stPlaene(), gespeichert = !b.neu, weg = gespeichert && b.angelegt, key = "my:"+d.id, p = null;
+  if(gespeichert && !weg) l.forEach(function(x){ if(x.fromWo === key) p = x; });
+  if(p){   // vorhandener Plan zu diesem Workout: fehlende Übungen kommen dazu
+    var pl = stPlanIds(p);
+    ids.forEach(function(id){ if(pl.indexOf(id) < 0) pl.push(id); });
+    p.ids = pl; p.updatedAt = Date.now();
+  } else {
+    p = { id:uid(), name:d.name && d.name !== t("myDefaultName") ? d.name : t("planDefault", { n:l.length+1 }), ids:ids, updatedAt:Date.now() };
+    if(gespeichert && !weg) p.fromWo = key;
+    l.push(p);
+    stPlanNeuId = p.id;   // bleibt er leer, wird er beim Verlassen wieder entfernt
+  }
+  if(weg) deleteMyNow(d.id);
+  save();
+  bauEntwurf = null;
+  katZuMeine();
+  stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+  navStack.pop();
+  if(navTop() !== "#katalog") navStack.push("#katalog");
+  syncGuard(); render(); window.scrollTo(0, 0);
+}
+/* Sätze → Zeit: der Plan wird zum Workout mit Timer (Satz- und Pausenwerte der Übungen). Ein erst beim Bauen angelegter Plan wandert dabei. */
+function planNachZeit(p){
+  var ids = stPlanIds(p), mw = null, neu = false;
+  if(ids.length){
+    var items = ids.map(function(id){
+      var ex = findExercise(id), tm = studioTimer(id);
+      return { ex:id, reps:ex.perSide ? tm.reps*2 : tm.reps, work:tm.work, rest:tm.rest };
+    });
+    mw = (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
+    var teil = t("planDefault", { n:"#" }).split("#"), nm = p.name;   // ein Standardname „Plan 3“ wird zu „Mein Workout“, eigene Namen bleiben
+    if(nm.indexOf(teil[0]) === 0 && nm.length >= teil[0].length+teil[1].length && /^\d+$/.test(nm.slice(teil[0].length, nm.length-teil[1].length)) && nm.slice(nm.length-teil[1].length) === teil[1]) nm = t("myDefaultName");
+    if(mw){ mw.items = items; mw.updatedAt = Date.now(); }
+    else { mw = createMyFromDraft({ name:nm, mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:items }); mw.fromPlan = p.id; neu = true; }
+  }
+  if(stPlanNeuId === p.id && !p.fromWo){   // erst beim Bauen angelegt: wandert ins Workout
+    state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });
+    if(mw) delete mw.fromPlan;
+  }
+  stPlanNeuId = null;
+  save();
+  stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+  bauAngelegtNext = mw && neu ? mw.id : null;
+  go(mw ? "#mybuild/"+mw.id : "#mybuild/new");
+}
 /* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
 function renderKatalogBaukasten(){
-  var s = state.db.settings, modus = bauModus();
+  var modus = bauModus();
   var hw = hinweise("bau2", ["katBauHint"]);
   app.innerHTML =
     katKopfHTML("baukasten", hw.knopf) +
     hw.z(0, "page-hint") +
+    '<div class="bau-schritt"><span>1</span>'+esc(t("bauSchritt1"))+'</div>'+
     bauOrtHTML() +
-    '<div class="bau-toggle">'+toggleRow("bau-gewicht", esc(t("bauGewichtToggle")), esc(t(modus === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub")), modus === "gewicht")+'</div>'+
+    '<div class="bau-schritt"><span>2</span>'+esc(t("bauArtTitel"))+'</div>'+
+    bauArtHTML(modus, true) +
+    '<div class="bau-schritt"><span>3</span>'+esc(t("bauSchritt3"))+'</div>'+
     '<button type="button" class="bau-karte bau-sp" data-surprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+esc(t("bauUeberraschSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte" data-bauselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();
-  bindToggle("bau-gewicht", function(v){ s.bauModus = v ? "gewicht" : "timer"; s.bauModusOrt = katOrt(); save(); renderKatalog(); });
+  bauArtBinden(modus, function(){ renderKatalog(); });
   bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
   app.querySelector("[data-bauselber]").addEventListener("click", function(){

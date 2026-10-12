@@ -2360,6 +2360,15 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 /* Verweis zwischen Workout und Mobility & Stretch, unter der Liste */
 .kat-link{ display:flex; align-items:center; justify-content:center; gap:8px; margin:18px 0 0; width:100%; }
 .kat-link .ico, .kat-link svg{ width:20px; height:20px; }
-/* Kippschalter „Mit Gewicht“ im Baukasten */
-.bau-toggle{ margin:0 0 12px; padding:0 14px; border:1px solid var(--border); border-radius:16px; background:var(--surface); }
-.bau-toggle .toggle-row{ border:none; padding:12px 0; }
+/* Baukasten: das „i“ auf den Kacheln zeigt nur, dass es Infos gibt (lange drücken); ein Tipp gehört immer der Auswahl */
+.wb-kachel{ -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
+.wb-i{ pointer-events:none; cursor:default; width:20px; height:20px; font-size:12px; line-height:20px; opacity:.75; }
+.plan-sticky-kopf .sec-link{ margin-left:auto; white-space:nowrap; }
+.plan-sticky-kopf b{ white-space:nowrap; }
+.plan-sticky-kopf span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Baukasten: drei kleine Schritte (Wo · Wie · Weg), damit der Faden sichtbar bleibt */
+.bau-schritt{ display:flex; align-items:center; gap:8px; margin:14px 2px 8px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); }
+.bau-schritt span{ width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--text) 12%, transparent); color:var(--text); font-size:11px; }
+.topbar:has([data-lupe]) h1{ font-size:18px; }
+.plan-sticky .wb-mini{ width:66px; }
+.plan-sticky .wb-mini-illu{ width:44px; height:44px; }

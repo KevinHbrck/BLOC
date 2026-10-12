@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Baukasten: Nach Zeit · Nach Sätzen, Info per Langdruck, Ablauf bleibt sichtbar, Politur
+
+- **Art wieder als zwei Knöpfe** „Nach Zeit · Nach Sätzen“ (ersetzt den Kippschalter) – im Baukasten und unter dem Ort auf beiden Bauseiten (Workout mit Timer, Plan). Auf den Bauseiten wandern die gewählten Übungen mit: ein erst beim Bauen angelegtes Workout bzw. ein neuer Plan wird dabei umgewandelt, nicht doppelt aufgehoben (`bauNachSaetzen`, `planNachZeit` in `js/11b-katalog.js`).
+- **Info nur per Langdruck**: das „i“ auf den Kacheln ist nur noch ein Hinweis, ein Tipp gehört immer der Auswahl (Workout mit Timer und Plan-Bau; Hinweistexte ergänzt).
+- **Ablauf bleibt sichtbar**: die gewählten Übungen kleben beim Scrollen unter der Kopfzeile (wie im Plan-Bau); neu Gewähltes scrollt im Streifen nach.
+- **Zurück**: die System-Zurück-Geste im Plan-Bau, im geöffneten Plan und in der Gewichtung führt erst zur Liste (wie der Pfeil oben), nicht gleich zur Startseite (`katPlanVerlassen`).
+- **UX-Politur** ohne Änderung von Funktion und Aufbau: drei Schritte im Baukasten (1 Wo · 2 Wie · 3 Weg), einheitliche Wörter (Zeit/Sätze in Meine, Hinweise, Startseite, „Was ist was?“), Mobility & Stretch mit demselben Reiter wie das Workout, Titel mit Lupe passt in eine Zeile. Fassung 2026-10-12-19.
+
 ## 2026-10-12 · Baukasten: Kippschalter „Mit Gewicht“
 
 - Statt des Zwei-Knöpfe-Schalters ein **Kippschalter „Mit Gewicht“**: Freiluft steht auf Timer, Fitnessstudio auf Gewicht, beides lässt sich umstellen (Freiluft mit Gewicht, Fitnessstudio mit Zeit). Die Wahl gilt für den Ort; beim Ortswechsel gilt wieder der Standard. Fassung 2026-10-12-18.

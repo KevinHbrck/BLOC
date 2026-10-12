@@ -61,6 +61,8 @@ window.addEventListener("popstate", function(){
     syncGuard();
     return;
   }
+  // 1b. Plan-Bau und Gewichtung liegen auf der Katalogseite: Zurück geht erst zur Liste (wie der Pfeil oben), nicht gleich zur Startseite
+  if(katPlanVerlassen()){ syncGuard(); return; }
   // 2. laufender Timer: nicht einfach weg - erst nachfragen
   if(document.getElementById("playerRoot").innerHTML && playerState){
     var st = playerState.steps[playerState.idx];

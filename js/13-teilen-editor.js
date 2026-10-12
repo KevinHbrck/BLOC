@@ -133,14 +133,16 @@ var ICON_GRIP = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentCo
 /* Baukasten: Arbeitskopie, die sich selbst speichert - sobald mindestens eine Übung drin ist, wird jede Änderung sofort gesichert
    (kein „Speichern“-Knopf nötig). Ein neues Workout ohne Übung bleibt unangelegt (neu = noch nicht in der Liste). */
 var bauEntwurf = null;
+var bauAngelegtNext = null;   // Workout, das gerade aus einem Plan entstanden ist (darf beim Zurückwechseln wandern)
 function renderMyBuild(id){
   if(!bauEntwurf || bauEntwurf.key !== id){
     if(id === "new"){
-      bauEntwurf = { key:id, neu:true, d:{ id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[] } };
+      bauEntwurf = { key:id, neu:true, angelegt:true, d:{ id:uid(), name:t("myDefaultName"), mode:"uniform", reps:6, work:30, rest:10, blockRest:45, items:[] } };
       if(bauNeuWs){ bauEntwurf.d.ws = bauNeuWs; if(bauNeuWs === "dehn") bauEntwurf.d.work = 30; }
       bauNeuWs = "";
     }
-    else { var mw = findMy(id); if(!mw){ go("#library"); return; } bauEntwurf = { key:id, d:draftCopy(mw) }; }
+    else { var mw = findMy(id); if(!mw){ go("#library"); return; } bauEntwurf = { key:id, angelegt:bauAngelegtNext === id, d:draftCopy(mw) }; }
+    bauAngelegtNext = null;
   }
   renderDraftPage(bauEntwurf.d, { cover:false, back:bauEntwurf.d.ws ? "#warmstretch" : "#library", id:bauEntwurf.d.id, bau:bauEntwurf });
 }
@@ -235,7 +237,7 @@ function renderDraftPage(d, cfg){
   d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
   function kachel(ex){
     return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:exFarbe(ex), nr:pos[ex.id] || [], unter:kachelMuskel(ex),
-      innen:'<button type="button" class="wb-i" data-exinfo="'+ex.id+'" aria-label="'+esc(t("info"))+'">i</button>'+exFavBtn(ex.id) });
+      innen:'<span class="wb-i" aria-hidden="true">i</span>'+exFavBtn(ex.id) });   // das i zeigt nur: lange drücken = Info
   }
   // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen
   function ablaufKachel(it, i){
@@ -305,6 +307,7 @@ function renderDraftPage(d, cfg){
     hw = hinweise("bau", ["wbTippen"]);
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       bauOrtHTML()+
+      (cfg.cover ? '' : bauArtHTML("timer", false))+
       hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
       airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true, zonen)+
@@ -356,9 +359,12 @@ function renderDraftPage(d, cfg){
       '<div class="page-hint">'+esc(t("wbAblaufHint"))+'</div>'+
       '<div class="fig-grid">'+d.items.map(ablaufKachel).join("")+'</div>'+
       (palOpen ? '' : '<button type="button" class="my-new" data-palopen>'+ICON_PLUS+' '+t("myAdd")+'</button>')
-    : '<div class="section-title wb-kopf"><span>'+t("wbAblauf")+'</span>'+
-        (exs.length > 2 ? '<button type="button" class="sec-link" data-wbordnen>'+esc(t("wbOrdnen"))+'</button>' : '')+'</div>'+
-      (d.items.length ? '<div class="wb-streifen">'+streifen+'</div>' : '<div class="fav-empty">'+esc(t("wbLeer"))+'</div>');
+    : d.items.length
+      // Der Ablauf bleibt beim Scrollen unter der Kopfzeile stehen: beim Wählen sieht man immer, was schon im Workout ist
+      ? '<div class="plan-sticky" id="plan-sticky"><div class="plan-sticky-kopf"><b>'+esc(t("wbAblauf"))+'</b><span>'+esc(t("exCount", { n:exs.length })+" · "+dauer)+'</span>'+
+          (exs.length > 2 ? '<button type="button" class="sec-link" data-wbordnen>'+esc(t("wbOrdnen"))+'</button>' : '')+'</div>'+
+          '<div class="wb-streifen">'+streifen+'</div></div>'
+      : '<div class="section-title wb-kopf"><span>'+t("wbAblauf")+'</span></div><div class="fav-empty">'+esc(t("wbLeer"))+'</div>';
 
   app.innerHTML =
     topbar(cfg.cover ? t("coverTitle") : t("myWorkout"), { back:cfg.back, right: hw.knopf + (palOpen ? lupeHTML("b", buildQuery) : "") + (cfg.cover ? "" :
@@ -378,6 +384,9 @@ function renderDraftPage(d, cfg){
     if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ bauEntwurf = null; goBack(cfg.back); }); }
   }
   bindCommon();
+  var stK = app.querySelector("#plan-sticky"), tbK = app.querySelector(".topbar");   // der Ablauf klebt direkt unter der Kopfzeile
+  if(stK && tbK) stK.style.top = Math.max(0, Math.round(tbK.getBoundingClientRect().height) - 2)+"px";
+  if(d._streifenEnde){ d._streifenEnde = false; var strK = app.querySelector(".wb-streifen"); if(strK) strK.scrollLeft = strK.scrollWidth; }   // neu Gewähltes steht am Ende
 
   function speichern(){
     if(cfg.cover){ d._dirty = true; return; }
@@ -413,13 +422,17 @@ function renderDraftPage(d, cfg){
     var id = el.getAttribute("data-wbex");
     if(pos[id]){ d.items = d.items.filter(function(it){ return it.ex !== id; }); }
     else {
-      d.items.push(itemFromEx(id));
+      d.items.push(itemFromEx(id)); d._streifenEnde = true;
       var neuOrd = stretchLast(d.items, function(it){ return it.ex; }); d.items = neuOrd;
     }
     speichern(); neu();
   }
   kachelKlick(app, "[data-wbex]", kachelTipp);
-  on("[data-exinfo]", function(el, e){ e.stopPropagation(); openExInfo(el.getAttribute("data-exinfo"), false); });
+  app.querySelectorAll("[data-wbex]").forEach(function(el){   // Info nur per Langdruck - ein Tipp fügt die Übung hinzu bzw. nimmt sie heraus
+    var id = el.getAttribute("data-wbex");
+    langDruck(el, function(){ openExInfo(id, false); });
+    el.addEventListener("keydown", function(e){ if(e.target === el && (e.key === "i" || e.key === "I")){ e.preventDefault(); openExInfo(id, false); } });
+  });
   on("[data-exfav]", function(el, e){ e.stopPropagation(); toggleExFav(el.getAttribute("data-exfav")); neu(); });   // Stern: steht dann oben
 
   // Übung im Ablauf: Aktionen
@@ -451,6 +464,7 @@ function renderDraftPage(d, cfg){
 
   on("[data-btoggle]", function(){ s.buildFilterOpen = !s.buildFilterOpen; save(); neu(); });
   bauOrtBinden(neu);
+  if(!cfg.cover) bauArtBinden("timer", function(){ bauNachSaetzen(cfg.bau); });   // nach Sätzen: dieselben Übungen als Plan (Gewicht × Wiederholungen)
   on("[data-bfcat]", function(el){ s.buildCats = selToggle(cat, el.getAttribute("data-bfcat")); save(); neu(); });
   on("[data-bfequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bfequip")); save(); neu(); });
   on("[data-bfzone]", function(el){ s.buildZonen = selToggle(zonen, el.getAttribute("data-bfzone")); save(); neu(); });
