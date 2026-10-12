@@ -990,7 +990,7 @@
       klick('[data-kattab="uebungen"]');
       await bis(function () { return $(".sp-leiste[data-surprise]"); }, 3000, "Überrasch mich");
       var le = $(".sp-leiste[data-surprise]");
-      pruefe(W.getComputedStyle(le).backgroundColor === W.getComputedStyle($(".kat-plan")).backgroundColor, "Überrasch mich soll die Standardfarbe haben wie „Workout planen“");
+      pruefe(W.getComputedStyle(le.querySelector(".ico")).color !== W.getComputedStyle(W.document.body).color && W.getComputedStyle(le).backgroundColor !== W.getComputedStyle($(".kat-plan")).backgroundColor, "Überrasch mich soll im BLOC-Orange stehen (Symbol und Hintergrund)");
       klick('.tabbar [data-nav="#search"]');
       eingeben(await bis(function () { return $("#gs-q"); }, 3000, "Suchfeld"), "ganzk");
       await bis(function () { return $(".sr-welt"); }, 3000, "Suche zeigt den Ort bei Workouts");

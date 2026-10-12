@@ -13,6 +13,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - Schnelltest 33 Prüfungen. Fassung 2026-10-12-3.
 - **Nachtrag (Fassung 2026-10-12-5)**: Fitnessstudio-Orange ist jetzt **dasselbe Orange wie das BLOC-Logo** (`--gym-color` = `--accent`); das Symbol des gewählten Orts im Schalter ist orange (stand blau). **Bereiche stehen immer zugeklappt da**, auch mit Filter (nur eine Suche klappt Treffer auf). **Startseite**: Workout und direkt darunter **Mobility & Stretch** sind die zwei großen Felder, **Timer, Summit und Run** die Liste darunter (sortierbar); Mobility & Stretch ist wieder grün (Symbol, Übungen, Programme). Schnelltest 33 Prüfungen.
 - **Nachtrag 2 (Fassung 2026-10-12-6)**: **Fitnessstudio im C60-Rot** (`#e1251b`, in allen Designs), dafür ist **Workout selbst im BLOC-Orange** (Symbol auf der Startseite, beim Sortieren und in „Was ist was?“, `--accent`). Freiluft bleibt blau, Mobility & Stretch grün.
+- **Nachtrag 3 (Fassung 2026-10-12-7)**: „Überrasch mich“ steht wieder im **BLOC-Orange** (zarte Akzent-Tönung mit Akzent-Symbol), das Symbol ist ein **schlichter Würfel** statt des Zauberstabs mit Funken.
 
 ## 2026-10-10 · Fitnessstudio-Übungen überall, hellgrüne Symbole, einheitliche Namen
 

@@ -9,8 +9,8 @@ var HOME_ICON = {
   warm:'<circle cx="12" cy="4.5" r="2"/><path d="M5 8.5l7 2 7-2M12 10.5v4.5l-4.5 5.5M12 15l4.5 5.5"/>',   /* Mobility & Stretch: Figur streckt sich */
   run:'<circle cx="14" cy="4.5" r="2"/><path d="M6 21l3-6 3 2v5M9 15l1-4 4-1 2 3 3 1M10 11L8 8"/>'   /* Lauf: Läufer */
 };
-/* „Überrasch mich“: Zauberstab mit Funken (klarer und moderner als die beiden Sterne davor) */
-var ICON_UEBERRASCH = '<path d="M4.5 19.5L14.5 9.5"/><path d="M13 3.5l.9 2.2 2.2.9-2.2.9L13 9.7l-.9-2.2-2.2-.9 2.2-.9z"/><path d="M19.5 11.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/><path d="M6 5l.5 1.2 1.2.5-1.2.5L6 8.4l-.5-1.2-1.2-.5 1.2-.5z"/>';
+/* „Überrasch mich“: ein schlichter Würfel (erwachsener als der frühere Zauberstab mit Funken) */
+var ICON_UEBERRASCH = '<rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.1" fill="currentColor" stroke="none"/>';
 var ICON_STAR = '<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>';
 /* Bereichs-Kachel (zwei nebeneinander): Symbol oben, Titel, Kurzbeschreibung, Pfeil */
 /* art: "gross" (Workouts, der wichtigste Bereich) oder "zeile" (die übrigen, als ruhige Liste) */
