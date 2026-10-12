@@ -3,15 +3,19 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Baukasten ohne Schalter „Mit Timer · Mit Gewicht“
+
+- Der Schalter entfällt: die Art ergibt sich aus dem Ort (**Freiluft = Timer, Fitnessstudio = Gewicht**); eine Zeile darunter erklärt sie. Fassung 2026-10-12-17.
+
 ## 2026-10-12 · Namen und Verweise zwischen Workout und Mobility & Stretch
 
-- Der Bereich Workout heißt auf der Seite **Katalog** (Reiter Katalog | Baukasten); die Kachel auf der Startseite bleibt „Workout“.
+- Im Workout-Bereich steht oben **Workout**, darunter die Reiter **Katalog** und **Baukasten**; in Mobility & Stretch genauso.
 - In Mobility & Stretch heißt die Abteilung **Abläufe** (statt „Workoutkatalog“).
 - **Verweise**: unter der Liste in Mobility „Mehr Übungen im Workout-Katalog“ (öffnet den Übungskatalog), im Übungskatalog des Workouts „Aufwärmen und Dehnen: Mobility & Stretch“. Fassung 2026-10-12-16.
 
 ## 2026-10-12 · Baukasten: Art folgt dem Ort
 
-- Im Baukasten läuft **Freiluft standardmäßig „Mit Timer“, Fitnessstudio „Mit Gewicht“**. Wer selbst umschaltet, behält die Wahl für diesen Ort; beim Ortswechsel gilt wieder der Standard (`bauModus()` in `js/11b-katalog.js`, `settings.bauModusOrt`). Schnelltest 33 Prüfungen.
+- Im Baukasten läuft **Freiluft mit „Mit Timer“, Fitnessstudio mit „Mit Gewicht“** (zuerst als Standard, siehe oben: der Schalter ist inzwischen entfallen). Fassung 2026-10-12-15.
 
 ## 2026-10-12 · Mobility & Stretch mit der Katalog-Logik des Workouts
 

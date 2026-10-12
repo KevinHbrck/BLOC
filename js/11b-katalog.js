@@ -117,7 +117,7 @@ function katSuche(q, standard){
 /* ---------- Kopf: Titel, Reiter, Überrasch mich ---------- */
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
-  var kopf = topbar(t("katTitel"), { back:"#home", right:right || "" }) +
+  var kopf = topbar(t("katalog"), { back:"#home", right:right || "" }) +
     '<div class="rz kat-rz" style="--rz:var(--text)">'+b("workouts", t("katTabKatalog"))+b("baukasten", t("katTabBaukasten"))+'</div>';
   if(tab !== "workouts") return kopf;
   // Katalog: drei gleichrangige Abteilungen Meine · Workoutkatalog · Übungskatalog, im Workoutkatalog ganz vorn der Ort
@@ -164,7 +164,7 @@ function bauOrtBinden(neu, box){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-bauort");
       if(o === katOrt()) return;
-      state.db.settings.katOrt = o; delete state.db.settings.bauModusOrt; save(); neu();
+      state.db.settings.katOrt = o; save(); neu();
     });
   });
 }
@@ -208,7 +208,7 @@ function katKopfBinden(){
     b.addEventListener("click", function(){
       var o = b.getAttribute("data-katort");
       if(o === katOrt()) return;
-      state.db.settings.katOrt = o; delete state.db.settings.bauModusOrt; save(); katOffen = {};
+      state.db.settings.katOrt = o; save(); katOffen = {};
       renderKatalog(); window.scrollTo(0, 0);
     });
   });
@@ -228,33 +228,20 @@ function renderKatalog(){
   return abt === "meine" ? renderLibrary() : abt === "uebungen" ? renderKatalogUebungen() : renderKatalogWorkouts();
 }
 
-/* Art des Workouts im Baukasten: Freiluft läuft standardmäßig mit Timer, Fitnessstudio mit Gewicht. Wer selbst umschaltet, behält das für diesen Ort;
-   wechselt der Ort, gilt wieder der Standard. */
-function bauModus(){
-  var s = state.db.settings;
-  if(s.bauModusOrt === katOrt() && (s.bauModus === "gewicht" || s.bauModus === "timer")) return s.bauModus;
-  return katOrt() === "studio" ? "gewicht" : "timer";
-}
 /* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
 function renderKatalogBaukasten(){
-  var s = state.db.settings, modus = bauModus();
+  var modus = katOrt() === "studio" ? "gewicht" : "timer";   // Art ergibt sich aus dem Ort: Freiluft mit Timer, Fitnessstudio mit Gewicht
   var hw = hinweise("bau2", ["katBauHint"]);
   app.innerHTML =
     katKopfHTML("baukasten", hw.knopf) +
     hw.z(0, "page-hint") +
     bauOrtHTML() +
-    '<div class="seg-row bau-modus" role="group" aria-label="'+esc(t("bauModusTitel"))+'">'+
-      '<button type="button" data-baumodus="timer" class="'+(modus === "timer" ? 'active' : '')+'" aria-pressed="'+(modus === "timer")+'">'+esc(t("bauModusTimer"))+'</button>'+
-      '<button type="button" data-baumodus="gewicht" class="'+(modus === "gewicht" ? 'active' : '')+'" aria-pressed="'+(modus === "gewicht")+'">'+esc(t("bauModusGewicht"))+'</button></div>'+
     '<div class="bau-hinweis">'+esc(t(modus === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>'+
     '<button type="button" class="bau-karte bau-sp" data-surprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+esc(t("bauUeberraschSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte" data-bauselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();
-  app.querySelectorAll("[data-baumodus]").forEach(function(b){
-    b.addEventListener("click", function(){ s.bauModus = b.getAttribute("data-baumodus"); s.bauModusOrt = katOrt(); save(); renderKatalog(); });
-  });
   bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
   app.querySelector("[data-bauselber]").addEventListener("click", function(){

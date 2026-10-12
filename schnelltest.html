@@ -108,10 +108,11 @@
     var b = await bis(function () { return $('[data-kattab="baukasten"]'); }, 3000, "Reiter Baukasten");
     if (!b.classList.contains("active")) klick(b);
     await bis(function () { return $("[data-bauselber]"); }, 3000, "Baukasten");
-    if (modus) {
-      var m = await bis(function () { return $('[data-baumodus="' + modus + '"]'); }, 2000, "Art des Workouts");
-      if (!m.classList.contains("active")) klick(m);
-      await bis(function () { return $('[data-baumodus="' + modus + '"].active'); }, 2000, "Art gewählt");
+    if (modus) {   // die Art ergibt sich aus dem Ort: Timer = Freiluft, Gewicht = Fitnessstudio
+      var ort = modus === "gewicht" ? "studio" : "frei";
+      var m = await bis(function () { return $('[data-bauort="' + ort + '"]'); }, 2000, "Ort im Baukasten");
+      if (!m.classList.contains("on")) klick(m);
+      await bis(function () { return $('[data-bauort="' + ort + '"].on'); }, 2000, "Ort gewählt");
     }
   }
 
@@ -155,7 +156,7 @@
       var tabs = $$("[data-kattab]").map(function (b) { return b.textContent.trim(); }).join(" · ");
       pruefe(tabs === "Katalog · Baukasten", "Reihenfolge ist " + tabs);
       pruefe($(".rz") && !$(".lib-tabs-card") && !$(".surprise-card"), "Reiterzeile fehlt oder die große Karte steht noch da");
-      pruefe(/^Katalog$/.test($(".topbar h1").textContent.trim()), "Titel ist nicht „Katalog“");
+      pruefe(/^Workout$/.test($(".topbar h1").textContent.trim()), "Titel ist nicht „Workout“");
       await zuKatalogTab();
       var abt = $$("[data-katabt]").map(function (b) { return b.textContent.trim(); }).join(" · ");
       pruefe(abt === "Meine · Workoutkatalog · Übungskatalog", "Abteilungen: " + abt);
@@ -700,16 +701,12 @@
       await heim();
       klick('[data-nav="#katalog"]');
       await zuBaukasten("gewicht");
-      // Standard der Art: Freiluft = Mit Timer, Fitnessstudio = Mit Gewicht; wer selbst umschaltet, behält es für diesen Ort bis zum Wechsel
+      // Die Art ergibt sich aus dem Ort (kein Schalter mehr): Freiluft = Zeit pro Übung mit Timer, Fitnessstudio = Gewicht
+      pruefe(!$("[data-baumodus]"), "Der Schalter „Mit Timer · Mit Gewicht“ ist noch da");
+      klick('[data-bauort="frei"]');
+      await bis(function () { return $('[data-bauort="frei"].on') && /Timer/.test($(".bau-hinweis").textContent); }, 2000, "Freiluft: Timer");
       klick('[data-bauort="studio"]');
-      await bis(function () { return $('[data-bauort="studio"].on') && $('[data-baumodus="gewicht"].active'); }, 2000, "Fitnessstudio: Mit Gewicht ist der Standard");
-      klick('[data-bauort="frei"]');
-      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-baumodus="timer"].active'); }, 2000, "Freiluft: Mit Timer ist der Standard");
-      klick('[data-baumodus="gewicht"]');   // eigene Wahl bleibt für diesen Ort ...
-      await bis(function () { return $('[data-baumodus="gewicht"].active'); }, 2000, "eigene Wahl Mit Gewicht in Freiluft");
-      klick('[data-bauort="studio"]');      // ... beim Wechsel des Ortes gilt wieder der Standard
-      klick('[data-bauort="frei"]');
-      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-baumodus="timer"].active'); }, 2000, "nach dem Ortswechsel wieder Mit Timer");
+      await bis(function () { return $('[data-bauort="studio"].on') && /Gewicht/.test($(".bau-hinweis").textContent); }, 2000, "Fitnessstudio: Gewicht");
       await zuBaukasten("gewicht");
       pruefe($(".bau-karte[data-surprise]") && $("[data-bauselber]"), "Die beiden Wege im Baukasten (Überrasch mich, Selber bauen) fehlen");
       var plaene0 = (JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length;
@@ -723,6 +720,7 @@
       await zuBaukasten("gewicht");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen (mit Gewicht)"));
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau");
+      klick('[data-bauort="frei"]');   // der Plan-Bau öffnet im Fitnessstudio (Gewicht); für die Freiluft-Übung zuerst den Ort wechseln
       pruefe($$("details.kat-gr").length >= 7 && $$("details.kat-gr").every(function (d) { return !d.open; }), "Plan-Bau: zu Beginn sollen nur die Überschriften stehen");
       klick($('details[data-katgr="pl-beine"] > summary'));
       klick(await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats"));
@@ -770,7 +768,7 @@
       // Verweise zwischen den Bereichen: Mobility → Workout › Übungskatalog (Titel „Katalog“), von dort zurück nach Mobility & Stretch
       klick(await bis(function () { return $("[data-wslink]"); }, 2000, "Verweis zum Workout-Katalog"));
       await bis(function () { return $('[data-katabt="uebungen"].active'); }, 3000, "Workout › Übungskatalog");
-      pruefe(/Katalog/.test($(".topbar").textContent) && !/^Workout/.test($(".topbar").textContent.trim()), "Titel im Workout-Bereich: " + $(".topbar").textContent);
+      pruefe(/^Workout/.test($(".topbar").textContent.trim()), "Titel im Workout-Bereich: " + $(".topbar").textContent);
       klick(await bis(function () { return $('.kat-link[data-nav="#warmstretch"]'); }, 2000, "Verweis nach Mobility & Stretch"));
       await bis(function () { return $("[data-wsabt]") && /Mobility/.test($(".topbar").textContent); }, 3000, "zurück in Mobility & Stretch");
       klick('[data-wsabt="uebungen"]');
