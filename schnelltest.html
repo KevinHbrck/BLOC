@@ -593,7 +593,15 @@
       pruefe($('[data-wbex="plank"] .ex-fav.on'), "Stern lässt sich nicht setzen");
       klick('[data-wbex="plank"] [data-exfav]');
       pruefe($(".wb-leiste [data-tocover]") && !$(".wb-leiste [data-tocover]").disabled, "Start-Leiste fehlt");
-      pruefe($('[data-wbex="leg-press"]') && /gym-color/.test($('[data-wbex="leg-press"]').getAttribute("style")) && !$('[data-wbex="cobra-lift"]'), "Fitnessstudio-Übung fehlt (oder ist nicht grün) bzw. Dehnübung in der Auswahl");
+      // Ort immer getrennt: Freiluft zeigt keine Geräte, Fitnessstudio nur Geräte (grün/rot gekennzeichnet); Dehnübungen nie
+      klick('[data-bauort="frei"]');
+      pruefe($('[data-wbex="air-squats"]') && !$('[data-wbex="leg-press"]') && !$('[data-wbex="cobra-lift"]'), "Freiluft: Studio- oder Dehnübung in der Auswahl");
+      klick('[data-bauort="studio"]');
+      pruefe($('[data-wbex="leg-press"]') && /gym-color/.test($('[data-wbex="leg-press"]').getAttribute("style")) && !$('[data-wbex="air-squats"]') && !$('[data-wbex="cobra-lift"]'),
+        "Fitnessstudio: Übung fehlt (oder ist nicht rot), Freiluft- oder Dehnübung steht in der Auswahl");
+      pruefe($$(".wb-mini").length === 3, "Beim Ortswechsel bleibt der Ablauf: " + $$(".wb-mini").length);
+      pruefe(!$('[data-bfequip="gym"]'), "Der Filter „Fitnessstudio“ bei der Ausrüstung ist durch den Ort ersetzt");
+      klick('[data-bauort="frei"]');
       // Der Baukasten speichert selbst: kein Speichern-Knopf nötig, zurück ohne Nachfrage
       var sk = $(".wb-leiste [data-wbsave]");
       pruefe(sk && sk.disabled && /Gespeichert/.test(sk.textContent), "Anzeige „Gespeichert“ fehlt: " + (sk && sk.textContent));
@@ -708,14 +716,18 @@
       klick($('details[data-katgr="pl-beine"] > summary'));
       klick(await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats"));
       await bis(function () { return $('details[data-katgr="pl-beine"] .kat-n'); }, 2000, "„1 gewählt“ am Bereich");
-      klick($('[data-planex="leg-press"]'));
+      pruefe(!$('[data-planex="leg-press"]'), "Plan-Bau: Freiluft zeigt eine Geräteübung");
+      klick($('[data-bauort="studio"]'));   // Ort immer getrennt: Fitnessstudio zeigt nur Geräte, schon Gewähltes bleibt im Plan
+      pruefe(!$('[data-planex="air-squats"]') && $$(".plan-sticky [data-plansel]").length === 1, "Plan-Bau: Fitnessstudio zeigt Freiluft-Übungen oder verliert den Plan");
+      klick(await bis(function () { return $('[data-planex="leg-press"]'); }, 2000, "Beinpresse im Fitnessstudio"));
       await bis(function () { return $(".kk-kopf .kk-zeile"); }, 2000, "Körperkarte oben im Plan");
       await bis(function () { return $$(".plan-sticky [data-plansel]").length === 2; }, 2000, "Der Plan zeigt oben die gewählten Übungen");
       pruefe(/Plan/.test($(".plan-sticky-kopf").textContent) && /2/.test($(".plan-sticky-kopf").textContent), "Überschrift „Plan“ mit Anzahl: " + $(".plan-sticky-kopf").textContent);
       klick($('.plan-sticky [data-plansel="0"]'));   // im Plan antippen wählt aus, der Papierkorb nimmt die Übung heraus
       klick(await bis(function () { return $("[data-plandelsel]"); }, 2000, "Steuerung im Plan"));
       await bis(function () { return $$(".plan-sticky [data-plansel]").length === 1; }, 2000, "Übung aus dem Plan genommen");
-      klick($('details[data-katgr="pl-beine"] [data-planex="air-squats"]'));
+      klick($('[data-bauort="frei"]'));
+      klick(await bis(function () { return $('details[data-katgr="pl-beine"] [data-planex="air-squats"]'); }, 2000, "Air Squats unter Freiluft"));
       await bis(function () { return $$(".plan-sticky [data-plansel]").length === 2; }, 2000, "Übung wieder im Plan");
       klick($('.plan-sticky [data-plansel="1"]'));   // Reihenfolge: die zweite Übung (Air Squats) nach vorn schieben
       klick(await bis(function () { return $('[data-planmv="-1"]'); }, 2000, "◀ im Plan"));
@@ -1002,9 +1014,20 @@
       klick('[data-nav="#katalog"]');
       await zuBaukasten();
       klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
-      var gymChip = await bis(function () { return $('#overlayRoot [data-spequip="gym"]'); }, 2000, "Chip Fitnessstudio");
-      klick(gymChip);
-      klick(await bis(function () { return $('#overlayRoot [data-spequip="none"].on'); }, 2000, "Ohne Geräte war gewählt"));
+      // Überrasch mich unterscheidet immer nach Ort: Freiluft zieht keine Geräte (und kennt den Chip „Fitnessstudio“ nicht), Fitnessstudio nur Geräte
+      klick(await bis(function () { return $('#overlayRoot [data-bauort="frei"]'); }, 2000, "Ort-Schalter im Fenster"));
+      await bis(function () { return $('#overlayRoot [data-spequip="none"]'); }, 2000, "Ausrüstung bei Freiluft");
+      pruefe(!$('#overlayRoot [data-spequip="gym"]'), "Überrasch mich: Chip „Fitnessstudio“ steht noch bei der Ausrüstung");
+      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los (Freiluft)"));
+      await bis(function () { return /^#cover/.test(W.location.hash) && $$(".wb-ablauf").length > 0; }, 3000, "Überrasch-mich-Deckblatt (Freiluft)");
+      var cf = W.coverDraft;
+      pruefe(cf && cf.items.length > 2 && cf.items.every(function (it) { return !W.exIstStudio(W.findExercise(it.ex)); }), "Überrasch mich in Freiluft zieht Geräteübungen");
+      await heim();
+      klick('[data-nav="#katalog"]');
+      await zuBaukasten();
+      klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
+      klick(await bis(function () { return $('#overlayRoot [data-bauort="studio"]'); }, 2000, "Ort Fitnessstudio im Fenster"));
+      pruefe(!$('#overlayRoot [data-spequip]'), "Überrasch mich im Fitnessstudio: Ausrüstung ist nicht nötig, steht aber da");
       klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los"));
       await bis(function () { return /^#cover/.test(W.location.hash) && $$(".wb-ablauf").length > 0; }, 3000, "Überrasch-mich-Deckblatt");
       var cd = W.coverDraft;
@@ -1016,6 +1039,14 @@
       klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
       klick(await bis(function () { return $("#overlayRoot [data-spgewicht]"); }, 3000, "Nach Gewichtung"));
       klick(await bis(function () { return $('[data-genort="studio"]'); }, 3000, "Ort-Schalter im Generator"));
+      // Körpermodell oben (vor dem Hinweis), Regler färben es: je höher die Gewichtung, desto kräftiger rot; 0 % bleibt grau
+      var fg = await bis(function () { return $("[data-genfig] .kk-paar"); }, 2000, "Körpermodell im Generator");
+      pruefe($("[data-genfig]").compareDocumentPosition($(".page-hint")) & 4, "Körpermodell steht nicht oben (vor dem Hinweis)");
+      var an0 = $$("[data-genfig] .kk .z.an").length, rb = $("#gw-beine");
+      pruefe(an0 > 4, "Körpermodell zeigt keine gewichteten Zonen: " + an0);
+      rb.value = 0; rb.dispatchEvent(new W.Event("input", { bubbles: true }));
+      pruefe($$("[data-genfig] .kk .z.an").length < an0, "Körpermodell folgt den Reglern nicht");
+      rb.value = 35; rb.dispatchEvent(new W.Event("input", { bubbles: true }));
       klick(await bis(function () { return $("[data-genmake]"); }, 2000, "Plan anlegen"));
       await bis(function () { return $("[data-planwo]") && $$("[data-studio]").length > 2; }, 3000, "Plan nach Gewichtung (Fitnessstudio)");
       var l1 = daten().settings.stPlaene, p1 = l1[l1.length - 1];

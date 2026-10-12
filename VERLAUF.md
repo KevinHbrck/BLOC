@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-12 · Beim Bauen immer nach Ort getrennt, Körpermodell bei „Plan nach Gewichtung“
+
+- **Selber bauen und Überrasch mich unterscheiden immer zwischen Fitnessstudio und Freiluft**: ein Ort-Schalter (derselbe wie im Katalog, `settings.katOrt`) steht auf der Baukasten-Seite, im Timer-Baukasten, im Plan-Bau (Gewicht) und im Fenster „Überrasch mich“. Die Auswahl zeigt nur Übungen des gewählten Ortes, schon Gewähltes bleibt im Ablauf. Beim Öffnen eines Entwurfs bzw. Plans richtet sich der Ort einmal nach seinen Übungen. Der Ausrüstungs-Chip „Fitnessstudio“ entfällt (der Ort ersetzt ihn); Überrasch mich im Fitnessstudio braucht keine Ausrüstung.
+- **Plan nach Gewichtung**: oben (und beim Scrollen mitlaufend) das Körpermodell, die Gruppen werden je nach Gewichtung kräftiger oder weniger rot; es folgt den Reglern und der gewählten Ansicht (grob/fein).
+- Schnelltest 33 Prüfungen. Fassung 2026-10-12-12.
+
 ## 2026-10-12 · Workout umgebaut: Katalog (Meine · Workoutkatalog · Übungskatalog) und Baukasten
 
 - **Zwei Reiter**: **Katalog** und **Baukasten**. Der Reiter „Meine“ ist weg: im Katalog stehen drei gleichrangige Abteilungen **Meine** (eigene Workouts mit Timer und Pläne), **Workoutkatalog** (Ort-Schalter, Filter) und **Übungskatalog** (alle Übungen nach Bereichen, oben „Eigene Übung anlegen“; `#uebungskatalog` führt dorthin).

@@ -202,6 +202,7 @@ function wbTauschKandidat(d, i){
   var wahl = gleich.length ? gleich : pool;
   return wahl.length ? wahl[Math.floor(Math.random()*wahl.length)] : null;
 }
+var bauOrtEntwurf = null;   // der Entwurf, dessen Ort schon aus den Übungen übernommen wurde
 function renderDraftPage(d, cfg){
   var s = state.db.settings;
   // Dehn- und Mobility-Übungen stehen immer am Ende
@@ -209,9 +210,18 @@ function renderDraftPage(d, cfg){
   if(geordnet.some(function(it, i){ return it !== d.items[i]; })){
     d.items = geordnet;
   }
+  /* Beim ersten Öffnen eines Entwurfs: der Ort richtet sich nach seinen Übungen (überwiegend Fitnessstudio = Fitnessstudio), sonst bleibt der gewählte */
+  if(bauOrtEntwurf !== d){
+    bauOrtEntwurf = d;
+    var oEx = d.items.map(function(it){ return findExercise(it.ex); }).filter(function(ex){ return ex && fuerBau(ex); });
+    if(oEx.length){
+      var oNeu = oEx.filter(exIstStudio).length*2 > oEx.length ? "studio" : "frei";
+      if(oNeu !== katOrt()){ s.katOrt = oNeu; save(); }
+    }
+  }
   function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
   var cat = ohne(selArr(s.buildCats || s.buildCat), "stretch"), sort = s.libSort === "az" ? "az" : "std";
-  var equip = selArr(s.buildEquips);
+  var equip = selArr(s.buildEquips).filter(function(e){ return e !== "gym"; });   // „Fitnessstudio“ regelt der Ort-Schalter
   var zonen = kkNorm(s.buildZonen);
   var run = draftRun(d);
   var exs = d.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
@@ -290,9 +300,11 @@ function renderDraftPage(d, cfg){
         '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   } else if(palOpen){
-    var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(fuerBau);
+    // beim Bauen immer nach Ort getrennt: nur Übungen des gewählten Ortes (Fitnessstudio oder Freiluft), schon Gewähltes bleibt im Ablauf
+    var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(function(ex){ return fuerBau(ex) && exOrt(ex) === katOrt(); });
     hw = hinweise("bau", ["wbTippen"]);
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
+      bauOrtHTML()+
       hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
       airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true, zonen)+
@@ -438,6 +450,7 @@ function renderDraftPage(d, cfg){
   on("[data-wbordnen]", function(){ d.items = wbSinnvollOrdnen(d.items); speichern(); neu(); showToast(t("wbGeordnet")); });
 
   on("[data-btoggle]", function(){ s.buildFilterOpen = !s.buildFilterOpen; save(); neu(); });
+  bauOrtBinden(neu);
   on("[data-bfcat]", function(el){ s.buildCats = selToggle(cat, el.getAttribute("data-bfcat")); save(); neu(); });
   on("[data-bfequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bfequip")); save(); neu(); });
   on("[data-bfzone]", function(el){ s.buildZonen = selToggle(zonen, el.getAttribute("data-bfzone")); save(); neu(); });
@@ -576,7 +589,11 @@ function buildSurprise(p){
   var fokus = p.cats.filter(function(c){ return c !== "stretch"; });
   var wantStretch = mains.indexOf("stretch") > -1 || p.cats.indexOf("stretch") > -1;
   var trainMains = mains.filter(function(m){ return m !== "stretch"; });
+  // Ort: Fitnessstudio zieht nur Studio-Übungen, Freiluft nur alles andere (Ausrüstung ohne „Fitnessstudio“)
+  var ort = p.ort === "studio" ? "studio" : p.ort === "frei" ? "frei" : null;
   var equips = p.equips;
+  if(ort === "studio") equips = ["gym"];
+  else if(ort === "frei"){ equips = selArr(p.equips).filter(function(e){ return e !== "gym"; }); if(!equips.length) equips = ["none"]; }
   var recent = p.avoid === false ? {} : recentExercises(7);
   var total = p.dur*60;
 
@@ -593,8 +610,8 @@ function buildSurprise(p){
     var trainSec = Math.max(block, total - stretchBudget);
     var n = anzahl ? Math.max(1, anzahl - stretchAnzahl) : Math.max(2, Math.round((trainSec + tm.blockRest) / (block + tm.blockRest)));
     var pool = EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && spErlaubt(ex, equips) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
-        equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains);
+      return !libHidden("ex:"+ex.id) && spErlaubt(ex, equips) && (!ort || exOrt(ex) === ort) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
+        (ort === "studio" || (equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains)));
     });
     if(!pool.length && !stretchPool.length) return null;
     var fresh = pool.filter(function(ex){ return !recent[ex.id]; }).length;
@@ -732,6 +749,7 @@ function openSurprise(twId){
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet">'+
       '<h3>'+svgIcon(ICON_UEBERRASCH, "ico sp-h-ico")+' '+t("surprise")+'</h3>'+
       (tw ? '' : '<div class="seg-row sp-art" role="group"><button type="button" class="active" aria-pressed="true">'+esc(t("spArtZufall"))+'</button><button type="button" data-spgewicht aria-pressed="false">'+esc(t("spArtGewichtung"))+'</button></div>')+
+      bauOrtHTML()+
       (tw ? '<div class="tm-hint" style="margin-top:0">'+esc(t("spFillHint", { n:tw.name || t("untitled") }))+'</div>'+
             '<label>'+t("spCount")+'</label><div class="sp-chips">'+[4,6,8,10,12,15].map(function(v){
         return '<button type="button" class="fc-chip'+(p.anzahl===v?' on':'')+'" data-spanz="'+v+'">'+v+' '+t("spCountUnit")+'</button>'; }).join("")+'</div>'
@@ -740,8 +758,8 @@ function openSurprise(twId){
       '<label>'+t("mainCat")+'</label>'+
       mainTilesHTML(p.mains, null, "data-spmain", ["stretch"])+
       '<div class="tm-hint" style="margin-top:-4px;">'+esc(t("spMainHint"))+'</div>'+
-      '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.map(function(e){
-        return '<button type="button" class="fc-chip'+(p.equips.indexOf(e.id)>-1?' on':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>'+
+      (katOrt() === "studio" ? '' : '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
+        return '<button type="button" class="fc-chip'+(p.equips.indexOf(e.id)>-1?' on':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>')+
       // Fokus, Intensität und die Regeln sind selten nötig: zugeklappt, die Zusammenfassung zeigt die aktuelle Wahl
       '<button type="button" class="sp-more'+(spFeinOffen?' open':'')+'" data-spmore aria-expanded="'+spFeinOffen+'">'+
         '<span><b>'+t("spMore")+'</b><small>'+esc(feinText())+'</small></span>'+ICON_CHEV+'</button>'+
@@ -761,6 +779,7 @@ function openSurprise(twId){
     function on(sel, fn){ root.querySelectorAll(sel).forEach(function(b){ b.addEventListener("click", function(){ fn(b); draw(); }); }); }
     var gw = root.querySelector("[data-spgewicht]");   // Nach Gewichtung: die Seite mit den Reglern je Muskelgruppe (statt Zufall nach Zeit und Ausrüstung)
     if(gw) gw.addEventListener("click", function(){ root.innerHTML = ""; go("#katalog"); katPlanGenNeu(); });
+    bauOrtBinden(draw, root);
     on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; });
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
     on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
@@ -775,6 +794,8 @@ function openSurprise(twId){
     root.querySelector("[data-spgo]").addEventListener("click", function(){
       if(tw){ s.surpriseAnzahl = p.anzahl; var q = JSON.parse(JSON.stringify(p)); delete q.anzahl; s.surprise = q; }
       else s.surprise = p;
+      save();
+      p.ort = katOrt(); if(!tw) s.surprise = p; else { var q2 = JSON.parse(JSON.stringify(p)); delete q2.anzahl; s.surprise = q2; }
       save();
       var d = buildSurprise(p);
       if(!d){ showToast(t("spNone")); return; }

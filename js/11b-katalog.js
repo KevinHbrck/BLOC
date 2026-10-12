@@ -132,6 +132,8 @@ var KAT_ICON_STUDIO = '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h
 var KAT_ICON_FREI = '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>';
 function katOrt(){ return state.db.settings.katOrt === "studio" ? "studio" : "frei"; }
 function katWoOrt(exs){ return exs.some(function(ex){ return ex.equip.indexOf("gym") > -1; }) ? "studio" : "frei"; }
+/* Ort einer Übung: Fitnessstudio (Geräte, Kabel, Langhantel, alles mit Ausrüstung „Fitnessstudio“) oder Freiluft (alles andere) */
+function exOrt(ex){ return exIstStudio(ex) ? "studio" : "frei"; }
 /* Schalter Fitnessstudio · Freiluft. Ohne Angaben: der Ort des Katalogs mit der Zahl der Workouts je Ort; für „Plan nach Gewichtung“ mit
    eigenem Ort (attr = "data-genort") und Zahl der Übungen */
 function katOrtHTML(sel, zahl, attr, textKey){
@@ -149,6 +151,22 @@ function katOrtHTML(sel, zahl, attr, textKey){
       '<span class="ko-t"><b>'+esc(label)+'</b><small>'+esc(t(textKey, { n:n[k] }))+'</small></span></button>';
   }
   return '<div class="kat-ort" role="group" aria-label="'+esc(t("katOrt"))+'">'+b("studio", t("katOrtStudio"), KAT_ICON_STUDIO)+b("frei", t("katOrtFrei"), KAT_ICON_FREI)+'</div>';
+}
+/* Beim Bauen wird immer nach Ort unterschieden: die Auswahl zeigt nur die Übungen des gewählten Ortes (derselbe Ort wie im Workoutkatalog,
+   settings.katOrt); der Schalter wechselt. Schon gewählte Übungen bleiben im Plan, auch wenn sie zum anderen Ort gehören. */
+function bauOrtHTML(){
+  var n = { studio:0, frei:0 };
+  EXERCISES.forEach(function(ex){ if(ex.main === "stretch" || libHidden("ex:"+ex.id)) return; n[exOrt(ex)]++; });
+  return katOrtHTML(katOrt(), n, "data-bauort", "katOrtUebAnz");
+}
+function bauOrtBinden(neu, box){
+  (box || app).querySelectorAll("[data-bauort]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var o = b.getAttribute("data-bauort");
+      if(o === katOrt()) return;
+      state.db.settings.katOrt = o; save(); neu();
+    });
+  });
 }
 /* Neuer Plan: sofort angelegt (es muss nichts gespeichert werden) und gleich im Plan-Bau geöffnet.
    Bleibt er ohne Übung liegen, wird er beim Verlassen wieder entfernt, damit keine leeren Pläne herumliegen. */
@@ -217,6 +235,7 @@ function renderKatalogBaukasten(){
   app.innerHTML =
     katKopfHTML("baukasten", hw.knopf) +
     hw.z(0, "page-hint") +
+    bauOrtHTML() +
     '<div class="seg-row bau-modus" role="group" aria-label="'+esc(t("bauModusTitel"))+'">'+
       '<button type="button" data-baumodus="timer" class="'+(modus === "timer" ? 'active' : '')+'" aria-pressed="'+(modus === "timer")+'">'+esc(t("bauModusTimer"))+'</button>'+
       '<button type="button" data-baumodus="gewicht" class="'+(modus === "gewicht" ? 'active' : '')+'" aria-pressed="'+(modus === "gewicht")+'">'+esc(t("bauModusGewicht"))+'</button></div>'+
@@ -229,6 +248,7 @@ function renderKatalogBaukasten(){
   app.querySelectorAll("[data-baumodus]").forEach(function(b){
     b.addEventListener("click", function(){ s.bauModus = b.getAttribute("data-baumodus"); save(); renderKatalog(); });
   });
+  bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
   app.querySelector("[data-bauselber]").addEventListener("click", function(){
     if(modus === "timer") go("#mybuild/new"); else katPlanNeu();

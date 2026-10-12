@@ -24,10 +24,24 @@ function stGenBauen(w, n, ort){
   q.forEach(function(x){ shuffle(pools[x.g] || []).slice(0, x.k).forEach(function(id){ aus.push(id); }); });
   return aus;
 }
+/* Körpermodell oben: je höher die Gewichtung einer Gruppe, desto kräftiger rot (ab 35 % voll), 0 % bleibt grau; folgt der gewählten Ansicht (grob/fein) */
+function stGenFigurHTML(w){
+  var wert = {}, fein = kkFeinAn();
+  MUSKEL_GRP.forEach(function(g){
+    var v = Math.min(1, (w[g.id] || 0)/35);
+    (KK_GRUPPE_ZONEN[g.id] || []).forEach(function(z){
+      var k = fein ? z : (KK_F2G[z] || z);
+      wert[k] = Math.max(wert[k] || 0, v);
+    });
+  });
+  return koerperPaar(wert);
+}
 function renderStudioPlanGen(){
   var w = stGen.w;
   var zahlen = { studio:stGenPool("studio").length, frei:stGenPool("frei").length };
-  var html = topbar(t("genTitle"), { back:"#katalog" }) + '<div class="page-hint">'+esc(t("genHint"))+'</div>'+katOrtHTML(stGen.ort || katOrt(), zahlen, "data-genort", "katOrtUebAnz")+'<div class="card gen-card">'+
+  var html = topbar(t("genTitle"), { back:"#katalog" }) +
+    '<div class="gen-figur" data-genfig>'+stGenFigurHTML(w)+'<small>'+esc(t("genFigur"))+'</small></div>'+
+    '<div class="page-hint">'+esc(t("genHint"))+'</div>'+katOrtHTML(stGen.ort || katOrt(), zahlen, "data-genort", "katOrtUebAnz")+'<div class="card gen-card">'+
     MUSKEL_GRP.map(function(g){
       return '<div class="gen-row"><label for="gw-'+g.id+'">'+esc(t(g.key))+'</label><input type="range" id="gw-'+g.id+'" data-gw="'+g.id+'" min="0" max="100" step="1" value="'+(w[g.id] || 0)+'">'+
         '<b data-gp="'+g.id+'">'+(w[g.id] || 0)+'%</b></div>';
@@ -52,6 +66,8 @@ function renderStudioPlanGen(){
     });
     w[gross.id] = Math.max(0, w[gross.id] + rest - sum);   // Rundungsrest
     w[id] = v;
+    var fg = app.querySelector("[data-genfig]"), kl = fg && fg.querySelector("small");
+    if(fg) fg.innerHTML = stGenFigurHTML(w) + (kl ? kl.outerHTML : "");
     MUSKEL_GRP.forEach(function(g){
       var r = app.querySelector("#gw-"+g.id), b = app.querySelector('[data-gp="'+g.id+'"]');
       if(r) r.value = w[g.id];

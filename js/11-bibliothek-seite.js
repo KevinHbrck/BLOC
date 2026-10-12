@@ -220,7 +220,7 @@ function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung, zonen)
     zeigen:filterZeigenText(n, uebung ? "Ex" : "Wo"),
     inhalt:filterChipsHTML(t("afTraining"), "", LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
         return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join(""))+
-      filterChipsHTML(t("equipHave"), "", EQUIPS.map(function(e){
+      filterChipsHTML(t("equipHave"), "", EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
         return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join(""))+
       (mitZonen ? kkFilterHTML('data-'+pre+'fzone', zonen) : ''),
     /* Sortierung: kein Block mehr in der Karte, nur ein Schalter „A–Z“ neben der Kopfzeile (aus = die Standardreihenfolge der Liste: Standard bzw. Dauer) */
