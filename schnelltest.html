@@ -852,7 +852,13 @@
       await ortNur("bauort", "frei");   // der Plan-Bau öffnet im Fitnessstudio (Gewicht); für die Freiluft-Übung zuerst den Ort wechseln
       pruefe($$("details.kat-gr").length >= 7 && $$("details.kat-gr").every(function (d) { return !d.open; }), "Plan-Bau: zu Beginn sollen nur die Überschriften stehen");
       klick($('details[data-katgr="pl-beine"] > summary'));
-      klick(await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats"));
+      // Die erste Auswahl schiebt die Liste nicht weg: oben kommen Körperkarte und Plan dazu, die angetippte Kachel bleibt aber an ihrem Platz
+      var kAir = await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats");
+      var topVor = kAir.getBoundingClientRect().top;
+      klick(kAir);
+      await bis(function () { return $(".kk-kopf") && $$(".plan-sticky [data-plansel]").length === 1; }, 2000, "Körperkarte und Plan oben");
+      var topNach = $('[data-planex="air-squats"]').getBoundingClientRect().top;
+      pruefe(Math.abs(topNach - topVor) <= 4, "Die Kachel springt nach dem ersten Antippen weg: " + Math.round(topVor) + " → " + Math.round(topNach));
       await bis(function () { return $('details[data-katgr="pl-beine"] .kat-n'); }, 2000, "„1 gewählt“ am Bereich");
       pruefe(!$('[data-planex="leg-press"]'), "Plan-Bau: Freiluft zeigt eine Geräteübung");
       await ortNur("bauort", "studio");   // Ort immer getrennt: Fitnessstudio zeigt nur Geräte, schon Gewähltes bleibt im Plan

@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Beim Zusammenstellen springt die Liste nicht mehr weg (Fassung 2026-10-14-5)
+
+- Beim Bauen eines Plans oder eines Workouts schob die **erste Auswahl** die Übungsliste nach unten (oben kamen Körperkarte und Plan bzw. Ablauf dazu, die Scrollposition blieb gleich) – es wirkte, als würde man nach oben geworfen. Jetzt bleibt die angetippte Kachel an ihrem Platz (`ankerNeuZeichnen` in `js/02-bibliothek.js`, genutzt von Plan-Bau und Workout-Baukasten), man tippt einfach die nächsten Übungen an.
+
 ## 2026-10-14 · Übungen ohne Gewicht mit Sätzen × Wiederholungen (Fassung 2026-10-14-4)
 
 - **Übungen ohne Gewicht** (Körpergewicht, Band, Stange – `studioNurBlock`) lassen sich jetzt auch **Satz für Satz** machen, nicht nur mit dem Timer: Übungskarte und Plan-Zeile haben denselben Umschalter *Satz für Satz · Mit Timer* (`studioModus`; ohne Eintrag starten diese Übungen weiter mit dem Timer, Übungen mit Gewicht mit Sätzen). Im Satz-Modus gibt es nur ein Feld für die **Wiederholungen** (Satz = `[0, wdh]`), dazu Satztypen, Pause-Auswahl und „Letztes Mal“ zum Übernehmen.

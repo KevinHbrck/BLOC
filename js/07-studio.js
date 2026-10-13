@@ -495,7 +495,7 @@ function renderStudioPlan(){
     var id = el.getAttribute("data-planex"), l = stPlanIds(p), i = l.indexOf(id);
     if(i > -1) l.splice(i, 1); else l.push(id);
     stPlanSel = -1;
-    p.ids = l; p.updatedAt = Date.now(); save(); neu();
+    p.ids = l; p.updatedAt = Date.now(); save(); ankerNeuZeichnen("data-planex", id, neu);   // die Kachel bleibt, wo sie ist (oben kommen Körperkarte und Plan dazu)
   });
   // Plan oben: Übung antippen = auswählen, ◀ ▶ verschieben, Papierkorb nimmt sie heraus
   bauOrtBinden(neu);

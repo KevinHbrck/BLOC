@@ -402,6 +402,20 @@ function kachelKlick(root, sel, fn){
     el.addEventListener("keydown", function(e){ if(e.target === el && (e.key==="Enter" || e.key===" ")){ e.preventDefault(); fn(el); } });
   });
 }
+/* Neu zeichnen und dabei die angetippte Kachel an ihrem Platz auf dem Bildschirm lassen: beim ersten Auswählen kommt oben etwas dazu (Ablauf,
+   Körperkarte) und schöbe die Liste nach unten - die Seite wird um den Unterschied nachgeführt, man tippt einfach die nächste Übung an.
+   attr/wert: Attribut und Wert der Kachel (z. B. "data-planex", "air-squats"); neuZeichnen: die Zeichenfunktion der Seite (sie hält die Scrollposition). */
+function ankerNeuZeichnen(attr, wert, neuZeichnen){
+  function finden(){
+    var l = app.querySelectorAll("["+attr+"]");
+    for(var i = 0; i < l.length; i++) if(l[i].getAttribute(attr) === wert) return l[i];
+    return null;
+  }
+  var el = finden(), top = el ? el.getBoundingClientRect().top : null;
+  neuZeichnen();
+  var neu = finden();
+  if(top != null && neu){ var d = neu.getBoundingClientRect().top - top; if(d) window.scrollBy(0, d); }
+}
 function applySearch(root, q){
   q = (q || "").trim().toLowerCase();
   var shown = 0;

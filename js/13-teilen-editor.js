@@ -446,7 +446,7 @@ function renderDraftPage(d, cfg){
       d.items.push(itemFromEx(id)); d._streifenEnde = true;
       var neuOrd = stretchLast(d.items, function(it){ return it.ex; }); d.items = neuOrd;
     }
-    speichern(); neu();
+    speichern(); ankerNeuZeichnen("data-wbex", id, neu);   // die angetippte Kachel bleibt, wo sie ist (oben kommt der Ablauf dazu)
   }
   kachelKlick(app, "[data-wbex]", kachelTipp);
   app.querySelectorAll("[data-wbex]").forEach(function(el){   // Info nur per Langdruck - ein Tipp fügt die Übung hinzu bzw. nimmt sie heraus
