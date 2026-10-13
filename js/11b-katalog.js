@@ -125,7 +125,7 @@ function katKopfHTML(tab, right){
   function a(k, label){ return '<button type="button" data-katabt="'+k+'" class="'+(abt === k ? 'active' : '')+'" aria-pressed="'+(abt === k)+'">'+esc(label)+'</button>'; }
   return kopf +
     '<div class="seg-row kat-abt" role="group">'+a("meine", t("tabMine"))+a("workouts", t("katAbtWorkouts"))+a("uebungen", t("katUebKatalog"))+'</div>' +
-    (abt === "workouts" ? katOrtHTML() : '');
+    (abt === "workouts" ? ortFotosHTML("data-katort", katOrtZahlenWo(), "katOrtAnz", "kompakt") : '');
 }
 /* Ort: Fitnessstudio (Workouts mit Geräten oder Langhantel) oder Freiluft (alles andere: zuhause, draußen, mit Kurzhantel, Band, Stange) */
 var KAT_ICON_STUDIO = '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>';
@@ -136,16 +136,17 @@ function katWoOrt(exs){ return exs.some(function(ex){ return ex.equip.indexOf("g
 function exOrt(ex){ return exIstStudio(ex) ? "studio" : "frei"; }
 /* Schalter Fitnessstudio · Freiluft. Ohne Angaben: der Ort des Katalogs mit der Zahl der Workouts je Ort; für „Plan nach Gewichtung“ mit
    eigenem Ort (attr = "data-genort") und Zahl der Übungen */
+function katOrtZahlenWo(){
+  var n = { studio:0, frei:0 };
+  LIB_WORKOUTS.forEach(function(lw){
+    if(libIstWarmDehn(lw) || libHidden("wo:"+lw.id)) return;
+    n[katWoOrt(lw.exercises.map(findExercise).filter(Boolean))]++;
+  });
+  return n;
+}
 function katOrtHTML(sel, zahl, attr, textKey){
-  var o = sel || katOrt(), n = zahl;
+  var o = sel || katOrt(), n = zahl || katOrtZahlenWo();
   attr = attr || "data-katort"; textKey = textKey || "katOrtAnz";
-  if(!n){
-    n = { studio:0, frei:0 };
-    LIB_WORKOUTS.forEach(function(lw){
-      if(libIstWarmDehn(lw) || libHidden("wo:"+lw.id)) return;
-      n[katWoOrt(lw.exercises.map(findExercise).filter(Boolean))]++;
-    });
-  }
   function b(k, label, ico){
     return '<button type="button" '+attr+'="'+k+'" class="'+(o === k ? 'on' : '')+'" aria-pressed="'+(o === k)+'">'+svgIcon(ico)+
       '<span class="ko-t"><b>'+esc(label)+'</b><small>'+esc(t(textKey, { n:n[k] }))+'</small></span></button>';
@@ -162,18 +163,20 @@ function bauOrtZahlen(){
 function bauOrtHTML(){
   return katOrtHTML(katOrt(), bauOrtZahlen(), "data-bauort", "katOrtUebAnz");
 }
-/* Baukasten, Schritt 1: derselbe Schalter als zwei Fotokarten (gleiche Knöpfe `data-bauort`, gleiche Zahlen). Fotos: Pexels, siehe quellen.html */
+/* Der Ort als zwei Fotokarten (Baukasten Schritt 1 und Kopf des Workoutkatalogs): gleiche Knöpfe wie der kleine Schalter (attr = `data-bauort` bzw.
+   `data-katort`), gleiche Zahlen. klasse „kompakt“ = flachere Karten. Fotos: Pexels, siehe quellen.html */
 var KAT_FOTO = { studio:"img/ort-fitnessstudio.jpg", frei:"img/ort-freiluft.jpg" };
-function bauOrtKartenHTML(){
-  var n = bauOrtZahlen(), o = katOrt();
+function ortFotosHTML(attr, n, textKey, klasse){
+  var o = katOrt();
   function k(id, label){
-    return '<button type="button" data-bauort="'+id+'" class="ort-foto'+(o === id ? ' on' : '')+'" aria-pressed="'+(o === id)+'">'+
+    return '<button type="button" '+attr+'="'+id+'" class="ort-foto'+(o === id ? ' on' : '')+'" aria-pressed="'+(o === id)+'">'+
       '<img class="of-bild" src="'+KAT_FOTO[id]+'" alt="" draggable="false">'+
       '<span class="of-haken" aria-hidden="true">'+svgIcon('<path d="M5 12.5l4.5 4.5L19 7.5"/>')+'</span>'+
-      '<span class="of-t"><b>'+esc(label)+'</b><small>'+esc(t("katOrtUebAnz", { n:n[id] }))+'</small></span></button>';
+      '<span class="of-t"><b>'+esc(label)+'</b><small>'+esc(t(textKey, { n:n[id] }))+'</small></span></button>';
   }
-  return '<div class="ort-fotos" role="group" aria-label="'+esc(t("katOrt"))+'">'+k("studio", t("katOrtStudio"))+k("frei", t("katOrtFrei"))+'</div>';
+  return '<div class="ort-fotos'+(klasse ? ' '+klasse : '')+'" role="group" aria-label="'+esc(t("katOrt"))+'">'+k("studio", t("katOrtStudio"))+k("frei", t("katOrtFrei"))+'</div>';
 }
+function bauOrtKartenHTML(){ return ortFotosHTML("data-bauort", bauOrtZahlen(), "katOrtUebAnz", ""); }
 function bauOrtBinden(neu, box){
   (box || app).querySelectorAll("[data-bauort]").forEach(function(b){
     b.addEventListener("click", function(){

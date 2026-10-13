@@ -3,7 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-13 · Start und Baukasten nach dem Mockup (Branch `layout-start-baukasten`)
+## 2026-10-13 · Fotokarten im Katalog, Bild-Köpfe der Bereiche, neues Stretch-Symbol (Branch `katalog-fotos-bilder`)
+
+- **Katalog**: der Ort-Schalter im Workoutkatalog ist jetzt auch Fotokarten (flacher, „13 Workouts“ / „50 Workouts“; `ortFotosHTML(attr, zahlen, textKey, "kompakt")` in `js/11b-katalog.js`, gleiche Knöpfe `data-katort`). Der kleine Schalter (`katOrtHTML`) bleibt im Überrasch-Fenster, in den Bauseiten und im Plan nach Gewichtung.
+- **Bild-Köpfe**: Mobility & Stretch (beide Reiter), Summit und Run zeigen unter der Kopfzeile ein schmales Foto (`bereichBildHTML` in `js/04-start.js`, `img/bereich-mobility|summit|run.jpg`); beim laufenden Lauf und im Countdown nicht.
+- **Symbol Mobility & Stretch** (`HOME_ICON.warm`): sitzende Figur unter aufgehender Sonne statt Strichmännchen mit ausgebreiteten Armen (gilt überall, wo das Symbol steht: Kachel, Einführung, „Was ist was?“, Sortierfenster).
+- Fassung 2026-10-13-3.
+
+## 2026-10-13 · Start und Baukasten nach dem Mockup (Branch `layout-start-baukasten`, live)
 
 - **Startseite**: Reihenfolge Kopf (BLOC · Modular Training Builder) → Kopfblock „Bereit für dein Training?“ → Diese Woche → Favoriten → Bereiche. Der Kopfblock (`heroHTML` in `js/04-start.js`, Hallenfoto `img/start-halle.jpg` unter orangem Verlauf) führt mit einem Tipp **direkt in den Baukasten** (`katTabSetzen("baukasten")`, „Workout zusammenstellen“).
 - **Baukasten**: Ort als zwei Fotokarten (`bauOrtKartenHTML`, gleiche Knöpfe `data-bauort`; Auswahl mit Ring und Haken in der Farbe des Ortes), orange Schrittnummern, „Nach Zeit · Nach Sätzen“ mit orange gefüllter Auswahl, Zusammenfassung „Freiluft · Nach Zeit“, „Überrasch mich“ als große orange Karte. Bauseiten und das Überrasch-Fenster behalten den kleinen Ort-Schalter (`bauOrtHTML`).

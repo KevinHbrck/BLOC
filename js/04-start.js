@@ -6,7 +6,7 @@ var HOME_ICON = {
   lib:'<path d="M3 8.5h10a3 3 0 1 0-3-3"/><path d="M3 12.5h15a3 3 0 1 1-3 3"/><path d="M3 16.5h6"/>',   /* Air: Wind (Menüs beim langen Drücken) */
   katalog:'<rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/>',   /* Katalog: vier Kacheln */
   reps:'<path d="M2.5 20l6.5-11.5 3.8 6.3 2.7-4.3 6 9.5z"/><path d="M9 8.5V3.5l3.5 1.5L9 6.5"/>',   /* Summit: Gipfel mit Fahne */
-  warm:'<circle cx="12" cy="4.5" r="2"/><path d="M5 8.5l7 2 7-2M12 10.5v4.5l-4.5 5.5M12 15l4.5 5.5"/>',   /* Mobility & Stretch: Figur streckt sich */
+  warm:'<circle cx="12" cy="9.5" r="2"/><path d="M12 12v3.5M12 12.8c-2 0-3.4.9-4.3 2.9M12 12.8c2 0 3.4.9 4.3 2.9M5 20.5c2-2.8 4.2-4 7-4s5 1.2 7 4zM12 3v.5M5.5 6l.4.4M18.5 6l-.4.4"/>',   /* Mobility & Stretch: sitzende Figur (Yoga) unter aufgehender Sonne */
   run:'<circle cx="14" cy="4.5" r="2"/><path d="M6 21l3-6 3 2v5M9 15l1-4 4-1 2 3 3 1M10 11L8 8"/>'   /* Lauf: Läufer */
 };
 /* „Überrasch mich“: ein schlichter Würfel (erwachsener als der frühere Zauberstab mit Funken) */
@@ -106,6 +106,11 @@ function openBereicheSheet(){
 function surpriseLeisteHTML(){
   return '<button type="button" class="sp-leiste" data-surprise title="'+esc(t("spSub"))+'">'+svgIcon(ICON_UEBERRASCH)+'<b>'+esc(t("surprise"))+'</b>'+
     '<span class="sp-chev">'+ICON_CHEV+'</span></button>';
+}
+/* Bild-Kopf der Bereichsseiten (Mobility & Stretch, Summit, Run): ein schmales Foto direkt unter der Kopfzeile. Fotos: Pexels (siehe quellen.html) */
+var BEREICH_BILD = { warm:"img/bereich-mobility.jpg", reps:"img/bereich-summit.jpg", run:"img/bereich-run.jpg" };
+function bereichBildHTML(key){
+  return '<div class="bereich-bild"><img src="'+BEREICH_BILD[key]+'" alt="" draggable="false"></div>';
 }
 /* Kopfblock der Startseite („Bereit für dein Training?“): ein Tipp führt direkt in den Baukasten (Workout › Baukasten). Foto: Pexels (siehe quellen.html) */
 function heroHTML(){

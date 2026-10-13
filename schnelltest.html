@@ -91,7 +91,7 @@
     await zuKatalogTab();
     var b = await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Abteilung Workoutkatalog");
     if (!b.classList.contains("active")) klick(b);
-    await bis(function () { return $('[data-katabt="workouts"].active') && $(".kat-ort"); }, 3000, "Workoutkatalog mit Ort-Schalter");
+    await bis(function () { return $('[data-katabt="workouts"].active') && $(".ort-fotos"); }, 3000, "Workoutkatalog mit Ort-Schalter");
   }
   async function zuMeine() {
     await zuKatalogTab();
@@ -172,14 +172,14 @@
       pruefe(abt === "Meine · Workoutkatalog · Übungskatalog", "Abteilungen: " + abt);
       pruefe(!$(".fab") && !$("[data-fab]"), "Das Plus ist weg: es darf kein Plus-Knopf mehr da sein");
       klick('[data-katabt="workouts"]');
-      await bis(function () { return $(".kat-ort") && $$(".lib-card").length >= 20; }, 3000, "Workoutkatalog");
+      await bis(function () { return $(".ort-fotos") && $$(".lib-card").length >= 20; }, 3000, "Workoutkatalog");
       var gr = $$("details.kat-gr");
       pruefe(gr.length >= 6 && gr.every(function (d) { return !d.open && sichtbar(d); }), "Workouts: zu Beginn sollen nur die Überschriften stehen (" + gr.length + " Bereiche)");
       klick(gr[0].querySelector("summary"));
       pruefe(gr[0].open && $$(".lib-card").filter(sichtbar).length >= 1, "Antippen klappt den Bereich nicht auf");
       klick(gr[0].querySelector("summary"));
       pruefe(!gr[0].open, "zweites Antippen klappt nicht zu");
-      pruefe($(".kat-ort") && !$("[data-surprise]") && !$("[data-bauselber]"), "Im Workoutkatalog sollen nur der Ort-Schalter, aber nicht Überrasch mich und Selber bauen stehen");
+      pruefe($(".ort-fotos") && !$("[data-surprise]") && !$("[data-bauselber]"), "Im Workoutkatalog sollen nur der Ort-Schalter, aber nicht Überrasch mich und Selber bauen stehen");
       pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Katalog");
       // Sortierung A–Z: kleiner Schalter in der Kopfzeile der Filterkarte; sortiert wird innerhalb der Bereiche
       pruefe($(".air-filter .af-az") && !$(".air-filter .fc-seg"), "A–Z-Schalter fehlt oder der Sortier-Block steht noch in der Karte");
@@ -335,6 +335,7 @@
       await heim();
       klick('[data-nav="#reps"]');
       await bis(function () { return $$("[data-repf^='tab:']").length === 3; }, 3000, "drei Reiter");
+      pruefe($(".bereich-bild img[src$='bereich-summit.jpg']"), "Summit: Bild-Kopf fehlt");
       klick('[data-repf="tab:einheiten"]');
       pruefe($$(".rep-karte .rep-plan").length >= 10, "Karten zeigen keine Mengen");
     }],
@@ -371,6 +372,7 @@
     ["Mobility & Stretch: Kobra unter Stretch", async function () {
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Reiter Dehnen"));
+      pruefe($(".bereich-bild img[src$='bereich-mobility.jpg']"), "Mobility & Stretch: Bild-Kopf fehlt");
       klick('[data-wsabt="uebungen"]');
       pruefe(/Kobra/.test(D.body.textContent), "Kobra fehlt");
     }],
@@ -740,8 +742,8 @@
       await heim();
       klick('[data-nav="#katalog"]');
       await bis(function () { return $$("[data-katort]").length === 2; }, 3000, "Ort-Umschalter ganz vorn im Katalog");
-      pruefe($(".kat-rz") && $(".kat-ort") && $('[data-katort="frei"].on'), "Freiluft sollte vorgewählt sein");
-      pruefe(/Fitnessstudio/.test($('[data-katort="studio"]').textContent) && /Freiluft/.test($('[data-katort="frei"]').textContent), "Beschriftung: " + $(".kat-ort").textContent);
+      pruefe($(".kat-rz") && $(".ort-fotos") && $('[data-katort="frei"].on'), "Freiluft sollte vorgewählt sein");
+      pruefe(/Fitnessstudio/.test($('[data-katort="studio"]').textContent) && /Freiluft/.test($('[data-katort="frei"]').textContent), "Beschriftung: " + $(".ort-fotos").textContent);
       var frei = $$(".lib-card").length;
       pruefe(frei >= 40 && !$('[data-cover="lib/gym-legday"]'), "Freiluft zeigt " + frei + " Workouts oder ein Fitnessstudio-Programm");
       klick('[data-katort="studio"]');
@@ -949,6 +951,7 @@
       Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cbs.push(f); return cbs.length; }, clearWatch: function () {} } });
       pruefe($('.area-tile[data-nav="#run"]').textContent.indexOf("BETA") < 0, "Lauf-Kachel trägt noch BETA");
       klick($('.area-tile[data-nav="#run"]'));
+      await bis(function () { return $(".bereich-bild img[src$='bereich-run.jpg']"); }, 3000, "Run: Bild-Kopf fehlt");
       klick(await bis(function () { return $("[data-runstart]"); }, 3000, "Lauf starten"));
       await bis(function () { return $("#run-vor") && +$("#run-vor").textContent >= 19; }, 3000, "Countdown ab 20 s");
       klick($("[data-runplus]"));

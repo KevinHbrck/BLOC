@@ -17,7 +17,7 @@ function wsKnopf(attr, wert, aktiv, text){ return '<button type="button" data-'+
 /* Kopf unter der Titelleiste: Reiter, im Katalog die Abteilungen, darunter die Art (Aufwärmen | Dehnen) */
 function wsKopfHTML(tab, art){
   var abt = wsAbt();
-  return '<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+'</div>'+   // derselbe Reiter wie im Workout
+  return bereichBildHTML("warm")+'<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+'</div>'+   // derselbe Reiter wie im Workout
     (tab === "workouts" ? '<div class="seg-row kat-abt ws-abt" role="group">'+wsKnopf("wsabt", "meine", abt === "meine", t("tabMine"))+
       wsKnopf("wsabt", "workouts", abt === "workouts", t("wsAbtWorkouts"))+wsKnopf("wsabt", "uebungen", abt === "uebungen", t("katUebKatalog"))+'</div>' : '')+
     '<div class="theme-pick lib-tabs seg-2 ws-art">'+wsKnopf("wsart", "warm", art === "warm", t("wsWarm"))+wsKnopf("wsart", "dehn", art === "dehn", t("wsDehn"))+'</div>';
@@ -205,6 +205,7 @@ function renderReps(){
   }
   var hw = hinweise("reps", [repFilter.tab === "einheiten" ? "repUnitsIntro" : repFilter.tab === "meine" ? "repMineIntro2" : "repIntro"]);
   var html = topbar(t("repTitle"), { back:"#home", right:hw.knopf+lupeHTML("rs", repQuery) }) +
+    bereichBildHTML("reps") +
     reiterZeileHTML("var(--rep-color)",
       '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+
       '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
