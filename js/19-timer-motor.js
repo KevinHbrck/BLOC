@@ -118,6 +118,19 @@ function phaseVars(phase){
   return { bg:"var(--bg)", text:"var(--text)", label:"" };
 }
 
+/* Wohin gehört ein Training aus dem Timer: ein Plan-Workout zu seinem Plan, eine einzelne Übung zum geöffneten Plan oder zum freien Training des Tages */
+function playerTrainingKontext(){
+  var src = playerState && playerState.source, p = null;
+  if(src && src.type === "mine"){ var mw = findMy(src.id); if(mw && mw.fromPlan) p = stPlanFind(mw.fromPlan); }
+  if(p) return { plan:p, ids:stPlanIds(p) };
+  return trainingKontext(src && src.type === "studio" ? src.id : null);
+}
+function playerTrackt(){   // Workouts mit Gewicht (aus einem Plan oder eine einzelne Übung mit Gewicht) lassen sich im Timer speichern
+  var src = playerState && playerState.source;
+  if(!src) return false;
+  if(src.type === "mine"){ var mw = findMy(src.id); return !!(mw && mw.fromPlan); }
+  return src.type === "studio" && !!playerState.workout.mitGewicht;
+}
 function playerTemplate(){
   var vol = Math.round((state.db.settings.volume!=null?state.db.settings.volume:1)*100);
   return '<div class="player" id="playerEl">'+
@@ -125,6 +138,7 @@ function playerTemplate(){
     '<div class="player-top">'+
       '<button class="exit" data-exit title="'+t("endBtn")+'">&times;</button>'+
       '<div class="pl-mitte"><div class="ex-dots" id="pl-exdots" role="img"></div></div>'+
+      (playerTrackt() ? '<button class="exit" data-plsave title="'+esc(t("trSpeichern"))+'" aria-label="'+esc(t("trSpeichern"))+'">'+ICON_SAVE+'</button>' : '')+
       '<button class="exit" data-vol-toggle title="'+t("volume")+'">'+ICON_VOLUME+'</button>'+
     '</div>'+
     '<div class="vol-popover hidden" id="pl-vol-pop">'+ICON_VOLUME+

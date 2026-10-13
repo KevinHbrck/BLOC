@@ -305,6 +305,7 @@ function renderStats(){
       '<div class="heat"><div class="heat-tage">'+namen.map(function(x){ return '<small>'+esc(x)+'</small>'; }).join("")+'</div><div class="heat-raster">'+zellen+'</div>'+
       '<div class="heat-legende"><small>'+esc(t("statWeniger2"))+'</small><i class="hz l0"></i><i class="hz l1"></i><i class="hz l2"></i><i class="hz l3"></i><small>'+esc(t("statMehr2"))+'</small></div></div></details>';
   }
+  html += statTrainingsHTML();   // zuletzt gespeicherte Trainings (Training speichern auf Plan-Seite, Karte und im Timer)
   // Bereiche wie auf der Startseite: Workout, dann Mobility & Stretch, danach Timer und Summit (der in den letzten 4 Wochen am meisten genutzte zuerst), Run zuletzt
   var folge = statGruppen(aktiv).map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
     var fix = function(k){ return k === "katalog" ? 0 : k === "warm" ? 1 : k === "run" ? 3 : 2; };
@@ -370,6 +371,7 @@ function renderStats(){
   app.querySelectorAll("[data-statmodus]").forEach(function(b){ b.addEventListener("click", function(){ statModus = b.getAttribute("data-statmodus"); neu(); }); });
   app.querySelectorAll("[data-ziel]").forEach(function(b){ b.addEventListener("click", function(){ s.wochenZiel = clamp(ziel + (+b.getAttribute("data-ziel")), 1, 7); save(); neu(); }); });
   app.querySelectorAll("[data-statgran]").forEach(function(b){ b.addEventListener("click", function(){ statGran = b.getAttribute("data-statgran"); neu(); }); });
+  statTrainingsBinden(neu);
 }
 function recentExercises(days){
   var since = Date.now() - days*86400000, out = {};
@@ -378,3 +380,165 @@ function recentExercises(days){
 }
 
 /* (Rest der Verlauf-Logik steht in 12-uebung-statistik.js) */
+
+/* ============ Training speichern (den Tag tracken) ============
+   Jeder Satz steht sofort im Protokoll der Übung; „Training speichern“ legt dazu den Tag als Ganzes ab: Übungen mit ihren Sätzen, Volumen, Dauer,
+   Rekorde und eine Notiz - jederzeit auch mitten im Workout (Plan-Seite, Übungskarte, Ende des Timers). Je Plan und Tag gibt es einen Eintrag; erneutes
+   Speichern aktualisiert ihn. Ohne Plan zählt alles, was heute eingetragen wurde („Freies Training“).
+   Daten: settings.einheiten = [{ id, at, tag:"JJJJ-MM-TT", plan:Plan-ID oder "", name, ex:[{ id, s:[[kg, wdh, typ?]], rekord }], saetze, vol, dauer, rek, notiz }] -
+   nur auf dem Gerät, höchstens 1000 Einträge. */
+function einheitenListe(){ var s = state.db.settings; return Array.isArray(s.einheiten) ? s.einheiten : (s.einheiten = []); }
+function einheitTagKey(ts){
+  var d = new Date(ts || Date.now());
+  return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);
+}
+/* Wohin gehört das, was gerade trainiert wird: in den geöffneten Plan (wenn die Übung darin steht), sonst ins freie Training des Tages */
+function trainingFrei(){   // freies Training: alles, was heute eingetragen wurde
+  var heute = studioTag(Date.now()), alle = studioAlle();
+  return { plan:null, ids:Object.keys(alle).filter(function(k){
+    var l = alle[k] && alle[k].log || [], z = l.length ? l[l.length-1] : null;
+    return z && z.s.length && studioTag(z.at) === heute && findExercise(k);
+  }) };
+}
+function trainingKontext(id){
+  var p = stPlanAktiv ? stPlanFind(stPlanAktiv) : null;
+  if(p && (!id || stPlanIds(p).indexOf(id) > -1)) return { plan:p, ids:stPlanIds(p) };
+  return trainingFrei();
+}
+function einheitHeute(plan){
+  var key = einheitTagKey(), pid = plan ? plan.id : "", gef = null;
+  einheitenListe().forEach(function(x){ if(x.tag === key && (x.plan || "") === pid) gef = x; });
+  return gef;
+}
+/* Was heute zu den Übungen eingetragen wurde (Sätze aus Karte und Timer; Übungen ohne Gewicht zählen mit, wenn sie heute im Verlauf stehen) */
+function trainingHeute(ids){
+  var heute = studioTag(Date.now()), hist = state.db.history || [], inHist = {}, ex = [], saetze = 0, vol = 0, rek = 0, dauer = 0;
+  hist.forEach(function(h){ if(h && studioTag(h.at) === heute) (h.ex || []).forEach(function(id){ inHist[id] = true; }); });
+  ids.forEach(function(id){
+    var e = studioEintrag(id), log = (e && e.log) || [], i = log.length-1;
+    var l = i >= 0 && log[i].s.length && studioTag(log[i].at) === heute ? log[i] : null;
+    if(l){
+      var vor = studioBestwerte(log, i), jetzt = studioBestwerte([l]);
+      var rekord = i > 0 && (jetzt.kg > vor.kg || jetzt.rm > vor.rm + .001);
+      ex.push({ id:id, s:JSON.parse(JSON.stringify(l.s)), rekord:rekord });
+      saetze += arbeitsSaetze(l).length; vol += studioVolumen(l); if(rekord) rek++;
+    } else if(inHist[id]) ex.push({ id:id, s:[], rekord:false });
+  });
+  hist.forEach(function(h){
+    if(!h || studioTag(h.at) !== heute) return;
+    if(h.studio || (h.ex || []).some(function(id){ return ids.indexOf(id) > -1; })) dauer += +h.dur || 0;
+  });
+  return { ex:ex, saetze:saetze, vol:Math.round(vol), rek:rek, dauer:Math.round(dauer) };
+}
+function trainingSpeichern(k, notiz){
+  var d = trainingHeute(k.ids);
+  if(!d.ex.length) return null;
+  var l = einheitenListe(), vorh = einheitHeute(k.plan);
+  var e = vorh || { id:uid(), tag:einheitTagKey(), plan:k.plan ? k.plan.id : "" };
+  e.at = Date.now(); e.name = k.plan ? k.plan.name : ""; e.ex = d.ex; e.saetze = d.saetze; e.vol = d.vol; e.dauer = d.dauer; e.rek = d.rek;
+  if(notiz != null) e.notiz = String(notiz).trim();
+  if(!vorh) l.push(e);
+  if(l.length > 1000) l.splice(0, l.length - 1000);
+  save();
+  return e;
+}
+/* Nach jedem eingetragenen Satz: heute schon gespeicherte Trainings, in denen die Übung vorkommt, führen sich selbst nach */
+function trainingNachSatz(id){
+  var key = einheitTagKey();
+  einheitenListe().slice().forEach(function(x){
+    if(x.tag !== key) return;
+    var p = x.plan ? stPlanFind(x.plan) : null;
+    if(x.plan && !p) return;   // der Plan wurde gelöscht: der Eintrag bleibt, wie er war
+    var drin = p ? stPlanIds(p).indexOf(id) > -1 : x.ex.some(function(a){ return a.id === id; });
+    if(drin) trainingSpeichern(p ? { plan:p, ids:stPlanIds(p) } : trainingFrei(), null);
+  });
+}
+function trLeisteText(s, u){ return satzName(s)+" · "+planAnzahl(u); }   // „9 Sätze · 3 Übungen“
+function trainingZahlenHTML(d){
+  var zahlen = [[String(d.ex.length), t("trUebungen")], [String(d.saetze), t("stSetsAll")], [studioKg(d.vol)+" kg", t("stVolGesamt")],
+    [d.dauer ? fmtDuration(d.dauer >= 60 ? Math.round(d.dauer/60)*60 : d.dauer) : "–", t("trDauer")], [String(d.rek), t("stRekord")]];
+  return '<div class="st-stats-zahlen">'+zahlen.map(function(z){ return '<div><b>'+esc(z[0])+'</b><span>'+esc(z[1])+'</span></div>'; }).join("")+'</div>';
+}
+function trainingUebungenHTML(ex){
+  return ex.map(function(x){
+    var e = findExercise(x.id);
+    return '<div class="st-v-zeile"><span>'+esc(e ? tplText(e.name) : x.id)+(x.rekord ? '<i class="st-rekord" title="'+esc(t("stRekord"))+'">★</i>' : '')+'</span>'+
+      '<b>'+esc(x.s.length ? x.s.map(satzText).join(" · ") : "✓")+'</b></div>';
+  }).join("");
+}
+/* Fenster „Training speichern“: Zusammenfassung des heutigen Trainings, Notiz, Speichern; k = trainingKontext(…), nachher läuft nach dem Speichern */
+function openTrainingSpeichern(k, nachher){
+  var root = document.getElementById("overlayRoot"), d = trainingHeute(k.ids), vorh = einheitHeute(k.plan);
+  var name = k.plan ? k.plan.name : t("trFrei");
+  function zu(){ root.innerHTML = ""; }
+  if(!d.ex.length){
+    root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tr-sheet" role="dialog" aria-label="'+esc(t("trTitel"))+'"><h3>'+esc(t("trTitel"))+SEP+esc(name)+'</h3>'+
+      '<p>'+esc(t("trLeer"))+'</p><button type="button" class="btn btn-secondary" data-cancel>'+esc(t("close"))+'</button></div></div>';
+  } else {
+    root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tr-sheet" role="dialog" aria-label="'+esc(t("trTitel"))+'">'+
+      '<h3>'+esc(t("trTitel"))+SEP+esc(name)+'</h3>'+
+      (vorh ? '<p class="tr-schon">'+esc(t("trSchon"))+'</p>' : '')+
+      trainingZahlenHTML(d)+trainingUebungenHTML(d.ex)+
+      '<label for="tr-notiz" style="margin-top:12px">'+esc(t("stNote"))+'</label>'+
+      '<textarea id="tr-notiz" rows="2" placeholder="'+esc(t("trNotizPh"))+'">'+esc(vorh && vorh.notiz || "")+'</textarea>'+
+      '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button>'+
+      '<button class="btn btn-primary" data-trok>✓ '+esc(t(vorh ? "trAktual" : "trSpeichern"))+'</button></div></div></div>';
+    root.querySelector("[data-trok]").addEventListener("click", function(){
+      trainingSpeichern(k, root.querySelector("#tr-notiz").value);
+      zu(); showToast(t("trGespeichert"));
+      if(nachher) nachher();
+    });
+  }
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+}
+/* Leiste unten (Plan-Seite, Übungskarte): zeigt, was heute drin ist, und speichert */
+function trainingLeisteHTML(k){
+  var d = trainingHeute(k.ids), vorh = einheitHeute(k.plan);
+  return '<div class="wb-leiste tr-leiste"><div class="wb-leiste-in"><span>'+
+    (d.ex.length ? '<b>'+esc(trLeisteText(d.saetze, d.ex.length))+'</b>' : esc(t("trNochNichts")))+(vorh ? ' · '+esc(t("trGespeichertKurz")) : '')+'</span>'+
+    '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-trsave>✓ '+esc(t(vorh ? "trAktual" : "trSpeichern"))+'</button></span></div></div>';
+}
+function trainingLeisteBinden(k, nachher){
+  var b = app.querySelector("[data-trsave]");
+  if(b) b.addEventListener("click", function(){ openTrainingSpeichern(k, nachher); });
+}
+/* Statistik: die zuletzt gespeicherten Trainings */
+function statTrainingsHTML(){
+  var l = einheitenListe().slice().sort(function(a, b){ return b.at - a.at; }).slice(0, 10);
+  if(!l.length) return "";
+  return '<div class="card stat-karte stat-trainings"><div class="sk-kopf"><b>'+esc(t("trStatTitel"))+'</b><span class="sk-sub">'+esc(t("trStatSub", { n:einheitenListe().length }))+'</span></div>'+
+    l.map(function(x){
+      var tag = new Date(x.tag+"T12:00:00").toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" });
+      return '<button type="button" class="tr-zeile" data-trdetail="'+esc(x.id)+'"><span><b>'+esc(tag)+'</b><small>'+esc(x.name || t("trFrei"))+'</small></span>'+
+        '<span class="tr-rechts">'+esc(trLeisteText(x.saetze, x.ex.length)+(x.dauer >= 60 ? " · "+Math.round(x.dauer/60)+" min" : "")+(x.rek ? " · ★ "+x.rek : ""))+'</span></button>';
+    }).join("")+'</div>';
+}
+function statTrainingsBinden(neu){
+  app.querySelectorAll("[data-trdetail]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var x = null, id = b.getAttribute("data-trdetail");
+      einheitenListe().forEach(function(e){ if(e.id === id) x = e; });
+      if(x) openTrainingDetail(x, neu);
+    });
+  });
+}
+function openTrainingDetail(x, neu){
+  var root = document.getElementById("overlayRoot");
+  var tag = new Date(x.tag+"T12:00:00").toLocaleDateString(currentLang(), { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tr-sheet" role="dialog" aria-label="'+esc(t("trTitel"))+'">'+
+    '<h3>'+esc(x.name || t("trFrei"))+'</h3><p>'+esc(tag)+'</p>'+
+    trainingZahlenHTML({ ex:x.ex, saetze:x.saetze, vol:x.vol, dauer:x.dauer, rek:x.rek })+trainingUebungenHTML(x.ex)+
+    (x.notiz ? '<p class="tr-notiz">'+esc(x.notiz)+'</p>' : '')+
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("close"))+'</button>'+
+    '<button class="btn btn-secondary" data-trdel>'+ICON_TRASH+' '+esc(t("del"))+'</button></div></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+  root.querySelector("[data-trdel]").addEventListener("click", function(){
+    confirmSheet(t("trDelQ"), t("cantUndo"), t("del"), function(){
+      state.db.settings.einheiten = einheitenListe().filter(function(e){ return e.id !== x.id; });
+      save(); if(neu) neu();
+    });
+  });
+}

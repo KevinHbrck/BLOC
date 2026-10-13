@@ -432,7 +432,8 @@ function renderStudioPlan(){
       (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("planAlleTimer"))+'</button>' : '')+
       (ids.length ? '<div class="pz-liste">'+ids.map(function(id, i){ return planZeileHTML(id, i+1); }).join("")+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
       (ids.length ? auswertungHTML(ids) : '')+
-      '<div style="height:40px"></div>';
+      (ids.length ? trainingLeisteHTML({ plan:p, ids:ids }) : '')+
+      '<div style="height:'+(ids.length ? 96 : 40)+'px"></div>';
   }
   app.innerHTML = html;
   // Zurück führt zur Liste unter „Meine“, nicht aus dem Katalog heraus
@@ -444,6 +445,7 @@ function renderStudioPlan(){
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
   an("[data-planedit]", function(){ stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
+  if(!stPlanBauen && ids.length) trainingLeisteBinden({ plan:p, ids:ids }, neu);
   if(!stPlanBauen) planZeilenBinden(app, function(){   // Summe der Sätze oben nachführen
     var su = app.querySelector("#plan-summe");
     if(su) su.textContent = planSummeText(stPlanIds(p));

@@ -338,6 +338,8 @@ function renderStudioKarte(id){
   if(e.kg != null && !h) v.kg = e.kg;
   var letzte = studioLetzte(id, false);   // die Einheit davor: so sieht man vor Ort, was beim letzten Mal ging
   var timerModus = e.modus === "timer";   // vor Ort umschaltbar: Satz für Satz eintragen oder den Timer durchlaufen lassen
+  var trKontext = trainingKontext(id);   // Training speichern ist auch mitten im Workout da: Leiste unten, sobald heute etwas eingetragen ist
+  if(!trainingHeute(trKontext.ids).ex.length) trKontext = { plan:trKontext.plan, ids:[] };
   app.innerHTML =
     topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
     '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
@@ -387,7 +389,8 @@ function renderStudioKarte(id){
     '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
     studioInfoHTML(id, ex)+
     '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
-    '<div style="height:40px"></div>';
+    (trKontext.ids.length ? trainingLeisteHTML(trKontext) : "")+
+    '<div style="height:'+(trKontext.ids.length ? 96 : 40)+'px"></div>';
   bindCommon();
   function neu(){ var y = window.scrollY; renderStudioKarte(id); window.scrollTo(0, y); }
   function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
@@ -441,6 +444,7 @@ function renderStudioKarte(id){
     studioSatzTypWahl = "n";
     en.kg = kg; en.zuletzt = jetzt;
     studioVerlauf(id, jetzt);
+    trainingNachSatz(id);
     save();
     vibrate([30]);
     studioPauseStart(id, pause);
@@ -450,7 +454,7 @@ function renderStudioKarte(id){
     var en = eintrag(), l = en.log[en.log.length-1];
     if(l && studioTag(l.at) === heute){ l.s.pop(); if(!l.s.length) en.log.pop(); }
     studioPR = null;
-    studioPauseStop(); save(); neu();
+    studioPauseStop(); save(); trainingNachSatz(id); neu();
   });
   an("[data-stup]", function(){ var en = eintrag(); en.kg = stg.kg; en.erhoeht = Date.now(); save(); showToast(t("stRaised", { kg:studioKg(stg.kg) })); neu(); });
   an("[data-stskip]", function(){ studioPauseStop(); neu(); });
@@ -461,6 +465,7 @@ function renderStudioKarte(id){
   app.querySelectorAll("[data-stpause]").forEach(function(b){ b.addEventListener("click", function(){ eintrag().pause = +b.getAttribute("data-stpause"); save(); neu(); }); });
   var notiz = app.querySelector("#st-notiz");
   notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
+  if(trKontext.ids.length) trainingLeisteBinden(trKontext, neu);
   studioPauseZeigen();
   window.scrollTo(0, 0);   // Karte öffnet oben bei der Eingabe (neu() stellt beim Nachzeichnen die Position wieder her)
 }
@@ -543,6 +548,7 @@ function studioSatzLog(id, kg, w){
   l.s.push([kg, w]);
   en.kg = kg; en.zuletzt = jetzt;
   studioVerlauf(id, jetzt);
+  trainingNachSatz(id);
   save();
 }
 function openGewichtSheet(id, nachher){

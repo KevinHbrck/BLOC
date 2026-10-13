@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Training speichern – den Tag tracken, auch mitten im Workout (Fassung 2026-10-14-3)
+
+- **„Training speichern“** (`openTrainingSpeichern`, `js/12-uebung-statistik.js`): legt den Tag als Ganzes ab – Übungen mit ihren Sätzen, Volumen, Dauer, Rekorde (★) und eine Notiz. Jeder Satz steht weiter sofort im Protokoll der Übung; das Speichern ist der Tageseintrag dazu. Je Plan und Tag gibt es **einen** Eintrag (erneutes Speichern aktualisiert ihn); ohne Plan zählt alles, was heute eingetragen wurde („Freies Training“). Ein schon gespeicherter Tag führt sich nach jedem weiteren Satz selbst nach (`trainingNachSatz`).
+- **Überall erreichbar, auch während des Workouts**: Leiste unten auf der Plan-Seite und auf der Übungskarte (sobald heute etwas eingetragen ist) und ein Haken-Knopf oben im Timer bei Plan-Workouts und Übungen mit Gewicht.
+- **Statistik**: Karte „Gespeicherte Trainings“ (die letzten zehn, ein Tipp zeigt Sätze und Notiz, dort auch Löschen). Daten: `settings.einheiten` (höchstens 1000, nur auf dem Gerät).
+
 ## 2026-10-14 · Timer je Übung im Plan (Fassung 2026-10-14-2)
 
 - **Timer für jede Übung einzeln**: In jeder Plan-Zeile (`planZeileHTML`, `js/07-studio.js`) steht der Umschalter **Satz für Satz · Mit Timer** (`studio[id].modus`, derselbe Wert wie auf der Übungskarte). Im Timer-Modus zeigt die Zeile Sätze, **Arbeit (s)**, Gewicht und Pause und einen Knopf **Timer starten**, der nur diese Übung laufen lässt (`#playst/<id>`, mit Satz-Eintrag nach jedem Satz). Der Knopf oben heißt jetzt „Ganzen Plan mit Timer starten“.

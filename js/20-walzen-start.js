@@ -235,6 +235,9 @@ function bindPlayerControls(){
       planAudio(true);
       tickLoop();
     }
+    if(e.target.closest("[data-plsave]")){   // Training speichern mitten im Workout (Pause und Anzeige laufen weiter)
+      openTrainingSpeichern(playerTrainingKontext());
+    }
     if(e.target.closest("[data-vol-toggle]")){
       document.getElementById("pl-vol-pop").classList.toggle("hidden");
     }

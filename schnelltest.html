@@ -1320,6 +1320,7 @@
       var z1 = $('.pz-zeile[data-pz="leg-press"]'), z2 = $('.pz-zeile[data-pz="butterfly"]');
       pruefe(/60×12 · 60×11/.test(z1.querySelector(".pz-letzte").textContent), "Zeile zeigt das letzte Mal nicht: " + z1.querySelector(".pz-letzte").textContent);
       pruefe(/Noch nicht/.test(z2.querySelector(".pz-letzte").textContent), "Übung ohne Einträge: " + z2.querySelector(".pz-letzte").textContent);
+      pruefe($(".tr-leiste [data-trsave]") && /Sätze/.test($(".tr-leiste").textContent), "Leiste „Training speichern“ fehlt auf der Plan-Seite: " + ($(".tr-leiste") && $(".tr-leiste").textContent));
       pruefe(z1.querySelectorAll("[data-feld]").length === 4, "vier Felder je Übung erwartet (Sätze, Wdh., Gewicht, Pause)");
       var s0 = +z1.querySelector('[data-feld="saetze"] input').value, schritt = W.studioZiel("leg-press").schritt;
       klick(z1.querySelector('[data-feld="saetze"] [data-inc]'));
@@ -1406,6 +1407,29 @@
       var heute = daten().settings.studio["leg-press"].log.filter(function (l) { return W.studioTag(l.at) === W.studioTag(Date.now()); })[0];
       pruefe(heute && heute.s.length === 1, "Satz aus dem Timer landet nicht im Protokoll");
       pruefe((daten().history || []).some(function (h) { return h.studio && h.ex.indexOf("leg-press") > -1; }), "Satz aus dem Timer fließt nicht in die Wochenzeile");
+      // Training speichern mitten im Workout: Knopf im Timer, Zusammenfassung mit Notiz, Eintrag je Plan und Tag, führt sich nach
+      pruefe($("[data-plsave]"), "Speichern-Knopf im Timer fehlt");
+      klick($("[data-plsave]"));
+      await bis(function () { return $("#overlayRoot [data-trok]"); }, 2000, "Fenster Training speichern (im Timer)");
+      eingeben($("#tr-notiz"), "Beine solide");
+      klick("#overlayRoot [data-trok]");
+      await bis(function () { return (daten().settings.einheiten || []).length === 1; }, 2000, "Training gespeichert");
+      var tr = daten().settings.einheiten[0];
+      pruefe(tr.plan === "p-prog" && tr.saetze === 1 && tr.ex.some(function (x) { return x.id === "leg-press" && x.s.length === 1; }) && tr.notiz === "Beine solide" && tr.tag === W.einheitTagKey(),
+        "gespeichertes Training: " + JSON.stringify(tr));
+      W.exitPlayer();
+      W.studioSatzLog("leg-press", 62.5, 10);   // ein weiterer Satz: der gespeicherte Tag zieht sich nach, es gibt keinen zweiten Eintrag
+      var tr2 = daten().settings.einheiten;
+      pruefe(tr2.length === 1 && tr2[0].saetze === 2 && tr2[0].notiz === "Beine solide", "Eintrag führt sich nicht nach: " + JSON.stringify(tr2.map(function (x) { return x.saetze; })));
+      W.go("#studioplan/p-prog");
+      await bis(function () { return $(".tr-leiste [data-trsave]"); }, 3000, "Leiste Training speichern auf der Plan-Seite");
+      pruefe(/2 Sätze/.test($(".tr-leiste").textContent) && /gespeichert/.test($(".tr-leiste").textContent), "Leiste: " + $(".tr-leiste").textContent);
+      W.go("#stats");
+      klick(await bis(function () { return $("[data-trdetail]"); }, 3000, "Gespeicherte Trainings in der Statistik"));
+      await bis(function () { return /Programm/.test($("#overlayRoot .tr-sheet").textContent) && /Beine solide/.test($("#overlayRoot .tr-sheet").textContent); }, 2000, "Detail mit Notiz");
+      klick("#overlayRoot [data-trdel]");
+      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Löschen bestätigen"));
+      await bis(function () { return (daten().settings.einheiten || []).length === 0 && !$("[data-trdetail]"); }, 2000, "Training gelöscht");
       // Freiluft-Übung mit Gewicht: im Plan-Workout ebenfalls mit Satz-Eintrag, im normalen Air-Workout nicht
       var frei = W.EXERCISES.filter(function (ex) { return !W.exIstStudio(ex) && !W.studioNurBlock(ex) && ex.main !== "stretch"; })[0];
       pruefe(frei && W.gymSatzText(frei.id) === "" && W.gymSatzText(frei.id, true) !== "", "Freiluft-Übung mit Gewicht: Satz-Eintrag nur im Plan-Workout");
