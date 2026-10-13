@@ -12,7 +12,8 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Workout-Bild-Kopf** entfällt (`img/bereich-workout.jpg` gelöscht, kein Eintrag mehr in `BEREICH_BILD`).
 - **Timer-Workouts**: jeder Block hat „Wie oft hintereinander“ (`times`, 1–99; `workoutItems` in `js/01-basis.js`, Pause danach auch zwischen den Wiederholungen); Dauer und Ablauf rechnen es mit. Play-Knöpfe der Timer-Seite im hellen Design nicht mehr tiefschwarz.
 - **Play-Knöpfe überall**: weißer Kreis mit Rand und Dreieck in der Farbe des Bereichs (`--pb`, Favoriten, Listen, Übungskacheln).
-- Fassung 2026-10-13-8.
+- **Überrasch mich**: im Deckblatt gibt es den Stern (speichert bei Bedarf eine Kopie unter Meine und markiert sie als Favorit) und „Speichern“ (einmal je Entwurf; danach „Gespeichert“). Gilt auch für geteilte Workouts.
+- Fassung 2026-10-13-9.
 
 ## 2026-10-13 · Fotokarten im Katalog, Bild-Köpfe der Bereiche, neues Stretch-Symbol (Branch `katalog-fotos-bilder`, live)
 

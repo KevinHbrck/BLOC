@@ -314,6 +314,18 @@
       var vorher = $$(".wb-ablauf .fig-name").map(function (x) { return x.textContent; }).join();
       klick("[data-reroll]");
       await bis(function () { return $$(".wb-ablauf .fig-name").map(function (x) { return x.textContent; }).join() !== vorher; }, 3000, "„Nochmal mischen“ ändert das Workout");
+      // Stern und Speichern: der Stern legt (einmal) eine Kopie unter Meine an und markiert sie als Favorit, Speichern danach legt keine zweite an
+      var my0 = (JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || []).length;
+      pruefe($("[data-favdraft]") && $("[data-savemy]"), "Überrasch mich: Stern und Speichern fehlen im Deckblatt");
+      klick("[data-favdraft]");
+      await bis(function () { var dd = JSON.parse(W.localStorage.getItem(KEY)); return (dd.myWorkouts || []).length === my0 + 1 && (dd.settings.favs || []).some(function (k) { return /^my:/.test(k); }); }, 3000, "Stern speichert und merkt das Workout");
+      await bis(function () { return $("[data-favdraft].on") && /Gespeichert/.test($("[data-savemy]").textContent); }, 2000, "Stern leuchtet, Speichern zeigt „Gespeichert“");
+      klick("[data-savemy]");
+      pruefe((JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || []).length === my0 + 1, "Speichern legt eine zweite Kopie an");
+      // aufräumen: die Kopie und der Favorit sollen die folgenden Tests nicht stören
+      W.state.db.myWorkouts.length = my0;
+      W.state.db.settings.favs = (W.state.db.settings.favs || []).filter(function (k) { return !/^my:/.test(k); });
+      W.save();
     }],
     ["Timer: Übungs-Kreise, Satz blinkt in der Pause, Figur in der Blockpause", async function () {
       await heim();

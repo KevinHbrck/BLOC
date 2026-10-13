@@ -334,9 +334,16 @@ function renderDraftPage(d, cfg){
   }
   var ICON_MISCHEN = svgIcon('<path d="M3 7h3c2.6 0 4 1.6 5.2 3.9l1.6 3C14 16.3 15.5 17 18 17h3M3 17h3c1.5 0 2.6-.5 3.4-1.5M14.3 7.9C15.2 7.3 16.4 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3"/>');
   var favOn = isFav(d.key);
+  /* „Überrasch mich“ und geteilte Workouts sind noch nicht gespeichert: Speichern legt (einmal) eine Kopie unter Meine an, der Stern speichert bei Bedarf
+     und markiert diese Kopie als Favorit (d._myId merkt sich die Kopie) */
+  var entwurfsArt = d.src === "surprise" || d.src === "shared";
+  var meineId = entwurfsArt && d._myId && findMy(d._myId) ? d._myId : null;
+  var gespeichert = !!meineId && !d._nachSpeichern;
+  var sternAn = entwurfsArt ? !!meineId && isFav("my:"+meineId) : favOn;
   var coverActs = '<div class="cover-acts">'+
-    (d.src!=="surprise" && d.src!=="shared" && d.src!=="neu" ? coverAct('data-fav="'+d.key+'" aria-pressed="'+favOn+'"', favOn ? '★' : '☆', t("favorite"), favOn ? 'on' : '') : '')+
-    coverAct('data-savemy', svgIcon(ICON_COPY), t(d.src==="my" ? "actCopy" : "actSave"))+
+    (d.src!=="neu" ? coverAct(entwurfsArt ? 'data-favdraft aria-pressed="'+sternAn+'"' : 'data-fav="'+d.key+'" aria-pressed="'+favOn+'"', sternAn ? '★' : '☆', t("favorite"), sternAn ? 'on' : '') : '')+
+    (entwurfsArt && gespeichert ? coverAct('data-savemy', '✓', t("wbGespeichert"), 'on')
+      : coverAct('data-savemy', svgIcon(ICON_COPY), t(d.src==="my" ? "actCopy" : "actSave")))+
     coverAct('data-share', ICON_SHARE, t("share"))+
     (d.src==="lib" ? coverAct('data-coverhide', svgIcon(ICON_EYE_OFF), t("hideShort")) : '')+
   '</div>';
@@ -403,7 +410,7 @@ function renderDraftPage(d, cfg){
   if(d._streifenEnde){ d._streifenEnde = false; var strK = app.querySelector(".wb-streifen"); if(strK) strK.scrollLeft = strK.scrollWidth; }   // neu Gewähltes steht am Ende
 
   function speichern(){
-    if(cfg.cover){ d._dirty = true; return; }
+    if(cfg.cover){ d._dirty = true; d._nachSpeichern = true; return; }   // nach dem Speichern geändert: ein neues Speichern legt eine neue Kopie an
     if(cfg.bau.neu){ cfg.bau.dirty = true; return; }   // neues Workout: erst mit „Speichern“ in Meine
     bauSpeichern(cfg.bau);
   }
@@ -520,9 +527,29 @@ function renderDraftPage(d, cfg){
       go("#playdraft");
     });
     on("[data-goplan]", function(){ katPlanAusDraft(d); });
+    /* legt (einmal je Entwurf, solange er unverändert ist) die Kopie unter Meine an; gibt ihre Id zurück */
+    function entwurfSpeichern(){
+      if(meineId && !d._nachSpeichern) return meineId;
+      if(d.src==="shared") adoptSharedCustoms(d);
+      var gesp = createMyFromDraft(d);
+      d._myId = gesp.id; d._nachSpeichern = false;
+      return gesp.id;
+    }
+    on("[data-favdraft]", function(){
+      if(!d.items.length) return;
+      var id = entwurfSpeichern();
+      toggleFav("my:"+id);
+      neu();
+    });
     on("[data-savemy]", function(){
       if(!d.items.length) return;
-      if(d.src==="shared") adoptSharedCustoms(d);
+      if(entwurfsArt){
+        if(gespeichert){ showToast(t("savedMy")); return; }
+        entwurfSpeichern();
+        showToast(t("savedMy"));
+        neu();
+        return;
+      }
       var gesp = createMyFromDraft(d);
       if(d.src === "neu"){   // das Gebaute ist jetzt gespeichert: Zurück führt zum gespeicherten Workout, nicht zu einem leeren Entwurf
         var iNeu = navStack.lastIndexOf("#mybuild/new");
