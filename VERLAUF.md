@@ -3,10 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-13 · Beide Orte zugleich, Trainingsplan mit Muskelgruppen (Fassung 2026-10-13-12)
+## 2026-10-13 · Beide Orte zugleich, Trainingsplan mit Muskelgruppen (Fassung 2026-10-13-13)
 
 - **Ort mehrfach wählbar**: Fitnessstudio und Freiluft lassen sich zugleich antippen (`settings.katOrt` = `"studio"` · `"frei"` · `"beide"`; `katOrte`, `katOrtPasst`, `katOrtUmschalten`, `katOrtText` in `js/11b-katalog.js`; der letzte gewählte Ort lässt sich nicht abschalten). Workoutkatalog, Übungskatalog, Plan-Bau, Übungsauswahl, Überrasch mich (`p.orte`) und Nach Gewichtung (`stGenPool(orte)`) ziehen dann aus beiden; die Zeile im Fenster heißt „Fitnessstudio + Freiluft“.
-- **Meine › „Nach Sätzen · Trainingsplan“** (vorher „Pläne“): Jede Plan-Karte zeigt Anzahl und Ort (auch „Fitnessstudio + Freiluft“) sowie die größten Muskelgruppen (`planGruppen`, `planOrt`). Die Leertexte sagen, wo Gespeichertes landet („Was du im Baukasten … baust und speicherst … landet hier“).
+- **Meine › „Nach Sätzen · Trainingsplan“** (vorher „Pläne“): Jede Plan-Karte zeigt Anzahl und Ort (auch „Fitnessstudio + Freiluft“) sowie die größten Muskelgruppen (`planGruppen`, `planOrt`). Die Leertexte sagen, wo Gespeichertes landet („Was du im Baukasten … baust und speicherst … landet hier“). Auch die Karten der Workouts mit Timer zeigen Ort und Muskelgruppen (`myWoCard`).
 
 ## 2026-10-13 · Fenster ohne doppelte Fragen (Fassung 2026-10-13-11, live)
 
