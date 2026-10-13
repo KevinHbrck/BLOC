@@ -199,6 +199,13 @@ function loadDB(){
       else if(br0.indexOf("intervall") < 0){ var nach = br0.indexOf("timer") > -1 ? br0.indexOf("timer") : br0.indexOf("lib"); br0.splice(nach + 1, 0, "intervall"); }
       db.settings.bereiche = br0; db.settings.bereicheV = 3;
     }
+    if(db.settings.bereicheV !== 4){   // einmalig: Mobility & Stretch ist eine Listenkachel wie die anderen (sortierbar); sie bleibt zunächst direkt unter Workout
+      /* kein selArr: die Funktion steht erst in 02-bibliothek.js, beim Laden gibt es sie hier noch nicht */
+      var br4 = (Array.isArray(db.settings.bereiche) ? db.settings.bereiche : []).filter(function(k){ return k !== "warm"; }), pos4 = -1;
+      br4.forEach(function(k, i){ if(k === "lib" || k === "timer" || k === "katalog") pos4 = i; });
+      br4.splice(pos4 + 1, 0, "warm");
+      db.settings.bereiche = br4; db.settings.bereicheV = 4;
+    }
     db.settings.theme = migrateTheme(db.settings.theme);
     db.settings.soundStyle = migrateSound(db.settings.soundStyle);
     /* Sprachansagen halten auf den meisten Handys Musik anderer Apps (Spotify) an -

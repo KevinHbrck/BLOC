@@ -24,7 +24,7 @@ function areaTile(key, href, titel, unter, farbe, art){
 /* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
 var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Bereiche im Verlauf (gespeichert bleibt Air = lib und Studio = timer); die Statistik zeigt beide gemeinsam als „Workout“
 var HOME_KEYS = ["katalog", "warm", "intervall", "reps", "run"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
-var HOME_GROSS = ["katalog", "warm"];   // die zwei großen Felder oben (Workout, Mobility & Stretch); Timer, Summit und Run stehen darunter als Liste
+var HOME_GROSS = ["katalog"];   // steht fest vorn und ist als Kopfblock „Bereit für dein Training?“ (heroHTML) die große Kachel; Mobility & Stretch, Timer, Summit und Run sind „Weitere Bereiche“ als Liste
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--accent)"];
@@ -47,14 +47,14 @@ function bereichReihe(){
    Der Katalog ist nur aus, wenn Air und Studio beide aus sind (im Verlauf bleiben sie getrennt gespeichert). */
 function fokusAusRoh(k){ return selArr(state.db.settings.fokusAus).indexOf(k) > -1; }
 function fokusAus(k){ return k === "katalog" ? fokusAusRoh("lib") && fokusAusRoh("timer") : fokusAusRoh(k); }
+/* „Weitere Bereiche“: Mobility & Stretch, Timer, Summit und Run als eine ruhige Liste in der gewählten Reihenfolge; Workout ist der Kopfblock darüber.
+   Leer, wenn nur Workout übrig ist; die Hinweiskarte erscheint erst, wenn gar nichts mehr eingeblendet ist (auch Workout nicht). */
 function bereicheHTML(){
   var r = bereichReihe().filter(function(k){ return !fokusAus(k); });
   if(!r.length) return '<div class="card fokus-leer"><div>'+esc(t("fokusAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
-  function kachel(k, art){ var d = bereichDaten(k); return areaTile(k, d[0], d[1], d[2], d[3], art); }
-  /* Oben die großen Felder (Workout, direkt darunter Mobility & Stretch), darunter Timer, Summit und Run als ruhige Liste in der gewählten Reihenfolge */
-  var gross = HOME_GROSS.filter(function(k){ return r.indexOf(k) > -1; }), klein = r.filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
-  return '<div class="area-bereiche">'+gross.map(function(k){ return kachel(k, "gross"); }).join("")+
-    (klein.length ? '<div class="area-gruppe">'+klein.map(function(k){ return kachel(k, "zeile"); }).join("")+'</div>' : '')+'</div>';
+  var klein = r.filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
+  if(!klein.length) return "";
+  return '<div class="area-bereiche"><div class="area-gruppe">'+klein.map(function(k){ var d = bereichDaten(k); return areaTile(k, d[0], d[1], d[2], d[3], "zeile"); }).join("")+'</div></div>';
 }
 /* Langes Drücken (0,5 s, ohne zu wischen); der Klick danach wird geschluckt, damit die Seite nicht wechselt */
 var langDruckSperre = 0;
@@ -108,13 +108,14 @@ function surpriseLeisteHTML(){
     '<span class="sp-chev">'+ICON_CHEV+'</span></button>';
 }
 /* Bild-Kopf der Bereichsseiten (Mobility & Stretch, Summit, Run): ein schmales Foto direkt unter der Kopfzeile. Fotos: Pexels (siehe quellen.html) */
-var BEREICH_BILD = { warm:"img/bereich-mobility.jpg", reps:"img/bereich-summit.jpg", run:"img/bereich-run.jpg" };
+var BEREICH_BILD = { katalog:"img/bereich-workout.jpg", warm:"img/bereich-mobility.jpg", intervall:"img/bereich-timer.jpg", reps:"img/bereich-summit.jpg", run:"img/bereich-run.jpg" };
 function bereichBildHTML(key){
   return '<div class="bereich-bild"><img src="'+BEREICH_BILD[key]+'" alt="" draggable="false"></div>';
 }
 /* Kopfblock der Startseite („Bereit für dein Training?“): ein Tipp führt direkt in den Baukasten (Workout › Baukasten). Foto: Pexels (siehe quellen.html) */
 function heroHTML(){
-  var tag = new Date().toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long" });
+  if(fokusAus("katalog")) return "";   // Workout in den Einstellungen ausgeblendet: dann auch kein Kopfblock
+  var tag =new Date().toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long" });
   return '<section class="home-hero">'+
     '<img class="hh-bild" src="img/start-halle.jpg" alt="" draggable="false">'+
     '<button type="button" class="hh-main" data-herostart>'+

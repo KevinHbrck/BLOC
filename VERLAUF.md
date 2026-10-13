@@ -6,9 +6,11 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 ## 2026-10-13 · Fotokarten im Katalog, Bild-Köpfe der Bereiche, neues Stretch-Symbol (Branch `katalog-fotos-bilder`)
 
 - **Katalog**: der Ort-Schalter im Workoutkatalog ist jetzt auch Fotokarten (flacher, „13 Workouts“ / „50 Workouts“; `ortFotosHTML(attr, zahlen, textKey, "kompakt")` in `js/11b-katalog.js`, gleiche Knöpfe `data-katort`). Der kleine Schalter (`katOrtHTML`) bleibt im Überrasch-Fenster, in den Bauseiten und im Plan nach Gewichtung.
-- **Bild-Köpfe**: Mobility & Stretch (beide Reiter), Summit und Run zeigen unter der Kopfzeile ein schmales Foto (`bereichBildHTML` in `js/04-start.js`, `img/bereich-mobility|summit|run.jpg`); beim laufenden Lauf und im Countdown nicht.
+- **Bild-Köpfe**: Workout (alle Reiter), Mobility & Stretch (beide Reiter), Timer, Summit und Run zeigen unter der Kopfzeile ein schmales Foto (`bereichBildHTML`/`BEREICH_BILD` in `js/04-start.js`, `img/bereich-workout|mobility|timer|summit|run.jpg`); beim laufenden Lauf und im Countdown nicht.
+- **Startseite**: Die Kachel „Workout“ entfällt, der große Kopfblock „Bereit für dein Training?“ ist der Einstieg (Tipp = Workout › Baukasten, Zeile „Workout · Katalog & Baukasten“; ausgeblendet, wenn Workout im Fokus aus ist). Mobility & Stretch ist eine Listenkachel wie Timer, Summit und Run (bleibt grün, jetzt sortierbar) unter der Überschrift **„Weitere Bereiche“**. `HOME_GROSS = ["katalog"]`; Migration `bereicheV` 4 setzt „warm“ einmalig direkt unter Workout.
 - **Symbol Mobility & Stretch** (`HOME_ICON.warm`): sitzende Figur unter aufgehender Sonne statt Strichmännchen mit ausgebreiteten Armen (gilt überall, wo das Symbol steht: Kachel, Einführung, „Was ist was?“, Sortierfenster).
-- Fassung 2026-10-13-3.
+- **Reiter**: Baukasten links, Katalog rechts (Workout sowie Mobility & Stretch). **Zurück** aus „Selber bauen nach Sätzen“ und „Plan nach Gewichtung“ führt wieder in den Baukasten (kein Wechsel nach Katalog › Meine, wenn man aus dem Baukasten kam).
+- Fassung 2026-10-13-5.
 
 ## 2026-10-13 · Start und Baukasten nach dem Mockup (Branch `layout-start-baukasten`, live)
 

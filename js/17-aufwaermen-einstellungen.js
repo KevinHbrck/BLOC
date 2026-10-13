@@ -17,7 +17,7 @@ function wsKnopf(attr, wert, aktiv, text){ return '<button type="button" data-'+
 /* Kopf unter der Titelleiste: Reiter, im Katalog die Abteilungen, darunter die Art (Aufwärmen | Dehnen) */
 function wsKopfHTML(tab, art){
   var abt = wsAbt();
-  return bereichBildHTML("warm")+'<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+'</div>'+   // derselbe Reiter wie im Workout
+  return bereichBildHTML("warm")+'<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+'</div>'+   // derselbe Reiter wie im Workout
     (tab === "workouts" ? '<div class="seg-row kat-abt ws-abt" role="group">'+wsKnopf("wsabt", "meine", abt === "meine", t("tabMine"))+
       wsKnopf("wsabt", "workouts", abt === "workouts", t("wsAbtWorkouts"))+wsKnopf("wsabt", "uebungen", abt === "uebungen", t("katUebKatalog"))+'</div>' : '')+
     '<div class="theme-pick lib-tabs seg-2 ws-art">'+wsKnopf("wsart", "warm", art === "warm", t("wsWarm"))+wsKnopf("wsart", "dehn", art === "dehn", t("wsDehn"))+'</div>';

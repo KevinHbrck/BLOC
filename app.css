@@ -2309,7 +2309,7 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .plan-sticky-kopf span{ font-size:13px; color:var(--text-dim); }
 .plan-sticky .wb-streifen{ margin-bottom:0; padding-bottom:8px; }
 :root[data-vintage] .plan-sticky{ background-color:var(--bg); background-image:var(--paper); }
-/* Mobility & Stretch: das einzige Grün der Startseite (großes Feld direkt unter Workout); seine Übungen und Programme sind ebenfalls grün */
+/* Mobility & Stretch: das einzige Grün der Startseite (Listenkachel unter „Weitere Bereiche“); seine Übungen und Programme sind ebenfalls grün */
 .area-tile[data-bereich="warm"] .at-ico, .bs-zeile[data-bereich="warm"] .at-ico, .wi-zeile[data-bereich="warm"] .at-ico{
   background:color-mix(in srgb, var(--ws-color) 14%, transparent); color:var(--ws-color); }
 /* Workout: das BLOC-Orange (Akzent) als Farbe des Bereichs - Symbol auf der Startseite, im Sortieren und in „Was ist was?“ */

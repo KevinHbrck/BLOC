@@ -172,6 +172,7 @@ function renderSearch(){
 function renderHome(){
   var favHTML = favItemsHTML();
   var nFav = favEntries().length;
+  var bereicheListe = bereicheHTML();
   app.innerHTML =
     topbar("BLOC", { home:true, sub:"Modular Training Builder" }) +
     installTipHTML() + backupTipHTML() + heroHTML() + wocheHTML() +
@@ -180,14 +181,14 @@ function renderHome(){
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
     '</div>'+
     favHTML +
-    /* Bereiche: Workouts zuerst und hervorgehoben, die übrigen drei als ruhige Liste („Überrasch mich“ gehört zu den Workouts) */
-    '<div class="sec-head"><div class="section-title">'+t("areas")+'</div>'+
-      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
-    bereicheHTML() +
+    /* Weitere Bereiche: Mobility & Stretch, Timer, Summit und Run als ruhige Liste (Workout ist der Kopfblock oben) */
+    (bereicheListe ? '<div class="sec-head"><div class="section-title">'+t("areasMore")+'</div>'+
+      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+bereicheListe : '') +
     KODAK_BADGE;
   bindCommon();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
-  app.querySelector("[data-herostart]").addEventListener("click", function(){ katTabSetzen("baukasten"); go("#katalog"); });
+  var heroKnopf = app.querySelector("[data-herostart]");
+  if(heroKnopf) heroKnopf.addEventListener("click", function(){ katTabSetzen("baukasten"); go("#katalog"); });
   bindFavItems(renderHome);
   bindBackupTip();
   var wib = app.querySelector("[data-wasistwas]");
