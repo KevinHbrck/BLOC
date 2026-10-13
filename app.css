@@ -2453,3 +2453,8 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 :root:root .list-item .playbtn.wo, :root:root .list-item .playbtn.bl{ --pb:var(--tp-color); }
 :root:root .list-item .playbtn.st{ --pb:var(--gym-color); }
 :root:root .list-item .playbtn.ti, :root:root .timer-panel .list-item .playbtn, :root:root .timer-panel .list-item .playbtn.bl, :root:root .timer-panel .list-item .playbtn.wo{ --pb:var(--ti-color); }
+/* Ort: beide Karten können zugleich gewählt sein (Hinweis darunter, Haken an jeder gewählten Karte) */
+.bau-ort-hinweis{ font-size:12.5px; color:var(--text-dim); margin:4px 2px 0; }
+/* Meine › Trainingsplan: Muskelgruppen und Ort unter dem Namen */
+.plan-item .pl-gruppen{ font-weight:600; color:var(--text); }
+.plan-item .pl-namen{ opacity:.85; }

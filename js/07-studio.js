@@ -235,13 +235,13 @@ function renderStudioPlan(){
     if(stPlanOrtFuer !== p.id){
       stPlanOrtFuer = p.id;
       var oEx = ids.map(findExercise).filter(Boolean);
-      if(oEx.length){ var oNeu = oEx.filter(exIstStudio).length*2 > oEx.length ? "studio" : "frei"; if(oNeu !== katOrt()){ s.katOrt = oNeu; save(); } }
+      if(oEx.length){ var oNeu = oEx.filter(exIstStudio).length*2 > oEx.length ? "studio" : "frei"; if(!katOrtPasst(oNeu)){ s.katOrt = oNeu; save(); } }
     }
     var fGr = selArr(s.stGruppen).filter(function(id){ return gueltig[id]; });
     var fArt = studioArtenWahl();
     var zonen = kkNorm(s.stZonen), filterAn = !!(fGr.length || fArt.length || zonen.length);
     // beim Bauen immer nach Ort getrennt (Fitnessstudio oder Freiluft, derselbe Schalter wie im Baukasten)
-    function artOk(id){ var ex = findExercise(id); return !!ex && exOrt(ex) === katOrt() && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(ex, zonen)); }
+    function artOk(id){ var ex = findExercise(id); return !!ex && katOrtPasst(exOrt(ex)) && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(ex, zonen)); }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keinem Bereich stehen (z. B. ausgeblendete)
     html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="60"></div>'+
       (ids.length ? kkKopfHTML(ids) : '')+

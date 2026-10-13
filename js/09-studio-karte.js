@@ -2,9 +2,10 @@
 /* Plan nach Gewichtung: Reglerwerte je Muskelgruppe (zusammen 100 %), Anzahl der Übungen und Ort; verteilt nach größtem Rest und zieht passende Übungen (Fitnessstudio oder Freiluft) */
 /* Übungen, aus denen „Plan nach Gewichtung“ zieht: Fitnessstudio = Geräte, Kabel, Langhantel (und eigene Studio-Übungen), Freiluft = alles andere;
    ohne Dehnübungen und ausgeblendete */
-function stGenPool(ort){
+function stGenPool(orte){   // orte: Liste der gewählten Orte ("studio", "frei" oder beide)
+  orte = Array.isArray(orte) ? orte : [orte];
   return EXERCISES.filter(function(ex){
-    return ex.main !== "stretch" && !libHidden("ex:"+ex.id) && (ort === "studio" ? exIstStudio(ex) : !exIstStudio(ex));
+    return ex.main !== "stretch" && !libHidden("ex:"+ex.id) && orte.indexOf(exIstStudio(ex) ? "studio" : "frei") > -1;
   });
 }
 function stGenBauen(w, n, ort){
@@ -74,7 +75,7 @@ function genReglerBinden(root, g){
 }
 /* Plan aus den Reglern anlegen und öffnen (Katalog › Meine ist sein Ort; er steht sofort dort) */
 function genPlanErstellen(g){
-  var ids = stGenBauen(g.w, g.n, katOrt());
+  var ids = stGenBauen(g.w, g.n, katOrte());
   if(!ids.length){ showToast(t("genZero")); return false; }
   var p = { id:uid(), name:t("genName"), ids:ids, updatedAt:Date.now() };
   stPlaene().push(p); save();

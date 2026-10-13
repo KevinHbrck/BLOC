@@ -229,7 +229,7 @@ function renderDraftPage(d, cfg){
     var oEx = d.items.map(function(it){ return findExercise(it.ex); }).filter(function(ex){ return ex && fuerBau(ex); });
     if(oEx.length){
       var oNeu = oEx.filter(exIstStudio).length*2 > oEx.length ? "studio" : "frei";
-      if(oNeu !== katOrt()){ s.katOrt = oNeu; save(); }
+      if(!katOrtPasst(oNeu)){ s.katOrt = oNeu; save(); }
     }
   }
   function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
@@ -315,7 +315,7 @@ function renderDraftPage(d, cfg){
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   } else if(palOpen){
     // beim Bauen immer nach Ort getrennt: nur Übungen des gewählten Ortes (Fitnessstudio oder Freiluft), schon Gewähltes bleibt im Ablauf
-    var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(function(ex){ return fuerBau(ex) && exOrt(ex) === katOrt(); });
+    var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(function(ex){ return fuerBau(ex) && katOrtPasst(exOrt(ex)); });
     hw = hinweise("bau", ["wbTippen"]);
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       bauOrtHTML()+
@@ -657,11 +657,17 @@ function buildSurprise(p){
   var fokus = p.cats.filter(function(c){ return c !== "stretch"; });
   var wantStretch = mains.indexOf("stretch") > -1 || p.cats.indexOf("stretch") > -1;
   var trainMains = mains.filter(function(m){ return m !== "stretch"; });
-  // Ort: Fitnessstudio zieht nur Studio-Übungen, Freiluft nur alles andere (Ausrüstung ohne „Fitnessstudio“)
-  var ort = p.ort === "studio" ? "studio" : p.ort === "frei" ? "frei" : null;
+  // Ort: Fitnessstudio zieht nur Studio-Übungen, Freiluft nur alles andere (Ausrüstung ohne „Fitnessstudio“), beide Orte zusammen beides
+  // (p.orte = Liste der gewählten Orte; ältere Fassungen speicherten ein einzelnes p.ort)
+  var orte = Array.isArray(p.orte) && p.orte.length ? p.orte : (p.ort === "studio" || p.ort === "frei" ? [p.ort] : null);
+  var mitStudio = !!orte && orte.indexOf("studio") > -1, mitFrei = !!orte && orte.indexOf("frei") > -1;
   var equips = p.equips;
-  if(ort === "studio") equips = ["gym"];
-  else if(ort === "frei"){ equips = selArr(p.equips).filter(function(e){ return e !== "gym"; }); if(!equips.length) equips = ["none"]; }
+  if(mitStudio && !mitFrei) equips = ["gym"];
+  else if(mitFrei){
+    equips = selArr(p.equips).filter(function(e){ return e !== "gym"; });
+    if(!equips.length) equips = ["none"];
+    if(mitStudio) equips = equips.concat(["gym"]);   // beide Orte: Geräteübungen sind erlaubt, die übrigen folgen der gewählten Ausrüstung
+  }
   var recent = p.avoid === false ? {} : recentExercises(7);
   var total = p.dur*60;
 
@@ -678,8 +684,8 @@ function buildSurprise(p){
     var trainSec = Math.max(block, total - stretchBudget);
     var n = anzahl ? Math.max(1, anzahl - stretchAnzahl) : Math.max(2, Math.round((trainSec + tm.blockRest) / (block + tm.blockRest)));
     var pool = EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && spErlaubt(ex, equips) && (!ort || exOrt(ex) === ort) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
-        (ort === "studio" || (equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains)));
+      return !libHidden("ex:"+ex.id) && spErlaubt(ex, equips) && (!orte || orte.indexOf(exOrt(ex)) > -1) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
+        ((mitStudio && exOrt(ex) === "studio") || (equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains)));
     });
     if(!pool.length && !stretchPool.length) return null;
     var fresh = pool.filter(function(ex){ return !recent[ex.id]; }).length;
@@ -850,7 +856,7 @@ function openSurprise(twId, modusStart){
   var seiteDahinter = !tw && parseHash()[0] === "katalog" && katTab() === "baukasten" && !stPlanAktiv;
   function wahlZeile(){
     var art = artWahl || bauModus();
-    return '<div class="bau-zusammen sp-wahl">'+esc(t(katOrt() === "studio" ? "katOrtStudio" : "katOrtFrei"))+' · <b>'+esc(t(art === "timer" ? "bauArtZeit" : "bauArtSaetze"))+'</b></div>';
+    return '<div class="bau-zusammen sp-wahl">'+esc(katOrtText())+' · <b>'+esc(t(art === "timer" ? "bauArtZeit" : "bauArtSaetze"))+'</b></div>';
   }
   function selberHTML(){
     var art = artWahl || bauModus();
@@ -898,7 +904,7 @@ function openSurprise(twId, modusStart){
       }
       if(modus === "selber"){    // Art merken, dann zur Übungsauswahl: Workout mit Timer oder Plan mit Gewicht × Wiederholungen
         var art = artWahl || bauModus();
-        s.bauModus = art; s.bauModusOrt = katOrt(); save();
+        s.bauModus = art; s.bauModusOrt = katOrtSchluessel(); save();
         root.innerHTML = "";
         go("#katalog");
         if(art === "timer") go("#mybuild/new"); else katPlanNeu();
@@ -907,7 +913,7 @@ function openSurprise(twId, modusStart){
       if(tw){ s.surpriseAnzahl = p.anzahl; var q = JSON.parse(JSON.stringify(p)); delete q.anzahl; s.surprise = q; }
       else s.surprise = p;
       save();
-      p.ort = katOrt(); if(!tw) s.surprise = p; else { var q2 = JSON.parse(JSON.stringify(p)); delete q2.anzahl; s.surprise = q2; }
+      p.orte = katOrte().slice(); delete p.ort; if(!tw) s.surprise = p; else { var q2 = JSON.parse(JSON.stringify(p)); delete q2.anzahl; s.surprise = q2; }
       save();
       var d = buildSurprise(p);
       if(!d){ showToast(t("spNone")); return; }
