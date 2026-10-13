@@ -3,7 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-13 · Ein Fenster für alle Wege, Filter ohne Doppelung, Timer-Wiederholungen, Play-Knöpfe (Branch `fenster-einheitlich`)
+## 2026-10-13 · Bildtöne und Ausschnitte (Fassung 2026-10-13-10)
+
+- **Summit**: Foto an die Tönung von Mobility & Stretch angeglichen (entsättigt, etwas heller; `img/bereich-summit.jpg`).
+- **Timer**: neues Foto (Ausfallschritt, gleiche Bildwelt wie Mobility & Stretch) statt der Plank-Personen (`img/bereich-timer.jpg`).
+- **Suche**: Bildausschnitt weiter auf die Sportgeräte (`img/bereich-suche.jpg`).
+
+## 2026-10-13 · Ein Fenster für alle Wege, Filter ohne Doppelung, Timer-Wiederholungen, Play-Knöpfe (live)
 
 - **Ein Fenster, drei Wege** (`openSurprise(twId, modus)` in `js/13-teilen-editor.js`): „Überrasch mich“ und „Selber bauen“ im Baukasten öffnen dasselbe Fenster „Workout zusammenstellen“ mit **Zufall · Nach Gewichtung · Selber bauen**. Gleicher Aufbau (Kopf, Ort-Schalter, Inhalt, Abbrechen/Knopf), anderer Inhalt: Zufall wie bisher; Nach Gewichtung mit Körpermodell und Reglern im Fenster (`genReglerHTML`/`genReglerBinden`/`genPlanErstellen` in `js/09-studio-karte.js`, die eigene Seite `renderStudioPlanGen` und `stGen` entfallen); Selber bauen mit Art (Nach Zeit/Nach Sätzen) und „Übungen wählen“ → Bauseite.
 - **Filter**: Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl; Summit-Stufe) werden bei jedem Besuch der Startseite zurückgesetzt (`render()` in `js/03-router.js`). Der Chip „Fitnessstudio“ (geraet) entfällt in der Filterkarte, weil der Ort-Schalter ihn ersetzt; im Fitnessstudio gibt es keine Ausrüstungs-Chips (`studioArtenWahl` in `js/07-studio.js`).
