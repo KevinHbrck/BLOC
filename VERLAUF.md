@@ -3,7 +3,17 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-13 · Fotokarten im Katalog, Bild-Köpfe der Bereiche, neues Stretch-Symbol (Branch `katalog-fotos-bilder`)
+## 2026-10-13 · Ein Fenster für alle Wege, Filter ohne Doppelung, Timer-Wiederholungen, Play-Knöpfe (Branch `fenster-einheitlich`)
+
+- **Ein Fenster, drei Wege** (`openSurprise(twId, modus)` in `js/13-teilen-editor.js`): „Überrasch mich“ und „Selber bauen“ im Baukasten öffnen dasselbe Fenster „Workout zusammenstellen“ mit **Zufall · Nach Gewichtung · Selber bauen**. Gleicher Aufbau (Kopf, Ort-Schalter, Inhalt, Abbrechen/Knopf), anderer Inhalt: Zufall wie bisher; Nach Gewichtung mit Körpermodell und Reglern im Fenster (`genReglerHTML`/`genReglerBinden`/`genPlanErstellen` in `js/09-studio-karte.js`, die eigene Seite `renderStudioPlanGen` und `stGen` entfallen); Selber bauen mit Art (Nach Zeit/Nach Sätzen) und „Übungen wählen“ → Bauseite.
+- **Filter**: Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl; Summit-Stufe) werden bei jedem Besuch der Startseite zurückgesetzt (`render()` in `js/03-router.js`). Der Chip „Fitnessstudio“ (geraet) entfällt in der Filterkarte, weil der Ort-Schalter ihn ersetzt; im Fitnessstudio gibt es keine Ausrüstungs-Chips (`studioArtenWahl` in `js/07-studio.js`).
+- **Übungskatalog** hat dieselben Ort-Fotokarten wie der Workoutkatalog („63 Übungen“ / „141 Übungen“) und zeigt nur die Übungen des gewählten Ortes.
+- **Workout-Bild-Kopf** entfällt (die Paar-an-der-Seebrücke-Fotos bleiben nur in `img/bereich-*` der übrigen Bereiche).
+- **Timer-Workouts**: jeder Block hat „Wie oft hintereinander“ (`times`, 1–99; `workoutItems` in `js/01-basis.js`, Pause danach auch zwischen den Wiederholungen); Dauer und Ablauf rechnen es mit. Play-Knöpfe der Timer-Seite im hellen Design nicht mehr tiefschwarz.
+- **Play-Knöpfe überall**: weißer Kreis mit Rand und Dreieck in der Farbe des Bereichs (`--pb`, Favoriten, Listen, Übungskacheln).
+- Fassung 2026-10-13-7.
+
+## 2026-10-13 · Fotokarten im Katalog, Bild-Köpfe der Bereiche, neues Stretch-Symbol (Branch `katalog-fotos-bilder`, live)
 
 - **Katalog**: der Ort-Schalter im Workoutkatalog ist jetzt auch Fotokarten (flacher, „13 Workouts“ / „50 Workouts“; `ortFotosHTML(attr, zahlen, textKey, "kompakt")` in `js/11b-katalog.js`, gleiche Knöpfe `data-katort`). Der kleine Schalter (`katOrtHTML`) bleibt im Überrasch-Fenster, in den Bauseiten und im Plan nach Gewichtung.
 - **Bild-Köpfe**: Workout (alle Reiter), Mobility & Stretch (beide Reiter), Timer, Summit und Run zeigen unter der Kopfzeile ein schmales Foto (`bereichBildHTML`/`BEREICH_BILD` in `js/04-start.js`, `img/bereich-workout|mobility|timer|summit|run.jpg`); beim laufenden Lauf und im Countdown nicht.

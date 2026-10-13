@@ -2428,3 +2428,28 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .bereich-bild{ position:relative; overflow:hidden; height:116px; margin:0 0 12px; border-radius:var(--radius); background:#222; box-shadow:var(--shadow); }
 .bereich-bild img{ display:block; width:100%; height:100%; object-fit:cover; }
 .bereich-bild::after{ content:""; position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0) 55%, rgba(0,0,0,.28)); pointer-events:none; }
+/* Timer: Symbole im Plus-Menü weiß mit dunklem Symbol und feiner Kontur (im hellen Design waren sie tiefschwarz) */
+.fab-opt .ico.ti{ background:#ffffff; color:#1c1c1e; box-shadow:inset 0 0 0 1.5px rgba(28,28,30,.22); }
+.gap-row.times-row label{ margin:0; font-size:13px; color:var(--text-dim); }
+/* Zusammenstell-Fenster (Baukasten): drei Wege Zufall · Nach Gewichtung · Selber bauen; bei „Nach Gewichtung“ stehen Körpermodell und Regler im Fenster */
+.sp-wege button{ padding:10px 2px; font-size:12.5px; white-space:nowrap; }
+.sp-sheet .gen-figur{ position:static; margin:0 0 6px; padding:2px 0 4px; border:0; background:none; }
+.sp-sheet .gen-figur .kk{ width:38px; height:76px; }
+.sp-sheet .sp-gen-hint{ margin:0 0 8px; }
+.sp-sheet .gen-card{ box-shadow:none; border:1px solid var(--border); margin:0 0 4px; }
+/* Play-Knöpfe überall (Favoriten, Listen, Übungskacheln): weißer Kreis mit Rand und Dreieck in der Farbe des Bereichs statt gefüllter Farbfläche.
+   Die Farbe kommt aus --pb; die Reihenfolge der Regeln ist wichtig (später und spezifischer gewinnt). */
+:root:root .playbtn, :root:root .list-item .playbtn, :root:root .air-start{
+  --pb:var(--accent); background:var(--surface); color:var(--pb); box-shadow:inset 0 0 0 2px var(--pb); }
+:root:root .air-start{ --pb:var(--cat, var(--accent)); }
+:root:root .playbtn.wo{ --pb:var(--wo-color); }
+:root:root .playbtn.bl{ --pb:var(--bl-color); }
+:root:root .playbtn.tp, :root:root .playbtn.cat{ --pb:var(--tp-color); }
+:root:root .playbtn.cat{ --pb:var(--cat); }
+:root:root .playbtn.ws{ --pb:var(--ws-color); }
+:root:root .playbtn.rep{ --pb:var(--rep-color); }
+:root:root .playbtn.st{ --pb:var(--gym-color); }
+:root:root .playbtn.ti{ --pb:var(--ti-color); }
+:root:root .list-item .playbtn.wo, :root:root .list-item .playbtn.bl{ --pb:var(--tp-color); }
+:root:root .list-item .playbtn.st{ --pb:var(--gym-color); }
+:root:root .list-item .playbtn.ti, :root:root .timer-panel .list-item .playbtn, :root:root .timer-panel .list-item .playbtn.bl, :root:root .timer-panel .list-item .playbtn.wo{ --pb:var(--ti-color); }

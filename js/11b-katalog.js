@@ -4,9 +4,10 @@
    - Katalog: zwei Abteilungen „Meine“ (eigene Workouts mit Timer und Pläne mit Gewicht × Wiederholungen) und „Workoutkatalog“
      (fertige Workouts nach Fokus, mit Ort-Schalter und Filter); dazu eine Karte „Übungskatalog“ (eigene Seite #uebungskatalog:
      alle Übungen nach Bereichen, Filter, eigene Übung anlegen).
-   - Baukasten: „Überrasch mich“ (Zufall oder nach Gewichtung) oder „Selber bauen“ (mit Timer oder mit Gewicht), groß und vorn.
-   Die Seiten selbst liegen in renderKatalogWorkouts, renderLibrary (Meine), renderKatalogUebungen und renderKatalogBaukasten; die Plan-Seiten
-   (renderStudioPlan, renderStudioPlanGen) öffnen sich aus „Meine“. Hier stehen Kopf, Reiter, aufklappbare Bereiche und die Zuordnung. */
+   - Baukasten: „Überrasch mich“ oder „Selber bauen“ öffnen dasselbe Zusammenstell-Fenster (openSurprise) mit den drei Wegen Zufall · Nach Gewichtung ·
+     Selber bauen und je eigenem Inhalt.
+   Die Seiten selbst liegen in renderKatalogWorkouts, renderLibrary (Meine), renderKatalogUebungen und renderKatalogBaukasten; die Plan-Seite
+   (renderStudioPlan) öffnet sich aus „Meine“. Hier stehen Kopf, Reiter, aufklappbare Bereiche und die Zuordnung. */
 var KAT_TABS = ["workouts", "baukasten"];
 var katOffen = {};   // Bereiche: true = aufgeklappt, false = zugeklappt, fehlt = Standard (offen bei Filter oder Suche, sonst zu); nur für diesen Besuch
 
@@ -25,7 +26,7 @@ function katAbt(){ var a = state.db.settings.katAbt; return a === "meine" || a =
 function katZuMeine(){ var s = state.db.settings; s.katTab = "workouts"; s.katAbt = "meine"; }
 function katTabSetzen(tab){
   var s = state.db.settings;
-  s.katTab = tab; stPlanAktiv = null; stPlanBauen = false; stGen = null; stPlanQuery = "";
+  s.katTab = tab; stPlanAktiv = null; stPlanBauen = false; stPlanQuery = "";
   save();
 }
 
@@ -118,7 +119,6 @@ function katSuche(q, standard){
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
   var kopf = topbar(t("katalog"), { back:"#home", right:right || "" }) +
-    bereichBildHTML("katalog") +
     '<div class="rz kat-rz" style="--rz:var(--text)">'+b("baukasten", t("katTabBaukasten"))+b("workouts", t("katTabKatalog"))+'</div>';
   if(tab !== "workouts") return kopf;
   // Katalog: drei gleichrangige Abteilungen Meine · Workoutkatalog · Übungskatalog, im Workoutkatalog ganz vorn der Ort
@@ -126,7 +126,9 @@ function katKopfHTML(tab, right){
   function a(k, label){ return '<button type="button" data-katabt="'+k+'" class="'+(abt === k ? 'active' : '')+'" aria-pressed="'+(abt === k)+'">'+esc(label)+'</button>'; }
   return kopf +
     '<div class="seg-row kat-abt" role="group">'+a("meine", t("tabMine"))+a("workouts", t("katAbtWorkouts"))+a("uebungen", t("katUebKatalog"))+'</div>' +
-    (abt === "workouts" ? ortFotosHTML("data-katort", katOrtZahlenWo(), "katOrtAnz", "kompakt") : '');
+    // Workoutkatalog und Übungskatalog: derselbe Ort (Fitnessstudio · Freiluft) ganz vorn, mit der Zahl der Workouts bzw. Übungen
+    (abt === "workouts" ? ortFotosHTML("data-katort", katOrtZahlenWo(), "katOrtAnz", "kompakt") :
+     abt === "uebungen" ? ortFotosHTML("data-katort", bauOrtZahlen(), "katOrtUebAnz", "kompakt") : '');
 }
 /* Ort: Fitnessstudio (Workouts mit Geräten oder Langhantel) oder Freiluft (alles andere: zuhause, draußen, mit Kurzhantel, Band, Stange) */
 var KAT_ICON_STUDIO = '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>';
@@ -195,7 +197,7 @@ function katPlanNeu(){
   var p = { id:uid(), name:t("planDefault", { n:stPlaene().filter(function(x){ return !x.entwurf; }).length+1 }), ids:[], updatedAt:Date.now(), entwurf:true };
   stPlaene().push(p); save();
   if(katTab() !== "baukasten") katZuMeine();   // aus dem Baukasten kommt „Zurück“ wieder dorthin
-  stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+  stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = "";
   renderKatalog(); window.scrollTo(0, 0);
 }
 /* Entwürfe, die gerade nicht offen sind (z. B. nach einem Abbruch), und leere neue Pläne werden entfernt */
@@ -222,7 +224,7 @@ function katKopfBinden(){
   app.querySelectorAll("[data-kattab]").forEach(function(b){
     b.addEventListener("click", function(){
       var k = b.getAttribute("data-kattab");
-      if(k === katTab() && !stPlanAktiv && !stGen) return;
+      if(k === katTab() && !stPlanAktiv) return;
       katTabSetzen(k); renderKatalog(); window.scrollTo(0, 0);
     });
   });
@@ -250,7 +252,6 @@ function renderKatalog(){
   katPlanAufraeumen();
   if(stPlanAktiv && !stPlanFind(stPlanAktiv)){ stPlanAktiv = null; stPlanBauen = false; }
   tabLeiste("katalog");   // untere Leiste auf den Listen des Bereichs, nicht im Plan-Bau (Reiterwechsel rendern nicht über render())
-  if(stGen) return renderStudioPlanGen();
   if(stPlanAktiv && stPlanFind(stPlanAktiv)) return renderStudioPlan();
   stPlanAktiv = null; stPlanBauen = false;
   var tab = katTab();
@@ -262,10 +263,10 @@ function renderKatalog(){
 /* System-Zurück (Geste, Taste) im Plan-Bau, im geöffneten Plan oder in der Gewichtung: erst zurück zur Liste, genau wie der Pfeil oben */
 function katPlanVerlassen(){
   var r = parseHash()[0];
-  if((r !== "katalog" && r !== "library" && r !== "timers") || (!stPlanAktiv && !stGen)) return false;
+  if((r !== "katalog" && r !== "library" && r !== "timers") || (!stPlanAktiv)) return false;
   var p = stPlanAktiv ? stPlanFind(stPlanAktiv) : null;
   planVerlassen(p, function(){
-    stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+    stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = "";
     renderKatalog(); window.scrollTo(0, 0);
   });
   return true;
@@ -315,7 +316,7 @@ function bauNachSaetzen(b){
   save();
   bauEntwurf = null;
   katZuMeine();
-  stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+  stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = "";
   navStack.pop();
   if(navTop() !== "#katalog") navStack.push("#katalog");
   syncGuard(); render(); window.scrollTo(0, 0);
@@ -334,7 +335,7 @@ function planNachZeit(p){
   if(p.entwurf){ state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; }); }
   if(mw){ mw.items = items; mw.updatedAt = Date.now(); }
   save();
-  stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; stGen = null;
+  stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = "";
   if(!mw){
     bauEntwurf = { key:"new", neu:true, d:{ id:uid(), name:nm, mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:items } };
     if(!p.entwurf) bauEntwurf.d.fromPlan = p.id;
@@ -364,9 +365,8 @@ function renderKatalogBaukasten(){
   bauArtBinden(modus, function(){ renderKatalog(); });
   bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
-  app.querySelector("[data-bauselber]").addEventListener("click", function(){
-    if(modus === "timer") go("#mybuild/new"); else katPlanNeu();
-  });
+  // „Selber bauen“ öffnet dasselbe Fenster wie „Überrasch mich“ (dort mit Ort und Art); „Übungen wählen“ führt dann in die Bauseite
+  app.querySelector("[data-bauselber]").addEventListener("click", function(){ openSurprise(null, "selber"); });
 }
 
 /* ---------- Übungskatalog (dritte Abteilung des Katalogs; #uebungskatalog führt dorthin) ---------- */
@@ -377,9 +377,9 @@ function renderKatalogUebungen(){
   var gruppen = katalogGruppen(), vonId = katGruppeIds(gruppen), gueltig = {};
   gruppen.forEach(function(g){ gueltig[g.id] = true; });
   var fGr = selArr(s.stGruppen).filter(function(id){ return gueltig[id]; });
-  var fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
-  var zonen = kkNorm(s.stZonen);   // Körperkarte: gewählte Muskelzonen
-  function artOk(id){ return (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(findExercise(id), zonen)); }
+  var fArt = studioArtenWahl();
+  var zonen = kkNorm(s.stZonen), ort = katOrt();   // Körperkarte: gewählte Muskelzonen; Ort wie im Workoutkatalog
+  function artOk(id){ var ex = findExercise(id); return !!ex && exOrt(ex) === ort && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(ex, zonen)); }
   function passt(id){ return !!vonId[id] && (!fGr.length || fGr.indexOf(vonId[id]) > -1) && artOk(id); }
   var filterAn = !!(fGr.length || fArt.length || zonen.length);
   var favs = (s.exFavs || []).filter(function(id){ return !!findExercise(id) && passt(id); });
@@ -484,16 +484,12 @@ function katPlanAusDraft(d){
   }
   save();
   katZuMeine();
-  stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = ""; stGen = null;
+  stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = "";
   go("#katalog");
 }
-/* Plan nach Gewichtung: Seite mit den Reglern; der Ort (Fitnessstudio oder Freiluft) entscheidet, aus welchen Übungen gezogen wird */
-function katPlanGenNeu(){
-  stPlanAktiv = null; stPlanBauen = false;
-  stGen = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8, ort:katOrt() };
-  if(katTab() !== "baukasten") katZuMeine();   // aus dem Baukasten kommt „Zurück“ wieder dorthin
-  renderKatalog(); window.scrollTo(0, 0);
-}
+/* Plan nach Gewichtung: öffnet das Zusammenstell-Fenster (js/13-teilen-editor.js) bei „Nach Gewichtung“ mit den Reglern; der Ort (Fitnessstudio
+   oder Freiluft) entscheidet, aus welchen Übungen gezogen wird */
+function katPlanGenNeu(){ openSurprise(null, "gewicht"); }
 /* ---------- Katalog: fertige Workouts (derselbe Filter wie bei den Übungen) ----------
    Überschriften sind dieselben Bereiche wie bei den Übungen, dazu „Ganzkörper“. Ein Workout steht dort, wohin sein Fokus zeigt
    (Cardio, Beine, Rücken, Arme, Bauch) oder wo klar die meisten seiner Übungen liegen (mindestens 40 % und mehr als im zweiten Bereich); sonst unter Ganzkörper.
@@ -527,7 +523,7 @@ function renderKatalogWorkouts(){
   var gruppen = katalogGruppen(), gueltig = {};
   gruppen.forEach(function(g){ gueltig[g.id] = true; });
   var fGr = selArr(s.stGruppen).filter(function(id){ return gueltig[id]; });
-  var fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+  var fArt = studioArtenWahl();
   var zonen = kkNorm(s.stZonen), ort = katOrt();
   var filterAn = !!(fGr.length || fArt.length || zonen.length);
   var woSort = s.libWoSort === "az" ? "az" : "dur";

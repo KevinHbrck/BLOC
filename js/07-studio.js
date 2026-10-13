@@ -75,6 +75,12 @@ function studioArt(id){
   return (eq.indexOf("db") > -1 || eq.indexOf("kb") > -1) ? "frei" : "koerper";
 }
 var STUDIO_ARTEN = ["geraet", "frei", "stange", "band", "koerper"];
+/* Gewählte Ausrüstungs-Chips der Filterkarte. „Fitnessstudio“ (geraet) regelt der Ort-Schalter und ist kein Chip mehr (sonst stünde es doppelt);
+   im Fitnessstudio gibt es keine Ausrüstungswahl (alles dort ist Gerät), die Chips gelten also nur bei Freiluft. */
+function studioArtenWahl(){
+  if(katOrt() === "studio") return [];
+  return selArr(state.db.settings.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1 && a !== "geraet"; });
+}
 var STUDIO_ART_ICON = { geraet:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP_ICON.bar, band:EQUIP_ICON.band, koerper:EQUIP_ICON.none };
 /* Frühere Gruppen-Chips, die jetzt zur Ausrüstung gehören (Langhantel, Kurzhantel & Kettlebell, Stange & Barren, Körpergewicht), in die Ausrüstung umziehen;
    die früheren Chips „Kabel“ und „Langhantel“ stehen jetzt unter „Fitnessstudio“ */
@@ -116,8 +122,8 @@ function studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen, opt){
     zeigen:filterZeigenText(anzahl, opt.art || "Ex"), extra:opt.extra,
     inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length && !g.air; }).map(function(g){
         return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
-      filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.map(function(a){
-        return filterChip("data-start", a, fArt.indexOf(a) > -1, STUDIO_ART_ICON[a] ? svgIcon(STUDIO_ART_ICON[a]) : "", t("stArt_"+a)); }).join(""))+
+      (katOrt() === "studio" ? "" : filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.filter(function(a){ return a !== "geraet"; }).map(function(a){
+        return filterChip("data-start", a, fArt.indexOf(a) > -1, STUDIO_ART_ICON[a] ? svgIcon(STUDIO_ART_ICON[a]) : "", t("stArt_"+a)); }).join("")))+
       kkFilterHTML("data-stzone", zonen) });
 }
 function studioFilterBinden(fGr, fArt, zonen, neuZeichnen){
@@ -214,7 +220,6 @@ function studioUnter(id){
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
 function renderStudioPlan(){
-  if(stGen) return renderStudioPlanGen();
   var p = stPlanAktiv && stPlanFind(stPlanAktiv);
   if(!p){ stPlanAktiv = null; stPlanBauen = false; return renderKatalog(); }
   var ids = stPlanIds(p), pos = {}, html;
@@ -233,7 +238,7 @@ function renderStudioPlan(){
       if(oEx.length){ var oNeu = oEx.filter(exIstStudio).length*2 > oEx.length ? "studio" : "frei"; if(oNeu !== katOrt()){ s.katOrt = oNeu; save(); } }
     }
     var fGr = selArr(s.stGruppen).filter(function(id){ return gueltig[id]; });
-    var fArt = selArr(s.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+    var fArt = studioArtenWahl();
     var zonen = kkNorm(s.stZonen), filterAn = !!(fGr.length || fArt.length || zonen.length);
     // beim Bauen immer nach Ort getrennt (Fitnessstudio oder Freiluft, derselbe Schalter wie im Baukasten)
     function artOk(id){ var ex = findExercise(id); return !!ex && exOrt(ex) === katOrt() && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(ex, zonen)); }
@@ -352,7 +357,7 @@ function renderStudioPlan(){
     if(stPl && tbPl) stPl.style.top = Math.max(0, Math.round(tbPl.getBoundingClientRect().height) - 2)+"px";
     var sb = state.db.settings, gb = katalogGruppen(), gv = {}, filterB;
     gb.forEach(function(g){ gv[g.id] = true; });
-    var fgB = selArr(sb.stGruppen).filter(function(id){ return gv[id]; }), faB = selArr(sb.stArten).filter(function(a){ return STUDIO_ARTEN.indexOf(a) > -1; });
+    var fgB = selArr(sb.stGruppen).filter(function(id){ return gv[id]; }), faB = studioArtenWahl();
     filterB = !!(fgB.length || faB.length || kkNorm(sb.stZonen).length);
     studioFilterBinden(fgB, faB, kkNorm(sb.stZonen), neu);
     katBinden(function(){ return stPlanQuery; });

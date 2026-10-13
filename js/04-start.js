@@ -108,7 +108,7 @@ function surpriseLeisteHTML(){
     '<span class="sp-chev">'+ICON_CHEV+'</span></button>';
 }
 /* Bild-Kopf der Bereichsseiten (Mobility & Stretch, Summit, Run): ein schmales Foto direkt unter der Kopfzeile. Fotos: Pexels (siehe quellen.html) */
-var BEREICH_BILD = { katalog:"img/bereich-workout.jpg", warm:"img/bereich-mobility.jpg", intervall:"img/bereich-timer.jpg", reps:"img/bereich-summit.jpg", run:"img/bereich-run.jpg" };
+var BEREICH_BILD = { warm:"img/bereich-mobility.jpg", intervall:"img/bereich-timer.jpg", reps:"img/bereich-summit.jpg", run:"img/bereich-run.jpg" };
 function bereichBildHTML(key){
   return '<div class="bereich-bild"><img src="'+BEREICH_BILD[key]+'" alt="" draggable="false"></div>';
 }

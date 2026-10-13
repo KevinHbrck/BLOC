@@ -150,7 +150,7 @@ var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
   var el = document.getElementById("tabbar");
   if(!el) return;
-  var imBereich = !!BEREICH_LEISTE[route] && !stGen && !(stPlanAktiv && stPlanFind(stPlanAktiv));
+  var imBereich = !!BEREICH_LEISTE[route] && !(stPlanAktiv && stPlanFind(stPlanAktiv));
   var aktiv = TAB_ROUTEN[route] || (imBereich ? "#home" : null);   // im Bereich leuchtet „Start“ (die Bereiche liegen unter der Startseite)
   if(!aktiv){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
   var eintraege = [
@@ -180,6 +180,10 @@ function render(){
   tabLeiste(route);
   if(route==="home"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
     var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.repFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
+    /* Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl; Summit) werden nicht aufbewahrt: jeder neue Besuch beginnt ohne Filter.
+       Ort, Sortierung A–Z und die Art des Bauens bleiben als Einstellungen stehen. */
+    ["stGruppen", "stArten", "stZonen", "wsRegionen", "wsZonen", "buildCats", "buildCat", "buildEquips", "buildZonen"].forEach(function(k){ delete sz[k]; });
+    if(typeof repFilter === "object"){ repFilter.lvl = "all"; repFilter.bar = "all"; repFilter.stufe = "standard"; }
     hinweisBesucht = {};   // Erklärtexte: der nächste Besuch einer Seite zählt wieder
     katOffen = {};         // Katalog: beim nächsten Besuch stehen wieder nur die Überschriften
   }
@@ -204,7 +208,7 @@ function render(){
   }
   if(route==="studioplan"){   // Favorit auf der Startseite: Katalog › Meine › Plan direkt geöffnet
     var sp0 = state.db.settings;
-    if(stPlanFind(parts[1])){ sp0.katTab = "workouts"; sp0.katAbt = "meine"; stPlanAktiv = parts[1]; stPlanBauen = false; stGen = null; stPlanQuery = ""; }
+    if(stPlanFind(parts[1])){ sp0.katTab = "workouts"; sp0.katAbt = "meine"; stPlanAktiv = parts[1]; stPlanBauen = false; stPlanQuery = ""; }
     navStack[navStack.length-1] = "#katalog"; setUrl("#katalog");
     return renderKatalog();
   }

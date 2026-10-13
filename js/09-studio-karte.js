@@ -1,6 +1,5 @@
 "use strict";
 /* Plan nach Gewichtung: Reglerwerte je Muskelgruppe (zusammen 100 %), Anzahl der Übungen und Ort; verteilt nach größtem Rest und zieht passende Übungen (Fitnessstudio oder Freiluft) */
-var stGen = null;   // { w:{gruppe:0-100}, n, ort } solange die Seite offen ist
 /* Übungen, aus denen „Plan nach Gewichtung“ zieht: Fitnessstudio = Geräte, Kabel, Langhantel (und eigene Studio-Übungen), Freiluft = alles andere;
    ohne Dehnübungen und ausgeblendete */
 function stGenPool(ort){
@@ -36,54 +35,52 @@ function stGenFigurHTML(w){
   });
   return koerperPaar(wert);
 }
-function renderStudioPlanGen(){
-  var w = stGen.w;
-  var zahlen = { studio:stGenPool("studio").length, frei:stGenPool("frei").length };
-  var html = topbar(t("genTitle"), { back:"#katalog" }) +
-    '<div class="gen-figur" data-genfig>'+stGenFigurHTML(w)+'<small>'+esc(t("genFigur"))+'</small></div>'+
-    '<div class="page-hint">'+esc(t("genHint"))+'</div>'+katOrtHTML(stGen.ort || katOrt(), zahlen, "data-genort", "katOrtUebAnz")+'<div class="card gen-card">'+
-    MUSKEL_GRP.map(function(g){
-      return '<div class="gen-row"><label for="gw-'+g.id+'">'+esc(t(g.key))+'</label><input type="range" id="gw-'+g.id+'" data-gw="'+g.id+'" min="0" max="100" step="1" value="'+(w[g.id] || 0)+'">'+
-        '<b data-gp="'+g.id+'">'+(w[g.id] || 0)+'%</b></div>';
+/* Regler für „Nach Gewichtung“ (sitzen im Zusammenstell-Fenster, js/13-teilen-editor.js): Körpermodell, Hinweis, ein Regler je Muskelgruppe und die Zahl der Übungen.
+   g = { w:{gruppe:0-100}, n }. Es sind immer genau 100 % zu verteilen. */
+function genReglerHTML(g){
+  var w = g.w;
+  return '<div class="gen-figur" data-genfig>'+stGenFigurHTML(w)+'<small>'+esc(t("genFigur"))+'</small></div>'+
+    '<div class="tm-hint sp-gen-hint">'+esc(t("genHint"))+'</div><div class="card gen-card">'+
+    MUSKEL_GRP.map(function(m){
+      return '<div class="gen-row"><label for="gw-'+m.id+'">'+esc(t(m.key))+'</label><input type="range" id="gw-'+m.id+'" data-gw="'+m.id+'" min="0" max="100" step="1" value="'+(w[m.id] || 0)+'">'+
+        '<b data-gp="'+m.id+'">'+(w[m.id] || 0)+'%</b></div>';
     }).join("")+
-    '<div class="gen-row"><label for="gw-n">'+esc(t("genAnz"))+'</label><input type="range" id="gw-n" min="3" max="20" step="1" value="'+stGen.n+'"><b data-gn>'+stGen.n+'</b></div></div>'+
-    '<button type="button" class="btn btn-primary" data-genmake>'+ICON_SAVE+' '+t("genMake")+'</button><div style="height:40px"></div>';
-  app.innerHTML = html;
-  var zur = app.querySelector("[data-back]");
-  if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){ stGen = null; renderStudio(); window.scrollTo(0, 0); }); }
-  bindCommon();
-  app.querySelectorAll("[data-genort]").forEach(function(o){ o.addEventListener("click", function(){
-    stGen.ort = o.getAttribute("data-genort"); var y = window.scrollY; renderStudioPlanGen(); window.scrollTo(0, y);
-  }); });
-  /* Es sind immer genau 100 % zu verteilen: Wer einen Regler verschiebt, nimmt den anderen im gleichen Verhältnis etwas weg bzw. gibt ihnen etwas */
+    '<div class="gen-row"><label for="gw-n">'+esc(t("genAnz"))+'</label><input type="range" id="gw-n" min="3" max="20" step="1" value="'+g.n+'"><b data-gn>'+g.n+'</b></div></div>';
+}
+function genReglerBinden(root, g){
+  var w = g.w;
+  /* Wer einen Regler verschiebt, nimmt den anderen im gleichen Verhältnis etwas weg bzw. gibt ihnen etwas */
   function verteilen(id, v){
-    var andere = MUSKEL_GRP.filter(function(g){ return g.id !== id; }), rest = 100 - v;
-    var so = andere.reduce(function(a, g){ return a + (w[g.id] || 0); }, 0), sum = 0, gross = andere[0];
-    andere.forEach(function(g){
-      w[g.id] = so ? Math.round((w[g.id] || 0)*rest/so) : Math.round(rest/andere.length);
-      sum += w[g.id];
-      if(w[g.id] > w[gross.id]) gross = g;
+    var andere = MUSKEL_GRP.filter(function(m){ return m.id !== id; }), rest = 100 - v;
+    var so = andere.reduce(function(a, m){ return a + (w[m.id] || 0); }, 0), sum = 0, gross = andere[0];
+    andere.forEach(function(m){
+      w[m.id] = so ? Math.round((w[m.id] || 0)*rest/so) : Math.round(rest/andere.length);
+      sum += w[m.id];
+      if(w[m.id] > w[gross.id]) gross = m;
     });
     w[gross.id] = Math.max(0, w[gross.id] + rest - sum);   // Rundungsrest
     w[id] = v;
-    var fg = app.querySelector("[data-genfig]"), kl = fg && fg.querySelector("small");
+    var fg = root.querySelector("[data-genfig]"), kl = fg && fg.querySelector("small");
     if(fg) fg.innerHTML = stGenFigurHTML(w) + (kl ? kl.outerHTML : "");
-    MUSKEL_GRP.forEach(function(g){
-      var r = app.querySelector("#gw-"+g.id), b = app.querySelector('[data-gp="'+g.id+'"]');
-      if(r) r.value = w[g.id];
-      if(b) b.textContent = w[g.id]+"%";
+    MUSKEL_GRP.forEach(function(m){
+      var r = root.querySelector("#gw-"+m.id), b = root.querySelector('[data-gp="'+m.id+'"]');
+      if(r) r.value = w[m.id];
+      if(b) b.textContent = w[m.id]+"%";
     });
   }
-  app.querySelectorAll("[data-gw]").forEach(function(el){ el.addEventListener("input", function(){ verteilen(el.getAttribute("data-gw"), +el.value); }); });  var nn = app.querySelector("#gw-n");
-  nn.addEventListener("input", function(){ stGen.n = +nn.value; app.querySelector("[data-gn]").textContent = nn.value; });
-  app.querySelector("[data-genmake]").addEventListener("click", function(){
-    var ids = stGenBauen(w, stGen.n, stGen.ort || katOrt());
-    if(!ids.length){ showToast(t("genZero")); return; }
-    var p = { id:uid(), name:t("genName"), ids:ids, updatedAt:Date.now() };
-    stPlaene().push(p); save();
-    stGen = null; stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = "";
-    renderStudio(); window.scrollTo(0, 0);
-  });
+  root.querySelectorAll("[data-gw]").forEach(function(el){ el.addEventListener("input", function(){ verteilen(el.getAttribute("data-gw"), +el.value); }); });
+  var nn = root.querySelector("#gw-n");
+  if(nn) nn.addEventListener("input", function(){ g.n = +nn.value; var gn = root.querySelector("[data-gn]"); if(gn) gn.textContent = nn.value; });
+}
+/* Plan aus den Reglern anlegen und öffnen (Katalog › Meine ist sein Ort; er steht sofort dort) */
+function genPlanErstellen(g){
+  var ids = stGenBauen(g.w, g.n, katOrt());
+  if(!ids.length){ showToast(t("genZero")); return false; }
+  var p = { id:uid(), name:t("genName"), ids:ids, updatedAt:Date.now() };
+  stPlaene().push(p); save();
+  stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = "";
+  go("#katalog");
+  return true;
 }
 
 /* Vorschlag für den nächsten Satz: heute der letzte Satz, sonst Arbeitsgewicht bzw. letztes Mal */

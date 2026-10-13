@@ -298,13 +298,23 @@ function findWorkout(id){
   for(var i=0;i<state.db.workouts.length;i++) if(state.db.workouts[i].id===id) return state.db.workouts[i];
   return null;
 }
+/* Einträge eines Timer-Workouts mit Wiederholungen („3 × Block A, 2 × Block B“): jeder Eintrag steht `times`-mal hintereinander (1 bis 99);
+   die „Pause nach dem Block“ gilt auch zwischen den Wiederholungen, nach der letzten Wiederholung des letzten Eintrags gibt es keine. */
+function workoutItems(w){
+  var out = [];
+  (w.items || []).forEach(function(it){
+    var n = Math.max(1, Math.min(99, Math.round(+it.times) || 1));
+    for(var k = 0; k < n; k++) out.push(it);
+  });
+  return out;
+}
 function workoutDuration(w){
-  var total = 0;
-  for(var i=0;i<w.items.length;i++){
-    var b = findBlock(w.items[i].blockId);
+  var total = 0, items = workoutItems(w);
+  for(var i=0;i<items.length;i++){
+    var b = findBlock(items[i].blockId);
     if(!b) continue;
     total += blockDuration(b);
-    if(i < w.items.length-1) total += (w.items[i].restAfterSec||0);
+    if(i < items.length-1) total += (items[i].restAfterSec||0);
   }
   return total;
 }

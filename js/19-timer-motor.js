@@ -2,6 +2,7 @@
 /* ============ Timer engine ============ */
 function buildSteps(w){
   var steps = [];
+  w = { id:w.id, name:w.name, items:workoutItems(w) };   // Blöcke mit Wiederholungen (times) hintereinander ausgeschrieben
   var b0 = findBlock(w.items[0] ? w.items[0].blockId : null);
   steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", kg: gymSatzText(b0 && b0.ex || ""), exNr:1 });
   var exNr = 0;   // die wievielte Übung (Block) im Workout - nur für die Anzeige oben

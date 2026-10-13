@@ -170,9 +170,12 @@ function renderWorkoutEdit(id){
   var itemsHTML = w.items.map(function(it, idx){
     var b = findBlock(it.blockId);
     var name = b ? b.name : t("deletedBlock");
+    var times = Math.max(1, Math.min(99, Math.round(+it.times) || 1));
     var sub = b ? (blockSpec(b)+' &middot; '+fmtDuration(blockDuration(b))) : "";
+    /* Wie oft der Block hintereinander läuft („3 × Block A, 2 × Block B“); die Pause danach gilt auch zwischen den Wiederholungen */
+    var wdh = '<div class="gap-row times-row"><label for="tm-'+idx+'">'+esc(t("blockTimes"))+'</label> <input type="number" id="tm-'+idx+'" inputmode="numeric" min="1" max="99" data-times="'+idx+'" value="'+times+'"> &times;</div>';
     var gap = "";
-    if(idx < w.items.length-1){
+    if(idx < w.items.length-1 || times > 1){
       gap = '<div class="gap-row">'+t("restAfter")+' <input type="number" inputmode="numeric" data-gap="'+idx+'" value="'+(it.restAfterSec||0)+'"> '+t("sec")+'</div>';
     }
     return '<div class="wblock">'+
@@ -184,7 +187,7 @@ function renderWorkoutEdit(id){
           '<button data-remove="'+idx+'">&times;</button>'+
         '</div>'+
       '</div>'+
-      gap+
+      (b ? wdh : '')+gap+
     '</div>';
   }).join("");
 
@@ -271,6 +274,15 @@ function renderWorkoutEdit(id){
     el.addEventListener("click", function(){
       var i = parseInt(el.getAttribute("data-remove"));
       w.items.splice(i,1); save(); renderWorkoutEdit(id);
+    });
+  });
+  app.querySelectorAll("[data-times]").forEach(function(el){
+    el.addEventListener("change", function(){
+      var i = parseInt(el.getAttribute("data-times"));
+      w.items[i].times = clamp(parseInt(el.value)||1, 1, 99);
+      w.updatedAt = Date.now();
+      save();
+      var y = window.scrollY; renderWorkoutEdit(id); window.scrollTo(0, y);
     });
   });
   app.querySelectorAll("[data-gap]").forEach(function(el){
