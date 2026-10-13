@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Übungen ohne Gewicht mit Sätzen × Wiederholungen (Fassung 2026-10-14-4)
+
+- **Übungen ohne Gewicht** (Körpergewicht, Band, Stange – `studioNurBlock`) lassen sich jetzt auch **Satz für Satz** machen, nicht nur mit dem Timer: Übungskarte und Plan-Zeile haben denselben Umschalter *Satz für Satz · Mit Timer* (`studioModus`; ohne Eintrag starten diese Übungen weiter mit dem Timer, Übungen mit Gewicht mit Sätzen). Im Satz-Modus gibt es nur ein Feld für die **Wiederholungen** (Satz = `[0, wdh]`), dazu Satztypen, Pause-Auswahl und „Letztes Mal“ zum Übernehmen.
+- Sätze, Wiederholungen und Pause gelten je Übung für Plan, Karte und Timer (Runden des Timers = Sätze des Ziels, Pause des Timers = Pause der Übung, solange der Timer keine eigene hat); die Voreinstellung der Sätze kommt aus Air.
+- **Auswertung ohne Gewicht**: Statistik zählt Wiederholungen (beste Wdh. je Satz und je Einheit, gesamt, Kurve *Beste Wdh. · Wdh. gesamt*), die Karte meldet mehr Wiederholungen als Rekord, „Training speichern“ zeigt Wiederholungen gesamt. Die frühere reine Timer-Karte für Übungen ohne Gewicht (`renderStudioBlockKarte`) ist entfallen, die normale Karte übernimmt.
+
 ## 2026-10-14 · Training speichern – den Tag tracken, auch mitten im Workout (Fassung 2026-10-14-3)
 
 - **„Training speichern“** (`openTrainingSpeichern`, `js/12-uebung-statistik.js`): legt den Tag als Ganzes ab – Übungen mit ihren Sätzen, Volumen, Dauer, Rekorde (★) und eine Notiz. Jeder Satz steht weiter sofort im Protokoll der Übung; das Speichern ist der Tageseintrag dazu. Je Plan und Tag gibt es **einen** Eintrag (erneutes Speichern aktualisiert ihn); ohne Plan zählt alles, was heute eingetragen wurde („Freies Training“). Ein schon gespeicherter Tag führt sich nach jedem weiteren Satz selbst nach (`trainingNachSatz`).

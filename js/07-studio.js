@@ -11,7 +11,9 @@ function studioEintrag(id){ return (state.db.settings.studio || {})[id] || null;
 /* Ziel einer Übung: Sätze × Wiederholungen. Voreinstellung aus STUDIO_ZIEL, überschrieben von dem, was im Plan oder auf der Karte eingestellt wurde
    (settings.studio[id].ziel = { saetze, wdh }) - es gilt überall gleich: Plan, Übungskarte, Timer und die Steigerung nach der doppelten Progression. */
 function studioZiel(id){
-  var z = STUDIO_ZIEL[id] || [3, 12, 2.5], e = studioEintrag(id), g = e && e.ziel;
+  var ex = findExercise(id), e = studioEintrag(id), g = e && e.ziel;
+  // Übungen ohne Gewicht (nur Block) bringen ihre Satzzahl aus Air mit; Wiederholungen sind dort frei wählbar (Voreinstellung 12)
+  var z = STUDIO_ZIEL[id] || [studioNurBlock(ex) ? ((e && e.timer && e.timer.reps) || ex.setReps || 3) : 3, 12, 2.5];
   // schritt: Gewichtsschritt der +/−-Knöpfe, je Übung einstellbar (Karte), sonst die Voreinstellung
   return { saetze:g && g.saetze > 0 ? g.saetze : z[0], wdh:g && g.wdh > 0 ? g.wdh : z[1], schritt:e && e.schritt > 0 ? e.schritt : z[2] };
 }
@@ -58,10 +60,12 @@ function wochenKurve(pts, cls){
 /* Wochenwerte je Sicht: "kg" bestes Gewicht, "rm" geschätztes 1RM, "vol" Volumen (Gewicht × Wiederholungen, alle Arbeitssätze der Woche) */
 function studioWochen(id, sicht){
   var e = studioEintrag(id), log = (e && e.log || []).filter(function(l){ return arbeitsSaetze(l).length; });
+  if(!sicht && studioNurBlock(findExercise(id))) sicht = "wdh";   // ohne Gewicht zählen die Wiederholungen: "wdh" beste Wiederholungen je Satz, "wsum" alle der Woche
   if(sicht === "vol") return wochenWerte(log.map(function(l){ return [l.at, studioVolumen(l)]; }), false, true).slice(-16);
+  if(sicht === "wsum") return wochenWerte(log.map(function(l){ return [l.at, studioWdhSumme(l)]; }), false, true).slice(-16);
   return wochenWerte(log.map(function(l){
     var a = arbeitsSaetze(l);
-    return [l.at, Math.max.apply(null, a.map(function(x){ return sicht === "rm" ? satzSchaetzung1RM(x) : x[0]; }))];
+    return [l.at, Math.max.apply(null, a.map(function(x){ return sicht === "rm" ? satzSchaetzung1RM(x) : sicht === "wdh" ? x[1] : x[0]; }))];
   }), false).slice(-16);
 }
 /* Satztypen: ein Satz ist [kg, wdh] oder [kg, wdh, typ] mit typ "w" (Aufwärmen), "d" (Drop) oder "f" (bis Versagen). Aufwärmsätze zählen nicht
@@ -71,19 +75,26 @@ function satzTyp(x){ return x[2] === "w" || x[2] === "d" || x[2] === "f" ? x[2] 
 function arbeitsSaetze(l){ return (l.s || []).filter(function(x){ return satzTyp(x) !== "w"; }); }
 function satzSchaetzung1RM(x){ return x[1] <= 1 ? x[0] : x[0]*(1 + x[1]/30); }   // Epley
 function studioVolumen(l){ return arbeitsSaetze(l).reduce(function(a, x){ return a + x[0]*x[1]; }, 0); }
-function satzText(x){   // „40×12“, bei besonderen Sätzen mit Kürzel davor („Aufw. 20×10“)
+function studioWdhSumme(l){ return arbeitsSaetze(l).reduce(function(a, x){ return a + x[1]; }, 0); }
+function satzText(x){   // „40×12“, ohne Gewicht „12 Wdh.“, bei besonderen Sätzen mit Kürzel davor („Aufw. 20×10“)
   var ty = satzTyp(x);
-  return (ty === "n" ? "" : t("satzTyp_"+ty)+" ")+studioKg(x[0])+"×"+x[1];
+  return (ty === "n" ? "" : t("satzTyp_"+ty)+" ")+(x[0] > 0 ? studioKg(x[0])+"×"+x[1] : x[1]+" "+t("wdhKurz"));
 }
-/* Geschätztes 1RM und Bestgewicht über alle Einheiten (nur Arbeitssätze); davor = nur Einheiten vor dem Index i */
+/* Geschätztes 1RM und Bestgewicht über alle Einheiten (nur Arbeitssätze); davor = nur Einheiten vor dem Index i.
+   wdh: die meisten Wiederholungen in einem Satz, wsum: die meisten in einer Einheit (für Übungen ohne Gewicht) */
 function studioBestwerte(log, bis){
-  var kg = 0, rm = 0, vol = 0;
+  var kg = 0, rm = 0, vol = 0, wdh = 0, wsum = 0;
   log.forEach(function(l, i){
     if(bis != null && i >= bis) return;
-    arbeitsSaetze(l).forEach(function(x){ kg = Math.max(kg, x[0]); rm = Math.max(rm, satzSchaetzung1RM(x)); });
-    vol = Math.max(vol, studioVolumen(l));
+    arbeitsSaetze(l).forEach(function(x){ kg = Math.max(kg, x[0]); rm = Math.max(rm, satzSchaetzung1RM(x)); wdh = Math.max(wdh, x[1]); });
+    vol = Math.max(vol, studioVolumen(l)); wsum = Math.max(wsum, studioWdhSumme(l));
   });
-  return { kg:kg, rm:rm, vol:vol };
+  return { kg:kg, rm:rm, vol:vol, wdh:wdh, wsum:wsum };
+}
+/* Neuer Rekord einer Einheit gegenüber allem davor: mit Gewicht Bestgewicht oder 1RM, ohne Gewicht die meisten Wiederholungen in einem Satz */
+function studioIstRekord(jetzt, vor){
+  if(jetzt.kg > 0 || vor.kg > 0) return jetzt.kg > vor.kg || jetzt.rm > vor.rm + .001;
+  return jetzt.wdh > vor.wdh;
 }
 function studioTag(ts){ var d = new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
 function studioNurBlock(ex){
@@ -91,8 +102,9 @@ function studioNurBlock(ex){
 }
 function studioTimer(id){
   var e = studioEintrag(id) || {}, tm = e.timer || {}, ex = findExercise(id);
-  if(studioNurBlock(ex))   // Vorgabe wie in Air
-    return { reps:tm.reps || ex.setReps || ex.reps, work:tm.work || ex.workSec, rest:tm.rest != null ? tm.rest : ex.restSec };
+  if(studioNurBlock(ex))   // Vorgabe wie in Air; Runden = Sätze des Ziels, Pause = die Pause der Übung (Plan oder Karte), sonst die aus Air
+    return { reps:(e.ziel && e.ziel.saetze) || tm.reps || ex.setReps || ex.reps, work:tm.work || ex.workSec,
+             rest:tm.rest != null ? tm.rest : (e.pause != null ? e.pause : ex.restSec) };
   // Runden = die Sätze des Ziels (im Plan oder auf der Karte eingestellt); eine ältere Timer-Einstellung gilt, solange kein Ziel gesetzt ist
   return { reps:(e.ziel && e.ziel.saetze) || tm.reps || studioZiel(id).saetze, work:tm.work || 40, rest:tm.rest != null ? tm.rest : (e.pause || 90) };
 }
@@ -155,8 +167,8 @@ function studioKachel(id){
   var ex = findExercise(id);
   if(!ex) return "";
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
-  var la = last ? arbeitsSaetze(last) : [], sub = la.length ? studioKg(la[0][0])+" kg · "+la.length+" × "+la[0][1] : t("stNoData");
-  if(studioNurBlock(ex)){ var tb = studioTimer(id); sub = tb.reps+" × "+tb.work+" s"; last = null; }
+  var la = last ? arbeitsSaetze(last) : [], sub = la.length ? (la[0][0] > 0 ? studioKg(la[0][0])+" kg · " : "")+la.length+" × "+la[0][1] : t("stNoData");
+  if(studioNurBlock(ex) && !la.length){ sub = satzKurz(id).replace("×", " × "); last = null; }   // ohne Eintrag das Ziel: „3 × 12“ bzw. „3 × 40 s“
   return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
     '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+(sub === t("stNoData") ? '' : '<span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>')+
@@ -237,28 +249,36 @@ function stPlanIds(p){   // nur Übungen, die es noch gibt, jede nur einmal
   var da = {};
   return (Array.isArray(p.ids) ? p.ids : []).filter(function(id){ if(da[id] || !findExercise(id)) return false; da[id] = true; return true; });
 }
-/* So heißen Sätze überall: „3 Sätze × 12“ (mit Gewicht) bzw. „3 Sätze × 40 s“ (ohne Gewicht, Block); nach einem Eintrag „40 kg · 3 Sätze × 12“ */
+/* Wie eine Übung gerade gemacht wird: "saetze" (Satz für Satz eintragen) oder "timer". Übungen mit Gewicht starten mit Sätzen, Übungen ohne Gewicht
+   (nur Block, aus Air) mit dem Timer - beides lässt sich je Übung umstellen (Plan-Zeile und Übungskarte) und wird gemerkt. */
+function studioModus(id){
+  var e = studioEintrag(id);
+  if(e && (e.modus === "timer" || e.modus === "saetze")) return e.modus;
+  return studioNurBlock(findExercise(id)) ? "timer" : "saetze";
+}
+/* So heißen Sätze überall: „3 Sätze × 12“ (Wiederholungen) bzw. „3 Sätze × 40 s“ (Timer); nach einem Eintrag „40 kg · 3 Sätze × 12“ */
 function satzName(n){ return n === 1 ? t("satzEins") : t("satzMehr", { n:n }); }
 function satzZiel(id){
   var ex = findExercise(id);
-  if(studioNurBlock(ex)){ var tb = studioTimer(id); return satzName(tb.reps)+" × "+tb.work+" s"; }
+  if(studioNurBlock(ex) && studioModus(id) === "timer"){ var tb = studioTimer(id); return satzName(tb.reps)+" × "+tb.work+" s"; }
   var z = studioZiel(id);
   return satzName(z.saetze)+" × "+z.wdh;
 }
 function satzKurz(id){   // „3×12“ bzw. „3×40 s“ für die kleinen Plan-Kacheln
   var ex = findExercise(id);
-  if(studioNurBlock(ex)){ var tb = studioTimer(id); return tb.reps+"×"+tb.work+" s"; }
+  if(studioNurBlock(ex) && studioModus(id) === "timer"){ var tb = studioTimer(id); return tb.reps+"×"+tb.work+" s"; }
   var z = studioZiel(id);
   return z.saetze+"×"+z.wdh;
 }
 function satzLetzter(id){
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
   var la = last ? arbeitsSaetze(last) : [];
-  return la.length ? studioKg(la[0][0])+" kg · "+satzName(la.length)+" × "+la[0][1] : "";
+  if(!la.length) return "";
+  return (la[0][0] > 0 ? studioKg(la[0][0])+" kg · " : "")+satzName(la.length)+" × "+la[0][1];
 }
 function studioSub(id){
   var ex = findExercise(id);
-  if(studioNurBlock(ex)) return satzZiel(id);
+  if(studioNurBlock(ex)) return satzLetzter(id) || satzZiel(id);
   return satzLetzter(id) || t("stNoData");
 }
 /* Fitnessstudio-Übung in einem Workout mit Timer: vorn steht Gewicht × Wiederholungen („40 kg · 3 × 12“, ohne Eintrag das Ziel „3 × 12“);
@@ -290,13 +310,12 @@ function planZeileHTML(id, nr){
   var ex = findExercise(id);
   if(!ex) return "";
   var block = studioNurBlock(ex), z = studioZiel(id), tm = studioTimer(id), e = studioEintrag(id) || {}, l = studioLetzte(id, true);
-  var timerModus = !block && e.modus === "timer";   // je Übung: Satz für Satz eintragen oder diese Übung mit dem Timer laufen lassen
-  var felder = block
-    ? planFeldHTML("reps", t("planSaetze"), tm.reps, 1, 20, 1)+planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5)+
-      planFeldHTML("rest", t("planPause"), tm.rest, 0, 600, 5)
-    : planFeldHTML("saetze", t("planSaetze"), z.saetze, 1, 20, 1)+
-      (timerModus ? planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5) : planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1))+
-      planFeldHTML("kg", t("planKg"), studioArbeitsKg(id), 0, 500, z.schritt)+planFeldHTML("pause", t("planPause"), e.pause || 90, 0, 600, 15);
+  var timerModus = studioModus(id) === "timer";   // je Übung: Satz für Satz eintragen oder diese Übung mit dem Timer laufen lassen
+  // Sätze, dann Wiederholungen (Satz-Modus) bzw. Arbeitszeit (Timer), Gewicht (nur Übungen mit Gewicht) und Pause
+  var felder = planFeldHTML("saetze", t("planSaetze"), z.saetze, 1, 20, 1)+
+    (timerModus ? planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5) : planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1))+
+    (block ? '' : planFeldHTML("kg", t("planKg"), studioArbeitsKg(id), 0, 500, z.schritt))+
+    (block ? planFeldHTML("pause", t("planPause"), tm.rest, 0, 600, 5) : planFeldHTML("pause", t("planPause"), e.pause || 90, 0, 600, 15));
   return '<div class="pz-zeile" data-pz="'+id+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<div class="pz-kopf" role="button" tabindex="0" data-studio="'+id+'" aria-label="'+esc(tplText(ex.name))+'">'+
       '<span class="pz-bild">'+(ILLU[id] ? illuStillHTML(id, "pz-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+'</span>'+
@@ -304,17 +323,14 @@ function planZeileHTML(id, nr){
         '<span class="pz-letzte'+(l ? ' an' : '')+'">'+(l ? esc(t("planZuletzt", { d:studioTagText(l.at), s:studioLetzteText(l) })) : esc(t("planNochNie")))+'</span>'+
         (e.notiz && e.notiz.trim() ? '<span class="pz-notiz">'+esc(e.notiz.trim())+'</span>' : '')+'</span>'+   // die Notiz der Übung erscheint beim nächsten Mal wieder
       '<span class="pz-pfeil" aria-hidden="true">'+ICON_CHEV+'</span></div>'+
-    (block ? '' : '<div class="seg-row pz-modus" role="group" aria-label="'+esc(t("stModusTitel"))+'">'+
+    '<div class="seg-row pz-modus" role="group" aria-label="'+esc(t("stModusTitel"))+'">'+
       '<button type="button" data-pzmodus="saetze" class="'+(timerModus ? '' : 'active')+'" aria-pressed="'+!timerModus+'">'+esc(t("stModusSaetze"))+'</button>'+
-      '<button type="button" data-pzmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>')+
+      '<button type="button" data-pzmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>'+
     '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div>'+
-    (timerModus || block ? '<button type="button" class="btn btn-secondary pz-start" data-pzstart="'+id+'">'+ICON_PLAY+' '+esc(t("planTimerStart"))+'</button>' : '')+'</div>';
+    (timerModus ? '<button type="button" class="btn btn-secondary pz-start" data-pzstart="'+id+'">'+ICON_PLAY+' '+esc(t("planTimerStart"))+'</button>' : '')+'</div>';
 }
 function planSaetzeSumme(ids){
-  return ids.reduce(function(a, id){
-    var ex = findExercise(id);
-    return a + (ex && studioNurBlock(ex) ? studioTimer(id).reps : studioZiel(id).saetze);
-  }, 0);
+  return ids.reduce(function(a, id){ return findExercise(id) ? a + studioZiel(id).saetze : a; }, 0);
 }
 function planSummeText(ids){
   return planAnzahl(ids.length)+(ids.length ? " · "+t("planSaetzeGesamt", { n:planSaetzeSumme(ids) }) : "");
@@ -341,7 +357,7 @@ function planZeilenBinden(root, fn, neuZeichnen){
     zeile.querySelectorAll("[data-pzmodus]").forEach(function(b){   // je Übung: Satz für Satz oder mit Timer
       b.addEventListener("click", function(){
         var m = b.getAttribute("data-pzmodus") === "timer" ? "timer" : "saetze";
-        if((eintrag().modus || "saetze") === m) return;
+        if(studioModus(id) === m) return;
         eintrag().modus = m; save();
         if(neuZeichnen) neuZeichnen();
       });

@@ -2515,3 +2515,5 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .tr-zeile > span:first-child{ display:flex; flex-direction:column; min-width:0; }
 .tr-zeile small{ color:var(--text-dim); font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .tr-rechts{ font-size:13px; color:var(--text-dim); text-align:right; font-variant-numeric:tabular-nums; }
+/* Übungen ohne Gewicht: nur ein Feld für die Wiederholungen */
+.st-eingabe.eins{ grid-template-columns:1fr; }

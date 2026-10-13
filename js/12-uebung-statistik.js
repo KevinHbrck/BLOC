@@ -412,30 +412,30 @@ function einheitHeute(plan){
 }
 /* Was heute zu den Übungen eingetragen wurde (Sätze aus Karte und Timer; Übungen ohne Gewicht zählen mit, wenn sie heute im Verlauf stehen) */
 function trainingHeute(ids){
-  var heute = studioTag(Date.now()), hist = state.db.history || [], inHist = {}, ex = [], saetze = 0, vol = 0, rek = 0, dauer = 0;
+  var heute = studioTag(Date.now()), hist = state.db.history || [], inHist = {}, ex = [], saetze = 0, vol = 0, rek = 0, dauer = 0, wdh = 0;
   hist.forEach(function(h){ if(h && studioTag(h.at) === heute) (h.ex || []).forEach(function(id){ inHist[id] = true; }); });
   ids.forEach(function(id){
     var e = studioEintrag(id), log = (e && e.log) || [], i = log.length-1;
     var l = i >= 0 && log[i].s.length && studioTag(log[i].at) === heute ? log[i] : null;
     if(l){
       var vor = studioBestwerte(log, i), jetzt = studioBestwerte([l]);
-      var rekord = i > 0 && (jetzt.kg > vor.kg || jetzt.rm > vor.rm + .001);
+      var rekord = i > 0 && studioIstRekord(jetzt, vor);
       ex.push({ id:id, s:JSON.parse(JSON.stringify(l.s)), rekord:rekord });
-      saetze += arbeitsSaetze(l).length; vol += studioVolumen(l); if(rekord) rek++;
+      saetze += arbeitsSaetze(l).length; vol += studioVolumen(l); wdh += studioWdhSumme(l); if(rekord) rek++;
     } else if(inHist[id]) ex.push({ id:id, s:[], rekord:false });
   });
   hist.forEach(function(h){
     if(!h || studioTag(h.at) !== heute) return;
     if(h.studio || (h.ex || []).some(function(id){ return ids.indexOf(id) > -1; })) dauer += +h.dur || 0;
   });
-  return { ex:ex, saetze:saetze, vol:Math.round(vol), rek:rek, dauer:Math.round(dauer) };
+  return { ex:ex, saetze:saetze, vol:Math.round(vol), wdh:wdh, rek:rek, dauer:Math.round(dauer) };
 }
 function trainingSpeichern(k, notiz){
   var d = trainingHeute(k.ids);
   if(!d.ex.length) return null;
   var l = einheitenListe(), vorh = einheitHeute(k.plan);
   var e = vorh || { id:uid(), tag:einheitTagKey(), plan:k.plan ? k.plan.id : "" };
-  e.at = Date.now(); e.name = k.plan ? k.plan.name : ""; e.ex = d.ex; e.saetze = d.saetze; e.vol = d.vol; e.dauer = d.dauer; e.rek = d.rek;
+  e.at = Date.now(); e.name = k.plan ? k.plan.name : ""; e.ex = d.ex; e.saetze = d.saetze; e.vol = d.vol; e.wdh = d.wdh; e.dauer = d.dauer; e.rek = d.rek;
   if(notiz != null) e.notiz = String(notiz).trim();
   if(!vorh) l.push(e);
   if(l.length > 1000) l.splice(0, l.length - 1000);
@@ -456,7 +456,7 @@ function trainingNachSatz(id){
 function trLeisteText(s, u){ return satzName(s)+" · "+planAnzahl(u); }   // „9 Sätze · 3 Übungen“
 function trainingZahlenHTML(d){
   var zahlen = [[String(d.ex.length), t("trUebungen")], [String(d.saetze), t("stSetsAll")], [studioKg(d.vol)+" kg", t("stVolGesamt")],
-    [d.dauer ? fmtDuration(d.dauer >= 60 ? Math.round(d.dauer/60)*60 : d.dauer) : "–", t("trDauer")], [String(d.rek), t("stRekord")]];
+    [d.dauer ? fmtDuration(d.dauer >= 60 ? Math.round(d.dauer/60)*60 : d.dauer) : "–", t("trDauer")], [String(d.rek), t("stRekord")], [String(d.wdh || 0), t("stWdhGesamt")]];
   return '<div class="st-stats-zahlen">'+zahlen.map(function(z){ return '<div><b>'+esc(z[0])+'</b><span>'+esc(z[1])+'</span></div>'; }).join("")+'</div>';
 }
 function trainingUebungenHTML(ex){
@@ -528,7 +528,7 @@ function openTrainingDetail(x, neu){
   var tag = new Date(x.tag+"T12:00:00").toLocaleDateString(currentLang(), { weekday:"long", day:"numeric", month:"long", year:"numeric" });
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tr-sheet" role="dialog" aria-label="'+esc(t("trTitel"))+'">'+
     '<h3>'+esc(x.name || t("trFrei"))+'</h3><p>'+esc(tag)+'</p>'+
-    trainingZahlenHTML({ ex:x.ex, saetze:x.saetze, vol:x.vol, dauer:x.dauer, rek:x.rek })+trainingUebungenHTML(x.ex)+
+    trainingZahlenHTML({ ex:x.ex, saetze:x.saetze, vol:x.vol, wdh:x.wdh, dauer:x.dauer, rek:x.rek })+trainingUebungenHTML(x.ex)+
     (x.notiz ? '<p class="tr-notiz">'+esc(x.notiz)+'</p>' : '')+
     '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("close"))+'</button>'+
     '<button class="btn btn-secondary" data-trdel>'+ICON_TRASH+' '+esc(t("del"))+'</button></div></div></div>';

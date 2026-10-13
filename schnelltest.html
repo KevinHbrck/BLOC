@@ -1433,6 +1433,33 @@
       // Freiluft-Übung mit Gewicht: im Plan-Workout ebenfalls mit Satz-Eintrag, im normalen Air-Workout nicht
       var frei = W.EXERCISES.filter(function (ex) { return !W.exIstStudio(ex) && !W.studioNurBlock(ex) && ex.main !== "stretch"; })[0];
       pruefe(frei && W.gymSatzText(frei.id) === "" && W.gymSatzText(frei.id, true) !== "", "Freiluft-Übung mit Gewicht: Satz-Eintrag nur im Plan-Workout");
+      // Übungen ohne Gewicht: Sätze × Wiederholungen statt Timer, ohne Gewichtsfeld; Statistik und Rekord zählen Wiederholungen
+      var dk = W.state.db, nk = Date.now();
+      pruefe(W.studioNurBlock(W.findExercise("push-ups")), "Liegestütze sollen eine Übung ohne Gewicht sein");
+      dk.settings.studio["push-ups"] = { log: [{ at: nk - 3 * 864e5, s: [[0, 10], [0, 10]] }] };
+      dk.settings.stPlaene.push({ id: "p-koerper", name: "Körper", ids: ["push-ups", "leg-press"], updatedAt: nk });
+      W.save();
+      W.go("#studioplan/p-koerper");
+      await bis(function () { return $('.pz-zeile[data-pz="push-ups"]'); }, 3000, "Plan mit Übung ohne Gewicht");
+      var zk = $('.pz-zeile[data-pz="push-ups"]');
+      pruefe(zk.querySelector('[data-feld="work"]') && !zk.querySelector('[data-feld="kg"]') && zk.querySelector('[data-pzstart]'), "Ohne Gewicht: Timer-Modus mit Arbeit, ohne Gewichtsfeld erwartet");
+      klick(zk.querySelector('[data-pzmodus="saetze"]'));
+      await bis(function () { return $('.pz-zeile[data-pz="push-ups"] [data-feld="wdh"]'); }, 2000, "Zeile im Satz-Modus (Wiederholungen)");
+      pruefe(!$('.pz-zeile[data-pz="push-ups"] [data-feld="kg"]') && !$('.pz-zeile[data-pz="push-ups"] [data-feld="work"]'), "Satz-Modus ohne Gewicht: nur Sätze, Wiederholungen, Pause");
+      klick($('.pz-zeile[data-pz="push-ups"] .pz-kopf'));
+      await bis(function () { return $("#st-w"); }, 3000, "Karte im Satz-Modus ohne Gewichtsfeld");
+      pruefe(!$("#st-kg") && !$("[data-stschritt]") && !$("[data-stscheiben]"), "Ohne Gewicht: kein kg-Feld, kein Schritt");
+      eingeben($("#st-w"), "15");
+      klick("[data-stset]");
+      await bis(function () { return /15 Wdh\./.test($(".st-heute").textContent); }, 3000, "Satz ohne Gewicht steht unter Heute");
+      var elog = W.state.db.settings.studio["push-ups"].log, elast = elog[elog.length - 1];
+      pruefe(elast.s[elast.s.length - 1][0] === 0 && elast.s[elast.s.length - 1][1] === 15, "Satz ohne Gewicht: " + JSON.stringify(elast.s));
+      pruefe($(".st-pr") && /Neue Bestleistung/.test($(".st-pr").textContent) && /vorher 10/.test($(".st-pr").textContent), "Rekord über Wiederholungen: " + ($(".st-pr") && $(".st-pr").textContent));
+      klick("[data-ststats]");
+      await bis(function () { return $$("#overlayRoot [data-stsicht]").length === 2 && /Beste Wdh/.test($("#overlayRoot .st-stats-zahlen").textContent); }, 3000, "Statistik zählt Wiederholungen");
+      klick("#overlayRoot [data-cancel]");
+      klick('[data-stmodus="timer"]');
+      await bis(function () { return $(".st-timer") && !$("#st-w"); }, 2000, "zurück zum Timer");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

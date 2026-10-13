@@ -129,7 +129,8 @@ function statsLeisteHTML(attr, kurz, pts, farbe){
 }
 function studioStatsLeiste(id){
   var e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return arbeitsSaetze(l).length; }), kurz = t("stStatsNone");
-  if(log.length) kurz = t("stStatsKurz", { kg:studioKg(studioBestwerte(log).kg), n:log.length });
+  if(log.length) kurz = studioNurBlock(findExercise(id)) ? t("stStatsKurzWdh", { w:studioBestwerte(log).wdh, n:log.length })
+    : t("stStatsKurz", { kg:studioKg(studioBestwerte(log).kg), n:log.length });
   return statsLeisteHTML("data-ststats", kurz, studioWochen(id));
 }
 /* Diagramm je Woche. fmt formatiert die Achsenwerte (Standard: Gewicht), schritt ist der Abstand, wenn alle Werte gleich sind.
@@ -186,13 +187,32 @@ function openStudioStats(id, sicht){
   var saetze = 0;
   log.forEach(function(l){ saetze += arbeitsSaetze(l).length; });
   var b = studioBestwerte(log), gesamt = log.reduce(function(a, l){ return a + studioVolumen(l); }, 0);
+  var koerper = studioNurBlock(ex);   // ohne Gewicht zählen die Wiederholungen
   function kgT(v){ return studioKg(Math.round(v*10)/10)+" kg"; }
-  // Rekorde automatisch erkennen: eine Einheit mit neuem Bestgewicht oder neuem geschätzten 1RM (gegenüber allen davor) trägt einen Stern
+  // Rekorde automatisch erkennen: eine Einheit mit neuem Bestgewicht oder neuem geschätzten 1RM (ohne Gewicht: mehr Wiederholungen in einem Satz)
+  // gegenüber allen davor trägt einen Stern
   var rekorde = log.map(function(l, i){
     if(!i) return false;
-    var vor = studioBestwerte(log, i), jetzt = studioBestwerte([l]);
-    return jetzt.kg > vor.kg || jetzt.rm > vor.rm + .001;
+    return studioIstRekord(studioBestwerte([l]), studioBestwerte(log, i));
   });
+  if(koerper){
+    sicht = sicht === "wsum" ? "wsum" : "wdh";
+    var wsumAll = log.reduce(function(a, l){ return a + studioWdhSumme(l); }, 0);
+    return openStatistik({
+      titel:tplText(ex.name), farbe:studioFarbe(ex), hatDaten:log.length > 0, leerText:t("stStatsEmpty"),
+      zahlen:[[String(b.wdh), t("stBestWdh")], [String(b.wsum), t("stBestWsum")], [String(wsumAll), t("stWdhGesamt")],
+              [String(log.length), t("stSessions")], [String(saetze), t("stSetsAll")]],
+      sichten:[["wdh", t("stSichtWdh")], ["wsum", t("stSichtWsum")]], sicht:sicht,
+      neu:function(s){ openStudioStats(id, s); },
+      verlaufTitel:t(sicht === "wdh" ? "stWeeklyWdh" : "stWeeklyWsum"), wochen:studioWochen(id, sicht), fmt:function(v){ return String(Math.round(v)); },
+      einheit:t("wdhKurz"), suffix:" "+t("wdhKurz"),
+      seit:log.length ? new Date(log[0].at).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" }) : "",
+      letzteTitel:t("stLastN"),
+      letzte:log.map(function(l, i){
+        return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
+      }).slice(-8).reverse()
+    });
+  }
   var fmt = sicht === "vol" ? function(v){ return studioKg(Math.round(v)); } : function(v){ return studioKg(Math.round(v*10)/10); };
   openStatistik({
     titel:tplText(ex.name), farbe:studioFarbe(ex), hatDaten:log.length > 0, leerText:t("stStatsEmpty"),
@@ -244,8 +264,8 @@ function studioTimerBinden(id, eintrag, nachher){
     en.timer = { reps:reps,
                  work:clamp(parseInt(stt.querySelector("#stt-work").value)||40, 5, 600),
                  rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
-    // Runden = Sätze des Ziels: dieselbe Zahl wie im Plan (Übungen ohne Gewicht haben nur den Block)
-    if(!studioNurBlock(findExercise(id))){ en.ziel = en.ziel || {}; en.ziel.saetze = reps; }
+    // Runden = Sätze des Ziels: dieselbe Zahl wie im Plan und im Satz-Modus
+    en.ziel = en.ziel || {}; en.ziel.saetze = reps;
     save();
     if(nachher) nachher();
   });
@@ -260,30 +280,6 @@ function studioInfoHTML(id, ex){
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(EX_POSTURE[id][lang*2+1])+'</div>' : '')+
       (ILLU2[id] ? '<button type="button" class="btn btn-secondary" data-stinfo>'+esc(t("infoLong"))+'</button>' : '')+
     '</div>' : '';
-}
-/* Air-Übung im Studio: kein Gewicht, nur ein Block (Runden, Arbeit, Pause) zum Starten, dazu Notiz und Anleitung */
-function renderStudioBlockKarte(id, ex){
-  var e = studioEintrag(id) || {};
-  app.innerHTML =
-    topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
-    '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
-      (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
-    '</div>'+
-    studioTimerKarte(id, t("stBlock"), t("stBlockHint"))+
-    '<div class="section-title">'+esc(t("stNote"))+'</div>'+
-    '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
-    studioInfoHTML(id, ex)+
-    '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
-    '<div style="height:40px"></div>';
-  bindCommon();
-  function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
-  var fav = app.querySelector(".topbar [data-exfav]");
-  if(fav) fav.addEventListener("click", function(){ toggleExFav(id); var y = window.scrollY; renderStudioKarte(id); window.scrollTo(0, y); });
-  var inf = app.querySelector("[data-stinfo]");
-  if(inf) inf.addEventListener("click", function(){ openExInfo(id, false); });
-  var notiz = app.querySelector("#st-notiz");
-  notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
-  studioTimerBinden(id, eintrag);
 }
 var studioPR = null;   // { id, art:"kg"|"rm", kg, w, vorher, rm, vorherRm } - zeigt nach einem Satz mit neuem Bestgewicht (oder neuem geschätzten 1RM) eine ruhige Zeile auf der Karte
 var studioSatzTypWahl = "n";   // Typ des nächsten Satzes auf der Karte: n normal · w Aufwärmen · d Drop · f bis Versagen
@@ -330,14 +326,14 @@ function openScheibenSheet(kgWert){
 function renderStudioKarte(id){
   var ex = findExercise(id);
   if(!ex){ go("#timers"); return; }
-  if(studioNurBlock(ex)) return renderStudioBlockKarte(id, ex);
+  var koerper = studioNurBlock(ex);   // Übung ohne Gewicht (Air): Sätze × Wiederholungen oder Timer, kein Gewichtsfeld
   if(studioPause && studioPause.id !== id) studioPauseStop();
   var e = studioEintrag(id) || {}, z = studioZiel(id), log = e.log || [], heute = studioTag(Date.now());
   var h = log.length && studioTag(log[log.length-1].at) === heute ? log[log.length-1] : null;
-  var v = studioVorschlag(id), stg = studioSteigern(id), pause = e.pause || 90;
+  var v = studioVorschlag(id), stg = studioSteigern(id), pause = e.pause || (koerper ? 60 : 90);
   if(e.kg != null && !h) v.kg = e.kg;
   var letzte = studioLetzte(id, false);   // die Einheit davor: so sieht man vor Ort, was beim letzten Mal ging
-  var timerModus = e.modus === "timer";   // vor Ort umschaltbar: Satz für Satz eintragen oder den Timer durchlaufen lassen
+  var timerModus = studioModus(id) === "timer";   // vor Ort umschaltbar: Satz für Satz eintragen oder den Timer durchlaufen lassen (Übungen ohne Gewicht starten mit dem Timer)
   var trKontext = trainingKontext(id);   // Training speichern ist auch mitten im Workout da: Leiste unten, sobald heute etwas eingetragen ist
   if(!trainingHeute(trKontext.ids).ex.length) trKontext = { plan:trKontext.plan, ids:[] };
   app.innerHTML =
@@ -346,7 +342,7 @@ function renderStudioKarte(id){
       studioStatsLeiste(id)+
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+satzName(z.saetze)+' × '+z.wdh+
-        (e.kg != null ? SEP+esc(t("stWeight"))+' '+studioKg(e.kg)+' kg' : '')+'</div>'+
+        (e.kg != null && !koerper ? SEP+esc(t("stWeight"))+' '+studioKg(e.kg)+' kg' : '')+'</div>'+
       // Werte vom letzten Mal: ein Tipp auf einen Satz übernimmt Gewicht und Wiederholungen in die Eingabe (nur im Satz-Modus)
       (letzte ? '<div class="st-letzte"><b>'+esc(t("stLetztes"))+'</b> <span>'+esc(studioTagText(letzte.at))+'</span> '+
         letzte.s.map(function(x){
@@ -361,27 +357,29 @@ function renderStudioKarte(id){
       '<div class="seg-row st-modus" role="group" aria-label="'+esc(t("stModusTitel"))+'">'+
         '<button type="button" data-stmodus="saetze" class="'+(timerModus ? '' : 'active')+'" aria-pressed="'+!timerModus+'">'+esc(t("stModusSaetze"))+'</button>'+
         '<button type="button" data-stmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>'+
-      (timerModus ? studioTimerKarte(id, "", t("stTimerSatzHint")).replace('<div class="card st-timer">', '<div class="st-timer">') :
+      (timerModus ? studioTimerKarte(id, "", t(koerper ? "stBlockHint" : "stTimerSatzHint")).replace('<div class="card st-timer">', '<div class="st-timer">') :
       // Satztyp des nächsten Satzes: Aufwärmsätze zählen nicht in Volumen, Bestwerte und Steigerung
       '<div class="st-typen" role="group" aria-label="'+esc(t("satzTypTitel"))+'">'+SATZ_TYPEN.map(function(ty){
         return '<button type="button" class="fc-chip'+(studioSatzTypWahl === ty ? ' on' : '')+'" data-sttyp="'+ty+'" aria-pressed="'+(studioSatzTypWahl === ty)+'">'+esc(t("satzTypLang_"+ty))+'</button>'; }).join("")+'</div>'+
-      '<div class="st-eingabe">'+
-        '<div class="st-feld"><label>'+esc(t("stKg"))+'</label><div class="stepper st-step" data-min="0" data-max="500" data-step="'+z.schritt+'">'+
-          '<button type="button" data-kgminus>&minus;</button><input type="text" inputmode="decimal" id="st-kg" value="'+studioKg(v.kg)+'"><button type="button" data-kgplus>&plus;</button></div></div>'+
+      // Übungen ohne Gewicht tragen nur die Wiederholungen ein (kein Gewichtsfeld, kein Schritt, kein Scheibenrechner)
+      '<div class="st-eingabe'+(koerper ? ' eins' : '')+'">'+
+        (koerper ? '' : '<div class="st-feld"><label>'+esc(t("stKg"))+'</label><div class="stepper st-step" data-min="0" data-max="500" data-step="'+z.schritt+'">'+
+          '<button type="button" data-kgminus>&minus;</button><input type="text" inputmode="decimal" id="st-kg" value="'+studioKg(v.kg)+'"><button type="button" data-kgplus>&plus;</button></div></div>')+
         '<div class="st-feld"><label>'+esc(t("stReps"))+'</label><div class="stepper st-step">'+
           '<button type="button" data-wminus>&minus;</button><input type="number" inputmode="numeric" id="st-w" value="'+v.wdh+'"><button type="button" data-wplus>&plus;</button></div></div>'+
       '</div>'+
       // einstellbarer Schritt der +/−-Knöpfe; bei Langhantel-Übungen dazu der Scheibenrechner
-      '<div class="st-schritt">'+esc(t("stSchritt"))+': '+[1, 2.5, 5, 10].map(function(sc){
+      (koerper ? '' : '<div class="st-schritt">'+esc(t("stSchritt"))+': '+[1, 2.5, 5, 10].map(function(sc){
         return '<button type="button" class="fc-chip'+(z.schritt === sc ? ' on' : '')+'" data-stschritt="'+sc+'">'+studioKg(sc)+'</button>'; }).join("")+
-        (studioLanghantel(ex) ? '<button type="button" class="st-scheiben" data-stscheiben>'+esc(t("scheibenLink"))+'</button>' : '')+'</div>'+
+        (studioLanghantel(ex) ? '<button type="button" class="st-scheiben" data-stscheiben>'+esc(t("scheibenLink"))+'</button>' : '')+'</div>')+
       '<button type="button" class="btn btn-primary st-los" data-stset>✓ '+esc(t("stSetDone"))+' '+((h ? h.s.length : 0)+1)+'</button>'+
       (studioPR ? '<div class="st-pr" role="status"><span class="st-pr-stern" aria-hidden="true">★</span><div><b>'+esc(t(studioPR.art === "rm" ? "stPrRm" : "stPrTitel"))+'</b><small>'+
-        esc(studioPR.art === "rm" ? t("stPrRmText", { rm:studioKg(Math.round(studioPR.rm*10)/10), v:studioKg(Math.round(studioPR.vorherRm*10)/10) })
+        esc(studioPR.art === "wdh" ? t("stPrWdhText", { w:studioPR.w, v:studioPR.vorher }) :
+            studioPR.art === "rm" ? t("stPrRmText", { rm:studioKg(Math.round(studioPR.rm*10)/10), v:studioKg(Math.round(studioPR.vorherRm*10)/10) })
                                   : t("stPrText", { kg:studioKg(studioPR.kg), w:studioPR.w, v:studioKg(studioPR.vorher) }))+'</small></div></div>' : '')+
       '<div class="st-pause" id="st-pause"'+(studioPause && studioPause.id === id ? '' : ' hidden')+'>'+
         '<span>'+esc(t("stPause"))+'</span><b id="st-pause-zeit"></b><button type="button" class="btn btn-secondary" data-stskip>'+esc(t("stSkip"))+'</button></div>'+
-      '<div class="st-pausewahl">'+esc(t("stPause"))+': '+[60, 90, 120, 180].map(function(sec){
+      '<div class="st-pausewahl">'+esc(t("stPause"))+': '+(koerper ? [30, 60, 90, 120] : [60, 90, 120, 180]).map(function(sec){
         return '<button type="button" class="fc-chip'+(pause === sec ? ' on' : '')+'" data-stpause="'+sec+'">'+(sec < 120 ? sec+" s" : (sec/60)+" min")+'</button>'; }).join("")+'</div>'+
       (h && h.s.length ? '<button type="button" class="st-undo" data-stundo>'+esc(t("stUndo"))+'</button>' : ''))+
     '</div>'+
@@ -394,8 +392,8 @@ function renderStudioKarte(id){
   bindCommon();
   function neu(){ var y = window.scrollY; renderStudioKarte(id); window.scrollTo(0, y); }
   function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
-  var kgIn = app.querySelector("#st-kg"), wIn = app.querySelector("#st-w");   // im Timer-Modus gibt es keine Eingabe
-  function kgWert(){ var x = parseFloat(String(kgIn.value).replace(",", ".")); return isFinite(x) && x >= 0 ? Math.min(500, x) : 0; }
+  var kgIn = app.querySelector("#st-kg"), wIn = app.querySelector("#st-w");   // im Timer-Modus gibt es keine Eingabe, ohne Gewicht kein kg-Feld
+  function kgWert(){ if(!kgIn) return 0; var x = parseFloat(String(kgIn.value).replace(",", ".")); return isFinite(x) && x >= 0 ? Math.min(500, x) : 0; }
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
   app.querySelectorAll("[data-stmodus]").forEach(function(b){
     b.addEventListener("click", function(){
@@ -404,15 +402,17 @@ function renderStudioKarte(id){
       eintrag().modus = m === "timer" ? "timer" : "saetze"; save(); neu();
     });
   });
-  if(kgIn && wIn){
-    an("[data-kgminus]", function(){ kgIn.value = studioKg(Math.max(0, kgWert() - z.schritt)); });
-    an("[data-kgplus]", function(){ kgIn.value = studioKg(kgWert() + z.schritt); });
+  if(wIn){
+    if(kgIn){
+      an("[data-kgminus]", function(){ kgIn.value = studioKg(Math.max(0, kgWert() - z.schritt)); });
+      an("[data-kgplus]", function(){ kgIn.value = studioKg(kgWert() + z.schritt); });
+      kgIn.addEventListener("focus", function(){ kgIn.select(); });
+    }
     an("[data-wminus]", function(){ wIn.value = Math.max(1, (parseInt(wIn.value) || 0) - 1); });
     an("[data-wplus]", function(){ wIn.value = Math.min(100, (parseInt(wIn.value) || 0) + 1); });
-    kgIn.addEventListener("focus", function(){ kgIn.select(); });
     wIn.addEventListener("focus", function(){ wIn.select(); });
     app.querySelectorAll("[data-ukg]").forEach(function(b){
-      b.addEventListener("click", function(){ kgIn.value = studioKg(+b.getAttribute("data-ukg")); wIn.value = b.getAttribute("data-uw"); });
+      b.addEventListener("click", function(){ if(kgIn) kgIn.value = studioKg(+b.getAttribute("data-ukg")); wIn.value = b.getAttribute("data-uw"); });
     });
     // Satztyp und Schritt ändern sich an Ort und Stelle (kein Neuzeichnen: das Eingegebene bleibt stehen)
     app.querySelectorAll("[data-sttyp]").forEach(function(b){
@@ -439,10 +439,12 @@ function renderStudioKarte(id){
     // Rekord: neues Bestgewicht, sonst neues geschätztes 1RM (Aufwärmsätze zählen nicht)
     var rm = satzSchaetzung1RM([kg, w]);
     studioPR = typ === "w" ? null :
+      kg === 0 && davor.kg === 0 ? (davor.wdh > 0 && w > davor.wdh ? { id:id, art:"wdh", w:w, vorher:davor.wdh } : null) :   // ohne Gewicht: mehr Wiederholungen
       davor.kg > 0 && kg > davor.kg ? { id:id, art:"kg", kg:kg, w:w, vorher:davor.kg } :
       davor.rm > 0 && rm > davor.rm + .05 ? { id:id, art:"rm", kg:kg, w:w, rm:rm, vorherRm:davor.rm } : null;
     studioSatzTypWahl = "n";
-    en.kg = kg; en.zuletzt = jetzt;
+    if(!koerper) en.kg = kg;
+    en.zuletzt = jetzt;
     studioVerlauf(id, jetzt);
     trainingNachSatz(id);
     save();
