@@ -168,7 +168,7 @@ function renderSearch(){
   zeigen();
   if(!gesamtQuery && !suchKoerperAuf) feld.focus();
 }
-/* Startseite: Kopf, Hinweise, Kopfblock „Bereit für dein Training?“ (startet Überrasch mich), Diese Woche, Favoriten, darunter die Bereiche */
+/* Startseite: Kopf, Hinweise, Kopfblock „Bereit für dein Training?“ (führt in den Baukasten), Diese Woche, Favoriten, darunter die Bereiche */
 function renderHome(){
   var favHTML = favItemsHTML();
   var nFav = favEntries().length;
@@ -187,8 +187,7 @@ function renderHome(){
     KODAK_BADGE;
   bindCommon();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
-  app.querySelector("[data-herostart]").addEventListener("click", surpriseDirekt);
-  app.querySelector("[data-heroanp]").addEventListener("click", function(){ openSurprise(); });
+  app.querySelector("[data-herostart]").addEventListener("click", function(){ katTabSetzen("baukasten"); go("#katalog"); });
   bindFavItems(renderHome);
   bindBackupTip();
   var wib = app.querySelector("[data-wasistwas]");

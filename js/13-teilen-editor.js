@@ -848,15 +848,4 @@ function openSurprise(twId){
   }
   draw();
 }
-/* Startseite: „Überrasch mich“ ohne Fenster, mit den zuletzt gewählten Angaben (Zeit, Bereiche, Ausrüstung) und dem Ort des Katalogs; geht gleich zum Deckblatt.
-   Findet sich nichts Passendes, öffnet sich das Fenster zum Anpassen. */
-function surpriseDirekt(){
-  var s = state.db.settings;
-  var p = spNormalize(JSON.parse(JSON.stringify(s.surprise || { dur:20, mains:["kraft","rumpf"], cats:[], level:2, equips:["none"] })));
-  delete p.anzahl; p.ort = katOrt();
-  var d = buildSurprise(p);
-  if(!d){ showToast(t("spNone")); openSurprise(); return; }
-  coverDraft = d;
-  go("#cover/surprise");
-}
 

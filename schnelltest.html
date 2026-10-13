@@ -151,12 +151,11 @@
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch als Karte auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
-      // Kopfblock „Bereit für dein Training?“ steht vor der Wochenzeile; ein Tipp startet Überrasch mich und führt zum Deckblatt
+      // Kopfblock „Bereit für dein Training?“ steht vor der Wochenzeile; ein Tipp führt direkt in den Baukasten
       var kopf = $(".home-hero");
       pruefe(kopf && /Bereit für dein Training/.test(kopf.textContent) && (kopf.compareDocumentPosition($(".woche")) & 4), "Kopfblock fehlt oder steht nicht vor der Wochenzeile");
-      pruefe(/Überrasch mich · \d+ Min/.test(kopf.textContent) && $("[data-heroanp]"), "Kopfblock: Überrasch mich mit Minuten und „Anpassen“ fehlen");
       klick("[data-herostart]");
-      await bis(function () { return W.location.hash === "#cover/surprise"; }, 3000, "Kopfblock führt zum Deckblatt von Überrasch mich");
+      await bis(function () { return W.location.hash === "#katalog" && $('[data-kattab="baukasten"].active') && $(".ort-foto"); }, 3000, "Kopfblock führt direkt in den Baukasten");
       W.go("#home");
       await bis(function () { return $(".area-tile") && $(".home-hero"); }, 3000, "zurück zur Startseite");
       pruefe($("#tabbar .tab.active") && /Start/.test($("#tabbar .tab.active").textContent), "In der Leiste soll „Start“ markiert sein");

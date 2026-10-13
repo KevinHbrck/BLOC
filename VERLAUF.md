@@ -5,10 +5,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 ## 2026-10-13 · Start und Baukasten nach dem Mockup (Branch `layout-start-baukasten`)
 
-- **Startseite**: Reihenfolge Kopf (BLOC · Modular Training Builder) → Kopfblock „Bereit für dein Training?“ → Diese Woche → Favoriten → Bereiche. Der Kopfblock (`heroHTML` in `js/04-start.js`) startet mit einem Tipp **Überrasch mich** mit den zuletzt gewählten Angaben und dem Ort des Katalogs (`surpriseDirekt` in `js/13-teilen-editor.js`) und führt zum Deckblatt; „Anpassen“ öffnet das bekannte Fenster. Findet sich nichts, öffnet sich das Fenster.
+- **Startseite**: Reihenfolge Kopf (BLOC · Modular Training Builder) → Kopfblock „Bereit für dein Training?“ → Diese Woche → Favoriten → Bereiche. Der Kopfblock (`heroHTML` in `js/04-start.js`, Hallenfoto `img/start-halle.jpg` unter orangem Verlauf) führt mit einem Tipp **direkt in den Baukasten** (`katTabSetzen("baukasten")`, „Workout zusammenstellen“).
 - **Baukasten**: Ort als zwei Fotokarten (`bauOrtKartenHTML`, gleiche Knöpfe `data-bauort`; Auswahl mit Ring und Haken in der Farbe des Ortes), orange Schrittnummern, „Nach Zeit · Nach Sätzen“ mit orange gefüllter Auswahl, Zusammenfassung „Freiluft · Nach Zeit“, „Überrasch mich“ als große orange Karte. Bauseiten und das Überrasch-Fenster behalten den kleinen Ort-Schalter (`bauOrtHTML`).
 - **Untere Leiste**: der aktive Eintrag ist orange (Symbole unverändert); in den Bereichen (Workout …) leuchtet „Start“.
-- **Fotos** (Pexels, frei nutzbar) in `img/` (`ort-fitnessstudio.jpg`, `ort-freiluft.jpg`, zugeschnitten und verkleinert, in `sw.js` im Zwischenspeicher); Nachweis in `quellen.html`. Fassung 2026-10-13-1.
+- **Fotos** (freie Bildbibliothek Pexels) in `img/` (`ort-fitnessstudio.jpg`, `ort-freiluft.jpg`, `start-halle.jpg`, zugeschnitten und verkleinert, in `sw.js` im Zwischenspeicher); allgemeiner Nachweis in `quellen.html`. Fassung 2026-10-13-2.
 
 ## 2026-10-12 · Neue Workouts und Pläne erst mit „Speichern“
 
