@@ -79,6 +79,7 @@ function renderSearch(){
   suchZonen = kkNorm(suchZonen);   // nach dem Umschalten der Detailansicht passen
   app.innerHTML =
     topbar(t("srTitle"), { back:"#home" }) +
+    bereichBildHTML("suche") +
     searchHTML(gesamtQuery, "gs", t("srPh")) +
     '<div class="lib-chips sr-kats">'+SUCH_KATEGORIEN.map(function(k){
       return '<button type="button" class="lib-chip'+(suchKat === k ? ' active' : '')+'" data-srkat="'+k+'" aria-pressed="'+(suchKat === k)+'">'+esc(t("srKat_"+k))+'</button>';

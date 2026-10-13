@@ -7,11 +7,12 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - **Ein Fenster, drei Wege** (`openSurprise(twId, modus)` in `js/13-teilen-editor.js`): „Überrasch mich“ und „Selber bauen“ im Baukasten öffnen dasselbe Fenster „Workout zusammenstellen“ mit **Zufall · Nach Gewichtung · Selber bauen**. Gleicher Aufbau (Kopf, Ort-Schalter, Inhalt, Abbrechen/Knopf), anderer Inhalt: Zufall wie bisher; Nach Gewichtung mit Körpermodell und Reglern im Fenster (`genReglerHTML`/`genReglerBinden`/`genPlanErstellen` in `js/09-studio-karte.js`, die eigene Seite `renderStudioPlanGen` und `stGen` entfallen); Selber bauen mit Art (Nach Zeit/Nach Sätzen) und „Übungen wählen“ → Bauseite.
 - **Filter**: Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl; Summit-Stufe) werden bei jedem Besuch der Startseite zurückgesetzt (`render()` in `js/03-router.js`). Der Chip „Fitnessstudio“ (geraet) entfällt in der Filterkarte, weil der Ort-Schalter ihn ersetzt; im Fitnessstudio gibt es keine Ausrüstungs-Chips (`studioArtenWahl` in `js/07-studio.js`).
-- **Übungskatalog** hat dieselben Ort-Fotokarten wie der Workoutkatalog („63 Übungen“ / „141 Übungen“) und zeigt nur die Übungen des gewählten Ortes.
-- **Workout-Bild-Kopf** entfällt (die Paar-an-der-Seebrücke-Fotos bleiben nur in `img/bereich-*` der übrigen Bereiche).
+- **Übungskatalog** hat dieselben Ort-Fotokarten wie der Workoutkatalog („63 Übungen“ / „141 Übungen“) und zeigt ohne Suche nur die Übungen des gewählten Ortes; die **Suche** dort durchsucht beide Orte (die Übungen des anderen Ortes stehen mit `data-ortfremd` unsichtbar im Seitentext).
+- **Suche** (Fußleiste) hat oben ein Foto (Meer mit Sportgeräten, `img/bereich-suche.jpg`).
+- **Workout-Bild-Kopf** entfällt (`img/bereich-workout.jpg` gelöscht, kein Eintrag mehr in `BEREICH_BILD`).
 - **Timer-Workouts**: jeder Block hat „Wie oft hintereinander“ (`times`, 1–99; `workoutItems` in `js/01-basis.js`, Pause danach auch zwischen den Wiederholungen); Dauer und Ablauf rechnen es mit. Play-Knöpfe der Timer-Seite im hellen Design nicht mehr tiefschwarz.
 - **Play-Knöpfe überall**: weißer Kreis mit Rand und Dreieck in der Farbe des Bereichs (`--pb`, Favoriten, Listen, Übungskacheln).
-- Fassung 2026-10-13-7.
+- Fassung 2026-10-13-8.
 
 ## 2026-10-13 · Fotokarten im Katalog, Bild-Köpfe der Bereiche, neues Stretch-Symbol (Branch `katalog-fotos-bilder`, live)
 

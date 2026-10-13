@@ -379,25 +379,32 @@ function renderKatalogUebungen(){
   var fGr = selArr(s.stGruppen).filter(function(id){ return gueltig[id]; });
   var fArt = studioArtenWahl();
   var zonen = kkNorm(s.stZonen), ort = katOrt();   // Körperkarte: gewählte Muskelzonen; Ort wie im Workoutkatalog
-  function artOk(id){ var ex = findExercise(id); return !!ex && exOrt(ex) === ort && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(ex, zonen)); }
-  function passt(id){ return !!vonId[id] && (!fGr.length || fGr.indexOf(vonId[id]) > -1) && artOk(id); }
+  /* Gezeigt werden die Übungen des gewählten Ortes; die des anderen Ortes stehen unsichtbar mit im Seitentext (data-ortfremd) und erscheinen nur,
+     solange etwas gesucht wird - die Suche soll nicht am Ort scheitern. */
+  function artOkOhneOrt(id){ var ex = findExercise(id); return !!ex && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(ex, zonen)); }
+  function artOk(id){ return artOkOhneOrt(id) && exOrt(findExercise(id)) === ort; }
+  function passtOhneOrt(id){ return !!vonId[id] && (!fGr.length || fGr.indexOf(vonId[id]) > -1) && artOkOhneOrt(id); }
+  function hier(id){ return exOrt(findExercise(id)) === ort; }
   var filterAn = !!(fGr.length || fArt.length || zonen.length);
-  var favs = (s.exFavs || []).filter(function(id){ return !!findExercise(id) && passt(id); });
-  var zuletzt = Object.keys(alle).filter(function(id){ return alle[id].zuletzt && findExercise(id) && passt(id) && favs.indexOf(id) < 0; })
+  var favs = (s.exFavs || []).filter(function(id){ return !!findExercise(id) && passtOhneOrt(id); });
+  var zuletzt = Object.keys(alle).filter(function(id){ return alle[id].zuletzt && findExercise(id) && passtOhneOrt(id) && favs.indexOf(id) < 0; })
     .sort(function(a, b){ return alle[b].zuletzt - alle[a].zuletzt; }).slice(0, 6);
   var anzahl = 0;
   gruppen.forEach(function(g){ if(!fGr.length || fGr.indexOf(g.id) > -1) anzahl += g.ids.filter(artOk).length; });
   var hw = hinweise("katueb", ["katUebHint"]);
   var html = "";
   function zeile(id, ico, name, ids, offen, extra, innenPlus){
-    var gym = ids.length > 0 && ids.every(function(id){ return exIstStudio(findExercise(id)); });   // nur Fitnessstudio: hellgrünes Symbol
-    return katZeileHTML(id, ico, name, ids.length, '<div class="fig-grid">'+ids.map(studioKachel).join("")+(innenPlus || "")+'</div>', katOffenStd(id, offen), extra, gym);
+    var da = ids.filter(hier);   // sichtbar ohne Suche
+    var gym = da.length > 0 && da.every(function(i){ return exIstStudio(findExercise(i)); });   // nur Fitnessstudio: hellgrünes Symbol
+    var kacheln = ids.map(function(i){ var k = studioKachel(i); return hier(i) ? k : k.replace("<div ", '<div data-ortfremd="1" '); }).join("");
+    var h = katZeileHTML(id, ico, name, da.length, '<div class="fig-grid">'+kacheln+(innenPlus || "")+'</div>', katOffenStd(id, offen), extra, gym);
+    return da.length || !ids.length ? h : h.replace("<details ", '<details data-ortfremd="1" ');
   }
   if(favs.length) html += zeile("fav", ICON_STAR, t("stFavs"), favs, false);
   if(zuletzt.length) html += zeile("zuletzt", KAT_ICON_UHR, t("stRecent"), zuletzt, false);
   gruppen.forEach(function(g){
     if(fGr.length && fGr.indexOf(g.id) < 0) return;
-    var ids = g.ids.filter(artOk);
+    var ids = g.ids.filter(artOkOhneOrt);
     if(!ids.length && (!g.eigene || filterAn)) return;
     var neu = g.eigene ? '<button type="button" class="fig-karte st-neu" data-stnew>'+ICON_PLUS+'<span class="fig-name">'+esc(t("stOwnNew"))+'</span></button>' : '';
     html += zeile(g.id, katIcon(g.id), g.name, ids, false, "", neu);   // Bereiche stehen immer zugeklappt da (auch mit Filter); nur eine Suche klappt Treffer auf
@@ -446,9 +453,11 @@ function renderKatalogUebungen(){
   function suchen(){
     applySearch(app, studioQuery);
     katSuche(studioQuery, false);   // bei einer Suche alle Bereiche mit Treffern offen, die übrigen weg
+    // ohne Suche nur der gewählte Ort; mit Suche zählen alle Übungen (beide Orte)
+    if(!(studioQuery || "").trim()) app.querySelectorAll("[data-ortfremd]").forEach(function(el){ el.style.display = "none"; });
   }
   q.addEventListener("input", function(){ studioQuery = q.value; suchen(); });
-  if(studioQuery) suchen();
+  suchen();
 }
 
 /* ---------- Meine: Pläne ---------- */
