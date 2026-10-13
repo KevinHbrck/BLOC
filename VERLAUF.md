@@ -3,7 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-13 · Bildtöne und Ausschnitte (Fassung 2026-10-13-10)
+## 2026-10-13 · Fenster ohne doppelte Fragen (Fassung 2026-10-13-11)
+
+- Das Zusammenstell-Fenster fragt **Ort und Art nicht noch einmal**, wenn der Baukasten (Schritt 1 und 2) direkt dahinter steht: oben im Fenster steht nur die Wahl als Zeile („Freiluft · Nach Zeit“). Von anderen Stellen aus (Suche, Timer-Workout füllen) bleibt der Ort-Schalter im Fenster, bei „Selber bauen“ auch die Art (`seiteDahinter` in `openSurprise`).
+
+## 2026-10-13 · Bildtöne und Ausschnitte (Fassung 2026-10-13-10, live)
 
 - **Summit**: Foto an die Tönung von Mobility & Stretch angeglichen (entsättigt, etwas heller; `img/bereich-summit.jpg`).
 - **Timer**: neues Foto (Ausfallschritt, gleiche Bildwelt wie Mobility & Stretch) statt der Plank-Personen (`img/bereich-timer.jpg`).

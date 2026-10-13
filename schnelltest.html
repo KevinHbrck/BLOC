@@ -1176,9 +1176,9 @@
       await heim();
       klick('[data-herostart]');
       await zuBaukasten();
+      klick(await bis(function () { return $('[data-bauort="frei"]'); }, 3000, "Ort frei (Seite)"));   // Ort steht auf der Seite, das Fenster fragt ihn nicht noch einmal
       klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
       // Überrasch mich unterscheidet immer nach Ort: Freiluft zieht keine Geräte (und kennt den Chip „Fitnessstudio“ nicht), Fitnessstudio nur Geräte
-      klick(await bis(function () { return $('#overlayRoot [data-bauort="frei"]'); }, 2000, "Ort-Schalter im Fenster"));
       await bis(function () { return $('#overlayRoot [data-spequip="none"]'); }, 2000, "Ausrüstung bei Freiluft");
       pruefe(!$('#overlayRoot [data-spequip="gym"]'), "Überrasch mich: Chip „Fitnessstudio“ steht noch bei der Ausrüstung");
       klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los (Freiluft)"));
@@ -1188,8 +1188,8 @@
       await heim();
       klick('[data-herostart]');
       await zuBaukasten();
+      klick(await bis(function () { return $('[data-bauort="studio"]'); }, 3000, "Ort studio (Seite)"));   // Ort steht auf der Seite, das Fenster fragt ihn nicht noch einmal
       klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
-      klick(await bis(function () { return $('#overlayRoot [data-bauort="studio"]'); }, 2000, "Ort Fitnessstudio im Fenster"));
       pruefe(!$('#overlayRoot [data-spequip]'), "Überrasch mich im Fitnessstudio: Ausrüstung ist nicht nötig, steht aber da");
       klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los"));
       await bis(function () { return /^#cover/.test(W.location.hash) && $$(".wb-ablauf").length > 0; }, 3000, "Überrasch-mich-Deckblatt");
@@ -1199,9 +1199,9 @@
       await heim();
       klick('[data-herostart]');
       await zuBaukasten();
+      klick(await bis(function () { return $('[data-bauort="studio"]'); }, 3000, "Ort studio (Seite)"));   // Ort steht auf der Seite, das Fenster fragt ihn nicht noch einmal
       klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
       klick(await bis(function () { return $("#overlayRoot [data-spmodus=\"gewicht\"]"); }, 3000, "Nach Gewichtung"));
-      klick(await bis(function () { return $('#overlayRoot [data-bauort="studio"]'); }, 3000, "Ort-Schalter im Generator"));
       // Körpermodell oben (vor dem Hinweis), Regler färben es: je höher die Gewichtung, desto kräftiger rot; 0 % bleibt grau
       var fg = await bis(function () { return $("[data-genfig] .kk-paar"); }, 2000, "Körpermodell im Generator");
       pruefe($("[data-genfig]").compareDocumentPosition($(".sp-gen-hint")) & 4, "Körpermodell steht nicht oben (vor dem Hinweis) im Fenster");
@@ -1217,9 +1217,9 @@
       await heim();
       klick('[data-herostart]');
       await zuBaukasten();
+      klick(await bis(function () { return $('[data-bauort="frei"]'); }, 3000, "Ort frei (Seite)"));   // Ort steht auf der Seite, das Fenster fragt ihn nicht noch einmal
       klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
       klick(await bis(function () { return $("#overlayRoot [data-spmodus=\"gewicht\"]"); }, 3000, "Nach Gewichtung"));
-      klick(await bis(function () { return $('#overlayRoot [data-bauort="frei"]'); }, 3000, "Ort Freiluft"));
       klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Plan anlegen"));
       await bis(function () { return $("[data-planwo]") && daten().settings.stPlaene.length === 3; }, 3000, "Plan nach Gewichtung (Freiluft)");
       var l2 = daten().settings.stPlaene, p2 = l2[l2.length - 1];

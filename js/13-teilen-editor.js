@@ -845,13 +845,21 @@ function openSurprise(twId, modusStart){
         '<div class="tm-hint">'+esc(t("spRules"))+'</div>'+
       '</div>' : '');
   }
+  /* Steht der Baukasten (Ort in Schritt 1, Art in Schritt 2) direkt hinter dem Fenster, fragt das Fenster beides nicht noch einmal, sondern zeigt
+     nur die Wahl als Zeile; von anderen Stellen aus (Suche, Timer) bleibt der Ort-Schalter im Fenster */
+  var seiteDahinter = !tw && parseHash()[0] === "katalog" && katTab() === "baukasten" && !stPlanAktiv;
+  function wahlZeile(){
+    var art = artWahl || bauModus();
+    return '<div class="bau-zusammen sp-wahl">'+esc(t(katOrt() === "studio" ? "katOrtStudio" : "katOrtFrei"))+' · <b>'+esc(t(art === "timer" ? "bauArtZeit" : "bauArtSaetze"))+'</b></div>';
+  }
   function selberHTML(){
     var art = artWahl || bauModus();
     function b(k, key){ return '<button type="button" data-spart="'+k+'" class="'+(art === k ? 'active' : '')+'" aria-pressed="'+(art === k)+'">'+esc(t(key))+'</button>'; }
     return '<div class="tm-hint" style="margin-top:0">'+esc(t("bauSelberSub"))+'</div>'+
-      '<label>'+esc(t("bauArtTitel"))+'</label>'+
-      '<div class="seg-row bau-modus" role="group">'+b("timer", "bauArtZeit")+b("gewicht", "bauArtSaetze")+'</div>'+
-      '<div class="bau-hinweis">'+esc(t(art === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>';
+      (seiteDahinter ? '' :
+        '<label>'+esc(t("bauArtTitel"))+'</label>'+
+        '<div class="seg-row bau-modus" role="group">'+b("timer", "bauArtZeit")+b("gewicht", "bauArtSaetze")+'</div>'+
+        '<div class="bau-hinweis">'+esc(t(art === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>');
   }
   function draw(){
     // Neu zeichnen ohne Springen: die Scrollposition im Fenster bleibt erhalten
@@ -861,7 +869,7 @@ function openSurprise(twId, modusStart){
       '<h3>'+svgIcon(ICON_UEBERRASCH, "ico sp-h-ico")+' '+esc(t(tw ? "surprise" : "bauFensterTitel"))+'</h3>'+
       (tw ? '' : '<div class="seg-row sp-art sp-wege" role="group">'+wege.map(function(m){
         return '<button type="button" data-spmodus="'+m[0]+'" class="'+(modus === m[0] ? 'active' : '')+'" aria-pressed="'+(modus === m[0])+'">'+esc(t(m[1]))+'</button>'; }).join("")+'</div>')+
-      bauOrtHTML()+
+      (seiteDahinter ? wahlZeile() : bauOrtHTML())+
       (modus === "gewicht" ? genReglerHTML(g) : modus === "selber" ? selberHTML() : zufallHTML())+
       '<div class="btn-row sp-foot"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
       '<button class="btn btn-primary" data-spgo>'+esc(t(modus === "gewicht" ? "genMake" : modus === "selber" ? "bauWaehlen" : "spGo"))+'</button></div>'+
