@@ -168,13 +168,13 @@ function renderSearch(){
   zeigen();
   if(!gesamtQuery && !suchKoerperAuf) feld.focus();
 }
-/* Startseite: Favoriten als Kacheln, „Überrasch mich“, darunter die zwei Bereiche Timer und Bibliothek */
+/* Startseite: Kopf, Hinweise, Kopfblock „Bereit für dein Training?“ (startet Überrasch mich), Diese Woche, Favoriten, darunter die Bereiche */
 function renderHome(){
   var favHTML = favItemsHTML();
   var nFav = favEntries().length;
   app.innerHTML =
     topbar("BLOC", { home:true, sub:"Modular Training Builder" }) +
-    installTipHTML() + backupTipHTML() + wocheHTML() +
+    installTipHTML() + backupTipHTML() + heroHTML() + wocheHTML() +
     '<div class="sec-head"><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
@@ -187,8 +187,8 @@ function renderHome(){
     KODAK_BADGE;
   bindCommon();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
-  var sp = app.querySelector("[data-surprise]");
-  if(sp) sp.addEventListener("click", openSurprise);
+  app.querySelector("[data-herostart]").addEventListener("click", surpriseDirekt);
+  app.querySelector("[data-heroanp]").addEventListener("click", function(){ openSurprise(); });
   bindFavItems(renderHome);
   bindBackupTip();
   var wib = app.querySelector("[data-wasistwas]");

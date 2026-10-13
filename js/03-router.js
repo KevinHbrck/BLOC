@@ -150,9 +150,9 @@ var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
   var el = document.getElementById("tabbar");
   if(!el) return;
-  var aktiv = TAB_ROUTEN[route];
   var imBereich = !!BEREICH_LEISTE[route] && !stGen && !(stPlanAktiv && stPlanFind(stPlanAktiv));
-  if(!aktiv && !imBereich){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
+  var aktiv = TAB_ROUTEN[route] || (imBereich ? "#home" : null);   // im Bereich leuchtet „Start“ (die Bereiche liegen unter der Startseite)
+  if(!aktiv){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
   var eintraege = [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],

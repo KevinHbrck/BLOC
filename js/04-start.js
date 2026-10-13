@@ -107,5 +107,22 @@ function surpriseLeisteHTML(){
   return '<button type="button" class="sp-leiste" data-surprise title="'+esc(t("spSub"))+'">'+svgIcon(ICON_UEBERRASCH)+'<b>'+esc(t("surprise"))+'</b>'+
     '<span class="sp-chev">'+ICON_CHEV+'</span></button>';
 }
+/* Kopfblock der Startseite („Bereit für dein Training?“): ein Tipp startet „Überrasch mich“ gleich mit den zuletzt gewählten Angaben (Zeit, Ort) und führt zum
+   Deckblatt; das kleine „Anpassen“ öffnet das bekannte Fenster. Foto: Pexels (siehe quellen.html) */
+function heroHTML(){
+  var sp = state.db.settings.surprise || {};
+  var dauer = clamp(Math.round(+sp.dur) || 20, 5, 180);
+  var tag = new Date().toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long" });
+  var ort = t(katOrt() === "studio" ? "katOrtStudio" : "katOrtFrei");
+  return '<section class="home-hero">'+
+    '<img class="hh-bild" src="'+KAT_FOTO.studio+'" alt="" draggable="false">'+
+    '<button type="button" class="hh-main" data-herostart>'+
+      '<span class="hh-label">'+esc(t("heroHeute", { d:tag }))+'</span>'+
+      '<b class="hh-titel">'+esc(t("heroTitel"))+'</b>'+
+      '<span class="hh-los">'+ICON_PLAY+'<span>'+esc(t("heroLos", { m:dauer, o:ort }))+'</span></span>'+
+    '</button>'+
+    '<button type="button" class="hh-anp" data-heroanp>'+esc(t("heroAnpassen"))+'</button>'+
+  '</section>';
+}
 /* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Workout, Mobility & Stretch, Summit) */
 function reiterZeileHTML(farbe, knoepfe){ return '<div class="rz" style="--rz:'+farbe+'">'+knoepfe+'</div>'; }

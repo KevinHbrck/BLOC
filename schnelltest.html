@@ -149,8 +149,17 @@
       pruefe($$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "katalog,warm,intervall,reps,run", "Reihenfolge der Bereiche: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
       pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "intervall,reps,run", "Timer, Summit und Run sollen die Liste darunter sein");
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
-      pruefe(!$("[data-surprise]"), "Überrasch mich steht noch auf der Startseite");
+      pruefe(!$("[data-surprise]"), "Überrasch mich steht noch als Karte auf der Startseite");
       pruefe($(".woche"), "Wochenzeile fehlt");
+      // Kopfblock „Bereit für dein Training?“ steht vor der Wochenzeile; ein Tipp startet Überrasch mich und führt zum Deckblatt
+      var kopf = $(".home-hero");
+      pruefe(kopf && /Bereit für dein Training/.test(kopf.textContent) && (kopf.compareDocumentPosition($(".woche")) & 4), "Kopfblock fehlt oder steht nicht vor der Wochenzeile");
+      pruefe(/Überrasch mich · \d+ Min/.test(kopf.textContent) && $("[data-heroanp]"), "Kopfblock: Überrasch mich mit Minuten und „Anpassen“ fehlen");
+      klick("[data-herostart]");
+      await bis(function () { return W.location.hash === "#cover/surprise"; }, 3000, "Kopfblock führt zum Deckblatt von Überrasch mich");
+      W.go("#home");
+      await bis(function () { return $(".area-tile") && $(".home-hero"); }, 3000, "zurück zur Startseite");
+      pruefe($("#tabbar .tab.active") && /Start/.test($("#tabbar .tab.active").textContent), "In der Leiste soll „Start“ markiert sein");
     }],
     ["Workout: Reiter Katalog · Baukasten, Abteilungen Meine · Workoutkatalog, Übungskatalog, Überrasch mich im Baukasten", async function () {
       klick('[data-nav="#katalog"]');
@@ -190,6 +199,8 @@
       var sl = $(".bau-karte[data-surprise]");
       pruefe(sl.getBoundingClientRect().height >= 70 && !$(".topbar .bau-karte"), "Die zwei Wege im Baukasten sollen groß sein");
       pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Baukasten");
+      pruefe($("#tabbar .tab.active") && /Start/.test($("#tabbar .tab.active").textContent), "Im Bereich soll in der Leiste „Start“ orange sein");
+      pruefe($$(".ort-foto").length === 2 && $$(".ort-foto.on").length === 1 && $$(".ort-foto img[src^='img/']").length === 2, "Baukasten: Ort als zwei Fotokarten, eine ist gewählt");
       // Übungskatalog: eigene Seite, alle Übungen zugeklappt nach Bereichen, „Eigene Übung anlegen“ oben
       await zuUebungskatalog();
       pruefe($("[data-stnew2]") && /Eigene Übung/.test($("[data-stnew2]").textContent), "„Eigene Übung anlegen“ fehlt im Übungskatalog");

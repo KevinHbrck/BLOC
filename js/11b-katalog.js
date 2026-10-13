@@ -154,10 +154,25 @@ function katOrtHTML(sel, zahl, attr, textKey){
 }
 /* Beim Bauen wird immer nach Ort unterschieden: die Auswahl zeigt nur die Übungen des gewählten Ortes (derselbe Ort wie im Workoutkatalog,
    settings.katOrt); der Schalter wechselt. Schon gewählte Übungen bleiben im Plan, auch wenn sie zum anderen Ort gehören. */
-function bauOrtHTML(){
+function bauOrtZahlen(){
   var n = { studio:0, frei:0 };
   EXERCISES.forEach(function(ex){ if(ex.main === "stretch" || libHidden("ex:"+ex.id)) return; n[exOrt(ex)]++; });
-  return katOrtHTML(katOrt(), n, "data-bauort", "katOrtUebAnz");
+  return n;
+}
+function bauOrtHTML(){
+  return katOrtHTML(katOrt(), bauOrtZahlen(), "data-bauort", "katOrtUebAnz");
+}
+/* Baukasten, Schritt 1: derselbe Schalter als zwei Fotokarten (gleiche Knöpfe `data-bauort`, gleiche Zahlen). Fotos: Pexels, siehe quellen.html */
+var KAT_FOTO = { studio:"img/ort-fitnessstudio.jpg", frei:"img/ort-freiluft.jpg" };
+function bauOrtKartenHTML(){
+  var n = bauOrtZahlen(), o = katOrt();
+  function k(id, label){
+    return '<button type="button" data-bauort="'+id+'" class="ort-foto'+(o === id ? ' on' : '')+'" aria-pressed="'+(o === id)+'">'+
+      '<img class="of-bild" src="'+KAT_FOTO[id]+'" alt="" draggable="false">'+
+      '<span class="of-haken" aria-hidden="true">'+svgIcon('<path d="M5 12.5l4.5 4.5L19 7.5"/>')+'</span>'+
+      '<span class="of-t"><b>'+esc(label)+'</b><small>'+esc(t("katOrtUebAnz", { n:n[id] }))+'</small></span></button>';
+  }
+  return '<div class="ort-fotos" role="group" aria-label="'+esc(t("katOrt"))+'">'+k("studio", t("katOrtStudio"))+k("frei", t("katOrtFrei"))+'</div>';
 }
 function bauOrtBinden(neu, box){
   (box || app).querySelectorAll("[data-bauort]").forEach(function(b){
@@ -330,11 +345,14 @@ function renderKatalogBaukasten(){
     katKopfHTML("baukasten", hw.knopf) +
     hw.z(0, "page-hint") +
     '<div class="bau-schritt"><span>1</span>'+esc(t("bauSchritt1"))+'</div>'+
-    bauOrtHTML() +
+    bauOrtKartenHTML() +
     '<div class="bau-schritt"><span>2</span>'+esc(t("bauArtTitel"))+'</div>'+
     bauArtHTML(modus, true) +
     '<div class="bau-schritt"><span>3</span>'+esc(t("bauSchritt3"))+'</div>'+
-    '<button type="button" class="bau-karte bau-sp" data-surprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+esc(t("bauUeberraschSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<div class="bau-zusammen">'+esc(t(katOrt() === "studio" ? "katOrtStudio" : "katOrtFrei"))+' · <b>'+esc(t(modus === "timer" ? "bauArtZeit" : "bauArtSaetze"))+'</b></div>'+
+    '<button type="button" class="bau-karte bau-sp" data-surprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+esc(t("bauUeberraschSub"))+'</small></span>'+
+      '<span class="bk-wuerfel" aria-hidden="true"><svg viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="20"/><circle cx="30" cy="30" r="7"/><circle cx="70" cy="30" r="7"/><circle cx="50" cy="50" r="7"/><circle cx="30" cy="70" r="7"/><circle cx="70" cy="70" r="7"/></svg></span>'+
+      '<span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte" data-bauselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<div style="height:40px"></div>';
   bindCommon();
