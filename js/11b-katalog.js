@@ -4,8 +4,8 @@
    - Katalog: zwei Abteilungen „Meine“ (eigene Workouts mit Timer und Pläne mit Gewicht × Wiederholungen) und „Workoutkatalog“
      (fertige Workouts nach Fokus, mit Ort-Schalter und Filter); dazu eine Karte „Übungskatalog“ (eigene Seite #uebungskatalog:
      alle Übungen nach Bereichen, Filter, eigene Übung anlegen).
-   - Baukasten: „Überrasch mich“ oder „Selber bauen“ öffnen dasselbe Zusammenstell-Fenster (openSurprise) mit den drei Wegen Zufall · Nach Gewichtung ·
-     Selber bauen und je eigenem Inhalt.
+   - Baukasten: „Überrasch mich“ öffnet das Zusammenstell-Fenster (openSurprise) mit den zwei Wegen Zufall · Nach Gewichtung; „Selber bauen“ führt
+     ohne Zwischenfenster gleich in die Übungsauswahl (Ort und Art stehen im Baukasten schon).
    Die Seiten selbst liegen in renderKatalogWorkouts, renderLibrary (Meine), renderKatalogUebungen und renderKatalogBaukasten; die Plan-Seite
    (renderStudioPlan) öffnet sich aus „Meine“. Hier stehen Kopf, Reiter, aufklappbare Bereiche und die Zuordnung. */
 var KAT_TABS = ["workouts", "baukasten"];
@@ -380,8 +380,12 @@ function renderKatalogBaukasten(){
   bauArtBinden(modus, function(){ renderKatalog(); });
   bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
-  // „Selber bauen“ öffnet dasselbe Fenster wie „Überrasch mich“ (dort mit Ort und Art); „Übungen wählen“ führt dann in die Bauseite
-  app.querySelector("[data-bauselber]").addEventListener("click", function(){ openSurprise(null, "selber"); });
+  // „Selber bauen“ fragt nichts mehr nach: Ort (Schritt 1) und Art (Schritt 2) stehen schon, es geht gleich in die Übungsauswahl -
+  // Workout mit Timer oder Plan mit Sätzen, Gewicht und Pausen
+  app.querySelector("[data-bauselber]").addEventListener("click", function(){
+    go("#katalog");
+    if(modus === "timer") go("#mybuild/new"); else katPlanNeu();
+  });
 }
 
 /* ---------- Übungskatalog (dritte Abteilung des Katalogs; #uebungskatalog führt dorthin) ---------- */

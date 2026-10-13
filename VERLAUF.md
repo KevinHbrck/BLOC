@@ -3,6 +3,15 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Plan als Programm, „Selber bauen“ ohne Nachfragen, Timer-Umschalter, Kraftlog-Auswertung (Fassung 2026-10-14-1)
+
+- **„Selber bauen“ fragt nichts mehr nach**: Der Knopf im Baukasten (`renderKatalogBaukasten`, `js/11b-katalog.js`) führt gleich in die Übungsauswahl – Ort (Schritt 1) und Art (Schritt 2) stehen dort schon. Das Zusammenstell-Fenster (`openSurprise`, `js/13-teilen-editor.js`) gehört nur noch zu „Überrasch mich“ und hat zwei Wege: Zufall · Nach Gewichtung.
+- **Plan als Programm** (`planZeileHTML`, `planZeilenBinden` in `js/07-studio.js`): Die Plan-Seite zeigt je Übung eine Zeile mit Sätzen, Wiederholungen, Gewicht und Pause (Übungen ohne Gewicht: Sätze, Arbeit, Pause) zum schnellen Einstellen per +/−; darunter „Zuletzt: 60×12 · 60×11“ und die Notiz der Übung. Oben steht die Summe der Sätze. Die Werte gelten je Übung und damit überall gleich: Plan, Übungskarte, Timer, Steigerung (`settings.studio[id].ziel = { saetze, wdh }`, `kg`, `pause`, `schritt`).
+- **Übungskarte**: Umschalter **Satz für Satz ↔ Mit Timer** (`studio[id].modus`); im Timer-Modus sind die Runden die Sätze des Ziels. Dazu die Zeile **Letztes Mal** (ein Tipp auf einen Satz übernimmt Gewicht und Wiederholungen), Schritt der +/−-Knöpfe einstellbar (1 · 2,5 · 5 · 10 kg), Satztypen **Normal · Aufwärmen · Drop-Satz · Bis Versagen** (Satz = `[kg, wdh, typ]`; Aufwärmsätze zählen nicht in Bestgewicht, Volumen, 1RM und Steigerung) und bei Langhantel-Übungen der **Scheibenrechner** (`openScheibenSheet`, Stange einstellbar, `settings.stangeKg`).
+- **Timer aus dem Plan**: Das Timer-Workout aus einem Plan (`fromPlan`) trägt nach jedem Satz Gewicht und Wiederholungen ein – jetzt auch bei Freiluft-Übungen mit Kurzhantel oder Kettlebell (`myRun` setzt `mitGewicht`, `gymSatzText(id, auchFrei)`). Das Eintragen-Fenster zeigt das letzte Mal; alles landet im selben Protokoll und in der Wochenzeile.
+- **Statistik je Übung** (`openStudioStats`): geschätztes 1RM (Epley), bestes Volumen und Volumen gesamt; Umschalter für die Kurve **Gewicht · 1RM · Volumen**; Einheiten mit neuem Bestgewicht oder 1RM tragen einen ★; die Karte meldet auch einen neuen 1RM-Rekord. Das Protokoll je Übung hält jetzt 200 statt 60 Einheiten.
+- **Noch offen** (aus der Liste „Kraftlog auf Hevy-Niveau“): Supersätze und Zirkel als Block, RPE/RIR je Satz (in den Einstellungen einschaltbar).
+
 ## 2026-10-13 · Beide Orte zugleich, Trainingsplan mit Muskelgruppen (Fassung 2026-10-13-13)
 
 - **Ort mehrfach wählbar**: Fitnessstudio und Freiluft lassen sich zugleich antippen (`settings.katOrt` = `"studio"` · `"frei"` · `"beide"`; `katOrte`, `katOrtPasst`, `katOrtUmschalten`, `katOrtText` in `js/11b-katalog.js`; der letzte gewählte Ort lässt sich nicht abschalten). Workoutkatalog, Übungskatalog, Plan-Bau, Übungsauswahl, Überrasch mich (`p.orte`) und Nach Gewichtung (`stGenPool(orte)`) ziehen dann aus beiden; die Zeile im Fenster heißt „Fitnessstudio + Freiluft“.

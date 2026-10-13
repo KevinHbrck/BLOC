@@ -807,16 +807,16 @@ function spDauerTreffen(d, ziel, tm){
   }
 }
 var spFeinOffen = false;   // Feinauswahl in „Überrasch mich“ aufgeklappt (bleibt so, solange die App offen ist)
-/* Das Zusammenstell-Fenster des Baukastens: ein Fenster, drei Wege mit je eigenem Inhalt - Zufall („Überrasch mich“: Dauer, Bereiche, Ausrüstung),
-   Nach Gewichtung (Regler je Muskelgruppe, ergibt einen Plan) und Selber bauen (Art wählen, dann zur Übungsauswahl). Ort und Aufbau sind überall gleich.
-   twId: ein Timer-Workout wird gefüllt (nur Zufall, mit Anzahl der Übungen). modusStart: "zufall" | "gewicht" | "selber". */
+/* Das Zusammenstell-Fenster des Baukastens („Überrasch mich“): zwei Wege mit je eigenem Inhalt - Zufall (Dauer, Bereiche, Ausrüstung)
+   und Nach Gewichtung (Regler je Muskelgruppe, ergibt einen Plan). „Selber bauen“ hat kein Fenster: es führt gleich in die Übungsauswahl
+   (renderKatalogBaukasten, Ort und Art stehen dort schon). twId: ein Timer-Workout wird gefüllt (nur Zufall, mit Anzahl der Übungen).
+   modusStart: "zufall" | "gewicht". */
 function openSurprise(twId, modusStart){
   var s = state.db.settings, tw = twId ? findWorkout(twId) : null;
   var p = spNormalize(JSON.parse(JSON.stringify(s.surprise || { dur:20, mains:["kraft","rumpf"], cats:[], level:2, equips:["none"] })));
   if(tw) p.anzahl = s.surpriseAnzahl || 8; else delete p.anzahl;
-  var modus = !tw && (modusStart === "gewicht" || modusStart === "selber") ? modusStart : "zufall";
+  var modus = !tw && modusStart === "gewicht" ? "gewicht" : "zufall";
   var g = { w:{ brust:15, ruecken:15, schulter:10, arme:10, rumpf:15, beine:35 }, n:8 };   // Regler von „Nach Gewichtung“
-  var artWahl = null;   // „Selber bauen“: "timer" | "gewicht"; leer = Standard des Ortes (bauModus)
   var root = document.getElementById("overlayRoot");
   var fokusCats = LIB_CATS.filter(function(c){ return c.id!=="stretch" && c.id!=="calis"; });
   function feinText(){   // Zusammenfassung der zugeklappten Feinauswahl
@@ -851,40 +851,29 @@ function openSurprise(twId, modusStart){
         '<div class="tm-hint">'+esc(t("spRules"))+'</div>'+
       '</div>' : '');
   }
-  /* Steht der Baukasten (Ort in Schritt 1, Art in Schritt 2) direkt hinter dem Fenster, fragt das Fenster beides nicht noch einmal, sondern zeigt
+  /* Steht der Baukasten (Ort in Schritt 1, Art in Schritt 2) direkt hinter dem Fenster, fragt das Fenster den Ort nicht noch einmal, sondern zeigt
      nur die Wahl als Zeile; von anderen Stellen aus (Suche, Timer) bleibt der Ort-Schalter im Fenster */
   var seiteDahinter = !tw && parseHash()[0] === "katalog" && katTab() === "baukasten" && !stPlanAktiv;
   function wahlZeile(){
-    var art = artWahl || bauModus();
-    return '<div class="bau-zusammen sp-wahl">'+esc(katOrtText())+' · <b>'+esc(t(art === "timer" ? "bauArtZeit" : "bauArtSaetze"))+'</b></div>';
-  }
-  function selberHTML(){
-    var art = artWahl || bauModus();
-    function b(k, key){ return '<button type="button" data-spart="'+k+'" class="'+(art === k ? 'active' : '')+'" aria-pressed="'+(art === k)+'">'+esc(t(key))+'</button>'; }
-    return '<div class="tm-hint" style="margin-top:0">'+esc(t("bauSelberSub"))+'</div>'+
-      (seiteDahinter ? '' :
-        '<label>'+esc(t("bauArtTitel"))+'</label>'+
-        '<div class="seg-row bau-modus" role="group">'+b("timer", "bauArtZeit")+b("gewicht", "bauArtSaetze")+'</div>'+
-        '<div class="bau-hinweis">'+esc(t(art === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>');
+    return '<div class="bau-zusammen sp-wahl">'+esc(katOrtText())+' · <b>'+esc(t(bauModus() === "timer" ? "bauArtZeit" : "bauArtSaetze"))+'</b></div>';
   }
   function draw(){
     // Neu zeichnen ohne Springen: die Scrollposition im Fenster bleibt erhalten
     var alt = root.querySelector(".sp-sheet"), scrollAlt = alt ? alt.scrollTop : 0;
-    var wege = [["zufall", "spArtZufall"], ["gewicht", "spArtGewichtung"], ["selber", "bauSelber"]];
+    var wege = [["zufall", "spArtZufall"], ["gewicht", "spArtGewichtung"]];
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sp-sheet sp-'+modus+'">'+
       '<h3>'+svgIcon(ICON_UEBERRASCH, "ico sp-h-ico")+' '+esc(t(tw ? "surprise" : "bauFensterTitel"))+'</h3>'+
       (tw ? '' : '<div class="seg-row sp-art sp-wege" role="group">'+wege.map(function(m){
         return '<button type="button" data-spmodus="'+m[0]+'" class="'+(modus === m[0] ? 'active' : '')+'" aria-pressed="'+(modus === m[0])+'">'+esc(t(m[1]))+'</button>'; }).join("")+'</div>')+
       (seiteDahinter ? wahlZeile() : bauOrtHTML())+
-      (modus === "gewicht" ? genReglerHTML(g) : modus === "selber" ? selberHTML() : zufallHTML())+
+      (modus === "gewicht" ? genReglerHTML(g) : zufallHTML())+
       '<div class="btn-row sp-foot"><button class="btn btn-secondary" data-cancel>'+t("cancel")+'</button>'+
-      '<button class="btn btn-primary" data-spgo>'+esc(t(modus === "gewicht" ? "genMake" : modus === "selber" ? "bauWaehlen" : "spGo"))+'</button></div>'+
+      '<button class="btn btn-primary" data-spgo>'+esc(t(modus === "gewicht" ? "genMake" : "spGo"))+'</button></div>'+
     '</div></div>';
     root.querySelector(".sp-sheet").scrollTop = scrollAlt;
     function on(sel, fn){ root.querySelectorAll(sel).forEach(function(b){ b.addEventListener("click", function(){ fn(b); draw(); }); }); }
-    bauOrtBinden(function(){ artWahl = null; draw(); }, root);
+    bauOrtBinden(function(){ draw(); }, root);
     on("[data-spmodus]", function(b){ modus = b.getAttribute("data-spmodus"); });
-    on("[data-spart]", function(b){ artWahl = b.getAttribute("data-spart"); });
     on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; });
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
     on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
@@ -900,14 +889,6 @@ function openSurprise(twId, modusStart){
     root.querySelector("[data-spgo]").addEventListener("click", function(){
       if(modus === "gewicht"){   // Plan aus den Reglern
         if(genPlanErstellen(g)) root.innerHTML = "";
-        return;
-      }
-      if(modus === "selber"){    // Art merken, dann zur Übungsauswahl: Workout mit Timer oder Plan mit Gewicht × Wiederholungen
-        var art = artWahl || bauModus();
-        s.bauModus = art; s.bauModusOrt = katOrtSchluessel(); save();
-        root.innerHTML = "";
-        go("#katalog");
-        if(art === "timer") go("#mybuild/new"); else katPlanNeu();
         return;
       }
       if(tw){ s.surpriseAnzahl = p.anzahl; var q = JSON.parse(JSON.stringify(p)); delete q.anzahl; s.surprise = q; }

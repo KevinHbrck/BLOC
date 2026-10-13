@@ -631,7 +631,6 @@
       klick('[data-herostart]');
       await zuBaukasten("timer");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen (mit Timer)"));
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
       ["air-squats", "push-ups", "plank"].forEach(function (id) { klick('[data-wbex="' + id + '"]'); });
       pruefe($$(".wb-kachel.gewaehlt").length === 3, "gewählte Kacheln: " + $$(".wb-kachel.gewaehlt").length);
@@ -666,7 +665,6 @@
       pruefe($$(".my-item").length === 0, "Verworfenes Workout steht in Meine: " + $$(".my-item").length);
       await zuBaukasten("timer");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
       ["air-squats", "push-ups", "plank"].forEach(function (id) { klick('[data-wbex="' + id + '"]'); });
       klick(await bis(function () { return $(".wb-leiste [data-wbsave]:not([disabled])"); }, 2000, "Speichern"));
@@ -678,7 +676,6 @@
       await bis(function () { return $$(".my-item").length === 1; }, 3000, "gespeichertes Workout in Meine");
       await zuBaukasten("timer");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       await bis(function () { return $("[data-wbex]"); }, 3000, "Baukasten");
       klick("button.back");   // neues Workout ohne Übung: nichts angelegt, keine Nachfrage
       await bis(function () { return $("[data-bauselber]") && !$("#overlayRoot [data-act]"); }, 3000, "zurück im Baukasten");
@@ -694,7 +691,6 @@
       await zuBaukasten("timer");
       pruefe($$(".bau-schritt").length === 3 && $('[data-bauart="timer"].active'), "Baukasten: drei Schritte und die Art „Nach Zeit“ fehlen");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
       pruefe(!$("button[data-exinfo]") && $(".wb-kachel .wb-i"), "Das „i“ soll nur ein Hinweis sein, kein Knopf");
       klick('[data-wbex="air-squats"]');
@@ -732,7 +728,6 @@
       // Plan speichern: erst „Speichern“ nimmt ihn in Meine auf
       await zuBaukasten("gewicht");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen (Sätze)"));
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       await bis(function () { return $("#plan-name") && $$("[data-planex]").length > 20; }, 3000, "Plan-Bau");
       klick($$("[data-planex]")[0]);
       klick($("[data-plandone]"));
@@ -845,7 +840,6 @@
       pruefe($(".bau-karte[data-surprise]") && $("[data-bauselber]"), "Die beiden Wege im Baukasten (Überrasch mich, Selber bauen) fehlen");
       var plaene0 = (JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length;
       klick("[data-bauselber]");   // mit Gewicht: der Plan-Bau
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau (leer)");
       pruefe($("#tabbar").classList.contains("hidden"), "Im Plan-Bau soll die untere Leiste weg sein (dort steht die Fertig-Leiste)");
       pruefe((JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length === plaene0 + 1, "Plan wurde nicht sofort angelegt (kein Speichern nötig)");
@@ -854,7 +848,6 @@
       pruefe((JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).length === plaene0, "leerer Plan bleibt liegen");
       await zuBaukasten("gewicht");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen (mit Gewicht)"));
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau");
       await ortNur("bauort", "frei");   // der Plan-Bau öffnet im Fitnessstudio (Gewicht); für die Freiluft-Übung zuerst den Ort wechseln
       pruefe($$("details.kat-gr").length >= 7 && $$("details.kat-gr").every(function (d) { return !d.open; }), "Plan-Bau: zu Beginn sollen nur die Überschriften stehen");
@@ -987,7 +980,6 @@
       await zuMeine();
       await zuBaukasten("gewicht");
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Neuer Plan"));
-      klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 3000, "Übungen wählen (Fenster)"));
       klick("button.back");
       await bis(function () { return $('[data-kattab="baukasten"].active'); }, 3000, "zurück im Baukasten");
       await zuMeine();
@@ -1178,7 +1170,8 @@
       await bis(function () { return $("[data-planwo]") && $$("[data-studio]:not([data-ortfremd])").length === 6; }, 3000, "Plan mit sechs Übungen");
       var pl = daten().settings.stPlaene;
       pruefe(pl.length === 1 && pl[0].ids.length === 6 && pl[0].fromWo === "lib:gym-chest", "Plan aus dem Deckblatt nicht angelegt: " + JSON.stringify(pl));
-      pruefe(/3 Sätze × 12/.test($('[data-studio="chest-press-machine"]:not([data-ortfremd])').textContent), "Plan-Kachel ohne Ziel „3 Sätze × 12“: " + $('[data-studio="chest-press-machine"]:not([data-ortfremd])').textContent);
+      var zr = $('.pz-zeile[data-pz="chest-press-machine"]');
+      pruefe(zr && zr.querySelector('[data-feld="saetze"] input').value === "3" && zr.querySelector('[data-feld="wdh"] input').value === "12", "Plan-Zeile ohne Ziel 3 Sätze × 12: " + (zr && zr.textContent));
       // „Mit Timer starten“ aus dem Plan: im Timer steht Gewicht × Wiederholungen unter dem Namen
       klick($("[data-planwo]"));
       klick(await bis(function () { return $("[data-go]"); }, 3000, "Mit Timer starten auf dem Deckblatt"));
@@ -1299,6 +1292,109 @@
       await bis(function () { return $(".st-pr") && /Neue Bestleistung/.test($(".st-pr").textContent) && /vorher 100/.test($(".st-pr").textContent); }, 3000, "Bestleistung wird gemeldet");
       klick("[data-stundo]");
       await bis(function () { return !$(".st-pr"); }, 3000, "Hinweis weg nach „Letzten Satz löschen“");
+    }],
+    ["Plan als Programm: Sätze, Gewicht, Pause je Übung, Letztes Mal, Timer-Umschalter, Statistik", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      // „Selber bauen“ fragt nichts mehr nach, „Überrasch mich“ hat nur noch Zufall und Nach Gewichtung
+      klick('[data-herostart]');
+      await zuBaukasten("gewicht");
+      klick("[data-bauselber]");
+      await bis(function () { return $("#plan-name") && $("[data-plandone]"); }, 3000, "Selber bauen führt gleich in die Übungsauswahl");
+      pruefe(!$("#overlayRoot .sp-sheet"), "Selber bauen öffnet noch ein Fenster mit Nachfragen");
+      klick("button.back");
+      await bis(function () { return $('[data-kattab="baukasten"].active') && $("[data-surprise]"); }, 3000, "zurück im Baukasten");
+      klick("[data-surprise]");
+      await bis(function () { return $("#overlayRoot [data-spmodus]"); }, 3000, "Überrasch-mich-Fenster");
+      pruefe($$("#overlayRoot [data-spmodus]").length === 2 && !$("#overlayRoot [data-spmodus=\"selber\"]"), "Das Fenster soll nur Zufall und Nach Gewichtung zeigen");
+      klick("#overlayRoot [data-cancel]");
+      // Plan mit zwei Fitnessstudio-Übungen und einer früheren Einheit
+      var db = daten(), n = Date.now();
+      db.settings.studio = db.settings.studio || {};
+      db.settings.stPlaene = (db.settings.stPlaene || []).concat([{ id: "p-prog", name: "Programm", ids: ["leg-press", "butterfly"], updatedAt: n }]);
+      db.settings.studio["leg-press"] = { log: [{ at: n - 14 * 864e5, s: [[50, 12]] }, { at: n - 7 * 864e5, s: [[60, 12], [60, 11]] }], kg: 60, zuletzt: n - 7 * 864e5 };
+      W.localStorage.setItem(KEY, JSON.stringify(db));
+      await heim();
+      W.go("#studioplan/p-prog");
+      await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "Plan zeigt je Übung eine Zeile");
+      var z1 = $('.pz-zeile[data-pz="leg-press"]'), z2 = $('.pz-zeile[data-pz="butterfly"]');
+      pruefe(/60×12 · 60×11/.test(z1.querySelector(".pz-letzte").textContent), "Zeile zeigt das letzte Mal nicht: " + z1.querySelector(".pz-letzte").textContent);
+      pruefe(/Noch nicht/.test(z2.querySelector(".pz-letzte").textContent), "Übung ohne Einträge: " + z2.querySelector(".pz-letzte").textContent);
+      pruefe(z1.querySelectorAll("[data-feld]").length === 4, "vier Felder je Übung erwartet (Sätze, Wdh., Gewicht, Pause)");
+      var s0 = +z1.querySelector('[data-feld="saetze"] input').value, schritt = W.studioZiel("leg-press").schritt;
+      klick(z1.querySelector('[data-feld="saetze"] [data-inc]'));
+      klick(z1.querySelector('[data-feld="kg"] [data-inc]'));
+      klick(z1.querySelector('[data-feld="pause"] [data-inc]'));
+      var e1 = daten().settings.studio["leg-press"];
+      pruefe(e1.ziel && e1.ziel.saetze === s0 + 1, "Sätze nicht gespeichert: " + JSON.stringify(e1.ziel));
+      pruefe(e1.kg === 60 + schritt, "Gewicht nicht gespeichert: " + e1.kg);
+      pruefe(e1.pause === 105, "Pause nicht gespeichert: " + e1.pause);
+      var summe = s0 + 1 + W.studioZiel("butterfly").saetze;
+      pruefe(new RegExp(summe + " Sätze").test($("#plan-summe").textContent), "Summe oben: " + $("#plan-summe").textContent + " (erwartet " + summe + ")");
+      // Übungskarte: dieselben Werte, Letztes Mal zum Übernehmen, Umschalter Satz für Satz ↔ Timer
+      klick(z1.querySelector(".pz-kopf"));
+      await bis(function () { return $("#st-kg") && $(".st-uebernehmen"); }, 3000, "Karte mit Letztes Mal");
+      pruefe(new RegExp((s0 + 1) + " Sätze").test($(".st-ziel").textContent), "Ziel auf der Karte: " + $(".st-ziel").textContent);
+      pruefe($("#st-kg").value === W.studioKg(60 + schritt), "Karte zeigt das Gewicht aus dem Plan nicht: " + $("#st-kg").value);
+      klick($(".st-uebernehmen"));
+      pruefe($("#st-kg").value === "60" && $("#st-w").value === "12", "Ein Tipp übernimmt Gewicht und Wiederholungen nicht: " + $("#st-kg").value + "×" + $("#st-w").value);
+      klick('[data-stmodus="timer"]');
+      await bis(function () { return $(".st-timer") && !$("#st-kg"); }, 3000, "Timer-Modus");
+      pruefe(+$("#stt-reps").value === s0 + 1, "Timer-Runden folgen den Sätzen nicht: " + $("#stt-reps").value);
+      klick('.st-timer [data-inc]');
+      pruefe(daten().settings.studio["leg-press"].ziel.saetze === s0 + 2 && daten().settings.studio["leg-press"].modus === "timer", "Runden/Modus nicht gespeichert");
+      klick('[data-stmodus="saetze"]');
+      await bis(function () { return $("#st-kg") && !$(".st-timer"); }, 3000, "zurück zu Satz für Satz");
+      // Satztypen: Aufwärmsatz zählt nicht in die Bestwerte; Schritt der +/−-Knöpfe einstellbar
+      klick('[data-sttyp="w"]');
+      pruefe($('[data-sttyp="w"].on'), "Satztyp Aufwärmen lässt sich nicht wählen");
+      eingeben($("#st-kg"), "20"); eingeben($("#st-w"), "10");
+      klick("[data-stset]");
+      await bis(function () { return /Aufw\. 20 × 10/.test($(".st-heute").textContent); }, 3000, "Aufwärmsatz steht unter Heute");
+      var logH = daten().settings.studio["leg-press"].log, lastL = logH[logH.length - 1];
+      pruefe(lastL.s[lastL.s.length - 1][2] === "w", "Satztyp nicht gespeichert: " + JSON.stringify(lastL.s));
+      pruefe(!$(".st-pr") && $('[data-sttyp="n"].on'), "Aufwärmsatz meldet einen Rekord oder der Typ springt nicht zurück");
+      klick('[data-stschritt="5"]');
+      pruefe(daten().settings.studio["leg-press"].schritt === 5, "Schritt nicht gespeichert");
+      eingeben($("#st-kg"), "60");
+      klick("[data-kgplus]");
+      pruefe($("#st-kg").value === "65", "Schritt 5 wirkt nicht: " + $("#st-kg").value);
+      klick("[data-stundo]");   // den Aufwärmsatz wieder entfernen, damit die weiteren Prüfungen von einem Satz ausgehen
+      await bis(function () { return !/Aufw\./.test($(".st-heute").textContent); }, 3000, "Aufwärmsatz gelöscht");
+      // Statistik: Sichten Gewicht · 1RM · Volumen, Rekord-Stern an der Einheit mit Steigerung
+      klick("[data-ststats]");
+      await bis(function () { return $$("#overlayRoot [data-stsicht]").length === 3; }, 3000, "Statistik mit drei Sichten");
+      pruefe(/Geschätztes 1RM/.test($("#overlayRoot .st-stats-zahlen").textContent) && /Volumen/.test($("#overlayRoot .st-stats-zahlen").textContent), "Zahlen: 1RM und Volumen fehlen");
+      klick('#overlayRoot [data-stsicht="vol"]');
+      await bis(function () { return /Volumen je Woche/.test($("#overlayRoot .wo-kopf").textContent); }, 2000, "Sicht Volumen");
+      pruefe($$("#overlayRoot .st-rekord").length >= 1, "Kein Rekord-Stern in den letzten Einheiten");
+      klick("#overlayRoot [data-cancel]");
+      // Scheibenrechner bei der Langhantel
+      W.go("#studio/bench-press");
+      await bis(function () { return $("[data-stscheiben]") && $("#st-kg"); }, 3000, "Karte Bankdrücken mit Scheiben");
+      eingeben($("#st-kg"), "100");
+      klick("[data-stscheiben]");
+      await bis(function () { return $("#overlayRoot .sch-gross"); }, 2000, "Scheibenrechner");
+      pruefe(/25 \+ 15/.test($("#overlayRoot .sch-gross").textContent), "100 kg mit 20-kg-Stange: pro Seite 25 + 15 erwartet, war " + $("#overlayRoot .sch-gross").textContent);
+      klick("#overlayRoot [data-cancel]");
+      W.go("#studioplan/p-prog");
+      await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
+      // Plan als Timer-Workout: Runden = Sätze, im Timer Gewicht eintragen, letztes Mal im Fenster, landet in der Statistik
+      W.go("#studioplan/p-prog");
+      klick(await bis(function () { return $("[data-planwo]"); }, 3000, "Mit Timer starten"));
+      var mw = (daten().myWorkouts || []).filter(function (m) { return m.fromPlan === "p-prog"; })[0];
+      pruefe(mw && mw.items[0].ex === "leg-press" && mw.items[0].reps === s0 + 2, "Timer-Workout aus dem Plan: " + JSON.stringify(mw && mw.items[0]));
+      W.go("#playmy/" + mw.id);
+      klick(await bis(function () { return $("[data-plkg]"); }, 3000, "Satz eintragen im Timer"));
+      await bis(function () { return $("#overlayRoot .pg-letzte .st-uebernehmen"); }, 2000, "Fenster zeigt das letzte Mal");
+      klick($("#overlayRoot [data-ok]"));
+      await bis(function () { return !$("#overlayRoot .pg-sheet"); }, 2000, "Fenster schließt");
+      var heute = daten().settings.studio["leg-press"].log.filter(function (l) { return W.studioTag(l.at) === W.studioTag(Date.now()); })[0];
+      pruefe(heute && heute.s.length === 1, "Satz aus dem Timer landet nicht im Protokoll");
+      pruefe((daten().history || []).some(function (h) { return h.studio && h.ex.indexOf("leg-press") > -1; }), "Satz aus dem Timer fließt nicht in die Wochenzeile");
+      // Freiluft-Übung mit Gewicht: im Plan-Workout ebenfalls mit Satz-Eintrag, im normalen Air-Workout nicht
+      var frei = W.EXERCISES.filter(function (ex) { return !W.exIstStudio(ex) && !W.studioNurBlock(ex) && ex.main !== "stretch"; })[0];
+      pruefe(frei && W.gymSatzText(frei.id) === "" && W.gymSatzText(frei.id, true) !== "", "Freiluft-Übung mit Gewicht: Satz-Eintrag nur im Plan-Workout");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

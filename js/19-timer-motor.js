@@ -2,9 +2,10 @@
 /* ============ Timer engine ============ */
 function buildSteps(w){
   var steps = [];
+  var mitGew = !!w.mitGewicht;   // Plan-Workout: Gewicht auch bei Freiluft-Übungen eintragen
   w = { id:w.id, name:w.name, items:workoutItems(w) };   // Blöcke mit Wiederholungen (times) hintereinander ausgeschrieben
   var b0 = findBlock(w.items[0] ? w.items[0].blockId : null);
-  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", kg: gymSatzText(b0 && b0.ex || ""), exNr:1 });
+  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", kg: gymSatzText(b0 && b0.ex || "", mitGew), exNr:1 });
   var exNr = 0;   // die wievielte Übung (Block) im Workout - nur für die Anzeige oben
   for(var i=0;i<w.items.length;i++){
     var it = w.items[i];
@@ -14,15 +15,15 @@ function buildSteps(w){
     for(var r=0;r<b.reps;r++){
       var bn = b.sides ? b.name+" · "+(r%2===0 ? t("left") : t("right")) : b.name;
       steps.push({ phase:"work", label:b.name, blockName:bn, duration:b.workSec, rep:r+1, totalReps:b.reps,
-                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || ""), exNr:exNr });
+                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || "", mitGew), exNr:exNr });
       if(r < b.reps-1){
         steps.push({ phase:"rest", label:b.name, blockName:b.name, duration:b.restSec, rep:r+1, totalReps:b.reps, ex:b.ex||"",
-                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || ""), exNr:exNr });
+                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || "", mitGew), exNr:exNr });
       }
     }
     if(i < w.items.length-1 && it.restAfterSec>0){
       var nb = findBlock(w.items[i+1].blockId);
-      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec, ex: nb && nb.ex || "", kg: gymSatzText(nb && nb.ex || ""), exNr:exNr+1 });
+      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec, ex: nb && nb.ex || "", kg: gymSatzText(nb && nb.ex || "", mitGew), exNr:exNr+1 });
     }
   }
   steps.push({ phase:"done", label:"Fertig", duration:0, exNr:exNr+1 });
@@ -261,7 +262,7 @@ function enterStep(idx, opt){
   if(kgBtn) kgBtn.addEventListener("click", function(){
     var exId = kgBtn.getAttribute("data-plkg");
     openGewichtSheet(exId, function(){
-      var txt = gymSatzText(exId);
+      var txt = gymSatzText(exId, !!playerState.workout.mitGewicht);
       playerState.steps.forEach(function(s){ if(s.ex === exId) s.kg = txt; });
       var el = document.querySelector("#pl-body .pl-kg"); if(el) el.textContent = txt;
     });

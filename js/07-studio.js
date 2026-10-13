@@ -3,19 +3,48 @@
    Übungen an Geräten und mit freien Gewichten als Kacheln. Jede Übung hat „ihre Karte“ (#studio/<id>):
    Gewicht × Wiederholungen eintragen (vorausgefüllt), danach läuft die Pause, Verlauf, Notiz und
    Steigerung nach der doppelten Progression (Ziel zweimal hintereinander geschafft -> Gewicht hoch).
-   Daten: settings.studio[id] = { kg, pause, notiz, zuletzt, log:[{ at, s:[[kg, wdh], …] }] } - nur auf dem Gerät. */
+   Daten: settings.studio[id] = { kg, pause, notiz, zuletzt, log:[{ at, s:[[kg, wdh], …] }], ziel:{ saetze, wdh }, timer:{ reps, work, rest },
+   modus:"timer" } - nur auf dem Gerät. kg, pause und ziel stellt man im Plan (Zeile je Übung) oder auf der Übungskarte ein, beides ist dasselbe. */
 var studioQuery = "", studioPause = null;
 function studioAlle(){ return state.db.settings.studio || (state.db.settings.studio = {}); }
 function studioEintrag(id){ return (state.db.settings.studio || {})[id] || null; }
-function studioZiel(id){ var z = STUDIO_ZIEL[id] || [3, 12, 2.5]; return { saetze:z[0], wdh:z[1], schritt:z[2] }; }
+/* Ziel einer Übung: Sätze × Wiederholungen. Voreinstellung aus STUDIO_ZIEL, überschrieben von dem, was im Plan oder auf der Karte eingestellt wurde
+   (settings.studio[id].ziel = { saetze, wdh }) - es gilt überall gleich: Plan, Übungskarte, Timer und die Steigerung nach der doppelten Progression. */
+function studioZiel(id){
+  var z = STUDIO_ZIEL[id] || [3, 12, 2.5], e = studioEintrag(id), g = e && e.ziel;
+  // schritt: Gewichtsschritt der +/−-Knöpfe, je Übung einstellbar (Karte), sonst die Voreinstellung
+  return { saetze:g && g.saetze > 0 ? g.saetze : z[0], wdh:g && g.wdh > 0 ? g.wdh : z[1], schritt:e && e.schritt > 0 ? e.schritt : z[2] };
+}
+/* Arbeitsgewicht: was zuletzt eingestellt oder benutzt wurde (sonst das Gewicht des ersten Satzes der letzten Einheit, sonst 0) */
+function studioArbeitsKg(id){
+  var e = studioEintrag(id) || {};
+  if(e.kg != null) return e.kg;
+  var l = e.log && e.log.length ? e.log[e.log.length-1] : null, a = l ? arbeitsSaetze(l) : [];
+  return a.length ? a[0][0] : (l && l.s.length ? l.s[0][0] : 0);
+}
+/* Jüngste Einheit mit Sätzen; mitHeute = false überspringt heutige Sätze („Letztes Mal“ auf der Karte, wo „Heute“ schon dasteht) */
+function studioLetzte(id, mitHeute){
+  var e = studioEintrag(id), log = (e && e.log) || [], heute = studioTag(Date.now());
+  for(var i = log.length-1; i >= 0; i--){
+    if(log[i].s.length && (mitHeute || studioTag(log[i].at) !== heute)) return log[i];
+  }
+  return null;
+}
+function studioLetzteText(l){   // „40×12 · 40×11 · 38×10“
+  return l.s.map(satzText).join(" · ");
+}
+function studioTagText(ts){
+  return new Date(ts).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" });
+}
 /* Fortschritt je Woche: aus [[Zeitpunkt, Wert], …] wird je Kalenderwoche (Montag) der beste Wert -
    beim Gewicht der höchste, bei Zeiten der niedrigste. Die Kurve zeigt echte Wochenabstände. */
-function wochenWerte(liste, niedrigGut){
+function wochenWerte(liste, niedrigGut, summe){   // summe: je Woche zusammenzählen (Volumen) statt den besten Wert nehmen
   var je = {};
   liste.forEach(function(x){
     var d = new Date(x[0]); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7);
     var w = Math.round(d.getTime() / 6048e5);
-    je[w] = w in je ? (niedrigGut ? Math.min(je[w], x[1]) : Math.max(je[w], x[1])) : x[1];
+    if(summe) je[w] = (je[w] || 0) + x[1];
+    else je[w] = w in je ? (niedrigGut ? Math.min(je[w], x[1]) : Math.max(je[w], x[1])) : x[1];
   });
   return Object.keys(je).map(Number).sort(function(a, b){ return a - b; }).map(function(w){ return { w:w, v:je[w] }; });
 }
@@ -26,10 +55,35 @@ function wochenKurve(pts, cls){
   return '<svg class="wo-kurve '+(cls || "")+'" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+
     pts.map(function(q){ return ((q.w - w0)/wb*100).toFixed(1)+","+(mx === mn ? 15 : 26 - (q.v - mn)/sp*22).toFixed(1); }).join(" ")+'"/></svg>';
 }
-function studioWochen(id){
-  var e = studioEintrag(id);
-  return wochenWerte((e && e.log || []).filter(function(l){ return l.s.length; }).map(function(l){
-    return [l.at, Math.max.apply(null, l.s.map(function(x){ return x[0]; }))]; }), false).slice(-16);
+/* Wochenwerte je Sicht: "kg" bestes Gewicht, "rm" geschätztes 1RM, "vol" Volumen (Gewicht × Wiederholungen, alle Arbeitssätze der Woche) */
+function studioWochen(id, sicht){
+  var e = studioEintrag(id), log = (e && e.log || []).filter(function(l){ return arbeitsSaetze(l).length; });
+  if(sicht === "vol") return wochenWerte(log.map(function(l){ return [l.at, studioVolumen(l)]; }), false, true).slice(-16);
+  return wochenWerte(log.map(function(l){
+    var a = arbeitsSaetze(l);
+    return [l.at, Math.max.apply(null, a.map(function(x){ return sicht === "rm" ? satzSchaetzung1RM(x) : x[0]; }))];
+  }), false).slice(-16);
+}
+/* Satztypen: ein Satz ist [kg, wdh] oder [kg, wdh, typ] mit typ "w" (Aufwärmen), "d" (Drop) oder "f" (bis Versagen). Aufwärmsätze zählen nicht
+   in Bestgewicht, Volumen, geschätztes 1RM und die Steigerung. */
+var SATZ_TYPEN = ["n", "w", "d", "f"];   // normal · Aufwärmen · Drop · bis Versagen
+function satzTyp(x){ return x[2] === "w" || x[2] === "d" || x[2] === "f" ? x[2] : "n"; }
+function arbeitsSaetze(l){ return (l.s || []).filter(function(x){ return satzTyp(x) !== "w"; }); }
+function satzSchaetzung1RM(x){ return x[1] <= 1 ? x[0] : x[0]*(1 + x[1]/30); }   // Epley
+function studioVolumen(l){ return arbeitsSaetze(l).reduce(function(a, x){ return a + x[0]*x[1]; }, 0); }
+function satzText(x){   // „40×12“, bei besonderen Sätzen mit Kürzel davor („Aufw. 20×10“)
+  var ty = satzTyp(x);
+  return (ty === "n" ? "" : t("satzTyp_"+ty)+" ")+studioKg(x[0])+"×"+x[1];
+}
+/* Geschätztes 1RM und Bestgewicht über alle Einheiten (nur Arbeitssätze); davor = nur Einheiten vor dem Index i */
+function studioBestwerte(log, bis){
+  var kg = 0, rm = 0, vol = 0;
+  log.forEach(function(l, i){
+    if(bis != null && i >= bis) return;
+    arbeitsSaetze(l).forEach(function(x){ kg = Math.max(kg, x[0]); rm = Math.max(rm, satzSchaetzung1RM(x)); });
+    vol = Math.max(vol, studioVolumen(l));
+  });
+  return { kg:kg, rm:rm, vol:vol };
 }
 function studioTag(ts){ var d = new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
 function studioNurBlock(ex){
@@ -39,7 +93,8 @@ function studioTimer(id){
   var e = studioEintrag(id) || {}, tm = e.timer || {}, ex = findExercise(id);
   if(studioNurBlock(ex))   // Vorgabe wie in Air
     return { reps:tm.reps || ex.setReps || ex.reps, work:tm.work || ex.workSec, rest:tm.rest != null ? tm.rest : ex.restSec };
-  return { reps:tm.reps || 3, work:tm.work || 40, rest:tm.rest != null ? tm.rest : (e.pause || 90) };
+  // Runden = die Sätze des Ziels (im Plan oder auf der Karte eingestellt); eine ältere Timer-Einstellung gilt, solange kein Ziel gesetzt ist
+  return { reps:(e.ziel && e.ziel.saetze) || tm.reps || studioZiel(id).saetze, work:tm.work || 40, rest:tm.rest != null ? tm.rest : (e.pause || 90) };
 }
 function studioRun(ex){
   var tm = studioTimer(ex.id), b = exBlock(ex);
@@ -98,7 +153,7 @@ function studioKachel(id){
   var ex = findExercise(id);
   if(!ex) return "";
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
-  var sub = last && last.s.length ? studioKg(last.s[0][0])+" kg · "+last.s.length+" × "+last.s[0][1] : t("stNoData");
+  var la = last ? arbeitsSaetze(last) : [], sub = la.length ? studioKg(la[0][0])+" kg · "+la.length+" × "+la[0][1] : t("stNoData");
   if(studioNurBlock(ex)){ var tb = studioTimer(id); sub = tb.reps+" × "+tb.work+" s"; last = null; }
   return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
@@ -196,7 +251,8 @@ function satzKurz(id){   // „3×12“ bzw. „3×40 s“ für die kleinen Plan
 }
 function satzLetzter(id){
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
-  return last && last.s.length ? studioKg(last.s[0][0])+" kg · "+satzName(last.s.length)+" × "+last.s[0][1] : "";
+  var la = last ? arbeitsSaetze(last) : [];
+  return la.length ? studioKg(la[0][0])+" kg · "+satzName(la.length)+" × "+la[0][1] : "";
 }
 function studioSub(id){
   var ex = findExercise(id);
@@ -205,9 +261,9 @@ function studioSub(id){
 }
 /* Fitnessstudio-Übung in einem Workout mit Timer: vorn steht Gewicht × Wiederholungen („40 kg · 3 × 12“, ohne Eintrag das Ziel „3 × 12“);
    leer bei allen anderen Übungen */
-function gymSatzText(id){
+function gymSatzText(id, auchFrei){   // auchFrei: im Plan-Workout zählen auch Freiluft-Übungen mit Gewicht (Kurzhantel, Kettlebell)
   var ex = findExercise(id);
-  if(!exIstStudio(ex)) return "";
+  if(!exIstStudio(ex) && !(auchFrei && ex && !studioNurBlock(ex) && ex.main !== "stretch")) return "";
   return satzLetzter(id) || satzZiel(id);
 }
 /* Unter dem Namen einer Kachel: wofür die Übung da ist - die ersten zwei Hauptmuskeln in Kurzform, klein. Ohne Muskeldaten (eigene Übungen) entfällt die Zeile. */
@@ -219,12 +275,78 @@ function studioUnter(id){
   return kachelMuskel(findExercise(id))+(sub === t("stNoData") ? '' : '<span class="st-sub">'+esc(sub)+'</span>');
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
+/* Der Plan als Programm (wie in Heavy): je Übung eine Zeile mit Sätzen, Wiederholungen, Gewicht und Pause zum schnellen Einstellen, darunter das letzte Mal.
+   Die Werte stehen je Übung (studioZiel, Arbeitsgewicht, Pause) und gelten damit auch auf der Übungskarte und im Timer. Übungen ohne Gewicht (nur Block)
+   haben Sätze, Arbeitszeit und Pause. */
+function planFeldHTML(feld, label, wert, min, max, schritt){
+  return '<div class="st-feld"><label>'+esc(label)+'</label><div class="stepper st-step pz-step" data-feld="'+feld+'" data-min="'+min+'" data-max="'+max+'" data-schritt="'+schritt+'">'+
+    '<button type="button" data-dec aria-label="&minus;">&minus;</button>'+
+    '<input type="text" inputmode="decimal" value="'+esc(studioKg(wert))+'" aria-label="'+esc(label)+'">'+
+    '<button type="button" data-inc aria-label="&plus;">&plus;</button></div></div>';
+}
+function planZeileHTML(id, nr){
+  var ex = findExercise(id);
+  if(!ex) return "";
+  var block = studioNurBlock(ex), z = studioZiel(id), tm = studioTimer(id), e = studioEintrag(id) || {}, l = studioLetzte(id, true);
+  var felder = block
+    ? planFeldHTML("reps", t("planSaetze"), tm.reps, 1, 20, 1)+planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5)+
+      planFeldHTML("rest", t("planPause"), tm.rest, 0, 600, 5)
+    : planFeldHTML("saetze", t("planSaetze"), z.saetze, 1, 20, 1)+planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1)+
+      planFeldHTML("kg", t("planKg"), studioArbeitsKg(id), 0, 500, z.schritt)+planFeldHTML("pause", t("planPause"), e.pause || 90, 0, 600, 15);
+  return '<div class="pz-zeile" data-pz="'+id+'" style="--cat:'+studioFarbe(ex)+'">'+
+    '<div class="pz-kopf" role="button" tabindex="0" data-studio="'+id+'" aria-label="'+esc(tplText(ex.name))+'">'+
+      '<span class="pz-bild">'+(ILLU[id] ? illuStillHTML(id, "pz-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+'</span>'+
+      '<span class="pz-text"><span class="pz-name"><i>'+nr+'</i> '+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+
+        '<span class="pz-letzte'+(l ? ' an' : '')+'">'+(l ? esc(t("planZuletzt", { d:studioTagText(l.at), s:studioLetzteText(l) })) : esc(t("planNochNie")))+'</span>'+
+        (e.notiz && e.notiz.trim() ? '<span class="pz-notiz">'+esc(e.notiz.trim())+'</span>' : '')+'</span>'+   // die Notiz der Übung erscheint beim nächsten Mal wieder
+      '<span class="pz-pfeil" aria-hidden="true">'+ICON_CHEV+'</span></div>'+
+    '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div></div>';
+}
+function planSaetzeSumme(ids){
+  return ids.reduce(function(a, id){
+    var ex = findExercise(id);
+    return a + (ex && studioNurBlock(ex) ? studioTimer(id).reps : studioZiel(id).saetze);
+  }, 0);
+}
+function planSummeText(ids){
+  return planAnzahl(ids.length)+(ids.length ? " · "+t("planSaetzeGesamt", { n:planSaetzeSumme(ids) }) : "");
+}
+/* fn() läuft nach jeder Änderung (Summe oben nachführen); gespeichert wird sofort */
+function planZeilenBinden(root, fn){
+  root.querySelectorAll(".pz-zeile").forEach(function(zeile){
+    var id = zeile.getAttribute("data-pz");
+    function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
+    function setzen(feld, v){
+      var en = eintrag();
+      if(feld === "saetze" || feld === "wdh"){ en.ziel = en.ziel || {}; en.ziel[feld] = v; }
+      else if(feld === "kg") en.kg = v;
+      else if(feld === "pause") en.pause = v;
+      else { var tm = studioTimer(id); en.timer = { reps:tm.reps, work:tm.work, rest:tm.rest }; en.timer[feld] = v; }
+      save();
+      fn();
+    }
+    zeile.querySelectorAll(".pz-step").forEach(function(st){
+      var feld = st.getAttribute("data-feld"), input = st.querySelector("input");
+      var min = parseFloat(st.getAttribute("data-min")), max = parseFloat(st.getAttribute("data-max")), sch = parseFloat(st.getAttribute("data-schritt"));
+      function wert(){ var x = parseFloat(String(input.value).replace(",", ".")); return isFinite(x) ? x : min; }
+      function los(v){
+        v = Math.round(Math.min(max, Math.max(min, v))*100)/100;
+        input.value = studioKg(v);
+        setzen(feld, v);
+      }
+      st.querySelector("[data-dec]").addEventListener("click", function(){ los(wert() - sch); });
+      st.querySelector("[data-inc]").addEventListener("click", function(){ los(wert() + sch); });
+      input.addEventListener("change", function(){ los(wert()); });
+      input.addEventListener("focus", function(){ input.select(); });
+    });
+  });
+}
 function renderStudioPlan(){
   var p = stPlanAktiv && stPlanFind(stPlanAktiv);
   if(!p){ stPlanAktiv = null; stPlanBauen = false; return renderKatalog(); }
   var ids = stPlanIds(p), pos = {}, html;
   ids.forEach(function(id, i){ pos[id] = [i+1]; });
-  var hw = stPlanBauen ? hinweise("planbau", ["planTippen"]) : hinweise("", []);
+  var hw = stPlanBauen ? hinweise("planbau", ["planTippen"]) : hinweise("planzeilen", ["planZeilenHint"]);
   html = topbar(p.name, { back:"#katalog", right:hw.knopf+(stPlanBauen ? lupeHTML("pl", stPlanQuery) : "") });
   if(stPlanBauen){
     /* Plan-Bau auf dem Katalog: dieselben Bereiche und Filter wie unter Übungen (Air und Studio gemeinsam), zugeklappt mit „n gewählt“;
@@ -281,13 +403,12 @@ function renderStudioPlan(){
       '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+esc(planAnzahl(ids.length))+'</b></span>'+
       '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone'+(p.entwurf && !ids.length ? ' disabled' : '')+'>'+ICON_SAVE+' '+t(p.entwurf ? "save" : "planDone")+'</button></span></div></div>';
   } else {
-    html += '<div class="plan-kopf"><b>'+esc(planAnzahl(ids.length))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
+    // Plan = Programm: je Übung Sätze, Wiederholungen, Gewicht und Pause gleich hier einstellen; das letzte Mal steht darunter
+    html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
+      (ids.length ? hw.z(0, "page-hint") : '')+
       (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("katPlanStart"))+'</button>' : '')+
+      (ids.length ? '<div class="pz-liste">'+ids.map(function(id, i){ return planZeileHTML(id, i+1); }).join("")+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
       (ids.length ? auswertungHTML(ids) : '')+
-      (ids.length ? '<div class="fig-grid">'+ids.map(function(id, i){
-        var ex = findExercise(id);
-        return uebKachel({ bild:id, name:tplText(ex.name), attr:'data-studio="'+id+'"', cat:studioFarbe(ex), nr:[i+1], unter:studioUnter(id) });
-      }).join("")+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
       '<div style="height:40px"></div>';
   }
   app.innerHTML = html;
@@ -300,6 +421,10 @@ function renderStudioPlan(){
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
   an("[data-planedit]", function(){ stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
+  if(!stPlanBauen) planZeilenBinden(app, function(){   // Summe der Sätze oben nachführen
+    var su = app.querySelector("#plan-summe");
+    if(su) su.textContent = planSummeText(stPlanIds(p));
+  });
   an("[data-plandone]", function(){
     if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); showToast(t("planGespeichert")); }   // erst jetzt steht der neue Plan unter Meine
     stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);

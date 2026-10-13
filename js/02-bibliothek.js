@@ -250,7 +250,9 @@ function findMy(id){
   for(var i=0;i<l.length;i++) if(l[i].id===id) return normMy(l[i]);
   return null;
 }
-function myRun(mw){ return draftRun(normMy(mw)); }
+/* mitGewicht: das Workout stammt aus einem Plan (Sätze × Wiederholungen) - im Timer wird nach jedem Satz Gewicht und Wiederholungen eingetragen,
+   auch bei Freiluft-Übungen mit Kurzhantel oder Kettlebell, und fließt in die Statistik */
+function myRun(mw){ var r = draftRun(normMy(mw)); if(mw.fromPlan) r.mitGewicht = true; return r; }
 function createMyFromDraft(d){
   var mw = { id:uid(), name:d.name, mode:d.mode, reps:d.reps, work:d.work, rest:d.rest, blockRest:d.blockRest,
              items:draftCopy(d.items), updatedAt:Date.now() };

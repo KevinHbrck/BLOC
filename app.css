@@ -2458,3 +2458,43 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 /* Meine › Trainingsplan: Muskelgruppen und Ort unter dem Namen */
 .pl-gruppen{ font-weight:600; color:var(--text); }
 .plan-item .pl-namen{ opacity:.85; }
+/* Plan als Programm (2026-10-14): je Übung eine Zeile mit Sätzen, Wiederholungen, Gewicht und Pause zum schnellen Einstellen, darunter das letzte Mal */
+.pz-liste{ display:flex; flex-direction:column; gap:10px; margin:0 0 14px; }
+.pz-zeile{ background:var(--surface); border-radius:16px; box-shadow:var(--shadow); padding:10px 12px 12px; border-left:4px solid var(--cat, var(--accent)); }
+.pz-kopf{ display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:8px; border-radius:10px; }
+.pz-bild{ flex:0 0 auto; width:54px; height:54px; display:flex; align-items:center; justify-content:center; }
+.pz-illu{ width:54px; height:54px; color:var(--cat); }
+.pz-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.pz-name{ font-weight:700; font-size:15px; line-height:1.25; }
+.pz-name i{ font-style:normal; color:var(--text-dim); font-weight:700; margin-right:2px; }
+.pz-letzte{ font-size:12.5px; color:var(--text-dim); font-variant-numeric:tabular-nums; }
+.pz-letzte.an{ color:var(--text); }
+.pz-pfeil{ flex:0 0 auto; color:var(--text-dim); display:flex; }
+.pz-pfeil svg{ width:18px; height:18px; }
+.pz-felder{ margin-bottom:0; gap:8px; }
+.pz-felder.drei{ grid-template-columns:1fr 1fr 1fr; }
+.pz-zeile .st-feld label{ font-size:11.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pz-zeile .stepper button{ width:38px; height:44px; font-size:20px; flex:0 0 auto; }
+.pz-zeile .st-step input{ font-size:17px; min-width:0; }
+/* Übungskarte: letztes Mal, Umschalter Satz für Satz ↔ Timer */
+.st-letzte{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; align-items:center; font-size:13px; color:var(--text-dim); margin:0 0 10px; }
+.st-letzte b{ font-weight:700; }
+.st-uebernehmen{ border:0; font:inherit; font-weight:600; color:var(--text); cursor:pointer; font-variant-numeric:tabular-nums; }
+.st-uebernehmen:active{ background:var(--border); }
+.st-modus{ margin:2px 0 12px; }
+.st-modus button{ display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.st-modus button .ico, .st-modus button svg{ width:14px; height:14px; }
+.st-hero .st-timer{ text-align:left; }
+.pg-letzte{ margin:0 0 8px; }
+.pz-notiz{ font-size:12.5px; color:var(--text-dim); font-style:italic; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Satztypen, Plattenrechner, Statistik-Sichten */
+.st-typen{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:0 0 10px; font-size:13px; color:var(--text-dim); align-items:center; }
+.st-schritt{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; align-items:center; margin:0 0 10px; font-size:13px; color:var(--text-dim); }
+.st-scheiben{ border:0; background:none; color:var(--text-dim); font:inherit; font-size:13px; text-decoration:underline; cursor:pointer; padding:4px 6px; }
+.sch-sheet .sch-zeile{ display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--border); font-size:15px; }
+.sch-sheet .sch-zeile:first-of-type{ border-top:0; }
+.sch-sheet .sch-gross{ font-size:20px; font-weight:700; text-align:center; margin:10px 0; font-variant-numeric:tabular-nums; }
+.sch-sheet .sch-bar{ display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 10px; }
+.st-stats .st-sicht{ margin:0 0 12px; }
+.st-stats .st-stats-zahlen{ margin-bottom:12px; }
+.st-v-zeile .st-rekord{ color:var(--accent); margin-left:6px; }

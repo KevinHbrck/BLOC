@@ -90,18 +90,19 @@ function studioVorschlag(id){
   var e = studioEintrag(id) || {}, z = studioZiel(id), log = e.log || [], heute = studioTag(Date.now());
   var h = log.length && studioTag(log[log.length-1].at) === heute ? log[log.length-1] : null;
   if(h && h.s.length) return { kg:h.s[h.s.length-1][0], wdh:h.s[h.s.length-1][1] };
-  var vor = log.length ? log[log.length-1] : null;
-  return { kg: e.kg != null ? e.kg : (vor && vor.s.length ? vor.s[0][0] : 0), wdh: vor && vor.s.length ? vor.s[0][1] : z.wdh };
+  var vor = log.length ? log[log.length-1] : null, va = vor ? arbeitsSaetze(vor) : [];
+  return { kg: e.kg != null ? e.kg : (va.length ? va[0][0] : 0), wdh: va.length ? va[0][1] : z.wdh };
 }
-/* Doppelte Progression: in den letzten zwei Einheiten mit dem Arbeitsgewicht alle Ziel-Sätze mit Ziel-Wdh. */
+/* Doppelte Progression: in den letzten zwei Einheiten mit dem Arbeitsgewicht alle Ziel-Sätze mit Ziel-Wdh. (Aufwärmsätze zählen nicht) */
 function studioSteigern(id){
   var e = studioEintrag(id), z = studioZiel(id);
   if(!e || !e.log || e.log.length < 2) return null;
-  var kg = e.kg != null ? e.kg : e.log[e.log.length-1].s[0][0];
+  var lz = arbeitsSaetze(e.log[e.log.length-1]);
+  var kg = e.kg != null ? e.kg : (lz.length ? lz[0][0] : 0);
   if(!(kg > 0)) return null;
   var zwei = e.log.slice(-2);
   var ok = zwei.every(function(l){
-    var gute = l.s.filter(function(x){ return x[0] >= kg && x[1] >= z.wdh; });
+    var gute = arbeitsSaetze(l).filter(function(x){ return x[0] >= kg && x[1] >= z.wdh; });
     return gute.length >= z.saetze;
   });
   if(!ok || (e.erhoeht && e.erhoeht >= zwei[1].at)) return null;
@@ -127,12 +128,8 @@ function statsLeisteHTML(attr, kurz, pts, farbe){
     '<span class="ssl-chev">'+ICON_CHEV+'</span></button>';
 }
 function studioStatsLeiste(id){
-  var e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return l.s.length; }), kurz = t("stStatsNone");
-  if(log.length){
-    var best = 0;
-    log.forEach(function(l){ l.s.forEach(function(x){ if(x[0] > best) best = x[0]; }); });
-    kurz = t("stStatsKurz", { kg:studioKg(best), n:log.length });
-  }
+  var e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return arbeitsSaetze(l).length; }), kurz = t("stStatsNone");
+  if(log.length) kurz = t("stStatsKurz", { kg:studioKg(studioBestwerte(log).kg), n:log.length });
   return statsLeisteHTML("data-ststats", kurz, studioWochen(id));
 }
 /* Diagramm je Woche. fmt formatiert die Achsenwerte (Standard: Gewicht), schritt ist der Abstand, wenn alle Werte gleich sind.
@@ -164,33 +161,52 @@ function openStatistik(o){
   var hinweis = !o.hatDaten ? o.leerText : wo.length < 2 ? t("stOneWeek") : "";
   var innen = '<div class="st-stats-zahlen">'+o.zahlen.map(function(z){
       return '<div><b>'+esc(o.hatDaten ? z[0] : "–")+'</b><span>'+esc(z[1])+'</span></div>'; }).join("")+'</div>'+
+    // sichten: [[Schlüssel, Beschriftung] …] - Umschalter für die Kurve (Gewicht · 1RM · Volumen); o.neu(Schlüssel) zeichnet das Fenster neu
+    (o.sichten ? '<div class="seg-row st-sicht" role="group">'+o.sichten.map(function(s){
+      return '<button type="button" data-stsicht="'+s[0]+'" class="'+(o.sicht === s[0] ? 'active' : '')+'" aria-pressed="'+(o.sicht === s[0])+'">'+esc(s[1])+'</button>'; }).join("")+'</div>' : '')+
     '<div class="wo-kopf"><span>'+esc(o.verlaufTitel)+(o.seit ? SEP+esc(t("stSince", { d:o.seit })) : '')+'</span>'+
       (wo.length > 1 ? '<b>'+fmt(wo[0].v)+' → '+fmt(wo[wo.length-1].v)+(o.suffix || '')+'</b>' : '')+'</div>'+
     wochenDiagramm(wo, o.einheit, fmt, o.schritt)+
     (hinweis ? '<p class="st-stats-hinweis">'+esc(hinweis)+'</p>' : '')+
     (o.letzte && o.letzte.length ? '<div class="info-title">'+esc(o.letzteTitel)+'</div>'+o.letzte.map(function(z){
-      return '<div class="st-v-zeile"><span>'+esc(z[0])+'</span><b>'+esc(z[1])+'</b></div>'; }).join("") : '');
+      return '<div class="st-v-zeile"><span>'+esc(z[0])+'</span><b>'+esc(z[1])+(z[2] ? '<i class="st-rekord" title="'+esc(t("stRekord"))+'">★</i>' : '')+'</b></div>'; }).join("") : '');
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet st-stats" role="dialog" aria-label="'+esc(t("stStats"))+'" style="--cat:'+o.farbe+'">'+
     '<h3>'+esc(t("stStats"))+SEP+esc(o.titel)+'</h3>'+innen+
     '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:14px;">'+t("close")+'</button></div></div>';
   function zu(){ root.innerHTML = ""; }
   root.querySelector("[data-cancel]").addEventListener("click", zu);
   root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+  root.querySelectorAll("[data-stsicht]").forEach(function(b){
+    b.addEventListener("click", function(){ if(o.neu) o.neu(b.getAttribute("data-stsicht")); });
+  });
 }
-function openStudioStats(id){
-  var ex = findExercise(id), e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return l.s.length; });
-  var saetze = 0, best = 0;
-  log.forEach(function(l){ saetze += l.s.length; l.s.forEach(function(x){ if(x[0] > best) best = x[0]; }); });
+function openStudioStats(id, sicht){
+  sicht = sicht === "rm" || sicht === "vol" ? sicht : "kg";
+  var ex = findExercise(id), e = studioEintrag(id) || {}, log = (e.log || []).filter(function(l){ return arbeitsSaetze(l).length; });
+  var saetze = 0;
+  log.forEach(function(l){ saetze += arbeitsSaetze(l).length; });
+  var b = studioBestwerte(log), gesamt = log.reduce(function(a, l){ return a + studioVolumen(l); }, 0);
+  function kgT(v){ return studioKg(Math.round(v*10)/10)+" kg"; }
+  // Rekorde automatisch erkennen: eine Einheit mit neuem Bestgewicht oder neuem geschätzten 1RM (gegenüber allen davor) trägt einen Stern
+  var rekorde = log.map(function(l, i){
+    if(!i) return false;
+    var vor = studioBestwerte(log, i), jetzt = studioBestwerte([l]);
+    return jetzt.kg > vor.kg || jetzt.rm > vor.rm + .001;
+  });
+  var fmt = sicht === "vol" ? function(v){ return studioKg(Math.round(v)); } : function(v){ return studioKg(Math.round(v*10)/10); };
   openStatistik({
     titel:tplText(ex.name), farbe:studioFarbe(ex), hatDaten:log.length > 0, leerText:t("stStatsEmpty"),
-    zahlen:[[studioKg(best)+" kg", t("stBestKg")], [String(log.length), t("stSessions")], [String(saetze), t("stSetsAll")]],
-    verlaufTitel:t("stWeekly"), wochen:studioWochen(id), einheit:"kg", suffix:" kg",
+    zahlen:[[studioKg(b.kg)+" kg", t("stBestKg")], [kgT(b.rm), t("stSchaetzung")], [kgT(b.vol), t("stBestVol")],
+            [String(log.length), t("stSessions")], [String(saetze), t("stSetsAll")], [studioKg(Math.round(gesamt))+" kg", t("stVolGesamt")]],
+    sichten:[["kg", t("stSichtKg")], ["rm", t("stSichtRm")], ["vol", t("stSichtVol")]], sicht:sicht,
+    neu:function(s){ openStudioStats(id, s); },
+    verlaufTitel:t(sicht === "kg" ? "stWeekly" : sicht === "rm" ? "stWeeklyRm" : "stWeeklyVol"), wochen:studioWochen(id, sicht), fmt:fmt,
+    einheit:"kg", suffix:" kg",
     seit:log.length ? new Date(log[0].at).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" }) : "",
     letzteTitel:t("stLastN"),
-    letzte:log.slice(-8).reverse().map(function(l){
-      return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }),
-              l.s.map(function(x){ return studioKg(x[0])+"×"+x[1]; }).join(" · ")];
-    })
+    letzte:log.map(function(l, i){
+      return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
+    }).slice(-8).reverse()
   });
 }
 /* Summit: dieselbe Statistik für ein Programm (Bestzeit, Läufe, Zeit je Woche) */
@@ -218,14 +234,20 @@ function studioTimerKarte(id, titel, hinweis){
       '<button type="button" class="btn btn-primary" data-sttimer style="margin-top:14px;">'+ICON_PLAY+' '+esc(t("stTimerStart"))+'</button>'+
     '</div>';
 }
-function studioTimerBinden(id, eintrag){
+/* nachher: läuft nach einer Änderung (die Karte zeichnet das Ziel neu) */
+function studioTimerBinden(id, eintrag, nachher){
   var stt = app.querySelector(".st-timer");
+  if(!stt) return;   // Karte im Satz-Modus: kein Timer-Teil
   stt.querySelector("[data-sttimer]").addEventListener("click", function(){ studioPauseStop(); go("#playst/"+id); });
   bindSteppers(stt, function(){
-    eintrag().timer = { reps:clamp(parseInt(stt.querySelector("#stt-reps").value)||3, 1, 20),
-                        work:clamp(parseInt(stt.querySelector("#stt-work").value)||40, 5, 600),
-                        rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
+    var reps = clamp(parseInt(stt.querySelector("#stt-reps").value)||3, 1, 20), en = eintrag();
+    en.timer = { reps:reps,
+                 work:clamp(parseInt(stt.querySelector("#stt-work").value)||40, 5, 600),
+                 rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
+    // Runden = Sätze des Ziels: dieselbe Zahl wie im Plan (Übungen ohne Gewicht haben nur den Block)
+    if(!studioNurBlock(findExercise(id))){ en.ziel = en.ziel || {}; en.ziel.saetze = reps; }
     save();
+    if(nachher) nachher();
   });
 }
 function studioInfoHTML(id, ex){
@@ -263,7 +285,48 @@ function renderStudioBlockKarte(id, ex){
   notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
   studioTimerBinden(id, eintrag);
 }
-var studioPR = null;   // { id, kg, w, vorher } - zeigt nach einem Satz mit neuem Bestgewicht eine ruhige Zeile auf der Karte
+var studioPR = null;   // { id, art:"kg"|"rm", kg, w, vorher, rm, vorherRm } - zeigt nach einem Satz mit neuem Bestgewicht (oder neuem geschätzten 1RM) eine ruhige Zeile auf der Karte
+var studioSatzTypWahl = "n";   // Typ des nächsten Satzes auf der Karte: n normal · w Aufwärmen · d Drop · f bis Versagen
+/* Langhantel-Übungen bekommen den Scheibenrechner */
+function studioLanghantel(ex){ return /barbell|langhantel|bench-press|ez-?bar|ez-?stange|smith|deadlift/i.test(ex.id+" "+JSON.stringify(ex.name || "")); }
+var SCHEIBEN = [25, 20, 15, 10, 5, 2.5, 1.25];
+/* Scheibenrechner: welche Scheiben pro Seite auf die Stange müssen; die Stange (kg) ist einstellbar und wird gemerkt */
+function openScheibenSheet(kgWert){
+  var root = document.getElementById("overlayRoot"), s = state.db.settings;
+  var stange = s.stangeKg > 0 ? s.stangeKg : 20, ziel = kgWert;
+  function rechnen(){
+    var pro = Math.max(0, (ziel - stange)/2), rest = pro, teile = [];
+    SCHEIBEN.forEach(function(p){ var n = 0; while(rest + 1e-9 >= p){ rest -= p; n++; } if(n) teile.push([p, n]); });
+    return { pro:pro, teile:teile, rest:Math.round(rest*1000)/1000 };
+  }
+  function draw(){
+    var r = rechnen();
+    root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet sch-sheet" role="dialog" aria-label="'+esc(t("scheibenTitel"))+'">'+
+      '<h3>'+esc(t("scheibenTitel"))+'</h3>'+
+      '<div class="st-eingabe">'+
+        '<div class="st-feld"><label>'+esc(t("stKg"))+'</label><div class="stepper st-step"><button type="button" data-zminus>&minus;</button>'+
+          '<input type="text" inputmode="decimal" id="sch-ziel" value="'+studioKg(ziel)+'"><button type="button" data-zplus>&plus;</button></div></div>'+
+        '<div class="st-feld"><label>'+esc(t("scheibenStange"))+'</label><div class="stepper st-step"><button type="button" data-sminus>&minus;</button>'+
+          '<input type="text" inputmode="decimal" id="sch-stange" value="'+studioKg(stange)+'"><button type="button" data-splus>&plus;</button></div></div>'+
+      '</div>'+
+      (ziel <= stange ? '<div class="sch-gross">'+esc(t("scheibenNurStange"))+'</div>' :
+        '<div class="sch-gross">'+esc(t("scheibenProSeite"))+': '+esc(r.teile.map(function(x){ return (x[1] > 1 ? x[1]+"× " : "")+studioKg(x[0]); }).join(" + ") || "–")+'</div>'+
+        r.teile.map(function(x){ return '<div class="sch-zeile"><span>'+esc(studioKg(x[0]))+' kg</span><b>'+x[1]+' ×</b></div>'; }).join("")+
+        (r.rest > 0 ? '<div class="tm-hint">'+esc(t("scheibenRest", { r:studioKg(r.rest*2) }))+'</div>' : ''))+
+      '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:14px;">'+esc(t("close"))+'</button></div></div>';
+    function zahl(sel){ var x = parseFloat(String(root.querySelector(sel).value).replace(",", ".")); return isFinite(x) && x >= 0 ? Math.min(500, x) : 0; }
+    function setzen(){ ziel = zahl("#sch-ziel"); stange = Math.min(60, zahl("#sch-stange")); s.stangeKg = stange; save(); draw(); }
+    root.querySelector("[data-zminus]").addEventListener("click", function(){ ziel = Math.max(0, zahl("#sch-ziel") - 2.5); setzen(); });
+    root.querySelector("[data-zplus]").addEventListener("click", function(){ ziel = zahl("#sch-ziel") + 2.5; setzen(); });
+    root.querySelector("[data-sminus]").addEventListener("click", function(){ stange = Math.max(0, zahl("#sch-stange") - 2.5); s.stangeKg = stange; save(); draw(); });
+    root.querySelector("[data-splus]").addEventListener("click", function(){ stange = Math.min(60, zahl("#sch-stange") + 2.5); s.stangeKg = stange; save(); draw(); });
+    ["#sch-ziel", "#sch-stange"].forEach(function(sel){ root.querySelector(sel).addEventListener("change", setzen); });
+    function zu(){ root.innerHTML = ""; }
+    root.querySelector("[data-cancel]").addEventListener("click", zu);
+    root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+  }
+  draw();
+}
 function renderStudioKarte(id){
   var ex = findExercise(id);
   if(!ex){ go("#timers"); return; }
@@ -273,16 +336,8 @@ function renderStudioKarte(id){
   var h = log.length && studioTag(log[log.length-1].at) === heute ? log[log.length-1] : null;
   var v = studioVorschlag(id), stg = studioSteigern(id), pause = e.pause || 90;
   if(e.kg != null && !h) v.kg = e.kg;
-  var info = EX_INFO[id], lang = currentLang()==="en" ? 1 : 0;
-  var verlauf = log.slice(-8).reverse().map(function(l){
-    var d = new Date(l.at);
-    return '<div class="st-v-zeile"><span>'+d.toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" })+'</span>'+
-      '<b>'+l.s.map(function(x){ return studioKg(x[0])+"×"+x[1]; }).join(" · ")+'</b></div>';
-  }).join("");
-  // Kurve: bestes Gewicht je Woche
-  var wo = studioWochen(id), kurve = "";
-  if(wo.length > 1) kurve = '<div class="wo-kopf"><span>'+esc(t("stWeekly"))+SEP+esc(t("weeksN", { n:wo[wo.length-1].w - wo[0].w + 1 }))+'</span>'+
-    '<b>'+studioKg(wo[0].v)+' → '+studioKg(wo[wo.length-1].v)+' kg</b></div>'+wochenKurve(wo, "st-kurve");
+  var letzte = studioLetzte(id, false);   // die Einheit davor: so sieht man vor Ort, was beim letzten Mal ging
+  var timerModus = e.modus === "timer";   // vor Ort umschaltbar: Satz für Satz eintragen oder den Timer durchlaufen lassen
   app.innerHTML =
     topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
     '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
@@ -290,53 +345,100 @@ function renderStudioKarte(id){
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+satzName(z.saetze)+' × '+z.wdh+
         (e.kg != null ? SEP+esc(t("stWeight"))+' '+studioKg(e.kg)+' kg' : '')+'</div>'+
+      // Werte vom letzten Mal: ein Tipp auf einen Satz übernimmt Gewicht und Wiederholungen in die Eingabe (nur im Satz-Modus)
+      (letzte ? '<div class="st-letzte"><b>'+esc(t("stLetztes"))+'</b> <span>'+esc(studioTagText(letzte.at))+'</span> '+
+        letzte.s.map(function(x){
+          var txt = esc(satzText(x).replace("×", " × "));
+          return timerModus ? '<span class="st-satz">'+txt+'</span>' :
+            '<button type="button" class="st-satz st-uebernehmen" data-ukg="'+x[0]+'" data-uw="'+x[1]+'" aria-label="'+esc(t("stUebernehmen")+" "+studioKg(x[0])+" × "+x[1])+'">'+txt+'</button>';
+        }).join("")+'</div>' : '')+
       (stg ? '<div class="st-steigern"><span>'+esc(t("stSuggest", { z:stg.ziel, kg:studioKg(stg.kg) }))+'</span>'+
         '<button type="button" class="btn btn-primary" data-stup>'+esc(t("stSuggestYes"))+'</button></div>' : '')+
       '<div class="st-heute"><b>'+esc(t("stToday"))+':</b> '+(h && h.s.length ? h.s.map(function(x, i){
-        return '<span class="st-satz">'+(i+1)+'. '+studioKg(x[0])+' × '+x[1]+'</span>'; }).join("") : '<span class="st-leer">–</span>')+'</div>'+
+        return '<span class="st-satz">'+(i+1)+'. '+esc(satzText(x).replace("×", " × "))+'</span>'; }).join("") : '<span class="st-leer">–</span>')+'</div>'+
+      '<div class="seg-row st-modus" role="group" aria-label="'+esc(t("stModusTitel"))+'">'+
+        '<button type="button" data-stmodus="saetze" class="'+(timerModus ? '' : 'active')+'" aria-pressed="'+!timerModus+'">'+esc(t("stModusSaetze"))+'</button>'+
+        '<button type="button" data-stmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>'+
+      (timerModus ? studioTimerKarte(id, "", t("stTimerSatzHint")).replace('<div class="card st-timer">', '<div class="st-timer">') :
+      // Satztyp des nächsten Satzes: Aufwärmsätze zählen nicht in Volumen, Bestwerte und Steigerung
+      '<div class="st-typen" role="group" aria-label="'+esc(t("satzTypTitel"))+'">'+SATZ_TYPEN.map(function(ty){
+        return '<button type="button" class="fc-chip'+(studioSatzTypWahl === ty ? ' on' : '')+'" data-sttyp="'+ty+'" aria-pressed="'+(studioSatzTypWahl === ty)+'">'+esc(t("satzTypLang_"+ty))+'</button>'; }).join("")+'</div>'+
       '<div class="st-eingabe">'+
         '<div class="st-feld"><label>'+esc(t("stKg"))+'</label><div class="stepper st-step" data-min="0" data-max="500" data-step="'+z.schritt+'">'+
           '<button type="button" data-kgminus>&minus;</button><input type="text" inputmode="decimal" id="st-kg" value="'+studioKg(v.kg)+'"><button type="button" data-kgplus>&plus;</button></div></div>'+
         '<div class="st-feld"><label>'+esc(t("stReps"))+'</label><div class="stepper st-step">'+
           '<button type="button" data-wminus>&minus;</button><input type="number" inputmode="numeric" id="st-w" value="'+v.wdh+'"><button type="button" data-wplus>&plus;</button></div></div>'+
       '</div>'+
+      // einstellbarer Schritt der +/−-Knöpfe; bei Langhantel-Übungen dazu der Scheibenrechner
+      '<div class="st-schritt">'+esc(t("stSchritt"))+': '+[1, 2.5, 5, 10].map(function(sc){
+        return '<button type="button" class="fc-chip'+(z.schritt === sc ? ' on' : '')+'" data-stschritt="'+sc+'">'+studioKg(sc)+'</button>'; }).join("")+
+        (studioLanghantel(ex) ? '<button type="button" class="st-scheiben" data-stscheiben>'+esc(t("scheibenLink"))+'</button>' : '')+'</div>'+
       '<button type="button" class="btn btn-primary st-los" data-stset>✓ '+esc(t("stSetDone"))+' '+((h ? h.s.length : 0)+1)+'</button>'+
-      (studioPR ? '<div class="st-pr" role="status"><span class="st-pr-stern" aria-hidden="true">★</span><div><b>'+esc(t("stPrTitel"))+'</b><small>'+esc(t("stPrText", { kg:studioKg(studioPR.kg), w:studioPR.w, v:studioKg(studioPR.vorher) }))+'</small></div></div>' : '')+
+      (studioPR ? '<div class="st-pr" role="status"><span class="st-pr-stern" aria-hidden="true">★</span><div><b>'+esc(t(studioPR.art === "rm" ? "stPrRm" : "stPrTitel"))+'</b><small>'+
+        esc(studioPR.art === "rm" ? t("stPrRmText", { rm:studioKg(Math.round(studioPR.rm*10)/10), v:studioKg(Math.round(studioPR.vorherRm*10)/10) })
+                                  : t("stPrText", { kg:studioKg(studioPR.kg), w:studioPR.w, v:studioKg(studioPR.vorher) }))+'</small></div></div>' : '')+
       '<div class="st-pause" id="st-pause"'+(studioPause && studioPause.id === id ? '' : ' hidden')+'>'+
         '<span>'+esc(t("stPause"))+'</span><b id="st-pause-zeit"></b><button type="button" class="btn btn-secondary" data-stskip>'+esc(t("stSkip"))+'</button></div>'+
       '<div class="st-pausewahl">'+esc(t("stPause"))+': '+[60, 90, 120, 180].map(function(sec){
         return '<button type="button" class="fc-chip'+(pause === sec ? ' on' : '')+'" data-stpause="'+sec+'">'+(sec < 120 ? sec+" s" : (sec/60)+" min")+'</button>'; }).join("")+'</div>'+
-      (h && h.s.length ? '<button type="button" class="st-undo" data-stundo>'+esc(t("stUndo"))+'</button>' : '')+
+      (h && h.s.length ? '<button type="button" class="st-undo" data-stundo>'+esc(t("stUndo"))+'</button>' : ''))+
     '</div>'+
     '<div class="section-title">'+esc(t("stNote"))+'</div>'+
     '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
-    '<details class="opt-mehr st-timer-auf"'+(state.db.settings.stTimerAuf ? ' open' : '')+'><summary>'+
-      '<span class="om-ico">'+ICON_PLAY+'</span><span class="meta"><span class="name">'+esc(t("stTimer"))+'</span>'+
-      '<span class="sub">'+studioTimer(id).reps+' × '+studioTimer(id).work+' s · '+esc(t("stRestKurz"))+' '+studioTimer(id).rest+' s</span></span>'+
-      '<span class="om-pfeil" aria-hidden="true">▾</span></summary>'+studioTimerKarte(id, "", t("stTimerHint"))+'</details>'+
     studioInfoHTML(id, ex)+
     '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
     '<div style="height:40px"></div>';
   bindCommon();
   function neu(){ var y = window.scrollY; renderStudioKarte(id); window.scrollTo(0, y); }
   function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
-  var kgIn = app.querySelector("#st-kg"), wIn = app.querySelector("#st-w");
+  var kgIn = app.querySelector("#st-kg"), wIn = app.querySelector("#st-w");   // im Timer-Modus gibt es keine Eingabe
   function kgWert(){ var x = parseFloat(String(kgIn.value).replace(",", ".")); return isFinite(x) && x >= 0 ? Math.min(500, x) : 0; }
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
-  an("[data-kgminus]", function(){ kgIn.value = studioKg(Math.max(0, kgWert() - z.schritt)); });
-  an("[data-kgplus]", function(){ kgIn.value = studioKg(kgWert() + z.schritt); });
-  an("[data-wminus]", function(){ wIn.value = Math.max(1, (parseInt(wIn.value) || 0) - 1); });
-  an("[data-wplus]", function(){ wIn.value = Math.min(100, (parseInt(wIn.value) || 0) + 1); });
-  kgIn.addEventListener("focus", function(){ kgIn.select(); });
-  wIn.addEventListener("focus", function(){ wIn.select(); });
+  app.querySelectorAll("[data-stmodus]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var m = b.getAttribute("data-stmodus");
+      if((m === "timer") === timerModus) return;
+      eintrag().modus = m === "timer" ? "timer" : "saetze"; save(); neu();
+    });
+  });
+  if(kgIn && wIn){
+    an("[data-kgminus]", function(){ kgIn.value = studioKg(Math.max(0, kgWert() - z.schritt)); });
+    an("[data-kgplus]", function(){ kgIn.value = studioKg(kgWert() + z.schritt); });
+    an("[data-wminus]", function(){ wIn.value = Math.max(1, (parseInt(wIn.value) || 0) - 1); });
+    an("[data-wplus]", function(){ wIn.value = Math.min(100, (parseInt(wIn.value) || 0) + 1); });
+    kgIn.addEventListener("focus", function(){ kgIn.select(); });
+    wIn.addEventListener("focus", function(){ wIn.select(); });
+    app.querySelectorAll("[data-ukg]").forEach(function(b){
+      b.addEventListener("click", function(){ kgIn.value = studioKg(+b.getAttribute("data-ukg")); wIn.value = b.getAttribute("data-uw"); });
+    });
+    // Satztyp und Schritt ändern sich an Ort und Stelle (kein Neuzeichnen: das Eingegebene bleibt stehen)
+    app.querySelectorAll("[data-sttyp]").forEach(function(b){
+      b.addEventListener("click", function(){
+        studioSatzTypWahl = b.getAttribute("data-sttyp");
+        app.querySelectorAll("[data-sttyp]").forEach(function(c){ c.classList.toggle("on", c === b); c.setAttribute("aria-pressed", c === b); });
+      });
+    });
+    app.querySelectorAll("[data-stschritt]").forEach(function(b){
+      b.addEventListener("click", function(){
+        z.schritt = +b.getAttribute("data-stschritt");
+        eintrag().schritt = z.schritt; save();
+        app.querySelectorAll("[data-stschritt]").forEach(function(c){ c.classList.toggle("on", c === b); });
+      });
+    });
+    an("[data-stscheiben]", function(){ openScheibenSheet(kgWert()); });
+  }
   an("[data-stset]", function(){
-    var en = eintrag(), jetzt = Date.now(), kg = kgWert(), w = Math.max(1, Math.min(100, parseInt(wIn.value) || 1));
+    var en = eintrag(), jetzt = Date.now(), kg = kgWert(), w = Math.max(1, Math.min(100, parseInt(wIn.value) || 1)), typ = studioSatzTypWahl;
     var l = en.log.length && studioTag(en.log[en.log.length-1].at) === studioTag(jetzt) ? en.log[en.log.length-1] : null;
-    var vorher = 0;   // bisheriges Bestgewicht (vor diesem Satz)
-    en.log.forEach(function(lg){ lg.s.forEach(function(x){ if(x[0] > vorher) vorher = x[0]; }); });
-    if(!l){ l = { at:jetzt, s:[] }; en.log.push(l); if(en.log.length > 60) en.log = en.log.slice(-60); }
-    l.s.push([kg, w]);
-    studioPR = vorher > 0 && kg > vorher ? { id:id, kg:kg, w:w, vorher:vorher } : null;
+    var davor = studioBestwerte(en.log);   // Bestwerte vor diesem Satz
+    if(!l){ l = { at:jetzt, s:[] }; en.log.push(l); if(en.log.length > 200) en.log = en.log.slice(-200); }
+    l.s.push(typ === "n" ? [kg, w] : [kg, w, typ]);
+    // Rekord: neues Bestgewicht, sonst neues geschätztes 1RM (Aufwärmsätze zählen nicht)
+    var rm = satzSchaetzung1RM([kg, w]);
+    studioPR = typ === "w" ? null :
+      davor.kg > 0 && kg > davor.kg ? { id:id, art:"kg", kg:kg, w:w, vorher:davor.kg } :
+      davor.rm > 0 && rm > davor.rm + .05 ? { id:id, art:"rm", kg:kg, w:w, rm:rm, vorherRm:davor.rm } : null;
+    studioSatzTypWahl = "n";
     en.kg = kg; en.zuletzt = jetzt;
     studioVerlauf(id, jetzt);
     save();
@@ -355,12 +457,7 @@ function renderStudioKarte(id){
   an("[data-stinfo]", function(){ openExInfo(id, false); });
   an("[data-ststats]", function(){ openStudioStats(id); });
   an(".topbar [data-exfav]", function(){ toggleExFav(id); neu(); });
-  studioTimerBinden(id, eintrag);
-  var auf = app.querySelector(".st-timer-auf");
-  auf.addEventListener("toggle", function(){ if(!!state.db.settings.stTimerAuf === auf.open) return; state.db.settings.stTimerAuf = auf.open; save(); });
-  auf.querySelector(".st-timer").addEventListener("click", function(){   // Kopfzeile nachführen
-    var tm = studioTimer(id); auf.querySelector("summary .sub").textContent = tm.reps+" × "+tm.work+" s · "+t("stRestKurz")+" "+tm.rest+" s";
-  });
+  studioTimerBinden(id, eintrag, neu);
   app.querySelectorAll("[data-stpause]").forEach(function(b){ b.addEventListener("click", function(){ eintrag().pause = +b.getAttribute("data-stpause"); save(); neu(); }); });
   var notiz = app.querySelector("#st-notiz");
   notiz.addEventListener("input", function(){ eintrag().notiz = notiz.value; save(); });
@@ -442,7 +539,7 @@ function studioSatzLog(id, kg, w){
   var alle = studioAlle(), en = alle[id] || (alle[id] = { log:[] }), jetzt = Date.now();
   if(!en.log) en.log = [];
   var l = en.log.length && studioTag(en.log[en.log.length-1].at) === studioTag(jetzt) ? en.log[en.log.length-1] : null;
-  if(!l){ l = { at:jetzt, s:[] }; en.log.push(l); if(en.log.length > 60) en.log = en.log.slice(-60); }
+  if(!l){ l = { at:jetzt, s:[] }; en.log.push(l); if(en.log.length > 200) en.log = en.log.slice(-200); }
   l.s.push([kg, w]);
   en.kg = kg; en.zuletzt = jetzt;
   studioVerlauf(id, jetzt);
@@ -451,10 +548,13 @@ function studioSatzLog(id, kg, w){
 function openGewichtSheet(id, nachher){
   var ex = findExercise(id), root = document.getElementById("overlayRoot");
   if(!ex) return;
-  var v = studioVorschlag(id), z = studioZiel(id), e0 = studioEintrag(id);
+  var v = studioVorschlag(id), z = studioZiel(id), e0 = studioEintrag(id), davor = studioLetzte(id, false);
   if(e0 && e0.kg != null) v.kg = e0.kg;
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet pg-sheet" role="dialog" aria-label="'+esc(tplText(ex.name))+'">'+
     '<h3>'+esc(tplText(ex.name))+'</h3>'+
+    // das letzte Mal und was heute schon drin ist: ein Tipp übernimmt einen Satz
+    (davor ? '<div class="st-letzte pg-letzte"><b>'+esc(t("stLetztes"))+'</b> <span>'+esc(studioTagText(davor.at))+'</span> '+
+      davor.s.map(function(x){ return '<button type="button" class="st-satz st-uebernehmen" data-ukg="'+x[0]+'" data-uw="'+x[1]+'">'+esc(studioKg(x[0])+" × "+x[1])+'</button>'; }).join("")+'</div>' : '')+
     '<div class="st-eingabe">'+
       '<div class="st-feld"><label>'+esc(t("stKg"))+'</label><div class="stepper st-step"><button type="button" data-kgminus>&minus;</button>'+
         '<input type="text" inputmode="decimal" id="pg-kg" value="'+studioKg(v.kg)+'"><button type="button" data-kgplus>&plus;</button></div></div>'+
@@ -470,6 +570,9 @@ function openGewichtSheet(id, nachher){
   root.querySelector("[data-kgplus]").addEventListener("click", function(){ kgIn.value = studioKg(kgWert() + z.schritt); });
   root.querySelector("[data-wminus]").addEventListener("click", function(){ wIn.value = Math.max(1, (parseInt(wIn.value) || 0) - 1); });
   root.querySelector("[data-wplus]").addEventListener("click", function(){ wIn.value = Math.min(100, (parseInt(wIn.value) || 0) + 1); });
+  root.querySelectorAll("[data-ukg]").forEach(function(b){
+    b.addEventListener("click", function(){ kgIn.value = studioKg(+b.getAttribute("data-ukg")); wIn.value = b.getAttribute("data-uw"); });
+  });
   root.querySelector("[data-cancel]").addEventListener("click", zu);
   root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
   root.querySelector("[data-ok]").addEventListener("click", function(){
