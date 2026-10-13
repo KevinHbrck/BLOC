@@ -99,7 +99,9 @@ function studioTimer(id){
 function studioRun(ex){
   var tm = studioTimer(ex.id), b = exBlock(ex);
   b.id = "st-"+ex.id; b.reps = ex.perSide ? tm.reps*2 : tm.reps; b.workSec = tm.work; b.restSec = tm.rest;
-  return libQuickWorkout([b], 0, tplText(ex.name), "studio-"+ex.id);
+  var r = libQuickWorkout([b], 0, tplText(ex.name), "studio-"+ex.id);
+  r.mitGewicht = !studioNurBlock(ex);   // Übung mit Gewicht: nach jedem Satz Gewicht und Wiederholungen eintragen (auch Freiluft-Hanteln)
+  return r;
 }
 function studioKg(v){ return (Math.round(v*100)/100).toLocaleString(currentLang()==="en" ? "en" : "de"); }
 function studioIds(){
@@ -288,10 +290,12 @@ function planZeileHTML(id, nr){
   var ex = findExercise(id);
   if(!ex) return "";
   var block = studioNurBlock(ex), z = studioZiel(id), tm = studioTimer(id), e = studioEintrag(id) || {}, l = studioLetzte(id, true);
+  var timerModus = !block && e.modus === "timer";   // je Übung: Satz für Satz eintragen oder diese Übung mit dem Timer laufen lassen
   var felder = block
     ? planFeldHTML("reps", t("planSaetze"), tm.reps, 1, 20, 1)+planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5)+
       planFeldHTML("rest", t("planPause"), tm.rest, 0, 600, 5)
-    : planFeldHTML("saetze", t("planSaetze"), z.saetze, 1, 20, 1)+planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1)+
+    : planFeldHTML("saetze", t("planSaetze"), z.saetze, 1, 20, 1)+
+      (timerModus ? planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5) : planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1))+
       planFeldHTML("kg", t("planKg"), studioArbeitsKg(id), 0, 500, z.schritt)+planFeldHTML("pause", t("planPause"), e.pause || 90, 0, 600, 15);
   return '<div class="pz-zeile" data-pz="'+id+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<div class="pz-kopf" role="button" tabindex="0" data-studio="'+id+'" aria-label="'+esc(tplText(ex.name))+'">'+
@@ -300,7 +304,11 @@ function planZeileHTML(id, nr){
         '<span class="pz-letzte'+(l ? ' an' : '')+'">'+(l ? esc(t("planZuletzt", { d:studioTagText(l.at), s:studioLetzteText(l) })) : esc(t("planNochNie")))+'</span>'+
         (e.notiz && e.notiz.trim() ? '<span class="pz-notiz">'+esc(e.notiz.trim())+'</span>' : '')+'</span>'+   // die Notiz der Übung erscheint beim nächsten Mal wieder
       '<span class="pz-pfeil" aria-hidden="true">'+ICON_CHEV+'</span></div>'+
-    '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div></div>';
+    (block ? '' : '<div class="seg-row pz-modus" role="group" aria-label="'+esc(t("stModusTitel"))+'">'+
+      '<button type="button" data-pzmodus="saetze" class="'+(timerModus ? '' : 'active')+'" aria-pressed="'+!timerModus+'">'+esc(t("stModusSaetze"))+'</button>'+
+      '<button type="button" data-pzmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>')+
+    '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div>'+
+    (timerModus || block ? '<button type="button" class="btn btn-secondary pz-start" data-pzstart="'+id+'">'+ICON_PLAY+' '+esc(t("planTimerStart"))+'</button>' : '')+'</div>';
 }
 function planSaetzeSumme(ids){
   return ids.reduce(function(a, id){
@@ -311,8 +319,8 @@ function planSaetzeSumme(ids){
 function planSummeText(ids){
   return planAnzahl(ids.length)+(ids.length ? " · "+t("planSaetzeGesamt", { n:planSaetzeSumme(ids) }) : "");
 }
-/* fn() läuft nach jeder Änderung (Summe oben nachführen); gespeichert wird sofort */
-function planZeilenBinden(root, fn){
+/* fn() läuft nach jeder Änderung (Summe oben nachführen); gespeichert wird sofort. neuZeichnen: Seite neu aufbauen (nach dem Umschalten Satz ↔ Timer) */
+function planZeilenBinden(root, fn, neuZeichnen){
   root.querySelectorAll(".pz-zeile").forEach(function(zeile){
     var id = zeile.getAttribute("data-pz");
     function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
@@ -320,11 +328,26 @@ function planZeilenBinden(root, fn){
       var en = eintrag();
       if(feld === "saetze" || feld === "wdh"){ en.ziel = en.ziel || {}; en.ziel[feld] = v; }
       else if(feld === "kg") en.kg = v;
-      else if(feld === "pause") en.pause = v;
-      else { var tm = studioTimer(id); en.timer = { reps:tm.reps, work:tm.work, rest:tm.rest }; en.timer[feld] = v; }
+      else if(feld === "pause"){ en.pause = v; if(en.timer) delete en.timer.rest; }   // die Pause des Timers folgt der Pause der Übung
+      else {   // Runden, Arbeit, Pause des Timers: nur was gesetzt wurde, der Rest folgt weiter den Voreinstellungen
+        var alt = en.timer || {};
+        en.timer = {};
+        ["reps", "work", "rest"].forEach(function(k){ if(alt[k] != null) en.timer[k] = alt[k]; });
+        en.timer[feld] = v;
+      }
       save();
       fn();
     }
+    zeile.querySelectorAll("[data-pzmodus]").forEach(function(b){   // je Übung: Satz für Satz oder mit Timer
+      b.addEventListener("click", function(){
+        var m = b.getAttribute("data-pzmodus") === "timer" ? "timer" : "saetze";
+        if((eintrag().modus || "saetze") === m) return;
+        eintrag().modus = m; save();
+        if(neuZeichnen) neuZeichnen();
+      });
+    });
+    var start = zeile.querySelector("[data-pzstart]");   // nur diese Übung mit dem Timer starten
+    if(start) start.addEventListener("click", function(){ go("#playst/"+id); });
     zeile.querySelectorAll(".pz-step").forEach(function(st){
       var feld = st.getAttribute("data-feld"), input = st.querySelector("input");
       var min = parseFloat(st.getAttribute("data-min")), max = parseFloat(st.getAttribute("data-max")), sch = parseFloat(st.getAttribute("data-schritt"));
@@ -406,7 +429,7 @@ function renderStudioPlan(){
     // Plan = Programm: je Übung Sätze, Wiederholungen, Gewicht und Pause gleich hier einstellen; das letzte Mal steht darunter
     html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
       (ids.length ? hw.z(0, "page-hint") : '')+
-      (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("katPlanStart"))+'</button>' : '')+
+      (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("planAlleTimer"))+'</button>' : '')+
       (ids.length ? '<div class="pz-liste">'+ids.map(function(id, i){ return planZeileHTML(id, i+1); }).join("")+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
       (ids.length ? auswertungHTML(ids) : '')+
       '<div style="height:40px"></div>';
@@ -424,7 +447,7 @@ function renderStudioPlan(){
   if(!stPlanBauen) planZeilenBinden(app, function(){   // Summe der Sätze oben nachführen
     var su = app.querySelector("#plan-summe");
     if(su) su.textContent = planSummeText(stPlanIds(p));
-  });
+  }, neu);
   an("[data-plandone]", function(){
     if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); showToast(t("planGespeichert")); }   // erst jetzt steht der neue Plan unter Meine
     stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);

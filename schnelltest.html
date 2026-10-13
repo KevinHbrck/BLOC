@@ -1331,6 +1331,20 @@
       pruefe(e1.pause === 105, "Pause nicht gespeichert: " + e1.pause);
       var summe = s0 + 1 + W.studioZiel("butterfly").saetze;
       pruefe(new RegExp(summe + " Sätze").test($("#plan-summe").textContent), "Summe oben: " + $("#plan-summe").textContent + " (erwartet " + summe + ")");
+      // Timer je Übung: Umschalter in der Plan-Zeile, Start nur dieser Übung (nicht der ganze Plan)
+      pruefe(!$('[data-pzstart="leg-press"]') && z1.querySelector('[data-feld="wdh"]'), "Satz-Modus: kein Start-Knopf, Wiederholungen sichtbar erwartet");
+      klick(z1.querySelector('[data-pzmodus="timer"]'));
+      await bis(function () { return $('.pz-zeile[data-pz="leg-press"] [data-feld="work"]'); }, 2000, "Zeile im Timer-Modus (Arbeit statt Wiederholungen)");
+      pruefe(!$('.pz-zeile[data-pz="leg-press"] [data-feld="wdh"]') && $('[data-pzstart="leg-press"]') && !$('[data-pzstart="butterfly"]'), "Timer gilt nur für die eine Übung");
+      pruefe(daten().settings.studio["leg-press"].modus === "timer" && (daten().settings.studio["butterfly"] || {}).modus !== "timer", "Modus je Übung nicht gespeichert");
+      klick($('[data-pzstart="leg-press"]'));
+      await bis(function () { return /^#playst\/leg-press/.test(W.location.hash) && $("[data-plkg]"); }, 3000, "Timer nur für diese Übung, mit Satz-Eintrag");
+      W.exitPlayer();
+      W.go("#studioplan/p-prog");
+      await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
+      klick($('.pz-zeile[data-pz="leg-press"] [data-pzmodus="saetze"]'));
+      await bis(function () { return $('.pz-zeile[data-pz="leg-press"] [data-feld="wdh"]'); }, 2000, "zurück im Satz-Modus");
+      z1 = $('.pz-zeile[data-pz="leg-press"]');
       // Übungskarte: dieselben Werte, Letztes Mal zum Übernehmen, Umschalter Satz für Satz ↔ Timer
       klick(z1.querySelector(".pz-kopf"));
       await bis(function () { return $("#st-kg") && $(".st-uebernehmen"); }, 3000, "Karte mit Letztes Mal");

@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Timer je Übung im Plan (Fassung 2026-10-14-2)
+
+- **Timer für jede Übung einzeln**: In jeder Plan-Zeile (`planZeileHTML`, `js/07-studio.js`) steht der Umschalter **Satz für Satz · Mit Timer** (`studio[id].modus`, derselbe Wert wie auf der Übungskarte). Im Timer-Modus zeigt die Zeile Sätze, **Arbeit (s)**, Gewicht und Pause und einen Knopf **Timer starten**, der nur diese Übung laufen lässt (`#playst/<id>`, mit Satz-Eintrag nach jedem Satz). Der Knopf oben heißt jetzt „Ganzen Plan mit Timer starten“.
+- Die Pause einer Übung im Timer folgt der Pause der Übung, solange der Timer keine eigene hat (`planZeilenBinden`).
+
 ## 2026-10-14 · Plan als Programm, „Selber bauen“ ohne Nachfragen, Timer-Umschalter, Kraftlog-Auswertung (Fassung 2026-10-14-1)
 
 - **„Selber bauen“ fragt nichts mehr nach**: Der Knopf im Baukasten (`renderKatalogBaukasten`, `js/11b-katalog.js`) führt gleich in die Übungsauswahl – Ort (Schritt 1) und Art (Schritt 2) stehen dort schon. Das Zusammenstell-Fenster (`openSurprise`, `js/13-teilen-editor.js`) gehört nur noch zu „Überrasch mich“ und hat zwei Wege: Zufall · Nach Gewichtung.
