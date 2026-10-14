@@ -255,8 +255,8 @@ var WS_REGION_VON = {
   "neck-stretch":["nacken"], "shoulder-stretch":["schulter"], "triceps-stretch":["arme", "schulter"], "biceps-stretch":["arme", "brust"],
   "chest-stretch":["brust", "schulter"], "wrist-stretch":["arme"], "side-bend":["rumpf"], "cat-cow":["ruecken", "rumpf"],
   "childs-pose":["ruecken", "huefte"], "sphinx-stretch":["rumpf", "ruecken"], "cobra-lift":["rumpf", "ruecken"],
-  "downward-dog":["ruecken", "beine", "schulter"], "spinal-twist":["ruecken", "huefte"], "forward-fold":["ruecken", "beine"],
-  "hip-flexor-stretch":["huefte"], "quad-stretch":["beine"], "hamstring-stretch":["beine"], "calf-stretch":["beine"],
+  "downward-dog":["ruecken", "beine", "schulter"], "spinal-twist":["ruecken", "huefte", "rumpf"], "forward-fold":["ruecken", "beine"],
+  "hip-flexor-stretch":["huefte", "beine"], "quad-stretch":["beine", "huefte"], "hamstring-stretch":["beine"], "calf-stretch":["beine"],
   "figure-four":["huefte"], "pigeon-stretch":["huefte"], "butterfly-stretch":["huefte"], "worlds-greatest":["huefte", "beine", "schulter", "ruecken"]
 };
 function wsRegionenVon(id){ return WS_REGION_VON[id] || []; }
@@ -873,7 +873,7 @@ function openExInfo(exId, live, lib){
       : illuHTML(exId, "info-illu"))+
     bandAnkerHTML(exId)+   // Band-Übungen: wo und wie das Band befestigt wird (aufklappbar, unter den Figuren)
     (EX_MUSCLES[exId] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
-      (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>'+
+      (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t(ex.cats.indexOf("stretch") > -1 ? "musAlsoStretched" : "musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>'+
       kkInfoHTML(ex)+'</div>' : '')+
     '<div class="info-title">'+t("howTo")+'</div><ol class="info-steps">'+steps+'</ol>'+
     (function(){

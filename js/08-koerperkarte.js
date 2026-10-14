@@ -125,7 +125,8 @@ var KK_REGELN = [
 var KK_AUSNAHME = {
   "swimmers":["schulter_h"], "mountain-climbers":["schulter_v"], "bear-crawl":["schulter_v"], "plank-steps":["schulter_v"], "plank-shoulder-taps":["schulter_v"],
   "burpees":["schulter_v"], "jump-forward-burpees":["schulter_v"], "muscle-ups":["schulter_v", "schulter_h"], "skin-the-cat":["schulter_v", "schulter_h"],
-  "archer-push-ups":["schulter_v"], "kb-clean":["schulter_v", "schulter_s"], "jumping-jacks":["schulter_s"]
+  "archer-push-ups":["schulter_v"], "kb-clean":["schulter_v", "schulter_s"], "jumping-jacks":["schulter_s"],
+  "childs-pose":["schulter_h"], "downward-dog":["schulter_h"]   // gedehnt wird die hintere Schulter (Arme über Kopf), nicht vorn/seitlich
 };
 /* gespeicherte Auswahl (egal ob grob oder fein, auch ältere Namen) in die Zonen der gewählten Ansicht übersetzen; Unbekanntes fällt weg */
 var KK_ALT = { trapez:["trapez_o", "rauten"], beine:["quad", "hamstring", "gesaess", "waden"] };
@@ -216,13 +217,13 @@ function kkTeile(ex){
 }
 /* Übungsinfo: kleine Silhouetten; antippen vergrößert sie und nennt die Zonen beim Namen (kkInfoBinden) */
 function kkInfoHTML(ex){
-  var tl = kkTeile(ex), w = {};
+  var tl = kkTeile(ex), w = {}, dehn = !!(ex.cats && ex.cats.indexOf("stretch") > -1);   // Dehnübungen: „Dehnt“ / „Dehnt auch“ statt „Trainiert“ / „Unterstützend“
   Object.keys(tl.hilfe).forEach(function(z){ w[z] = .38; });
   Object.keys(tl.haupt).forEach(function(z){ w[z] = 1; });
   function namen(m){ return kkReihe().filter(function(z){ return m[z]; }).map(kkName).join(", "); }
   return '<button type="button" class="info-kk-knopf'+(kkFeinAn() ? ' fein' : '')+'" data-kkgross aria-expanded="false" aria-label="'+esc(t("kkGross"))+'">'+koerperPaar(w)+'</button>'+
-    '<div class="info-kk-liste" hidden><div><span class="kk-punkt haupt"></span><b>'+esc(t("kkTrainiert"))+':</b> '+esc(namen(tl.haupt))+'</div>'+
-    (Object.keys(tl.hilfe).length ? '<div><span class="kk-punkt hilfe"></span><b>'+esc(t("musAssist"))+':</b> '+esc(namen(tl.hilfe))+'</div>' : '')+'</div>'+
+    '<div class="info-kk-liste" hidden><div><span class="kk-punkt haupt"></span><b>'+esc(t(dehn ? "musStretched" : "kkTrainiert"))+':</b> '+esc(namen(tl.haupt))+'</div>'+
+    (Object.keys(tl.hilfe).length ? '<div><span class="kk-punkt hilfe"></span><b>'+esc(t(dehn ? "musAlsoStretched" : "musAssist"))+':</b> '+esc(namen(tl.hilfe))+'</div>' : '')+'</div>'+
     kkModusHTML(ex);
 }
 /* Ein Tipp auf die kleinen Silhouetten vergrößert sie und zeigt die Zonen mit Namen (gilt für alle Übungsinfos, auch im Studio) */

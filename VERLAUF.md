@@ -3,6 +3,17 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Fachprüfung Dehnen und Aufwärmen: Texte ehrlicher, Sicherheitshinweise (Fassung 2026-10-14-31)
+
+Online-Recherche mit Studien, **keine** Prüfung durch eine Fachperson (Details in `docs/FACHPRUEFUNG.md`, Quellen [15]–[20] in `quellen.html`).
+
+- **Hinweis im Reiter Stretch** (`wsIntroDehn`): nur bis ein deutliches Ziehen, nie bis zum Schmerz, nicht wippen, bei Kribbeln/Taubheit/Schwindel lösen; ehrlich dazu: bessere Beweglichkeit bei regelmäßigem Dehnen, gegen Muskelkater kaum, Verletzungsschutz nicht belegt. **Mobility** (`wsIntroWarm`): Aufwärmen verbessert die Leistung meist leicht, Verletzungsschutz nicht belegt.
+- **Sicherheit in den Übungen**: Herabschauender Hund und Vorbeuge (Glaukom, hoher Blutdruck, Schwindel), Nackendehnung (Hand liegt nur auf; Kribbeln, Taubheit, Schwindel), Bizeps- und Brustdehnung an der Wand (Schulterschmerz).
+- **Handgelenke**: je Seite zwei Haltephasen (Innenseite, Außenseite) à 20 s (`perSide`), Anleitung dazu klarer. **Waden**: Hinweis auf das leicht gebeugte hintere Knie für den tieferen Wadenmuskel.
+- **Beschriftung**: bei Dehnübungen „Dehnt“ und „Dehnt auch“ statt „Trainiert“/„Unterstützend“ (`musAlsoStretched`, Übungsinfo und Körperkarte).
+- **Zuordnung**: Hüftbeuger-/Oberschenkeldehnung, Drehdehnung (Regionen in `WS_REGION_VON`); Kind und Hund dehnen die hintere Schulter (`KK_AUSNAHME`); Worlds Greatest nennt „oberer Rücken“.
+- **Offen, Entscheidung des Nutzers (Struktur)**: Armkreisen in Dehn-Auswahlen, Morgen-Mobility unter Aufwärmen, Überrasch-mich-Aufwärmen (Reihenfolge, Dauer), Programmzusammenstellung, Umsetzzeiten.
+
 ## 2026-10-14 · Meine: Abschnitte, Fotos, Trainings; Rückfrage nach dem Speichern (Fassung 2026-10-14-13)
 
 - **Training speichern** löst einen noch nicht gespeicherten Plan aus dem Entwurf: er steht danach unter Meine. Die gespeicherten Trainings stehen dort als dritter Abschnitt **„Gespeicherte Trainings“** (Tipp = Sätze, Notiz, Löschen; weiter auch in der Statistik).

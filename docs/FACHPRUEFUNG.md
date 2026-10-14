@@ -51,3 +51,17 @@ Die 38 Band-Übungen (`daten.js`, Block „Widerstandsband“) wurden per Online
 - **Alle Band-Übungen**: neuer Abschnitt „Mit dem Band“ in der Übungsinfo (Band prüfen, Befestigung, nie unter Spannung loslassen, Dehnungsgrenze).
 
 Offen bleibt weiterhin die Prüfung durch eine Fachperson (Trainerin, Sportwissenschaftler, Physiotherapeutin) – insbesondere Rehabilitation und Vorerkrankungen sind nicht abgedeckt.
+
+## Stand 2026-10-14: Dehnen und Aufwärmen (Literaturprüfung, keine Fachprüfung)
+
+Geprüft wurden die 13 Aufwärm-/Dehnprogramme, alle Dehnübungen samt Anleitung, Haltung, Muskelzuordnung und die Texte im Reiter Mobility & Stretch. Die Studien stehen in `quellen.html` [15]–[20] (DOI per Crossref bestätigt; für die meisten lag die Zusammenfassung vor, nicht der Volltext).
+
+**Umgesetzt (Texte und Übungsdaten):**
+
+- Allgemeiner Dehn-Hinweis (Intensität, nicht wippen, Warnsignale) und ehrliche Aussagen zu Beweglichkeit, Muskelkater und Verletzungen; Aufwärmen: Leistung meist leicht besser, Verletzungsschutz nicht belegt.
+- Sicherheitshinweise bei Kopf-tief-Haltungen (Hund, Vorbeuge), Nackendehnung, Schulterdehnungen an der Wand.
+- Handgelenke je Seite zwei Haltephasen; Hinweis für den tieferen Wadenmuskel; Beschriftung „Dehnt“/„Dehnt auch“; Regionen und Muskelzuordnungen (Hüftbeuger, Oberschenkel vorn, Drehdehnung, Kind, Hund, Worlds Greatest).
+
+**Keine belastbare Studienlage gefunden** (Praxis und Erfahrung, in `quellen.html` so benannt): Reihenfolge und Zusammenstellung der Programme, Aufwärmdauer im Heimtraining, Umsetzzeiten, Nacken- und Schulterhinweise, Kobra/Sphinx bei Rückenschmerz.
+
+**Offen, Entscheidung des Nutzers (Struktur der App):** Armkreisen in den Dehn-Auswahlen (Dehn-Überrasch-mich, Dehnteil im allgemeinen Überrasch mich); Morgen-Mobility unter Aufwärmen; Überrasch-mich-Aufwärmen (Reihenfolge, Dauer je Übung, Dauerstufen); Programmzusammenstellung (Ganzkörper ohne Waden/Oberschenkel vorn, Nacken nur eine Übung); Umsetzzeit 5 s.
