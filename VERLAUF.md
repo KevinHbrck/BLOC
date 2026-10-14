@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Ein Weg für Zeit und Sätze, Wochenübersicht oben (Fassung 2026-10-14-8)
+
+- **„Selber bauen“ führt immer in den Plan-Bau**, ohne Frage „Nach Zeit oder Nach Sätzen“: Übungen aus Fitnessstudio und Freiluft wählen, speichern, dann die Plan-Seite. Die im Baukasten (Schritt 2) gewählte Art ist nur die **Voreinstellung** der Zeilen (`p.standard`: Nach Zeit → Timer, Nach Sätzen → Satz für Satz); je Zeile lässt sich umstellen (`p.modus[id]`, `studioModus`/`studioModusSetzen` kennen den geöffneten Plan, die Übungskarte folgt ihm). Der Schalter Nach Zeit · Nach Sätzen im Plan-Bau entfällt; der Workout-Baukasten (`#mybuild`) bleibt zum Bearbeiten vorhandener Workouts.
+- **Plan-Seite oben**: erst die Übersicht über die Übungen im Ganzen (Auswertung), dann eine Karte „Alle Übungen: Satz für Satz · Mit Timer“ (für alle gleich) und die Zeiten des Timers wie im Workout-Baukasten – *Für alle gleich* (Runden, Arbeit, Pause gelten sofort für alle Timer-Übungen) oder *Je Übung*, dazu die Pause zwischen den Übungen (`p.blockRest`, `p.zeiten`; `planKopfKarteHTML`) – und dann die Zeilen.
+- **Startseite**: die Wochenübersicht („Diese Woche“) steht jetzt oben, über dem Kopfblock „Bereit für dein Training?“.
+
 ## 2026-10-14 · Bereichs-Symbole mit Rahmen, neues Symbol für Mobility & Stretch (Fassung 2026-10-14-7)
 
 - **Mobility & Stretch** hat ein neues Symbol: eine Figur, die auf dem Boden liegt und den Oberkörper nach oben drückt (Kobra; `HOME_ICON.warm` in `js/04-start.js`; erscheint auf der Startseite, im Sortieren, in „Was ist was?“, in der Einführung und im Link im Übungskatalog).

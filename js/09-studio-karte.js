@@ -416,7 +416,7 @@ function renderStudioKarte(id){
     b.addEventListener("click", function(){
       var m = b.getAttribute("data-stmodus");
       if((m === "timer") === timerModus) return;
-      eintrag().modus = m === "timer" ? "timer" : "saetze"; save(); neu();
+      studioModusSetzen(id, m); neu();
     });
   });
   if(wIn){

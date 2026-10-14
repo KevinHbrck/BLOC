@@ -165,7 +165,7 @@
       pruefe($(".woche"), "Wochenzeile fehlt");
       // Kopfblock „Bereit für dein Training?“ steht vor der Wochenzeile; ein Tipp führt direkt in den Baukasten
       var kopf = $(".home-hero");
-      pruefe(kopf && /Bereit für dein Training/.test(kopf.textContent) && (kopf.compareDocumentPosition($(".woche")) & 4), "Kopfblock fehlt oder steht nicht vor der Wochenzeile");
+      pruefe(kopf && /Bereit für dein Training/.test(kopf.textContent) && ($(".woche").compareDocumentPosition(kopf) & 4), "Kopfblock fehlt oder die Wochenzeile steht nicht oben vor dem Kopfblock");
       klick("[data-herostart]");
       await bis(function () { return W.location.hash === "#katalog" && $('[data-kattab="baukasten"].active') && $(".ort-foto"); }, 3000, "Kopfblock führt direkt in den Baukasten");
       pruefe(!$(".bereich-bild"), "Workout: der Bild-Kopf soll entfallen");
@@ -630,7 +630,7 @@
       await heim();
       klick('[data-herostart]');
       await zuBaukasten("timer");
-      klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen (mit Timer)"));
+      W.go("#mybuild/new");   // „Selber bauen“ führt jetzt in den Plan-Bau; der Workout-Baukasten für Timer-Workouts bleibt über seine Adresse erreichbar
       await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
       ["air-squats", "push-ups", "plank"].forEach(function (id) { klick('[data-wbex="' + id + '"]'); });
       pruefe($$("#dz-pal details.kat-gr").length >= 5 && $$("#dz-pal details.kat-gr").every(function (d) { return !d.open; }), "Workout-Baukasten: Übungen nicht nach Körperregionen geordnet (zugeklappt) erwartet");
@@ -666,7 +666,7 @@
       await zuMeine();
       pruefe($$(".my-item").length === 0, "Verworfenes Workout steht in Meine: " + $$(".my-item").length);
       await zuBaukasten("timer");
-      klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
+      W.go("#mybuild/new");
       await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
       ["air-squats", "push-ups", "plank"].forEach(function (id) { klick('[data-wbex="' + id + '"]'); });
       klick(await bis(function () { return $(".wb-leiste [data-wbsave]:not([disabled])"); }, 2000, "Speichern"));
@@ -677,7 +677,7 @@
       await zuMeine();
       await bis(function () { return $$(".my-item").length === 1; }, 3000, "gespeichertes Workout in Meine");
       await zuBaukasten("timer");
-      klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
+      W.go("#mybuild/new");
       await bis(function () { return $("[data-wbex]"); }, 3000, "Baukasten");
       klick("button.back");   // neues Workout ohne Übung: nichts angelegt, keine Nachfrage
       await bis(function () { return $("[data-bauselber]") && !$("#overlayRoot [data-act]"); }, 3000, "zurück im Baukasten");
@@ -692,7 +692,7 @@
       klick('[data-herostart]');
       await zuBaukasten("timer");
       pruefe($$(".bau-schritt").length === 3 && $('[data-bauart="timer"].active'), "Baukasten: drei Schritte und die Art „Nach Zeit“ fehlen");
-      klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen"));
+      W.go("#mybuild/new");
       await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
       pruefe(!$("button[data-exinfo]") && $(".wb-kachel .wb-i"), "Das „i“ soll nur ein Hinweis sein, kein Knopf");
       klick('[data-wbex="air-squats"]');
@@ -707,20 +707,11 @@
       // Nach Sätzen: dieselben Übungen im Plan, das beim Bauen angelegte Workout wandert
       klick('[data-bauart="gewicht"]');
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau");
-      pruefe($('[data-bauart="gewicht"].active') && $$("#plan-sticky .wb-mini").length === 2, "Plan: Art oder Übungen fehlen: " + $$("#plan-sticky .wb-mini").length);
+      pruefe(!$("[data-bauart]") && $$("#plan-sticky .wb-mini").length === 2, "Plan: Übungen fehlen oder die Frage Zeit/Sätze steht noch da: " + $$("#plan-sticky .wb-mini").length);
       pruefe($$("[data-planex] .st-sub").some(function (e) { return /\d+ Sätze × \d+/.test(e.textContent); }), "Plan-Kacheln sollen „3 Sätze × 12“ zeigen");
       pruefe($$("#plan-sticky .wb-mini-sub").length === 2 && /^\d+×\d+/.test($("#plan-sticky .wb-mini-sub").textContent), "Plan-Streifen soll „3×12“ zeigen");
       var a = zaehle();
       pruefe(a.wo === vor.wo && a.pl === vor.pl + 1, "Workout soll zum Plan werden, nicht doppelt bleiben: " + JSON.stringify(a));
-      // und zurück nach Zeit
-      klick('[data-bauart="timer"]');
-      await bis(function () { return $$("[data-wbex]").length > 50 && $("#plan-sticky"); }, 3000, "Workout mit Timer");
-      pruefe($$("#plan-sticky .wb-mini").length === 2, "Zurück nach Zeit: Übungen fehlen");
-      var b = zaehle();
-      pruefe(b.wo === vor.wo && b.pl === vor.pl, "Der Entwurf soll wandern, nichts gespeichert werden: " + JSON.stringify(b));
-      // System-Zurück im Plan-Bau führt zur Liste (nicht zur Startseite); ein neuer Plan mit Übungen fragt vorher nach
-      klick('[data-bauart="gewicht"]');
-      await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau (zweites Mal)");
       pruefe(/Speichern/.test($("[data-plandone]").textContent) && !$("[data-plandel]"), "Neuer Plan: Knopf „Speichern“ statt „Fertig“ erwartet");
       W.dispatchEvent(new W.PopStateEvent("popstate"));
       klick(await bis(function () { return $('#overlayRoot [data-act="1"]'); }, 2000, "Frage „Plan nicht gespeichert“"));   // Verwerfen
@@ -1301,6 +1292,46 @@
       klick("[data-stundo]");
       await bis(function () { return !$(".st-pr"); }, 3000, "Hinweis weg nach „Letzten Satz löschen“");
     }],
+    ["Selber bauen: ein Weg für Zeit und Sätze, Voreinstellung je Zeile, Für alle gleich, Zeiten, Woche oben", async function () {
+      await heim();
+      pruefe($(".woche") && ($(".woche").compareDocumentPosition($(".home-hero")) & 4), "Die Wochenübersicht soll über dem Kopfblock stehen");
+      klick('[data-herostart]');
+      await zuBaukasten("timer");
+      klick("[data-bauselber]");
+      await bis(function () { return $("#plan-name") && $("[data-plandone]"); }, 3000, "Selber bauen (Nach Zeit) führt in den Plan-Bau");
+      pruefe(!$("[data-bauart]") && !$("#overlayRoot .sp-sheet"), "Plan-Bau fragt nicht mehr nach Zeit oder Sätzen");
+      var plN = W.stPlaene().filter(function (x) { return x.entwurf; })[0];
+      pruefe(plN && plN.standard === "timer", "Nach Zeit soll die Voreinstellung Timer setzen: " + JSON.stringify(plN && plN.standard));
+      if (!$('[data-bauort="studio"].on')) klick('[data-bauort="studio"]');   // Fitnessstudio und Freiluft zugleich
+      await bis(function () { return $('[data-bauort="studio"].on') && $('[data-bauort="frei"].on'); }, 2000, "beide Orte");
+      klick(await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats"));
+      klick(await bis(function () { return $('[data-planex="leg-press"]'); }, 2000, "Beinpresse"));
+      klick(await bis(function () { return $("[data-plandone]:not([disabled])"); }, 2000, "Speichern"));
+      await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "Plan-Seite mit zwei Zeilen");
+      pruefe($$('.pz-zeile [data-pzmodus="timer"].active').length === 2, "Nach Zeit: beide Zeilen sollen mit Timer voreingestellt sein");
+      pruefe($('.pz-kopfkarte [data-pzalle="timer"].active') && $(".pz-kopfkarte [data-pzzeiten]"), "Karte „Alle Übungen“ mit Zeiten fehlt oben");
+      pruefe(($(".pz-kopfkarte").compareDocumentPosition($(".pz-liste")) & 4), "Die Karte „Alle Übungen“ soll vor den Zeilen stehen");
+      klick('.pz-kopfkarte [data-pzalle="saetze"]');
+      await bis(function () { return $$('.pz-zeile [data-pzmodus="saetze"].active').length === 2; }, 2000, "Alle Satz für Satz");
+      klick($('.pz-zeile[data-pz="air-squats"] [data-pzmodus="timer"]'));
+      await bis(function () { return $('.pz-zeile[data-pz="air-squats"] [data-pzmodus="timer"].active'); }, 2000, "eine Zeile mit Timer");
+      pruefe(!$(".pz-kopfkarte [data-pzalle].active") && $(".pz-kopfkarte [data-pzzeiten]"), "Gemischt: keine der beiden Stellungen oben aktiv, Zeiten sichtbar");
+      var pl2 = W.state.db.settings.stPlaene.filter(function (x) { return !x.entwurf; }).pop();
+      pruefe(pl2.modus && pl2.modus["air-squats"] === "timer" && pl2.standard === "saetze", "Wahl je Zeile nicht im Plan: " + JSON.stringify([pl2.modus, pl2.standard]));
+      // Zeiten: Für alle gleich gilt sofort für die Timer-Übungen
+      klick('.pz-kopfkarte [data-pzalle="timer"]');
+      await bis(function () { return $$('.pz-zeile [data-pzmodus="timer"].active').length === 2; }, 2000, "Alle mit Timer");
+      klick(await bis(function () { return $('[data-pzart="alle"]'); }, 2000, "Für alle gleich"));
+      await bis(function () { return $("#pk-reps"); }, 2000, "Runden, Arbeit, Pause für alle");
+      klick('#pk-work ~ [data-inc], #pk-work + [data-inc]');
+      await bis(function () { return $$('.pz-zeile [data-feld="work"] input').every(function (i) { return i.value === $("#pk-work").value; }); }, 2000, "Arbeit gilt für alle Zeilen");
+      var sel = $("#pk-br"); sel.value = "60"; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
+      await bis(function () { return W.state.db.settings.stPlaene.filter(function (x) { return !x.entwurf; }).pop().blockRest === 60; }, 2000, "Pause zwischen den Übungen gespeichert");
+      klick($("[data-planwo]"));
+      await bis(function () { return /^#cover\/my\//.test(W.location.hash); }, 3000, "Deckblatt des Timer-Workouts");
+      var mwN = (W.state.db.myWorkouts || []).filter(function (m) { return m.fromPlan === pl2.id; })[0];
+      pruefe(mwN && mwN.blockRest === 60, "Pause zwischen den Übungen kommt im Timer-Workout nicht an: " + JSON.stringify(mwN && mwN.blockRest));
+    }],
     ["Plan als Programm: Sätze, Gewicht, Pause je Übung, Letztes Mal, Timer-Umschalter, Statistik", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
       await heim();
@@ -1345,7 +1376,8 @@
       klick(z1.querySelector('[data-pzmodus="timer"]'));
       await bis(function () { return $('.pz-zeile[data-pz="leg-press"] [data-feld="work"]'); }, 2000, "Zeile im Timer-Modus (Arbeit statt Wiederholungen)");
       pruefe(!$('.pz-zeile[data-pz="leg-press"] [data-feld="wdh"]') && $('[data-pzstart="leg-press"]') && !$('[data-pzstart="butterfly"]'), "Timer gilt nur für die eine Übung");
-      pruefe(daten().settings.studio["leg-press"].modus === "timer" && (daten().settings.studio["butterfly"] || {}).modus !== "timer", "Modus je Übung nicht gespeichert");
+      var plM = daten().settings.stPlaene.filter(function (x) { return x.id === "p-prog"; })[0];   // die Wahl je Zeile gilt für diesen Plan
+      pruefe(plM.modus && plM.modus["leg-press"] === "timer" && !(plM.modus["butterfly"] === "timer"), "Modus je Übung nicht im Plan gespeichert: " + JSON.stringify(plM.modus));
       klick($('[data-pzstart="leg-press"]'));
       await bis(function () { return /^#playst\/leg-press/.test(W.location.hash) && $("[data-plkg]"); }, 3000, "Timer nur für diese Übung, mit Satz-Eintrag");
       W.exitPlayer();
@@ -1365,7 +1397,7 @@
       await bis(function () { return $(".st-timer") && !$("#st-kg"); }, 3000, "Timer-Modus");
       pruefe(+$("#stt-reps").value === s0 + 1, "Timer-Runden folgen den Sätzen nicht: " + $("#stt-reps").value);
       klick('.st-timer [data-inc]');
-      pruefe(daten().settings.studio["leg-press"].ziel.saetze === s0 + 2 && daten().settings.studio["leg-press"].modus === "timer", "Runden/Modus nicht gespeichert");
+      pruefe(daten().settings.studio["leg-press"].ziel.saetze === s0 + 2 && daten().settings.stPlaene.filter(function (x) { return x.id === "p-prog"; })[0].modus["leg-press"] === "timer", "Runden/Modus nicht gespeichert");
       klick('[data-stmodus="saetze"]');
       await bis(function () { return $("#st-kg") && !$(".st-timer"); }, 3000, "zurück zu Satz für Satz");
       // Satztypen: Aufwärmsatz zählt nicht in die Bestwerte; Schritt der +/−-Knöpfe einstellbar

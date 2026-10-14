@@ -209,7 +209,8 @@ function bauOrtBinden(neu, box){
 var stPlanNeuId = null;
 function katPlanNeu(){
   katPlanAufraeumen();
-  var p = { id:uid(), name:t("planDefault", { n:stPlaene().filter(function(x){ return !x.entwurf; }).length+1 }), ids:[], updatedAt:Date.now(), entwurf:true };
+  // standard: die im Baukasten gewählte Art (Nach Zeit → Timer, Nach Sätzen → Satz für Satz) gilt für die Übungen des Plans, solange man sie nicht einzeln umstellt
+  var p = { id:uid(), name:t("planDefault", { n:stPlaene().filter(function(x){ return !x.entwurf; }).length+1 }), ids:[], updatedAt:Date.now(), entwurf:true, standard:bauModus() === "timer" ? "timer" : "saetze" };
   stPlaene().push(p); save();
   if(katTab() !== "baukasten") katZuMeine();   // aus dem Baukasten kommt „Zurück“ wieder dorthin
   stPlanAktiv = p.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = "";
@@ -381,7 +382,7 @@ function renderKatalogBaukasten(){
   // Workout mit Timer oder Plan mit Sätzen, Gewicht und Pausen
   app.querySelector("[data-bauselber]").addEventListener("click", function(){
     go("#katalog");
-    if(modus === "timer") go("#mybuild/new"); else katPlanNeu();
+    katPlanNeu();   // immer der Plan: Übungen wählen, dann je Übung Satz für Satz oder Timer (die Art oben ist die Voreinstellung)
   });
 }
 

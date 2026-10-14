@@ -252,12 +252,30 @@ function stPlanIds(p){   // nur Übungen, die es noch gibt, jede nur einmal
   var da = {};
   return (Array.isArray(p.ids) ? p.ids : []).filter(function(id){ if(da[id] || !findExercise(id)) return false; da[id] = true; return true; });
 }
-/* Wie eine Übung gerade gemacht wird: "saetze" (Satz für Satz eintragen) oder "timer". Übungen mit Gewicht starten mit Sätzen, Übungen ohne Gewicht
-   (nur Block, aus Air) mit dem Timer - beides lässt sich je Übung umstellen (Plan-Zeile und Übungskarte) und wird gemerkt. */
+/* Wie eine Übung gerade gemacht wird: "saetze" (Satz für Satz eintragen) oder "timer". Im geöffneten Plan gilt die Wahl des Plans: die Einstellung der Übung
+   in diesem Plan (p.modus[id]), sonst die Art, mit der der Plan angelegt wurde (p.standard = Nach Zeit → Timer, Nach Sätzen → Satz für Satz).
+   Außerhalb eines Plans gilt die Wahl der Übung selbst (studio[id].modus); ohne Wahl starten Übungen mit Gewicht mit Sätzen, Übungen ohne Gewicht
+   (nur Block, aus Air) mit dem Timer. */
+function studioModusPlan(id){
+  var p = stPlanAktiv ? stPlanFind(stPlanAktiv) : null;
+  return p && stPlanIds(p).indexOf(id) > -1 ? p : null;
+}
 function studioModus(id){
+  var p = studioModusPlan(id);
+  if(p){
+    var pm = (p.modus && p.modus[id]) || p.standard;
+    if(pm === "timer" || pm === "saetze") return pm;
+  }
   var e = studioEintrag(id);
   if(e && (e.modus === "timer" || e.modus === "saetze")) return e.modus;
   return studioNurBlock(findExercise(id)) ? "timer" : "saetze";
+}
+function studioModusSetzen(id, m){
+  m = m === "timer" ? "timer" : "saetze";
+  var p = studioModusPlan(id);
+  if(p){ p.modus = p.modus || {}; p.modus[id] = m; p.updatedAt = Date.now(); }
+  else { var a = studioAlle(); (a[id] || (a[id] = { log:[] })).modus = m; }
+  save();
 }
 /* So heißen Sätze überall: „3 Sätze × 12“ (Wiederholungen) bzw. „3 Sätze × 40 s“ (Timer); nach einem Eintrag „40 kg · 3 Sätze × 12“ */
 function satzName(n){ return n === 1 ? t("satzEins") : t("satzMehr", { n:n }); }
@@ -417,6 +435,82 @@ function planListeHTML(p){
   });
   return teile.map(function(x, k){ return x.html+(k < teile.length-1 ? verbinder(x.letzte, false) : ""); }).join("");
 }
+/* Oben auf der Plan-Seite: „Für alle gleich“ - alle Übungen auf einmal Satz für Satz oder mit Timer stellen - und die Zeiten des Timers wie im
+   Workout-Baukasten (Für alle gleich: Runden, Arbeit, Pause für alle Timer-Übungen; Je Übung: die Werte der Zeilen; Pause zwischen den Übungen).
+   Die Voreinstellung je Übung kommt aus der Art, mit der der Plan angelegt wurde (p.standard); einzelne Zeilen lassen sich umstellen (p.modus). */
+function planKopfKarteHTML(p, ids){
+  var s = state.db.settings, modi = ids.map(studioModus);
+  var alleS = modi.every(function(m){ return m === "saetze"; }), alleT = modi.every(function(m){ return m === "timer"; }), hatTimer = modi.indexOf("timer") > -1;
+  var z = p.zeiten || {}, ersteT = ids.filter(function(id){ return studioModus(id) === "timer"; })[0];
+  var tm = ersteT ? studioTimer(ersteT) : { reps:3, work:40, rest:60 };
+  var art = z.art === "alle" ? "alle" : "je", offen = s.planZeitenOffen !== false;
+  var rests = [0, 15, 30, 45, 60, 90, 120], br = p.blockRest != null ? p.blockRest : 45;
+  if(rests.indexOf(br) < 0) rests.push(br);
+  function knopf(m, an, key){ return '<button type="button" data-pzalle="'+m+'" class="'+(an ? 'active' : '')+'" aria-pressed="'+an+'">'+(m === "timer" ? ICON_PLAY+' ' : '')+esc(t(key))+'</button>'; }
+  var zeiten = '';
+  if(hatTimer){
+    var sum = art === "alle" ? t("modeUniform")+" "+(z.saetze || tm.reps)+"×"+(z.work || tm.work)+" s · "+(z.pause != null ? z.pause : tm.rest)+" s" : t("modeIndividual");
+    zeiten = '<div class="pz-zeiten"><div class="opt-head" data-pzzeiten role="button" tabindex="0" aria-expanded="'+offen+'">'+
+        '<div><div class="opt-title">'+esc(t("timesLabel"))+'</div><div class="opt-sum">'+esc(sum)+SEP+esc(t("optRestShort", { n:br }))+'</div></div>'+
+        '<span class="tpl-chev'+(offen ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></div>'+
+      (offen ? '<div class="opt-body"><div class="seg-row">'+
+          '<button type="button" data-pzart="alle" class="'+(art === "alle" ? 'active' : '')+'">'+esc(t("modeUniform"))+'</button>'+
+          '<button type="button" data-pzart="je" class="'+(art === "je" ? 'active' : '')+'">'+esc(t("modeIndividual"))+'</button></div>'+
+        (art === "alle"
+          ? '<div class="tm-grid" id="pk-zeiten"><div><label>'+esc(t("tmReps"))+'</label>'+stepperHTML("pk-reps", z.saetze || tm.reps, 1, 20, 1)+'</div>'+
+            '<div><label>'+esc(t("tmWork"))+'</label>'+stepperHTML("pk-work", z.work || tm.work, 5, 600, 5)+'</div>'+
+            '<div><label>'+esc(t("tmRest"))+'</label>'+stepperHTML("pk-rest", z.pause != null ? z.pause : tm.rest, 0, 300, 5)+'</div></div>'
+          : '<div class="tm-hint">'+esc(t("planJeHint"))+'</div>')+
+        '<label for="pk-br">'+esc(t("myRest"))+'</label>'+
+        '<select id="pk-br">'+rests.sort(function(a, b){ return a - b; }).map(function(v){
+          return '<option value="'+v+'"'+(v === br ? ' selected' : '')+'>'+v+' s</option>'; }).join("")+'</select></div>' : '')+'</div>';
+  }
+  return '<div class="card pz-kopfkarte"><label>'+esc(t("planAlleTitel"))+'</label>'+
+    '<div class="seg-row" role="group">'+knopf("saetze", alleS, "stModusSaetze")+knopf("timer", alleT, "stModusTimer")+'</div>'+zeiten+'</div>';
+}
+function planKopfKarteBinden(p, ids, neu){
+  function modus(m){ p.standard = m; p.modus = {}; p.updatedAt = Date.now(); save(); neu(); }
+  app.querySelectorAll("[data-pzalle]").forEach(function(b){ b.addEventListener("click", function(){ modus(b.getAttribute("data-pzalle")); }); });
+  var s = state.db.settings;
+  var kt = app.querySelector("[data-pzzeiten]");
+  function zeitenUm(){ s.planZeitenOffen = s.planZeitenOffen === false; save(); neu(); }
+  if(kt){
+    kt.addEventListener("click", zeitenUm);
+    kt.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); zeitenUm(); } });
+  }
+  // Für alle gleich: Runden, Arbeit und Pause gelten sofort für alle Übungen, die mit dem Timer laufen
+  function fuerAlle(z){
+    p.zeiten = z;
+    ids.forEach(function(id){
+      if(studioModus(id) !== "timer") return;
+      var en = studioAlle()[id] || (studioAlle()[id] = { log:[] });
+      en.ziel = en.ziel || {}; en.ziel.saetze = z.saetze;
+      var alt = en.timer || {}; en.timer = { work:z.work };
+      if(alt.reps != null) en.timer.reps = z.saetze;
+      en.pause = z.pause;
+    });
+    p.updatedAt = Date.now(); save(); neu();
+  }
+  app.querySelectorAll("[data-pzart]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var a = b.getAttribute("data-pzart");
+      if((p.zeiten && p.zeiten.art || "je") === a) return;
+      if(a === "alle"){
+        var erste = ids.filter(function(id){ return studioModus(id) === "timer"; })[0], tm = erste ? studioTimer(erste) : { reps:3, work:40, rest:60 };
+        fuerAlle({ art:"alle", saetze:tm.reps, work:tm.work, pause:tm.rest });
+      } else { p.zeiten = { art:"je" }; p.updatedAt = Date.now(); save(); neu(); }
+    });
+  });
+  var zb = app.querySelector("#pk-zeiten");
+  if(zb) bindSteppers(zb, function(){
+    fuerAlle({ art:"alle",
+      saetze:clamp(parseInt(app.querySelector("#pk-reps").value) || 3, 1, 20),
+      work:clamp(parseInt(app.querySelector("#pk-work").value) || 40, 5, 600),
+      pause:clamp(parseInt(app.querySelector("#pk-rest").value) || 0, 0, 300) });
+  });
+  var br = app.querySelector("#pk-br");
+  if(br) br.addEventListener("change", function(){ p.blockRest = parseInt(br.value) || 0; p.updatedAt = Date.now(); save(); neu(); });
+}
 function planSaetzeSumme(ids){
   return ids.reduce(function(a, id){ return findExercise(id) ? a + studioZiel(id).saetze : a; }, 0);
 }
@@ -459,7 +553,7 @@ function planZeilenBinden(root, fn, neuZeichnen, p){
       b.addEventListener("click", function(){
         var m = b.getAttribute("data-pzmodus") === "timer" ? "timer" : "saetze";
         if(studioModus(id) === m) return;
-        eintrag().modus = m; save();
+        studioModusSetzen(id, m);
         if(neuZeichnen) neuZeichnen();
       });
     });
@@ -518,7 +612,7 @@ function renderStudioPlan(){
           (stPlanSel > -1 && stPlanSel < ids.length ? '<div class="plan-ctrl"><button type="button" data-planmv="-1" aria-label="'+esc(t("moveLeft"))+'"'+(stPlanSel === 0 ? ' disabled' : '')+'>&#9664;</button>'+
             '<button type="button" class="del" data-plandelsel>'+ICON_TRASH+' '+esc(t("planRaus"))+'</button>'+
             '<button type="button" data-planmv="1" aria-label="'+esc(t("moveRight"))+'"'+(stPlanSel === ids.length-1 ? ' disabled' : '')+'>&#9654;</button></div>' : '') : '')+'</div>'+
-      bauOrtHTML()+bauArtHTML("gewicht", false)+hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
+      bauOrtHTML()+hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
       studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk), zonen);
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
     function planKachel(id){
@@ -547,8 +641,9 @@ function renderStudioPlan(){
     html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
       (ids.length ? hw.z(0, "page-hint") : '')+
       (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("planAlleTimer"))+'</button>' : '')+
+      (ids.length ? planKopfKarteHTML(p, ids) : '')+
+      (ids.length ? auswertungHTML(ids) : '')+   // erst die Übersicht über die Übungen im Ganzen, dann die Zeilen
       (ids.length ? '<div class="pz-liste">'+planListeHTML(p)+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
-      (ids.length ? auswertungHTML(ids) : '')+
       (ids.length ? trainingLeisteHTML({ plan:p, ids:ids }) : '')+
       '<div style="height:'+(ids.length ? 96 : 40)+'px"></div>';
   }
@@ -563,6 +658,7 @@ function renderStudioPlan(){
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
   an("[data-planedit]", function(){ stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
   if(!stPlanBauen && ids.length) trainingLeisteBinden({ plan:p, ids:ids }, neu);
+  if(!stPlanBauen && ids.length) planKopfKarteBinden(p, ids, neu);
   if(!stPlanBauen) planZeilenBinden(app, function(){   // Summe der Sätze oben nachführen
     var su = app.querySelector("#plan-summe");
     if(su) su.textContent = planSummeText(stPlanIds(p));
@@ -576,8 +672,9 @@ function renderStudioPlan(){
   an("[data-planwo]", function(){
     var items = planTimerItems(p);   // Einzelübungen nacheinander, Supersätze und Zirkel abwechselnd
     var mw = (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
-    if(mw){ mw.name = p.name; mw.items = items; mw.updatedAt = Date.now(); save(); }
-    else { mw = createMyFromDraft({ name:p.name, mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:items }); mw.fromPlan = p.id; save(); }
+    var br = p.blockRest != null ? p.blockRest : 45;   // Pause zwischen den Übungen (Zeiten-Karte oben)
+    if(mw){ mw.name = p.name; mw.items = items; mw.blockRest = br; mw.updatedAt = Date.now(); save(); }
+    else { mw = createMyFromDraft({ name:p.name, mode:"individual", reps:6, work:30, rest:10, blockRest:br, items:items }); mw.fromPlan = p.id; save(); }
     go("#cover/my/"+mw.id);
   });
   an("[data-plandel]", function(){
@@ -597,7 +694,6 @@ function renderStudioPlan(){
   });
   // Plan oben: Übung antippen = auswählen, ◀ ▶ verschieben, Papierkorb nimmt sie heraus
   bauOrtBinden(neu);
-  if(stPlanBauen) bauArtBinden("gewicht", function(){ planNachZeit(p); });   // nach Zeit: dieselben Übungen als Workout mit Timer
   app.querySelectorAll("[data-plansel]").forEach(function(b){
     b.addEventListener("click", function(){ var i = +b.getAttribute("data-plansel"); stPlanSel = stPlanSel === i ? -1 : i; neu(); });
   });

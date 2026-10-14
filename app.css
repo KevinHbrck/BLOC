@@ -2542,3 +2542,9 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .area-tile[data-bereich="warm"] .at-ico, .bs-zeile[data-bereich="warm"] .at-ico, .wi-zeile[data-bereich="warm"] .at-ico,
 .area-tile[data-bereich="katalog"] .at-ico, .bs-zeile[data-bereich="katalog"] .at-ico, .wi-zeile[data-bereich="katalog"] .at-ico{
   background:transparent; box-shadow:inset 0 0 0 2px currentColor; }
+/* Plan-Seite oben: Für alle gleich und Zeiten */
+.pz-kopfkarte{ margin:0 0 12px; }
+.pz-kopfkarte > label{ margin-top:0; }
+.pz-zeiten{ margin-top:12px; border-top:1px solid var(--border); }
+.pz-zeiten .opt-head{ padding-left:0; padding-right:0; }
+.pz-zeiten .opt-body{ padding:0 0 4px; }
