@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Statistik: Karte „Dein Monat“, Meilensteine, Kalorienschätzung (Fassung 2026-10-14-37)
+
+- **Dein Monat** (Statistik): die letzten 4 Wochen gegen die 4 davor aus den Wochensummen, mit Trainings, Zeit, Lieblingstag, Rekorden, häufigster Übung und einem freundlichen Satz; Meilenstein-Chip („Training Nr. 25 geschafft!“) bei 5, 10, 25, 50, 75, 100 … Trainings.
+- **Kalorienschätzung (optional)**: Körperdaten (Gewicht, Größe, Alter, Geschlecht) in den Einstellungen unter „Mehr“, nur lokal; Zusatzverbrauch über dem Ruheumsatz aus MET je Bereich (Compendium [25]) und Ruheumsatz nach Mifflin-St Jeor [24]; ohne Daten erscheint nur ein kleiner Hinweis. Datenschutz- und Haftungstext ergänzt, Einheitstest dazu.
+- **Offen/Entscheidung des Nutzers**: Anbieterangaben (Entwurf in docs/ANBIETERANGABEN-ENTWURF.md), Foto-Einzelnachweise (die Bilddateien enthalten keine Metadaten).
+
 ## 2026-10-14 · Offene Punkte: Studio-Hinweis, neue Rumpf- und Zugübungen, Strukturentscheidungen (Fassung 2026-10-14-36)
 
 - **Studio-Hinweis** im Info-Fenster und auf der Übungskarte aller Geräteübungen (Gewicht, Aufwärmsätze ehrlich formuliert, Schmerz, Sicherungsarme, ärztliche Abklärung).

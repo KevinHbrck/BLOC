@@ -274,6 +274,27 @@ function statPaceSvg(runs){
     pts.map(function(q, i){ return '<circle cx="'+q[0]+'" cy="'+q[1]+'" r="'+(i === pts.length-1 ? 5 : 3)+'" class="'+(i === pts.length-1 ? 'sl-jetzt' : 'sl-punkt')+'"/>'; }).join("")+
     '<text x="'+Math.min(+last[0], W-px)+'" y="'+Math.max(10, +last[1]-9)+'" text-anchor="end" class="sl-text">'+esc(statPz(p[p.length-1]))+'</text></svg></div>';
 }
+/* ---------- Kalorien-Schätzung (optional, nur mit Körperdaten; alles lokal) ----------
+   Zusatzverbrauch über dem Ruheumsatz = (MET - 1) x Ruheumsatz je Stunde x Stunden. MET je Bereich grob nach dem Compendium of Physical Activities
+   (Krafttraining/Calisthenics 3,5-8, Dehnen 2,3, Laufen 8-11); Ruheumsatz nach Mifflin-St Jeor, ohne Größe/Geschlecht 1 kcal je kg und Stunde. Eine grobe Schätzung. */
+var KCAL_MET = { katalog:4.5, intervall:6, reps:7, warm:2.8, run:9 };
+function koerperDaten(){
+  var k = state.db.settings.koerper || {}, kg = +k.kg;
+  if(!(kg >= 30 && kg <= 250)) return null;
+  return { kg:kg, cm:+k.cm || 0, alter:+k.alter || 0, sex:k.sex || "" };
+}
+function kcalProStunde(kd){
+  if(kd.cm >= 120 && kd.cm <= 230 && (kd.sex === "m" || kd.sex === "w")){
+    var bmr = 10*kd.kg + 6.25*kd.cm - 5*(kd.alter >= 10 ? kd.alter : 35) + (kd.sex === "m" ? 5 : -161);
+    if(bmr > 600) return bmr/24;
+  }
+  return kd.kg;
+}
+function kcalSchaetzung(sekJeGruppe, kd){
+  var h = kcalProStunde(kd), sum = 0;
+  Object.keys(sekJeGruppe).forEach(function(g){ sum += Math.max(0, (KCAL_MET[g] || 4.5) - 1) * h * (sekJeGruppe[g]/3600); });
+  return Math.round(sum);
+}
 function renderStats(){
   var s = state.db.settings, jetzt = Date.now(), tag = 86400000, runs = s.runs || [];
   pruneHistory(state.db);
@@ -341,6 +362,34 @@ function renderStats(){
       statBalken(reihe.map(function(b){ return zeit ? b.s : b.n; }), labels, function(v){ return zeit ? statMin(v) : String(v); })+
       '<div class="sk-unter">'+esc(t(zeit ? "statMinHint" : "statNHint", { u:einheit })+" – "+t("statWischen"))+'</div>'+
       '<div class="sk-unter">'+esc(t("statBesuchHint"))+'</div></div>';
+    // Rückblick „Dein Monat“: die letzten 4 Wochen gegen die 4 davor (aus den Wochensummen, alles lokal); freundlich formuliert, ohne Druck
+    var w4 = voll.slice(-4), w4V = voll.slice(-8, -4), r28 = besA.filter(function(b){ return b.von >= jetzt - 28*tag; });
+    function sumN(l){ return l.reduce(function(a, w){ return a + w.n; }, 0); }
+    function sumS(l){ return l.reduce(function(a, w){ return a + w.s; }, 0); }
+    if(sumN(w4) > 0){
+      var tgR = sumN(w4), tgV = sumN(w4V), wtR = [0, 0, 0, 0, 0, 0, 0], zaehlR = {}, rekR = 0, bestR = null;
+      r28.forEach(function(b){ wtR[(new Date(b.von).getDay() + 6) % 7]++; });
+      var wtI = wtR.indexOf(Math.max.apply(null, wtR)), wtN = t("statWochentage").split(" ");
+      hist.forEach(function(e){ if(e.at >= jetzt - 28*tag) (e.ex || []).forEach(function(id){ zaehlR[id] = (zaehlR[id] || 0) + 1; }); });
+      Object.keys(zaehlR).forEach(function(id){ if(findExercise(id) && (!bestR || zaehlR[id] > zaehlR[bestR])) bestR = id; });
+      einheitenListe().forEach(function(x){ if(x.at >= jetzt - 28*tag) rekR += +x.rek || 0; });
+      var meil = [5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000].filter(function(m){ return gesamt >= m && gesamt - m <= 2; }).pop();
+      var satzR = tgV && tgR > tgV ? t("statRueckPlus", { n:tgR - tgV }) : tgV && tgR === tgV ? t("statRueckGleich") : t("statRueckBasis", { n:tgR });
+      var chipsR = [[String(tgR), t("statRueckTage")], [dauer(sumS(w4)), t("statRueckZeit")]];
+      if(r28.length >= 3) chipsR.push([wtN[wtI] || "–", t("statRueckTag")]);
+      var kd = koerperDaten(), kcalR = 0;
+      if(kd){
+        var a4 = {}; w4.forEach(function(w){ Object.keys(w.a).forEach(function(g){ a4[g] = (a4[g] || 0) + (w.a[g].s || 0); }); });
+        kcalR = kcalSchaetzung(a4, kd);
+        if(kcalR > 0) chipsR.push(["≈ "+kcalR.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"), t("statRueckKcal")]);
+      }
+      if(rekR) chipsR.push([rekR+" ★", t("statRueckRek")]);
+      html += '<div class="card stat-karte"><div class="sk-kopf"><b>'+esc(t("statRueck"))+'</b></div>'+
+        (meil ? '<div class="sh-chips" style="margin:2px 0 8px"><span class="sh-serie">'+svgIcon('<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>')+esc(t("statMeilenstein", { n:meil }))+'</span></div>' : '')+
+        '<div class="chips-stat">'+chipsR.map(function(c){ return '<span><b>'+esc(c[0])+'</b><small>'+esc(c[1])+'</small></span>'; }).join("")+'</div>'+
+        '<div class="sk-unter">'+esc(satzR)+(bestR && zaehlR[bestR] >= 2 ? " "+esc(t("statRueckUebung", { name:tplText(findExercise(bestR).name), n:zaehlR[bestR] })) : "")+'</div>'+
+        (kd ? (kcalR > 0 ? '<div class="sk-unter">'+esc(t("statKcalHint"))+'</div>' : "") : '<button type="button" class="kh-mehr" data-nav="#settings">'+esc(t("statKcalLink"))+' &#8250;</button>')+'</div>';
+    }
     // Kalender: letzte 4 Wochen (Tag = Start des Trainings)
     var tage = {}, mo = new Date(); mo.setHours(0, 0, 0, 0); mo.setDate(mo.getDate() - (mo.getDay() + 6) % 7 - 21);
     besA.forEach(function(b){ var d = new Date(b.von); var k = d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); tage[k] = (tage[k] || 0) + b.s; });

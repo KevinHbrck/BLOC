@@ -316,6 +316,19 @@
     gleich(W.einheitTagKey(new Date(2026, 9, 5, 23, 59).getTime()), "2026-10-05", "Datum mit führenden Nullen");
   });
 
+  test("Statistik: Kalorien-Schätzung (nur Gewicht, mit Größe/Alter/Geschlecht, ungültige Werte)", function () {
+    var s = W.state.db.settings, alt = s.koerper;
+    try {
+      gleich(W.kcalSchaetzung({ katalog: 3600 }, { kg: 80, cm: 0, alter: 0, sex: "" }), 280, "nur Gewicht: (4,5 - 1) x 80 kcal je Stunde");
+      gleich(W.kcalSchaetzung({}, { kg: 80, cm: 0, alter: 0, sex: "" }), 0, "ohne Zeit keine Kalorien");
+      var m = W.kcalSchaetzung({ katalog: 3600 }, { kg: 80, cm: 180, alter: 30, sex: "m" }), f = W.kcalSchaetzung({ katalog: 3600 }, { kg: 80, cm: 180, alter: 30, sex: "w" });
+      wahr(m > f && m > 200 && m < 320, "gleiche Daten: Mann höher als Frau (Ruheumsatz), plausibel: " + m + " / " + f);
+      s.koerper = { kg: 20, cm: 180 };
+      gleich(W.koerperDaten(), null, "Gewicht außerhalb 30-250 kg: keine Schätzung");
+      s.koerper = { kg: 70 };
+      gleich(W.koerperDaten().kg, 70, "gültiges Gewicht");
+    } finally { s.koerper = alt; }
+  });
   test("Statistik: Fortschritt je Übung (erstes gegen bestes Gewicht, ohne Gewicht Wiederholungen, nur ab zwei Einheiten)", function () {
     var s = W.state.db.settings, alt = s.studio, tag = 86400000, n = Date.now();
     try {
