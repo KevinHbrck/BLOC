@@ -2586,3 +2586,5 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .tr-zeile .ort-thumb{ width:44px; height:44px; border-radius:11px; margin-right:10px; }
 .tr-zeile .tr-links{ display:flex; flex-direction:column; min-width:0; flex:1; }
 .tr-zeile > .ort-thumb:first-child{ flex-direction:row; }
+.tr-mehr{ width:100%; margin-top:8px; }
+.sr-arten{ margin-top:6px; }

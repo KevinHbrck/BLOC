@@ -5,6 +5,8 @@
 var gesamtQuery = "";
 /* Kategorien der Suche: ordnet die Gruppen der Treffer sechs Kategorien zu (Chips unter dem Suchfeld) */
 var suchKat = "alle", suchZonen = [], suchKoerperAuf = false, suchOrt = "";   // Körper-Filter der Suche: gewählte Muskelgruppen, Karte offen; suchOrt: "" (beide) | "frei" | "studio"
+var suchArten = [];   // Ausrüstungs-Filter der Suche (wie im Katalog: „was hast du dabei?“): frei | stange | band | koerper; leer = alles
+var SUCH_ARTEN = ["frei", "stange", "band", "koerper"];
 var SUCH_KATEGORIEN = ["alle", "uebungen", "workouts", "challenges", "timer", "bereiche", "erstellen"];
 function suchKategorie(gruppe){
   if(gruppe === t("libExercises")) return "uebungen";
@@ -39,11 +41,13 @@ function gesamtEintraege(){
     var exs = lw.exercises.map(findExercise).filter(Boolean);
     add(t("workouts"), tplText(lw.name), t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(libWorkoutRun(lw))), woSearchText("", exs), function(){ go("#cover/lib/"+lw.id); });
     if(!libIstWarmDehn(lw)){ l[l.length-1].welt = katWoOrt(exs); l[l.length-1].ort = l[l.length-1].welt; }   // Freiluft blau, Fitnessstudio orange (Aufwärmen und Dehnen gehören zu Mobility & Stretch)
+    l[l.length-1].exs = exs.map(function(ex){ return ex.id; });   // für den Ausrüstungs-Filter
   });
   (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
     var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
     add(t("mineMy"), mw.name, t("exCount", { n:exs.length }), woSearchText("", exs), function(){ go("#mybuild/"+mw.id); });
     if(!mw.ws){ l[l.length-1].welt = katWoOrt(exs); l[l.length-1].ort = l[l.length-1].welt; }
+    l[l.length-1].exs = exs.map(function(ex){ return ex.id; });
   });
   // Übungen
   EXERCISES.forEach(function(ex){
@@ -87,17 +91,26 @@ function renderSearch(){
     '<div class="lib-chips sr-orte" role="group" aria-label="'+esc(t("katOrt"))+'">'+[["", t("srOrtAlle")], ["frei", t("katOrtFrei")], ["studio", t("katOrtStudio")]].map(function(o){
       return '<button type="button" class="lib-chip'+(suchOrt === o[0] ? ' active' : '')+'" data-srort="'+o[0]+'" aria-pressed="'+(suchOrt === o[0])+'">'+esc(o[1])+'</button>';
     }).join("")+'</div>'+
+    '<div class="lib-chips sr-arten" role="group" aria-label="'+esc(t("equipHave"))+'">'+SUCH_ARTEN.map(function(a){
+      var an = suchArten.indexOf(a) > -1;
+      return '<button type="button" class="lib-chip'+(an ? ' active' : '')+'" data-srart="'+a+'" aria-pressed="'+an+'">'+esc(t("stArt_"+a))+'</button>';
+    }).join("")+'</div>'+
     '<button type="button" class="sr-koerper-knopf" data-srkk aria-expanded="'+suchKoerperAuf+'">'+esc(t("kkFilter"))+(suchZonen.length ? ' · '+suchZonen.map(kkName).join(', ') : '')+'<span class="tpl-chev'+(suchKoerperAuf ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>'+
     '<div class="sr-koerper" id="sr-kk"'+(suchKoerperAuf ? '' : ' hidden')+'>'+kkFilterHTML('data-srzone', suchZonen)+'</div>'+
     '<div id="gs-res"></div><div style="height:40px"></div>';
   bindCommon();
   var feld = app.querySelector("#gs-q"), res = app.querySelector("#gs-res");
   function zeigen(){
-    var w = suchNorm(gesamtQuery), zon = suchZonen.length > 0, gewaehlt = suchKat !== "alle" || zon;
+    var w = suchNorm(gesamtQuery), zon = suchZonen.length > 0, art = suchArten.length > 0, gewaehlt = suchKat !== "alle" || zon || art;
     if(!w && !gewaehlt){ res.innerHTML = '<div class="rep-intro">'+esc(t("srHint"))+'</div>'; return; }
     // Muskelgruppen gewählt: nur Übungen, die diese Gruppen als Hauptmuskeln haben
     var treffer = alle.filter(function(e){
       if(zon && !(e.ex && zonePasst(findExercise(e.ex), suchZonen))) return false;
+      if(art){   // Ausrüstung: Übungen genau mit dieser Ausrüstung; Workouts nur, wenn jede Übung damit geht (Körpergewicht braucht nichts)
+        if(e.ex){ if(suchArten.indexOf(studioArt(e.ex)) < 0) return false; }
+        else if(e.exs){ if(!e.exs.length || !e.exs.every(function(id){ var a = studioArt(id); return a === "koerper" || suchArten.indexOf(a) > -1; })) return false; }
+        else return false;
+      }
       if(suchOrt && e.ort && e.ort !== suchOrt) return false;   // Ort-Filter: nur Workouts und Übungen dieses Ortes
       return (suchKat === "alle" || e.k === suchKat) && (!w || suchPasst(e.text, gesamtQuery));   // ohne Suchwort zeigt eine Kategorie alle ihre Einträge
     });
@@ -157,6 +170,14 @@ function renderSearch(){
     b.addEventListener("click", function(){
       suchOrt = b.getAttribute("data-srort");
       app.querySelectorAll("[data-srort]").forEach(function(x){ var an = x === b; x.classList.toggle("active", an); x.setAttribute("aria-pressed", String(an)); });
+      zeigen();
+    });
+  });
+  app.querySelectorAll("[data-srart]").forEach(function(b){
+    b.addEventListener("click", function(){
+      suchArten = selToggle(suchArten, b.getAttribute("data-srart"));
+      var an = suchArten.indexOf(b.getAttribute("data-srart")) > -1;
+      b.classList.toggle("active", an); b.setAttribute("aria-pressed", String(an));
       zeigen();
     });
   });

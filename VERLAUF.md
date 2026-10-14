@@ -55,7 +55,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - **„Training speichern“** (`openTrainingSpeichern`, `js/12-uebung-statistik.js`): legt den Tag als Ganzes ab – Übungen mit ihren Sätzen, Volumen, Dauer, Rekorde (★) und eine Notiz. Jeder Satz steht weiter sofort im Protokoll der Übung; das Speichern ist der Tageseintrag dazu. Je Plan und Tag gibt es **einen** Eintrag (erneutes Speichern aktualisiert ihn); ohne Plan zählt alles, was heute eingetragen wurde („Freies Training“). Ein schon gespeicherter Tag führt sich nach jedem weiteren Satz selbst nach (`trainingNachSatz`).
 - **Überall erreichbar, auch während des Workouts**: Leiste unten auf der Plan-Seite und auf der Übungskarte (sobald heute etwas eingetragen ist) und ein Haken-Knopf oben im Timer bei Plan-Workouts und Übungen mit Gewicht.
-- **Statistik**: Karte „Gespeicherte Trainings“ (die letzten zehn, ein Tipp zeigt Sätze und Notiz, dort auch Löschen). Daten: `settings.einheiten` (höchstens 1000, nur auf dem Gerät).
+- **Statistik**: Karte „Gespeicherte Trainings“ (zuerst die letzten zehn, „Mehr anzeigen“ holt je 20 weitere, ein Tipp zeigt Sätze und Notiz, dort auch Löschen). Daten: `settings.einheiten` (höchstens 1000, nur auf dem Gerät).
 
 ## 2026-10-14 · Timer je Übung im Plan (Fassung 2026-10-14-2)
 

@@ -210,7 +210,7 @@ function openStudioStats(id, sicht){
       letzteTitel:t("stLastN"),
       letzte:log.map(function(l, i){
         return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
-      }).slice(-8).reverse()
+      }).slice(-30).reverse()
     });
   }
   var fmt = sicht === "vol" ? function(v){ return studioKg(Math.round(v)); } : function(v){ return studioKg(Math.round(v*10)/10); };
@@ -226,7 +226,7 @@ function openStudioStats(id, sicht){
     letzteTitel:t("stLastN"),
     letzte:log.map(function(l, i){
       return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
-    }).slice(-8).reverse()
+    }).slice(-30).reverse()
   });
 }
 /* Summit: dieselbe Statistik für ein Programm (Bestzeit, Läufe, Zeit je Woche) */

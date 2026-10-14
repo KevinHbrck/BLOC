@@ -1268,6 +1268,11 @@
       klick('[data-srort="studio"]');   // Ort-Filter der Suche: nur Fitnessstudio
       await bis(function () { var z = $$(".sr-welt"); return z.length > 0 && z.every(function (e) { return /gym-color/.test(e.style.getPropertyValue("--w")); }); }, 3000, "Ort-Filter Fitnessstudio in der Suche");
       klick('[data-srort=""]');
+      eingeben($("#gs-q"), "");   // Ausrüstungs-Filter der Suche: nur noch Übungen und Workouts mit dem Band
+      klick('[data-srart="band"]');
+      await bis(function () { return $$("#gs-res .fig-grid > *").length >= 3; }, 3000, "Ausrüstungs-Filter Band zeigt Übungen");
+      pruefe($$("#gs-res .section-title").every(function (e) { return !/Neu anlegen|Create/.test(e.textContent); }), "Aktionen bei gewähltem Ausrüstungs-Filter");
+      klick('[data-srart="band"]');
     }],
     ["Kleine Hilfen: „Was ist was?“, Bestleistung, Leichter/Schwerer", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
@@ -1580,7 +1585,7 @@
       pruefe(bandIds.length === 38 && bandIds.every(function (id) { return W.BAND_ANKER[id] && W.BAND_ARTEN[W.BAND_ANKER[id][0]]; }), "Nicht jede Band-Übung hat eine Befestigung");
       W.openExInfo("band-standing-row", false);
       var k = await bis(function () { return $("#overlayRoot .info-anker"); }, 2000, "Karte Band befestigen");
-      pruefe(!k.open && /Tür/.test(k.textContent) && /Brusthöhe/.test(k.textContent), "Karte: Tür und Brusthöhe erwartet: " + k.textContent.slice(0, 80));
+      pruefe(!k.open && /Pfosten/.test(k.textContent) && !/Tür/.test(k.textContent) && /Brusthöhe/.test(k.textContent), "Karte: Pfosten und Brusthöhe (keine Tür) erwartet: " + k.textContent.slice(0, 80));
       klick(k.querySelector("summary"));
       await bis(function () { return $("#overlayRoot .info-anker").open && $$("#overlayRoot .info-anker li").length === 3 && $("#overlayRoot .info-anker svg.band-skizze"); }, 2000, "Karte aufgeklappt mit Schritten und Skizze");
       klick($("#overlayRoot [data-close]"));
