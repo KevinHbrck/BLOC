@@ -658,16 +658,20 @@ function renderStudioPlan(){
       (p.entwurf ? '' : '<button type="button" class="btn btn-danger" data-plandel style="margin-top:18px;">'+ICON_TRASH+' '+t("planDel")+'</button>')+
       '<div style="height:96px"></div>'+
       '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+esc(planAnzahl(ids.length))+'</b></span>'+
-      '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone'+(p.entwurf && !ids.length ? ' disabled' : '')+'>'+ICON_SAVE+' '+t(p.entwurf ? "save" : "planDone")+'</button></span></div></div>';
+      // neuer Plan: erst „Weiter“ zu Sätzen, Gewichten und Zeiten (Plan-Seite), gespeichert wird dort mit „Plan speichern“; bestehender Plan: „Fertig“
+      '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone'+(p.entwurf && !ids.length ? ' disabled' : '')+'>'+(p.entwurf ? esc(t("planWeiter"))+' ›' : ICON_SAVE+' '+t("planDone"))+'</button></span></div></div>';
   } else {
     // Plan = Programm: je Übung Sätze, Wiederholungen, Gewicht und Pause gleich hier einstellen; das letzte Mal steht darunter
     html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
+      (p.entwurf && ids.length ? '<div class="page-hint plan-entwurf">'+esc(t("planEntwurfHinweis"))+'</div>' : '')+
       (ids.length ? hw.z(0, "page-hint") : '')+
       (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("planAlleTimer"))+'</button>' : '')+
       (ids.length ? planKopfKarteHTML(p, ids) : '')+
       (ids.length ? auswertungHTML(ids) : '')+   // erst die Übersicht über die Übungen im Ganzen, dann die Zeilen
       (ids.length ? '<div class="pz-liste">'+planListeHTML(p)+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
-      (ids.length ? trainingLeisteHTML({ plan:p, ids:ids }) : '')+
+      (ids.length ? (p.entwurf ? '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+esc(planAnzahl(ids.length))+'</b></span>'+
+        '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plansave>'+ICON_SAVE+' '+esc(t("planSpeichern"))+'</button></span></div></div>'
+        : trainingLeisteHTML({ plan:p, ids:ids })) : '')+
       '<div style="height:'+(ids.length ? 96 : 40)+'px"></div>';
   }
   app.innerHTML = html;
@@ -680,17 +684,19 @@ function renderStudioPlan(){
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   function an(sel, fn){ var el = app.querySelector(sel); if(el) el.addEventListener("click", fn); }
   an("[data-planedit]", function(){ stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });
-  if(!stPlanBauen && ids.length) trainingLeisteBinden({ plan:p, ids:ids }, neu);
+  if(!stPlanBauen && ids.length && !p.entwurf) trainingLeisteBinden({ plan:p, ids:ids }, neu);
   if(!stPlanBauen && ids.length) planKopfKarteBinden(p, ids, neu);
   if(!stPlanBauen) planZeilenBinden(app, function(){   // Summe der Sätze oben nachführen
     var su = app.querySelector("#plan-summe");
     if(su) su.textContent = planSummeText(stPlanIds(p));
   }, neu, p);
-  an("[data-plandone]", function(){
-    var neuGespeichert = !!p.entwurf;
-    if(neuGespeichert){ delete p.entwurf; p.updatedAt = Date.now(); save(); }   // erst jetzt steht der neue Plan unter Meine
+  an("[data-plandone]", function(){   // Auswahl fertig: zur Plan-Seite (bei einem neuen Plan noch Entwurf - dort Sätze, Gewichte, Zeiten, dann „Plan speichern“)
     stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);
-    if(neuGespeichert) planLoslegenFrage(p);   // neu gespeichert: gleich fragen, ob es losgehen soll
+  });
+  an("[data-plansave]", function(){   // erst jetzt steht der neue Plan unter Meine; danach die Frage, ob es losgehen soll
+    if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); }
+    renderKatalog(); window.scrollTo(0, 0);
+    planLoslegenFrage(p);
   });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */

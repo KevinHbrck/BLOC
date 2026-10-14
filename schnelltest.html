@@ -712,7 +712,7 @@
       pruefe($$("#plan-sticky .wb-mini-sub").length === 2 && /^\d+×\d+/.test($("#plan-sticky .wb-mini-sub").textContent), "Plan-Streifen soll „3×12“ zeigen");
       var a = zaehle();
       pruefe(a.wo === vor.wo && a.pl === vor.pl + 1, "Workout soll zum Plan werden, nicht doppelt bleiben: " + JSON.stringify(a));
-      pruefe(/Speichern/.test($("[data-plandone]").textContent) && !$("[data-plandel]"), "Neuer Plan: Knopf „Speichern“ statt „Fertig“ erwartet");
+      pruefe(/Weiter/.test($("[data-plandone]").textContent) && !$("[data-plandel]"), "Neuer Plan: Knopf „Weiter“ statt „Fertig“ erwartet");
       W.dispatchEvent(new W.PopStateEvent("popstate"));
       klick(await bis(function () { return $('#overlayRoot [data-act="1"]'); }, 2000, "Frage „Plan nicht gespeichert“"));   // Verwerfen
       await bis(function () { return $("[data-kattab]") && !$("#plan-name"); }, 3000, "System-Zurück: Liste des Katalogs");
@@ -724,6 +724,11 @@
       await bis(function () { return $("#plan-name") && $$("[data-planex]").length > 20; }, 3000, "Plan-Bau");
       klick($$("[data-planex]")[0]);
       klick($("[data-plandone]"));
+      await bis(function () { return $("[data-plansave]"); }, 3000, "Plan-Seite eines Entwurfs mit „Plan speichern“");
+      pruefe((JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).some(function (p) { return p.entwurf; }), "Der Plan soll bis „Plan speichern“ ein Entwurf bleiben");
+      klick($("[data-plansave]"));
+      await bis(function () { return $("#overlayRoot [data-lja]"); }, 3000, "Plan gespeichert, Rückfrage");
+      klick("#overlayRoot [data-lja]");
       await bis(function () { return $("[data-planedit]"); }, 3000, "Plan gespeichert, Ansicht");
       var dd = JSON.parse(W.localStorage.getItem(KEY));
       pruefe((dd.settings.stPlaene || []).length === vor.pl + 1 && !(dd.settings.stPlaene || []).some(function (p) { return p.entwurf; }), "Gespeicherter Plan fehlt oder ist noch Entwurf");
@@ -1321,7 +1326,7 @@
       klick($('.pz-zeile[data-pz="air-squats"] [data-pzmodus="timer"]'));
       await bis(function () { return $('.pz-zeile[data-pz="air-squats"] [data-pzmodus="timer"].active'); }, 2000, "eine Zeile mit Timer");
       pruefe(!$(".pz-kopfkarte [data-pzalle].active") && $(".pz-kopfkarte [data-pzzeiten]"), "Gemischt: keine der beiden Stellungen oben aktiv, Zeiten sichtbar");
-      var pl2 = W.state.db.settings.stPlaene.filter(function (x) { return !x.entwurf; }).pop();
+      var pl2 = W.stPlaene().filter(function (x) { return x.id === W.stPlanAktiv; })[0];   // der Plan ist noch Entwurf, bis „Plan speichern“
       pruefe(pl2.modus && pl2.modus["air-squats"] === "timer" && pl2.standard === "saetze", "Wahl je Zeile nicht im Plan: " + JSON.stringify([pl2.modus, pl2.standard]));
       // Zeiten: Für alle gleich gilt sofort für die Timer-Übungen
       klick('.pz-kopfkarte [data-pzalle="timer"]');
@@ -1331,7 +1336,7 @@
       klick('#pk-work ~ [data-inc], #pk-work + [data-inc]');
       await bis(function () { return $$('.pz-zeile [data-feld="work"] input').every(function (i) { return i.value === $("#pk-work").value; }); }, 2000, "Arbeit gilt für alle Zeilen");
       var sel = $("#pk-br"); sel.value = "60"; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
-      await bis(function () { return W.state.db.settings.stPlaene.filter(function (x) { return !x.entwurf; }).pop().blockRest === 60; }, 2000, "Pause zwischen den Übungen gespeichert");
+      await bis(function () { return W.stPlaene().filter(function (x) { return x.id === pl2.id; })[0].blockRest === 60; }, 2000, "Pause zwischen den Übungen gespeichert");
       klick($("[data-planwo]"));
       await bis(function () { return /^#cover\/my\//.test(W.location.hash); }, 3000, "Deckblatt des Timer-Workouts");
       var mwN = (W.state.db.myWorkouts || []).filter(function (m) { return m.fromPlan === pl2.id; })[0];
@@ -1546,7 +1551,9 @@
       klick("[data-bauselber]");
       await bis(function () { return $("#plan-name") && $("[data-plandone]"); }, 3000, "Plan-Bau");
       klick(await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats"));
-      klick(await bis(function () { return $("[data-plandone]:not([disabled])"); }, 2000, "Speichern"));
+      klick(await bis(function () { return $("[data-plandone]:not([disabled])"); }, 2000, "Weiter"));
+      pruefe(!$("#overlayRoot [data-lja]"), "Vor „Plan speichern“ darf noch keine Rückfrage kommen");
+      klick(await bis(function () { return $("[data-plansave]"); }, 3000, "Plan speichern"));
       await bis(function () { return $("#overlayRoot [data-lnein]") && $("#overlayRoot [data-lja]") && $("[data-planedit]"); }, 3000, "Rückfrage: direkt loslegen?");
       var plNeu = W.stPlaene().filter(function (p) { return !p.entwurf; }).pop();
       pruefe(plNeu && plNeu.ids.indexOf("air-squats") > -1, "Der Plan steht nach „Speichern“ unter Meine");

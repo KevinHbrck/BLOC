@@ -2588,3 +2588,4 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .tr-zeile > .ort-thumb:first-child{ flex-direction:row; }
 .tr-mehr{ width:100%; margin-top:8px; }
 .sr-arten{ margin-top:6px; }
+.plan-entwurf{ margin:2px 4px 10px; }
