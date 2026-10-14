@@ -791,15 +791,15 @@
       klick('[data-katort="frei"]');
       pruefe($('[data-katort="frei"].on'), "Der letzte gewählte Ort darf nicht abgeschaltet werden");
       await ortNur("katort", "studio");
-      ["gym-fullbody", "gym-fullbody-b", "gym-upper", "gym-lower", "gym-legday", "gym-chest", "gym-back", "gym-shoulders", "gym-arms", "gym-glutes", "gym-core", "gym-posture", "gym-deepcore"].forEach(function (id) { pruefe($('[data-cover="lib/' + id + '"]'), "Programm fehlt: " + id); });
-      pruefe($$(".lib-card").length === 13, "Fitnessstudio: erwartet 13 Programme, gefunden " + $$(".lib-card").length);
+      ["gym-fullbody", "gym-fullbody-b", "gym-upper", "gym-lower", "gym-legday", "gym-chest", "gym-back", "gym-shoulders", "gym-arms", "gym-glutes", "gym-core", "gym-posture", "gym-deepcore", "gym-db-upper", "gym-db-fullbody"].forEach(function (id) { pruefe($('[data-cover="lib/' + id + '"]'), "Programm fehlt: " + id); });
+      pruefe($$(".lib-card").length === 15, "Fitnessstudio: erwartet 15 Programme, gefunden " + $$(".lib-card").length);
       pruefe(!$('[data-cover="lib/leg-day"]'), "Freiluft-Workout im Fitnessstudio");
       // derselbe Filter wirkt auch hier
       await filterAuf();
       klick('[data-stgr="beine"]');
-      await bis(function () { var n = $$(".lib-card").length; return n >= 3 && n < 13 && $('[data-cover="lib/gym-legday"]') && !$('[data-cover="lib/gym-arms"]'); }, 2000, "Gruppe Beine: Beinprogramme, nicht Arme");
+      await bis(function () { var n = $$(".lib-card").length; return n >= 3 && n < 15 && $('[data-cover="lib/gym-legday"]') && !$('[data-cover="lib/gym-arms"]'); }, 2000, "Gruppe Beine: Beinprogramme, nicht Arme");
       klick('[data-streset]');
-      await bis(function () { return $$(".lib-card").length === 13; }, 2000, "Zurücksetzen");
+      await bis(function () { return $$(".lib-card").length === 15; }, 2000, "Zurücksetzen");
       // Programm öffnen: Übungen aus dem Fitnessstudio laufen als Workout
       klick($('[data-cover="lib/gym-fullbody"]'));
       await bis(function () { return $$(".wb-ablauf").length >= 6; }, 3000, "Deckblatt mit sechs Übungen");
@@ -807,7 +807,7 @@
       // Daten: jedes Fitnessstudio-Programm hat nur bekannte Übungen, einen Hinweis in beiden Sprachen und liegt im Fitnessstudio
       var rows = W.BLOC_DATEN.LIB_WORKOUT_ROWS.filter(function (x) { return x[0].indexOf("gym-") === 0; });
       var ex = W.BLOC_DATEN.EXERCISE_ROWS.map(function (x) { return x[0]; });
-      pruefe(rows.length === 13, "erwartet 13 Programme in den Daten, gefunden " + rows.length);
+      pruefe(rows.length === 15, "erwartet 15 Programme in den Daten, gefunden " + rows.length);
       rows.forEach(function (x) {
         var ids = x[4].split(" ");
         pruefe(ids.length >= 5 && ids.every(function (id) { return ex.indexOf(id) > -1; }), "unbekannte Übung in " + x[0]);
