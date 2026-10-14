@@ -138,5 +138,4 @@ function blockRow(b){
     favBtn("bl:"+b.id)+trashBtn("bl", b.id, b.name)+'</div>';
 }
 /* Freies Training ist nur noch das Studio (2026-09-29). Timer-Workouts und Blöcke stehen unter Workouts › Meine. */
-function renderTimers(){ return renderStudio(); }
 

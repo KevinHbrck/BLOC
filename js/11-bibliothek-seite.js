@@ -100,7 +100,6 @@ function hiddenBlockHTML(n, cards){
     '<div class="hid-note">'+esc(t("hiddenSectionHint"))+'</div>'+cards;
 }
 /* Fertige Workouts, die Stangenübungen brauchen, erscheinen bei einem anderen Fokus nur mit passender Ausrüstung */
-function woGearOk(exs, cat, equip, mains){ return exs.every(function(ex){ return gearOk(ex, cat, equip, mains); }); }
 
 /* Schlanke Karten: links Start, in der Mitte Name + eine Infozeile (+ Muskeln klein),
    rechts Bild, ☆ und ⋯ (alle Nebenaktionen). Ausgeblendete: nur „Einblenden“. */
@@ -228,18 +227,6 @@ function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung, zonen)
       '" title="'+esc(t("afSortAz"))+'" aria-label="'+esc(t("afSortAz"))+'">A&ndash;Z</button>' });
 }
 /* Fokus eines Workouts: passt, wenn der Workout-Fokus gewählt ist oder mindestens ein Drittel der Übungen passt */
-function woFocusOk(focus, exs, cat, id){
-  cat = selArr(cat);
-  var tausch = id && LIB_FOKUS_TAUSCH[id];   // einzelne Workouts gezielt umsortiert (daten.js)
-  if(tausch && cat.length){
-    if(cat.indexOf(tausch.dazu) > -1) return true;
-    cat = cat.filter(function(c){ return c !== tausch.weg; });
-    if(!cat.length) return false;
-  }
-  if(!cat.length || cat.indexOf(focus) > -1) return true;
-  var n = exs.filter(function(ex){ return catMatch(cat, ex.cats); }).length;
-  return n > 0 && n >= exs.length/3;
-}
 /* Workouts automatisch nach Dauer (kürzeste zuerst) oder alphabetisch */
 function libWoSort(list, sort){
   return list.sort(sort === "az"

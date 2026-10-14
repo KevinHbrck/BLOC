@@ -233,10 +233,6 @@ function openWasIstWas(){
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
 }
 
-function timersSubText(){
-  var w = state.db.workouts.length, b = state.db.blocks.length;
-  return (w===1 ? t("oneTimerWo") : t("nTimerWo", { n:w }))+" · "+(b===1 ? t("oneBlock") : t("nBlocks", { n:b }));
-}
 /* Plus-Knopf mit Auswahlmenü (Startseite) bzw. als einfacher Knopf (eine Option) */
 function fabMenuHTML(opts){
   if(opts.length === 1){

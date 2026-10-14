@@ -119,24 +119,6 @@ function studioRun(ex){
   return r;
 }
 function studioKg(v){ return (Math.round(v*100)/100).toLocaleString(currentLang()==="en" ? "en" : "de"); }
-function studioIds(){
-  var gruppen = STUDIO_GRUPPEN.map(function(g){ return { id:g.id, name:tplText(g), ids:g.ids.split(" ").filter(findExercise) }; });
-  var inGruppen = {};
-  gruppen.forEach(function(g){ g.ids.forEach(function(id){ inGruppen[id] = true; }); });
-  function mit(eq){ return EXERCISES.filter(function(ex){ return !ex.custom && !inGruppen[ex.id] && ex.main !== "stretch" && ex.equip.some(function(e){ return eq.indexOf(e) > -1; }); }).map(function(ex){ return ex.id; }); }
-  gruppen.push({ id:"eigene", name:t("stOwn"), ids:EXERCISES.filter(function(ex){ return ex.custom; }).map(function(ex){ return ex.id; }), eigene:true });
-  // Die Air-Gruppen (air:true) sind immer dabei, kein Schalter: in der Liste stehen sie zugeklappt unter „Aus Air“ (studioAirBlockHTML)
-  gruppen.push({ id:"frei", name:t("stFree"), ids:mit(["db", "kb"]), air:true });
-  gruppen.push({ id:"stange", name:t("stBar"), ids:mit(["bar", "dip"]).filter(function(id){ return gruppen[gruppen.length-1].ids.indexOf(id) < 0; }), air:true });
-  var schon = {};
-  gruppen.forEach(function(g){ g.ids.forEach(function(id){ schon[id] = true; }); });
-  var bandIds = EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && fuerWorkout(ex) && ex.equip.indexOf("band") > -1; }).map(function(ex){ return ex.id; });
-  var imBand = {};
-  bandIds.forEach(function(id){ imBand[id] = true; });
-  gruppen.push({ id:"air", name:t("stAirGr"), ids:EXERCISES.filter(function(ex){ return !ex.custom && !schon[ex.id] && !imBand[ex.id] && fuerWorkout(ex); }).map(function(ex){ return ex.id; }), air:true });
-  gruppen.push({ id:"band", name:t("stBand"), ids:bandIds, air:true });
-  return gruppen;
-}
 /* Ausrüstung einer Übung - für die Chips im Filter. „Fitnessstudio“ fasst alles zusammen, was es dort gibt (Geräte, Kabel, Langhantel,
    Bank mit Kurzhanteln); die übrigen Arten sind das, was man auch zuhause oder draußen hat. */
 function studioArt(id){

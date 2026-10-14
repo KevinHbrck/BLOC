@@ -103,10 +103,6 @@ function openBereicheSheet(){
   zeichnen();
 }
 /* „Überrasch mich“: schmale Leiste (eine Zeile) direkt unter den Reitern vom Workout-Bereich - das Alleinstellungsmerkmal, aber ohne viel Höhe zu kosten */
-function surpriseLeisteHTML(){
-  return '<button type="button" class="sp-leiste" data-surprise title="'+esc(t("spSub"))+'">'+svgIcon(ICON_UEBERRASCH)+'<b>'+esc(t("surprise"))+'</b>'+
-    '<span class="sp-chev">'+ICON_CHEV+'</span></button>';
-}
 /* Bild-Kopf der Bereichsseiten (Mobility & Stretch, Summit, Run): ein schmales Foto direkt unter der Kopfzeile. Fotos: Pexels (siehe quellen.html) */
 var BEREICH_BILD = { suche:"img/bereich-suche.jpg", warm:"img/bereich-mobility.jpg", intervall:"img/bereich-timer.jpg", reps:"img/bereich-summit.jpg", run:"img/bereich-run.jpg" };
 function bereichBildHTML(key){

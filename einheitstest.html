@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLOC Einheitstest</title>
+<style>
+  :root { --bg:#f5f5f2; --text:#1d1d1f; --dim:#6b6b70; --ok:#1f9d63; --fail:#d6453d; --rule:#e2e2dd; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#121214; --text:#f2f2f2; --dim:#a0a0a6; --rule:#2e2e33; } }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; padding:16px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  p { color:var(--dim); margin:0 0 12px; max-width:70ch; }
+  button { font:inherit; padding:10px 16px; border-radius:10px; border:0; background:#ff5a36; color:#fff; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; }
+  #summe { font-weight:700; margin:12px 0; }
+  #summe.ok { color:var(--ok); } #summe.fail { color:var(--fail); }
+  ol { padding-left:22px; margin:0; }
+  li { margin:4px 0; }
+  li.ok::marker { color:var(--ok); } li.fail { color:var(--fail); }
+  li small { display:block; color:var(--dim); }
+  iframe { position:absolute; left:-9999px; width:390px; height:780px; border:0; }
+</style>
+</head>
+<body>
+<h1>BLOC Einheitstest</h1>
+<p>Prüft die Rechenregeln der App einzeln (Gewicht und Volumen, Rekorde, Wochenwerte, Muskelverteilung, Suche, Mengen, Zeitformate, Lauf: Strecke, Pace,
+  Ansagen, Besonderheiten). Ergänzt den Schnelltest, der die Wege durch die Oberfläche klickt. Läuft nur lokal (localhost); dein gespeicherter Stand wird
+  vorher beiseitegelegt und danach wiederhergestellt.</p>
+<button id="los" type="button">Test starten</button>
+<div id="summe"></div>
+<ol id="liste"></ol>
+<iframe id="app" title="App im Test"></iframe>
+<script>
+(function () {
+  "use strict";
+  var KEY = "sporttimer-data-v1";
+  var iframe = document.getElementById("app"), liste = document.getElementById("liste"), summe = document.getElementById("summe");
+  var W = null;
+  var lokal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
+  function warte(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function gleich(ist, soll, was) {
+    var a = JSON.stringify(ist), b = JSON.stringify(soll);
+    if (a !== b) throw new Error((was || "Wert") + ": erwartet " + b + ", war " + a);
+  }
+  function nah(ist, soll, tol, was) {
+    if (!(Math.abs(ist - soll) <= tol)) throw new Error((was || "Wert") + ": erwartet " + soll + " ± " + tol + ", war " + ist);
+  }
+  function wahr(b, was) { if (!b) throw new Error(was); }
+  function laden() {
+    return new Promise(function (ok, nein) {
+      iframe.onload = function () {
+        W = iframe.contentWindow;
+        var t0 = Date.now();
+        (function pruefen() {
+          if (W.studioVolumen && W.state && W.state.db) return ok();
+          if (Date.now() - t0 > 8000) return nein(new Error("App nicht geladen"));
+          setTimeout(pruefen, 100);
+        })();
+      };
+      iframe.src = "index.html?schnelltest=" + Date.now() + "&lang=de#home";
+    });
+  }
+  var T = [];
+  function test(name, fn) { T.push([name, fn]); }
+
+  /* ---------- Training: Gewicht, Volumen, Rekorde ---------- */
+  test("Arbeitssätze: Aufwärmsätze zählen nicht in Volumen und Wiederholungen", function () {
+    var l = { s: [[20, 10, "w"], [40, 10], [40, 8]] };
+    gleich(W.studioVolumen(l), 720, "Volumen");
+    gleich(W.studioWdhSumme(l), 18, "Wiederholungen");
+    gleich(W.arbeitsSaetze(l).length, 2, "Arbeitssätze");
+    gleich(W.satzTyp([40, 10, "d"]), "d", "Drop-Satz"); gleich(W.satzTyp([40, 10, "x"]), "n", "unbekannter Typ");
+  });
+  test("Geschätztes 1RM (Epley): eine Wiederholung = das Gewicht, sonst Gewicht × (1 + Wdh/30)", function () {
+    gleich(W.satzSchaetzung1RM([60, 1]), 60, "1 Wdh.");
+    nah(W.satzSchaetzung1RM([60, 10]), 80, 0.001, "10 Wdh.");
+    nah(W.satzSchaetzung1RM([100, 3]), 110, 0.001, "3 Wdh.");
+  });
+  test("Bestwerte über alle Einheiten (nur Arbeitssätze), auch „bis zur Einheit i“", function () {
+    var log = [{ s: [[40, 10]] }, { s: [[50, 5]] }, { s: [[20, 20, "w"], [45, 8]] }];
+    var b = W.studioBestwerte(log);
+    gleich(b.kg, 50, "Bestgewicht"); nah(b.rm, 58.333, 0.01, "1RM"); gleich(b.vol, 400, "Volumen"); gleich(b.wdh, 10, "Wdh. im Satz"); gleich(b.wsum, 10, "Wdh. je Einheit");
+    gleich(W.studioBestwerte(log, 1).kg, 40, "nur die erste Einheit");
+    gleich(W.studioBestwerte([]).kg, 0, "leeres Protokoll");
+  });
+  test("Rekord: mehr Gewicht oder höheres 1RM; ohne Gewicht mehr Wiederholungen; Gleichstand ist kein Rekord", function () {
+    wahr(W.studioIstRekord({ kg: 50, rm: 58.3, wdh: 5 }, { kg: 40, rm: 53.3, wdh: 10 }), "mehr Gewicht");
+    wahr(!W.studioIstRekord({ kg: 40, rm: 53.3, wdh: 10 }, { kg: 40, rm: 53.3, wdh: 10 }), "Gleichstand");
+    wahr(W.studioIstRekord({ kg: 40, rm: 56, wdh: 12 }, { kg: 40, rm: 53.3, wdh: 10 }), "gleiches Gewicht, mehr Wiederholungen = höheres 1RM");
+    wahr(W.studioIstRekord({ kg: 0, rm: 0, wdh: 12 }, { kg: 0, rm: 0, wdh: 10 }), "ohne Gewicht: mehr Wiederholungen");
+    wahr(!W.studioIstRekord({ kg: 0, rm: 0, wdh: 10 }, { kg: 0, rm: 0, wdh: 10 }), "ohne Gewicht: Gleichstand");
+    wahr(!W.studioIstRekord({ kg: 30, rm: 40, wdh: 10 }, { kg: 40, rm: 53, wdh: 10 }), "weniger ist kein Rekord");
+  });
+  test("Wochenwerte: je Kalenderwoche (Montag) der beste Wert, der niedrigste bei Zeiten, die Summe beim Volumen", function () {
+    var mo = new Date(2026, 9, 5, 10).getTime(), mi = new Date(2026, 9, 7, 18).getTime(), naechste = new Date(2026, 9, 12, 9).getTime();
+    var l = [[mo, 40], [mi, 50], [naechste, 30]];
+    gleich(W.wochenWerte(l, false).map(function (x) { return x.v; }), [50, 30], "höchster Wert");
+    gleich(W.wochenWerte(l, true).map(function (x) { return x.v; }), [40, 30], "niedrigster Wert");
+    gleich(W.wochenWerte(l, false, true).map(function (x) { return x.v; }), [90, 30], "Summe");
+    var so = new Date(2026, 9, 11, 22).getTime();   // Sonntag gehört noch zur Woche davor
+    gleich(W.wochenWerte([[mo, 1], [so, 2]], false).length, 1, "Sonntag zur selben Woche wie Montag");
+    gleich(W.wochenWerte([]).length, 0, "leer");
+  });
+  test("Satztext: Gewicht × Wiederholungen, ohne Gewicht „Wdh.“, besondere Sätze mit Kürzel, mit Anstrengung", function () {
+    gleich(W.satzText([40, 12]), "40×12", "normal");
+    wahr(W.satzText([0, 12]).indexOf("12") === 0 && W.satzText([0, 12]).indexOf("×") < 0, "ohne Gewicht: " + W.satzText([0, 12]));
+    wahr(/20×10/.test(W.satzText([20, 10, "w"])) && W.satzText([20, 10, "w"]) !== "20×10", "Aufwärmsatz mit Kürzel: " + W.satzText([20, 10, "w"]));
+    wahr(/40×12 @ RPE 8/.test(W.satzText([40, 12, "n", 8])), "mit RPE: " + W.satzText([40, 12, "n", 8]));
+  });
+  test("Zahlen: Kilogramm ohne überflüssige Nachkommastellen", function () {
+    gleich(W.studioKg(40), "40", "ganze Zahl"); gleich(W.studioKg(42.5), "42,5", "halbe Kilogramm"); gleich(W.studioKg(22.255), "22,26", "auf zwei Stellen");
+  });
+
+  /* ---------- Auswertung, Suche, Auswahl ---------- */
+  test("Muskelverteilung: Summe immer 100, Dehnübungen und leere Pläne zählen nicht", function () {
+    var r = W.mgProzent(["push-ups", "air-squats", "pull-ups", "plank"]);
+    gleich(r.rows.reduce(function (a, x) { return a + x.pct; }, 0), 100, "Summe");
+    gleich(r.leer, false, "nicht leer");
+    gleich(r.rows.every(function (x) { return x.pct === Math.floor(x.pct) && x.pct >= 0; }), true, "ganze, nicht negative Prozent");
+    gleich(W.mgProzent([]).leer, true, "leer");
+    gleich(W.mgProzent(["cobra-lift"]).leer, true, "nur Dehnen");
+    var einzel = W.mgProzent(["push-ups"]);
+    gleich(einzel.rows.reduce(function (a, x) { return a + x.pct; }, 0), 100, "eine Übung: Summe");
+  });
+  test("Suche: Groß/klein, Bindestrich, Umlaute, Wortreihenfolge und Mehrzahl-s egal", function () {
+    wahr(W.suchPasst("Pull-ups", "pull ups"), "pull ups");
+    wahr(W.suchPasst("Pull-Up", "pullups"), "pullups");
+    wahr(W.suchPasst("Liegestütz", "liegestutz"), "Umlaut");
+    wahr(W.suchPasst("Klimmzug breit", "breit klimmzug"), "Reihenfolge");
+    wahr(W.suchPasst("irgendwas", ""), "leere Suche findet alles");
+    wahr(!W.suchPasst("Bankdrücken", "kniebeuge"), "kein Treffer");
+    gleich(W.suchNorm("  Große Äpfel! "), "grosse apfel", "Normalisierung");
+  });
+  test("Auswahlhelfer: selArr, selToggle, clamp", function () {
+    gleich(W.selArr("all"), [], "all"); gleich(W.selArr("x"), ["x"], "einzelner Wert"); gleich(W.selArr(["a", "b"]), ["a", "b"], "Liste");
+    gleich(W.selToggle([], "a"), ["a"], "hinzufügen"); gleich(W.selToggle(["a", "b"], "a"), ["b"], "entfernen");
+    gleich(W.clamp(5, 1, 3), 3, "oben"); gleich(W.clamp(-1, 0, 3), 0, "unten"); gleich(W.clamp(2, 0, 3), 2, "innen");
+  });
+  test("Plan: doppelte und unbekannte Übungen fallen heraus, Reihenfolge bleibt", function () {
+    gleich(W.stPlanIds({ ids: ["push-ups", "push-ups", "gibt-es-nicht", "air-squats"] }), ["push-ups", "air-squats"], "bereinigt");
+    gleich(W.stPlanIds({}), [], "ohne ids");
+  });
+  test("Ausrüstungsart: Gerät, Stange, Band, Körpergewicht", function () {
+    gleich(W.studioArt("leg-press"), "geraet", "Beinpresse");
+    gleich(W.studioArt("pull-ups"), "stange", "Klimmzüge");
+    gleich(W.studioArt("push-ups"), "koerper", "Liegestütze");
+    gleich(W.studioArt("band-squat"), "band", "Band-Kniebeuge");
+  });
+
+  /* ---------- Summit: Mengen und Zeiten ---------- */
+  test("Mengen halbieren: Wiederholungen mindestens 1, Strecken in m/km, Zeiten unverändert", function () {
+    gleich(W.repMengeMal(10, 1), 10, "Faktor 1"); gleich(W.repMengeMal(10, 0.5), 5, "10 → 5"); gleich(W.repMengeMal(1, 0.5), 1, "mindestens 1");
+    gleich(W.repMengeMal(3, 0.5), 2, "3 → 2 (gerundet)");
+    gleich(W.repMengeMal("500m", 0.5), "250m", "Meter"); gleich(W.repMengeMal("2km", 0.5), "1km", "Kilometer");
+    gleich(W.repMengeMal("1km", 0.5), "500m", "unter 1 km in Metern"); gleich(W.repMengeMal("30s", 0.5), "30s", "Sekunden unverändert");
+  });
+  test("Zeitformate: Stoppuhr, Dauer, Kurzdauer", function () {
+    gleich(W.repUhr(0), "0:00", "null"); gleich(W.repUhr(65000), "1:05", "Minuten"); gleich(W.repUhr(3725000), "1:02:05", "Stunden");
+    gleich(W.repUhr(-500), "0:00", "negativ");
+    var m = W.t("unitMin"), s = W.t("unitSec"), h = W.t("unitH");
+    gleich(W.fmtDuration(59), "59 " + s, "Sekunden"); gleich(W.fmtDuration(125), "2 " + m + " 5 " + s, "Minuten und Sekunden");
+    gleich(W.fmtDuration(120), "2 " + m, "volle Minuten"); gleich(W.fmtDuration(3600), "1 " + h + " 0 " + m, "Stunde"); gleich(W.fmtDuration(-5), "0 " + s, "negativ");
+    gleich(W.fmtDauerKurz(125).replace(/ /g, " "), "2:05 " + m, "Kurzform (mit geschütztem Leerzeichen)");
+  });
+
+  /* ---------- Run: Strecke, Pace, Ansagen, Besonderheiten ---------- */
+  test("Run: Strecke zwischen zwei Punkten (Haversine)", function () {
+    nah(W.runMeter([48, 11], [48.009, 11]), 1001, 8, "0,009° Breite ≈ 1 km");
+    gleich(W.runMeter([48, 11], [48, 11]), 0, "gleicher Punkt");
+    nah(W.runMeter([0, 0], [0, 0.01]), 1113, 6, "am Äquator");
+  });
+  test("Run: Pace und Kilometer-Text", function () {
+    gleich(W.runPace(300, 1000), "5:00", "5:00"); gleich(W.runPace(330, 1000), "5:30", "5:30");
+    gleich(W.runPace(359.6, 1000), "6:00", "Rundung auf die volle Minute");
+    gleich(W.runPace(100, 10), "–:––", "zu kurze Strecke"); gleich(W.runPace(0, 1000), "–:––", "ohne Zeit"); gleich(W.runPace(4000, 1000), "–:––", "über 59 min/km");
+    gleich(W.runKm(1259), "1,26", "Kilometer, deutsch");
+  });
+  test("Run: Ansagetexte (nur km · km + Pace · alles), auch alle 2 km", function () {
+    var sp = [370000, 740000, 1110000];
+    gleich(W.runAnsageText(3, sp, { every: 1, was: "km" }, true), "3 Kilometer.", "nur km");
+    gleich(W.runAnsageText(3, sp, { every: 1, was: "pace" }, true), "3 Kilometer. Pace 6 Minuten 10 Sekunden pro Kilometer.", "km + Pace");
+    gleich(W.runAnsageText(2, sp, { every: 2, was: "pace" }, true), "2 Kilometer. Pace 6 Minuten 10 Sekunden pro Kilometer.", "alle 2 km");
+    var voll = W.runAnsageText(3, sp, { every: 1, was: "alles" }, true);
+    wahr(/Zeit 18 Minuten 30 Sekunden/.test(voll) && /Durchschnitt 6 Minuten 10 Sekunden/.test(voll), "alles: " + voll);
+    var en = W.runAnsageText(1, [372000], { every: 1, was: "pace" }, false);
+    gleich(en, "1 kilometre. Pace 6 minutes 12 seconds per kilometre.", "Englisch");
+  });
+  test("Run: Besonderheiten nach dem Lauf (erster, längster, schnellster Kilometer, Meilensteine)", function () {
+    var s = W.state.db.settings, alt = s.runs;
+    try {
+      var x = { id: "b", dist: 5200, dur: 1800000, splits: [350000, 700000, 1050000, 1400000, 1750000] };
+      s.runs = [x];
+      gleich(W.runHighlights(x), [W.t("runErster"), W.t("runM5")], "erster Lauf (mit 5 km)");
+      var a = { id: "a", dist: 3000, dur: 1200000, splits: [400000, 800000, 1200000] };
+      s.runs = [a, x];
+      var h = W.runHighlights(x);
+      wahr(h.indexOf(W.t("runLaengster")) > -1, "längster Lauf");
+      wahr(h.indexOf(W.t("runSchnellsterKm", { z: W.repUhr(350000) })) > -1, "schnellster Kilometer: " + h.join(" | "));
+      wahr(h.indexOf(W.t("runSchnellstePace")) > -1, "schnellste Pace");
+      wahr(h.indexOf(W.t("runM5")) > -1, "Meilenstein 5 km");
+      gleich(h.indexOf(W.t("runErster")), -1, "nicht mehr „erster Lauf“");
+      s.runs = [a, x, { id: "c", dist: 6000, dur: 3000000, splits: [500000] }];
+      wahr(W.runHighlights(x).indexOf(W.t("runM5")) < 0, "kein Meilenstein, wenn schon ein Lauf über 5 km da war");
+      wahr(W.runHighlights(x).indexOf(W.t("runLaengster")) < 0, "nicht der längste, wenn ein längerer existiert");
+    } finally { s.runs = alt; }
+  });
+  test("Run: schnellster Kilometer und Datumsschlüssel", function () {
+    gleich(W.runBesterKm({ splits: [400000, 700000, 1200000] }), 300000, "schnellster Abschnitt");
+    gleich(W.runBesterKm({ splits: [] }), null, "ohne Kilometer");
+    gleich(W.einheitTagKey(new Date(2026, 9, 5, 23, 59).getTime()), "2026-10-05", "Datum mit führenden Nullen");
+  });
+
+  function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
+  document.getElementById("los").addEventListener("click", async function () {
+    var knopf = this;
+    if (!lokal) { summe.className = "fail"; summe.textContent = "Nur lokal ausführen (localhost) – sonst würde der Test deinen echten Stand anfassen."; return; }
+    knopf.disabled = true; liste.innerHTML = ""; summe.textContent = "";
+    var gesichert = localStorage.getItem(KEY), ss = {};
+    for (var i = 0; i < sessionStorage.length; i++) { var k = sessionStorage.key(i); ss[k] = sessionStorage.getItem(k); }
+    localStorage.removeItem(KEY);
+    var ok = 0, schlecht = 0;
+    try {
+      await laden();
+      for (var n = 0; n < T.length; n++) {
+        var li = eintrag(T[n][0]);
+        try { T[n][1](); li.className = "ok"; li.textContent = "✓ " + T[n][0]; ok++; }
+        catch (e) {
+          li.className = "fail"; li.textContent = "✗ " + T[n][0];
+          var sm = document.createElement("small"); sm.textContent = e && e.message ? e.message : String(e); li.appendChild(sm);
+          schlecht++;
+        }
+      }
+    } catch (e) {
+      schlecht++; var f = eintrag("App laden"); f.className = "fail"; f.textContent = "✗ App laden: " + (e && e.message ? e.message : e);
+    } finally {
+      iframe.src = "about:blank";
+      await warte(200);
+      if (gesichert === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, gesichert);
+      sessionStorage.clear(); Object.keys(ss).forEach(function (k) { sessionStorage.setItem(k, ss[k]); });
+      var gesamt = ok + schlecht;
+      summe.className = schlecht ? "fail" : "ok";
+      summe.textContent = schlecht ? schlecht + " von " + gesamt + " Prüfungen fehlgeschlagen" : "Alles in Ordnung: " + ok + " von " + gesamt + " Prüfungen bestanden";
+      document.title = (schlecht ? "✗ " : "✓ ") + "BLOC Einheitstest";
+      knopf.disabled = false;
+    }
+  });
+  if (/[?&]auto\b/.test(location.search)) document.getElementById("los").click();
+})();
+</script>
+</body>
+</html>

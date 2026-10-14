@@ -162,16 +162,6 @@ function katOrtZahlenWo(){
   });
   return n;
 }
-function katOrtHTML(sel, zahl, attr, textKey){
-  var n = zahl || katOrtZahlenWo();
-  attr = attr || "data-katort"; textKey = textKey || "katOrtAnz";
-  function b(k, label, ico){
-    var an = sel ? sel === k : katOrtPasst(k);
-    return '<button type="button" '+attr+'="'+k+'" class="'+(an ? 'on' : '')+'" aria-pressed="'+an+'">'+svgIcon(ico)+
-      '<span class="ko-t"><b>'+esc(label)+'</b><small>'+esc(t(textKey, { n:n[k] }))+'</small></span></button>';
-  }
-  return '<div class="kat-ort" role="group" aria-label="'+esc(t("katOrt"))+'">'+b("studio", t("katOrtStudio"), KAT_ICON_STUDIO)+b("frei", t("katOrtFrei"), KAT_ICON_FREI)+'</div>';
-}
 /* Beim Bauen wird immer nach Ort unterschieden: die Auswahl zeigt nur die Übungen des gewählten Ortes (derselbe Ort wie im Workoutkatalog,
    settings.katOrt); der Schalter wechselt. Schon gewählte Übungen bleiben im Plan, auch wenn sie zum anderen Ort gehören. */
 function bauOrtZahlen(){
@@ -338,22 +328,6 @@ function bauNachSaetzen(b){
 }
 /* Sätze → Zeit: der Plan wird zum Workout mit Timer (Satz- und Pausenwerte der Übungen), zunächst als ungespeicherter Entwurf im Baukasten.
    Ein noch nicht gespeicherter Plan wandert dabei, ein gespeicherter bleibt; ein schon verknüpftes Workout wird aktualisiert und geöffnet. */
-function planNachZeit(p){
-  var ids = stPlanIds(p);
-  var items = planTimerItems(p);   // Supersätze und Zirkel laufen abwechselnd
-  var teil = t("planDefault", { n:"#" }).split("#"), nm = p.name;   // ein Standardname „Plan 3“ wird zu „Mein Workout“, eigene Namen bleiben
-  if(nm.indexOf(teil[0]) === 0 && nm.length >= teil[0].length+teil[1].length && /^\d+$/.test(nm.slice(teil[0].length, nm.length-teil[1].length)) && nm.slice(nm.length-teil[1].length) === teil[1]) nm = t("myDefaultName");
-  var mw = p.entwurf ? null : (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
-  if(p.entwurf){ state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; }); }
-  if(mw){ mw.items = items; mw.updatedAt = Date.now(); }
-  save();
-  stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = "";
-  if(!mw){
-    bauEntwurf = { key:"new", neu:true, d:{ id:uid(), name:nm, mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:items } };
-    if(!p.entwurf) bauEntwurf.d.fromPlan = p.id;
-  }
-  go(mw ? "#mybuild/"+mw.id : "#mybuild/new");
-}
 /* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
 function renderKatalogBaukasten(){
   var modus = bauModus();

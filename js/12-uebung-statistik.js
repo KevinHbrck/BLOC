@@ -132,11 +132,6 @@ function wocheHTML(){
       return '<span class="wo-tag'+(an ? ' an' : '')+(i === w.heute ? ' heute' : '')+'"><i></i><small>'+esc(namen[i] || "")+'</small></span>'; }).join("")+'</span>'+
   '</div>';
 }
-function wocheMuskelHTML(){   // letzte 7 Tage aus dem Kurz-Gedächtnis (Air, Studio, Summit); nichts Neues wird gespeichert
-  var since = Date.now() - 7*86400000, ids = [];
-  (state.db.history || []).forEach(function(e){ if(e && e.at >= since) (e.ex || []).forEach(function(id){ ids.push(id); }); });
-  return ids.length ? auswertungHTML(ids, { woche:true, titel:t("ausWoche"), sub:t("ausWocheSum") }) : "";
-}
 /* ============ Statistik ============
    Alles aus den lokal gespeicherten Daten, nichts verlässt das Gerät. Zeigt nur Bereiche, die im Fokus (Einstellungen) eingeschaltet sind;
    der in den letzten 4 Wochen am meisten genutzte steht oben. Grundlage: Kurz-Verlauf (31 Tage) + Wochensummen (statW), bei Run die Läufe selbst. */

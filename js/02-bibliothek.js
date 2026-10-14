@@ -152,23 +152,7 @@ function findCustom(id){
 syncCustomEx();
 function equipName(id){ for(var i=0;i<EQUIPS.length;i++) if(EQUIPS[i].id===id) return tplText(EQUIPS[i]); return id; }
 function exEquipText(ex){ return ex.equip.map(equipName).join(" / "); }
-function levelHTML(l){ return ""; }   // Schwierigkeitsgrad bewusst entfernt (zu subjektiv)
-function levelHTMLAlt(l){
-  return '<span class="lvl" title="'+esc(t("lvl"+l))+'">'+[1,2,3].map(function(i){ return '<i class="'+(i<=l?'on':'')+'"></i>'; }).join("")+
-    ' '+esc(t("lvl"+l))+'</span>';
-}
 /* passt eine Übung zu Ausrüstung und Level? "all" = egal */
-function exFits(ex, equip){ return equipMatch(equip, ex); }
-function exFitsAlt(ex, equip, level){
-  if(equip && equip!=="all" && ex.equip.indexOf(equip) < 0) return false;
-  if(level && level!=="all" && ex.level !== +level) return false;
-  return true;
-}
-function woLevel(exs){
-  if(!exs.length) return 0;
-  var sum = 0; exs.forEach(function(ex){ sum += ex.level; });
-  return Math.round(sum/exs.length);
-}
 /* Mehrfachauswahl: leere Liste = alles */
 function selArr(v){ return Array.isArray(v) ? v.slice() : (v && v!=="all" ? [v] : []); }
 function selToggle(arr, id){ var a = selArr(arr), i = a.indexOf(id); if(i > -1) a.splice(i, 1); else a.push(id); return a; }
@@ -184,10 +168,6 @@ function gearOk(ex, cat, equip, mains){
 }
 function equipMatch(sel, ex){ sel = selArr(sel); return !sel.length || ex.equip.some(function(e){ return sel.indexOf(e) > -1; }); }
 /* Workout geht mit der gewählten Ausrüstung, wenn jede Übung mit einem der gewählten Dinge machbar ist */
-function woFits(exs, equip){
-  var sel = selArr(equip);
-  return !sel.length || exs.every(function(ex){ return ex.equip.some(function(e){ return sel.indexOf(e) > -1; }); });
-}
 function woEquipText(exs){
   var need = [];
   exs.forEach(function(ex){
