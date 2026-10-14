@@ -25,7 +25,16 @@ function installTipHTML(){
 function maybeShowInstallTip(){}
 
 /* ============ Common bindings ============ */
+/* Dauerhafte Einzeiler für Bedienung, die man nicht sieht (langes Drücken): mit Finger-Symbol, per × dauerhaft ausblendbar (settings.tippAus) */
+var ICON_TIPP = '<path d="M9 11V5a2 2 0 0 1 4 0v5M13 10V8a2 2 0 0 1 4 0v4M17 12v-1a2 2 0 0 1 4 0v4a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-3l-3-5a2 2 0 0 1 3-2l2 2"/>';
+function tippZeileHTML(key, textKey){
+  var aus = state.db.settings.tippAus || {};
+  if(aus[key]) return "";
+  return '<div class="tipp-zeile" data-tipp="'+esc(key)+'">'+svgIcon(ICON_TIPP, "ico tipp-ico")+'<span>'+esc(t(textKey))+'</span>'+
+    '<button type="button" class="tipp-x" data-tippx aria-label="'+esc(t("tippAus"))+'" title="'+esc(t("tippAus"))+'">&times;</button></div>';
+}
 function bindCommon(){
+app.querySelectorAll("[data-tippx]").forEach(function(b){    b.addEventListener("click", function(){      var z = b.closest("[data-tipp]"), s = state.db.settings;      (s.tippAus || (s.tippAus = {}))[z.getAttribute("data-tipp")] = 1; save(); z.remove();    });  });
   app.querySelectorAll("[data-hinweis]").forEach(function(b){ b.addEventListener("click", openHinweise); });
   app.querySelectorAll("[data-lupe]").forEach(function(b){
     b.addEventListener("click", function(){

@@ -133,7 +133,7 @@ function renderWarmStretch(){
     topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) }) +
     wsKopfHTML("workouts", art) +
     (tab === "uebungen" ? '<button type="button" class="btn btn-secondary kat-eigene" data-wsnewex>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' : '')+
-    hw.z(0, "rep-intro")+
+    hw.z(0, "rep-intro")+(tab === "workouts" ? tippZeileHTML("workout", "tippWorkout") : tab === "uebungen" ? tippZeileHTML("wsuebung", "tippWsUebung") : "")+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
     (tab === "uebungen" ? hw.z(1, "page-hint") : '')+
     (tab !== "meine" ? wsRegionFilterHTML(regSel, anzahl, tab === "uebungen" ? "Ex" : "Wo", zonSel, art === "dehn") : '')+
@@ -232,7 +232,7 @@ function renderReps(){
   }
   if(repFilter.tab === "einheiten"){
     var stufe = REP_STUFEN.indexOf(repFilter.stufe) > -1 ? repFilter.stufe : "standard";
-    html += hw.z(0, "rep-intro")+
+    html += hw.z(0, "rep-intro")+tippZeileHTML("summit", "tippSummit")+
       '<div class="theme-pick rep-pick">'+knopf("stufe","leicht",t("stufe_leicht"))+knopf("stufe","standard",t("stufe_standard"))+knopf("stufe","fortgeschritten",t("stufe_fortgeschritten"))+'</div>';
     liste += eigeneListe(["unit"], true);   // eigene Einheiten stehen oben
     fab = fabMenuHTML([{ key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
@@ -250,11 +250,11 @@ function renderReps(){
       });
     });
   } else if(repFilter.tab === "meine"){
-    html += hw.z(0, "rep-intro");
+    html += hw.z(0, "rep-intro")+tippZeileHTML("summit", "tippSummit");
     liste = eigeneListe(["unit", "prog"], false) || '<div class="empty" style="padding:24px 20px 4px;">'+esc(t("repMineEmpty"))+'</div>';
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }, { key:"unit", label:t("repNewUnit"), ico:ICON_PLUS, cls:"tp" }]);
   } else {
-    html += hw.z(0, "rep-intro")+
+    html += hw.z(0, "rep-intro")+tippZeileHTML("summit", "tippSummit")+
       '<div class="theme-pick rep-pick">'+knopf("lvl","all",t("repAll"))+knopf("lvl",1,t("lvl1"))+knopf("lvl",2,t("lvl2"))+knopf("lvl",3,t("lvl3"))+'</div>';
     liste += eigeneListe(["prog"], true);   // eigene Programme stehen oben
     fab = fabMenuHTML([{ key:"prog", label:t("repNewProg"), ico:ICON_PLUS, cls:"tp" }]);

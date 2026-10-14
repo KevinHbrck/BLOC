@@ -153,7 +153,7 @@ function studioKachel(id){
   if(!ex) return "";
   var e = studioEintrag(id), last = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
   var la = last ? arbeitsSaetze(last) : [], sub = la.length ? (la[0][0] > 0 ? studioKg(la[0][0])+" kg · " : "")+la.length+" × "+la[0][1] : t("stNoData");
-  if(studioNurBlock(ex) && !la.length){ sub = satzKurz(id).replace("×", " × "); last = null; }   // ohne Eintrag das Ziel: „3 × 12“ bzw. „3 × 40 s“
+  if(studioNurBlock(ex) && !la.length && zielGesetzt(id)){ sub = satzKurz(id).replace("×", " × "); last = null; }   // ohne Eintrag das selbst gesetzte Ziel: „3 × 12“ bzw. „3 × 40 s“
   return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+studioFarbe(ex)+'">'+
     '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
     '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+(sub === t("stNoData") ? '' : '<span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>')+
@@ -279,10 +279,21 @@ function satzLetzter(id){
   if(!la.length) return "";
   return (la[0][0] > 0 ? studioKg(la[0][0])+" kg · " : "")+satzName(la.length)+" × "+la[0][1];
 }
+/* Ein Ziel steht nur auf Kacheln, wenn man es selbst eingestellt hat (Sätze oder Wiederholungen im Plan oder auf der Übungskarte) - die
+   Voreinstellung „3 × 12“ erscheint dort nicht, die trägt man ja selbst ein; der Timer rechnet intern weiter mit ihr. */
+function zielGesetzt(id){
+  var e = studioEintrag(id), z = e && e.ziel;
+  return !!(z && (z.saetze > 0 || z.wdh > 0));
+}
+function satzZielAnzeige(id){ return zielGesetzt(id) ? satzZiel(id) : ""; }
 function studioSub(id){
+  return satzLetzter(id) || satzZielAnzeige(id) || t("stNoData");
+}
+/* Kachel in Übersicht und Baukasten (Fitnessstudio): letzter Satz bzw. selbst gesetztes Ziel, sonst leer */
+function gymSatzKachel(id){
   var ex = findExercise(id);
-  if(studioNurBlock(ex)) return satzLetzter(id) || satzZiel(id);
-  return satzLetzter(id) || t("stNoData");
+  if(!ex || !exIstStudio(ex)) return "";
+  return satzLetzter(id) || satzZielAnzeige(id);
 }
 /* Fitnessstudio-Übung in einem Workout mit Timer: vorn steht Gewicht × Wiederholungen („40 kg · 3 × 12“, ohne Eintrag das Ziel „3 × 12“);
    leer bei allen anderen Übungen */
@@ -295,8 +306,7 @@ function gymSatzText(id, auchFrei){   // auchFrei: im Plan-Workout zählen auch 
 function kachelMuskel(ex){ var m = ex && musclesMain(ex); return m ? '<span class="st-mus">'+esc(m.split(", ").slice(0, 2).join(", "))+'</span>' : ''; }
 /* Studio-Kacheln im Plan: Muskeln und - falls schon eingetragen - der letzte Satz bzw. die Zeit (kein „–“ mehr ohne Daten) */
 function studioUnter(id){
-  var sub = studioSub(id);
-  if(sub === t("stNoData")) sub = satzZiel(id);   // ohne Eintrag: das Ziel („3 Sätze × 12“) statt nichts
+  var sub = studioSub(id);   // letzter Satz oder selbst gesetztes Ziel; ohne beides nur die Muskeln
   return kachelMuskel(findExercise(id))+(sub === t("stNoData") ? '' : '<span class="st-sub">'+esc(sub)+'</span>');
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
@@ -612,12 +622,12 @@ function renderStudioPlan(){
         (ids.length ? '<div class="wb-streifen">'+ids.map(function(id, i){
           var ex = findExercise(id);
           return ex ? '<button type="button" class="wb-mini'+(stPlanSel === i ? ' sel' : '')+'" data-plansel="'+i+'" style="--cat:'+studioFarbe(ex)+'" aria-pressed="'+(stPlanSel === i)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name)+", "+satzZiel(id))+'">'+
-            (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span><span class="wb-mini-sub">'+esc(satzKurz(id))+'</span></button>' : "";
+            (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span>'+(zielGesetzt(id) ? '<span class="wb-mini-sub">'+esc(satzKurz(id))+'</span>' : '')+'</button>' : "";
         }).join("")+'</div>'+
           (stPlanSel > -1 && stPlanSel < ids.length ? '<div class="plan-ctrl"><button type="button" data-planmv="-1" aria-label="'+esc(t("moveLeft"))+'"'+(stPlanSel === 0 ? ' disabled' : '')+'>&#9664;</button>'+
             '<button type="button" class="del" data-plandelsel>'+ICON_TRASH+' '+esc(t("planRaus"))+'</button>'+
             '<button type="button" data-planmv="1" aria-label="'+esc(t("moveRight"))+'"'+(stPlanSel === ids.length-1 ? ' disabled' : '')+'>&#9654;</button></div>' : '') : '')+'</div>'+
-      bauOrtHTML()+hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
+      bauOrtHTML()+tippZeileHTML("info", "tippInfo")+hw.z(0, "page-hint")+suchFeldHTML(stPlanQuery, "pl", t("stSearch"))+
       studioFilterHTML(gruppen, fGr, fArt, studioAnzahl(gruppen, fGr, artOk), zonen);
     if(rest.length) gruppen = gruppen.concat([{ id:"rest", name:t("planSonst"), ids:rest, immer:true }]);
     function planKachel(id){

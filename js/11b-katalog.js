@@ -405,7 +405,7 @@ function renderKatalogUebungen(){
   app.innerHTML =
     katKopfHTML("workouts", hw.knopf+lupeHTML("st", studioQuery)) +
     '<button type="button" class="btn btn-secondary kat-eigene" data-stnew2>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' +
-    hw.z(0, "page-hint") +
+    tippZeileHTML("uebung", "tippUebung") + hw.z(0, "page-hint") +
     suchFeldHTML(studioQuery, "st", t("stSearch")) +
     studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen) +
     html +
@@ -602,7 +602,7 @@ function renderKatalogWorkouts(){
   app.innerHTML =
     katKopfHTML("workouts", hw.knopf + lupeHTML("l", libQuery)) +
     suchFeldHTML(libQuery, "l", t("searchWoPh")) +
-    hw.z(0, "page-hint") +
+    tippZeileHTML("workout", "tippWorkout") + hw.z(0, "page-hint") +
     studioFilterHTML(gruppen, fGr, fArt, sichtbar.length, zonen, { art:"Wo", extra:az }) +
     liste +
     hiddenBlockHTML(versteckt.length, versteckt.map(function(r){ return libWoCard(r.lw, r.exs, true, r.dur, r.mains); }).join("")) +

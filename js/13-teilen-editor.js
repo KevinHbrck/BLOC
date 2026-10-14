@@ -248,7 +248,7 @@ function renderDraftPage(d, cfg){
   d.items.forEach(function(it, i){ (pos[it.ex] = pos[it.ex] || []).push(i+1); });
   function kachel(ex){
     return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbex="'+ex.id+'"', q:exSearchText(ex), cat:exFarbe(ex), nr:pos[ex.id] || [],
-      unter:kachelMuskel(ex)+(exIstStudio(ex) ? '<span class="st-sub an">'+esc(gymSatzText(ex.id))+'</span>' : ''),   // Fitnessstudio-Übung: „3 Sätze × 12“ gleich auf der Kachel
+      unter:kachelMuskel(ex)+(gymSatzKachel(ex.id) ? '<span class="st-sub an">'+esc(gymSatzKachel(ex.id))+'</span>' : ''),   // Fitnessstudio-Übung: nur was eingetragen bzw. selbst als Ziel gesetzt wurde
       innen:'<span class="wb-i" aria-hidden="true">i</span>'+exFavBtn(ex.id) });   // das i zeigt nur: lange drücken = Info
   }
   // Ablauf: Deckblatt = große Kacheln in Reihenfolge, Baukasten = schmaler Streifen
@@ -258,7 +258,7 @@ function renderDraftPage(d, cfg){
     var tm = itemTiming(d, it);
     return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:'data-wbitem="'+i+'"', cat:exFarbe(ex), klasse:"wb-ablauf",
       innen:'<span class="wb-nr">'+(i+1)+'</span>',
-      unter:exIstStudio(ex) ? '<span class="st-sub an">'+esc(gymSatzText(ex.id))+'</span>' : '<span class="st-sub">'+timingText(tm, ex.perSide)+'</span>' });   // Fitnessstudio: Gewicht × Wiederholungen vorn
+      unter:exIstStudio(ex) ? (gymSatzKachel(ex.id) ? '<span class="st-sub an">'+esc(gymSatzKachel(ex.id))+'</span>' : '') : '<span class="st-sub">'+timingText(tm, ex.perSide)+'</span>' });   // Fitnessstudio: Gewicht × Wiederholungen nur nach Eintrag oder eigenem Ziel
   }
   var streifen = d.items.map(function(it, i){
     var ex = findExercise(it.ex);
@@ -307,7 +307,7 @@ function renderDraftPage(d, cfg){
       .sort(function(a, b){ return (isExFav(b.id) ? 1 : 0) - (isExFav(a.id) ? 1 : 0); });
     hw = hinweise("bau", ["wbTippen"].concat(d.ws === "dehn" ? ["wsRegionHint"] : []));
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
-      hw.z(0, "page-hint")+
+      tippZeileHTML("info", "tippInfo")+hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
       (d.ws === "dehn" ? hw.z(1, "page-hint") : '')+wsRegionFilterHTML(wsSel, wsListe.length, "Ex", wsZon, d.ws === "dehn")+
       '<div class="fig-grid" id="dz-pal">'+(wsListe.map(function(ex){ return kachel(ex); }).join("") ||
@@ -330,7 +330,7 @@ function renderDraftPage(d, cfg){
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       bauOrtHTML()+
       (cfg.cover ? '' : bauArtHTML("timer", false))+
-      hw.z(0, "page-hint")+
+      tippZeileHTML("info", "tippInfo")+hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
       airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true, zonen)+
       '<div id="dz-pal">'+(bereichHTML || '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+

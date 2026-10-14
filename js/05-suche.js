@@ -97,7 +97,7 @@ function renderSearch(){
     }).join("")+'</div>'+
     '<button type="button" class="sr-koerper-knopf" data-srkk aria-expanded="'+suchKoerperAuf+'">'+esc(t("kkFilter"))+(suchZonen.length ? ' · '+suchZonen.map(kkName).join(', ') : '')+'<span class="tpl-chev'+(suchKoerperAuf ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>'+
     '<div class="sr-koerper" id="sr-kk"'+(suchKoerperAuf ? '' : ' hidden')+'>'+kkFilterHTML('data-srzone', suchZonen)+'</div>'+
-    '<div id="gs-res"></div><div style="height:40px"></div>';
+    tippZeileHTML("suche", "tippUebung")+'<div id="gs-res"></div><div style="height:40px"></div>';
   bindCommon();
   var feld = app.querySelector("#gs-q"), res = app.querySelector("#gs-res");
   function zeigen(){

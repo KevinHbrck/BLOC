@@ -164,6 +164,31 @@
   });
 
   /* ---------- Run: Strecke, Pace, Ansagen, Besonderheiten ---------- */
+  test("Kacheln: keine Voreinstellung „3 Sätze × 12“, nur letzter Satz oder selbst gesetztes Ziel", function () {
+    var s = W.state.db.settings, alt = s.studio, n = Date.now();
+    try {
+      s.studio = {};
+      gleich(W.gymSatzKachel("leg-press"), "", "ohne Eintrag leer");
+      gleich(W.zielGesetzt("leg-press"), false, "Ziel nicht gesetzt");
+      s.studio = { "leg-press": { ziel: { saetze: 4, wdh: 10 } } };
+      gleich(W.zielGesetzt("leg-press"), true, "Ziel gesetzt");
+      wahr(/4/.test(W.gymSatzKachel("leg-press")) && /10/.test(W.gymSatzKachel("leg-press")), "selbst gesetztes Ziel: " + W.gymSatzKachel("leg-press"));
+      s.studio = { "leg-press": { ziel: { saetze: 4, wdh: 10 }, log: [{ at: n, s: [[80, 8], [80, 8]] }] } };
+      wahr(/80 kg/.test(W.gymSatzKachel("leg-press")) && /8/.test(W.gymSatzKachel("leg-press")), "letzter Satz hat Vorrang: " + W.gymSatzKachel("leg-press"));
+      gleich(W.gymSatzKachel("push-ups"), "", "Freiluft-Übung hat hier keinen Text");
+    } finally { s.studio = alt; }
+  });
+  test("Einzeiler-Tipps zu Gesten: sichtbar, bis man sie ausblendet (und dann dauerhaft weg)", function () {
+    var s = W.state.db.settings, alt = s.tippAus;
+    try {
+      s.tippAus = {};
+      var h = W.tippZeileHTML("uebung", "tippUebung");
+      wahr(h.indexOf("data-tipp=\"uebung\"") > -1 && h.indexOf(W.t("tippUebung")) > -1 && h.indexOf("data-tippx") > -1, "Tipp mit Text und Schließen-Knopf");
+      s.tippAus = { uebung: 1 };
+      gleich(W.tippZeileHTML("uebung", "tippUebung"), "", "ausgeblendeter Tipp");
+      wahr(W.tippZeileHTML("workout", "tippWorkout") !== "", "andere Tipps bleiben");
+    } finally { s.tippAus = alt; }
+  });
   test("Run: Strecke zwischen zwei Punkten (Haversine)", function () {
     nah(W.runMeter([48, 11], [48.009, 11]), 1001, 8, "0,009° Breite ≈ 1 km");
     gleich(W.runMeter([48, 11], [48, 11]), 0, "gleicher Punkt");

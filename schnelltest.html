@@ -708,8 +708,8 @@
       klick('[data-bauart="gewicht"]');
       await bis(function () { return $("[data-plandone]") && $("#plan-name"); }, 3000, "Plan-Bau");
       pruefe(!$("[data-bauart]") && $$("#plan-sticky .wb-mini").length === 2, "Plan: Übungen fehlen oder die Frage Zeit/Sätze steht noch da: " + $$("#plan-sticky .wb-mini").length);
-      pruefe($$("[data-planex] .st-sub").some(function (e) { return /\d+ Sätze × \d+/.test(e.textContent); }), "Plan-Kacheln sollen „3 Sätze × 12“ zeigen");
-      pruefe($$("#plan-sticky .wb-mini-sub").length === 2 && /^\d+×\d+/.test($("#plan-sticky .wb-mini-sub").textContent), "Plan-Streifen soll „3×12“ zeigen");
+      pruefe(!$$("[data-planex] .st-sub").some(function (e) { return /\d+ Sätze × \d+/.test(e.textContent); }), "Plan-Kacheln sollen die Voreinstellung „3 Sätze × 12“ nicht zeigen (die trägt man selbst ein)");
+      pruefe($$("#plan-sticky .wb-mini-sub").length === 0, "Plan-Streifen soll ohne eigene Eingabe kein „3×12“ zeigen");
       var a = zaehle();
       pruefe(a.wo === vor.wo && a.pl === vor.pl + 1, "Workout soll zum Plan werden, nicht doppelt bleiben: " + JSON.stringify(a));
       pruefe(/Weiter/.test($("[data-plandone]").textContent) && !$("[data-plandel]"), "Neuer Plan: Knopf „Weiter“ statt „Fertig“ erwartet");
@@ -1169,7 +1169,7 @@
       await bis(function () { return $("[data-goplan]") && $$(".wb-ablauf").length === 6; }, 3000, "Deckblatt mit Gewichten");
       pruefe($("[data-goplan]").classList.contains("btn-primary") && $("[data-go]").classList.contains("btn-secondary"), "Deckblatt: „Mit Gewichten trainieren“ soll vorn stehen, der Timer dahinter");
       var subs = $$(".wb-ablauf .st-sub").map(function (e) { return e.textContent; });
-      pruefe(subs.length === 6 && subs.every(function (x) { return /\d+ Sätze × \d/.test(x) && !/s\//.test(x); }), "Ablauf zeigt Sätze × Wiederholungen: " + subs.join(" | "));
+      pruefe(subs.length === 0, "Ablauf soll ohne eigene Eingabe keine Voreinstellung zeigen: " + subs.join(" | "));
       klick($("[data-goplan]"));
       await bis(function () { return $("[data-planwo]") && $$("[data-studio]:not([data-ortfremd])").length === 6; }, 3000, "Plan mit sechs Übungen");
       var pl = daten().settings.stPlaene;
