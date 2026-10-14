@@ -2673,3 +2673,5 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .kal-heute-in{ border-top:1px solid var(--border); padding:8px 10px 10px; }
 .kh-label{ color:var(--text-dim); font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; padding:2px 4px 4px; }
 .woche-karte .kal-heute-zeile{ margin:6px 0 0; box-shadow:none; background:var(--surface-2, color-mix(in srgb, var(--text) 6%, var(--surface))); }
+.kal-heutebtn{ display:flex; align-items:center; gap:6px; height:44px; padding:0 14px; border:0; border-radius:14px; background:var(--surface); color:var(--text); font:inherit; font-size:14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow); }
+.kal-heutebtn svg{ width:20px; height:20px; }

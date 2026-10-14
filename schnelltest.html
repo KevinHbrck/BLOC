@@ -1624,6 +1624,10 @@
       await bis(function () { return $(".kal-panel") && $('[data-kalansicht="monat"].active'); }, 2000, "Tipp auf einen Tag bleibt im Monat");
       pruefe(!$(".tabbar [data-nav]") || $('[data-kalansicht="woche"]:not(.active)'), "Ansicht darf nicht auf Woche springen");
       pruefe(!$(".kal-tray"), "Die Leiste „Meine“ unten ist weg");
+      klick($('[data-kalnav="-1"]'));   // „Heute“ springt aus einem anderen Monat zurück und wählt den heutigen Tag
+      await bis(function () { return !$(".km-zelle.heute"); }, 2000, "anderer Monat");
+      klick($("[data-kalheute]"));
+      await bis(function () { return $(".km-zelle.heute") && $(".kal-panel.heute"); }, 2000, "Heute: aktueller Monat, heutiger Tag gewählt");
       W.kalHinzu(W.kalTagKey(new Date()), { art: "zufall" });
       W.save();
       await heim();

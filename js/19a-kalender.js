@@ -133,7 +133,7 @@ function renderKalender(){
   }
   var sichtbar = tage.filter(function(d){ return !monat || d.getMonth() === kalBasis.getMonth(); }).map(kalTagKey);
   var sum = kalSumme(sichtbar);
-  html = topbar(t("kalTitel"), { back:"#home", right:'<button type="button" class="iconbtn" data-kalheute title="'+esc(t("kalHeute"))+'" aria-label="'+esc(t("kalHeute"))+'">'+svgIcon('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>')+'</button>' }) +
+  html = topbar(t("kalTitel"), { back:"#home", right:'<button type="button" class="kal-heutebtn" data-kalheute aria-label="'+esc(t("kalHeuteSpringen"))+'">'+svgIcon('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>')+'<span>'+esc(t("kalHeute"))+'</span></button>' }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
       '<button type="button" data-kalansicht="woche" class="'+(!monat ? 'active' : '')+'">'+esc(t("kalWoche"))+'</button>'+
       '<button type="button" data-kalansicht="monat" class="'+(monat ? 'active' : '')+'">'+esc(t("kalMonat"))+'</button></div></div>'+
@@ -187,7 +187,11 @@ function renderKalender(){
     el.addEventListener("keydown", function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); los(); } });
   });
   var hb = app.querySelector("[data-kalheute]");
-  if(hb) hb.addEventListener("click", function(){ kalBasis = new Date(); renderKalender(); window.scrollTo(0, 0); });
+  if(hb) hb.addEventListener("click", function(){   // „Heute“: zur aktuellen Woche bzw. zum aktuellen Monat, im Monat ist heute gewählt
+    kalBasis = new Date(); kalAuswahl = kalTagKey(Date.now()); renderKalender(); window.scrollTo(0, 0);
+    var z = app.querySelector(".kal-tag.heute, .kal-panel.heute");
+    if(z && z.scrollIntoView) z.scrollIntoView({ block:"center", behavior:"smooth" });
+  });
   app.querySelectorAll("[data-kaladd]").forEach(function(b){ b.addEventListener("click", function(){ kalHinzuMenue(b.getAttribute("data-kaladd")); }); });
   app.querySelectorAll("[data-kaltap]").forEach(function(b){
     b.addEventListener("click", function(){   // Monat: den Tag auswählen, die Ansicht bleibt (Einträge stehen unter dem Raster)
