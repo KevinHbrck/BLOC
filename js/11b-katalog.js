@@ -180,7 +180,7 @@ function bauOrtZahlen(){
   return n;
 }
 function bauOrtHTML(){
-  return katOrtHTML(null, bauOrtZahlen(), "data-bauort", "katOrtUebAnz");
+  return ortFotosHTML("data-bauort", bauOrtZahlen(), "katOrtUebAnz", "kompakt");   // dieselben Fotokarten wie ganz vorn im Baukasten und im Katalog
 }
 /* Der Ort als zwei Fotokarten (Baukasten Schritt 1 und Kopf des Workoutkatalogs): gleiche Knöpfe wie der kleine Schalter (attr = `data-bauort` bzw.
    `data-katort`), gleiche Zahlen. klasse „kompakt“ = flachere Karten. Fotos: Pexels, siehe quellen.html */
@@ -339,10 +339,7 @@ function bauNachSaetzen(b){
    Ein noch nicht gespeicherter Plan wandert dabei, ein gespeicherter bleibt; ein schon verknüpftes Workout wird aktualisiert und geöffnet. */
 function planNachZeit(p){
   var ids = stPlanIds(p);
-  var items = ids.map(function(id){
-    var ex = findExercise(id), tm = studioTimer(id);
-    return { ex:id, reps:ex.perSide ? tm.reps*2 : tm.reps, work:tm.work, rest:tm.rest };
-  });
+  var items = planTimerItems(p);   // Supersätze und Zirkel laufen abwechselnd
   var teil = t("planDefault", { n:"#" }).split("#"), nm = p.name;   // ein Standardname „Plan 3“ wird zu „Mein Workout“, eigene Namen bleiben
   if(nm.indexOf(teil[0]) === 0 && nm.length >= teil[0].length+teil[1].length && /^\d+$/.test(nm.slice(teil[0].length, nm.length-teil[1].length)) && nm.slice(nm.length-teil[1].length) === teil[1]) nm = t("myDefaultName");
   var mw = p.entwurf ? null : (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];

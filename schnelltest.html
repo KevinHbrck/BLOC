@@ -633,6 +633,8 @@
       klick(await bis(function () { return $("[data-bauselber]"); }, 3000, "Selber bauen (mit Timer)"));
       await bis(function () { return $$("[data-wbex]").length > 50; }, 3000, "Übungskacheln");
       ["air-squats", "push-ups", "plank"].forEach(function (id) { klick('[data-wbex="' + id + '"]'); });
+      pruefe($$("#dz-pal details.kat-gr").length >= 5 && $$("#dz-pal details.kat-gr").every(function (d) { return !d.open; }), "Workout-Baukasten: Übungen nicht nach Körperregionen geordnet (zugeklappt) erwartet");
+      pruefe($$(".ort-foto[data-bauort]").length === 2 && $(".ort-foto[data-bauort] img.of-bild"), "Ort in der Übungsauswahl nicht als Fotokarten");
       pruefe($$(".wb-kachel.gewaehlt").length === 3, "gewählte Kacheln: " + $$(".wb-kachel.gewaehlt").length);
       pruefe($$(".wb-mini").length === 3, "Ablauf-Streifen: " + $$(".wb-mini").length);
       klick('[data-wbex="push-ups"]');
@@ -1466,6 +1468,39 @@
       klick("#overlayRoot [data-cancel]");
       klick('[data-stmodus="timer"]');
       await bis(function () { return $(".st-timer") && !$("#st-w"); }, 2000, "zurück zum Timer");
+      // RPE/RIR je Satz (in den Einstellungen einschaltbar): Auswahl beim Eintragen, Anzeige am Satz
+      W.state.db.settings.anstrengung = "rpe"; W.save();
+      W.go("#studio/leg-press");
+      await bis(function () { return $("#st-kg") && $('[data-strpe="8"]'); }, 3000, "Karte mit RPE-Auswahl");
+      klick($('[data-strpe="8"]'));
+      pruefe($('[data-strpe="8"].on'), "RPE 8 lässt sich nicht wählen");
+      klick("[data-stset]");
+      await bis(function () { return /RPE 8/.test($(".st-heute").textContent); }, 3000, "Satz mit RPE 8 steht unter Heute");
+      var rl = W.state.db.settings.studio["leg-press"].log, rs = rl[rl.length - 1].s;
+      pruefe(rs[rs.length - 1][3] === 8, "RPE nicht gespeichert: " + JSON.stringify(rs[rs.length - 1]));
+      W.state.db.settings.anstrengung = "rir"; W.save();
+      W.go("#studio/leg-press");
+      await bis(function () { return /RIR 2/.test($(".st-heute").textContent); }, 3000, "Anzeige als RIR (10 − RPE)");
+      W.state.db.settings.anstrengung = ""; W.save();
+      // Supersatz: zwei Übungen im Plan verbinden - Runden gleich, im Timer abwechselnd, auf der Karte „danach: …“ ohne Pause bis zur letzten Übung
+      W.go("#studioplan/p-prog");
+      klick(await bis(function () { return $('[data-pzlink="0"]'); }, 3000, "Verbinden-Knopf zwischen den Übungen"));
+      await bis(function () { return $(".pz-block.pz-super .pz-zeile").length !== 0 || $$(".pz-block.pz-super .pz-zeile").length === 2; }, 3000, "Supersatz im Plan");
+      pruefe(/Supersatz/.test($(".pz-blockkopf").textContent), "Block ohne Überschrift Supersatz");
+      var sA = W.studioZiel("leg-press").saetze, sB = W.studioZiel("butterfly").saetze;
+      pruefe(sA === sB, "Runden eines Supersatzes sind nicht gleich: " + sA + " / " + sB);
+      var plp = W.stPlanFind("p-prog"), tim = W.planTimerItems(plp);
+      pruefe(tim.length === sA * 2 && tim[0].ex === "leg-press" && tim[1].ex === "butterfly" && tim[2].ex === "leg-press" && tim[0].after === 0 && tim[1].after > 0, "Timer-Items eines Supersatzes: " + JSON.stringify(tim.map(function (x) { return [x.ex, x.after]; })));
+      klick($('.pz-zeile[data-pz="leg-press"] [data-feld="saetze"] [data-inc]'));
+      pruefe(+$('.pz-zeile[data-pz="butterfly"] [data-feld="saetze"] input').value === sA + 1, "Runden-Änderung gilt nicht für die ganze Gruppe");
+      klick($('.pz-zeile[data-pz="leg-press"] .pz-kopf'));
+      await bis(function () { return $("[data-stblock=\"butterfly\"]") && $(".st-block"); }, 3000, "Karte mit Supersatz-Hinweis");
+      klick("[data-stset]");
+      await bis(function () { return /1\./.test($(".st-heute").textContent); }, 3000, "Satz im Supersatz eingetragen");
+      pruefe($("#st-pause").hidden, "Im Supersatz startet nach der ersten Übung keine Pause");
+      W.go("#studioplan/p-prog");
+      klick(await bis(function () { return $('[data-pzlink="0"].an'); }, 3000, "Trennen-Knopf"));
+      await bis(function () { return !$(".pz-block"); }, 3000, "Block getrennt");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

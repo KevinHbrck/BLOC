@@ -76,9 +76,12 @@ function arbeitsSaetze(l){ return (l.s || []).filter(function(x){ return satzTyp
 function satzSchaetzung1RM(x){ return x[1] <= 1 ? x[0] : x[0]*(1 + x[1]/30); }   // Epley
 function studioVolumen(l){ return arbeitsSaetze(l).reduce(function(a, x){ return a + x[0]*x[1]; }, 0); }
 function studioWdhSumme(l){ return arbeitsSaetze(l).reduce(function(a, x){ return a + x[1]; }, 0); }
-function satzText(x){   // „40×12“, ohne Gewicht „12 Wdh.“, bei besonderen Sätzen mit Kürzel davor („Aufw. 20×10“)
+/* RPE/RIR je Satz (Einstellungen › Training, settings.anstrengung = "rpe" | "rir" | ""): der Satz trägt als vierte Stelle die RPE (6–10; RIR = 10 − RPE) */
+function anstrengungModus(){ var a = state.db.settings.anstrengung; return a === "rpe" || a === "rir" ? a : ""; }
+function anstrengungText(rpe){ return anstrengungModus() === "rir" ? "RIR "+(10 - rpe) : "RPE "+rpe; }
+function satzText(x){   // „40×12“, ohne Gewicht „12 Wdh.“, bei besonderen Sätzen mit Kürzel davor („Aufw. 20×10“), mit Anstrengung „40×12 @ RPE 8“
   var ty = satzTyp(x);
-  return (ty === "n" ? "" : t("satzTyp_"+ty)+" ")+(x[0] > 0 ? studioKg(x[0])+"×"+x[1] : x[1]+" "+t("wdhKurz"));
+  return (ty === "n" ? "" : t("satzTyp_"+ty)+" ")+(x[0] > 0 ? studioKg(x[0])+"×"+x[1] : x[1]+" "+t("wdhKurz"))+(x[3] > 0 ? " @ "+anstrengungText(x[3]) : "");
 }
 /* Geschätztes 1RM und Bestgewicht über alle Einheiten (nur Arbeitssätze); davor = nur Einheiten vor dem Index i.
    wdh: die meisten Wiederholungen in einem Satz, wsum: die meisten in einer Einheit (für Übungen ohne Gewicht) */
@@ -297,6 +300,69 @@ function studioUnter(id){
   return kachelMuskel(findExercise(id))+(sub === t("stNoData") ? '' : '<span class="st-sub">'+esc(sub)+'</span>');
 }
 function planAnzahl(n){ return n === 1 ? t("planOne") : t("planN", { n:n }); }
+/* ---------- Supersätze und Zirkel ----------
+   Aufeinanderfolgende Übungen eines Plans können zu einem Block verbunden werden (p.blk = { Übungs-ID: Block-ID }): zwei Übungen = Supersatz,
+   drei und mehr = Zirkel. Ein Block läuft abwechselnd: eine Runde = je ein Satz jeder Übung, die Pause kommt erst nach der Runde; die Sätze
+   (Runden) sind für alle Übungen des Blocks gleich. */
+function planBloecke(p){
+  var blk = p.blk || {}, out = [], cur = null;
+  stPlanIds(p).forEach(function(id){
+    var b = blk[id] || null;
+    if(b && cur && cur.b === b) cur.ids.push(id);
+    else { cur = { b:b, ids:[id] }; out.push(cur); }
+  });
+  return out;
+}
+function blockArt(n){ return n >= 3 ? "zirkel" : "super"; }
+function planBlockVon(p, id){   // der Block (mit mindestens zwei Übungen), zu dem die Übung gehört, sonst null
+  var l = planBloecke(p);
+  for(var i = 0; i < l.length; i++) if(l[i].ids.length > 1 && l[i].ids.indexOf(id) > -1) return l[i];
+  return null;
+}
+/* Übung i und i+1 verbinden bzw. - wenn sie schon im selben Block stehen - dort trennen */
+function planVerbinden(p, i){
+  var ids = stPlanIds(p), a = ids[i], b = ids[i+1];
+  if(!a || !b) return;
+  var blk = p.blk = p.blk || {};
+  if(blk[a] && blk[a] === blk[b]){   // trennen: alles ab i+1 bekommt einen neuen Block
+    var alt = blk[a], neu = uid();
+    for(var j = i+1; j < ids.length && blk[ids[j]] === alt; j++) blk[ids[j]] = neu;
+  } else {                            // verbinden: auch der ganze Block der nächsten Übung kommt mit
+    var bid = blk[a] || uid(), bb = blk[b];
+    blk[a] = bid;
+    ids.forEach(function(id){ if(id === b || (bb && blk[id] === bb)) blk[id] = bid; });
+    var runden = studioZiel(a).saetze;   // alle Übungen des Blocks gehen gleich viele Runden
+    planBloecke(p).forEach(function(bl){
+      if(bl.b !== bid) return;
+      bl.ids.forEach(function(id){ var en = studioAlle()[id] || (studioAlle()[id] = { log:[] }); en.ziel = en.ziel || {}; en.ziel.saetze = runden; });
+    });
+  }
+  // Einzelne Übungen brauchen keine Block-ID
+  var noch = {};
+  planBloecke(p).forEach(function(bl){ if(bl.ids.length > 1) bl.ids.forEach(function(id){ noch[id] = bl.b; }); });
+  Object.keys(blk).forEach(function(id){ if(!noch[id]) delete blk[id]; });
+  p.updatedAt = Date.now(); save();
+}
+/* Timer-Workout aus einem Plan: Einzelübungen laufen mit allen Sätzen hintereinander, Blöcke abwechselnd (je Runde ein Satz jeder Übung, die Pause
+   erst nach der Runde); beide Seiten einer einseitigen Übung gehören zu einem Satz */
+function planTimerItems(p){
+  var out = [];
+  planBloecke(p).forEach(function(bl){
+    if(bl.ids.length < 2){
+      var id = bl.ids[0], ex = findExercise(id), tm = studioTimer(id);
+      out.push({ ex:id, reps:ex.perSide ? tm.reps*2 : tm.reps, work:tm.work, rest:tm.rest });
+      return;
+    }
+    var runden = Math.max.apply(null, bl.ids.map(function(id){ return studioTimer(id).reps; }));
+    for(var r = 0; r < runden; r++){
+      bl.ids.forEach(function(id, k){
+        var ex = findExercise(id), tm = studioTimer(id), letzte = k === bl.ids.length-1;
+        out.push({ ex:id, reps:ex.perSide ? 2 : 1, work:tm.work, rest:ex.perSide ? 5 : tm.rest, after:letzte ? tm.rest : 0 });
+      });
+    }
+  });
+  return out;
+}
 /* Der Plan als Programm (wie in Heavy): je Übung eine Zeile mit Sätzen, Wiederholungen, Gewicht und Pause zum schnellen Einstellen, darunter das letzte Mal.
    Die Werte stehen je Übung (studioZiel, Arbeitsgewicht, Pause) und gelten damit auch auf der Übungskarte und im Timer. Übungen ohne Gewicht (nur Block)
    haben Sätze, Arbeitszeit und Pause. */
@@ -306,20 +372,21 @@ function planFeldHTML(feld, label, wert, min, max, schritt){
     '<input type="text" inputmode="decimal" value="'+esc(studioKg(wert))+'" aria-label="'+esc(label)+'">'+
     '<button type="button" data-inc aria-label="&plus;">&plus;</button></div></div>';
 }
-function planZeileHTML(id, nr){
+function planZeileHTML(id, nr, bl){   // bl: { art, k, n, bid } - die Übung steht in einem Supersatz oder Zirkel
   var ex = findExercise(id);
   if(!ex) return "";
   var block = studioNurBlock(ex), z = studioZiel(id), tm = studioTimer(id), e = studioEintrag(id) || {}, l = studioLetzte(id, true);
   var timerModus = studioModus(id) === "timer";   // je Übung: Satz für Satz eintragen oder diese Übung mit dem Timer laufen lassen
   // Sätze, dann Wiederholungen (Satz-Modus) bzw. Arbeitszeit (Timer), Gewicht (nur Übungen mit Gewicht) und Pause
-  var felder = planFeldHTML("saetze", t("planSaetze"), z.saetze, 1, 20, 1)+
+  var felder = planFeldHTML("saetze", t(bl ? "blkRunden" : "planSaetze"), z.saetze, 1, 20, 1)+
     (timerModus ? planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5) : planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1))+
     (block ? '' : planFeldHTML("kg", t("planKg"), studioArbeitsKg(id), 0, 500, z.schritt))+
     (block ? planFeldHTML("pause", t("planPause"), tm.rest, 0, 600, 5) : planFeldHTML("pause", t("planPause"), e.pause || 90, 0, 600, 15));
-  return '<div class="pz-zeile" data-pz="'+id+'" style="--cat:'+studioFarbe(ex)+'">'+
+  return '<div class="pz-zeile'+(bl ? ' pz-imblock' : '')+'" data-pz="'+id+'"'+(bl ? ' data-pzblk="'+esc(bl.bid)+'"' : '')+' style="--cat:'+studioFarbe(ex)+'">'+
     '<div class="pz-kopf" role="button" tabindex="0" data-studio="'+id+'" aria-label="'+esc(tplText(ex.name))+'">'+
       '<span class="pz-bild">'+(ILLU[id] ? illuStillHTML(id, "pz-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+'</span>'+
       '<span class="pz-text"><span class="pz-name"><i>'+nr+'</i> '+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+
+        (bl ? '<span class="pz-bm">'+esc(t(bl.art === "zirkel" ? "blkZirkel" : "blkSuper"))+' · '+bl.k+'/'+bl.n+'</span>' : '')+
         '<span class="pz-letzte'+(l ? ' an' : '')+'">'+(l ? esc(t("planZuletzt", { d:studioTagText(l.at), s:studioLetzteText(l) })) : esc(t("planNochNie")))+'</span>'+
         (e.notiz && e.notiz.trim() ? '<span class="pz-notiz">'+esc(e.notiz.trim())+'</span>' : '')+'</span>'+   // die Notiz der Übung erscheint beim nächsten Mal wieder
       '<span class="pz-pfeil" aria-hidden="true">'+ICON_CHEV+'</span></div>'+
@@ -329,6 +396,27 @@ function planZeileHTML(id, nr){
     '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div>'+
     (timerModus ? '<button type="button" class="btn btn-secondary pz-start" data-pzstart="'+id+'">'+ICON_PLAY+' '+esc(t("planTimerStart"))+'</button>' : '')+'</div>';
 }
+/* Die Zeilen des Plans: Einzelübungen und Blöcke (Supersatz, Zirkel) mit einem Knopf zwischen je zwei Übungen zum Verbinden bzw. Trennen */
+function planListeHTML(p){
+  var ids = stPlanIds(p), i = 0, teile = [];
+  var ICON_LINK = '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>';
+  function verbinder(von, verbunden){
+    return '<div class="pz-verbinder"><button type="button" class="pz-link'+(verbunden ? ' an' : '')+'" data-pzlink="'+von+'" aria-label="'+esc(t(verbunden ? "blkTrennen" : "blkVerbindenTitel"))+'">'+
+      svgIcon(ICON_LINK)+' '+esc(t(verbunden ? "blkTrennen" : "blkVerbinden"))+'</button></div>';
+  }
+  planBloecke(p).forEach(function(b){
+    var art = blockArt(b.ids.length), im = b.ids.length > 1, zeilen = [];
+    b.ids.forEach(function(id, k){
+      zeilen.push(planZeileHTML(id, i+1, im ? { art:art, k:k+1, n:b.ids.length, bid:b.b } : null));
+      if(k < b.ids.length-1) zeilen.push(verbinder(i, true));
+      i++;
+    });
+    var runden = im ? studioZiel(b.ids[0]).saetze : 0;
+    teile.push({ html: im ? '<div class="pz-block pz-'+art+'"><div class="pz-blockkopf"><b>'+esc(t(art === "zirkel" ? "blkZirkel" : "blkSuper"))+'</b><span>'+
+        esc(t("blkRundenN", { n:runden })+" · "+t("blkAbwechselnd"))+'</span></div>'+zeilen.join("")+'</div>' : zeilen.join(""), letzte:i-1 });
+  });
+  return teile.map(function(x, k){ return x.html+(k < teile.length-1 ? verbinder(x.letzte, false) : ""); }).join("");
+}
 function planSaetzeSumme(ids){
   return ids.reduce(function(a, id){ return findExercise(id) ? a + studioZiel(id).saetze : a; }, 0);
 }
@@ -336,7 +424,10 @@ function planSummeText(ids){
   return planAnzahl(ids.length)+(ids.length ? " · "+t("planSaetzeGesamt", { n:planSaetzeSumme(ids) }) : "");
 }
 /* fn() läuft nach jeder Änderung (Summe oben nachführen); gespeichert wird sofort. neuZeichnen: Seite neu aufbauen (nach dem Umschalten Satz ↔ Timer) */
-function planZeilenBinden(root, fn, neuZeichnen){
+function planZeilenBinden(root, fn, neuZeichnen, p){
+  if(p) root.querySelectorAll("[data-pzlink]").forEach(function(b){   // zwei Übungen zu Supersatz oder Zirkel verbinden bzw. wieder trennen
+    b.addEventListener("click", function(){ planVerbinden(p, +b.getAttribute("data-pzlink")); if(neuZeichnen) neuZeichnen(); });
+  });
   root.querySelectorAll(".pz-zeile").forEach(function(zeile){
     var id = zeile.getAttribute("data-pz");
     function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
@@ -350,6 +441,16 @@ function planZeilenBinden(root, fn, neuZeichnen){
         en.timer = {};
         ["reps", "work", "rest"].forEach(function(k){ if(alt[k] != null) en.timer[k] = alt[k]; });
         en.timer[feld] = v;
+      }
+      if(feld === "saetze"){   // die Runden eines Blocks sind für alle seine Übungen gleich
+        var bid = zeile.getAttribute("data-pzblk");
+        if(bid) root.querySelectorAll('.pz-zeile[data-pzblk="'+bid+'"]').forEach(function(z2){
+          var id2 = z2.getAttribute("data-pz");
+          if(id2 === id) return;
+          var e2 = studioAlle()[id2] || (studioAlle()[id2] = { log:[] });
+          e2.ziel = e2.ziel || {}; e2.ziel.saetze = v;
+          var inp = z2.querySelector('[data-feld="saetze"] input'); if(inp) inp.value = studioKg(v);
+        });
       }
       save();
       fn();
@@ -446,7 +547,7 @@ function renderStudioPlan(){
     html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
       (ids.length ? hw.z(0, "page-hint") : '')+
       (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("planAlleTimer"))+'</button>' : '')+
-      (ids.length ? '<div class="pz-liste">'+ids.map(function(id, i){ return planZeileHTML(id, i+1); }).join("")+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
+      (ids.length ? '<div class="pz-liste">'+planListeHTML(p)+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
       (ids.length ? auswertungHTML(ids) : '')+
       (ids.length ? trainingLeisteHTML({ plan:p, ids:ids }) : '')+
       '<div style="height:'+(ids.length ? 96 : 40)+'px"></div>';
@@ -465,7 +566,7 @@ function renderStudioPlan(){
   if(!stPlanBauen) planZeilenBinden(app, function(){   // Summe der Sätze oben nachführen
     var su = app.querySelector("#plan-summe");
     if(su) su.textContent = planSummeText(stPlanIds(p));
-  }, neu);
+  }, neu, p);
   an("[data-plandone]", function(){
     if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); showToast(t("planGespeichert")); }   // erst jetzt steht der neue Plan unter Meine
     stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);
@@ -473,10 +574,7 @@ function renderStudioPlan(){
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */
   an("[data-planwo]", function(){
-    var items = ids.map(function(id){
-      var ex = findExercise(id), tm = studioTimer(id);
-      return { ex:id, reps:ex.perSide ? tm.reps*2 : tm.reps, work:tm.work, rest:tm.rest };
-    });
+    var items = planTimerItems(p);   // Einzelübungen nacheinander, Supersätze und Zirkel abwechselnd
     var mw = (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
     if(mw){ mw.name = p.name; mw.items = items; mw.updatedAt = Date.now(); save(); }
     else { mw = createMyFromDraft({ name:p.name, mode:"individual", reps:6, work:30, rest:10, blockRest:45, items:items }); mw.fromPlan = p.id; save(); }

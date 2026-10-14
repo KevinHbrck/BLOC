@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Körperregionen und Fotokarten auch beim Zusammenstellen, Supersätze, Zirkel, RPE/RIR (Fassung 2026-10-14-6)
+
+- **Workout-Baukasten (Nach Zeit)**: Die Übungsauswahl ist jetzt wie im Katalog und im Plan-Bau nach **Körperregionen** geordnet (Brust, Rücken, Schultern, Arme, Bauch & Rumpf, Beine & Po, Cardio, Eigene; zugeklappt, „n gewählt“, Suche klappt Treffer auf) – bei Freiluft stand sie bisher als flache Liste da.
+- **Ort als Fotokarten überall**: `bauOrtHTML` zeigt auch in den tieferen Seiten (Plan-Bau, Workout-Baukasten, Überrasch-mich-Fenster) die kompakten Fotokarten statt der alten Symbol-Karten.
+- **Supersätze und Zirkel** (Plan, Nach Sätzen): „Verbinden“ zwischen zwei Übungen macht aus ihnen einen Block (zwei = Supersatz, drei und mehr = Zirkel; `p.blk`, `planBloecke`, `planVerbinden`). Die Runden sind für alle Übungen des Blocks gleich, die Plan-Zeilen stehen gemeinsam gerahmt; im Timer laufen die Übungen abwechselnd mit der Pause erst nach der Runde (`planTimerItems`, auch bei „Nach Zeit“ umwandeln); auf der Übungskarte steht „danach: …“ mit Knopf zur nächsten Übung, die Pause startet erst nach der letzten Übung der Runde.
+- **RPE/RIR je Satz**: Einstellungen › Training schaltet es ein (RPE oder RIR). Beim Eintragen wählt man optional 6–10 (bzw. 4–0 Wiederholungen im Tank); der Satz speichert `[kg, wdh, typ, rpe]`, Listen zeigen „@ RPE 8“ bzw. „@ RIR 2“.
+
 ## 2026-10-14 · Beim Zusammenstellen springt die Liste nicht mehr weg (Fassung 2026-10-14-5)
 
 - Beim Bauen eines Plans oder eines Workouts schob die **erste Auswahl** die Übungsliste nach unten (oben kamen Körperkarte und Plan bzw. Ablauf dazu, die Scrollposition blieb gleich) – es wirkte, als würde man nach oben geworfen. Jetzt bleibt die angetippte Kachel an ihrem Platz (`ankerNeuZeichnen` in `js/02-bibliothek.js`, genutzt von Plan-Bau und Workout-Baukasten), man tippt einfach die nächsten Übungen an.

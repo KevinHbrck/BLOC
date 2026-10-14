@@ -317,14 +317,23 @@ function renderDraftPage(d, cfg){
     // beim Bauen immer nach Ort getrennt: nur Übungen des gewählten Ortes (Fitnessstudio oder Freiluft), schon Gewähltes bleibt im Ablauf
     var palListe = sortedExercises(cat, sort, equip, [], zonen).filter(function(ex){ return fuerBau(ex) && katOrtPasst(exOrt(ex)); });
     hw = hinweise("bau", ["wbTippen"]);
+    // Nach Körperregionen geordnet wie im Katalog und im Plan-Bau: Brust, Rücken, Schultern, Arme, Bauch & Rumpf, Beine & Po, Cardio, Eigene
+    var je = {};
+    palListe.forEach(function(ex){ var g = katGruppeVon(ex); (je[g] = je[g] || []).push(ex); });
+    var bereiche = KAT_GRUPPEN.map(function(g){ return { id:g.id, name:t(g.key) }; }).concat([{ id:"eigene", name:t("stOwn") }]);
+    var bereichHTML = bereiche.filter(function(b){ return je[b.id]; }).map(function(b){
+      var gew = je[b.id].filter(function(ex){ return pos[ex.id]; }).length;
+      return katZeileHTML("b-"+b.id, katIcon(b.id), b.name, je[b.id].length,
+        '<div class="fig-grid">'+je[b.id].map(function(ex){ return kachel(ex); }).join("")+'</div>', katOffenStd("b-"+b.id, false),
+        gew ? '<span class="kat-n">'+esc(t("katGewaehlt", { n:gew }))+'</span>' : '', je[b.id].every(exIstStudio));
+    }).join("");
     palHTML = '<div class="section-title">'+t("wbWaehlen")+'</div>'+
       bauOrtHTML()+
       (cfg.cover ? '' : bauArtHTML("timer", false))+
       hw.z(0, "page-hint")+
       suchFeldHTML(buildQuery, "b")+
       airFilterHTML("b", !!s.buildFilterOpen, cat, equip, sort, [["std", t("sortStd")], ["az", "A&ndash;Z"]], palListe.length, true, zonen)+
-      '<div class="fig-grid" id="dz-pal">'+(palListe.map(function(ex){ return kachel(ex); }).join("") ||
-        '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
+      '<div id="dz-pal">'+(bereichHTML || '<div class="empty" style="padding:20px;">'+t("libEmpty")+'</div>')+'</div>'+
       '<div class="empty" data-noresult style="display:none;padding:20px;">'+t("noResult")+'</div>';
   }
 
@@ -493,9 +502,11 @@ function renderDraftPage(d, cfg){
   on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; s.buildZonen = []; save(); neu(); });
   wsRegionBinden(neu);
   var bq = app.querySelector("#b-q");
+  katBinden(function(){ return buildQuery; });   // die Körperregionen der Übungsauswahl klappen auf und zu
+  function bSuchen(){ applySearch(app.querySelector("#dz-pal") || app, buildQuery); katSuche(buildQuery, false); }
   if(bq){
-    applySearch(app.querySelector("#dz-pal") || app, buildQuery);
-    bq.addEventListener("input", function(){ buildQuery = bq.value; applySearch(app.querySelector("#dz-pal") || app, buildQuery); });
+    bSuchen();
+    bq.addEventListener("input", function(){ buildQuery = bq.value; bSuchen(); });
   }
   on("[data-palopen]", function(){ d._pal = true; neu(); });
   on("[data-share]", function(){ shareDraft(d); });

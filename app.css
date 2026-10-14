@@ -2517,3 +2517,22 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .tr-rechts{ font-size:13px; color:var(--text-dim); text-align:right; font-variant-numeric:tabular-nums; }
 /* Übungen ohne Gewicht: nur ein Feld für die Wiederholungen */
 .st-eingabe.eins{ grid-template-columns:1fr; }
+/* RPE/RIR */
+.st-rpe span{ font-weight:700; color:var(--text); }
+.rpe-wahl{ margin:0 0 6px; }
+/* Supersätze und Zirkel im Plan */
+.pz-verbinder{ display:flex; justify-content:center; margin:-4px 0 -4px; }
+.pz-link{ display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border:1px dashed var(--border); border-radius:999px; background:var(--surface); color:var(--text-dim); font:inherit; font-size:12.5px; cursor:pointer; }
+.pz-link svg{ width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.pz-link.an{ border-style:solid; color:var(--text); }
+.pz-block{ border-radius:20px; padding:8px; background:color-mix(in srgb, var(--accent) 10%, transparent); box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 45%, transparent); display:flex; flex-direction:column; gap:10px; }
+.pz-blockkopf{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:2px 6px 0; font-size:13px; }
+.pz-blockkopf b{ font-size:14px; }
+.pz-blockkopf span{ color:var(--text-dim); text-align:right; }
+.pz-block .pz-verbinder{ margin:-6px 0 -6px; }
+.pz-bm{ font-size:12px; font-weight:700; color:var(--accent); }
+/* Übungskarte im Block */
+.st-block{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 12px; padding:10px 12px; border-radius:14px; text-align:left;
+  background:color-mix(in srgb, var(--accent) 12%, transparent); font-size:14px; }
+.st-block small{ display:block; color:var(--text-dim); font-size:12.5px; margin-top:1px; }
+.st-block .btn{ width:auto; margin:0; padding:10px 14px; font-size:14px; flex:0 0 auto; }

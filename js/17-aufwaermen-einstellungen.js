@@ -807,6 +807,9 @@ function renderSettings(){
       '<div class="range-scale"><span>0</span><span>100</span></div>'+
       '<div class="range-hint">'+t("volMusicHint")+'</div></div>'+
       toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
+      toggleRow("f-rpe", t("rpeSetting"), t("rpeSettingDesc"), !!anstrengungModus())+
+      (anstrengungModus() ? '<div class="seg-row rpe-wahl" role="group">'+["rpe", "rir"].map(function(m){
+        return '<button type="button" data-rpemodus="'+m+'" class="'+(anstrengungModus() === m ? "active" : "")+'">'+(m === "rpe" ? t("rpeName") : t("rirName"))+'</button>'; }).join("")+'</div>' : "")+
     '</div>'+
     '<div class="card">'+einstKopf(EINST_ICON.daten, t("data"))+
       '<div class="snap-zeile" id="snap-zeile">'+snapZeileHTML()+'</div>'+
@@ -890,6 +893,9 @@ function renderSettings(){
   bindToggle("f-vibration", function(v){ s.vibration=v; save(); });
   bindToggle("f-keepawake", function(v){ s.keepAwake=v; save(); });
   bindToggle("f-voice", function(v){ s.voice=v; save(); });
+  function settingsNeu(){ var y = window.scrollY; renderSettings(); window.scrollTo(0, y); }
+  bindToggle("f-rpe", function(v){ s.anstrengung = v ? (anstrengungModus() || "rpe") : ""; save(); settingsNeu(); });
+  app.querySelectorAll("[data-rpemodus]").forEach(function(b){ b.addEventListener("click", function(){ s.anstrengung = b.getAttribute("data-rpemodus"); save(); settingsNeu(); }); });
 
   var volEl = app.querySelector("#f-volume");
   var volLabel = app.querySelector("#f-volume-label");

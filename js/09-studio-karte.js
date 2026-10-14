@@ -283,6 +283,7 @@ function studioInfoHTML(id, ex){
 }
 var studioPR = null;   // { id, art:"kg"|"rm", kg, w, vorher, rm, vorherRm } - zeigt nach einem Satz mit neuem Bestgewicht (oder neuem geschätzten 1RM) eine ruhige Zeile auf der Karte
 var studioSatzTypWahl = "n";   // Typ des nächsten Satzes auf der Karte: n normal · w Aufwärmen · d Drop · f bis Versagen
+var studioRpeWahl = 0;   // RPE (6–10) des nächsten Satzes, 0 = keine Angabe (nur wenn RPE/RIR in den Einstellungen eingeschaltet ist)
 /* Langhantel-Übungen bekommen den Scheibenrechner */
 function studioLanghantel(ex){ return /barbell|langhantel|bench-press|ez-?bar|ez-?stange|smith|deadlift/i.test(ex.id+" "+JSON.stringify(ex.name || "")); }
 var SCHEIBEN = [25, 20, 15, 10, 5, 2.5, 1.25];
@@ -334,6 +335,15 @@ function renderStudioKarte(id){
   if(e.kg != null && !h) v.kg = e.kg;
   var letzte = studioLetzte(id, false);   // die Einheit davor: so sieht man vor Ort, was beim letzten Mal ging
   var timerModus = studioModus(id) === "timer";   // vor Ort umschaltbar: Satz für Satz eintragen oder den Timer durchlaufen lassen (Übungen ohne Gewicht starten mit dem Timer)
+  /* Gehört die Übung im geöffneten Plan zu einem Supersatz oder Zirkel? Dann steht oben „danach: …“ mit Knopf zur nächsten Übung des Blocks,
+     und die Pause kommt erst nach der letzten Übung der Runde. */
+  var blKontext = null;
+  (function(){
+    var pl = stPlanAktiv ? stPlanFind(stPlanAktiv) : null, bl = pl ? planBlockVon(pl, id) : null;
+    if(!bl) return;
+    var i = bl.ids.indexOf(id);
+    blKontext = { art:blockArt(bl.ids.length), n:bl.ids.length, i:i, next:bl.ids[(i+1) % bl.ids.length], letzte:i === bl.ids.length-1 };
+  })();
   var trKontext = trainingKontext(id);   // Training speichern ist auch mitten im Workout da: Leiste unten, sobald heute etwas eingetragen ist
   if(!trainingHeute(trKontext.ids).ex.length) trKontext = { plan:trKontext.plan, ids:[] };
   app.innerHTML =
@@ -354,6 +364,9 @@ function renderStudioKarte(id){
         '<button type="button" class="btn btn-primary" data-stup>'+esc(t("stSuggestYes"))+'</button></div>' : '')+
       '<div class="st-heute"><b>'+esc(t("stToday"))+':</b> '+(h && h.s.length ? h.s.map(function(x, i){
         return '<span class="st-satz">'+(i+1)+'. '+esc(satzText(x).replace("×", " × "))+'</span>'; }).join("") : '<span class="st-leer">–</span>')+'</div>'+
+      (blKontext ? '<div class="st-block"><span><b>'+esc(t(blKontext.art === "zirkel" ? "blkZirkel" : "blkSuper"))+'</b> · '+(blKontext.i+1)+'/'+blKontext.n+
+        '<small>'+esc(t(blKontext.letzte ? "blkDannPause" : "blkDanach", { n:tplText(findExercise(blKontext.next).name) }))+'</small></span>'+
+        '<button type="button" class="btn btn-primary" data-stblock="'+esc(blKontext.next)+'">'+esc(t("blkWeiter"))+' ›</button></div>' : '')+
       '<div class="seg-row st-modus" role="group" aria-label="'+esc(t("stModusTitel"))+'">'+
         '<button type="button" data-stmodus="saetze" class="'+(timerModus ? '' : 'active')+'" aria-pressed="'+!timerModus+'">'+esc(t("stModusSaetze"))+'</button>'+
         '<button type="button" data-stmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>'+
@@ -361,6 +374,10 @@ function renderStudioKarte(id){
       // Satztyp des nächsten Satzes: Aufwärmsätze zählen nicht in Volumen, Bestwerte und Steigerung
       '<div class="st-typen" role="group" aria-label="'+esc(t("satzTypTitel"))+'">'+SATZ_TYPEN.map(function(ty){
         return '<button type="button" class="fc-chip'+(studioSatzTypWahl === ty ? ' on' : '')+'" data-sttyp="'+ty+'" aria-pressed="'+(studioSatzTypWahl === ty)+'">'+esc(t("satzTypLang_"+ty))+'</button>'; }).join("")+'</div>'+
+      // Anstrengung des nächsten Satzes (RPE oder RIR, in den Einstellungen einschaltbar); nochmal antippen nimmt die Angabe zurück
+      (anstrengungModus() ? '<div class="st-typen st-rpe" role="group" aria-label="'+esc(t("rpeTitel"))+'"><span>'+esc(anstrengungModus() === "rir" ? "RIR" : "RPE")+'</span>'+
+        [6, 7, 8, 9, 10].map(function(r){
+          return '<button type="button" class="fc-chip'+(studioRpeWahl === r ? ' on' : '')+'" data-strpe="'+r+'" aria-pressed="'+(studioRpeWahl === r)+'">'+(anstrengungModus() === "rir" ? 10 - r : r)+'</button>'; }).join("")+'</div>' : '')+
       // Übungen ohne Gewicht tragen nur die Wiederholungen ein (kein Gewichtsfeld, kein Schritt, kein Scheibenrechner)
       '<div class="st-eingabe'+(koerper ? ' eins' : '')+'">'+
         (koerper ? '' : '<div class="st-feld"><label>'+esc(t("stKg"))+'</label><div class="stepper st-step" data-min="0" data-max="500" data-step="'+z.schritt+'">'+
@@ -421,6 +438,13 @@ function renderStudioKarte(id){
         app.querySelectorAll("[data-sttyp]").forEach(function(c){ c.classList.toggle("on", c === b); c.setAttribute("aria-pressed", c === b); });
       });
     });
+    app.querySelectorAll("[data-strpe]").forEach(function(b){
+      b.addEventListener("click", function(){
+        var r = +b.getAttribute("data-strpe");
+        studioRpeWahl = studioRpeWahl === r ? 0 : r;
+        app.querySelectorAll("[data-strpe]").forEach(function(c){ var an = +c.getAttribute("data-strpe") === studioRpeWahl; c.classList.toggle("on", an); c.setAttribute("aria-pressed", an); });
+      });
+    });
     app.querySelectorAll("[data-stschritt]").forEach(function(b){
       b.addEventListener("click", function(){
         z.schritt = +b.getAttribute("data-stschritt");
@@ -435,21 +459,24 @@ function renderStudioKarte(id){
     var l = en.log.length && studioTag(en.log[en.log.length-1].at) === studioTag(jetzt) ? en.log[en.log.length-1] : null;
     var davor = studioBestwerte(en.log);   // Bestwerte vor diesem Satz
     if(!l){ l = { at:jetzt, s:[] }; en.log.push(l); if(en.log.length > 200) en.log = en.log.slice(-200); }
-    l.s.push(typ === "n" ? [kg, w] : [kg, w, typ]);
+    var satz = [kg, w], rpe = anstrengungModus() ? studioRpeWahl : 0;   // typ "n" steht als Platzhalter, wenn nur die Anstrengung angegeben ist
+    if(typ !== "n" || rpe) satz.push(typ);
+    if(rpe) satz.push(rpe);
+    l.s.push(satz);
     // Rekord: neues Bestgewicht, sonst neues geschätztes 1RM (Aufwärmsätze zählen nicht)
     var rm = satzSchaetzung1RM([kg, w]);
     studioPR = typ === "w" ? null :
       kg === 0 && davor.kg === 0 ? (davor.wdh > 0 && w > davor.wdh ? { id:id, art:"wdh", w:w, vorher:davor.wdh } : null) :   // ohne Gewicht: mehr Wiederholungen
       davor.kg > 0 && kg > davor.kg ? { id:id, art:"kg", kg:kg, w:w, vorher:davor.kg } :
       davor.rm > 0 && rm > davor.rm + .05 ? { id:id, art:"rm", kg:kg, w:w, rm:rm, vorherRm:davor.rm } : null;
-    studioSatzTypWahl = "n";
+    studioSatzTypWahl = "n"; studioRpeWahl = 0;
     if(!koerper) en.kg = kg;
     en.zuletzt = jetzt;
     studioVerlauf(id, jetzt);
     trainingNachSatz(id);
     save();
     vibrate([30]);
-    studioPauseStart(id, pause);
+    if(blKontext && !blKontext.letzte) studioPauseStop(); else studioPauseStart(id, pause);   // im Block geht es ohne Pause zur nächsten Übung
     neu();
   });
   an("[data-stundo]", function(){
@@ -460,6 +487,7 @@ function renderStudioKarte(id){
   });
   an("[data-stup]", function(){ var en = eintrag(); en.kg = stg.kg; en.erhoeht = Date.now(); save(); showToast(t("stRaised", { kg:studioKg(stg.kg) })); neu(); });
   an("[data-stskip]", function(){ studioPauseStop(); neu(); });
+  an("[data-stblock]", function(){ studioPauseStop(); go("#studio/"+app.querySelector("[data-stblock]").getAttribute("data-stblock")); });
   an("[data-stinfo]", function(){ openExInfo(id, false); });
   an("[data-ststats]", function(){ openStudioStats(id); });
   an(".topbar [data-exfav]", function(){ toggleExFav(id); neu(); });
