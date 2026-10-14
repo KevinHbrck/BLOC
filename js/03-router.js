@@ -99,6 +99,7 @@ window.addEventListener("load", function(){
   applyTheme();
   render();
   if(ERSTER_START && initial === "#home" && !state.db.settings.introGesehen) setTimeout(openIntro, 250);
+  if(DB_GERETTET) setTimeout(function(){ showToast(t("datenGerettet")); }, 600);
   registerSW();
   maybeShowInstallTip();
 });

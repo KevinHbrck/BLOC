@@ -195,7 +195,8 @@ function loadDB(){
     if(parsed.settings) Object.assign(db.settings, parsed.settings);
     pruneHistory(db);
     if(db.settings.bereicheV !== 3){   // einmalig: der Timer ist wieder ein eigener Bereich - bei bestehender Reihenfolge direkt nach Studio einsortieren, sonst Standard
-      var br0 = db.settings.bereicheV === 2 ? selArr(db.settings.bereiche) : [];
+      /* kein selArr: die Funktion steht erst in 02-bibliothek.js, beim Laden gibt es sie hier noch nicht */
+      var br0 = db.settings.bereicheV === 2 && Array.isArray(db.settings.bereiche) ? db.settings.bereiche.slice() : [];
       if(!br0.length) br0 = ["lib", "timer", "intervall", "reps", "run", "warm"];
       else if(br0.indexOf("intervall") < 0){ var nach = br0.indexOf("timer") > -1 ? br0.indexOf("timer") : br0.indexOf("lib"); br0.splice(nach + 1, 0, "intervall"); }
       db.settings.bereiche = br0; db.settings.bereicheV = 3;
@@ -215,15 +216,35 @@ function loadDB(){
     delete db.settings.lockScreen;   // „Anzeige auf dem Sperrbildschirm“ gibt es nicht mehr
     migrateExIds(db);
     return db;
-  }catch(e){ return defaultDB(); }
+  }catch(e){
+    /* Nicht lesbar: den Rohtext beiseitelegen, bevor der nächste save() ihn überschreibt (nur die erste Rettung bleibt liegen) */
+    try{
+      var roh0 = localStorage.getItem(DB_KEY);
+      if(roh0 && !localStorage.getItem(DB_KEY + "-defekt")){ localStorage.setItem(DB_KEY + "-defekt", roh0); DB_GERETTET = true; }
+    }catch(e2){}
+    return defaultDB();
+  }
 }
+var DB_GERETTET = false;   // true: der gespeicherte Stand war nicht lesbar; der Rohtext liegt unter DB_KEY + "-defekt"
 
 /* Erster Start auf diesem Gerät = noch nichts gespeichert. Nur dann zeigt BLOC die Einführung von selbst;
    wer die App schon eingerichtet hat, findet sie in den Einstellungen. */
 var ERSTER_START = (function(){ try{ return !localStorage.getItem(DB_KEY); }catch(e){ return false; } })();
 var state = { db: loadDB() };
 
-function save(){ localStorage.setItem(DB_KEY, JSON.stringify(state.db)); }
+/* Speichern kann scheitern (Speicher voll, privates Fenster): dann nicht still „gespeichert“ vortäuschen, sondern warnen
+   (höchstens alle 30 s, der Lauf schreibt alle paar Sekunden). Gibt true zurück, wenn es geklappt hat. */
+var speichernWarnung = 0;
+function save(){
+  try{ localStorage.setItem(DB_KEY, JSON.stringify(state.db)); return true; }
+  catch(e){
+    if(Date.now() - speichernWarnung > 30000){
+      speichernWarnung = Date.now();
+      if(typeof showToast === "function") showToast(t("speichernFehler"));
+    }
+    return false;
+  }
+}
 var speichereDB = save;   // für Stellen, die ein eigenes lokales save() haben (renderWorkoutEdit)
 /* IDs zusammengelegter Übungen (EX_ALIAS) in Favoriten, Ausblendungen, eigenen Workouts und Blöcken umschreiben */
 function migrateExIds(db){

@@ -348,6 +348,67 @@
     } finally { s.studio = alt; }
   });
 
+  /* ---------- Start und Speichern: Stand beim Laden, kaputte Daten, volles Gerät ---------- */
+  /* Startet die App frisch in einem eigenen Rahmen mit dem übergebenen Rohtext im Speicher (so läuft loadDB wirklich beim Laden
+     der Skripte, nicht erst danach wie im Haupt-Rahmen) und gibt das Fenster zurück. */
+  function startMit(roh) {
+    return new Promise(function (ok, nein) {
+      var vorher = localStorage.getItem(KEY), f = document.createElement("iframe");
+      function aufraeumen() {
+        f.src = "about:blank"; f.remove();
+        if (vorher === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, vorher);
+        localStorage.removeItem(KEY + "-defekt");
+      }
+      localStorage.removeItem(KEY + "-defekt");
+      localStorage.setItem(KEY, roh);
+      f.title = "App im Test (Start)";
+      f.onload = function () {
+        var w = f.contentWindow, t0 = Date.now();
+        (function pruefen() {
+          if (w.state && w.state.db && w.save) { var erg = { w: w, defekt: localStorage.getItem(KEY + "-defekt") }; aufraeumen(); return ok(erg); }
+          if (Date.now() - t0 > 8000) { aufraeumen(); return nein(new Error("App nicht geladen")); }
+          setTimeout(pruefen, 100);
+        })();
+      };
+      f.src = "index.html?schnelltest=" + Date.now() + "&lang=de#home";
+      document.body.appendChild(f);
+    });
+  }
+  test("Start mit altem Stand (Bereiche-Version 2): nichts geht verloren, die Reihenfolge wird übernommen", function () {
+    var alt = { blocks: [{ id: "b1", name: "Block" }], workouts: [], myWorkouts: [], customEx: [], history: [],
+      settings: { bereicheV: 2, bereiche: ["run", "lib", "timer"] } };
+    return startMit(JSON.stringify(alt)).then(function (e) {
+      var d = e.w.state.db;
+      gleich(d.blocks.length, 1, "Block bleibt erhalten (nicht auf leeren Stand zurückgesetzt)");
+      gleich(d.settings.bereicheV, 4, "auf die aktuelle Version gehoben");
+      wahr(d.settings.bereiche.indexOf("run") > -1 && d.settings.bereiche.indexOf("run") < d.settings.bereiche.indexOf("lib"), "eigene Reihenfolge bleibt: Run vor Workout");
+      wahr(d.settings.bereiche.indexOf("intervall") > -1 && d.settings.bereiche.indexOf("warm") > -1, "neue Bereiche sind ergänzt");
+      gleich(e.w.DB_GERETTET, false, "nichts musste gerettet werden");
+    });
+  });
+  test("Start mit unlesbarem Stand: Rohtext wird beiseitegelegt, die App startet leer", function () {
+    return startMit("{kaputt").then(function (e) {
+      gleich(e.defekt, "{kaputt", "Rohtext unter dem Rettungsschlüssel");
+      gleich(e.w.DB_GERETTET, true, "Kennzeichen gesetzt");
+      gleich(e.w.state.db.blocks.length, 0, "frischer Stand");
+    });
+  });
+  test("Speichern: scheitert der Gerätespeicher, kommt false und ein Hinweis statt stillem „gespeichert“", function () {
+    var proto = W.Storage.prototype, orig = proto.setItem;
+    W.speichernWarnung = 0;
+    var alt = W.document.getElementById("toast"); if (alt) alt.remove();
+    var r;
+    try {
+      proto.setItem = function () { throw new Error("QuotaExceededError"); };
+      r = W.save();
+    } finally { proto.setItem = orig; }
+    gleich(r, false, "save() meldet den Fehler");
+    var toast = W.document.getElementById("toast");
+    wahr(toast && toast.textContent === W.t("speichernFehler"), "Hinweis sichtbar");
+    if (toast) toast.remove();
+    gleich(W.save(), true, "danach wieder normal");
+  });
+
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
   document.getElementById("los").addEventListener("click", async function () {
     var knopf = this;
@@ -361,7 +422,7 @@
       await laden();
       for (var n = 0; n < T.length; n++) {
         var li = eintrag(T[n][0]);
-        try { T[n][1](); li.className = "ok"; li.textContent = "✓ " + T[n][0]; ok++; }
+        try { var erg = T[n][1](); if (erg && erg.then) await erg; li.className = "ok"; li.textContent = "✓ " + T[n][0]; ok++; }
         catch (e) {
           li.className = "fail"; li.textContent = "✗ " + T[n][0];
           var sm = document.createElement("small"); sm.textContent = e && e.message ? e.message : String(e); li.appendChild(sm);
