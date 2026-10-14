@@ -193,6 +193,7 @@ var EXERCISE_ROWS = [
   ["barbell-rdl", "Rumänisches Kreuzheben (Langhantel)", "Barbell Romanian Deadlift", "weight legs back", 3, 40, 0, "Hüfte nach hinten, Stange am Bein", "Hips back, bar along your legs", 90],
   /* Dehnen: Haltezeit statt Arbeit, 5 s zum Umsetzen */
   ["neck-stretch","Nacken seitlich","Neck Side Stretch","stretch",1,30,1,"Schultern locker nach unten","Shoulders relaxed and down",5],
+  ["chin-tuck","Kinn einziehen (Nacken)","Chin Tuck (Neck)","stretch",1,30,0,"Kinn gerade nach hinten, nicht nicken","Draw your chin straight back, don't nod",5],
   ["shoulder-stretch","Schulter (Arm vor der Brust)","Cross-body Shoulder Stretch","stretch",1,30,1,"Arm auf Schulterhöhe heranziehen","Pull the arm in at shoulder height",5],
   ["triceps-stretch","Trizeps über Kopf","Overhead Triceps Stretch","stretch",1,30,1,"Ellbogen sanft Richtung Kopf","Ease the elbow towards your head",5],
   ["biceps-stretch","Bizeps an der Wand","Wall Biceps Stretch","stretch",1,30,1,"Handfläche an die Wand, Körper wegdrehen","Palm on the wall, turn your body away",5],
@@ -200,6 +201,7 @@ var EXERCISE_ROWS = [
   ["wrist-stretch","Handgelenke (innen und außen)","Wrist Stretch (inside and outside)","stretch",2,20,1,"Finger sanft zurückziehen","Gently pull your fingers back",5],
   ["side-bend","Seitbeuge im Stand","Standing Side Bend","stretch",1,20,1,"Lang machen, nicht nach vorn kippen","Stay long, don't tip forward",5],
   ["cat-cow","Katze-Kuh","Cat-Cow","stretch",1,60,0,"Langsam im Atemrhythmus","Slowly with your breath",5],
+  ["thoracic-rotation","Brustwirbelsäule drehen (Vierfüßler)","Thoracic Rotation (All Fours)","stretch",1,30,1,"Hand hinter den Kopf, Ellbogen zur Decke aufdrehen","Hand behind your head, rotate the elbow up to the ceiling",5],
   ["childs-pose","Kindhaltung","Child's Pose","stretch",1,60,0,"Po Richtung Fersen, Arme lang","Hips towards heels, arms long",5],
   ["sphinx-stretch","Sphinx","Sphinx Stretch","stretch",1,45,0,"Unterarme stützen, Bauch entspannt","Forearms support, belly relaxed",5],
   ["cobra-lift","Kobra","Cobra Stretch","stretch",2,20,0,"Hüfte bleibt am Boden, Schultern tief","Hips stay down, shoulders low",5],
@@ -259,8 +261,8 @@ var LIB_WORKOUT_ROWS = [
   ["stretch-full","Ganzkörper-Dehnen","Full Body Stretch","stretch","neck-stretch shoulder-stretch chest-stretch quad-stretch calf-stretch cat-cow downward-dog hip-flexor-stretch hamstring-stretch figure-four spinal-twist childs-pose",10],
   ["stretch-post-legs","Nach dem Training: Beine","After Training: Legs","stretch","quad-stretch hamstring-stretch calf-stretch hip-flexor-stretch figure-four butterfly-stretch",10],
   ["stretch-post-upper","Nach dem Training: Oberkörper","After Training: Upper Body","stretch","chest-stretch shoulder-stretch triceps-stretch biceps-stretch wrist-stretch childs-pose",10],
-  ["stretch-back-hips","Rücken & Hüfte","Back & Hips","stretch","cat-cow childs-pose sphinx-stretch hip-flexor-stretch pigeon-stretch spinal-twist",10],
-  ["stretch-office","Schultern & Nacken (Büro)","Shoulders & Neck (Office)","stretch","neck-stretch shoulder-stretch triceps-stretch chest-stretch side-bend wrist-stretch",10],
+  ["stretch-back-hips","Rücken & Hüfte","Back & Hips","stretch","cat-cow thoracic-rotation childs-pose sphinx-stretch hip-flexor-stretch pigeon-stretch spinal-twist",10],
+  ["stretch-office","Schultern & Nacken (Büro)","Shoulders & Neck (Office)","stretch","neck-stretch chin-tuck shoulder-stretch triceps-stretch chest-stretch thoracic-rotation side-bend wrist-stretch",10],
   ["stretch-morning","Morgens locker werden","Loosen Up in the Morning","stretch","cat-cow worlds-greatest downward-dog side-bend forward-fold",5],
   ["calis-pull","Calisthenics Zug","Calisthenics Pull","calis","scapular-pull-ups inverted-rows commando-pull-ups chin-ups pull-ups burpee-pull-ups dead-hang",90],
   ["calis-push","Calisthenics Druck","Calisthenics Push","calis","support-hold parallel-bar-dips archer-push-ups pike-push-ups diamond-push-ups",90],
@@ -323,7 +325,7 @@ var EX_LEVEL = {
   "air-squats":1,"split-squats":2,"bulgarian-split-squats":3,"forward-lunges":2,"single-leg-glute-bridge":2,"lateral-lunge-pulses":2,
   "plank":1,"side-plank":2,"dead-bug":1,"bicycle-crunches":1,"leg-raises":2,"jackknives":3,"side-jackknives":3,
   "hollow-hold":3,"reverse-crunch":2,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"toes-to-bar":3,
-  "neck-stretch":1,"shoulder-stretch":1,"triceps-stretch":1,"biceps-stretch":1,"chest-stretch":1,"wrist-stretch":1,"side-bend":1,
+  "neck-stretch":1,"chin-tuck":1,"thoracic-rotation":1,"shoulder-stretch":1,"triceps-stretch":1,"biceps-stretch":1,"chest-stretch":1,"wrist-stretch":1,"side-bend":1,
   "cat-cow":1,"childs-pose":1,"sphinx-stretch":1,"downward-dog":1,"spinal-twist":1,"forward-fold":1,"hip-flexor-stretch":1,
   "quad-stretch":1,"hamstring-stretch":1,"calf-stretch":1,"figure-four":1,"pigeon-stretch":2,"butterfly-stretch":1,"worlds-greatest":2,
   "burpee-pull-ups":3,
@@ -397,7 +399,7 @@ var EX_MAIN_ROWS = {
   ausdauer:"box-step-ups burpee-squat-jumps jump-forward-squats jump-forward-burpees burpees fast-feet frogs high-knees jump-lunges jump-squats jumping-jacks lateral-hops mountain-climbers plank-burpees skater-jumps sprint-in-place stand-up-jumps tuck-jumps",
   rumpf:"bicycle-crunches dead-bug dragon-flags hollow-hold leg-raises plank plank-shoulder-taps reverse-crunch russian-twists side-jackknives side-plank sit-ups toe-touches jackknives",
   stange:"chin-ups commando-pull-ups rung-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups burpee-pull-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
-  stretch:"hamstring-stretch biceps-stretch chest-stretch spinal-twist figure-four wrist-stretch downward-dog hip-flexor-stretch cat-cow childs-pose neck-stretch quad-stretch butterfly-stretch shoulder-stretch side-bend sphinx-stretch cobra-lift pigeon-stretch triceps-stretch forward-fold calf-stretch worlds-greatest arm-circles"
+  stretch:"hamstring-stretch biceps-stretch chest-stretch spinal-twist figure-four wrist-stretch downward-dog hip-flexor-stretch cat-cow childs-pose neck-stretch quad-stretch butterfly-stretch shoulder-stretch side-bend sphinx-stretch cobra-lift pigeon-stretch triceps-stretch forward-fold calf-stretch worlds-greatest arm-circles chin-tuck thoracic-rotation"
 };
 
 var EQUIPS = [
@@ -424,7 +426,8 @@ var EX_SUCH_ALIAS = { "russian-twists":"russian twist twists russische drehung r
   "cable-lateral-raise":"seitheben kabel verstellbarer kabelzug adjustable pulley", "smith-bench-press":"multipresse smith bankdrücken bankdruecken",
   "assisted-dip":"dips dip maschine gegengewicht kniepolster trizeps", "high-row-machine":"high row rudern oben hammer",
   "cable-crunch":"kabel crunch kniend bauch seil", "cable-pull-through":"pull through kabel gesäß po hüfte seil", "back-extension":"hyperextension",
-  "jump-lunges":"sprungausfallschritt ausfallschritt sprung split jumps lunge jumps", "cobra-lift":"cobra lift kobra" };
+  "jump-lunges":"sprungausfallschritt ausfallschritt sprung split jumps lunge jumps", "cobra-lift":"cobra lift kobra",
+  "chin-tuck":"kinn einziehen doppelkinn nacken halswirbelsäule chin tuck", "thoracic-rotation":"brustwirbelsäule bws rotation drehen offenes buch open book thread the needle vierfüßler" };
 
 /* ---------- Piktogramme ----------
    Jede Übung hat zwei Posen, die sich abwechseln (bei Halteübungen eine). Eine Pose beschreibt
@@ -607,6 +610,9 @@ Object.assign(ILLU_POSES, {
   "arm-circles":        [qWith(P_F,{ a:[[37,26,24,26],[63,26,76,26]] }), qWith(P_F,{ a:[[37,20,26,12],[63,20,74,12]] })],
   /* Dehnen */
   "neck-stretch":       [Q([43,14],[50,21],[50,52],P_FLEGS,[[40,14,42,6],[56,34,58,48]],"",true), null],
+  /* Kinn einziehen: Kopf wandert waagerecht nach hinten (Seitenansicht); Brustwirbelsäule drehen: Vierfüßler, Ellbogen der Kopfhand öffnet sich nach oben */
+  "chin-tuck":          [Q([57,9],[50,20],[50,50],[[50,70,50,89,58,89]],[[58,30,57,17]]), Q([48,9],[50,20],[50,50],[[50,70,50,89,58,89]],[[56,30,50,18]])],
+  "thoracic-rotation":  [Q(null,[66,66],[40,66],[[40,88,22,88,18,89]],[[67,78,68,89],[71,77,78,67]]), Q(null,[66,66],[40,66],[[40,88,22,88,18,89]],[[67,78,68,89],[71,55,78,64]])],
   "shoulder-stretch":   [Q(null,[50,20],[50,52],P_FLEGS,[[40,27,30,27],[44,36,40,28]],"",true), null],
   "triceps-stretch":    [Q(null,[50,20],[50,50],[[50,70,50,89,58,89]],[[53,6,45,16],[59,14,54,7]]), null],
   "biceps-stretch":     [Q(null,[52,20],[52,50],[[52,70,52,89,60,89]],[[40,25,26,26]], gWall(22)), null],
@@ -1351,6 +1357,8 @@ Object.assign(EX_INFO, {
   "triceps-curls":["Eine Kurzhantel mit beiden Händen senkrecht über den Kopf halten.|Ellbogen beugen und die Hantel langsam hinter den Kopf senken.|Wieder nach oben strecken.","Hold one dumbbell upright overhead with both hands.|Bend your elbows and slowly lower it behind your head.|Extend back up."],
   "arm-circles":["Aufrecht stehen, Arme seitlich auf Schulterhöhe strecken.|Kleine Kreise nach vorn machen.|Nach der Hälfte der Zeit die Richtung wechseln.","Stand tall, arms straight out at shoulder height.|Make small circles forwards.|Halfway through, switch direction."],
   "neck-stretch":["Aufrecht sitzen oder stehen.|Den Kopf zur Seite neigen, Ohr Richtung Schulter; die Hand liegt nur sanft auf.|Halten, ruhig atmen, dann die Seite wechseln.","Sit or stand tall.|Tilt your head to the side, ear towards shoulder; your hand rests on lightly.|Hold, breathe calmly, then switch sides."],
+  "chin-tuck":["Aufrecht sitzen oder stehen, Blick geradeaus.|Das Kinn waagerecht nach hinten schieben, als würdest du ein Doppelkinn machen; der Kopf bleibt gerade, nicht nicken.|Etwa 5 Sekunden halten, lösen und ruhig im Wechsel wiederholen.","Sit or stand tall, eyes forward.|Slide your chin straight back as if making a double chin; keep your head level, don't nod.|Hold for about 5 seconds, release and repeat calmly."],
+  "thoracic-rotation":["Im Vierfüßlerstand eine Hand hinter den Kopf legen, die andere Hand bleibt unter der Schulter.|Den Ellbogen der Kopfhand Richtung Boden führen, dann den Brustkorb aufdrehen und den Ellbogen zur Decke öffnen; der Blick folgt.|Langsam im Atemrhythmus wiederholen, dann die Seite wechseln.","On all fours, put one hand behind your head; the other hand stays under your shoulder.|Bring the elbow of the head hand down towards the floor, then open your chest and rotate the elbow up to the ceiling; your eyes follow.|Repeat slowly with your breathing, then switch sides."],
   "shoulder-stretch":["Einen gestreckten Arm vor der Brust zur anderen Seite führen.|Mit der anderen Hand am Oberarm sanft heranziehen.|Halten, dann die Seite wechseln.","Bring one straight arm across your chest.|Gently pull it in at the upper arm with the other hand.|Hold, then switch sides."],
   "triceps-stretch":["Einen Arm nach oben strecken und beugen, die Hand liegt zwischen den Schulterblättern.|Mit der anderen Hand den Ellbogen sanft Richtung Kopf ziehen.|Halten, dann die Seite wechseln.","Raise one arm and bend it so your hand rests between your shoulder blades.|Gently pull the elbow towards your head with the other hand.|Hold, then switch sides."],
   "biceps-stretch":["Seitlich neben eine Wand stellen, den gestreckten Arm auf Schulterhöhe nach hinten an die Wand legen.|Den Körper langsam von der Wand wegdrehen.|Halten, dann die Seite wechseln.","Stand side-on to a wall, straight arm back on the wall at shoulder height.|Slowly turn your body away from the wall.|Hold, then switch sides."],
@@ -1398,6 +1406,8 @@ Object.assign(EX_POSTURE, {
   "triceps-curls":["Ellbogen zeigen nach vorn oben, eng am Kopf.|Rippen unten, kein Hohlkreuz.","Die Ellbogen weit nach außen öffnen.","Elbows point forward and up, close to your head.|Ribs down, no arched back.","Letting your elbows flare wide."],
   "arm-circles":["Schultern tief, Arme gestreckt.|Rumpf fest, kein Hohlkreuz.","Die Schultern zu den Ohren ziehen.","Shoulders down, arms straight.|Core braced, no arched back.","Shrugging your shoulders up."],
   "neck-stretch":["Die gegenüberliegende Schulter nach unten sinken lassen.|Blick nach vorn, nicht drehen.","Ruckartig am Kopf ziehen. Bei Kribbeln im Arm, Taubheit oder Schwindel sofort lösen.","Let the opposite shoulder sink down.|Look forward, don't rotate.","Yanking on your head. Release at once if your arm tingles or you feel numb or dizzy."],
+  "chin-tuck":["Schultern locker, Brustbein leicht angehoben.|Nur so weit, dass es angenehm bleibt.","Den Kopf nach unten nicken oder die Schultern hochziehen. Bei Kribbeln im Arm, Taubheit oder Schwindel sofort lösen.","Shoulders relaxed, breastbone slightly lifted.|Only as far as feels comfortable.","Nodding your head down or shrugging your shoulders. Release at once if your arm tingles or you feel numb or dizzy."],
+  "thoracic-rotation":["Hüfte bleibt über den Knien, die Drehung kommt aus dem Brustkorb.|Stützarm gestreckt, Schulter weg vom Ohr.","Mit dem unteren Rücken oder der Hüfte mitdrehen. Bei Schulter- oder Rückenschmerz die Drehung kleiner machen oder weglassen.","Hips stay over your knees, the rotation comes from your chest.|Support arm straight, shoulder away from your ear.","Twisting through your lower back or hips. If your shoulder or back hurts, make the rotation smaller or skip it."],
   "shoulder-stretch":["Schulter tief, nicht hochziehen.|Der Oberkörper bleibt gerade.","Den Oberkörper mitdrehen.","Keep the shoulder down, don't shrug.|Torso stays square.","Rotating your torso with it."],
   "triceps-stretch":["Kopf aufrecht, nicht nach vorn drücken lassen.|Rippen unten.","Ins Hohlkreuz ausweichen.","Head upright, don't let it get pushed forward.|Ribs down.","Arching your lower back."],
   "biceps-stretch":["Schulter tief und zurück.|Ellbogen gestreckt, aber nicht durchgedrückt.","Die Schulter nach vorn rollen lassen. Bei Schulterschmerz oder wackeliger Schulter weglassen.","Shoulder down and back.|Elbow straight but not locked.","Letting your shoulder roll forward. Skip it if your shoulder hurts or feels unstable."],
@@ -1600,6 +1610,8 @@ var EX_MUSCLES = {
   "arm-circles":["Seitliche und hintere Schulter","Oberer Rücken, Trapez","Side and rear delts","Upper back, traps"],
 
   "neck-stretch":["Seitliche Nackenmuskeln, oberer Trapez","","Side neck muscles, upper traps",""],
+  "chin-tuck":["Nacken (tiefe Halsbeuger, Nackenstrecker)","","Neck (deep neck flexors, neck extensors)",""],
+  "thoracic-rotation":["Oberer Rücken, Brust","Schräge Bauchmuskeln, hintere Schulter","Upper back, chest","Obliques, rear delts"],
   "shoulder-stretch":["Hintere Schulter, oberer Rücken","","Rear delts, upper back",""],
   "triceps-stretch":["Trizeps","Breiter Rückenmuskel","Triceps","Lats"],
   "biceps-stretch":["Bizeps, vordere Schulter","Brust","Biceps, front delts","Chest"],
@@ -1871,8 +1883,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     2, 3, "stange",
     [qWith(P_HANG, { x:gBar(6,24,76)+bl([42,6], [42,80], [48,86]) }),
      qWith(P_PULL, { x:gBar(6,24,76)+bl([42,6], [42,66], [48,72]) })],
-    ["Ein Loop-Band fest um eine stabile Stange legen, ein Ende durchziehen, festziehen und kräftig daran ziehen, ob es hält. Dann den Fuß oder das Knie hineinsetzen (Knie = weniger Hilfe).|Die Stange etwas mehr als schulterbreit greifen und ruhig hängen. Das Band hilft unten am meisten und lässt nach oben nach.|Das Kinn über die Stange ziehen und langsam wieder ablassen – nicht vom Band hochschleudern lassen.",
-     "Loop a band firmly around a sturdy bar, pull one end through, cinch it and give it a hard tug to check it holds. Then put your foot or knee in it (knee = less help).|Grip the bar a little wider than shoulder width and hang still. The band helps most at the bottom and less as you rise.|Pull your chin over the bar and lower slowly – don't let the band catapult you up."],
+    ["Ein Loop-Band fest um eine stabile Stange legen, ein Ende durchziehen, festziehen und kräftig daran ziehen, ob es hält. Dann den Fuß oder das Knie hineinsetzen (Knie = weniger Hilfe).|Die Stange etwas mehr als schulterbreit greifen und ruhig hängen. Das Band hilft unten am meisten und lässt nach oben nach.|Das Kinn über die Stange ziehen und langsam wieder ablassen – nicht vom Band hochschleudern lassen. Zum Absteigen erst sicheren Stand suchen (Boden oder Stuhl), dann den Fuß oder das Knie aus dem Band nehmen.",
+     "Loop a band firmly around a sturdy bar, pull one end through, cinch it and give it a hard tug to check it holds. Then put your foot or knee in it (knee = less help).|Grip the bar a little wider than shoulder width and hang still. The band helps most at the bottom and less as you rise.|Pull your chin over the bar and lower slowly – don't let the band catapult you up. To get down, first find secure footing (floor or chair), then take your foot or knee out of the band."],
     ["Schultern vom Ohr weg, Ellbogen nach unten.|Körper ruhig, Blick nach vorn.", "Mit Schwung aus den Beinen hochkommen oder im Band federn.",
      "Shoulders away from your ears, elbows down.|Keep your body still, eyes forward.", "Kicking or bouncing in the band to get up."],
     ["Breiter Rückenmuskel, oberer Rücken", "Bizeps, Unterarme, Rauten, Rumpf", "Lats, upper back", "Biceps, forearms, rhomboids, core"],
@@ -1885,8 +1897,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     [qWith(P_PH, { x:bl([70,88], [44,60]) }), qWith(P_PL, { x:bl([70,88], [44,76]) })],
     ["Das Band hinter dem Rücken über die Schulterblätter legen und die Enden mit den Händen am Boden fassen.|Körper gerade, dann die Brust kontrolliert zum Boden senken.|Gegen den Widerstand des Bandes wieder hochdrücken.",
      "Place the band across your upper back and hold the ends under your hands on the floor.|Body in one line, lower your chest under control.|Press back up against the band's resistance."],
-    ["Linie von Kopf bis Ferse, Bauch und Gesäß fest.|Ellbogen schräg nach hinten.", "Die Hüfte durchhängen lassen.",
-     "One line from head to heels, core and glutes tight.|Elbows at an angle behind you.", "Letting your hips sag."],
+    ["Linie von Kopf bis Ferse, Bauch und Gesäß fest.|Ellbogen schräg nach hinten.|Zu schwer? Auf den Knien oder mit erhöhten Händen beginnen.", "Die Hüfte durchhängen lassen.",
+     "One line from head to heels, core and glutes tight.|Elbows at an angle behind you.|Too hard? Start on your knees or with your hands raised.", "Letting your hips sag."],
     ["Brust, Trizeps, vordere Schulter", "Rumpf, Sägemuskel", "Chest, triceps, front delts", "Core, serratus"],
     "liegestütz push up");
 
@@ -1903,16 +1915,16 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     "butterfly fliegende");
 
   E("band-reverse-fly", "Reverse Fly mit Band", "Band Reverse Fly", "back arms", 6, 30, 0,
-    "Arme gestreckt, Band vor dem Körper auseinanderziehen", "Arms straight, pull the band apart in front of you",
+    "Vorgebeugt, Arme seitlich öffnen und das Band auseinanderziehen", "Hinged forward, open your arms to the sides and pull the band apart",
     1, 1, "kraft",
     // Vorgebeugt (kurzer Rumpf von vorn, Kopf bleibt über den Schultern): Arme hängen gestreckt vor den Knien, Hände zusammen ->
     // die Arme öffnen sich seitlich bis auf Schulterhöhe und ziehen das Band auseinander
     [FH(M(108,100), function(q){ return blv(hand(q,0), hand(q,1)); }),
      FH(M(178,180), function(q){ return blv(hand(q,0), hand(q,1)); })],
-    ["Das Band mit beiden Händen schulterbreit greifen und die Arme vor der Brust ausstrecken.|Das Band auseinanderziehen, bis die Arme seitlich auf Schulterhöhe sind.|Kontrolliert zurückführen.",
-     "Hold the band shoulder-width apart and reach your arms out in front of your chest.|Pull the band apart until your arms are out to the sides at shoulder height.|Return under control."],
-    ["Ellbogen leicht gebeugt, Schulterblätter zusammenziehen.|Hals lang, Blick geradeaus.", "Die Schultern zu den Ohren ziehen oder den Rücken hohl machen.",
-     "Elbows slightly bent, squeeze your shoulder blades together.|Neck long, eyes forward.", "Shrugging your shoulders or arching your back."],
+    ["Das Band mit beiden Händen schulterbreit greifen, aus der Hüfte nach vorn beugen und die Arme gestreckt vor den Knien hängen lassen.|Die Arme seitlich bis auf Schulterhöhe öffnen und das Band auseinanderziehen.|Kontrolliert zurückführen.",
+     "Hold the band shoulder-width apart, hinge forward from your hips and let your straight arms hang in front of your knees.|Open your arms out to the sides to shoulder height and pull the band apart.|Return under control."],
+    ["Rücken lang und gerade, Ellbogen leicht gebeugt, Schulterblätter zusammenziehen.|Nacken in Verlängerung der Wirbelsäule, Blick zum Boden.", "Die Schultern zu den Ohren ziehen oder den Rücken rund oder hohl machen.",
+     "Long flat back, elbows slightly bent, squeeze your shoulder blades together.|Neck in line with your spine, eyes on the floor.", "Shrugging your shoulders or rounding or arching your back."],
     ["Hintere Schulter, oberer Rücken", "Rauten, Trapez, Rumpf", "Rear delts, upper back", "Rhomboids, traps, core"],
     "reverse fly hintere schulter");
 
@@ -2183,7 +2195,7 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      "Lie on your side with your knees bent and the band around both thighs just above the knees.|Keep your feet together and your pelvis steady.|Open your top knee against the band, pause and close slowly. Switch sides halfway."],
     ["Becken bleibt stabil, nicht nach hinten rollen.|Bauch leicht angespannt.", "Mit dem Becken mitkippen, statt aus der Hüfte zu öffnen.",
      "Keep your pelvis stable, don't roll back.|Core lightly braced.", "Rolling your pelvis instead of opening from the hip."],
-    ["Seitlicher Gesäßmuskel", "Tiefe Hüftrotatoren, Großer Gesäßmuskel, Rumpf", "Glute medius", "Deep hip rotators, glute max, core"],
+    ["Seitlicher Gesäßmuskel", "Tiefe Hüftrotatoren, Großer Gesäßmuskel, Oberschenkel außen, Rumpf", "Glute medius", "Deep hip rotators, glute max, outer thigh, core"],
     "muschel clamshell");
 
   E("band-leg-abduction", "Beinheben zur Seite mit Band", "Standing Band Leg Abduction", "legs", 3, 30, 1,
@@ -2193,8 +2205,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      (function(){ var q = Q(null, FN.slice(), FP.slice(), [[46,70,45,89,39,89],[60,69,72,81,78,83]], [arm(FP,FN,150,60), arm(FP,FN,30,120)], "", true); q.x = bl([45,86], [72,81]); return q; })()],
     ["Das Band um beide Knöchel legen und aufrecht hinstellen, eine Hand an einer Wand oder Stuhllehne.|Das Standbein leicht gebeugt, den Oberkörper aufrecht.|Das andere Bein gestreckt seitlich anheben, kurz halten und kontrolliert zurückführen. Nach der Hälfte die Seite wechseln.",
      "Put the band around both ankles and stand tall, one hand on a wall or chair back.|Keep the standing knee soft and your torso upright.|Lift the other leg out to the side with a straight knee, pause and return under control. Switch sides halfway."],
-    ["Oberkörper aufrecht, Becken gerade.|Fußspitze zeigt nach vorn, das Bein nur so hoch, wie das Becken ruhig bleibt (etwa 45°).", "Zur Seite lehnen oder das Bein höher heben – dann arbeitet nicht mehr der seitliche Gesäßmuskel.",
-     "Torso upright, hips level.|Toes point forward; lift only as high as your pelvis stays still (about 45°).", "Leaning sideways or lifting higher – the side glute no longer does the work."],
+    ["Oberkörper aufrecht, Becken gerade.|Fußspitze zeigt nach vorn, das Bein nur so hoch, wie das Becken ruhig bleibt (als Faustregel etwa 45°).", "Zur Seite lehnen oder das Bein höher heben – dann kippt das Becken mit und der Rumpf hilft nach.",
+     "Torso upright, hips level.|Toes point forward; lift only as high as your pelvis stays still (about 45° as a rule of thumb).", "Leaning sideways or lifting higher – your pelvis tips and your trunk takes over."],
     ["Seitlicher Gesäßmuskel", "Großer Gesäßmuskel, Oberschenkel außen", "Glute medius", "Glute max, outer thigh"],
     "abduktion beinheben seitlich");
 
@@ -2279,8 +2291,8 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
      (function(){ var q = S([46,86], 180, [[-100,-94,[6,-4]],[-62,62]], [[-72,-22],[-78,-30]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })()],
     ["Auf den Rücken legen, ein Bein anwinkeln und das Band um den Fuß legen. Die Enden mit beiden Händen nah an der Brust halten.|Das andere Bein bleibt angewinkelt am Boden.|Das Bein nach oben strecken, kurz halten und langsam wieder beugen. Nach der Hälfte die Seite wechseln.",
      "Lie on your back, bend one leg and loop the band around the foot. Hold the ends in both hands close to your chest.|The other leg stays bent on the floor.|Extend your leg upwards, pause and bend slowly. Switch sides halfway."],
-    ["Rücken und Kopf bleiben am Boden.|Bein langsam strecken, Knie nicht durchdrücken.", "Das Becken vom Boden heben oder das Knie überstrecken.",
-     "Back and head stay on the floor.|Extend slowly, don't lock the knee.", "Lifting your hips or locking your knee."],
+    ["Rücken und Kopf bleiben am Boden.|Bein langsam strecken, Knie nicht durchdrücken.", "Das Becken vom Boden heben, das Knie überstrecken oder das Band vom Fuß rutschen lassen – es schnellt zurück. Band um den Fußballen legen, bei Rutschgefahr abbrechen.",
+     "Back and head stay on the floor.|Extend slowly, don't lock the knee.", "Lifting your hips, locking your knee or letting the band slip off your foot – it snaps back. Wrap it around the ball of your foot and stop if it slips."],
     ["Oberschenkel vorn", "Gesäß, Hüftbeuger", "Quads", "Glutes, hip flexors"],
     "beinpresse beinstrecker liegend");
 
@@ -2327,9 +2339,9 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   /* fertige Workouts mit dem Band: Reihenfolge so, dass sich die Muskelgruppen abwechseln */
   LIB_WORKOUT_ROWS.push(
     ["band-full-body","Ganzkörper mit Band","Full Body with Band","mix","band-squat band-standing-row band-push-ups band-shoulder-press band-biceps-curl band-triceps-pressdown band-crunch",20,"3/40/20"],
-    ["band-upper","Oberkörper mit Band","Upper Body with Band","arms","band-standing-row band-chest-fly band-reverse-fly band-lateral-raise band-hammer-curl band-triceps-kickback",20,"3/40/20"],
-    ["band-legs-glutes","Beine & Po mit Band","Legs & Glutes with Band","legs","band-squat band-lunge-squat band-glute-bridge band-donkey-kick band-leg-abduction band-clamshell",20,"3/40/20"],
-    ["band-core","Rumpf mit Band","Core with Band","core","band-russian-twist band-kneeling-twist band-side-bend band-crunch band-kneeling-crunch",20,"3/40/20"]
+    ["band-upper","Oberkörper mit Band","Upper Body with Band","arms","band-standing-row band-shoulder-press band-reverse-fly band-chest-fly band-lateral-raise band-hammer-curl",20,"3/40/20"],
+    ["band-legs-glutes","Beine & Po mit Band","Legs & Glutes with Band","legs","band-squat band-single-leg-deadlift band-lunge-squat band-glute-bridge band-leg-abduction band-clamshell",20,"3/40/20"],
+    ["band-core","Rumpf mit Band","Core with Band","core","band-russian-twist band-kneeling-twist band-side-bend band-crunch plank",20,"3/40/20"]
   );
   /* Programme fürs Fitnessstudio (2026-10-10), nach Empfehlungen aus der Trainingswissenschaft (siehe quellen.html):
      - Einsteiger: Ganzkörper 2-3 Mal pro Woche, 3 Sätze mit 8-12 Wiederholungen (ACSM), zu Beginn gern 3 × 12; vier Tage: Ober-/Unterkörper
@@ -2378,7 +2390,16 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     "gym-posture": ["Für lange Schreibtischtage: mehr ziehen als drücken, hintere Schulter und Rückenstrecker. Leicht, kontrolliert, 3 × 12–15.",
       "For long desk days: more pulling than pushing, rear shoulders and back extensors. Light, controlled, 3 × 12–15."],
     "gym-deepcore": ["Die tiefen Bauch- und Rückenmuskeln stabilisieren die Wirbelsäule. Langsam und kontrolliert, bei der Anstrengung ausatmen. Vier Runden à 40 Sekunden. Ergänzt das Krafttraining, ersetzt es nicht.",
-      "The deep abdominal and back muscles stabilise the spine. Slow and controlled, breathe out on the effort. Four rounds of 40 seconds. Complements strength training, does not replace it."]
+      "The deep abdominal and back muscles stabilise the spine. Slow and controlled, breathe out on the effort. Four rounds of 40 seconds. Complements strength training, does not replace it."],
+    /* Widerstandsband: Rhythmus ehrlich benannt; Studienlage zu Pausen betrifft überwiegend Trainierte mit Gewichten (quellen.html [5]) */
+    "band-full-body": ["Ganzkörper für den Einstieg: Beine, Zug, Druck, Schulter, Arme und Rumpf im Wechsel. Liegestütze mit Band sind fordernd – auf den Knien zu beginnen ist völlig in Ordnung. Rhythmus: 3 Sätze à 40 Sekunden, 20 Sekunden Pause, 20 Sekunden bis zur nächsten Übung. Längere Pausen bringen nach Studien mehr Kraft, die Studien betreffen aber überwiegend Trainierte mit Gewichten; für Einsteiger mit Band gibt es dazu keine belastbare Studienlage. Steigern (Praxisregel, keine Studie): gehen alle Sätze sauber und bleibt Luft, dann dickeres Band, kürzer greifen oder langsamer zurückgehen.",
+      "Full body to get started: legs, pulling, pushing, shoulders, arms and trunk in turn. Band push-ups are demanding – starting on your knees is perfectly fine. Rhythm: 3 sets of 40 seconds, 20 seconds rest, 20 seconds until the next exercise. Longer rests bring more strength according to studies, but those mostly involve trained people with weights; for beginners with a band there is no solid evidence. To progress (practical rule, not a study): if all sets are clean and you have something left, use a thicker band, grip shorter or return more slowly."],
+    "band-upper": ["Ziehen und Drücken im Wechsel: Rudern, Schulterdrücken, hintere Schulter, Brust, Seitheben und Hammer-Curl. Rhythmus: 3 Sätze à 40 Sekunden, 20 Sekunden Pause, 20 Sekunden bis zur nächsten Übung. Längere Pausen bringen nach Studien mehr Kraft, die Studien betreffen aber überwiegend Trainierte mit Gewichten. Steigern (Praxisregel, keine Studie): dickeres Band, kürzer greifen oder langsamer zurückgehen.",
+      "Pulling and pushing in turn: row, shoulder press, rear shoulder, chest, lateral raise and hammer curl. Rhythm: 3 sets of 40 seconds, 20 seconds rest, 20 seconds until the next exercise. Longer rests bring more strength according to studies, but those mostly involve trained people with weights. To progress (practical rule, not a study): thicker band, grip shorter or return more slowly."],
+    "band-legs-glutes": ["Die Grundmuster der Beine: Kniebeuge, Hüftbeuge (einbeiniges Kreuzheben, am besten mit Hand an Wand oder Stuhl), Ausfallschritt, Hüftstreckung und seitliche Hüfte. Rhythmus: 3 Sätze à 40 Sekunden, 20 Sekunden Pause, 20 Sekunden bis zur nächsten Übung. Steigern (Praxisregel, keine Studie): dickeres Band, kürzer greifen oder langsamer zurückgehen.",
+      "The basic leg patterns: squat, hip hinge (single-leg deadlift, ideally with a hand on a wall or chair), lunge, hip extension and side hip. Rhythm: 3 sets of 40 seconds, 20 seconds rest, 20 seconds until the next exercise. To progress (practical rule, not a study): thicker band, grip shorter or return more slowly."],
+    "band-core": ["Drehen, Seitbeugen und Einrollen, dazu ein Unterarmstütz als Stabilisation. Rhythmus: 3 Sätze à 40 Sekunden, 20 Sekunden Pause, 20 Sekunden bis zur nächsten Übung. Bei Rückenbeschwerden die Drehungen klein halten. Steigern (Praxisregel, keine Studie): dickeres Band oder langsamer zurückgehen.",
+      "Rotating, side-bending and curling, plus a forearm plank for stability. Rhythm: 3 sets of 40 seconds, 20 seconds rest, 20 seconds until the next exercise. Keep the twists small if your back hurts. To progress (practical rule, not a study): thicker band or return more slowly."]
   });
 })();
 /* ---------- Befestigung des Widerstandsbands ----------
@@ -2481,7 +2502,7 @@ var BAND_ANKER_EXTRA = {
   "band-overhead-extension":["Mit einem Fuß auf das Bandende treten, das andere Ende hinter dem Kopf mit beiden Händen halten.", "Stand on one end of the band with one foot and hold the other end behind your head with both hands."],
   "band-prone-leg-curl":["Alternativ das Band vorn tief an einem Pfosten befestigen und mit dem Kopf zum Pfosten liegen.", "Alternatively anchor the band low on a post in front of you and lie with your head towards the post."],
   "band-lat-pull-apart":["Etwas mehr als schulterbreit greifen.", "Hold it a little wider than shoulder width."],
-  "band-reverse-fly":["Schulterbreit greifen, die Arme gestreckt.", "Hold it shoulder-width apart with straight arms."],
+  "band-reverse-fly":["Schulterbreit greifen, Ellbogen leicht gebeugt.", "Hold it shoulder-width apart with your elbows slightly bent."],
   "band-donkey-kick":["Die Hände halten die Bandenden am Boden, das Band liegt um einen Fuß.", "Your hands press the band ends to the floor, the band sits around one foot."],
   "band-push-ups":["Die Enden werden mit den Händen am Boden gegriffen; das Band läuft über die Schulterblätter.", "The ends are held with your hands on the floor; the band runs across your shoulder blades."]
 };

@@ -66,4 +66,17 @@ Geprüft wurden die 13 Aufwärm-/Dehnprogramme, alle Dehnübungen samt Anleitung
 
 **Danach angepasst (Fassung -14-32):** Ganzkörper-Dehnen und Dehnen kurz um Oberschenkel vorn bzw. Waden ergänzt, Aufwärmen vor Kraft beginnt mit Hampelmann, Morgen-Mobility heißt „Morgens locker werden“, Handgelenke „(innen und außen)“.
 
-**Offen, Entscheidung des Nutzers (Struktur der App):** Armkreisen in den Dehn-Auswahlen (Dehn-Überrasch-mich, Dehnteil im allgemeinen Überrasch mich); Überrasch-mich-Aufwärmen (Reihenfolge, Dauer je Übung, Dauerstufen); Nacken nur eine Übung, Brustwirbelsäulen-Rotation fehlt (neue Übungen brauchen Figuren); Umsetzzeit 5 s.
+**Offen, Entscheidung des Nutzers (Struktur der App):** Armkreisen in den Dehn-Auswahlen (Dehn-Überrasch-mich, Dehnteil im allgemeinen Überrasch mich); Überrasch-mich-Aufwärmen (Reihenfolge, Dauer je Übung, Dauerstufen); Umsetzzeit 5 s.
+
+## Stand 2026-10-14: Band nachgeschärft (Literaturprüfung, keine Fachprüfung)
+
+Probelauf des Agenten über die 38 Band-Übungen und 4 Workouts; umgesetzt in Fassung -14-33:
+
+- Reverse Fly: Text und Figur stimmen überein; Hinweise bei Klimmzug mit Bandhilfe, Liegestützen mit Band, Beinstrecken im Liegen; Muschel und Beinheben vorsichtiger formuliert.
+- „Mit dem Band“: Progressionsregel (Praxisregel) sowie Latexallergie und ärztliche Abklärung.
+- Workouts mit Band: Oberkörper (Drücken ergänzt), Beine & Po (Hüftbeuge ergänzt), Rumpf (Stabilisation ergänzt); Deckblätter nennen Rhythmus und ehrlich die Studienlage zu Pausen.
+- Neu in Mobility & Stretch: Kinn einziehen, Brustwirbelsäule drehen (Praxisübungen, keine Studie geprüft).
+
+**Keine belastbare Studienlage gefunden:** Muskelwachstum mit Bändern, eine Progressionsregel für Bänder, Pausenlänge für Einsteiger mit Band, Befestigungshöhe und Griffbreite, Dehnungsgrenze „zwei- bis dreifache Ruhelänge“ (Herstellerangabe nicht verifiziert).
+
+**Nicht geprüft:** Muskelzuordnung der übrigen Band-Übungen, Sicherheit der Rumpfdrehungen bei Rückenbeschwerden, Aufwärmhinweise vor Band-Workouts.

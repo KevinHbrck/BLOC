@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Band nachgeschärft, zwei neue Dehn-/Mobilisationsübungen (Fassung 2026-10-14-33)
+
+Literaturprüfung des Band-Bereichs (Probelauf des Agenten), **keine** Fachprüfung; Quelle [21] in `quellen.html`.
+
+- **Reverse Fly**: Text, Haltung und „Band befestigen“ passen jetzt zur Figur (vorgebeugt, Arme hängen, öffnen seitlich) – vorher beschrieb der Text ein Auseinanderziehen im Stand.
+- **Hinweise**: Klimmzug mit Bandhilfe (sicher absteigen), Liegestütze mit Band (Knie oder erhöhte Hände), Beinstrecken im Liegen (Band kann abrutschen und zurückschnellen), Muschel (Oberschenkel außen als Hilfsmuskel), Beinheben (Becken kippt statt „arbeitet nicht mehr“).
+- **Im Info-Fenster „Mit dem Band“**: Progressionsregel als Praxisregel (keine Studie), Latexallergie und ärztliche Abklärung (`bandS5`, `bandS6`).
+- **Workouts mit Band** ausgewogener: Oberkörper mit Schulterdrücken statt Kickback (Ziehen und Drücken im Wechsel), Beine & Po mit einbeinigem Kreuzheben statt Fersenstoß (Hüftbeuge), Rumpf mit Unterarmstütz statt zweitem Crunch (Stabilisation). Jedes Deckblatt nennt den Rhythmus (3 × 40 s, 20 s Pause, 20 s bis zur nächsten Übung), die Studienlage zu Pausen und die Progressionsregel.
+- **Neu**: **Kinn einziehen (Nacken)** und **Brustwirbelsäule drehen (Vierfüßler)** (Mobility & Stretch, mit Figuren); im Büro-Programm und in „Rücken & Hüfte“. Für beide wurde keine Studie geprüft (Praxisübungen), das steht in `quellen.html`.
+
 ## 2026-10-14 · Dehn- und Aufwärmprogramme passen zu ihren Titeln (Fassung 2026-10-14-32)
 
 - **Ganzkörper-Dehnen**: Oberschenkel vorn und Waden ergänzt (12 Übungen), im Stehen zuerst, dann am Boden. **Dehnen kurz · Ganzkörper**: Waden ergänzt.

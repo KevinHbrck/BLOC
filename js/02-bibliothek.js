@@ -252,7 +252,7 @@ var bauNeuWs = "";   // beim Anlegen aus Mobility & Stretch: „warm“ bzw. „
 /* Körperregionen der Dehnübungen (Attribute für Filter in Mobility & Stretch) */
 var WS_REGIONEN = ["nacken", "schulter", "arme", "brust", "ruecken", "rumpf", "huefte", "beine"];
 var WS_REGION_VON = {
-  "neck-stretch":["nacken"], "shoulder-stretch":["schulter"], "triceps-stretch":["arme", "schulter"], "biceps-stretch":["arme", "brust"],
+  "neck-stretch":["nacken"], "chin-tuck":["nacken"], "thoracic-rotation":["ruecken", "brust"], "shoulder-stretch":["schulter"], "triceps-stretch":["arme", "schulter"], "biceps-stretch":["arme", "brust"],
   "chest-stretch":["brust", "schulter"], "wrist-stretch":["arme"], "side-bend":["rumpf"], "cat-cow":["ruecken", "rumpf"],
   "childs-pose":["ruecken", "huefte"], "sphinx-stretch":["rumpf", "ruecken"], "cobra-lift":["rumpf", "ruecken"],
   "downward-dog":["ruecken", "beine", "schulter"], "spinal-twist":["ruecken", "huefte", "rumpf"], "forward-fold":["ruecken", "beine"],
@@ -884,7 +884,7 @@ function openExInfo(exId, live, lib){
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(p[lang*2+1])+'</div>';
     })()+
     '<div class="info-tip"><b>'+t("tip")+':</b> '+esc(tplText(ex.hint))+'</div>'+
-    (ex.equip.indexOf("band") > -1 ? '<div class="info-title">'+t("bandTitel")+'</div><ul class="info-posture info-band">'+["bandS1", "bandS2", "bandS3", "bandS4"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("")+'</ul>' : '')+
+    (ex.equip.indexOf("band") > -1 ? '<div class="info-title">'+t("bandTitel")+'</div><ul class="info-posture info-band">'+["bandS1", "bandS2", "bandS3", "bandS4", "bandS5", "bandS6"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("")+'</ul>' : '')+
     (function(){   // Passt es nicht? Eine Zeile mit der leichteren und der schwereren Variante
       var lz = live ? null : leichterSchwerer(exId);
       if(!lz) return "";
