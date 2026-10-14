@@ -1608,7 +1608,8 @@
       klick('.tabbar [data-nav="#kalender"]');
       await bis(function () { return $$(".kal-tag").length === 7 && $(".kal-nav"); }, 3000, "Wochenansicht mit sieben Tagen");
       klick($("[data-kaladd]"));
-      klick(await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Menü „Hinzufügen“ (Zufallstraining)"));
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Menü „Hinzufügen“: Workouts"));
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[2]; }, 2000, "Workouts: Zufallstraining (Meine Workouts stehen vorn)"));
       await bis(function () { return $$(".kal-eintrag").length === 1; }, 2000, "Eintrag steht im Kalender");
       var tag0 = daten().settings.kalender.e[0].tag;
       klick($("[data-kalok]"));
@@ -1619,6 +1620,10 @@
       await bis(function () { return daten().settings.kalender.e[0].tag !== tag0; }, 2000, "Eintrag auf anderem Tag");
       klick('[data-kalansicht="monat"]');
       await bis(function () { return $$(".km-zelle").length >= 28 && $(".km-balken i"); }, 2000, "Monatsansicht mit Eintrag");
+      klick($(".km-zelle:not(.aus)"));
+      await bis(function () { return $(".kal-panel") && $('[data-kalansicht="monat"].active'); }, 2000, "Tipp auf einen Tag bleibt im Monat");
+      pruefe(!$(".tabbar [data-nav]") || $('[data-kalansicht="woche"]:not(.active)'), "Ansicht darf nicht auf Woche springen");
+      pruefe(!$(".kal-tray"), "Die Leiste „Meine“ unten ist weg");
       W.kalHinzu(W.kalTagKey(new Date()), { art: "zufall" });
       W.save();
       await heim();

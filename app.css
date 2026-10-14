@@ -2665,3 +2665,13 @@ body.kal-zieht{ overscroll-behavior:contain; user-select:none; -webkit-user-sele
 .kal-heute-zeile{ position:relative; width:100%; display:flex; align-items:center; gap:12px; padding:12px 14px 12px 20px; margin-bottom:8px; border:0; border-radius:14px; background:var(--surface); color:inherit; font:inherit; text-align:left; cursor:pointer; box-shadow:var(--shadow); }
 .kh-play{ width:38px; height:38px; border-radius:50%; background:var(--kc); color:#fff; display:flex; align-items:center; justify-content:center; flex:none; }
 .kh-play svg{ width:18px; height:18px; fill:#fff; stroke:none; }
+.km-zelle.gewaehlt{ border-color:var(--text); }
+.kp-titel{ font-weight:600; margin:4px 0 2px; }
+
+/* „Diese Woche“ ↔ Kalender: gleiche Karte, Ring = geplant, Tipp führt in den Kalender */
+.woche-link{ cursor:pointer; }
+.woche-link .wo-chev{ color:var(--text-dim); font-size:22px; line-height:1; margin-left:-4px; }
+.wo-tag.plan i{ background:transparent; box-shadow:inset 0 0 0 2.5px var(--accent); }
+.woche-kal .wo-tag{ cursor:pointer; }
+.woche-kal .wo-tag i{ width:16px; height:16px; }
+.woche-kal .wo-tag small{ font-size:11px; }

@@ -200,6 +200,29 @@
     gleich(W.kalTagKey(W.kalPlus(new Date(2026, 9, 28, 12), 5)), "2026-11-02", "plus Tage über Sommerzeit-Ende");
     gleich(W.kalTagKey(W.kalTagDatum("2026-03-29")), "2026-03-29", "Tag der Sommerzeit-Umstellung bleibt derselbe Tag");
   });
+  test("Wochenkarte: eine beliebige Woche (Start Montag), heute nur in der aktuellen, Geplantes als Ring", function () {
+    var w = W.wocheDaten(new Date(2026, 9, 14, 15));
+    gleich(W.kalTagKey(new Date(w.start)), "2026-10-12", "Montag der Woche");
+    gleich(w.tage.length, 7, "sieben Tage");
+    gleich(W.wocheDaten(new Date(2020, 0, 15)).heute, -1, "frühere Woche: kein heute");
+    var jetzt = W.wocheDaten();
+    wahr(jetzt.heute >= 0 && jetzt.heute <= 6, "aktuelle Woche: heute ist ein Wochentag");
+    var s = W.state.db.settings, alt = s.kalender;
+    try {
+      var mo = W.kalMontag(new Date());
+      s.kalender = { e: [] };
+      W.kalHinzu(W.kalTagKey(W.kalPlus(mo, 2)), { art: "zufall" });
+      var e2 = W.kalHinzu(W.kalTagKey(W.kalPlus(mo, 4)), { art: "run", name: "Lauf", km: 5 });
+      var d = document.createElement("div"); d.innerHTML = W.wocheHTML();
+      gleich(d.querySelectorAll(".wo-tag.plan").length, 2, "zwei geplante Tage als Ring");
+      wahr(/2 geplant/.test(d.textContent), "Summe nennt das Geplante: " + d.textContent);
+      wahr(d.querySelector(".woche-link[data-nav=\"#kalender\"]"), "Startseiten-Karte führt in den Kalender");
+      e2.erledigt = true;
+      d.innerHTML = W.wocheHTML({ kal: true, basis: mo });
+      gleich(d.querySelectorAll(".wo-tag.plan").length, 1, "Erledigtes zählt nicht mehr als geplant");
+      wahr(d.querySelector("[data-kalgoto]") && !d.querySelector(".woche-link"), "im Kalender: Tage springen statt zu verlinken");
+    } finally { s.kalender = alt; }
+  });
   test("Kalender: Einträge hinzufügen, verschieben, abhaken, löschen, Summen", function () {
     var s = W.state.db.settings, alt = s.kalender;
     try {

@@ -110,8 +110,8 @@ function logHistory(partial){
 }
 /* Übungen der letzten n Tage (für den Generator) */
 /* Wochenzeile: welche Tage (Mo–So) trainiert, wie oft und wie lange - ohne Statistik, nur ein Blick */
-function wocheDaten(){
-  var d = new Date(); d.setHours(0, 0, 0, 0);
+function wocheDaten(basis){   // basis: ein Tag der gewünschten Woche (Voreinstellung: heute)
+  var d = basis ? new Date(basis) : new Date(); d.setHours(0, 0, 0, 0);
   var start = d.getTime() - ((d.getDay() + 6) % 7)*86400000;   // Montag 0:00
   var tage = [0,0,0,0,0,0,0], n = 0, sek = 0;
   besucheAlle((state.db.history || []).filter(function(e){ return e; })).forEach(function(b){   // ein Besuch = ein Training (Timer bis 60 Minuten Abstand)
@@ -120,17 +120,32 @@ function wocheDaten(){
     if(tag > 6) return;
     tage[tag] = 1; n++; sek += b.s;
   });
-  return { tage:tage, n:n, sek:sek, heute:(d.getDay() + 6) % 7 };
+  var jetzt = new Date(); jetzt.setHours(0, 0, 0, 0);
+  var hi = Math.round((jetzt.getTime() - start)/86400000);
+  return { tage:tage, n:n, sek:sek, heute:hi >= 0 && hi <= 6 ? hi : -1, start:start };
 }
-function wocheHTML(){
-  var w = wocheDaten(), namen = t("weekDays").split(" ");
+/* Die Woche als Karte: Tage (gefüllt = trainiert, Ring = im Kalender geplant), Anzahl, Dauer, Geplantes. Auf der Startseite führt sie in den Kalender;
+   im Kalender (opt.kal) steht dieselbe Karte oben, ein Tipp auf einen Tag springt dorthin. opt: { basis, titel, kal } */
+function wocheHTML(opt){
+  opt = opt || {};
+  var w = wocheDaten(opt.basis), namen = t("weekDays").split(" "), plan = [0,0,0,0,0,0,0], keys = [], geplant = 0;
+  for(var i = 0; i < 7; i++){
+    var dd = new Date(w.start); dd.setHours(12, 0, 0, 0); dd.setDate(dd.getDate() + i);
+    keys.push(typeof kalTagKey === "function" ? kalTagKey(dd) : "");
+    if(typeof kalAn === "function"){ plan[i] = kalAn(keys[i]).filter(function(e){ return !e.erledigt; }).length; geplant += plan[i]; }
+  }
   var dauer = w.sek >= 60 ? " · "+fmtDuration(Math.round(w.sek/60)*60) : "";   // unter einer Minute keine Zeitangabe
-  return '<div class="woche" aria-label="'+esc(t("weekTitle")+": "+(w.n ? (w.n === 1 ? t("weekOne") : t("weekN", { n:w.n }))+dauer : t("weekNone")))+'">'+
-    '<span class="wo-links" aria-hidden="true"><b class="wo-titel">'+esc(t("weekTitle"))+'</b>'+
-      '<span class="wo-summe">'+esc(w.n ? (w.n === 1 ? t("weekOne") : t("weekN", { n:w.n }))+dauer : t("weekNone"))+'</span></span>'+
-    '<span class="wo-tage" aria-hidden="true">'+w.tage.map(function(an, i){
-      return '<span class="wo-tag'+(an ? ' an' : '')+(i === w.heute ? ' heute' : '')+'"><i></i><small>'+esc(namen[i] || "")+'</small></span>'; }).join("")+'</span>'+
-  '</div>';
+  var teile = [];
+  if(w.n) teile.push((w.n === 1 ? t("weekOne") : t("weekN", { n:w.n }))+dauer);
+  if(geplant) teile.push(t("kalGeplant", { n:geplant }));
+  var summe = teile.length ? teile.join(" · ") : t("weekNone"), titel = opt.titel || t("weekTitle");
+  var tage = w.tage.map(function(an, i){
+    return '<span class="wo-tag'+(an ? ' an' : '')+(plan[i] && !an ? ' plan' : '')+(i === w.heute ? ' heute' : '')+'"'+(opt.kal ? ' data-kalgoto="'+keys[i]+'" role="button" tabindex="0"' : '')+'><i></i><small>'+esc(namen[i] || "")+'</small></span>';
+  }).join("");
+  var kopf = '<span class="wo-links"><b class="wo-titel">'+esc(titel)+'</b><span class="wo-summe">'+esc(summe)+'</span></span>';
+  if(opt.kal) return '<div class="woche woche-kal">'+kopf+'<span class="wo-tage">'+tage+'</span></div>';
+  return '<div class="woche woche-link" data-nav="#kalender" role="button" tabindex="0" aria-label="'+esc(titel+": "+summe+" – "+t("tabKalender"))+'">'+kopf+
+    '<span class="wo-tage" aria-hidden="true">'+tage+'</span><span class="wo-chev" aria-hidden="true">&#8250;</span></div>';
 }
 /* ============ Statistik ============
    Alles aus den lokal gespeicherten Daten, nichts verlässt das Gerät. Zeigt nur Bereiche, die im Fokus (Einstellungen) eingeschaltet sind;

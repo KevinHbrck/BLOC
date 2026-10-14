@@ -214,6 +214,8 @@ function renderHome(){
   bindFavItems(renderHome);
   bindBackupTip();
   kalHeuteBinden();
+  var wl = app.querySelector(".woche-link");
+  if(wl){ wl.addEventListener("click", function(){ kalBasis = null; kalAnsicht = "woche"; }, true); wl.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); kalBasis = null; kalAnsicht = "woche"; go("#kalender"); } }); }
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }
