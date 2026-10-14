@@ -2536,3 +2536,9 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
   background:color-mix(in srgb, var(--accent) 12%, transparent); font-size:14px; }
 .st-block small{ display:block; color:var(--text-dim); font-size:12.5px; margin-top:1px; }
 .st-block .btn{ width:auto; margin:0; padding:10px 14px; font-size:14px; flex:0 0 auto; }
+/* Bereichs-Symbole (Startseite, Sortieren, „Was ist was?“): ein Rahmen in der Farbe des Bereichs (Mobility & Stretch grün, Workout orange, die übrigen
+   schwarz bzw. weiß) statt des grauen Grundes - innen bleibt es frei */
+.at-ico, .bs-zeile .at-ico, .wi-zeile .at-ico,
+.area-tile[data-bereich="warm"] .at-ico, .bs-zeile[data-bereich="warm"] .at-ico, .wi-zeile[data-bereich="warm"] .at-ico,
+.area-tile[data-bereich="katalog"] .at-ico, .bs-zeile[data-bereich="katalog"] .at-ico, .wi-zeile[data-bereich="katalog"] .at-ico{
+  background:transparent; box-shadow:inset 0 0 0 2px currentColor; }

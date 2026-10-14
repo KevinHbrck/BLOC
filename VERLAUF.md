@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Bereichs-Symbole mit Rahmen, neues Symbol für Mobility & Stretch (Fassung 2026-10-14-7)
+
+- **Mobility & Stretch** hat ein neues Symbol: eine Figur, die auf dem Boden liegt und den Oberkörper nach oben drückt (Kobra; `HOME_ICON.warm` in `js/04-start.js`; erscheint auf der Startseite, im Sortieren, in „Was ist was?“, in der Einführung und im Link im Übungskatalog).
+- **Rahmen statt grauem Grund**: Die Bereichs-Symbole (Startseite „Weitere Bereiche“, Sortieren, „Was ist was?“) tragen einen 2-px-Rahmen in der Farbe des Bereichs – Mobility & Stretch grün, Workout orange, Timer/Summit/Run schwarz bzw. weiß – und sind innen frei (kein Grauton mehr).
+
 ## 2026-10-14 · Körperregionen und Fotokarten auch beim Zusammenstellen, Supersätze, Zirkel, RPE/RIR (Fassung 2026-10-14-6)
 
 - **Workout-Baukasten (Nach Zeit)**: Die Übungsauswahl ist jetzt wie im Katalog und im Plan-Bau nach **Körperregionen** geordnet (Brust, Rücken, Schultern, Arme, Bauch & Rumpf, Beine & Po, Cardio, Eigene; zugeklappt, „n gewählt“, Suche klappt Treffer auf) – bei Freiluft stand sie bisher als flache Liste da.
