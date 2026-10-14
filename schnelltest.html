@@ -193,7 +193,7 @@
       klick(gr[0].querySelector("summary"));
       pruefe(!gr[0].open, "zweites Antippen klappt nicht zu");
       pruefe($(".ort-fotos") && !$("[data-surprise]") && !$("[data-bauselber]"), "Im Workoutkatalog sollen nur der Ort-Schalter, aber nicht Überrasch mich und Selber bauen stehen");
-      pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Katalog");
+      pruefe($$("#tabbar .tab").length === 5 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Katalog");
       // Sortierung A–Z: kleiner Schalter in der Kopfzeile der Filterkarte; sortiert wird innerhalb der Bereiche
       pruefe($(".air-filter .af-az") && !$(".air-filter .fc-seg"), "A–Z-Schalter fehlt oder der Sortier-Block steht noch in der Karte");
       klick(".af-az");
@@ -210,7 +210,7 @@
       await bis(function () { return $(".bau-karte[data-surprise]") && $(".bau-karte[data-bauselber]"); }, 3000, "Baukasten mit zwei Wegen");
       var sl = $(".bau-karte[data-surprise]");
       pruefe(sl.getBoundingClientRect().height >= 70 && !$(".topbar .bau-karte"), "Die zwei Wege im Baukasten sollen groß sein");
-      pruefe($$("#tabbar .tab").length === 4 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Baukasten");
+      pruefe($$("#tabbar .tab").length === 5 && !$("#tabbar").classList.contains("hidden"), "Untere Leiste fehlt im Baukasten");
       pruefe($("#tabbar .tab.active") && /Start/.test($("#tabbar .tab.active").textContent), "Im Bereich soll in der Leiste „Start“ orange sein");
       pruefe($$(".ort-foto").length === 2 && $$(".ort-foto.on").length === 1 && $$(".ort-foto img[src^='img/']").length === 2, "Baukasten: Ort als zwei Fotokarten, eine ist gewählt");
       // Übungskatalog: eigene Seite, alle Übungen zugeklappt nach Bereichen, „Eigene Übung anlegen“ oben
@@ -1094,7 +1094,7 @@
     ["Leiste unten, Statistik und Fokus", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
       await heim();
-      pruefe($$(".tabbar .tab").length === 4 && !$(".topbar [data-nav=\"#settings\"]"), "Leiste mit vier Einträgen fehlt oder Zahnrad noch oben");
+      pruefe($$(".tabbar .tab").length === 5 && !$(".topbar [data-nav=\"#settings\"]"), "Leiste mit fünf Einträgen fehlt oder Zahnrad noch oben");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent) && $(".tabbar .tab.active") && /Statistik/.test($(".tabbar .tab.active").textContent); }, 3000, "Statistik-Seite mit aktiver Leiste");
       pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 5 && !$(".woche") && /Workout/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")) && !/Air|Studio/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")), "Statistik ohne Kopf, ohne fünf Bereiche (Air und Studio als Workout), oder mit Wochenzeile");
@@ -1600,6 +1600,29 @@
       await bis(function () { return $("#overlayRoot .info-sheet"); }, 2000, "Info Liegestütze");
       pruefe(!$("#overlayRoot .info-anker"), "Übungen ohne Band zeigen keine Befestigung");
       klick($("#overlayRoot [data-close]"));
+    }],
+    ["Kalender: fünfter Tab, Eintrag per Menü, abhaken, verschieben, Monat, „Heute im Kalender“", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      pruefe($$(".tabbar .tab").length === 5 && $('.tabbar [data-nav="#kalender"]'), "Leiste: fünf Tabs mit Kalender");
+      klick('.tabbar [data-nav="#kalender"]');
+      await bis(function () { return $$(".kal-tag").length === 7 && $(".kal-nav"); }, 3000, "Wochenansicht mit sieben Tagen");
+      klick($("[data-kaladd]"));
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Menü „Hinzufügen“ (Zufallstraining)"));
+      await bis(function () { return $$(".kal-eintrag").length === 1; }, 2000, "Eintrag steht im Kalender");
+      var tag0 = daten().settings.kalender.e[0].tag;
+      klick($("[data-kalok]"));
+      await bis(function () { return $(".kal-eintrag.erledigt") && daten().settings.kalender.e[0].erledigt; }, 2000, "Eintrag abgehakt und gespeichert");
+      klick($(".kal-eintrag"));   // Menü: Starten · Erledigt · Verschieben · Entfernen
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[2]; }, 2000, "Menü des Eintrags"));
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Verschieben: ein anderer Tag"));
+      await bis(function () { return daten().settings.kalender.e[0].tag !== tag0; }, 2000, "Eintrag auf anderem Tag");
+      klick('[data-kalansicht="monat"]');
+      await bis(function () { return $$(".km-zelle").length >= 28 && $(".km-balken i"); }, 2000, "Monatsansicht mit Eintrag");
+      W.kalHinzu(W.kalTagKey(new Date()), { art: "zufall" });
+      W.save();
+      await heim();
+      await bis(function () { return $(".kal-heute-zeile"); }, 3000, "Startseite zeigt „Heute im Kalender“");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

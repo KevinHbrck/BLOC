@@ -144,7 +144,7 @@ applyLang();
 var app = document.getElementById("app");
 
 /* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
-var TAB_ROUTEN = { home:"#home", search:"#search", stats:"#stats", settings:"#settings" };
+var TAB_ROUTEN = { home:"#home", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
 /* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
 var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
@@ -156,6 +156,7 @@ function tabLeiste(route){
   var eintraege = [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],
+    ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
     ["#stats", t("tabStats"), '<path d="M5 20V11M12 20V4M19 20v-6"/>'],
     ["#settings", t("settings"), null]
   ];
@@ -197,6 +198,7 @@ function render(){
   if(route==="repplay") return renderRepPlayer(parts[1]);
   if(route==="repedit") return renderRepEdit(parts[1]);
   if(route==="repunitedit") return renderRepUnitEdit(parts[1]);
+  if(route==="kalender") return renderKalender();
   if(route==="run") return renderRun();
   if(route==="rundetail") return renderRunDetail(parts[1]);
   if(route==="intervall") return renderIntervall();   // Timer: eigene Seite (früher je ein Reiter in Air und Studio)

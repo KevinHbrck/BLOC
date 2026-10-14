@@ -1,0 +1,389 @@
+"use strict";
+/* ============ Trainingskalender ============
+   Wochen- oder Monatsansicht (Montag zuerst). Einträge: eigene Workouts (Nach Zeit), Pläne (Nach Sätzen), Workouts aus dem Katalog, Mobility & Stretch,
+   Summit (Programm, Einheit, eigene), Run (frei oder mit Ziel in km) und ein Zufallstraining („Überrasch mich“ erst am Tag selbst).
+   Hinzufügen: „+ Hinzufügen“ am Tag oder lange auf einen Chip in der Leiste „Meine“ drücken und auf einen Tag ziehen; Einträge lassen sich ebenso von
+   Tag zu Tag ziehen (lange drücken) oder über das Menü verschieben. Daten: settings.kalender = { e:[{ id, tag:"JJJJ-MM-TT", art, ref, name, km, erledigt, at }] }
+   - nur auf dem Gerät, wie alles andere. Art: workout | plan | lib | summit | run | zufall. */
+var kalAnsicht = "woche";      // "woche" | "monat"
+var kalBasis = null;           // ein Tag der angezeigten Woche bzw. des Monats
+var kalTrayAuf = true;         // Leiste „Meine“ unten offen
+var KAL_FARBE = { workout:"var(--tp-color)", plan:"var(--gym-color, var(--bl-color))", lib:"var(--tp-color)", summit:"var(--rep-color)", run:"var(--run-color, #e5573f)", zufall:"var(--accent)" };
+
+/* ---------- Daten ---------- */
+function kalListe(){
+  var s = state.db.settings;
+  if(!s.kalender || !Array.isArray(s.kalender.e)) s.kalender = { e:[] };
+  return s.kalender.e;
+}
+function kalTagKey(d){
+  var x = new Date(d);
+  return x.getFullYear()+"-"+("0"+(x.getMonth()+1)).slice(-2)+"-"+("0"+x.getDate()).slice(-2);
+}
+function kalTagDatum(key){ var p = String(key).split("-"); return new Date(+p[0], +p[1]-1, +p[2], 12, 0, 0, 0); }   // Mittag: sicher gegen Sommerzeit
+function kalMontag(d){ var x = new Date(d); x.setHours(12, 0, 0, 0); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }
+function kalPlus(d, n){ var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function kalKW(d){   // ISO-Kalenderwoche
+  var x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  var tag = x.getUTCDay() || 7;
+  x.setUTCDate(x.getUTCDate() + 4 - tag);
+  var j0 = new Date(Date.UTC(x.getUTCFullYear(), 0, 1));
+  return Math.ceil(((x - j0)/86400000 + 1)/7);
+}
+function kalAn(tag){
+  return kalListe().filter(function(e){ return e.tag === tag; }).sort(function(a, b){ return (a.at || 0) - (b.at || 0); });
+}
+function kalFinde(id){ var l = kalListe(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
+function kalHinzu(tag, o){
+  var e = { id:uid(), tag:tag, art:o.art, ref:o.ref || "", name:o.name || "", km:+o.km || 0, erledigt:false, at:Date.now() };
+  kalListe().push(e); save();
+  return e;
+}
+function kalVerschiebe(id, tag){
+  var e = kalFinde(id);
+  if(!e || e.tag === tag) return false;
+  e.tag = tag; e.at = Date.now(); save();
+  return true;
+}
+function kalEntferne(id){
+  var s = state.db.settings;
+  s.kalender = { e:kalListe().filter(function(e){ return e.id !== id; }) }; save();
+}
+/* Anzahl der Einträge und Run-Kilometer einer Reihe von Tagen (für die Kopfzeile) */
+function kalSumme(tage){
+  var n = 0, km = 0, ok = 0;
+  tage.forEach(function(tag){ kalAn(tag).forEach(function(e){ n++; if(e.erledigt) ok++; if(e.art === "run") km += e.km || 0; }); });
+  return { n:n, km:km, ok:ok };
+}
+/* Name, Zeile darunter und Farbe eines Eintrags; ok:false, wenn das Ziel gelöscht wurde */
+function kalAufloesen(e){
+  var o = { name:e.name || "", sub:"", ok:true, farbe:KAL_FARBE[e.art] || "var(--accent)" };
+  function exAnz(exs, dauer){ return t("exCount", { n:exs.length })+(dauer ? " · "+fmtDauerKurz(dauer) : ""); }
+  if(e.art === "workout"){
+    var mw = findMy(e.ref);
+    if(!mw) o.ok = false;
+    else {
+      var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
+      o.name = mw.name; o.sub = exAnz(exs, workoutDuration(myRun(mw)));
+      if(mw.ws) o.farbe = "var(--ws-color)";
+    }
+  } else if(e.art === "plan"){
+    var p = stPlanFind(e.ref);
+    if(!p) o.ok = false; else { o.name = p.name; o.sub = planAnzahl(stPlanIds(p).length); }
+  } else if(e.art === "lib"){
+    var lw = findLibWorkout(e.ref);
+    if(!lw) o.ok = false;
+    else {
+      var le = lw.exercises.map(findExercise).filter(Boolean);
+      o.name = tplText(lw.name); o.sub = exAnz(le, workoutDuration(libWorkoutRun(lw)));
+      if(libIstWarmDehn(lw)) o.farbe = "var(--ws-color)";
+    }
+  } else if(e.art === "summit"){
+    var q = repQuelle(e.ref);
+    if(!q) o.ok = false;
+    else {
+      var R = repQRunden(q);
+      o.name = q.name; o.sub = (R === 1 ? t("repRound1") : t("repRoundsN", { n:R }))+" · "+t("repReps", { n:repQWdh(q) });
+    }
+  } else if(e.art === "run"){
+    o.name = e.name || t("kalRunName");
+    o.sub = e.km > 0 ? runKm(e.km*1000)+" km" : t("kalRunFrei");
+  } else {   // zufall
+    o.name = t("kalZufall"); o.sub = t("kalZufallSub");
+  }
+  if(!o.name) o.name = t("kalFehlt");
+  return o;
+}
+function kalStarten(e){
+  if(e.art === "workout"){ coverDraft = null; go("#cover/my/"+e.ref); }
+  else if(e.art === "lib"){ coverDraft = null; go("#cover/lib/"+e.ref); }
+  else if(e.art === "plan") go("#studioplan/"+e.ref);
+  else if(e.art === "summit") go("#rep/"+e.ref);
+  else if(e.art === "run") go("#run");
+  else openSurprise();
+}
+
+/* ---------- Ansicht ---------- */
+function kalNeu(){ var y = window.scrollY; renderKalender(); window.scrollTo(0, y); }
+function kalEintragHTML(e){
+  var o = kalAufloesen(e);
+  return '<div class="kal-eintrag'+(e.erledigt ? ' erledigt' : '')+(o.ok ? '' : ' fehlt')+'" data-kaleid="'+esc(e.id)+'" data-kalname="'+esc(o.name)+'" style="--kc:'+o.farbe+'" role="button" tabindex="0">'+
+    '<i class="ke-balken"></i><span class="ke-text"><b>'+esc(o.name)+'</b><small>'+esc(o.ok ? o.sub : t("kalFehlt"))+'</small></span>'+
+    '<button type="button" class="ke-ok" data-kalok="'+esc(e.id)+'" aria-pressed="'+!!e.erledigt+'" aria-label="'+esc(t("kalErledigt"))+'">'+svgIcon('<path d="M5 12.5l4.5 4.5L19 7"/>')+'</button></div>';
+}
+function kalTrayHTML(){
+  var chips = [];
+  function chip(art, ref, name, km, farbe){
+    chips.push('<span class="kal-chip" data-kaldrag="'+esc([art, ref || "", km || 0, name].join("|"))+'" data-kalname="'+esc(name)+'" style="--kc:'+farbe+'">'+esc(name)+'</span>');
+  }
+  chip("zufall", "", t("kalZufall"), 0, KAL_FARBE.zufall);
+  chip("run", "", t("kalRunName"), 0, KAL_FARBE.run);
+  (state.db.myWorkouts || []).map(normMy).forEach(function(mw){ chip("workout", mw.id, mw.name, 0, mw.ws ? "var(--ws-color)" : KAL_FARBE.workout); });
+  stPlaene().filter(function(p){ return !p.entwurf; }).forEach(function(p){ chip("plan", p.id, p.name, 0, KAL_FARBE.plan); });
+  (state.db.settings.myRepUnits || []).forEach(function(u){ chip("summit", u.id, u.name || t("reUnitDefault"), 0, KAL_FARBE.summit); });
+  (state.db.settings.myReps || []).forEach(function(c){ chip("summit", c.id, c.name || t("reDefaultName"), 0, KAL_FARBE.summit); });
+  return '<div class="kal-tray'+(kalTrayAuf ? '' : ' zu')+'"><button type="button" class="kt-griff" data-kaltray aria-expanded="'+kalTrayAuf+'"><b>'+esc(t("kalTrayTitel"))+'</b>'+
+    '<span class="tpl-chev'+(kalTrayAuf ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></button>'+
+    (kalTrayAuf ? '<div class="kt-chips">'+chips.join("")+'</div><div class="kt-hint">'+esc(t("kalTrayHint"))+'</div>' : '')+'</div>';
+}
+function renderKalender(){
+  var s = state.db.settings, lang = currentLang() === "en" ? "en-GB" : "de-DE";
+  if(!kalBasis) kalBasis = new Date();
+  var heute = kalTagKey(Date.now()), monat = kalAnsicht === "monat";
+  var namen = t("weekDays").split(" ");
+  var kopfText, tage = [], html;
+  if(!monat){
+    var mo = kalMontag(kalBasis);
+    for(var i = 0; i < 7; i++) tage.push(kalPlus(mo, i));
+    var so = tage[6];
+    kopfText = mo.toLocaleDateString(lang, { day:"numeric", month:"short" }).replace(/\.$/, "")+" – "+so.toLocaleDateString(lang, { day:"numeric", month:"short" });
+  } else {
+    var m1 = new Date(kalBasis.getFullYear(), kalBasis.getMonth(), 1, 12), start = kalMontag(m1);
+    var letzter = new Date(kalBasis.getFullYear(), kalBasis.getMonth()+1, 0, 12), wochen = Math.ceil((((letzter - start)/86400000) + 1)/7);
+    for(var j = 0; j < wochen*7; j++) tage.push(kalPlus(start, j));
+    kopfText = m1.toLocaleDateString(lang, { month:"long", year:"numeric" });
+  }
+  var sichtbar = tage.filter(function(d){ return !monat || d.getMonth() === kalBasis.getMonth(); }).map(kalTagKey);
+  var sum = kalSumme(sichtbar);
+  html = topbar(t("kalTitel"), { back:"#home", right:'<button type="button" class="iconbtn" data-kalheute title="'+esc(t("kalHeute"))+'" aria-label="'+esc(t("kalHeute"))+'">'+svgIcon('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>')+'</button>' }) +
+    '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
+      '<button type="button" data-kalansicht="woche" class="'+(!monat ? 'active' : '')+'">'+esc(t("kalWoche"))+'</button>'+
+      '<button type="button" data-kalansicht="monat" class="'+(monat ? 'active' : '')+'">'+esc(t("kalMonat"))+'</button></div></div>'+
+    '<div class="kal-nav"><button type="button" class="iconbtn" data-kalnav="-1" aria-label="'+esc(t("kalZurueck"))+'">&#8249;</button>'+
+      '<div class="kn-mitte"><b>'+esc(kopfText)+'</b>'+(!monat ? '<span class="kn-kw">'+esc(t("kalKW", { n:kalKW(tage[0]) }))+'</span>' : '')+'</div>'+
+      '<button type="button" class="iconbtn" data-kalnav="1" aria-label="'+esc(t("kalVor"))+'">&#8250;</button></div>'+
+    '<div class="kal-summe">'+esc(sum.n ? t("kalGeplant", { n:sum.n })+(sum.ok ? " · "+t("kalErledigtN", { n:sum.ok }) : "")+(sum.km > 0 ? " · "+runKm(sum.km*1000).replace(/[,.]00$/, "")+" km Run" : "") : t("kalNichtsGeplant"))+'</div>';
+  if(!monat){
+    html += tage.map(function(d, i){
+      var key = kalTagKey(d), liste = kalAn(key), vorbei = key < heute;
+      return '<section class="kal-tag'+(key === heute ? ' heute' : '')+(vorbei ? ' vorbei' : '')+'" data-kaltag="'+key+'">'+
+        '<div class="kt-kopf"><small>'+esc(d.toLocaleDateString(lang, { weekday:"short" }).replace(/\.$/, ""))+'</small><b class="kt-nr">'+d.getDate()+'</b></div>'+
+        '<div class="kt-liste">'+liste.map(kalEintragHTML).join("")+
+          '<button type="button" class="kt-add" data-kaladd="'+key+'">'+svgIcon('<path d="M12 5v14M5 12h14"/>')+'<span>'+esc(t("kalAdd"))+'</span></button></div></section>';
+    }).join("");
+  } else {
+    html += '<div class="kal-monat"><div class="km-namen">'+namen.map(function(n){ return '<small>'+esc(n)+'</small>'; }).join("")+'</div><div class="km-raster">'+
+      tage.map(function(d){
+        var key = kalTagKey(d), liste = kalAn(key), ausser = d.getMonth() !== kalBasis.getMonth();
+        return '<button type="button" class="km-zelle'+(key === heute ? ' heute' : '')+(ausser ? ' aus' : '')+'" data-kaltag="'+key+'" data-kaltap="'+key+'"><b>'+d.getDate()+'</b>'+
+          '<span class="km-balken">'+liste.slice(0, 3).map(function(e){ return '<i class="'+(e.erledigt ? 'ok' : '')+'" style="--kc:'+kalAufloesen(e).farbe+'"></i>'; }).join("")+(liste.length > 3 ? '<em>+'+(liste.length-3)+'</em>' : '')+'</span></button>';
+      }).join("")+'</div></div>';
+  }
+  html += '<div style="height:'+(kalTrayAuf ? 210 : 120)+'px"></div>'+kalTrayHTML();
+  app.innerHTML = html;
+  bindCommon();
+  app.querySelectorAll("[data-kalansicht]").forEach(function(b){ b.addEventListener("click", function(){ kalAnsicht = b.getAttribute("data-kalansicht"); renderKalender(); window.scrollTo(0, 0); }); });
+  app.querySelectorAll("[data-kalnav]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var r = +b.getAttribute("data-kalnav");
+      kalBasis = kalAnsicht === "monat" ? new Date(kalBasis.getFullYear(), kalBasis.getMonth()+r, 1, 12) : kalPlus(kalBasis, 7*r);
+      renderKalender(); window.scrollTo(0, 0);
+    });
+  });
+  var hb = app.querySelector("[data-kalheute]");
+  if(hb) hb.addEventListener("click", function(){ kalBasis = new Date(); renderKalender(); window.scrollTo(0, 0); });
+  app.querySelectorAll("[data-kaladd]").forEach(function(b){ b.addEventListener("click", function(){ kalHinzuMenue(b.getAttribute("data-kaladd")); }); });
+  app.querySelectorAll("[data-kaltap]").forEach(function(b){
+    b.addEventListener("click", function(){ kalBasis = kalTagDatum(b.getAttribute("data-kaltap")); kalAnsicht = "woche"; renderKalender(); window.scrollTo(0, 0); });
+  });
+  app.querySelectorAll("[data-kalok]").forEach(function(b){
+    b.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      var e = kalFinde(b.getAttribute("data-kalok"));
+      if(e){ e.erledigt = !e.erledigt; save(); kalNeu(); }
+    });
+  });
+  app.querySelectorAll("[data-kaleid]").forEach(function(el){
+    function los(){ var e = kalFinde(el.getAttribute("data-kaleid")); if(e) kalEintragMenue(e); }
+    el.addEventListener("click", los);
+    el.addEventListener("keydown", function(ev){ if(ev.target === el && (ev.key === "Enter" || ev.key === " ")){ ev.preventDefault(); los(); } });
+  });
+  var tr = app.querySelector("[data-kaltray]");
+  if(tr) tr.addEventListener("click", function(){ kalTrayAuf = !kalTrayAuf; renderKalender(); });
+  app.querySelectorAll("[data-kaldrag]").forEach(function(c){   // Tippen auf einen Chip erklärt nur, was zu tun ist (ziehen)
+    c.addEventListener("click", function(){ showToast(t("kalTrayHint")); });
+  });
+  kalZiehenBinden();
+}
+
+/* ---------- Menüs ---------- */
+function kalTagText(tag){
+  return kalTagDatum(tag).toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long", day:"numeric", month:"long" });
+}
+function kalEintragMenue(e){
+  var o = kalAufloesen(e), acts = [];
+  if(o.ok) acts.push({ ico:P_PLAY, label:t("kalStart"), fn:function(){ kalStarten(e); } });
+  acts.push({ ico:P_CHECK, label:t(e.erledigt ? "kalNichtErledigt" : "kalErledigtMark"), fn:function(){ e.erledigt = !e.erledigt; save(); kalNeu(); } });
+  acts.push({ ico:ICON_EDIT, label:t("kalVerschieben"), fn:function(){ kalVerschiebenMenue(e); } });
+  acts.push({ ico:P_TRASH, label:t("kalLoeschen"), danger:true, fn:function(){ kalEntferne(e.id); kalNeu(); } });
+  openActionSheet(o.name+" · "+kalTagText(e.tag), acts);
+}
+function kalVerschiebenMenue(e){
+  var mo = kalMontag(kalTagDatum(e.tag)), acts = [];
+  var namen = t("weekDays").split(" ");
+  for(var i = 0; i < 7; i++){
+    (function(i){
+      var d = kalPlus(mo, i), key = kalTagKey(d);
+      if(key === e.tag) return;
+      acts.push({ ico:ICON_EDIT, label:(namen[i] || "")+" "+d.getDate()+"."+(d.getMonth()+1)+".", fn:function(){ kalVerschiebe(e.id, key); kalNeu(); } });
+    })(i);
+  }
+  acts.push({ ico:ICON_EDIT, label:t("kalNaechsteWoche"), fn:function(){ kalVerschiebe(e.id, kalTagKey(kalPlus(kalTagDatum(e.tag), 7))); kalNeu(); } });
+  acts.push({ ico:ICON_EDIT, label:t("kalVorherigeWoche"), fn:function(){ kalVerschiebe(e.id, kalTagKey(kalPlus(kalTagDatum(e.tag), -7))); kalNeu(); } });
+  openActionSheet(t("kalVerschieben"), acts);
+}
+/* Auswahl mit Suche: items = [{ id, name, sub }] */
+function kalPicker(titel, items, onPick){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet re-pick" role="dialog" aria-label="'+esc(titel)+'">'+
+    '<h3>'+esc(titel)+'</h3>'+searchHTML("", "kp", t("wsSearchPh"))+
+    '<div class="re-pick-liste">'+(items.length ? items.map(function(o){
+      return '<div class="list-item entry" role="button" tabindex="0" data-kpick="'+esc(o.id)+'" data-q="'+esc(o.name+" "+(o.sub || ""))+'"><div class="meta"><div class="name">'+esc(o.name)+'</div>'+
+        (o.sub ? '<div class="sub">'+esc(o.sub)+'</div>' : '')+'</div></div>';
+    }).join("") : '<div class="empty" style="padding:20px;">'+esc(t("kalListeLeer"))+'</div>')+
+    '<div class="empty" data-noresult style="display:none;padding:20px;">'+esc(t("noResult"))+'</div></div>'+
+    '<button class="btn btn-secondary" data-reclose>'+esc(t("cancel"))+'</button></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  var box = root.querySelector(".re-pick-liste"), q = root.querySelector("#kp-q");
+  q.addEventListener("input", function(){ applySearch(box, q.value); });
+  root.querySelectorAll("[data-kpick]").forEach(function(b){
+    function los(){ var id = b.getAttribute("data-kpick"); zu(); onPick(id); }
+    b.addEventListener("click", los);
+    b.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); los(); } });
+  });
+  root.querySelector("[data-reclose]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+}
+function kalRunSheet(tag){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet" role="dialog" aria-label="'+esc(t("kalRunTitel"))+'">'+
+    '<h3>'+esc(t("kalRunTitel"))+'</h3>'+
+    '<label for="kr-n">'+esc(t("name"))+'</label><input type="text" id="kr-n" maxlength="40" value="'+esc(t("kalRunName"))+'">'+
+    '<label for="kr-km">'+esc(t("kalRunZiel"))+'</label><input type="number" id="kr-km" inputmode="decimal" min="0" max="100" step="0.5" value="5">'+
+    '<div class="tm-hint">'+esc(t("kalRunHint"))+'</div>'+
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button><button class="btn btn-primary" data-ok>'+esc(t("kalAdd"))+'</button></div></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+  root.querySelector("[data-ok]").addEventListener("click", function(){
+    var km = clamp(parseFloat(String(root.querySelector("#kr-km").value).replace(",", ".")) || 0, 0, 100);
+    var n = root.querySelector("#kr-n").value.trim() || t("kalRunName");
+    zu(); kalHinzu(tag, { art:"run", name:n, km:km }); kalNeu();
+  });
+}
+function kalHinzuMenue(tag){
+  function fertig(art, ref){ kalHinzu(tag, { art:art, ref:ref }); kalNeu(); }
+  var acts = [
+    { ico:P_PLUS, label:t("kalZufall"), fn:function(){ fertig("zufall", ""); } },
+    { ico:HOME_ICON.lib, label:t("kalMeineWo"), fn:function(){
+      var items = (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return !mw.ws; }).map(function(mw){
+        var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
+        return { id:mw.id, name:mw.name, sub:t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(myRun(mw))) };
+      });
+      kalPicker(t("kalMeineWo"), items, function(id){ fertig("workout", id); });
+    } },
+    { ico:HOME_ICON.timer, label:t("kalMeinePl"), fn:function(){
+      var items = stPlaene().filter(function(p){ return !p.entwurf; }).map(function(p){ return { id:p.id, name:p.name, sub:planAnzahl(stPlanIds(p).length) }; });
+      kalPicker(t("kalMeinePl"), items, function(id){ fertig("plan", id); });
+    } },
+    { ico:HOME_ICON.lib, label:t("kalKat"), fn:function(){
+      var items = LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); }).map(function(lw){
+        var exs = lw.exercises.map(findExercise).filter(Boolean);
+        return { id:lw.id, name:tplText(lw.name), sub:t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(libWorkoutRun(lw))) };
+      });
+      kalPicker(t("kalKat"), items, function(id){ fertig("lib", id); });
+    } },
+    { ico:HOME_ICON.reps, label:t("kalSummit"), fn:function(){
+      var items = [];
+      (state.db.settings.myRepUnits || []).forEach(function(u){ items.push({ id:u.id, name:u.name || t("reUnitDefault"), sub:t("repOwnTag") }); });
+      (state.db.settings.myReps || []).forEach(function(c){ items.push({ id:c.id, name:c.name || t("reDefaultName"), sub:t("repOwnTag") }); });
+      REP_WORKOUT_ROWS.forEach(function(r){ items.push({ id:r[0], name:repName(r), sub:t("lvl"+r[3]) }); });
+      kalPicker(t("kalSummit"), items, function(id){ fertig("summit", id); });
+    } },
+    { ico:HOME_ICON.run, label:t("kalRun"), fn:function(){ kalRunSheet(tag); } },
+    { ico:HOME_ICON.warm, label:t("kalMob"), fn:function(){
+      var items = [];
+      (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return mw.ws; }).forEach(function(mw){ items.push({ id:"w:"+mw.id, name:mw.name, sub:t("repOwnTag") }); });
+      LIB_WORKOUTS.filter(function(lw){ return libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); }).forEach(function(lw){ items.push({ id:"l:"+lw.id, name:tplText(lw.name), sub:"" }); });
+      kalPicker(t("kalMob"), items, function(id){ fertig(id.charAt(0) === "w" ? "workout" : "lib", id.slice(2)); });
+    } }
+  ];
+  openActionSheet(kalTagText(tag), acts);
+}
+
+/* ---------- Ziehen: Chips aus der Leiste auf einen Tag, Einträge von Tag zu Tag (lange drücken) ---------- */
+function kalZiehenBinden(){
+  app.querySelectorAll("[data-kaldrag], [data-kaleid]").forEach(function(el){
+    var tm = 0, x0 = 0, y0 = 0;
+    function stop(){ if(tm){ clearTimeout(tm); tm = 0; } }
+    el.addEventListener("pointerdown", function(e){
+      if(e.target.closest("[data-kalok]")) return;
+      x0 = e.clientX; y0 = e.clientY; stop();
+      tm = setTimeout(function(){ tm = 0; kalZiehen(el, x0, y0); }, 380);
+    });
+    el.addEventListener("pointermove", function(e){ if(tm && Math.abs(e.clientX-x0) + Math.abs(e.clientY-y0) > 10) stop(); });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(function(ev){ el.addEventListener(ev, stop); });
+    el.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+  });
+}
+function kalZiehen(el, x, y){
+  var ghost = document.createElement("div"), fertig = false, ziel = null, laufY = y, uhr = 0;
+  ghost.className = "kal-ghost"; ghost.textContent = el.getAttribute("data-kalname") || el.textContent.trim();
+  ghost.style.setProperty("--kc", el.style.getPropertyValue("--kc") || "var(--accent)");
+  document.body.appendChild(ghost); document.body.classList.add("kal-zieht"); el.classList.add("gezogen");
+  try{ if(navigator.vibrate) navigator.vibrate(20); }catch(err){}
+  function setzen(px, py){
+    ghost.style.left = px+"px"; ghost.style.top = py+"px"; laufY = py;
+    var u = document.elementFromPoint(px, py), z = u && u.closest ? u.closest("[data-kaltag]") : null;
+    if(z !== ziel){
+      if(ziel) ziel.classList.remove("ziel");
+      ziel = z; if(ziel) ziel.classList.add("ziel");
+    }
+  }
+  function bewegt(e){ var p = e.touches && e.touches[0] ? e.touches[0] : e; setzen(p.clientX, p.clientY); }
+  function sperre(e){ e.preventDefault(); }   // kein Scrollen der Seite, solange gezogen wird
+  function ende(e){
+    if(fertig) return; fertig = true;
+    clearInterval(uhr);
+    ["pointermove", "touchmove"].forEach(function(n){ window.removeEventListener(n, bewegt); });
+    ["pointerup", "pointercancel", "touchend", "touchcancel"].forEach(function(n){ window.removeEventListener(n, ende); });
+    document.removeEventListener("touchmove", sperre, { passive:false });
+    ghost.remove(); document.body.classList.remove("kal-zieht"); el.classList.remove("gezogen");
+    var tag = ziel && ziel.getAttribute("data-kaltag");
+    if(ziel) ziel.classList.remove("ziel");
+    langDruckSperre = Date.now() + 700;   // der Klick nach dem Loslassen soll kein Menü öffnen
+    if(!tag || (e && /cancel/.test(e.type))) return;
+    var eid = el.getAttribute("data-kaleid");
+    if(eid){ if(kalVerschiebe(eid, tag)) kalNeu(); }
+    else {
+      var p = (el.getAttribute("data-kaldrag") || "").split("|");
+      kalHinzu(tag, { art:p[0], ref:p[1], km:p[2], name:p[0] === "run" ? p[3] : "" });
+      kalNeu();
+      showToast(t("kalHinzugefuegt", { d:kalTagText(tag) }));
+    }
+  }
+  window.addEventListener("pointermove", bewegt); window.addEventListener("touchmove", bewegt, { passive:true });
+  window.addEventListener("pointerup", ende); window.addEventListener("pointercancel", ende);
+  window.addEventListener("touchend", ende); window.addEventListener("touchcancel", ende);
+  document.addEventListener("touchmove", sperre, { passive:false });
+  uhr = setInterval(function(){   // am oberen und unteren Rand die Seite mitscrollen
+    if(laufY < 110) window.scrollBy(0, -14); else if(laufY > window.innerHeight - 210) window.scrollBy(0, 14);
+  }, 16);
+  setzen(x, y);
+}
+
+/* ---------- Startseite: heute geplant ---------- */
+function kalHeuteHTML(){
+  var heute = kalTagKey(Date.now()), liste = kalAn(heute).filter(function(e){ return !e.erledigt; });
+  if(!liste.length) return "";
+  return '<div class="kal-heute"><div class="section-title">'+esc(t("kalHeuteTitel"))+'</div>'+liste.slice(0, 3).map(function(e){
+    var o = kalAufloesen(e);
+    return '<button type="button" class="kal-heute-zeile" data-kalheutestart="'+esc(e.id)+'" style="--kc:'+o.farbe+'"><i class="ke-balken"></i><span class="ke-text"><b>'+esc(o.name)+'</b><small>'+esc(o.sub)+'</small></span>'+
+      '<span class="kh-play">'+svgIcon('<path d="M7 4l13 8-13 8z"/>')+'</span></button>';
+  }).join("")+'</div>';
+}
+function kalHeuteBinden(){
+  app.querySelectorAll("[data-kalheutestart]").forEach(function(b){
+    b.addEventListener("click", function(){ var e = kalFinde(b.getAttribute("data-kalheutestart")); if(e) kalStarten(e); });
+  });
+}

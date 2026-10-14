@@ -189,6 +189,51 @@
       wahr(W.tippZeileHTML("workout", "tippWorkout") !== "", "andere Tipps bleiben");
     } finally { s.tippAus = alt; }
   });
+  test("Kalender: Wochenbeginn Montag, Kalenderwoche (ISO), Tagesschlüssel", function () {
+    gleich(W.kalTagKey(W.kalMontag(new Date(2026, 9, 14, 8))), "2026-10-12", "Mittwoch → Montag");
+    gleich(W.kalTagKey(W.kalMontag(new Date(2026, 9, 18, 23))), "2026-10-12", "Sonntag gehört zur Woche davor");
+    gleich(W.kalTagKey(W.kalMontag(new Date(2026, 9, 12, 0, 5))), "2026-10-12", "Montag früh bleibt Montag");
+    gleich(W.kalTagKey(W.kalMontag(new Date(2026, 10, 1, 12))), "2026-10-26", "über die Monatsgrenze");
+    gleich(W.kalKW(new Date(2026, 0, 5)), 2, "5. Januar 2026 = KW 2");
+    gleich(W.kalKW(new Date(2026, 9, 14)), 42, "14. Oktober 2026 = KW 42");
+    gleich(W.kalKW(new Date(2027, 0, 3)), 53, "3. Januar 2027 gehört noch zu KW 53");
+    gleich(W.kalTagKey(W.kalPlus(new Date(2026, 9, 28, 12), 5)), "2026-11-02", "plus Tage über Sommerzeit-Ende");
+    gleich(W.kalTagKey(W.kalTagDatum("2026-03-29")), "2026-03-29", "Tag der Sommerzeit-Umstellung bleibt derselbe Tag");
+  });
+  test("Kalender: Einträge hinzufügen, verschieben, abhaken, löschen, Summen", function () {
+    var s = W.state.db.settings, alt = s.kalender;
+    try {
+      s.kalender = undefined;
+      gleich(W.kalListe().length, 0, "leer");
+      var a = W.kalHinzu("2026-10-12", { art: "run", name: "Dauerlauf", km: 7.5 });
+      var b = W.kalHinzu("2026-10-12", { art: "zufall" });
+      var c = W.kalHinzu("2026-10-14", { art: "run", name: "Intervalle", km: 5 });
+      gleich(W.kalAn("2026-10-12").length, 2, "zwei am Montag");
+      gleich(W.kalAn("2026-10-12")[0].id, a.id, "Reihenfolge nach Anlage");
+      gleich(W.kalSumme(["2026-10-12", "2026-10-13", "2026-10-14"]), { n: 3, km: 12.5, ok: 0 }, "Summe vor dem Abhaken");
+      b.erledigt = true;
+      gleich(W.kalSumme(["2026-10-12", "2026-10-14"]).ok, 1, "erledigt gezählt");
+      wahr(W.kalVerschiebe(c.id, "2026-10-16"), "verschieben meldet Änderung");
+      gleich(W.kalAn("2026-10-14").length, 0, "weg vom alten Tag"); gleich(W.kalAn("2026-10-16")[0].id, c.id, "auf dem neuen Tag");
+      wahr(!W.kalVerschiebe(c.id, "2026-10-16"), "gleicher Tag: keine Änderung");
+      W.kalEntferne(a.id);
+      gleich(W.kalListe().length, 2, "nach dem Löschen");
+    } finally { s.kalender = alt; }
+  });
+  test("Kalender: Anzeige der Einträge (Name, Zeile, fehlende Ziele)", function () {
+    var s = W.state.db.settings, alt = s.kalender;
+    try {
+      s.kalender = { e: [] };
+      var run = W.kalAufloesen({ art: "run", name: "Dauerlauf", km: 7.5 });
+      gleich(run.name, "Dauerlauf", "Name"); wahr(/7,50 km/.test(run.sub), "Strecke in der Zeile: " + run.sub);
+      wahr(/Frei|Free/.test(W.kalAufloesen({ art: "run", name: "Lauf", km: 0 }).sub), "ohne Ziel: frei");
+      gleich(W.kalAufloesen({ art: "zufall" }).name, W.t("kalZufall"), "Zufallstraining");
+      var fehlt = W.kalAufloesen({ art: "workout", ref: "gibt-es-nicht", name: "Alt" });
+      gleich(fehlt.ok, false, "gelöschtes Workout erkannt");
+      var plan = W.kalAufloesen({ art: "summit", ref: "saentis" });
+      wahr(plan.ok && plan.name.length > 0 && /Runden|Runde/.test(plan.sub), "Summit-Programm: " + plan.name + " / " + plan.sub);
+    } finally { s.kalender = alt; }
+  });
   test("Run: Strecke zwischen zwei Punkten (Haversine)", function () {
     nah(W.runMeter([48, 11], [48.009, 11]), 1001, 8, "0,009° Breite ≈ 1 km");
     gleich(W.runMeter([48, 11], [48, 11]), 0, "gleicher Punkt");

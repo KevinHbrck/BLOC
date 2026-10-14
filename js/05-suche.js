@@ -197,7 +197,7 @@ function renderHome(){
   var bereicheListe = bereicheHTML();
   app.innerHTML =
     topbar("BLOC", { home:true, sub:"Modular Training Builder" }) +
-    installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
+    installTipHTML() + backupTipHTML() + wocheHTML() + kalHeuteHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
     '<div class="sec-head"><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
@@ -213,6 +213,7 @@ function renderHome(){
   if(heroKnopf) heroKnopf.addEventListener("click", function(){ katTabSetzen("baukasten"); go("#katalog"); });
   bindFavItems(renderHome);
   bindBackupTip();
+  kalHeuteBinden();
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }
