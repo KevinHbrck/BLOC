@@ -795,6 +795,37 @@ function koerperFormHTML(s){
       return '<button type="button" data-ksex="'+x[0]+'" class="'+((k.sex || "") === x[0] ? "active" : "")+'">'+esc(x[1])+'</button>'; }).join("")+'</div>'+
     '<div style="font-size:12px;color:var(--text-dim);margin-top:10px">'+esc(t("koerperHint"))+'</div></div>';
 }
+/* Körperdaten binden (in der Statistik-Ansicht, siehe openKoerperSheet): Zahlen prüfen, nur sinnvolle Werte speichern (sonst leer = keine Schätzung) */
+function koerperBinden(wurzel){
+  var s = state.db.settings;
+  function speichern(){
+    var kk = s.koerper = s.koerper || {};
+    function zahl(id, lo, hi){ var v = parseFloat(String(wurzel.querySelector("#"+id).value).replace(",", ".")); return v >= lo && v <= hi ? Math.round(v*10)/10 : 0; }
+    kk.kg = zahl("k-kg", 30, 250); kk.cm = Math.round(zahl("k-cm", 120, 230)); kk.alter = Math.round(zahl("k-alter", 10, 99)); save();
+  }
+  ["k-kg", "k-cm", "k-alter"].forEach(function(id){ var el = wurzel.querySelector("#"+id); if(el) el.addEventListener("change", speichern); });
+  wurzel.querySelectorAll("[data-ksex]").forEach(function(b){
+    b.addEventListener("click", function(){
+      s.koerper = s.koerper || {}; s.koerper.sex = b.getAttribute("data-ksex"); save();
+      wurzel.querySelectorAll("[data-ksex]").forEach(function(x){ x.classList.toggle("active", x === b); });
+    });
+  });
+  wurzel.querySelectorAll("input[type=number]").forEach(function(el){ el.addEventListener("blur", speichern); });
+}
+/* Fenster „Körperdaten“ (Person-Symbol oben rechts in der Statistik); danach zeichnet die Statistik neu */
+function openKoerperSheet(nachher){
+  var root = document.getElementById("overlayRoot"), s = state.db.settings;
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet"><h3>'+esc(t("koerperTitel"))+'</h3>'+
+    '<p style="font-size:13px;color:var(--text-dim);margin:0 0 8px">'+esc(t("koerperSub"))+'</p>'+koerperFormHTML(s)+
+    '<div class="btn-row"><button class="btn btn-secondary" data-kclose>'+esc(t("close"))+'</button></div></div></div>';
+  koerperBinden(root);
+  function zu(){
+    var aktiv = document.activeElement; if(aktiv && aktiv.blur) aktiv.blur();   // Eingabe noch übernehmen
+    root.innerHTML = ""; if(nachher) nachher();
+  }
+  root.querySelector("[data-kclose]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(ev){ if(ev.target.classList.contains("confirm-overlay")) zu(); });
+}
 function renderSettings(){
   var s = state.db.settings;
   function zeile(attr, name, sub){
@@ -843,7 +874,6 @@ function renderSettings(){
       toggleRow("f-countin",t("countIn"), t("countInDesc"), s.countIn)+
       toggleRow("f-vibration",t("vibration"), t("vibrationDesc"), s.vibration)+
       toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake), HOME_ICON.intervall)+
-    einstMehr("koerper", t("koerperTitel"), t("koerperSub"), koerperFormHTML(s), '<path d="M5 20h14M8 20v-8a4 4 0 0 1 8 0v8M12 8V5"/>')+
     einstMehr("sprache", t("language"), currentLang() === "en" ? "English" : "Deutsch",
       '<div class="theme-pick lang-pick">'+langBtn("de","Deutsch")+langBtn("en","English")+'</div>',
       '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.5 5.4 3.5 8.5s-1 5.9-3.5 8.5c-2.5-2.6-3.5-5.4-3.5-8.5s1-5.9 3.5-8.5z"/>')+
@@ -911,20 +941,6 @@ function renderSettings(){
   function settingsNeu(){ var y = window.scrollY; renderSettings(); window.scrollTo(0, y); }
   bindToggle("f-rpe", function(v){ s.anstrengung = v ? (anstrengungModus() || "rpe") : ""; save(); settingsNeu(); });
   app.querySelectorAll("[data-rpemodus]").forEach(function(b){ b.addEventListener("click", function(){ s.anstrengung = b.getAttribute("data-rpemodus"); save(); settingsNeu(); }); });
-
-  /* Körperdaten: Zahlen prüfen und nur sinnvolle Werte speichern (sonst leer = keine Schätzung) */
-  function koerperSpeichern(){
-    var kk = s.koerper = s.koerper || {};
-    function zahl(id, lo, hi){ var v = parseFloat(String(app.querySelector("#"+id).value).replace(",", ".")); return v >= lo && v <= hi ? Math.round(v*10)/10 : 0; }
-    kk.kg = zahl("k-kg", 30, 250); kk.cm = Math.round(zahl("k-cm", 120, 230)); kk.alter = Math.round(zahl("k-alter", 10, 99)); save();
-  }
-  ["k-kg", "k-cm", "k-alter"].forEach(function(id){ var el = app.querySelector("#"+id); if(el) el.addEventListener("change", koerperSpeichern); });
-  app.querySelectorAll("[data-ksex]").forEach(function(b){
-    b.addEventListener("click", function(){
-      s.koerper = s.koerper || {}; s.koerper.sex = b.getAttribute("data-ksex"); save();
-      app.querySelectorAll("[data-ksex]").forEach(function(x){ x.classList.toggle("active", x === b); });
-    });
-  });
 
   var volEl = app.querySelector("#f-volume");
   var volLabel = app.querySelector("#f-volume-label");

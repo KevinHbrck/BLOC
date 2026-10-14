@@ -295,6 +295,56 @@ function kcalSchaetzung(sekJeGruppe, kd){
   Object.keys(sekJeGruppe).forEach(function(g){ sum += Math.max(0, (KCAL_MET[g] || 4.5) - 1) * h * (sekJeGruppe[g]/3600); });
   return Math.round(sum);
 }
+/* ---------- „Mehr Einblicke“: eine zugeklappte Karte mit Volumen, letzten Rekorden, Drücken : Ziehen und Anstrengung (nur wenn Daten da sind) ---------- */
+function statEinblickeHTML(voll){
+  var tag = 86400000, jetzt = Date.now(), liste = einheitenListe(), teile = [], lang = currentLang() === "en" ? "en-GB" : "de-DE";
+  // Volumen je Woche (kg × Wiederholungen der Arbeitssätze) aus den gespeicherten Trainings
+  var wochen = voll.slice(-8), vals = wochen.map(function(w){
+    return liste.filter(function(x){ return x.at >= w.ab && x.at < w.ab + 7*tag; }).reduce(function(a, x){ return a + (+x.vol || 0); }, 0);
+  });
+  if(vals.some(function(v){ return v > 0; })){
+    var labels = wochen.map(function(w, i){ var d = new Date(w.ab); return i === wochen.length - 1 ? t("statJetzt") : d.getDate()+"."+(d.getMonth()+1)+"."; });
+    teile.push('<div class="sk-unter titel">'+esc(t("statEinVol"))+'</div>'+
+      statBalken(vals, labels, function(v){ return v >= 1000 ? String(Math.round(v/100)/10).replace(".", ",")+"t" : String(Math.round(v)); })+
+      '<div class="sk-unter">'+esc(t("statEinVolHint"))+'</div>');
+  }
+  // letzte Rekorde: die schwerste Arbeitsserie der Übung an dem Tag
+  var rek = [];
+  liste.slice().sort(function(a, b){ return b.at - a.at; }).forEach(function(x){
+    (x.ex || []).forEach(function(e){
+      if(!e.rekord || rek.length >= 5) return;
+      var ex = findExercise(e.id), best = null;
+      arbeitsSaetze(e).forEach(function(s){ if(!best || s[0] > best[0] || (s[0] === best[0] && s[1] > best[1])) best = s; });
+      if(ex && best) rek.push({ name:tplText(ex.name), satz:satzText([best[0], best[1]]), at:x.at });
+    });
+  });
+  if(rek.length){
+    teile.push('<div class="sk-unter titel">'+esc(t("statEinRek"))+'</div><div class="rekorde">'+rek.map(function(r){
+      return '<div><span>'+esc(r.name)+'</span><b>'+esc(r.satz)+' ★</b><small>'+esc(new Date(r.at).toLocaleDateString(lang, { day:"numeric", month:"short" }))+'</small></div>'; }).join("")+'</div>');
+  }
+  // Drücken : Ziehen der letzten 4 Wochen (Arbeitssätze); ein Praxishinweis, kein Muss
+  var push = 0, pull = 0, rpeSumme = 0, rpeAnz = 0;
+  liste.filter(function(x){ return x.at >= jetzt - 28*tag; }).forEach(function(x){
+    (x.ex || []).forEach(function(e){
+      var ex = findExercise(e.id); if(!ex) return;
+      var n = arbeitsSaetze(e).length, mu = exProfile(ex).pattern;
+      if(mu === "push") push += n; else if(mu === "pull") pull += n;
+      arbeitsSaetze(e).forEach(function(s){ if(s[3] > 0){ rpeSumme += s[3]; rpeAnz++; } });
+    });
+  });
+  if(push + pull >= 8){
+    var anteil = Math.round(100*push/(push + pull)), r = pull ? push/pull : 9;
+    teile.push('<div class="sk-unter titel">'+esc(t("statEinBalance"))+'</div>'+
+      '<div class="who-zeile"><span>'+esc(t("statEinDruecken"))+" : "+esc(t("statEinZiehen"))+'</span><b>'+push+' : '+pull+'</b><i class="who-bar"><u style="width:'+anteil+'%"></u></i></div>'+
+      '<div class="sk-unter">'+esc(t(r > 1.4 ? "statEinPush" : r < 0.7 ? "statEinPull" : "statEinGut"))+'</div>');
+  }
+  if(anstrengungModus() && rpeAnz >= 6){
+    teile.push('<div class="sk-unter titel">'+esc(t("statEinRpe"))+'</div><div class="chips-stat"><span><b>'+esc(anstrengungText(Math.round(rpeSumme/rpeAnz*10)/10).replace(".", currentLang() === "en" ? "." : ","))+'</b><small>'+esc(t("statEinRpeHint"))+'</small></span></div>');
+  }
+  if(!teile.length) return "";
+  return '<details class="card stat-karte stat-kal stat-falt" data-statfalt="einblicke"'+(statOffen.einblicke ? ' open' : '')+'><summary><b>'+esc(t("statEinTitel"))+'</b>'+
+    '<span class="sk-sub">'+esc(t("statEinSub"))+'</span><span class="sk-chev">'+ICON_CHEV+'</span></summary>'+teile.join("")+'</details>';
+}
 function renderStats(){
   var s = state.db.settings, jetzt = Date.now(), tag = 86400000, runs = s.runs || [];
   pruneHistory(state.db);
@@ -324,7 +374,7 @@ function renderStats(){
   while(si >= 0 && voll[si].n){ serie++; si--; }
   var einheit = t(statGran === "woche" ? "statUWoche" : statGran === "monat" ? "statUMonat" : "statUJahr");
   var labels = reihe.map(function(b){ return b.label; });
-  var html = topbar(t("tabStats"), { back:"#home" });
+  var html = topbar(t("tabStats"), { back:"#home", right:'<button type="button" class="iconbtn" data-koerper title="'+esc(t("koerperTitel"))+'" aria-label="'+esc(t("koerperTitel"))+'">'+svgIcon('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>')+'</button>' });
   if(!aktiv.length){
     app.innerHTML = html + '<div class="card fokus-leer"><div>'+esc(t("statAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
     return bindCommon();
@@ -388,7 +438,7 @@ function renderStats(){
         (meil ? '<div class="sh-chips" style="margin:2px 0 8px"><span class="sh-serie">'+svgIcon('<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>')+esc(t("statMeilenstein", { n:meil }))+'</span></div>' : '')+
         '<div class="chips-stat">'+chipsR.map(function(c){ return '<span><b>'+esc(c[0])+'</b><small>'+esc(c[1])+'</small></span>'; }).join("")+'</div>'+
         '<div class="sk-unter">'+esc(satzR)+(bestR && zaehlR[bestR] >= 2 ? " "+esc(t("statRueckUebung", { name:tplText(findExercise(bestR).name), n:zaehlR[bestR] })) : "")+'</div>'+
-        (kd ? (kcalR > 0 ? '<div class="sk-unter">'+esc(t("statKcalHint"))+'</div>' : "") : '<button type="button" class="kh-mehr" data-nav="#settings">'+esc(t("statKcalLink"))+' &#8250;</button>')+'</div>';
+        (kd ? (kcalR > 0 ? '<div class="sk-unter">'+esc(t("statKcalHint"))+'</div>' : "") : '<button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button>')+'</div>';
     }
     // Kalender: letzte 4 Wochen (Tag = Start des Trainings)
     var tage = {}, mo = new Date(); mo.setHours(0, 0, 0, 0); mo.setDate(mo.getDate() - (mo.getDay() + 6) % 7 - 21);
@@ -407,6 +457,7 @@ function renderStats(){
   }
   html += statTrainingsHTML();   // zuletzt gespeicherte Trainings (Training speichern auf Plan-Seite, Karte und im Timer)
   html += statFortschrittHTML(); // Fortschritt je Übung (Bestgewicht erste → jetzt)
+  html += statEinblickeHTML(voll);   // Mehr Einblicke (zugeklappt): Volumen, Rekorde, Drücken : Ziehen
   // Bereiche wie auf der Startseite: Workout, dann Mobility & Stretch, danach Timer und Summit (der in den letzten 4 Wochen am meisten genutzte zuerst), Run zuletzt
   var folge = statGruppen(aktiv).map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
     var fix = function(k){ return k === "katalog" ? 0 : k === "warm" ? 1 : k === "run" ? 3 : 2; };
@@ -481,6 +532,7 @@ function renderStats(){
   app.querySelectorAll("[data-statmodus]").forEach(function(b){ b.addEventListener("click", function(){ statModus = b.getAttribute("data-statmodus"); neu(); }); });
   app.querySelectorAll("[data-ziel]").forEach(function(b){ b.addEventListener("click", function(){ s.wochenZiel = clamp(ziel + (+b.getAttribute("data-ziel")), 1, 7); save(); neu(); }); });
   app.querySelectorAll("[data-statgran]").forEach(function(b){ b.addEventListener("click", function(){ statGran = b.getAttribute("data-statgran"); neu(); }); });
+  app.querySelectorAll("[data-koerper]").forEach(function(b){ b.addEventListener("click", function(){ openKoerperSheet(neu); }); });
   statTrainingsBinden(neu);
 }
 function recentExercises(days){

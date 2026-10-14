@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Statistik: Mehr Einblicke, Körperdaten über das Person-Symbol (Fassungen 2026-10-14-38 und -39)
+
+- **Mehr Einblicke** (zugeklappt, unter „Fortschritt je Übung“): Volumen je Woche in kg, letzte Rekorde, Drücken : Ziehen der letzten 4 Wochen (Praxishinweis) und, wenn RPE/RIR an ist, die durchschnittliche Anstrengung; erscheint nur, wenn Daten da sind.
+- **Körperdaten** (Gewicht, Größe, Alter, Geschlecht) stehen jetzt hinter dem **Person-Symbol oben rechts in der Statistik** statt in den Einstellungen; der Hinweis „Kalorien schätzen“ öffnet dasselbe Fenster.
+- **Summit**: der Einführungstext nennt jetzt, dass es harte Challenges sind (aufwärmen, Stufe ehrlich wählen, Technik vor Tempo, bei Schmerz abbrechen).
+
 ## 2026-10-14 · Statistik: Karte „Dein Monat“, Meilensteine, Kalorienschätzung (Fassung 2026-10-14-37)
 
 - **Dein Monat** (Statistik): die letzten 4 Wochen gegen die 4 davor aus den Wochensummen, mit Trainings, Zeit, Lieblingstag, Rekorden, häufigster Übung und einem freundlichen Satz; Meilenstein-Chip („Training Nr. 25 geschafft!“) bei 5, 10, 25, 50, 75, 100 … Trainings.
