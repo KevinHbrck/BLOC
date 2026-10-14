@@ -157,6 +157,7 @@ function runAnsage(k){
 /* „Lauf starten“: erst ein Countdown (20 s, beliebig oft +10 s), damit man das Handy wegstecken kann und das GPS Zeit zum Finden hat.
    Während des Countdowns läuft nur die Suche nach dem Signal - Zeit und Strecke zählen erst ab „Los“. */
 var RUN_VORLAUF = 20;
+var runGeplant = null;   // aus dem Kalender: { name, km, t } - die Lauf-Seite zeigt es startklar, „Start“ übernimmt Name und Ziel
 var runVor = null;   // { ende (ms), uhr, watch, gps, fehler, piep }
 function runStart(){
   if(!navigator.geolocation){ showToast(t("runNoGps")); return; }
@@ -197,7 +198,9 @@ function runVorLos(){
 }
 function runLosgehts(){
   run = { id:uid(), start:Date.now(), pauseAb:0, pausenMs:0, dist:0, pts:[], letzte:null, splits:[], tZ:0, verlauf:[], gps:null, fehler:0, stumm:false, gesagt:[], n:0, sumAcc:0,
-    lastMove:Date.now(), auto:false, iv:runIvEinst().an ? runIvEinst() : null, ivPhase:null };
+    lastMove:Date.now(), auto:false, iv:runIvEinst().an ? runIvEinst() : null, ivPhase:null,
+    ziel:runGeplant && Date.now() - runGeplant.t < 6*3600000 ? runGeplant : null };
+  runGeplant = null;
   runLauschen();
   runWachen(true);
   run.uhr = setInterval(function(){ runAutoPruefen(); runAnzeige(); runSichern(); }, 1000);
@@ -236,6 +239,7 @@ function runSpeichern(d){   // d: { id, start, dur, dist, pts, splits } -> in de
   var x = { id:d.id, at:d.start, dur:Math.round(d.dur), dist:Math.round(d.dist), pts:d.pts, splits:d.splits };
   if(d.pause > 1000) x.pause = Math.round(d.pause);   // herausgerechnete Pausen/Stehzeit (ms)
   if(d.iv) x.iv = { lauf:d.iv.lauf, geh:d.iv.geh };
+  if(d.name) x.name = d.name;
   (s.runs || (s.runs = [])).push(x);
   pruneHistory(state.db);
   state.db.history.push({ at:d.start, dur:Math.round(d.dur/1000), ex:[], b:"run" });   // zählt in der Wochenzeile
@@ -252,7 +256,7 @@ function runBeenden(speichern){
   var dunkel = document.getElementById("run-dunkel"); if(dunkel) dunkel.remove();
   run = null;
   delete state.db.settings.runLive;
-  var ok = speichern ? runSpeichern({ id:r.id, start:r.start, dur:dauer, dist:r.dist, pts:r.pts, splits:r.splits, pause:pausen, iv:iv }) : (save(), false);
+  var ok = speichern ? runSpeichern({ id:r.id, start:r.start, dur:dauer, dist:r.dist, pts:r.pts, splits:r.splits, pause:pausen, iv:iv, name:r.ziel && r.ziel.name }) : (save(), false);
   if(ok){ runNeu = r.id; go("#rundetail/"+r.id); } else renderRun();   // runNeu: Abschlusskarte oben im Detail
 }
 var runNeu = null;
@@ -425,6 +429,10 @@ function renderRun(){
     (live ?'<div class="card run-live"><b>'+esc(t("runBroken"))+'</b><div class="sub">'+esc(t("runBrokenText", { km:runKm(live.dist) }))+'</div>'+
       '<div class="btn-row"><button type="button" class="btn btn-secondary" data-runlivedel>'+esc(t("runDiscard"))+'</button>'+
       '<button type="button" class="btn btn-primary" data-runlivesave>'+esc(t("runRecover"))+'</button></div></div>' : '')+
+    (runGeplant && Date.now() - runGeplant.t < 6*3600000 ? '<div class="card run-geplant"><small>'+esc(t("runGeplant"))+'</small><b>'+esc(runGeplant.name || t("kalRunName"))+'</b>'+
+      (runGeplant.km > 0 ? '<div class="sub">'+esc(t("runZielKm", { km:runKm(runGeplant.km*1000) }))+'</div>' : '')+
+      '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button>'+
+      '<button type="button" class="ghost" data-rungeplantweg>'+esc(t("runGeplantWeg"))+'</button></div>' : '')+
     '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div><div class="rh-sub">'+esc(runs.length ? t("runLaeufe", { n:runs.length }) : t("runTeaser"))+'</div>'+
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button></div>'+
     (runs.length ? '<div class="section-title">'+esc(t("runVerlauf"))+'</div>' : '')+
@@ -450,7 +458,9 @@ function renderRun(){
     s.runAuto = sek; save();
     app.querySelector("#run-auto-wert").textContent = sek ? t("runAutoNach", { s:sek }) : t("runAus");
   });
-  app.querySelector("[data-runstart]").addEventListener("click", runStart);
+  app.querySelectorAll("[data-runstart]").forEach(function(b){ b.addEventListener("click", runStart); });
+  var gw = app.querySelector("[data-rungeplantweg]");
+  if(gw) gw.addEventListener("click", function(){ runGeplant = null; renderRun(); });
   app.querySelectorAll("[data-runevery]").forEach(function(b){
     b.addEventListener("click", function(){ var e = runAnsageEinst(); s.runAnsage = { every:+b.getAttribute("data-runevery"), was:e.was }; save(); renderRun(); });
   });
@@ -475,7 +485,7 @@ function renderRunLive(){
   var r = run;
   app.innerHTML =
     topbar(t("runTitle"), { back:"#home" }) +
-    '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+'</div>'+
+    '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+(r.ziel && r.ziel.km > 0 ? '<div class="run-ziel">'+esc(t("runZielKm", { km:runKm(r.ziel.km*1000) }))+'</div>' : '')+'</div>'+
     '<div class="run-raster">'+
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
       '<div><b id="run-pace">–:––</b><small>'+esc(t("runPaceAvg"))+' /km</small></div>'+
@@ -548,11 +558,11 @@ function renderRunDetail(id){
 
 /* Eigenes Workout als Karte (Air › Meine und Mobility & Stretch › Meine) */
 function myWoCard(mw, exs, mains, dur){
-  var ids = exs.map(function(e){ return e.id; }), gr = planGruppen(ids), ort = mw.ws ? "" : planOrt(ids); return '<div class="list-item entry tpl-item lib-card my-item" style="--cat:'+woFarbe(exs)+'" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, exs))+'">'+
+  var ids = exs.map(function(e){ return e.id; }), gr = planGruppen(ids), ort = mw.ws ? "" : planOrt(ids); return '<div class="list-item entry tpl-item lib-card my-item" style="--cat:'+woFarbe(exs)+'" data-cover="my/'+mw.id+'" role="button" tabindex="0" data-q="'+esc(woSearchText(mw.name, exs))+'">'+
     '<button class="playbtn cat" data-cover="my/'+mw.id+'" '+(exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+(mw.ws ? '' : ortThumbHTML(ids))+
     '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
     '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDauerKurz(dur)+(ort ? SEP+esc(ort) : '')+'</div>'+(gr ? '<div class="sub pl-gruppen">'+esc(gr)+'</div>' : '')+
-    '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';
+    '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+'<button type="button" class="fav-btn my-edit" data-myedit="'+mw.id+'" title="'+t("edit")+'" aria-label="'+t("edit")+'">&#9998;</button>'+trashBtn("my", mw.id, mw.name)+'</div></div></div>';
 }
 /* Menü eines fertigen Workouts (⋯ und langes Drücken): unter „Meine“ speichern, ausblenden. ws: aus Mobility & Stretch */
 function woMenue(lw, neu, ws){

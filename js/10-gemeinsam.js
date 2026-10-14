@@ -36,6 +36,9 @@ function tippZeileHTML(key, textKey){
 function bindCommon(){
 app.querySelectorAll("[data-tippx]").forEach(function(b){    b.addEventListener("click", function(){      var z = b.closest("[data-tipp]"), s = state.db.settings;      (s.tippAus || (s.tippAus = {}))[z.getAttribute("data-tipp")] = 1; save(); z.remove();    });  });
   app.querySelectorAll("[data-hinweis]").forEach(function(b){ b.addEventListener("click", openHinweise); });
+  app.querySelectorAll("[data-myedit]").forEach(function(b){   // Stift an einer Karte unter Meine: ins Bearbeiten (die Karte selbst führt zum Deckblatt mit „Los geht’s“)
+    b.addEventListener("click", function(ev){ ev.stopPropagation(); go("#mybuild/"+b.getAttribute("data-myedit")); });
+  });
   app.querySelectorAll("[data-lupe]").forEach(function(b){
     b.addEventListener("click", function(){
       var pre = b.getAttribute("data-lupe"), w = app.querySelector('.lib-suche[data-lsw="'+pre+'"]'), q = app.querySelector("#"+pre+"-q");

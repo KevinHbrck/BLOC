@@ -590,6 +590,17 @@ function planLoslegenFrage(p){
   root.querySelector("[data-lnein]").addEventListener("click", nein);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
 }
+/* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
+   eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird. Öffnet das Deckblatt mit „Los geht’s“ (auch aus dem Kalender) */
+function planAlsWorkout(p){
+  var items = planTimerItems(p);   // Einzelübungen nacheinander, Supersätze und Zirkel abwechselnd
+  var mw = (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
+  var br = p.blockRest != null ? p.blockRest : 45;   // Pause zwischen den Übungen (Zeiten-Karte oben)
+  if(mw){ mw.name = p.name; mw.items = items; mw.blockRest = br; mw.updatedAt = Date.now(); save(); }
+  else { mw = createMyFromDraft({ name:p.name, mode:"individual", reps:6, work:30, rest:10, blockRest:br, items:items }); mw.fromPlan = p.id; save(); }
+  coverDraft = null;
+  go("#cover/my/"+mw.id);
+}
 function renderStudioPlan(){
   var p = stPlanAktiv && stPlanFind(stPlanAktiv);
   if(!p){ stPlanAktiv = null; stPlanBauen = false; return renderKatalog(); }
@@ -692,14 +703,7 @@ function renderStudioPlan(){
   });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */
-  an("[data-planwo]", function(){
-    var items = planTimerItems(p);   // Einzelübungen nacheinander, Supersätze und Zirkel abwechselnd
-    var mw = (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
-    var br = p.blockRest != null ? p.blockRest : 45;   // Pause zwischen den Übungen (Zeiten-Karte oben)
-    if(mw){ mw.name = p.name; mw.items = items; mw.blockRest = br; mw.updatedAt = Date.now(); save(); }
-    else { mw = createMyFromDraft({ name:p.name, mode:"individual", reps:6, work:30, rest:10, blockRest:br, items:items }); mw.fromPlan = p.id; save(); }
-    go("#cover/my/"+mw.id);
-  });
+  an("[data-planwo]", function(){ planAlsWorkout(p); });
   an("[data-plandel]", function(){
     confirmSheet(t("planDelQ"), "„"+p.name+"“ – "+t("cantUndo"), t("del"), function(){
       state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });

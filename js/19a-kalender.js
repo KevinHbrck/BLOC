@@ -131,9 +131,9 @@ function kalAufloesen(e){
 function kalStarten(e){
   if(e.art === "workout"){ coverDraft = null; go("#cover/my/"+e.ref); }
   else if(e.art === "lib"){ coverDraft = null; go("#cover/lib/"+e.ref); }
-  else if(e.art === "plan") go("#studioplan/"+e.ref);
+  else if(e.art === "plan"){ var pl = stPlanFind(e.ref); if(pl && stPlanIds(pl).length) planAlsWorkout(pl); else go("#studioplan/"+e.ref); }
   else if(e.art === "summit") go("#rep/"+e.ref);
-  else if(e.art === "run") go("#run");
+  else if(e.art === "run"){ runGeplant = { name:e.name || t("kalRunName"), km:e.km || 0, t:Date.now() }; go("#run"); }
   else openSurprise();
 }
 
