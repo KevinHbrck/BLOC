@@ -324,7 +324,7 @@ function bauNachSaetzen(b){
     ids.forEach(function(id){ if(pl.indexOf(id) < 0) pl.push(id); });
     p.ids = pl; p.updatedAt = Date.now();
   } else {
-    p = { id:uid(), name:d.name && d.name !== t("myDefaultName") ? d.name : t("planDefault", { n:l.filter(function(x){ return !x.entwurf; }).length+1 }), ids:ids, updatedAt:Date.now(), entwurf:true };
+    p = { id:uid(), name:d.name && d.name !== t("myDefaultName") ? d.name : t("planDefault", { n:l.filter(function(x){ return !x.entwurf; }).length+1 }), ids:ids, updatedAt:Date.now(), entwurf:true, standard:"saetze" };
     if(!b.neu) p.fromWo = key;
     l.push(p);
   }

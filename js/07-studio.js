@@ -489,6 +489,11 @@ function planKopfKarteBinden(p, ids, neu){
       if(alt.reps != null) en.timer.reps = z.saetze;
       en.pause = z.pause;
     });
+    // Blöcke (Supersatz, Zirkel) gehen für alle ihre Übungen gleich viele Runden - auch für Mitglieder, die gerade nicht mit dem Timer laufen
+    planBloecke(p).forEach(function(bl){
+      if(bl.ids.length < 2 || !bl.ids.some(function(id){ return studioModus(id) === "timer"; })) return;
+      bl.ids.forEach(function(id){ var en = studioAlle()[id] || (studioAlle()[id] = { log:[] }); en.ziel = en.ziel || {}; en.ziel.saetze = z.saetze; });
+    });
     p.updatedAt = Date.now(); save(); neu();
   }
   app.querySelectorAll("[data-pzart]").forEach(function(b){

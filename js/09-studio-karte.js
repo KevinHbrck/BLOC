@@ -266,6 +266,9 @@ function studioTimerBinden(id, eintrag, nachher){
                  rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
     // Runden = Sätze des Ziels: dieselbe Zahl wie im Plan und im Satz-Modus
     en.ziel = en.ziel || {}; en.ziel.saetze = reps;
+    // gehört die Übung im geöffneten Plan zu einem Supersatz oder Zirkel, gehen alle Übungen des Blocks dieselben Runden
+    var pl = typeof studioModusPlan === "function" ? studioModusPlan(id) : null, bl = pl ? planBlockVon(pl, id) : null;
+    if(bl) bl.ids.forEach(function(x){ var e2 = studioAlle()[x] || (studioAlle()[x] = { log:[] }); e2.ziel = e2.ziel || {}; e2.ziel.saetze = reps; });
     save();
     if(nachher) nachher();
   });

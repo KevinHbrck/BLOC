@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Logik-Durchgang (Fassung 2026-10-14-9)
+
+- Durchgang durch die neuen Wege (Plan, Blöcke, Modus je Zeile, RPE/RIR, Rekorde, Training speichern) mit Einzelprüfungen der Rechenwege; vier Randfälle behoben:
+  - Ein zuletzt geöffneter Plan gilt nicht mehr weiter, sobald man die Startseite besucht (`render()` für `home` setzt `stPlanAktiv` zurück) – sonst hätte die Satz-/Timer-Wahl und „Training speichern“ einem alten Plan folgen können.
+  - „Für alle gleich“ (Zeiten) stellt die Runden auch für Übungen eines Supersatzes/Zirkels ein, die gerade nicht mit dem Timer laufen, damit alle Übungen eines Blocks gleich viele Runden haben.
+  - Die Runden im Timer-Teil der Übungskarte gelten ebenfalls für den ganzen Block.
+  - Ein Workout, das im alten Workout-Baukasten auf „Nach Sätzen“ umgestellt wird, legt einen Plan mit der Voreinstellung Satz für Satz an.
+
 ## 2026-10-14 · Ein Weg für Zeit und Sätze, Wochenübersicht oben (Fassung 2026-10-14-8)
 
 - **„Selber bauen“ führt immer in den Plan-Bau**, ohne Frage „Nach Zeit oder Nach Sätzen“: Übungen aus Fitnessstudio und Freiluft wählen, speichern, dann die Plan-Seite. Die im Baukasten (Schritt 2) gewählte Art ist nur die **Voreinstellung** der Zeilen (`p.standard`: Nach Zeit → Timer, Nach Sätzen → Satz für Satz); je Zeile lässt sich umstellen (`p.modus[id]`, `studioModus`/`studioModusSetzen` kennen den geöffneten Plan, die Übungskarte folgt ihm). Der Schalter Nach Zeit · Nach Sätzen im Plan-Bau entfällt; der Workout-Baukasten (`#mybuild`) bleibt zum Bearbeiten vorhandener Workouts.
