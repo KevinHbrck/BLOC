@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Summit: Burpees in 40 von 52 Programmen (Fassung 2026-10-14-40)
+
+- Burpees sind der Kern von Summit: 13 weitere Programme tragen jetzt eine Burpee-Variante (vorher 27, jetzt 40 von 52). Einsteiger-Programme (Stufe 1) nutzen den leichteren Plank-Burpee ohne Liegestütz und Sprung, Stufe 2 den Burpee, Stufe 3 Burpee oder Burpee Squat Jump; die ersetzte Übung war jeweils eine leichtere.
+- Betroffen: Feldberg, Zugspitze, Zugspitze Kraft, Fichtelberg, Kampenwand, Kampenwand Basis, Rigi, Jungfrau, Mönch, Titlis, Piz Palü Kraft, Mont Blanc, Hochkönig.
+
 ## 2026-10-14 · Statistik: Mehr Einblicke, Körperdaten über das Person-Symbol (Fassungen 2026-10-14-38 und -39)
 
 - **Mehr Einblicke** (zugeklappt, unter „Fortschritt je Übung“): Volumen je Woche in kg, letzte Rekorde, Drücken : Ziehen der letzten 4 Wochen (Praxishinweis) und, wenn RPE/RIR an ist, die durchschnittliche Anstrengung; erscheint nur, wenn Daten da sind.
