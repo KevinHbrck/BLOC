@@ -64,4 +64,6 @@ Geprüft wurden die 13 Aufwärm-/Dehnprogramme, alle Dehnübungen samt Anleitung
 
 **Keine belastbare Studienlage gefunden** (Praxis und Erfahrung, in `quellen.html` so benannt): Reihenfolge und Zusammenstellung der Programme, Aufwärmdauer im Heimtraining, Umsetzzeiten, Nacken- und Schulterhinweise, Kobra/Sphinx bei Rückenschmerz.
 
-**Offen, Entscheidung des Nutzers (Struktur der App):** Armkreisen in den Dehn-Auswahlen (Dehn-Überrasch-mich, Dehnteil im allgemeinen Überrasch mich); Morgen-Mobility unter Aufwärmen; Überrasch-mich-Aufwärmen (Reihenfolge, Dauer je Übung, Dauerstufen); Programmzusammenstellung (Ganzkörper ohne Waden/Oberschenkel vorn, Nacken nur eine Übung); Umsetzzeit 5 s.
+**Danach angepasst (Fassung -14-32):** Ganzkörper-Dehnen und Dehnen kurz um Oberschenkel vorn bzw. Waden ergänzt, Aufwärmen vor Kraft beginnt mit Hampelmann, Morgen-Mobility heißt „Morgens locker werden“, Handgelenke „(innen und außen)“.
+
+**Offen, Entscheidung des Nutzers (Struktur der App):** Armkreisen in den Dehn-Auswahlen (Dehn-Überrasch-mich, Dehnteil im allgemeinen Überrasch mich); Überrasch-mich-Aufwärmen (Reihenfolge, Dauer je Übung, Dauerstufen); Nacken nur eine Übung, Brustwirbelsäulen-Rotation fehlt (neue Übungen brauchen Figuren); Umsetzzeit 5 s.

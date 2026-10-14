@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Dehn- und Aufwärmprogramme passen zu ihren Titeln (Fassung 2026-10-14-32)
+
+- **Ganzkörper-Dehnen**: Oberschenkel vorn und Waden ergänzt (12 Übungen), im Stehen zuerst, dann am Boden. **Dehnen kurz · Ganzkörper**: Waden ergänzt.
+- **Aufwärmen vor Kraft**: beginnt mit Hampelmann (Puls), danach die bisherigen Übungen.
+- **Morgen-Mobility** heißt jetzt **Morgens locker werden** (enthält Halteübungen, ist kein Aufwärmen vor Kraft); Reiter und Übungen bleiben.
+- **Handgelenke** heißt jetzt **Handgelenke (innen und außen)**.
+
 ## 2026-10-14 · Fachprüfung Dehnen und Aufwärmen: Texte ehrlicher, Sicherheitshinweise (Fassung 2026-10-14-31)
 
 Online-Recherche mit Studien, **keine** Prüfung durch eine Fachperson (Details in `docs/FACHPRUEFUNG.md`, Quellen [15]–[20] in `quellen.html`).
