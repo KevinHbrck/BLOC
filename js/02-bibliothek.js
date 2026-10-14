@@ -858,6 +858,33 @@ function bandAnkerHTML(exId){
       '<ol class="info-steps">'+art.schritte[lang].map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
       (extra ? '<div class="info-tip">'+esc(extra[lang])+'</div>' : '')+'</div></details>';
 }
+/* Übersicht aller Befestigungsarten mit den Bildern (aus der Band-Info erreichbar); Texte stehen hier, nicht in texte.js */
+function bandUebersichtOeffnen(exId){
+  var lang = currentLang() === "en" ? 1 : 0, root = document.getElementById("overlayRoot");
+  var txt = lang
+    ? { titel:"Attaching the band – overview", sub:"All the ways to attach the band, with pictures. Each exercise shows its own way in the “Anchor the band” card." }
+    : { titel:"Band befestigen – Übersicht", sub:"Alle Arten, das Band zu befestigen, mit Bildern. Jede Übung zeigt ihre eigene Art in der Karte „Band befestigen“." };
+  var reihe = ["tuer", "stange", "fuss", "fuss1", "haende", "knie", "knoechel", "fussloop", "ruecken", "sitzfuss"];
+  var karten = reihe.filter(function(k){ return BAND_ARTEN[k]; }).map(function(k){
+    var a = BAND_ARTEN[k];
+    return '<div class="bu-art"><div class="bu-t">'+esc(a.titel[lang])+'</div>'+bandSkizze(k, k === "tuer" ? "brust" : null)+
+      '<ol class="info-steps">'+a.schritte[lang].map(function(s){ return '<li>'+esc(s)+'</li>'; }).join("")+'</ol></div>';
+  }).join("");
+  var sicher = ["bandS1", "bandS2", "bandS3", "bandS4", "bandS6"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("");
+  root.innerHTML = '<div class="confirm-overlay info-overlay"><div class="confirm-sheet info-sheet band-uebersicht" role="dialog" aria-label="'+esc(txt.titel)+'">'+
+    '<div class="info-head"><div><h3>'+esc(txt.titel)+'</h3><div class="info-sub">'+esc(txt.sub)+'</div></div>'+
+      '<button type="button" class="info-x" data-close aria-label="'+esc(t("close"))+'">&times;</button></div>'+
+    karten+
+    '<div class="info-title">'+esc(t("bandTitel"))+'</div><ul class="info-posture info-band">'+sicher+'</ul>'+
+    '<button class="btn btn-secondary" data-close>'+esc(t("close"))+'</button></div></div>';
+  function zu(){ root.innerHTML = ""; if(exId) openExInfo(exId); }
+  root.querySelectorAll("[data-close]").forEach(function(b){ b.addEventListener("click", zu); });
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+}
+document.addEventListener("click", function(e){
+  var b = e.target.closest && e.target.closest("[data-bandalle]");
+  if(b){ e.preventDefault(); bandUebersichtOeffnen(b.getAttribute("data-bandalle")); }
+});
 /* Hinweise für Geräteübungen im Fitnessstudio (Info-Fenster und Übungskarte) */
 function gymHinweisHTML(ex){
   if(!ex || !ex.equip || ex.equip.indexOf("gym") < 0) return "";
@@ -891,7 +918,7 @@ function openExInfo(exId, live, lib){
         '<div class="info-avoid"><b>'+t("avoid")+':</b> '+esc(p[lang*2+1])+'</div>';
     })()+
     '<div class="info-tip"><b>'+t("tip")+':</b> '+esc(tplText(ex.hint))+'</div>'+
-    (ex.equip.indexOf("band") > -1 ? '<div class="info-title">'+t("bandTitel")+'</div><ul class="info-posture info-band">'+["bandS1", "bandS2", "bandS3", "bandS4", "bandS5", "bandS6"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("")+'</ul>' : '')+
+    (ex.equip.indexOf("band") > -1 ? '<div class="info-title">'+t("bandTitel")+'</div><ul class="info-posture info-band">'+["bandS1", "bandS2", "bandS3", "bandS4", "bandS5", "bandS6"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("")+'</ul><button type="button" class="tpl-adopt" data-bandalle="'+exId+'">'+esc(lang ? "All ways to attach the band, with pictures" : "Alle Befestigungsarten mit Bildern")+'</button>' : '')+
     gymHinweisHTML(ex)+
     (function(){   // Passt es nicht? Eine Zeile mit der leichteren und der schwereren Variante
       var lz = live ? null : leichterSchwerer(exId);

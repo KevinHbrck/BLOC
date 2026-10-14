@@ -3,6 +3,20 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Band befestigen: Übersicht aller Arten mit Bildern
+
+- In der Band-Info gibt es unter „Mit dem Band“ den Knopf **Alle Befestigungsarten mit Bildern**: ein Fenster mit allen zehn Arten (Pfosten, Stange, unter den Füßen, in den Händen, Oberschenkel, Knöchel, Fußschlaufe, Rücken, Sitzen) samt Skizze, Schritten und den Sicherheitshinweisen; Zurück führt in die Übungsinfo. Texte stehen im Code (js/02-bibliothek.js), weil texte.js gerade in Arbeit war.
+
+## 2026-10-14 · Absicherung beim Laden und Speichern (Fassung 2026-10-14-42)
+
+Ergebnis einer Code-Durchsicht (IT-Agent); drei kleine Korrekturen in `js/01-basis.js`:
+
+- **Alter Stand (Bereiche-Version 2)**: `loadDB` rief beim Laden `selArr` auf, das erst in `02-bibliothek.js` steht – der Fehler wurde geschluckt und die App startete leer. Jetzt ohne `selArr`.
+- **Unlesbarer Stand**: Der Rohtext wird vor dem Überschreiben unter `sporttimer-data-v1-defekt` beiseitegelegt (nur die erste Rettung bleibt), beim Start erscheint ein Hinweis.
+- **Speichern**: `save()` fängt Fehler (Speicher voll) ab, gibt `true`/`false` zurück und zeigt höchstens alle 30 s einen Hinweis, statt still „gespeichert“ vorzutäuschen.
+- Einheitstest: drei neue Prüfungen (Start mit altem Stand im frischen Rahmen, unlesbarer Stand, volles Gerät); der Lauf wartet jetzt auch auf Prüfungen, die ein Versprechen zurückgeben.
+- Meta-Beschreibung in `index.html` zeigt den heutigen Umfang statt „Intervall-Timer“.
+
 ## 2026-10-14 · Mehr Ketten „Leichter / Schwerer“ (Fassung 2026-10-14-41)
 
 - **Klimmzug**: Dead Hang → Scapular Pull-up → Negative Pull-up; die Klimmzug-Kette endet jetzt beim Muscle-Up (… Klimmzug → Commando → Muscle-Up).
