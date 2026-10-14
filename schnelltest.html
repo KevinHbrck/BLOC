@@ -1628,10 +1628,11 @@
       await bis(function () { return !$(".km-zelle.heute"); }, 2000, "anderer Monat");
       klick($("[data-kalheute]"));
       await bis(function () { return $(".km-zelle.heute") && $(".kal-panel.heute"); }, 2000, "Heute: aktueller Monat, heutiger Tag gewählt");
-      W.kalHinzu(W.kalTagKey(new Date()), { art: "zufall" });
+      W.kalHinzu(W.kalTagKey(new Date()), { art: "zufall" }).erledigt = false;   // heutige Trainings der Testläufe sollen ihn nicht automatisch abhaken
       W.save();
       await heim();
-      await bis(function () { return $(".kal-heute-zeile"); }, 3000, "Startseite zeigt „Heute im Kalender“");
+      klick($(".woche-link"));
+      await bis(function () { return $(".kal-heute-zeile"); }, 3000, "Aufklappen zeigt, was ansteht");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

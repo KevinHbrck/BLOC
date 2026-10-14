@@ -132,7 +132,7 @@ function wocheHTML(opt){
   for(var i = 0; i < 7; i++){
     var dd = new Date(w.start); dd.setHours(12, 0, 0, 0); dd.setDate(dd.getDate() + i);
     keys.push(typeof kalTagKey === "function" ? kalTagKey(dd) : "");
-    if(typeof kalAn === "function"){ plan[i] = kalAn(keys[i]).filter(function(e){ return !e.erledigt; }).length; geplant += plan[i]; }
+    if(typeof kalAn === "function"){ plan[i] = kalAn(keys[i]).filter(function(e){ return !kalErledigt(e); }).length; geplant += plan[i]; }
   }
   var dauer = w.sek >= 60 ? " · "+fmtDuration(Math.round(w.sek/60)*60) : "";   // unter einer Minute keine Zeitangabe
   var teile = [];
@@ -144,10 +144,11 @@ function wocheHTML(opt){
   }).join("");
   var kopf = '<span class="wo-links"><b class="wo-titel">'+esc(titel)+'</b><span class="wo-summe">'+esc(summe)+'</span></span>';
   if(opt.kal) return '<div class="woche woche-kal">'+kopf+'<span class="wo-tage">'+tage+'</span></div>';
-  var heuteZeilen = opt.heute && typeof kalHeuteZeilenHTML === "function" ? kalHeuteZeilenHTML() : "";
-  var karte = '<div class="woche woche-link" data-nav="#kalender" role="button" tabindex="0" aria-label="'+esc(titel+": "+summe+" – "+t("tabKalender"))+'">'+kopf+
+  var auf = !!(opt.heute && typeof kalHomeAuf !== "undefined" && kalHomeAuf);
+  var vorschau = auf && typeof kalVorschauHTML === "function" ? kalVorschauHTML() : "";
+  var karte = '<div class="woche woche-link'+(auf ? ' auf' : '')+'" data-wocheauf="1" role="button" tabindex="0" aria-expanded="'+(auf ? "true" : "false")+'" aria-label="'+esc(titel+": "+summe+" – "+t("tabKalender"))+'">'+kopf+
     '<span class="wo-tage" aria-hidden="true">'+tage+'</span><span class="wo-chev" aria-hidden="true">&#8250;</span></div>';
-  return heuteZeilen ? '<div class="woche-karte">'+karte+heuteZeilen+'</div>' : karte;
+  return vorschau ? '<div class="woche-karte">'+karte+vorschau+'</div>' : karte;
 }
 /* ============ Statistik ============
    Alles aus den lokal gespeicherten Daten, nichts verlässt das Gerät. Zeigt nur Bereiche, die im Fokus (Einstellungen) eingeschaltet sind;

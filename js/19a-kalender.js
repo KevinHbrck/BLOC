@@ -36,9 +36,42 @@ function kalAn(tag){
 }
 function kalFinde(id){ var l = kalListe(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
 function kalHinzu(tag, o){
-  var e = { id:uid(), tag:tag, art:o.art, ref:o.ref || "", name:o.name || "", km:+o.km || 0, erledigt:false, at:Date.now() };
+  var e = { id:uid(), tag:tag, art:o.art, ref:o.ref || "", name:o.name || "", km:+o.km || 0, at:Date.now() };   // erledigt fehlt: das ergibt sich aus den Trainings des Tages
   kalListe().push(e); save();
   return e;
+}
+/* Erledigt ergibt sich von allein: ist an dem Tag ein Training dieser Art gelaufen (Run, Summit-Ergebnis, sonst Workout/Plan/Timer), gilt der Eintrag
+   als abgehakt - der Reihe nach, je Training einer. e.erledigt === true bzw. false ist die eigene Entscheidung (abhaken bzw. zurücknehmen). */
+function kalAktivitaet(tag){
+  var h = (state.db.history || []).filter(function(x){ return x && kalTagKey(x.at) === tag; });
+  var reps = h.filter(function(x){ return bereichVonEintrag(x) === "reps"; }).length;
+  var ids = [], best = state.db.settings.repBest || {};
+  Object.keys(best).forEach(function(id){ ((best[id] && best[id].log) || []).forEach(function(x){ if(kalTagKey(x[0]) === tag && ids.indexOf(id) < 0) ids.push(id); }); });
+  return {
+    run:h.filter(function(x){ return bereichVonEintrag(x) === "run"; }).length,
+    reps:Math.max(reps, ids.length), repIds:ids,
+    train:besuche(h.filter(function(x){ var b = bereichVonEintrag(x); return b !== "run" && b !== "reps"; })).length
+  };
+}
+function kalStatus(tag){   // { Eintrags-ID: erledigt? }
+  var a = kalAktivitaet(tag), tr = a.train, rn = a.run, rp = a.reps, res = {};
+  kalAn(tag).forEach(function(e){
+    var auto = false;
+    if(e.art === "run"){ if(rn > 0){ rn--; auto = true; } }
+    else if(e.art === "summit"){ if(a.repIds.indexOf(e.ref) > -1 || rp > 0){ auto = true; if(rp > 0) rp--; } }
+    else if(tr > 0){ tr--; auto = true; }
+    res[e.id] = e.erledigt === true ? true : e.erledigt === false ? false : auto;
+  });
+  return res;
+}
+function kalErledigt(e){ return !!kalStatus(e.tag)[e.id]; }
+/* Die nächsten offenen Einträge ab heute (für die Vorschau auf der Startseite) */
+function kalNaechste(n){
+  var heute = kalTagKey(Date.now()), out = [];
+  kalListe().filter(function(e){ return e.tag >= heute; }).sort(function(a, b){
+    return a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : (a.at || 0) - (b.at || 0);
+  }).forEach(function(e){ if(out.length < n && !kalErledigt(e)) out.push(e); });
+  return out;
 }
 function kalVerschiebe(id, tag){
   var e = kalFinde(id);
@@ -53,7 +86,7 @@ function kalEntferne(id){
 /* Anzahl der Einträge und Run-Kilometer einer Reihe von Tagen (für die Kopfzeile) */
 function kalSumme(tage){
   var n = 0, km = 0, ok = 0;
-  tage.forEach(function(tag){ kalAn(tag).forEach(function(e){ n++; if(e.erledigt) ok++; if(e.art === "run") km += e.km || 0; }); });
+  tage.forEach(function(tag){ var st = kalStatus(tag); kalAn(tag).forEach(function(e){ n++; if(st[e.id]) ok++; if(e.art === "run") km += e.km || 0; }); });
   return { n:n, km:km, ok:ok };
 }
 /* Name, Zeile darunter und Farbe eines Eintrags; ok:false, wenn das Ziel gelöscht wurde */
@@ -108,9 +141,9 @@ function kalStarten(e){
 function kalNeu(){ var y = window.scrollY; renderKalender(); window.scrollTo(0, y); }
 function kalEintragHTML(e){
   var o = kalAufloesen(e);
-  return '<div class="kal-eintrag'+(e.erledigt ? ' erledigt' : '')+(o.ok ? '' : ' fehlt')+'" data-kaleid="'+esc(e.id)+'" data-kalname="'+esc(o.name)+'" style="--kc:'+o.farbe+'" role="button" tabindex="0">'+
+  return '<div class="kal-eintrag'+(kalErledigt(e) ? ' erledigt' : '')+(o.ok ? '' : ' fehlt')+'" data-kaleid="'+esc(e.id)+'" data-kalname="'+esc(o.name)+'" style="--kc:'+o.farbe+'" role="button" tabindex="0">'+
     '<i class="ke-balken"></i><span class="ke-text"><b>'+esc(o.name)+'</b><small>'+esc(o.ok ? o.sub : t("kalFehlt"))+'</small></span>'+
-    '<button type="button" class="ke-ok" data-kalok="'+esc(e.id)+'" aria-pressed="'+!!e.erledigt+'" aria-label="'+esc(t("kalErledigt"))+'">'+svgIcon('<path d="M5 12.5l4.5 4.5L19 7"/>')+'</button></div>';
+    '<button type="button" class="ke-ok" data-kalok="'+esc(e.id)+'" aria-pressed="'+kalErledigt(e)+'" aria-label="'+esc(t("kalErledigt"))+'">'+svgIcon('<path d="M5 12.5l4.5 4.5L19 7"/>')+'</button></div>';
 }
 function renderKalender(){
   var s = state.db.settings, lang = currentLang() === "en" ? "en-GB" : "de-DE";
@@ -157,7 +190,7 @@ function renderKalender(){
       tage.map(function(d){
         var key = kalTagKey(d), liste = kalAn(key), ausser = d.getMonth() !== kalBasis.getMonth();
         return '<button type="button" class="km-zelle'+(key === heute ? ' heute' : '')+(ausser ? ' aus' : '')+(key === kalAuswahl ? ' gewaehlt' : '')+'" data-kaltag="'+key+'" data-kaltap="'+key+'"><b>'+d.getDate()+'</b>'+
-          '<span class="km-balken">'+liste.slice(0, 3).map(function(e){ return '<i class="'+(e.erledigt ? 'ok' : '')+'" style="--kc:'+kalAufloesen(e).farbe+'"></i>'; }).join("")+(liste.length > 3 ? '<em>+'+(liste.length-3)+'</em>' : '')+'</span></button>';
+          '<span class="km-balken">'+liste.slice(0, 3).map(function(e){ return '<i class="'+(kalErledigt(e) ? 'ok' : '')+'" style="--kc:'+kalAufloesen(e).farbe+'"></i>'; }).join("")+(liste.length > 3 ? '<em>+'+(liste.length-3)+'</em>' : '')+'</span></button>';
       }).join("")+'</div></div>';
   }
   if(monat){   // gewählter Tag unter dem Raster: Einträge und „Hinzufügen“, ohne die Ansicht zu wechseln
@@ -205,7 +238,7 @@ function renderKalender(){
     b.addEventListener("click", function(ev){
       ev.stopPropagation();
       var e = kalFinde(b.getAttribute("data-kalok"));
-      if(e){ e.erledigt = !e.erledigt; save(); kalNeu(); }
+      if(e){ e.erledigt = !kalErledigt(e); save(); kalNeu(); }
     });
   });
   app.querySelectorAll("[data-kaleid]").forEach(function(el){
@@ -222,7 +255,7 @@ function kalTagText(tag){
 function kalEintragMenue(e){
   var o = kalAufloesen(e), acts = [];
   if(o.ok) acts.push({ ico:P_PLAY, label:t("kalStart"), fn:function(){ kalStarten(e); } });
-  acts.push({ ico:P_CHECK, label:t(e.erledigt ? "kalNichtErledigt" : "kalErledigtMark"), fn:function(){ e.erledigt = !e.erledigt; save(); kalNeu(); } });
+  acts.push({ ico:P_CHECK, label:t(kalErledigt(e) ? "kalNichtErledigt" : "kalErledigtMark"), fn:function(){ e.erledigt = !kalErledigt(e); save(); kalNeu(); } });
   acts.push({ ico:ICON_EDIT, label:t("kalVerschieben"), fn:function(){ kalVerschiebenMenue(e); } });
   acts.push({ ico:P_TRASH, label:t("kalLoeschen"), danger:true, fn:function(){ kalEntferne(e.id); kalNeu(); } });
   openActionSheet(o.name+" · "+kalTagText(e.tag), acts);
@@ -326,15 +359,24 @@ function kalHinzuMenue(tag){
   ]);
 }
 
-/* ---------- Startseite: heute geplant ---------- */
-function kalHeuteZeilenHTML(){   // Zeilen "Heute im Kalender" - stehen in der Wochenkarte der Startseite
-  var heute = kalTagKey(Date.now()), liste = kalAn(heute).filter(function(e){ return !e.erledigt; });
-  if(!liste.length) return "";
-  return '<div class="kal-heute-in"><div class="kh-label">'+esc(t("kalHeuteTitel"))+'</div>'+liste.slice(0, 3).map(function(e){
+/* ---------- Startseite: aufklappbare Vorschau unter „Diese Woche“ ---------- */
+var kalHomeAuf = false;   // „Diese Woche“ aufgeklappt (nur innerhalb des Besuchs gemerkt)
+function kalTagLabel(tag){
+  var heute = kalTagKey(Date.now()), morgen = kalTagKey(kalPlus(new Date(), 1));
+  if(tag === heute) return t("kalHeute");
+  if(tag === morgen) return t("kalMorgen");
+  return kalTagDatum(tag).toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"numeric" });
+}
+/* Was als Nächstes ansteht (bis zu fünf offene Einträge ab heute) mit Start-Pfeil, dazu der Weg in den ganzen Kalender */
+function kalVorschauHTML(){
+  var liste = kalNaechste(5);
+  return '<div class="kal-heute-in">'+(liste.length ? liste.map(function(e){
     var o = kalAufloesen(e);
-    return '<button type="button" class="kal-heute-zeile" data-kalheutestart="'+esc(e.id)+'" style="--kc:'+o.farbe+'"><i class="ke-balken"></i><span class="ke-text"><b>'+esc(o.name)+'</b><small>'+esc(o.sub)+'</small></span>'+
+    return '<button type="button" class="kal-heute-zeile" data-kalheutestart="'+esc(e.id)+'" style="--kc:'+o.farbe+'"><i class="ke-balken"></i>'+
+      '<span class="ke-text"><small class="kh-tag">'+esc(kalTagLabel(e.tag))+'</small><b>'+esc(o.name)+'</b><small>'+esc(o.ok ? o.sub : t("kalFehlt"))+'</small></span>'+
       '<span class="kh-play">'+svgIcon('<path d="M7 4l13 8-13 8z"/>')+'</span></button>';
-  }).join("")+'</div>';
+  }).join("") : '<div class="kh-leer">'+esc(t("kalNichtsGeplant"))+'</div>')+
+    '<button type="button" class="kh-mehr" data-nav="#kalender">'+esc(t("kalOeffnen"))+' &#8250;</button></div>';
 }
 function kalHeuteBinden(){
   app.querySelectorAll("[data-kalheutestart]").forEach(function(b){

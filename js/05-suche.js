@@ -215,7 +215,12 @@ function renderHome(){
   bindBackupTip();
   kalHeuteBinden();
   var wl = app.querySelector(".woche-link");
-  if(wl){ wl.addEventListener("click", function(){ kalBasis = null; kalAnsicht = "woche"; }, true); wl.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); kalBasis = null; kalAnsicht = "woche"; go("#kalender"); } }); }
+  if(wl){
+    var umschalten = function(){ kalHomeAuf = !kalHomeAuf; kalBasis = null; kalAnsicht = "woche"; renderHome(); };
+    wl.addEventListener("click", umschalten);
+    wl.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); umschalten(); } });
+  }
+  app.querySelectorAll(".kh-mehr").forEach(function(b){ b.addEventListener("click", function(){ kalBasis = null; kalAnsicht = "woche"; go("#kalender"); }); });
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }

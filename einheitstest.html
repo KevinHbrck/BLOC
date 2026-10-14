@@ -216,12 +216,25 @@
       var d = document.createElement("div"); d.innerHTML = W.wocheHTML();
       gleich(d.querySelectorAll(".wo-tag.plan").length, 2, "zwei geplante Tage als Ring");
       wahr(/2 geplant/.test(d.textContent), "Summe nennt das Geplante: " + d.textContent);
-      wahr(d.querySelector(".woche-link[data-nav=\"#kalender\"]"), "Startseiten-Karte führt in den Kalender");
+      wahr(d.querySelector(".woche-link[data-wocheauf]"), "Startseiten-Karte klappt die Vorschau auf");
       e2.erledigt = true;
       d.innerHTML = W.wocheHTML({ kal: true, basis: mo });
       gleich(d.querySelectorAll(".wo-tag.plan").length, 1, "Erledigtes zählt nicht mehr als geplant");
       wahr(d.querySelector("[data-kalgoto]") && !d.querySelector(".woche-link"), "im Kalender: Tage springen statt zu verlinken");
     } finally { s.kalender = alt; }
+  });
+  test("Kalender: Erledigt ergibt sich automatisch, Handentscheid gewinnt", function () {
+    var s = W.state.db.settings, alt = s.kalender, h = W.state.db.history, altH = h.slice();
+    try {
+      var tag = W.kalTagKey(new Date());
+      s.kalender = { e: [] };
+      var r = W.kalHinzu(tag, { art: "run", name: "Lauf", km: 5 });
+      gleich(W.kalErledigt(r), false, "ohne Run nicht erledigt");
+      h.push({ b: "run", at: Date.now(), id: "kt" + Date.now() });
+      gleich(W.kalErledigt(r), true, "Run gespeichert: automatisch erledigt");
+      r.erledigt = false;
+      gleich(W.kalErledigt(r), false, "zurückgenommen bleibt offen");
+    } finally { s.kalender = alt; h.length = 0; altH.forEach(function (x) { h.push(x); }); }
   });
   test("Kalender: Einträge hinzufügen, verschieben, abhaken, löschen, Summen", function () {
     var s = W.state.db.settings, alt = s.kalender;
