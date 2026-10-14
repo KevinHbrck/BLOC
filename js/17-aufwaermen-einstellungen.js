@@ -59,10 +59,12 @@ function buildWsSurprise(p){
   var d = { key:"surprise:", src:"surprise", name:"", mode:"individual", reps:6, work:30, rest:10, blockRest:art === "dehn" ? 10 : 20, items:[], ws:art, _params:p };
   for(var i = 0; i < pool.length; i++){
     var it = itemFromEx(pool[i].id);
+    if(art === "warm"){ it.reps = Math.min(it.reps, 2); it.work = Math.min(it.work, 40); }   // Aufwärmen: je Übung kurz, damit die gewählte Dauer stimmt
     it.after = 10;
     d.items.push(it);
     if(d.items.length > 2 && workoutDuration(draftRun(d)) > ziel){ d.items.pop(); break; }
   }
+  if(art === "warm") d.items.sort(function(a, b){ return (EX_INT[a.ex] || 2) - (EX_INT[b.ex] || 2); });   // erst locker, dann zügiger
   d.name = t("spName", { n:Math.max(1, Math.round(workoutDuration(draftRun(d))/60)) });
   return d;
 }

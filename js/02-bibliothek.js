@@ -259,11 +259,13 @@ var WS_REGION_VON = {
   "hip-flexor-stretch":["huefte", "beine"], "quad-stretch":["beine", "huefte"], "hamstring-stretch":["beine"], "calf-stretch":["beine"],
   "figure-four":["huefte"], "pigeon-stretch":["huefte"], "butterfly-stretch":["huefte"], "worlds-greatest":["huefte", "beine", "schulter", "ruecken"]
 };
+/* Mobilisation, kein Dehnen: Armkreisen erscheint nur unter Aufwärmen, nicht in den Dehn-Auswahlen */
+var WS_NICHT_DEHNEN = ["arm-circles"];
 function wsRegionenVon(id){ return WS_REGION_VON[id] || []; }
 function wsRegionOk(id, sel){ return !sel.length || wsRegionenVon(id).some(function(r){ return sel.indexOf(r) > -1; }); }
 /* Übungen eines Mobility-Bereichs: Aufwärmen (feste Liste) bzw. alle Dehnübungen */
 function wsUebungen(art){
-  var l = art === "warm" ? AUFWAERM_UEBUNGEN.map(findExercise) : EXERCISES.filter(function(ex){ return ex.main === "stretch"; });
+  var l = art === "warm" ? AUFWAERM_UEBUNGEN.map(findExercise) : EXERCISES.filter(function(ex){ return ex.main === "stretch" && WS_NICHT_DEHNEN.indexOf(ex.id) < 0; });
   return l.filter(function(ex){ return ex && !libHidden("ex:"+ex.id); });
 }
 /* Filterkarte der Körperregionen (Dehnen), dieselbe Karte wie in Air. anzahl: wie viele Einträge gerade zu sehen sind; art: Wo (Workouts) oder Ex (Übungen) */
@@ -856,6 +858,11 @@ function bandAnkerHTML(exId){
       '<ol class="info-steps">'+art.schritte[lang].map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
       (extra ? '<div class="info-tip">'+esc(extra[lang])+'</div>' : '')+'</div></details>';
 }
+/* Hinweise für Geräteübungen im Fitnessstudio (Info-Fenster und Übungskarte) */
+function gymHinweisHTML(ex){
+  if(!ex || !ex.equip || ex.equip.indexOf("gym") < 0) return "";
+  return '<div class="info-title">'+t("gymTitel")+'</div><ul class="info-posture info-band">'+["gymS1", "gymS2", "gymS3"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("")+'</ul>';
+}
 function openExInfo(exId, live, lib){
   var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe() || (ex && studioFarbe(ex) === "var(--gym-color)" ? "var(--gym-color)" : "");
   if(!ex || !info) return;
@@ -885,6 +892,7 @@ function openExInfo(exId, live, lib){
     })()+
     '<div class="info-tip"><b>'+t("tip")+':</b> '+esc(tplText(ex.hint))+'</div>'+
     (ex.equip.indexOf("band") > -1 ? '<div class="info-title">'+t("bandTitel")+'</div><ul class="info-posture info-band">'+["bandS1", "bandS2", "bandS3", "bandS4", "bandS5", "bandS6"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("")+'</ul>' : '')+
+    gymHinweisHTML(ex)+
     (function(){   // Passt es nicht? Eine Zeile mit der leichteren und der schwereren Variante
       var lz = live ? null : leichterSchwerer(exId);
       if(!lz) return "";

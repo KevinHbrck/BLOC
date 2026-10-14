@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Offene Punkte: Studio-Hinweis, neue Rumpf- und Zugübungen, Strukturentscheidungen (Fassung 2026-10-14-36)
+
+- **Studio-Hinweis** im Info-Fenster und auf der Übungskarte aller Geräteübungen (Gewicht, Aufwärmsätze ehrlich formuliert, Schmerz, Sicherungsarme, ärztliche Abklärung).
+- **Neu**: Pallof-Press (Studio, Bauch), Copenhagen Plank (kurzer Hebel, Quelle [23]), Rucksack-Rudern (Zug ohne Stange); Eintrag in Büro-Programm, Rumpfstabilität und Kraft für Läufer.
+- **Brust-Gruppe im Studio**: Kurzhantel-Bankdrücken gehört jetzt dazu, Pallof-Press zur Gruppe Bauch.
+- **Strukturentscheidungen**: Armkreisen steht nur noch unter Aufwärmen, nicht mehr in den Dehn-Auswahlen und im Dehnteil von Überrasch mich; Überrasch-mich-Aufwärmen sortiert locker zuerst und hält je Übung höchstens 2 Runden à 40 s, damit die gewählte Dauer stimmt; Umsetzzeit bei Taube, Hüftbeuger und Worlds Greatest sowie zwischen den Blöcken der vier Mobility-Programme jetzt 10 s.
+- **Anbieterangaben**: Entwurf zum Ausfüllen in docs/ANBIETERANGABEN-ENTWURF.md (nicht veröffentlicht).
+
 ## 2026-10-14 · Workouts, Summit, Übungstexte, Band-Befestigung, Kalender-Stil (Fassungen 2026-10-14-34 und -35)
 
 - **Workouts**: neue Studio-Workouts (Oberkörper und Ganzkörper mit Kurzhanteln) und Einsteiger-Programme ohne Geräte (Ganzkörper, Beine, Oberkörper; 2 Runden à 30 s); schwere und explosive Übungen früh, Aktivierung vor Zugkraft; Kettlebell HIIT ohne doppelten Swing; Arme ohne Geräte als Trizeps und Schulter benannt; Deckblatt-Hinweise zu Belastung und Sicherheit.

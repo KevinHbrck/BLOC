@@ -407,6 +407,7 @@ function renderStudioKarte(id){
     '<div class="section-title">'+esc(t("stNote"))+'</div>'+
     '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
     studioInfoHTML(id, ex)+
+    gymHinweisHTML(ex)+
     '<p class="info-risk">'+esc(t("ownRisk"))+' <a href="privacy.html#haftung" target="_blank" rel="noopener">'+t("ownRiskMore")+'</a> · <a href="quellen.html" target="_blank" rel="noopener">'+t("sourcesLink")+'</a></p>'+
     (trKontext.ids.length ? trainingLeisteHTML(trKontext) : "")+
     '<div style="height:'+(trKontext.ids.length ? 96 : 40)+'px"></div>';

@@ -194,6 +194,9 @@ var EXERCISE_ROWS = [
   ["knee-push-ups","Knie-Liegestütz","Knee Push-ups","bw",6,20,0,"Körperlinie von Kopf bis Knie","Body line from head to knees"],
   ["single-leg-calf-raise","Einbeiniges Wadenheben","Single-Leg Calf Raise","bw legs",3,30,1,"Langsam hoch, langsam runter, mit einer Hand festhalten","Slow up, slow down, hold on lightly with one hand",30],
   ["negative-dips","Negative Dips","Negative Dips","calis arms",4,20,0,"Aus dem Stütz langsam absenken","Lower slowly from the support",30],
+  ["pallof-press","Pallof-Press","Pallof Press","weight core",3,40,1,"Der Rumpf lässt sich nicht zum Kabel aufdrehen","Don't let the cable turn you",45],
+  ["copenhagen-plank","Copenhagen Plank (kurzer Hebel)","Short-Lever Copenhagen Plank","core",3,20,1,"Knie auf die Bank, Körper in einer Linie","Knee on the bench, body in one line",30],
+  ["backpack-row","Rucksack-Rudern","Backpack Row","back",6,30,0,"Rucksack nah am Körper, Schulterblätter zusammen","Backpack close to your body, squeeze your shoulder blades"],
   /* 2026-10-14: Ergänzungen aus der Fachprüfung - Hüftbeuge einbeinig und Oberschenkelrückseite ohne Gerät, flaches Kurzhantel-Drücken im Studio */
   ["db-bench-press","Kurzhantel-Bankdrücken","Dumbbell Bench Press","weight",3,40,0,"Schulterblätter zusammen, Hanteln über der Brust","Shoulder blades together, dumbbells over your chest",90],
   ["db-step-ups","Step-ups mit Kurzhanteln","Dumbbell Step-ups","weight legs",3,40,1,"Ganzer Fuß auf der Stufe, aus dem vorderen Bein hochdrücken","Whole foot on the step, drive up through the front leg",60],
@@ -217,14 +220,14 @@ var EXERCISE_ROWS = [
   ["downward-dog","Herabschauender Hund","Downward Dog","stretch",2,30,0,"Hüfte hoch, Fersen Richtung Boden","Hips high, heels towards the floor",5],
   ["spinal-twist","Drehdehnung liegend","Supine Spinal Twist","stretch",1,30,1,"Schultern bleiben am Boden","Shoulders stay on the floor",5],
   ["forward-fold","Vorbeuge im Stand","Standing Forward Fold","stretch",2,30,0,"Knie leicht gebeugt, Oberkörper hängen lassen","Knees soft, let your upper body hang",5],
-  ["hip-flexor-stretch","Hüftbeuger kniend","Kneeling Hip Flexor Stretch","stretch",1,30,1,"Becken nach vorn schieben, Gesäß anspannen","Push your hips forward, squeeze your glutes",5],
+  ["hip-flexor-stretch","Hüftbeuger kniend","Kneeling Hip Flexor Stretch","stretch",1,30,1,"Becken nach vorn schieben, Gesäß anspannen","Push your hips forward, squeeze your glutes",10],
   ["quad-stretch","Oberschenkel vorn im Stand","Standing Quad Stretch","stretch",1,30,1,"Knie zeigen nach unten, nah beieinander","Knees point down, close together",5],
   ["hamstring-stretch","Beinrückseite im Sitzen","Seated Hamstring Stretch","stretch",2,30,0,"Aus der Hüfte beugen, Rücken lang","Hinge from the hips, long back",5],
   ["calf-stretch","Waden an der Wand","Wall Calf Stretch","stretch",1,30,1,"Hintere Ferse bleibt am Boden","Back heel stays down",5],
   ["figure-four","Gesäß liegend (Figur 4)","Figure-Four Glute Stretch","stretch",1,30,1,"Knöchel aufs Knie, Bein heranziehen","Ankle on knee, draw the leg in",5],
-  ["pigeon-stretch","Taube","Pigeon Stretch","stretch",1,45,1,"Hüfte gerade Richtung Boden","Hips square towards the floor",5],
+  ["pigeon-stretch","Taube","Pigeon Stretch","stretch",1,45,1,"Hüfte gerade Richtung Boden","Hips square towards the floor",10],
   ["butterfly-stretch","Schmetterling","Butterfly Stretch","stretch",2,30,0,"Fußsohlen zusammen, Knie sinken lassen","Soles together, let the knees drop",5],
-  ["worlds-greatest","World's Greatest Stretch","World's Greatest Stretch","stretch",2,20,1,"Aus der Brust aufdrehen","Rotate open through your chest",5],
+  ["worlds-greatest","World's Greatest Stretch","World's Greatest Stretch","stretch",2,20,1,"Aus der Brust aufdrehen","Rotate open through your chest",10],
 
   /* Calisthenics (Stange, Barren) - längere Pausen, weil die Übungen schwer sind */
   ["chin-ups","Chin-Up","Chin-Up","calis back arms",5,20,0,"Klimmzug im Untergriff","Pull-up with an underhand grip",20],
@@ -272,7 +275,7 @@ var LIB_WORKOUT_ROWS = [
   ["stretch-post-upper","Nach dem Training: Oberkörper","After Training: Upper Body","stretch","chest-stretch shoulder-stretch triceps-stretch biceps-stretch wrist-stretch childs-pose",10],
   ["stretch-back-hips","Rücken & Hüfte","Back & Hips","stretch","cat-cow thoracic-rotation childs-pose sphinx-stretch hip-flexor-stretch pigeon-stretch spinal-twist",10],
   ["stretch-office","Schultern & Nacken (Büro)","Shoulders & Neck (Office)","stretch","neck-stretch chin-tuck shoulder-stretch triceps-stretch chest-stretch thoracic-rotation side-bend wrist-stretch",10],
-  ["stretch-morning","Morgens locker werden","Loosen Up in the Morning","stretch","cat-cow worlds-greatest downward-dog side-bend forward-fold",5],
+  ["stretch-morning","Morgens locker werden","Loosen Up in the Morning","stretch","cat-cow worlds-greatest downward-dog side-bend forward-fold",10],
   ["calis-pull","Calisthenics Zug","Calisthenics Pull","calis","scapular-pull-ups inverted-rows commando-pull-ups chin-ups pull-ups burpee-pull-ups dead-hang",90],
   ["calis-push","Calisthenics Druck","Calisthenics Push","calis","support-hold parallel-bar-dips archer-push-ups pike-push-ups diamond-push-ups",90],
   ["calis-core","Calisthenics Core","Calisthenics Core","calis","hanging-knee-raise hanging-leg-raise windshield-wipers hanging-l-sit l-sit toes-to-bar",60],
@@ -289,12 +292,12 @@ var LIB_WORKOUT_ROWS = [
      Brust = Liegestütz-Varianten im Zirkel, vorher Schulterblätter aktivieren;
      Beine & Po = alle Bewegungsmuster (Kniebeuge, einbeinig, Hüftstreckung, seitlich);
      High Pulse = 40 s Arbeit / 20 s Pause; Dehnen kurz = große Muskelgruppen, je 30 s */
-  ["stretch-quick","Dehnen kurz · Ganzkörper","Quick Full Body Stretch","stretch","quad-stretch calf-stretch chest-stretch shoulder-stretch hip-flexor-stretch hamstring-stretch childs-pose",5],
+  ["stretch-quick","Dehnen kurz · Ganzkörper","Quick Full Body Stretch","stretch","quad-stretch calf-stretch chest-stretch shoulder-stretch hip-flexor-stretch hamstring-stretch childs-pose",10],
   ["chest-bw","Brust (ohne Geräte)","Chest (no equipment)","bw","scapular-push-ups push-ups clap-push-ups archer-push-ups close-grip-push-ups diamond-push-ups chest-stretch",45],
   ["chest-db","Brust & Schultern mit Kurzhantel","Chest & Shoulders with Dumbbells","weight","floor-press push-ups push-press shoulder-press triceps-curls chest-stretch",60],
   ["legs-glutes","Beine & Po","Legs & Glutes","legs","air-squats bulgarian-split-squats glute-bridge side-lunges single-leg-glute-bridge wall-sit calf-raises quad-stretch figure-four",45],
   ["hiit-full","Ganzkörper High Pulse","Full Body High Pulse","cardio","jumping-jacks high-knees skater-jumps jump-squats tuck-jumps burpees mountain-climbers plank-burpees frogs",30,"3/40/20"],
-  ["back-office","Rücken & Haltung (Büro)","Back & Posture (Office)","back","bird-dog prone-y-raise prone-t-raise reverse-snow-angels swimmers superman-hold childs-pose",20,"3/30/10"],
+  ["back-office","Rücken & Haltung (Büro)","Back & Posture (Office)","back","bird-dog prone-y-raise backpack-row prone-t-raise reverse-snow-angels swimmers superman-hold childs-pose",20,"3/30/10"],
   ["arms-db","Schultern & Arme mit Kurzhantel","Shoulders & Arms with Dumbbells","weight","push-press bent-over-row shoulder-press one-arm-row triceps-curls shoulder-stretch triceps-stretch",45],
   /* weitere Programme mit klarem Zweck */
   ["warmup-5","Aufwärmen 5 Min","5-Minute Warm-up","cardio","jumping-jacks air-squats high-knees plank-steps fast-feet",10,"2/25/5"],
@@ -310,10 +313,10 @@ var LIB_WORKOUT_ROWS = [
   ["metcon-db","Metcon mit Kurzhantel","Dumbbell Metcon","mix","db-thruster burpees renegade-row jump-squats mountain-climbers push-press",30,"4/40/20"],
   ["glutes-bw","Po-Fokus (ohne Geräte)","Glute Focus (no equipment)","legs","glute-bridge reverse-lunges single-leg-glute-bridge side-lunges squat-hold lateral-lunge-pulses figure-four pigeon-stretch",40],
   ["db-full-30","Kurzhantel Ganzkörper","Dumbbell Full Body","weight","goblet-squat bent-over-row floor-press romanian-deadlift db-thruster renegade-row shoulder-press",60],
-  ["core-stable","Rumpfstabilität (rückenschonend)","Core Stability (back-friendly)","core","dead-bug bird-dog plank side-plank glute-bridge hollow-hold childs-pose",30],
-  ["runner-strength","Kraft für Läufer","Strength for Runners","legs","split-squats calf-raises single-leg-rdl nordic-curl lateral-lunge-pulses side-plank plank hip-flexor-stretch calf-stretch",40],
-  ["stretch-hips","Hüfte mobil","Hip Mobility","stretch","worlds-greatest hip-flexor-stretch pigeon-stretch butterfly-stretch figure-four",5],
-  ["stretch-evening","Entspannt dehnen am Abend","Relaxing Evening Stretch","stretch","forward-fold childs-pose sphinx-stretch spinal-twist butterfly-stretch figure-four",5],
+  ["core-stable","Rumpfstabilität (rückenschonend)","Core Stability (back-friendly)","core","dead-bug bird-dog plank side-plank copenhagen-plank glute-bridge hollow-hold childs-pose",30],
+  ["runner-strength","Kraft für Läufer","Strength for Runners","legs","split-squats single-leg-calf-raise single-leg-rdl nordic-curl lateral-lunge-pulses side-plank copenhagen-plank hip-flexor-stretch calf-stretch",40],
+  ["stretch-hips","Hüfte mobil","Hip Mobility","stretch","worlds-greatest hip-flexor-stretch pigeon-stretch butterfly-stretch figure-four",10],
+  ["stretch-evening","Entspannt dehnen am Abend","Relaxing Evening Stretch","stretch","forward-fold childs-pose sphinx-stretch spinal-twist butterfly-stretch figure-four",10],
   ["advanced-60","Advanced 60","Advanced 60","mix","burpee-squat-jumps pistol-squats archer-push-ups tuck-jumps dragon-flags clap-push-ups bulgarian-split-squats pike-push-ups frogs hollow-hold cossack-squats jackknives",120],
   ["warmup-ganz","Aufwärmen Ganzkörper","Full-Body Warm-up","mix","jumping-jacks air-squats good-mornings bird-dog reverse-lunges high-knees",20,"1/40/10"],
   ["warmup-kraft","Aufwärmen vor Kraft","Warm-up before Strength","mix","jumping-jacks scapular-push-ups glute-bridge air-squats good-mornings reverse-lunges plank",20,"1/40/10"],
@@ -336,7 +339,7 @@ var EX_LEVEL = {
   "hollow-hold":3,"reverse-crunch":2,"russian-twists":2,"sit-ups":1,"toe-touches":1,"plank-shoulder-taps":2,"toes-to-bar":3,
   "neck-stretch":1,"chin-tuck":1,"thoracic-rotation":1,"shoulder-stretch":1,"triceps-stretch":1,"biceps-stretch":1,"chest-stretch":1,"wrist-stretch":1,"side-bend":1,
   "cat-cow":1,"childs-pose":1,"sphinx-stretch":1,"downward-dog":1,"spinal-twist":1,"forward-fold":1,"hip-flexor-stretch":1,
-  "quad-stretch":1,"hamstring-stretch":1,"calf-stretch":1,"figure-four":1,"pigeon-stretch":2,"butterfly-stretch":1,"worlds-greatest":2,"db-bench-press":2,"db-step-ups":2,"knee-push-ups":1,"single-leg-calf-raise":2,"negative-dips":2,"tuck-jumps":3,"chin-ups":2,"commando-pull-ups":3,"parallel-bar-dips":3,"support-hold":2,"hanging-knee-raise":2,"hanging-leg-raise":3,"hanging-l-sit":3,"l-sit":3,"windshield-wipers":3,"muscle-ups":3,"monkey-bar-traverse":2,"skin-the-cat":3,"archer-push-ups":3,"pistol-squats":3,"dragon-flags":3,"clap-push-ups":3,"close-grip-push-ups":2,"diamond-push-ups":3,"sphinx-push-ups":3,"triceps-curls":1,"arm-circles":1,"sumo-squat-db":1,"single-leg-rdl":2,"nordic-curl":3,
+  "quad-stretch":1,"hamstring-stretch":1,"calf-stretch":1,"figure-four":1,"pigeon-stretch":2,"butterfly-stretch":1,"worlds-greatest":2,"db-bench-press":2,"pallof-press":1,"copenhagen-plank":2,"backpack-row":1,"db-step-ups":2,"knee-push-ups":1,"single-leg-calf-raise":2,"negative-dips":2,"tuck-jumps":3,"chin-ups":2,"commando-pull-ups":3,"parallel-bar-dips":3,"support-hold":2,"hanging-knee-raise":2,"hanging-leg-raise":3,"hanging-l-sit":3,"l-sit":3,"windshield-wipers":3,"muscle-ups":3,"monkey-bar-traverse":2,"skin-the-cat":3,"archer-push-ups":3,"pistol-squats":3,"dragon-flags":3,"clap-push-ups":3,"close-grip-push-ups":2,"diamond-push-ups":3,"sphinx-push-ups":3,"triceps-curls":1,"arm-circles":1,"sumo-squat-db":1,"single-leg-rdl":2,"nordic-curl":3,
   "burpee-pull-ups":3,
   "leg-press":1,"leg-press-45":1,"leg-extension":1,"leg-curl":1,"adductor-machine":1,"abductor-machine":1,"calf-machine":1,
   "chest-press-machine":1,"butterfly":1,"pullover":2,"lat-pulldown":1,"row-machine":1,"cable-row":1,"reverse-butterfly":1,
@@ -374,7 +377,8 @@ var LZ_KETTEN = [
   ["jump-squats", "jump-forward-squats", "tuck-jumps"],
   ["triceps-dips", "negative-dips", "parallel-bar-dips", "muscle-ups"],
   ["calf-raises", "single-leg-calf-raise"],
-  ["good-mornings", "single-leg-rdl"]
+  ["good-mornings", "single-leg-rdl"],
+  ["plank", "side-plank", "copenhagen-plank"]
 ];
 var EX_EQUIP = {
   "leg-press":"gym","leg-press-45":"gym","leg-extension":"gym","leg-curl":"gym","adductor-machine":"gym","abductor-machine":"gym",
@@ -382,7 +386,7 @@ var EX_EQUIP = {
   "cable-row":"gym","reverse-butterfly":"gym","back-extension":"gym","shoulder-press-machine":"gym","biceps-machine":"gym",
   "cable-curl":"gym","triceps-pushdown":"gym","skull-crusher":"gym db","ab-crunch-machine":"gym","bench-press":"gym",
   "barbell-squat":"gym","barbell-deadlift":"gym",
-  "hack-squat":"gym","smith-squat":"gym","leg-press-single":"gym","hip-thrust":"gym","glute-kickback-cable":"gym","seated-calf":"gym","incline-chest-press":"gym","cable-crossover":"gym","incline-db-press":"gym db","db-fly":"gym db","assisted-pullup":"gym","close-grip-pulldown":"gym","t-bar-row":"gym","barbell-row":"gym","face-pull":"gym","straight-arm-pulldown":"gym","lateral-raise":"gym db","shrugs":"gym db","hammer-curl":"gym db","barbell-curl":"gym","overhead-cable-triceps":"gym","triceps-machine":"gym","glute-machine":"gym","calf-press":"gym","lying-leg-curl":"gym","rotary-torso":"gym","back-extension-machine":"gym","triceps-extension-machine":"gym","lateral-raise-machine":"gym","cable-lateral-raise":"gym","smith-bench-press":"gym","assisted-dip":"gym","high-row-machine":"gym","cable-crunch":"gym","cable-pull-through":"gym","cable-woodchop":"gym","captains-chair":"gym","barbell-overhead-press":"gym","barbell-rdl":"gym","db-bench-press":"gym db","negative-dips":"dip","db-step-ups":"db","sumo-squat-db":"db kb",
+  "hack-squat":"gym","smith-squat":"gym","leg-press-single":"gym","hip-thrust":"gym","glute-kickback-cable":"gym","seated-calf":"gym","incline-chest-press":"gym","cable-crossover":"gym","incline-db-press":"gym db","db-fly":"gym db","assisted-pullup":"gym","close-grip-pulldown":"gym","t-bar-row":"gym","barbell-row":"gym","face-pull":"gym","straight-arm-pulldown":"gym","lateral-raise":"gym db","shrugs":"gym db","hammer-curl":"gym db","barbell-curl":"gym","overhead-cable-triceps":"gym","triceps-machine":"gym","glute-machine":"gym","calf-press":"gym","lying-leg-curl":"gym","rotary-torso":"gym","back-extension-machine":"gym","triceps-extension-machine":"gym","lateral-raise-machine":"gym","cable-lateral-raise":"gym","smith-bench-press":"gym","assisted-dip":"gym","high-row-machine":"gym","cable-crunch":"gym","cable-pull-through":"gym","cable-woodchop":"gym","captains-chair":"gym","barbell-overhead-press":"gym","barbell-rdl":"gym","db-bench-press":"gym db","pallof-press":"gym","negative-dips":"dip","db-step-ups":"db","sumo-squat-db":"db kb",
   "goblet-squat":"kb db","kb-swing":"kb","db-thruster":"db","romanian-deadlift":"db kb","db-deadlift":"db kb","bent-over-row":"db",
   "one-arm-row":"db","triceps-curls":"db","floor-press":"db","shoulder-press":"db","push-press":"db","weighted-reverse-lunge":"db kb","front-rack-carry":"kb db",
   "farmer-carry":"db kb","kb-clean":"kb","renegade-row":"db",
@@ -409,7 +413,7 @@ var MAIN_CATS = [
 ];
 var EX_MAIN_ROWS = {
   ausdauer:"box-step-ups burpee-squat-jumps jump-forward-squats jump-forward-burpees burpees fast-feet frogs high-knees jump-lunges jump-squats jumping-jacks lateral-hops mountain-climbers plank-burpees skater-jumps sprint-in-place stand-up-jumps tuck-jumps",
-  rumpf:"bicycle-crunches dead-bug dragon-flags hollow-hold leg-raises plank plank-shoulder-taps reverse-crunch russian-twists side-jackknives side-plank sit-ups toe-touches jackknives",
+  rumpf:"bicycle-crunches dead-bug dragon-flags hollow-hold leg-raises plank plank-shoulder-taps reverse-crunch russian-twists side-jackknives side-plank sit-ups toe-touches jackknives copenhagen-plank",
   stange:"chin-ups commando-pull-ups rung-pull-ups dead-hang hanging-knee-raise hanging-l-sit hanging-leg-raise inverted-rows l-sit monkey-bar-traverse muscle-ups burpee-pull-ups negative-pull-ups parallel-bar-dips pull-ups scapular-pull-ups skin-the-cat support-hold toes-to-bar windshield-wipers",
   stretch:"hamstring-stretch biceps-stretch chest-stretch spinal-twist figure-four wrist-stretch downward-dog hip-flexor-stretch cat-cow childs-pose neck-stretch quad-stretch butterfly-stretch shoulder-stretch side-bend sphinx-stretch cobra-lift pigeon-stretch triceps-stretch forward-fold calf-stretch worlds-greatest arm-circles chin-tuck thoracic-rotation"
 };
@@ -439,6 +443,7 @@ var EX_SUCH_ALIAS = { "russian-twists":"russian twist twists russische drehung r
   "assisted-dip":"dips dip maschine gegengewicht kniepolster trizeps", "high-row-machine":"high row rudern oben hammer",
   "cable-crunch":"kabel crunch kniend bauch seil", "cable-pull-through":"pull through kabel gesäß po hüfte seil", "back-extension":"hyperextension",
   "jump-lunges":"sprungausfallschritt ausfallschritt sprung split jumps lunge jumps", "cobra-lift":"cobra lift kobra",
+  "pallof-press":"pallof press antirotation kabel rumpf stabilität anti rotation", "copenhagen-plank":"copenhagen plank kopenhagen adduktoren leiste seitstütz bank", "backpack-row":"rucksack rudern rucksack backpack row zug ohne stange",
   "knee-push-ups":"knie liegestütz liegestütz auf den knien einsteiger leichter", "single-leg-calf-raise":"einbeiniges wadenheben waden einbeinig calf raise", "negative-dips":"negative dips dip negativ langsam absenken barren",
   "db-bench-press":"kurzhantel bankdrücken flachbank hantelbank dumbbell bench press brust", "db-step-ups":"step ups stufe kurzhantel aufsteigen bank treppe", "sumo-squat-db":"sumo kniebeuge sumo squat kurzhantel breiter stand adduktoren", "single-leg-rdl":"einbeiniges kreuzheben rumänisches kreuzheben einbeinig single leg deadlift ohne gewicht hüftbeuge",
   "nordic-curl":"nordic hamstring curl nordic curl oberschenkelrückseite beinbeuger fersen fixieren hamstrings",
@@ -724,6 +729,11 @@ Object.assign(ILLU_POSES, {
                        Q(null,[50,15],[50,45],[[50,65,50,84,58,89],[48,67,40,79]],[[52,29,53,42]])],
   "negative-dips":    [Q(null,[52,24],[52,52],[[50,68,42,80,44,84]],[[54,37,56,50]], G_PB),
                        Q(null,[54,38],[52,64],[[50,76,40,84,42,86]],[[44,40,56,50]], G_PB)],
+  "pallof-press":     [Q(null,[50,20],[50,50],[[50,70,50,89,58,89]],[[44,33,55,31]], gHand(55,31,'<circle class="ipf" cx="55" cy="31" r="3"/>')),
+                       Q(null,[50,20],[50,50],[[50,70,50,89,58,89]],[[62,26,75,26]], gHand(75,26,'<circle class="ipf" cx="75" cy="26" r="3"/>'))],
+  "copenhagen-plank": [Q(null,[24,64],[48,64],[[68,64,84,64],[56,76,70,82]],[[24,77,34,87]], gBench(62,94,66)), null],
+  "backpack-row":     [qWith(P_HG,{ x:gHand(61,68,'<rect class="ipf" x="57" y="66" width="9" height="12" rx="2"/>') }),
+                       qWith(P_HG,{ a:[[50,36,56,48]], x:gHand(56,50,'<rect class="ipf" x="52" y="48" width="9" height="12" rx="2"/>') })],
   "single-leg-rdl":   [Q(null,[50,20],[50,50],[[50,70,50,89,58,89],[46,72,40,84]],[[52,34,53,47]]),
                        Q(null,[68,48],[42,50],[[44,70,44,89,52,89],[22,50,4,50]],[[68,60,68,72]])],
   "nordic-curl":      [Q(null,[40,35],[40,65],[[40,86,22,88,16,89]],[[44,46,46,58]]),
@@ -1014,11 +1024,11 @@ ILLU_POSES["reverse-butterfly"] = [
 /* Gruppen im Reiter „Studio“ */
 var STUDIO_GRUPPEN = [
   { id:"beine",   de:"Beine & Po", en:"Legs & glutes", ids:"leg-press leg-press-45 leg-press-single hack-squat smith-squat leg-extension leg-curl adductor-machine abductor-machine hip-thrust glute-kickback-cable calf-machine seated-calf glute-machine calf-press lying-leg-curl cable-pull-through barbell-squat barbell-deadlift barbell-rdl" },
-  { id:"brust",   de:"Brust",   en:"Chest",  ids:"chest-press-machine incline-chest-press smith-bench-press butterfly cable-crossover assisted-dip incline-db-press db-fly pullover bench-press" },
+  { id:"brust",   de:"Brust",   en:"Chest",  ids:"chest-press-machine incline-chest-press smith-bench-press butterfly cable-crossover assisted-dip incline-db-press db-bench-press db-fly pullover bench-press" },
   { id:"ruecken", de:"Rücken",  en:"Back",   ids:"lat-pulldown close-grip-pulldown assisted-pullup row-machine high-row-machine cable-row t-bar-row face-pull straight-arm-pulldown reverse-butterfly back-extension back-extension-machine barbell-row" },
   { id:"schulter",de:"Schultern", en:"Shoulders", ids:"shoulder-press-machine lateral-raise-machine lateral-raise cable-lateral-raise shrugs barbell-overhead-press" },
   { id:"arme",    de:"Arme",    en:"Arms",   ids:"biceps-machine cable-curl hammer-curl barbell-curl triceps-pushdown overhead-cable-triceps triceps-machine triceps-extension-machine skull-crusher" },
-  { id:"bauch",   de:"Bauch",   en:"Abs",    ids:"ab-crunch-machine cable-crunch rotary-torso captains-chair cable-woodchop" }
+  { id:"bauch",   de:"Bauch",   en:"Abs",    ids:"ab-crunch-machine cable-crunch rotary-torso captains-chair cable-woodchop pallof-press" }
 ];
 STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){
   (ILLU_POSES[id] || []).forEach(function(q){ if(q && q.x) q.x = q.x.replace(/class="(ip|ipf)( gp)?"/g, 'class="$1$2 gm"'); });
@@ -1389,6 +1399,9 @@ Object.assign(EX_INFO, {
   "triceps-curls":["Eine Kurzhantel mit beiden Händen senkrecht über den Kopf halten.|Ellbogen beugen und die Hantel langsam hinter den Kopf senken.|Wieder nach oben strecken.","Hold one dumbbell upright overhead with both hands.|Bend your elbows and slowly lower it behind your head.|Extend back up."],
   "arm-circles":["Aufrecht stehen, Arme seitlich auf Schulterhöhe strecken.|Kleine Kreise nach vorn machen.|Nach der Hälfte der Zeit die Richtung wechseln.","Stand tall, arms straight out at shoulder height.|Make small circles forwards.|Halfway through, switch direction."],
   "neck-stretch":["Aufrecht sitzen oder stehen.|Den Kopf zur Seite neigen, Ohr Richtung Schulter; die Hand liegt nur sanft auf.|Halten, ruhig atmen, dann die Seite wechseln.","Sit or stand tall.|Tilt your head to the side, ear towards shoulder; your hand rests on lightly.|Hold, breathe calmly, then switch sides."],
+  "pallof-press":["Seitlich zum Kabelzug auf Brusthöhe stellen, den Griff mit beiden Händen vor die Brust nehmen, einen Schritt vom Turm weggehen.|Die Arme langsam nach vorn strecken, der Rumpf bleibt gerade und dreht sich nicht zum Kabel.|Kurz halten, die Hände zurück zur Brust führen; nach dem Satz die Seite wechseln.","Stand side-on to a cable at chest height, hold the handle with both hands at your chest, step away from the tower.|Press your arms slowly forward; your torso stays straight and doesn't turn towards the cable.|Hold briefly, bring your hands back to your chest; switch sides after the set."],
+  "copenhagen-plank":["Seitlich hinlegen, auf den unteren Unterarm stützen (Ellbogen unter der Schulter), das obere Knie auf eine stabile Bank oder Stuhlkante legen, das untere Bein hängt frei darunter.|Die Hüfte anheben, bis der Körper vom Kopf bis zum oberen Knie eine Linie bildet, das untere Bein schwebt.|Halten, ruhig atmen, nach dem Intervall die Seite wechseln.","Lie on your side and prop on the lower forearm (elbow under your shoulder), rest the upper knee on a stable bench or chair edge, the lower leg hangs free beneath.|Lift your hips until your body is one line from head to upper knee; the lower leg floats.|Hold, breathe calmly, switch sides after the interval."],
+  "backpack-row":["Einen gut gepackten, fest geschlossenen Rucksack mit beiden Händen an den Riemen oder dem Griff halten, hüftbreit stehen, aus der Hüfte etwa 45° vorbeugen, Rücken gerade.|Die Ellbogen nach hinten zur Hüfte ziehen, den Rucksack zum Bauch führen, Schulterblätter zusammen.|Langsam wieder strecken, ohne den Oberkörper aufzurichten.","Hold a well-packed, firmly closed backpack by the straps or handle with both hands, stand hip-width, hinge forward about 45° with a flat back.|Pull your elbows back to your hips and bring the pack to your belly, shoulder blades together.|Extend slowly without standing up."],
   "knee-push-ups":["Auf allen vieren, Hände etwas breiter als die Schultern, Knie am Boden, Körper eine Linie vom Kopf bis zu den Knien.|Brust kontrolliert bis knapp über den Boden senken, Ellbogen schräg nach hinten.|Hochdrücken, ohne dass die Hüfte nach hinten ausweicht oder durchhängt.","On all fours, hands a little wider than your shoulders, knees on the floor, body one line from head to knees.|Lower your chest to just above the floor, elbows angled back.|Press up without letting your hips push back or sag."],
   "single-leg-calf-raise":["Auf einem Bein stehen, Fußballen am Boden oder auf einer Stufenkante, mit einer Hand leicht an Wand oder Geländer festhalten.|Langsam auf die Zehenspitzen hochdrücken, das Sprunggelenk bleibt gerade.|In zwei bis drei Sekunden absenken (an der Stufe bis unter die Kante), Seite nach dem Intervall wechseln.","Stand on one leg, ball of the foot on the floor or a step edge, one hand resting lightly on a wall or rail.|Rise slowly onto your toes, ankle stays straight.|Lower over two to three seconds (below the edge on a step), switch sides after the interval."],
   "negative-dips":["Auf Barren oder Parallettes in den Stütz steigen, Arme gestreckt, Schultern tief.|So langsam wie möglich absenken, bis die Oberarme etwa waagerecht sind, nicht tiefer, wenn die Schulter vorn zieht.|Unten mit den Füßen absetzen und wieder in den Stütz steigen, Hochdrücken ist nicht nötig.","Climb into a support on dip bars or parallettes, arms straight, shoulders down.|Lower as slowly as you can until your upper arms are about horizontal, not deeper if the front of your shoulder pulls.|Put your feet down at the bottom and step back into the support, no need to press up."],
@@ -1446,6 +1459,9 @@ Object.assign(EX_POSTURE, {
   "triceps-curls":["Ellbogen zeigen nach vorn oben, eng am Kopf.|Rippen unten, kein Hohlkreuz.","Die Ellbogen weit nach außen öffnen.","Elbows point forward and up, close to your head.|Ribs down, no arched back.","Letting your elbows flare wide."],
   "arm-circles":["Schultern tief, Arme gestreckt.|Rumpf fest, kein Hohlkreuz.","Die Schultern zu den Ohren ziehen.","Shoulders down, arms straight.|Core braced, no arched back.","Shrugging your shoulders up."],
   "neck-stretch":["Die gegenüberliegende Schulter nach unten sinken lassen.|Blick nach vorn, nicht drehen.","Ruckartig am Kopf ziehen. Bei Kribbeln im Arm, Taubheit oder Schwindel sofort lösen.","Let the opposite shoulder sink down.|Look forward, don't rotate.","Yanking on your head. Release at once if your arm tingles or you feel numb or dizzy."],
+  "pallof-press":["Becken und Schultern zeigen nach vorn.|Füße hüftbreit oder in Schrittstellung, Rumpf und Gesäß fest.","Sich zum Kabel hin aufdrehen oder mit dem Oberkörper wegkippen. Zu viel Gewicht, bei dem die Schultern mitziehen.","Pelvis and shoulders face forward.|Feet hip-width or in a split stance, core and glutes braced.","Turning towards the cable or leaning away. Too much weight, so your shoulders get pulled."],
+  "copenhagen-plank":["Körper in einer Linie, Hüfte nicht nach hinten kippen.|Nacken lang, Möbel steht fest.","Die Hüfte absinken lassen oder mit Schwung hochkommen. Bei Schmerzen in Leiste oder Hüfte abbrechen.","Body in one line, don't tip your hips back.|Long neck, furniture is solid.","Letting your hips drop or swinging up. Stop if your groin or hip hurts."],
+  "backpack-row":["Rücken gerade und fest, Nacken in Verlängerung der Wirbelsäule.|Rucksack nah am Körper, Ellbogen nach hinten.","Mit Schwung aus dem Oberkörper ziehen oder den Rücken rund machen. Rucksack so packen, dass nichts verrutscht oder aufgeht.","Flat, braced back, neck in line with your spine.|Backpack close to your body, elbows back.","Heaving with your torso or rounding your back. Pack the bag so nothing shifts or opens."],
   "knee-push-ups":["Linie von Kopf bis Knie, Bauch und Gesäß angespannt.|Ellbogen etwa 45° vom Körper.","Den Po nach hinten schieben oder die Hüfte durchhängen lassen.","One line from head to knees, abs and glutes tight.|Elbows about 45° from your body.","Pushing your hips back or letting them sag."],
   "single-leg-calf-raise":["Gewicht über dem Großzehenballen, Knie gestreckt, nicht durchgedrückt.|Becken gerade, nur leicht festhalten.","Zum Außenrand des Fußes abkippen, wippen oder sich an der Wand hochziehen.","Weight over the big-toe ball, knee straight but not locked.|Pelvis level, hold on lightly only.","Rolling onto the outer edge, bouncing or pulling yourself up on the wall."],
   "negative-dips":["Schultern tief, Oberkörper leicht nach vorn.|Ellbogen nach hinten, nicht nach außen.","Fallen lassen statt kontrolliert zu senken. Bei Schmerz vorn in der Schulter die Tiefe verkleinern.","Shoulders down, torso slightly forward.|Elbows back, not out.","Dropping instead of lowering with control. If the front of your shoulder hurts, reduce the depth."],
@@ -1658,6 +1674,9 @@ var EX_MUSCLES = {
   "arm-circles":["Seitliche und hintere Schulter","Oberer Rücken, Trapez","Side and rear delts","Upper back, traps"],
 
   "neck-stretch":["Seitliche Nackenmuskeln, oberer Trapez","","Side neck muscles, upper traps",""],
+  "pallof-press":["Schräge Bauchmuskeln, tiefe Bauchmuskeln","Gerader Bauch, Schultern, Gesäß","Obliques, deep core","Abs, shoulders, glutes"],
+  "copenhagen-plank":["Adduktoren (Innenschenkel), schräge Bauchmuskeln","Seitliches Gesäß, Schultern, tiefe Bauchmuskeln","Adductors (inner thighs), obliques","Side glutes, shoulders, deep core"],
+  "backpack-row":["Breiter Rückenmuskel, oberer Rücken","Bizeps, hintere Schulter, Rückenstrecker","Lats, upper back","Biceps, rear delts, lower back"],
   "knee-push-ups":["Brust, Trizeps, vordere Schulter","Rumpf, Sägemuskel","Chest, triceps, front delts","Core, serratus"],
   "single-leg-calf-raise":["Waden (Zwillings- und Schollenmuskel)","Fußmuskulatur","Calves (gastrocnemius, soleus)","Foot muscles"],
   "negative-dips":["Trizeps, Brust","Vordere Schulter, Rumpf","Triceps, chest","Front delts, core"],

@@ -683,7 +683,7 @@ function buildSurprise(p){
   var total = p.dur*60;
 
   /* Dehnteil: nur Stretch gewählt = das ganze Training, sonst etwa ein Sechstel (mindestens zwei Übungen) */
-  var stretchPool = !wantStretch ? [] : EXERCISES.filter(function(ex){ return ex.main === "stretch" && !libHidden("ex:"+ex.id); });
+  var stretchPool = !wantStretch ? [] : EXERCISES.filter(function(ex){ return ex.main === "stretch" && WS_NICHT_DEHNEN.indexOf(ex.id) < 0 && !libHidden("ex:"+ex.id); });
   var stretchBudget = !stretchPool.length ? 0 : (trainMains.length ? Math.max(140, Math.round(total/6)) : total);
   // feste Anzahl (Timer-Workout füllen): Dehnübungen zählen mit, etwa jede fünfte
   var anzahl = p.anzahl > 0 ? p.anzahl : 0;
