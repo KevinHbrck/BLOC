@@ -3,8 +3,8 @@
    Wochen- oder Monatsansicht (Montag zuerst). Einträge: eigene Workouts (Nach Zeit), Pläne (Nach Sätzen), Workouts aus dem Katalog, Mobility & Stretch,
    Summit (Programm, Einheit, eigene), Run (frei oder mit Ziel in km) und ein Zufallstraining („Überrasch mich“ erst am Tag selbst).
    Hinzufügen nur über „+ Hinzufügen“ am Tag (Workouts › Meine Workouts, Meine Pläne, Zufallstraining, Katalog, Mobility; Run; Summit). Im Monat
-   wählt ein Tipp den Tag, seine Einträge stehen unter dem Raster. Einträge lassen sich von Tag zu Tag ziehen (lange drücken) oder über das Menü
-   verschieben. Daten: settings.kalender = { e:[{ id, tag:"JJJJ-MM-TT", art, ref, name, km, erledigt, at }] }
+   wählt ein Tipp den Tag, seine Einträge stehen unter dem Raster. Einträge verschiebt man über ihr Menü
+   („Auf einen anderen Tag“). Daten: settings.kalender = { e:[{ id, tag:"JJJJ-MM-TT", art, ref, name, km, erledigt, at }] }
    - nur auf dem Gerät, wie alles andere. Art: workout | plan | lib | summit | run | zufall. */
 var kalAnsicht = "woche";      // "woche" | "monat"
 var kalBasis = null;           // ein Tag der angezeigten Woche bzw. des Monats
@@ -140,7 +140,6 @@ function renderKalender(){
     '<div class="kal-nav"><button type="button" class="iconbtn" data-kalnav="-1" aria-label="'+esc(t("kalZurueck"))+'">&#8249;</button>'+
       '<div class="kn-mitte"><b>'+esc(kopfText)+'</b></div>'+
       '<button type="button" class="iconbtn" data-kalnav="1" aria-label="'+esc(t("kalVor"))+'">&#8250;</button></div>'+
-    tippZeileHTML("kalender", "tippKalender")+
     // Woche: dieselbe Karte wie „Diese Woche“ auf der Startseite (Tage mit Punkt = trainiert, Ring = geplant); Monat: nur die Summe
     (!monat ? wocheHTML({ basis:tage[0], kal:true, titel:kalTagKey(tage[0]) === kalTagKey(kalMontag(new Date())) ? t("weekTitle") : t("kalKW", { n:kalKW(tage[0]) }) })+
       (sum.km > 0 ? '<div class="kal-summe">'+esc(runKm(sum.km*1000).replace(/[,.]00$/, "")+" km Run")+'</div>' : '') : '')+
@@ -210,7 +209,6 @@ function renderKalender(){
     el.addEventListener("click", los);
     el.addEventListener("keydown", function(ev){ if(ev.target === el && (ev.key === "Enter" || ev.key === " ")){ ev.preventDefault(); los(); } });
   });
-  kalZiehenBinden();
 }
 
 /* ---------- Menüs ---------- */
@@ -322,61 +320,6 @@ function kalHinzuMenue(tag){
     { ico:HOME_ICON.run, label:t("kalRun"), fn:function(){ kalRunSheet(tag); } },
     { ico:HOME_ICON.reps, label:t("kalSummit"), fn:summitPicker }
   ]);
-}
-
-/* ---------- Ziehen: Chips aus der Leiste auf einen Tag, Einträge von Tag zu Tag (lange drücken) ---------- */
-function kalZiehenBinden(){
-  app.querySelectorAll("[data-kaldrag], [data-kaleid]").forEach(function(el){
-    var tm = 0, x0 = 0, y0 = 0;
-    function stop(){ if(tm){ clearTimeout(tm); tm = 0; } }
-    el.addEventListener("pointerdown", function(e){
-      if(e.target.closest("[data-kalok]")) return;
-      x0 = e.clientX; y0 = e.clientY; stop();
-      tm = setTimeout(function(){ tm = 0; kalZiehen(el, x0, y0); }, 380);
-    });
-    el.addEventListener("pointermove", function(e){ if(tm && Math.abs(e.clientX-x0) + Math.abs(e.clientY-y0) > 10) stop(); });
-    ["pointerup", "pointercancel", "pointerleave"].forEach(function(ev){ el.addEventListener(ev, stop); });
-    el.addEventListener("contextmenu", function(e){ e.preventDefault(); });
-  });
-}
-function kalZiehen(el, x, y){
-  var ghost = document.createElement("div"), fertig = false, ziel = null, laufY = y, uhr = 0;
-  ghost.className = "kal-ghost"; ghost.textContent = el.getAttribute("data-kalname") || el.textContent.trim();
-  ghost.style.setProperty("--kc", el.style.getPropertyValue("--kc") || "var(--accent)");
-  document.body.appendChild(ghost); document.body.classList.add("kal-zieht"); el.classList.add("gezogen");
-  try{ if(navigator.vibrate) navigator.vibrate(20); }catch(err){}
-  function setzen(px, py){
-    ghost.style.left = px+"px"; ghost.style.top = py+"px"; laufY = py;
-    var u = document.elementFromPoint(px, py), z = u && u.closest ? u.closest("[data-kaltag]") : null;
-    if(z !== ziel){
-      if(ziel) ziel.classList.remove("ziel");
-      ziel = z; if(ziel) ziel.classList.add("ziel");
-    }
-  }
-  function bewegt(e){ var p = e.touches && e.touches[0] ? e.touches[0] : e; setzen(p.clientX, p.clientY); }
-  function sperre(e){ e.preventDefault(); }   // kein Scrollen der Seite, solange gezogen wird
-  function ende(e){
-    if(fertig) return; fertig = true;
-    clearInterval(uhr);
-    ["pointermove", "touchmove"].forEach(function(n){ window.removeEventListener(n, bewegt); });
-    ["pointerup", "pointercancel", "touchend", "touchcancel"].forEach(function(n){ window.removeEventListener(n, ende); });
-    document.removeEventListener("touchmove", sperre, { passive:false });
-    ghost.remove(); document.body.classList.remove("kal-zieht"); el.classList.remove("gezogen");
-    var tag = ziel && ziel.getAttribute("data-kaltag");
-    if(ziel) ziel.classList.remove("ziel");
-    langDruckSperre = Date.now() + 700;   // der Klick nach dem Loslassen soll kein Menü öffnen
-    if(!tag || (e && /cancel/.test(e.type))) return;
-    var eid = el.getAttribute("data-kaleid");
-    if(eid && kalVerschiebe(eid, tag)) kalNeu();
-  }
-  window.addEventListener("pointermove", bewegt); window.addEventListener("touchmove", bewegt, { passive:true });
-  window.addEventListener("pointerup", ende); window.addEventListener("pointercancel", ende);
-  window.addEventListener("touchend", ende); window.addEventListener("touchcancel", ende);
-  document.addEventListener("touchmove", sperre, { passive:false });
-  uhr = setInterval(function(){   // am oberen und unteren Rand die Seite mitscrollen
-    if(laufY < 110) window.scrollBy(0, -14); else if(laufY > window.innerHeight - 210) window.scrollBy(0, 14);
-  }, 16);
-  setzen(x, y);
 }
 
 /* ---------- Startseite: heute geplant ---------- */
