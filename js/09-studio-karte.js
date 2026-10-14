@@ -479,7 +479,8 @@ function renderStudioKarte(id){
     studioVerlauf(id, jetzt);
     trainingNachSatz(id);
     save();
-    vibrate([30]);
+    vibrate([40, 30, 70]);
+    satzFeedback(l.s.length, satzText(satz), !!studioPR);   // große Bestätigung mitten auf dem Bildschirm
     if(blKontext && !blKontext.letzte) studioPauseStop(); else studioPauseStart(id, pause);   // im Block geht es ohne Pause zur nächsten Übung
     neu();
   });

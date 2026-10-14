@@ -210,6 +210,25 @@
     gleich(W.einheitTagKey(new Date(2026, 9, 5, 23, 59).getTime()), "2026-10-05", "Datum mit führenden Nullen");
   });
 
+  test("Statistik: Fortschritt je Übung (erstes gegen bestes Gewicht, ohne Gewicht Wiederholungen, nur ab zwei Einheiten)", function () {
+    var s = W.state.db.settings, alt = s.studio, tag = 86400000, n = Date.now();
+    try {
+      s.studio = {
+        "leg-press": { log: [{ at: n - 20*tag, s: [[60, 10], [60, 9]] }, { at: n - 2*tag, s: [[20, 12, "w"], [80, 8]] }] },
+        "push-ups": { log: [{ at: n - 14*tag, s: [[0, 12], [0, 10]] }, { at: n - 3*tag, s: [[0, 18]] }] },
+        "air-squats": { log: [{ at: n - 1*tag, s: [[0, 20]] }] }   // nur eine Einheit: erscheint nicht
+      };
+      var h = W.statFortschrittHTML(), d = document.createElement("div"); d.innerHTML = h;
+      var zeilen = d.querySelectorAll(".sf-zeile");
+      gleich(zeilen.length, 2, "Übungen mit mindestens zwei Einheiten");
+      wahr(/60 → 80 kg/.test(h) && /\+20 kg \(\+33 %\)/.test(h), "Beinpresse: 60 → 80 kg, +20 kg (+33 %): " + d.textContent.slice(0, 200));
+      wahr(/12 → 18 Wdh\./.test(h) && /\+6 Wdh\. \(\+50 %\)/.test(h), "Liegestütze: 12 → 18 Wdh.");
+      wahr(h.indexOf("air-squats") < 0, "Übung mit einer Einheit darf nicht erscheinen");
+      s.studio = {};
+      wahr(/stat-fort/.test(W.statFortschrittHTML()) && W.statFortschrittHTML().indexOf("sf-zeile") < 0, "ohne Daten ein Hinweis statt Zeilen");
+    } finally { s.studio = alt; }
+  });
+
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
   document.getElementById("los").addEventListener("click", async function () {
     var knopf = this;

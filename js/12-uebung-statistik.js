@@ -136,6 +136,42 @@ function wocheHTML(){
    Alles aus den lokal gespeicherten Daten, nichts verlässt das Gerät. Zeigt nur Bereiche, die im Fokus (Einstellungen) eingeschaltet sind;
    der in den letzten 4 Wochen am meisten genutzte steht oben. Grundlage: Kurz-Verlauf (31 Tage) + Wochensummen (statW), bei Run die Läufe selbst. */
 var statKalOffen = false;   // Kalender startet zugeklappt (nur innerhalb des Besuchs gemerkt)
+var statOffen = {};   // auf- oder zugeklappte Karten (WHO, Bereiche) innerhalb des Besuchs; ohne Eintrag gilt die Voreinstellung
+var statFortAnz = 5;   // wie viele Übungen unter „Fortschritt je Übung“ stehen (Mehr anzeigen: +10)
+/* Große Bestätigung nach „Satz eintragen“: Haken und Satz in der Bildschirmmitte, verschwindet von selbst (fängt keine Berührungen ab) */
+function satzFeedback(n, text, rekord){
+  var alt = document.getElementById("satz-fb"); if(alt) alt.remove();
+  var d = document.createElement("div");
+  d.id = "satz-fb"; d.className = "satz-fb"+(rekord ? " rekord" : ""); d.setAttribute("role", "status");
+  d.innerHTML = '<div class="sfb-haken">'+(rekord ? '★' : '✓')+'</div><div class="sfb-text"><b>'+esc(t("stSatzGespeichert", { n:n }))+'</b><span>'+esc(text)+'</span>'+
+    (rekord ? '<em>'+esc(t("stSatzRekord"))+'</em>' : '')+'</div>';
+  document.body.appendChild(d);
+  setTimeout(function(){ d.classList.add("weg"); }, 900);
+  setTimeout(function(){ d.remove(); }, 1300);
+}
+/* Fortschritt je Übung: erstes gegen heutiges Bestgewicht (ohne Gewicht: Wiederholungen), mit Wochenkurve; Tipp = Statistik der Übung */
+function statFortschrittHTML(){
+  var alle = studioAlle(), l = [];
+  Object.keys(alle).forEach(function(id){
+    var ex = findExercise(id), log = ((alle[id] && alle[id].log) || []).filter(function(x){ return arbeitsSaetze(x).length; });
+    if(!ex || log.length < 2) return;
+    var erst = studioBestwerte(log.slice(0, 1)), jetzt = studioBestwerte(log), mitKg = jetzt.kg > 0;
+    l.push({ id:id, name:tplText(ex.name), n:log.length, mitKg:mitKg, von:mitKg ? erst.kg : erst.wdh, bis:mitKg ? jetzt.kg : jetzt.wdh, at:log[log.length-1].at });
+  });
+  var kopf = '<div class="sk-kopf"><b>'+esc(t("statFort"))+'</b><span class="sk-sub">'+esc(t("statFortSub"))+'</span></div>';
+  if(!l.length) return '<div class="card stat-karte stat-fort">'+kopf+'<div class="sk-unter">'+esc(t("statFortLeer"))+'</div></div>';
+  l.sort(function(a, b){ return b.at - a.at; });
+  var zeilen = l.slice(0, statFortAnz).map(function(x){
+    var d = Math.round((x.bis - x.von)*100)/100, p = x.von > 0 ? Math.round(d/x.von*100) : 0, einheit = x.mitKg ? " kg" : " "+t("wdhKurz");
+    var delta = d > 0 ? "+"+studioKg(d)+einheit+(p ? " (+"+p+" %)" : "") : d < 0 ? "−"+studioKg(-d)+einheit : t("statFortGleich");
+    return '<button type="button" class="sf-zeile" data-sfuebung="'+esc(x.id)+'"><span class="sf-links"><b>'+esc(x.name)+'</b><small>'+esc(t("statFortEinh", { n:x.n }))+'</small></span>'+
+      wochenKurve(studioWochen(x.id, x.mitKg ? "kg" : "wdh"), "sf-kurve")+
+      '<span class="sf-rechts"><b>'+esc(studioKg(x.von)+" → "+studioKg(x.bis)+einheit)+'</b><small class="'+(d > 0 ? 'auf' : d < 0 ? 'ab' : '')+'">'+esc(delta)+'</small></span></button>';
+  }).join("");
+  var rest = l.length - statFortAnz;
+  return '<div class="card stat-karte stat-fort">'+kopf+zeilen+
+    (rest > 0 ? '<button type="button" class="btn btn-secondary tr-mehr" data-sfmehr>'+esc(t("trMehr", { n:rest }))+'</button>' : '')+'</div>';
+}
 var statModus = "zeit";   // Verlauf-Diagramm: "zeit" | "n"
 var statGran = "woche";   // Zeitraum je Balken: "woche" | "monat" | "jahr"
 function statTage(n){ return n <= 0 ? t("statHeute") : n === 1 ? t("statGestern") : t("statVorTagen", { n:n }); }
@@ -273,9 +309,11 @@ function renderStats(){
     woche.forEach(function(b){ minWo += b.s/60; if(b.areas.lib || b.areas.timer || b.areas.reps){ var dd = new Date(b.von); kraftTage[dd.getFullYear()+"-"+dd.getMonth()+"-"+dd.getDate()] = 1; } });
     var nKraft = Object.keys(kraftTage).length, nMin = Math.round(minWo);
     function whoZeile(label, wert, ziel, text){ var p = Math.min(100, Math.round(100*wert/ziel)); return '<div class="who-zeile'+(wert >= ziel ? ' ok' : '')+'"><span>'+esc(label)+'</span><b>'+esc(text)+(wert >= ziel ? ' ✓' : '')+'</b><i class="who-bar"><u style="width:'+p+'%"></u></i></div>'; }
-    html += '<div class="card stat-karte stat-who"><div class="sk-kopf"><b>'+esc(t("statWhoTitel"))+'</b><a class="sk-link" href="quellen.html#belegt" target="_blank" rel="noopener">'+esc(t("sourcesLink"))+'</a></div>'+
+    // zugeklappt: oben steht nur die Zusammenfassung („95 / 150 min · 1 / 2“), die Einzelheiten und die Quelle erst beim Aufklappen
+    html += '<details class="card stat-karte stat-who stat-kal stat-falt" data-statfalt="who"'+(statOffen.who ? ' open' : '')+'><summary><b>'+esc(t("statWhoTitel"))+'</b>'+
+      '<span class="sk-sub">'+esc(nMin+" / 150 min · "+nKraft+" / 2")+'</span><span class="sk-chev">'+ICON_CHEV+'</span></summary>'+
       whoZeile(t("statWhoMin"), nMin, 150, nMin+" / 150 min")+whoZeile(t("statWhoKraft"), nKraft, 2, nKraft+" / 2")+
-      '<div class="sk-unter">'+esc(t("statWhoHint"))+'</div></div>';
+      '<div class="sk-unter">'+esc(t("statWhoHint"))+' <a class="sk-link" href="quellen.html#belegt" target="_blank" rel="noopener">'+esc(t("sourcesLink"))+'</a></div></details>';
     // Verlauf: Woche / Monat / Jahr, nach links wischen für früher
     var zeit = statModus === "zeit";
     function knopf(attr, wert, aktivWert, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktivWert === wert ? 'active' : '')+'">'+esc(text)+'</button>'; }
@@ -301,12 +339,13 @@ function renderStats(){
       '<div class="heat-legende"><small>'+esc(t("statWeniger2"))+'</small><i class="hz l0"></i><i class="hz l1"></i><i class="hz l2"></i><i class="hz l3"></i><small>'+esc(t("statMehr2"))+'</small></div></div></details>';
   }
   html += statTrainingsHTML();   // zuletzt gespeicherte Trainings (Training speichern auf Plan-Seite, Karte und im Timer)
+  html += statFortschrittHTML(); // Fortschritt je Übung (Bestgewicht erste → jetzt)
   // Bereiche wie auf der Startseite: Workout, dann Mobility & Stretch, danach Timer und Summit (der in den letzten 4 Wochen am meisten genutzte zuerst), Run zuletzt
   var folge = statGruppen(aktiv).map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
     var fix = function(k){ return k === "katalog" ? 0 : k === "warm" ? 1 : k === "run" ? 3 : 2; };
     return fix(a.k) - fix(b.k) || b.n - a.n || a.i - b.i;
   });
-  folge.forEach(function(r){
+  folge.forEach(function(r, ri){
     var k = r.k, d = bereichDaten(k), l = bes(k, 28), letzte = l.length ? Math.max.apply(null, l.map(function(b){ return b.bis; })) : 0;
     var vk = reihe.map(function(b){ return (b.a[k] || {}).s || 0; });
     var tageSeit = letzte ? Math.floor((new Date(jetzt).setHours(0, 0, 0, 0) - new Date(letzte).setHours(0, 0, 0, 0))/tag + 0.5) : 0;
@@ -314,8 +353,11 @@ function renderStats(){
       : l.length ? t("statBereichSub", { n:l.length, z:dauer(summe(l)) })+" · "+statTage(tageSeit) : t("statNichts");
     var chipsK = k === "run" && runs.length ? [[String(runs.length), t("statLaeufe")], [runKm(runs.reduce(function(a, x){ return a + x.dist; }, 0)), "km"], [letzte ? statTage(tageSeit) : "–", t("statZuletzt")]]
       : l.length ? [[String(l.length), t("statChipTrainings")], [dauer(summe(l)), t("statChipZeit")], [statTage(tageSeit), t("statZuletzt")]] : null;
-    html += '<div class="card stat-karte stat-bereichkarte" style="--c:'+d[3]+'"><div class="sk-kopf"><b class="sb-name"><i></i>'+esc(d[1])+'</b><span class="sk-sub">'+esc(t("statLetzte4"))+'</span></div>'+
-      (chipsK ? '<div class="chips-stat">'+chipsK.map(function(c){ return '<span><b>'+esc(c[0])+'</b><small>'+esc(c[1])+'</small></span>'; }).join("")+'</div>' : '<div class="sk-sub">'+esc(sub)+'</div>');
+    // Der meistgenutzte Bereich steht aufgeklappt, die übrigen sind zu (Zusammenfassung bleibt sichtbar); merkt sich, was du auf- oder zugeklappt hast
+    var bOffen = statOffen["b-"+k] !== undefined ? statOffen["b-"+k] : ri === 0 && l.length > 0;
+    html += '<details class="card stat-karte stat-bereichkarte stat-kal stat-falt" data-statfalt="b-'+esc(k)+'" style="--c:'+d[3]+'"'+(bOffen ? ' open' : '')+'><summary><b class="sb-name"><i></i>'+esc(d[1])+'</b>'+
+      '<span class="sk-sub">'+esc(l.length || (k === "run" && runs.length) ? sub : t("statNichts"))+'</span><span class="sk-chev">'+ICON_CHEV+'</span></summary>'+
+      (chipsK ? '<div class="chips-stat">'+chipsK.map(function(c){ return '<span><b>'+esc(c[0])+'</b><small>'+esc(c[1])+'</small></span>'; }).join("")+'</div>' : '');
     if(k !== "run" && vk.some(function(v){ return v > 0; })) html += statBalken(vk, labels, statMin, d[3]);
     if(k === "run" && runs.length){
       var gut = runs.filter(function(x){ return x.dist >= 1000; }).sort(function(a, b){ return a.at - b.at; }), letzteL = gut.slice(-60);
@@ -355,10 +397,16 @@ function renderStats(){
       var ids = []; eintraege(k, 7).forEach(function(e){ (e.ex || []).forEach(function(id){ ids.push(id); }); });
       if(ids.length) html += auswertungHTML(ids, { woche:true, titel:t("ausWoche"), sub:t("ausWocheSum") });
     }
-    html += '</div>';
+    html += '</details>';
   });
   app.innerHTML = html + '<div style="height:40px"></div>';
   bindCommon();
+  app.querySelectorAll("[data-statfalt]").forEach(function(d){
+    d.addEventListener("toggle", function(){ statOffen[d.getAttribute("data-statfalt").replace(/^b-/, "b-")] = d.open; });
+  });
+  app.querySelectorAll("[data-sfuebung]").forEach(function(b){ b.addEventListener("click", function(){ openStudioStats(b.getAttribute("data-sfuebung")); }); });
+  var sfm = app.querySelector("[data-sfmehr]");
+  if(sfm) sfm.addEventListener("click", function(){ statFortAnz += 10; var y = window.scrollY; renderStats(); window.scrollTo(0, y); });
   app.querySelectorAll(".bscroll").forEach(function(b){ b.scrollLeft = b.scrollWidth; });
   var kal = app.querySelector("[data-statkal]");
   if(kal) kal.addEventListener("toggle", function(){ statKalOffen = kal.open; });
