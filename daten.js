@@ -367,18 +367,27 @@ var EX_INT = {
    Bewusst nur ein Hinweis zum Ausprobieren, keine Trainingsplanung - Fachprüfung offen (siehe quellen.html). */
 var LZ_KETTEN = [
   ["knee-push-ups", "push-ups", "close-grip-push-ups", "diamond-push-ups", "archer-push-ups", "clap-push-ups"],
-  ["inverted-rows", "negative-pull-ups", "chin-ups", "pull-ups", "commando-pull-ups"],
+  ["inverted-rows", "negative-pull-ups", "chin-ups", "pull-ups", "commando-pull-ups", "muscle-ups"],
   ["air-squats", "split-squats", "bulgarian-split-squats", "pistol-assist", "pistol-squats"],
   ["reverse-lunges", "forward-lunges", "walking-lunges", "jump-lunges"],
   ["plank-burpees", "burpees", "burpee-squat-jumps", "jump-forward-burpees", "burpee-pull-ups"],
-  ["dead-bug", "plank", "plank-shoulder-taps", "hollow-hold"],
+  ["dead-bug", "plank", "plank-shoulder-taps", "hollow-hold", "dragon-flags"],
   ["leg-raises", "hanging-knee-raise", "hanging-leg-raise", "toes-to-bar"],
   ["glute-bridge", "single-leg-glute-bridge"],
   ["jump-squats", "jump-forward-squats", "tuck-jumps"],
   ["triceps-dips", "negative-dips", "parallel-bar-dips", "muscle-ups"],
   ["calf-raises", "single-leg-calf-raise"],
   ["good-mornings", "single-leg-rdl"],
-  ["plank", "side-plank", "copenhagen-plank"]
+  ["plank", "side-plank", "copenhagen-plank"],
+  /* 2026-10-14: weitere Ketten (die erste Kette, in der eine Übung steht, gilt) */
+  ["dead-hang", "scapular-pull-ups", "negative-pull-ups"],
+  ["support-hold", "negative-dips"],
+  ["support-hold", "l-sit"],
+  ["hanging-knee-raise", "hanging-l-sit"],
+  ["scapular-push-ups", "push-ups"],
+  ["jumping-jacks", "high-knees", "sprint-in-place"],
+  ["lateral-hops", "skater-jumps"],
+  ["leg-raises", "jackknives", "side-jackknives"]
 ];
 var EX_EQUIP = {
   "leg-press":"gym","leg-press-45":"gym","leg-extension":"gym","leg-curl":"gym","adductor-machine":"gym","abductor-machine":"gym",

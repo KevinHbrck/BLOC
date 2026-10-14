@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Mehr Ketten „Leichter / Schwerer“ (Fassung 2026-10-14-41)
+
+- **Klimmzug**: Dead Hang → Scapular Pull-up → Negative Pull-up; die Klimmzug-Kette endet jetzt beim Muscle-Up (… Klimmzug → Commando → Muscle-Up).
+- **Dips**: Support Hold → Negative Dips → Barrendips → Muscle-Up; Support Hold → L-Sit.
+- **Rumpf**: Hollow Hold → Dragon Flag; Hanging Knee Raise → Hanging L-Sit; Leg Raises → Jackknives → Side Jackknives; Scapular Push-ups → Liegestütz.
+- **Cardio**: Hampelmann → High Knees → Sprint auf der Stelle; Lateral Hops → Skater Jumps. Die Burpee-Kette (Plank-Burpee → Burpee → Burpee Squat Jump → Jump Forward → Burpee-Klimmzug) gab es schon.
+
 ## 2026-10-14 · Summit: Burpees in 40 von 52 Programmen (Fassung 2026-10-14-40)
 
 - Burpees sind der Kern von Summit: 13 weitere Programme tragen jetzt eine Burpee-Variante (vorher 27, jetzt 40 von 52). Einsteiger-Programme (Stufe 1) nutzen den leichteren Plank-Burpee ohne Liegestütz und Sprung, Stufe 2 den Burpee, Stufe 3 Burpee oder Burpee Squat Jump; die ersetzte Übung war jeweils eine leichtere.
