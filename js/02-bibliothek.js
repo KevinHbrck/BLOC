@@ -829,6 +829,52 @@ function leichterSchwerer(id){
   }
   return null;
 }
+/* ---------- Befestigung des Widerstandsbands ----------
+   Aufklappbare Karte unter den bewegten Figuren (Info-Fenster und Übungskarte): wo und wie das Band befestigt wird - eine kleine Skizze, die Schritte
+   und bei Bedarf ein besonderer Hinweis. Daten: BAND_ARTEN, BAND_HOEHE, BAND_ANKER, BAND_ANKER_EXTRA in daten.js. */
+function bandSkizze(art, h){
+  var B = ' class="bs-b"', K = ' class="bs-k"', s = "";
+  function hand(x, y){ return '<circle'+B+' cx="'+x+'" cy="'+y+'" r="3.4"/>'; }
+  function person(x){ return '<circle'+K+' cx="'+x+'" cy="13" r="5"/><path'+K+' d="M'+x+' 18V42M'+x+' 42l-6 16M'+x+' 42l6 16"/>'; }
+  if(art === "tuer"){
+    var ay = { hoch:10, brust:26, huefte:38, tief:52 }[h] || 26, hy = { hoch:28, brust:26, huefte:36, tief:42 }[h] || 26;
+    s = '<path'+K+' d="M10 58V5h30v53"/><path'+K+' d="M10 14h-3M10 42h-3"/>'+
+        '<circle'+B+' cx="40" cy="'+ay+'" r="3.4"/><path'+B+' d="M43 '+ay+'L88 '+hy+'"/>'+hand(90, hy)+person(100)+'<path'+K+' d="M100 24L91 '+hy+'"/>';
+  } else if(art === "stange"){
+    s = '<path'+K+' d="M18 58V10H102V58"/><ellipse'+B+' cx="60" cy="10" rx="4.5" ry="9"/><path'+B+' d="M56 19V40M64 19V40M54 40a6 6 0 0 0 12 0"/>';
+  } else if(art === "fuss"){
+    s = '<rect'+K+' x="30" y="51" width="20" height="7" rx="3"/><rect'+K+' x="70" y="51" width="20" height="7" rx="3"/>'+
+        '<path'+B+' d="M16 12L36 50H84L104 12"/>'+hand(16, 12)+hand(104, 12);
+  } else if(art === "fuss1"){
+    s = '<rect'+K+' x="30" y="51" width="20" height="7" rx="3"/><path'+B+' d="M26 50H78L94 14M26 50L16 38"/>'+hand(94, 14);
+  } else if(art === "haende"){
+    s = hand(30, 32)+hand(90, 32)+'<path'+B+' d="M34 32H86"/><path'+K+' d="M24 32H10M14 27l-5 5 5 5M96 32H110M106 27l5 5-5 5"/>';
+  } else if(art === "knie"){
+    s = '<rect'+K+' x="38" y="4" width="16" height="42" rx="7"/><rect'+K+' x="66" y="4" width="16" height="42" rx="7"/>'+
+        '<rect'+B+' x="34" y="24" width="52" height="12" rx="6"/><path'+K+' d="M28 30H16M20 26l-4 4 4 4M92 30H104M100 26l4 4-4 4"/>';
+  } else if(art === "knoechel"){
+    s = '<path'+K+' d="M46 4V50M74 4V50M38 56H54M66 56H82"/><rect'+B+' x="40" y="40" width="40" height="11" rx="5.5"/>';
+  } else if(art === "fussloop"){
+    s = '<path'+K+' d="M20 8V40H54"/><ellipse'+B+' cx="44" cy="40" rx="9" ry="7"/><path'+B+' d="M50 36L90 14M52 42L96 30"/>'+hand(90, 14)+hand(96, 30);
+  } else if(art === "ruecken"){
+    s = '<circle'+K+' cx="62" cy="10" r="5"/><path'+K+' d="M60 16V50M60 50l-4 8M60 50l6 8"/>'+
+        '<path'+B+' d="M92 28H55a5 5 0 0 0 0 10H92"/>'+hand(92, 28)+hand(92, 38);
+  } else if(art === "sitzfuss"){
+    s = '<circle'+K+' cx="24" cy="18" r="5"/><path'+K+' d="M24 24V52H70V40"/><rect'+B+' x="66" y="38" width="11" height="15" rx="4"/>'+
+        '<path'+B+' d="M70 40L44 26M72 48L44 32"/>'+hand(44, 26)+hand(44, 32);
+  }
+  return '<svg class="band-skizze" viewBox="0 0 120 64" aria-hidden="true"><path'+K+' d="M3 59H117" opacity=".35"/>'+s+'</svg>';
+}
+function bandAnkerHTML(exId){
+  var a = BAND_ANKER[exId];
+  if(!a) return "";
+  var lang = currentLang() === "en" ? 1 : 0, art = BAND_ARTEN[a[0]], h = a[1] && BAND_HOEHE[a[1]], extra = BAND_ANKER_EXTRA[exId];
+  return '<details class="info-anker"><summary><span class="ia-t"><b>'+esc(t("bandAnkerTitel"))+'</b><small>'+esc(art.titel[lang]+(h ? " – "+h[lang] : ""))+'</small></span>'+
+      '<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+    '<div class="ia-body">'+bandSkizze(a[0], a[1])+
+      '<ol class="info-steps">'+art.schritte[lang].map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
+      (extra ? '<div class="info-tip">'+esc(extra[lang])+'</div>' : '')+'</div></details>';
+}
 function openExInfo(exId, live, lib){
   var ex = findExercise(exId), info = EX_INFO[exId], farbe = bereichsFarbe() || (ex && studioFarbe(ex) === "var(--gym-color)" ? "var(--gym-color)" : "");
   if(!ex || !info) return;
@@ -844,6 +890,7 @@ function openExInfo(exId, live, lib){
       ? '<div class="info-views"><figure>'+illuHTML(exId, "info-illu")+'<figcaption>'+t(ILLU_VIEW2[exId].haupt === "front" ? "viewFront" : "viewSide")+'</figcaption></figure>'+
         '<figure>'+illuHTML(exId, "info-illu", true)+'<figcaption>'+t({ top:"viewTop", side:"viewSide" }[ILLU_VIEW2[exId].typ] || "viewFront")+'</figcaption></figure></div>'
       : illuHTML(exId, "info-illu"))+
+    bandAnkerHTML(exId)+   // Band-Übungen: wo und wie das Band befestigt wird (aufklappbar, unter den Figuren)
     (EX_MUSCLES[exId] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
       (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t("musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>'+
       kkInfoHTML(ex)+'</div>' : '')+

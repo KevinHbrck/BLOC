@@ -655,12 +655,7 @@ Object.assign(ILLU_POSES, {
   mit("spinal-twist",       P_LBK);
   mit("figure-four",        P_LBK);
   mit("butterfly-stretch",  Q(null,[50,38],[50,82],[[34,80,48,88],[66,80,52,88]],[[44,70,48,86],[56,70,52,86]],"",true));   // aufrecht, dann nach vorn
-  /* Halteübungen: erst die Ausgangsstellung, dann die Haltung */
-  mit("squat-hold",    P_ST);
-  mit("wall-sit",      Q(null,[31,20],[31,50],[[31,70,31,89,39,89]],[[33,34,34,47]], gWall(24)));
-  mit("dead-hang",     Q(null,[50,26],[50,54],[[48,72,47,89,40,89],[52,72,53,89,60,89]],[[42,16,36,6],[58,16,64,6]], gBar(6,24,76), true));
-  mit("plank",         P_Q4);
-  mit("hollow-hold",   P_LB);
+  /* Halteübungen (Wall Sit, Kniebeuge halten, Hängen, Plank, Hollow Hold) sind statisch und zeigen nur die Haltung - kein Hin und Her (2026-10-14) */
   /* Dehnungen, die man hält, zeigen nur die Endstellung (ein Standbild statt Hin-und-her); in Bewegung bleiben nur Katze-Kuh,
      Kobra und World's Greatest Stretch (2026-10-10) */
   ["neck-stretch","shoulder-stretch","triceps-stretch","biceps-stretch","chest-stretch","wrist-stretch","side-bend","childs-pose","sphinx-stretch",
@@ -714,7 +709,7 @@ var J_ST   = Q(null,[50,19],[50,49],[[50,70,50,89,57,89]],[[52,35,54,47]]);     
 var J_SQB  = Q(null,[57,45],[36,66],[[57,71,52,89,59,89]],[[44,54,35,61]]);          // Hocke, Arme hinten (Ausholen)
 var J_SQF  = Q(null,[57,45],[36,66],[[57,71,52,89,59,89]],[[66,47,78,45]]);          // Hocke, Arme vorn (Landung)
 var J_AIR  = Q(null,[49,4],[50,34],[[53,55,50,74,54,80]],[[58,1,66,-8]]);           // in der Luft, gestreckt, Arme schräg hoch
-var J_TUCK = Q(null,[50,6],[50,36],[[70,31,66,50,72,53]],[[61,15,70,22]]);           // Knie zur Brust
+var J_TUCK = Q(null,[49,6],[50,36],[[69,27,58,44,65,46],[65,30,54,47,61,49]],[[60,19,73,25],[58,18,70,27]]);   // Knie zur Brust (beide Beine, das hintere blasser), Arme nach vorn unten zu den Knien
 var B_SQH  = Q(null,[68,64],[40,74],[[60,72,52,89,59,89]],[[68,77,70,89]]);          // tiefe Hocke, Hände am Boden
 var B_PL   = Q(null,[74,63.5],[46,74],[[26,81,9,87,13,89.5]],[[70.5,77,70,89]]);     // hoher Stütz
 var B_PUL  = Q(null,[77,79],[47,82.5],[[27,85.5,9,88,13,89.5]],[[61,81,70,89]]);     // Liegestütz unten
@@ -745,7 +740,8 @@ var ILLU_SEQ = {
   /* Box Step-ups: ganzer Zyklus - Führungsbein auf die Box, hochdrücken, zweites Bein nach, zweites Bein zuerst wieder runter */
   "box-step-ups":  { k:[BS_BODEN, BS_AUF, BS_HOCH, BS_OBEN, BS_RUNTER], t:[[.05,.22],[.02,.18],[.02,.16],[.05,.2],[.02,.2]] },
   "jump-squats":  { k:jSeq([J_SQB, J_AIR, J_SQF]), t:[[.22,.32,"o"],[.06,.36,"i"],[.18,.3]] },
-  "tuck-jumps":   { k:jSeq([J_SQB, J_TUCK, J_SQF]), t:[[.2,.3,"o"],[.08,.34,"i"],[.16,.3]] },
+  /* Tuck Jumps: Hocke (Arme hinten) → kräftiges Strecken mit Armschwung nach oben → Knie zur Brust auf dem Höhepunkt → weiche Landung in der Hocke */
+  "tuck-jumps":   { k:jSeq([J_SQB, J_AIR, J_TUCK, J_SQF]), t:[[.2,.22,"o"],[.0,.16],[.06,.3,"i"],[.16,.3]] },
   "jump-lunges":  { k:jSeq([JL_A, JL_AIR, qSwap(JL_A), JL_AIR], .84), t:[[.16,.26,"o"],[.04,.26,"i"],[.16,.26,"o"],[.04,.26,"i"]] },
   "burpees":      { k:jSeq([J_ST, B_SQH, B_PL, B_PUL, B_PL, B_SQH, J_AIR]), t:[[.2,.38],[.04,.28],[.06,.3],[.08,.3],[.04,.28],[.04,.3,"o"],[.06,.36,"i"]] },
   "plank-burpees":{ k:[J_ST, B_SQH, B_PL, B_SQH], t:[[.25,.45],[.06,.4],[.3,.4],[.06,.45]] },
@@ -767,7 +763,7 @@ var ILLU_SEQ = {
 Object.assign(ILLU_POSES, {
   "jumping-jacks": [JJ_AUF, JJ_ZU],
   "jump-squats": [ILLU_SEQ["jump-squats"].k[0], ILLU_SEQ["jump-squats"].k[1]],
-  "tuck-jumps":  [ILLU_SEQ["tuck-jumps"].k[1], ILLU_SEQ["tuck-jumps"].k[0]],
+  "tuck-jumps":  [ILLU_SEQ["tuck-jumps"].k[2], ILLU_SEQ["tuck-jumps"].k[0]],
   "jump-lunges": [ILLU_SEQ["jump-lunges"].k[0], ILLU_SEQ["jump-lunges"].k[1]],
   "burpees":     [ILLU_SEQ["burpees"].k[2], ILLU_SEQ["burpees"].k[6]],
   "plank-burpees": [B_SQH, B_PL],
@@ -1786,6 +1782,21 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     if(gear) q.x = gear(q);
     return q;
   }
+  /* Vorderansicht, kleinere Figur: Hals y 28, Hüfte y 56 - die Arme über dem Kopf bleiben im Bild (Hände bei y ≈ 9) */
+  function FU(arms, gear){
+    var n = [50,28], p = [50,56];
+    var q = Q(null, n, p, FL.map(function(l){ return [l[0], l[1]+2, l[2], l[3], l[4], l[5]]; }),
+              arms.map(function(a){ return arm(p, n, a[0], a[1]); }), "", true);
+    if(gear) q.x = gear(q);
+    return q;
+  }
+  /* Vorderansicht, vorgebeugt (Reverse Fly): kurzer Rumpf (Hals y 38, Hüfte y 54), Knie leicht gebeugt, Kopf bleibt über den Schultern */
+  function FH(arms, gear){
+    var n = [50,38], p = [50,54];
+    var q = Q(null, n, p, [[46,71,45,89,39,89],[54,71,55,89,61,89]], arms.map(function(a){ return arm(p, n, a[0], a[1]); }), "", true);
+    if(gear) q.x = gear(q);
+    return q;
+  }
   var STAND = [[90, 90]];
   /* Arme über dem Kopf: kleinere Figur (wie „Trizeps-Curls“), damit die Hände noch im Bild bleiben */
   function SU(arms, gear){
@@ -1832,8 +1843,10 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-lat-pull-apart", "Band auseinanderziehen über Kopf", "Overhead Band Pull-apart", "back", 6, 30, 0,
     "Arme über Kopf, Band bis zu den Schultern öffnen", "Arms overhead, open the band down to your shoulders",
     1, 1, "kraft",
-    [F(M(-150,-105), function(q){ return bl(hand(q,0), [50,9], hand(q,1)); }),
-     F(M(160,195), function(q){ return bl(hand(q,0), hand(q,1)); })],
+    // Kleinere Figur von vorn (damit die Hände über dem Kopf im Bild bleiben): Arme fast gestreckt über dem Kopf, Hände knapp schulterbreit ->
+    // die Arme öffnen sich in einem Bogen nach außen bis auf Schulterhöhe, das Band wird straff
+    [FU(M(-120,-117), function(q){ return bl(hand(q,0), hand(q,1)); }),
+     FU(M(-170,-176), function(q){ return bl(hand(q,0), hand(q,1)); })],
     ["Das Band mit beiden Händen etwas mehr als schulterbreit greifen und die Arme über den Kopf strecken.|Das Band auseinanderziehen und dabei die Arme seitlich bis auf Schulterhöhe absenken.|Kontrolliert wieder nach oben führen.",
      "Hold the band a little wider than shoulder width and reach your arms overhead.|Pull the band apart and lower your arms out to the sides down to shoulder height.|Return to the top under control."],
     ["Rippen unten, Bauch fest, Blick geradeaus.|Schulterblätter nach unten und hinten ziehen.", "Ins Hohlkreuz fallen oder die Schultern hochziehen.",
@@ -1892,8 +1905,10 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-reverse-fly", "Reverse Fly mit Band", "Band Reverse Fly", "back arms", 6, 30, 0,
     "Arme gestreckt, Band vor dem Körper auseinanderziehen", "Arms straight, pull the band apart in front of you",
     1, 1, "kraft",
-    [F(M(130,50), function(q){ return blv(hand(q,0), [50,43], hand(q,1)); }),
-     F(M(178,180), function(q){ return blv(hand(q,0), hand(q,1)); })],
+    // Vorgebeugt (kurzer Rumpf von vorn, Kopf bleibt über den Schultern): Arme hängen gestreckt vor den Knien, Hände zusammen ->
+    // die Arme öffnen sich seitlich bis auf Schulterhöhe und ziehen das Band auseinander
+    [FH(M(108,100), function(q){ return blv(hand(q,0), hand(q,1)); }),
+     FH(M(178,180), function(q){ return blv(hand(q,0), hand(q,1)); })],
     ["Das Band mit beiden Händen schulterbreit greifen und die Arme vor der Brust ausstrecken.|Das Band auseinanderziehen, bis die Arme seitlich auf Schulterhöhe sind.|Kontrolliert zurückführen.",
      "Hold the band shoulder-width apart and reach your arms out in front of your chest.|Pull the band apart until your arms are out to the sides at shoulder height.|Return under control."],
     ["Ellbogen leicht gebeugt, Schulterblätter zusammenziehen.|Hals lang, Blick geradeaus.", "Die Schultern zu den Ohren ziehen oder den Rücken hohl machen.",
@@ -2258,8 +2273,10 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
   E("band-lying-leg-press", "Beinstrecken im Liegen mit Band", "Lying Band Leg Press", "legs", 3, 30, 1,
     "Band um den Fuß, Bein gegen den Widerstand strecken", "Band around your foot, press your leg out against the resistance",
     1, 1, "kraft",
-    [(function(){ var q = S([46,86], 180, [[-60,-120,[-6,-4]],[-49,62]], [[-70,-20]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })(),
-     (function(){ var q = S([46,86], 180, [[-70,-70,[-6,-4]],[-49,62]], [[-70,-20]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })()],
+    // Rückenlage, Kopf links: das Arbeitsbein kommt mit angewinkeltem Knie zur Brust (Oberschenkel fast senkrecht, Unterschenkel nach oben vorn), die Hände
+    // halten das Band am Fuß nah an der Brust; dann wird das Bein nach oben gestreckt. Das andere Bein steht angewinkelt am Boden.
+    [(function(){ var q = S([46,86], 180, [[-102,-48,[7,-2]],[-62,62]], [[-72,-22],[-78,-30]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })(),
+     (function(){ var q = S([46,86], 180, [[-100,-94,[6,-4]],[-62,62]], [[-72,-22],[-78,-30]], null, { h:[14,83], len:22 }); q.x = bl(fuss(q,0), hand(q)); return q; })()],
     ["Auf den Rücken legen, ein Bein anwinkeln und das Band um den Fuß legen. Die Enden mit beiden Händen nah an der Brust halten.|Das andere Bein bleibt angewinkelt am Boden.|Das Bein nach oben strecken, kurz halten und langsam wieder beugen. Nach der Hälfte die Seite wechseln.",
      "Lie on your back, bend one leg and loop the band around the foot. Hold the ends in both hands close to your chest.|The other leg stays bent on the floor.|Extend your leg upwards, pause and bend slowly. Switch sides halfway."],
     ["Rücken und Kopf bleiben am Boden.|Bein langsam strecken, Knie nicht durchdrücken.", "Das Becken vom Boden heben oder das Knie überstrecken.",
@@ -2364,6 +2381,109 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
       "The deep abdominal and back muscles stabilise the spine. Slow and controlled, breathe out on the effort. Four rounds of 40 seconds. Complements strength training, does not replace it."]
   });
 })();
+/* ---------- Befestigung des Widerstandsbands ----------
+   Je Band-Übung: Art der Befestigung (und Höhe) - die Art bringt Titel, Schritte und eine kleine Skizze mit (bandAnkerHTML in js/02-bibliothek.js),
+   dazu bei Bedarf ein besonderer Hinweis. Als aufklappbare Karte unter den Figuren im Info-Fenster und auf der Übungskarte. Texte: eigene Formulierungen. */
+var BAND_ARTEN = {
+  tuer:    { titel:["An der Tür befestigen", "Anchor on a door"],
+             schritte:[["Den Knoten oder Türanker am Bandende auf der gewünschten Höhe in den Spalt zwischen Tür und Rahmen legen.",
+                        "Die Tür fest schließen (wenn möglich abschließen). Sie muss sich von dir weg öffnen, damit der Zug sie zudrückt.",
+                        "Einmal kräftig ziehen, ob es hält – erst dann trainieren. So weit zurücktreten, dass das Band leicht gespannt ist."],
+                       ["Put the knot or door anchor at the end of the band into the gap between door and frame at the height you need.",
+                        "Close the door firmly (lock it if you can). It must open away from you so that your pull presses it shut.",
+                        "Give it one hard tug to check it holds – only then train. Step back until the band is lightly stretched."]] },
+  stange:  { titel:["Um eine Stange legen", "Loop around a bar"],
+             schritte:[["Das Loop-Band um eine stabile Stange, ein Reck oder ein festes Geländer legen und ein Ende durch die Schlaufe ziehen.",
+                        "Fest zuziehen und kräftig daran ziehen, ob es hält.",
+                        "Nur an Stangen, die dein Gewicht und den Zug sicher tragen."],
+                       ["Loop the band around a sturdy bar, pull-up bar or fixed railing and pull one end through the loop.",
+                        "Pull it tight and tug hard to check it holds.",
+                        "Only use bars that safely carry your weight and the pull."]] },
+  fuss:    { titel:["Unter beiden Füßen", "Under both feet"],
+             schritte:[["Die Mitte des Bandes auf den Boden legen und mit beiden Füßen etwa hüftbreit daraufstellen.",
+                        "Die Enden greifen. Breiter stehen oder die Enden kürzer greifen = mehr Widerstand.",
+                        "Auf rutschfestem Boden stehen, nicht auf einem losen Teppich."],
+                       ["Lay the middle of the band on the floor and stand on it with both feet about hip-width apart.",
+                        "Hold the ends. A wider stance or shorter grip = more resistance.",
+                        "Stand on a non-slip floor, not on a loose rug."]] },
+  fuss1:   { titel:["Unter einem Fuß", "Under one foot"],
+             schritte:[["Das Bandende bzw. die Mitte unter den Fuß legen und mit dem ganzen Fuß fest daraufstehen.",
+                        "Das freie Ende greifen. Kürzer greifen = mehr Widerstand.",
+                        "Der Fuß darf nicht rutschen – bei Bedarf einen Schuh mit Profil tragen."],
+                       ["Lay the end or middle of the band under your foot and stand on it firmly with the whole foot.",
+                        "Hold the free end. A shorter grip = more resistance.",
+                        "Your foot must not slip – wear a shoe with grip if needed."]] },
+  haende:  { titel:["In den Händen", "In your hands"],
+             schritte:[["Es muss nichts befestigt werden: das Band mit beiden Händen greifen.",
+                        "Enger greifen = mehr Widerstand, weiter = weniger.",
+                        "Das Band bleibt während der ganzen Bewegung leicht gespannt."],
+                       ["Nothing needs anchoring: just hold the band in both hands.",
+                        "A narrower grip = more resistance, wider = less.",
+                        "Keep the band lightly stretched throughout the movement."]] },
+  knie:    { titel:["Um die Oberschenkel", "Around your thighs"],
+             schritte:[["Das Loop-Band knapp über den Knien um beide Oberschenkel legen (nicht direkt auf das Gelenk).",
+                        "Die Füße so stellen, dass das Band schon etwas Spannung hat.",
+                        "Beim Drücken nach außen die Knie über den Füßen halten."],
+                       ["Put the loop band around both thighs just above your knees (not directly on the joint).",
+                        "Place your feet so the band already has some tension.",
+                        "Keep your knees over your feet when pushing outwards."]] },
+  knoechel:{ titel:["Um die Knöchel", "Around your ankles"],
+             schritte:[["Das Loop-Band um beide Knöchel legen und die Füße hüftbreit hinstellen.",
+                        "Eine Hand an Wand oder Stuhllehne, damit du sicher stehst.",
+                        "Der Abstand der Knöchel bestimmt die Spannung: weiter = mehr Widerstand."],
+                       ["Put the loop band around both ankles and stand with your feet hip-width apart.",
+                        "Rest one hand on a wall or chair back so you stand safely.",
+                        "The distance between your ankles sets the tension: wider = more resistance."]] },
+  fussloop:{ titel:["Um den Fuß, Enden in den Händen", "Around the foot, ends in your hands"],
+             schritte:[["Das Band um den Fußballen legen, die Enden mit beiden Händen greifen.",
+                        "Die Hände bestimmen die Spannung: weiter weg = mehr Widerstand.",
+                        "Das Band darf nicht vom Fuß rutschen – bei Bedarf einmal um den Fuß wickeln."],
+                       ["Loop the band around the ball of your foot and hold the ends in both hands.",
+                        "Your hands set the tension: further away = more resistance.",
+                        "The band must not slip off your foot – wrap it once more if needed."]] },
+  ruecken: { titel:["Hinter dem Rücken", "Behind your back"],
+             schritte:[["Das Band hinter dem Rücken auf Höhe der Schulterblätter legen, unter den Achseln durch, die Enden vorn greifen.",
+                        "Die Enden bleiben fest in den Händen (beim Liegestütz die Hände mit dem Band am Boden).",
+                        "Je kürzer das Band zwischen Rücken und Händen, desto mehr Widerstand."],
+                       ["Put the band behind your back at shoulder-blade height, under your armpits, and hold the ends in front.",
+                        "The ends stay firmly in your hands (for push-ups, hands with the band on the floor).",
+                        "The shorter the band between your back and your hands, the more resistance."]] },
+  sitzfuss:{ titel:["Um die Füße im Sitzen", "Around the feet, seated"],
+             schritte:[["Auf den Boden setzen, die Beine anwinkeln und das Band um beide Füße legen.",
+                        "Die Enden mit den Händen vor der Brust greifen, der Rücken bleibt aufrecht.",
+                        "Die Hände näher an den Füßen = weniger Widerstand, weiter weg = mehr."],
+                       ["Sit on the floor, bend your legs and loop the band around both feet.",
+                        "Hold the ends in your hands in front of your chest, keep your back upright.",
+                        "Hands closer to your feet = less resistance, further away = more."]] }
+};
+var BAND_HOEHE = { hoch:["ganz oben (über Kopfhöhe)", "at the top (above head height)"], brust:["auf Brusthöhe", "at chest height"],
+                   huefte:["auf Hüfthöhe", "at hip height"], tief:["ganz unten am Boden", "at floor level"] };
+var BAND_ANKER = {
+  "band-standing-row":["tuer","brust"], "band-bent-over-row":["fuss"], "band-lat-pull-apart":["haende"], "band-pull-down":["tuer","hoch"],
+  "band-assisted-pull-up":["stange"], "band-push-ups":["ruecken"], "band-chest-fly":["ruecken"], "band-reverse-fly":["haende"],
+  "band-chest-fly-up":["tuer","tief"], "band-chest-cross":["ruecken"], "band-lateral-raise":["fuss"], "band-upright-row":["fuss"],
+  "band-front-raise":["fuss"], "band-shoulder-press":["fuss"], "band-one-arm-press":["fuss1"], "band-russian-twist":["sitzfuss"],
+  "band-kneeling-twist":["tuer","brust"], "band-side-bend":["fuss1"], "band-kneeling-crunch":["tuer","hoch"], "band-crunch":["tuer","tief"],
+  "band-hammer-curl":["fuss"], "band-one-arm-curl":["fuss1"], "band-biceps-curl":["fuss"], "band-concentration-curl":["fuss1"],
+  "band-overhead-triceps":["haende"], "band-triceps-pressdown":["tuer","hoch"], "band-side-triceps":["tuer","hoch"], "band-triceps-kickback":["fuss"],
+  "band-overhead-extension":["fuss1"], "band-clamshell":["knie"], "band-leg-abduction":["knoechel"], "band-single-leg-deadlift":["fuss1"],
+  "band-glute-bridge":["knie"], "band-donkey-kick":["fussloop"], "band-squat":["fuss"], "band-prone-leg-curl":["fussloop"],
+  "band-lunge-squat":["fuss1"], "band-lying-leg-press":["fussloop"]
+};
+/* besondere Hinweise (zusätzlich zur Art): [Deutsch, Englisch] */
+var BAND_ANKER_EXTRA = {
+  "band-assisted-pull-up":["Dann einen Fuß oder das Knie in die Schlaufe setzen: Knie = weniger Hilfe, Fuß = mehr Hilfe.", "Then put one foot or your knee in the loop: knee = less help, foot = more help."],
+  "band-kneeling-twist":["Seitlich zur Tür knien, die Befestigung auf Brusthöhe neben dir.", "Kneel side-on to the door with the anchor at chest height next to you."],
+  "band-side-triceps":["Seitlich zur Tür stehen, die Befestigung oben neben dir.", "Stand side-on to the door with the anchor high up next to you."],
+  "band-crunch":["Das Band hinter dem Kopf am Boden befestigen (Tür unten) und mit dem Kopf zur Tür liegen.", "Anchor the band behind your head at floor level (low on the door) and lie with your head towards the door."],
+  "band-overhead-triceps":["Ein Ende mit der unteren Hand am unteren Rücken halten, das andere mit der oberen Hand greifen – die untere Hand ersetzt die Befestigung.", "Hold one end with your lower hand at your lower back and the other with your upper hand – the lower hand replaces the anchor."],
+  "band-overhead-extension":["Mit einem Fuß auf das Bandende treten, das andere Ende hinter dem Kopf mit beiden Händen halten.", "Stand on one end of the band with one foot and hold the other end behind your head with both hands."],
+  "band-prone-leg-curl":["Alternativ das Band vorn tief an einer Tür befestigen und mit dem Kopf zur Tür liegen.", "Alternatively anchor the band low on a door in front of you and lie with your head towards the door."],
+  "band-lat-pull-apart":["Etwas mehr als schulterbreit greifen.", "Hold it a little wider than shoulder width."],
+  "band-reverse-fly":["Schulterbreit greifen, die Arme gestreckt.", "Hold it shoulder-width apart with straight arms."],
+  "band-donkey-kick":["Die Hände halten die Bandenden am Boden, das Band liegt um einen Fuß.", "Your hands press the band ends to the floor, the band sits around one foot."],
+  "band-push-ups":["Die Enden werden mit den Händen am Boden gegriffen; das Band läuft über die Schulterblätter.", "The ends are held with your hands on the floor; the band runs across your shoulder blades."]
+};
 window.BLOC_DATEN = {
   EX_ALIAS:EX_ALIAS,
   LIB_CATS:LIB_CATS,
@@ -2460,6 +2580,10 @@ window.BLOC_DATEN = {
   STUDIO_GRUPPEN:STUDIO_GRUPPEN,
   STUDIO_ZIEL:STUDIO_ZIEL,
   LIB_FOKUS_TAUSCH:LIB_FOKUS_TAUSCH,
-  LIB_WORKOUT_INFO:LIB_WORKOUT_INFO
+  LIB_WORKOUT_INFO:LIB_WORKOUT_INFO,
+  BAND_ARTEN:BAND_ARTEN,
+  BAND_HOEHE:BAND_HOEHE,
+  BAND_ANKER:BAND_ANKER,
+  BAND_ANKER_EXTRA:BAND_ANKER_EXTRA
 };
 })();

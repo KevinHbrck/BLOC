@@ -403,6 +403,7 @@ function renderStudioKarte(id){
         return '<button type="button" class="fc-chip'+(pause === sec ? ' on' : '')+'" data-stpause="'+sec+'">'+(sec < 120 ? sec+" s" : (sec/60)+" min")+'</button>'; }).join("")+'</div>'+
       (h && h.s.length ? '<button type="button" class="st-undo" data-stundo>'+esc(t("stUndo"))+'</button>' : ''))+
     '</div>'+
+    bandAnkerHTML(id)+   // Band-Übung: wo und wie das Band befestigt wird
     '<div class="section-title">'+esc(t("stNote"))+'</div>'+
     '<div class="card"><textarea id="st-notiz" rows="2" placeholder="'+esc(t("stNotePh"))+'">'+esc(e.notiz || "")+'</textarea></div>'+
     studioInfoHTML(id, ex)+

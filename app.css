@@ -2548,3 +2548,17 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .pz-zeiten{ margin-top:12px; border-top:1px solid var(--border); }
 .pz-zeiten .opt-head{ padding-left:0; padding-right:0; }
 .pz-zeiten .opt-body{ padding:0 0 4px; }
+/* Band befestigen: aufklappbare Karte unter den Figuren (Info-Fenster, Übungskarte) mit Skizze */
+.info-anker{ margin:10px 0 12px; border-radius:14px; background:var(--surface-2); border:1px solid var(--border); }
+.info-anker summary{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; cursor:pointer; list-style:none; }
+.info-anker summary::-webkit-details-marker{ display:none; }
+.info-anker .ia-t{ display:flex; flex-direction:column; min-width:0; text-align:left; }
+.info-anker .ia-t small{ color:var(--text-dim); font-size:13px; margin-top:1px; }
+.info-anker .tpl-chev{ transition:transform .15s; }
+.info-anker[open] .tpl-chev{ transform:rotate(180deg); }
+.info-anker .ia-body{ padding:0 14px 12px; text-align:left; }
+.band-skizze{ display:block; width:100%; max-width:300px; height:auto; margin:2px auto 10px; }
+.band-skizze .bs-k{ fill:none; stroke:var(--text-dim); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
+.band-skizze .bs-b{ fill:none; stroke:var(--accent); stroke-width:2.8; stroke-linecap:round; stroke-linejoin:round; }
+.band-skizze circle.bs-b{ fill:var(--surface-2); }
+.info-anker .info-steps{ margin-bottom:8px; }

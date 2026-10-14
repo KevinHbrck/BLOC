@@ -1534,6 +1534,25 @@
       klick(await bis(function () { return $('[data-pzlink="0"].an'); }, 3000, "Trennen-Knopf"));
       await bis(function () { return !$(".pz-block"); }, 3000, "Block getrennt");
     }],
+    ["Figuren: Haltübungen statisch, Band-Karte „Band befestigen“", async function () {
+      await heim();
+      pruefe(W.ILLU["wall-sit"] && W.ILLU["wall-sit"][0] && !W.ILLU["wall-sit"][1], "Wall Sit soll statisch sein (eine Pose)");
+      ["squat-hold", "dead-hang", "plank", "hollow-hold"].forEach(function (id) { pruefe(W.ILLU[id] && !W.ILLU[id][1], id + " soll statisch sein"); });
+      pruefe(W.ILLU["tuck-jumps"][1] && W.BLOC_DEV && W.BLOC_DEV.SEQ["tuck-jumps"].k.length === 4, "Tuck Jumps: vier Phasen erwartet");
+      // jede Band-Übung hat eine Befestigung mit bekannter Art
+      var bandIds = W.EXERCISES.filter(function (e) { return e.equip.indexOf("band") > -1; }).map(function (e) { return e.id; });
+      pruefe(bandIds.length === 38 && bandIds.every(function (id) { return W.BAND_ANKER[id] && W.BAND_ARTEN[W.BAND_ANKER[id][0]]; }), "Nicht jede Band-Übung hat eine Befestigung");
+      W.openExInfo("band-standing-row", false);
+      var k = await bis(function () { return $("#overlayRoot .info-anker"); }, 2000, "Karte Band befestigen");
+      pruefe(!k.open && /Tür/.test(k.textContent) && /Brusthöhe/.test(k.textContent), "Karte: Tür und Brusthöhe erwartet: " + k.textContent.slice(0, 80));
+      klick(k.querySelector("summary"));
+      await bis(function () { return $("#overlayRoot .info-anker").open && $$("#overlayRoot .info-anker li").length === 3 && $("#overlayRoot .info-anker svg.band-skizze"); }, 2000, "Karte aufgeklappt mit Schritten und Skizze");
+      klick($("#overlayRoot [data-close]"));
+      W.openExInfo("push-ups", false);
+      await bis(function () { return $("#overlayRoot .info-sheet"); }, 2000, "Info Liegestütze");
+      pruefe(!$("#overlayRoot .info-anker"), "Übungen ohne Band zeigen keine Befestigung");
+      klick($("#overlayRoot [data-close]"));
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

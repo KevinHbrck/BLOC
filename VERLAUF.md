@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Figuren nachgeschärft, Band befestigen (Fassung 2026-10-14-12)
+
+- **Halteübungen sind statisch**: Wall Sit, Kniebeuge halten, Hängen, Plank und Hollow Hold zeigen nur die Haltung (kein Hin und Her mehr aus dem Stand; `daten.js`, Block „Halteübungen“).
+- **Neu gezeichnet**: *Band auseinanderziehen über Kopf* (kleinere Figur von vorn, Arme gestreckt über dem Kopf, öffnen sich bis auf Schulterhöhe), *Reverse Fly mit Band* (vorgebeugt von vorn: kurzer Rumpf, Arme hängen, öffnen sich seitlich), *Beinstrecken im Liegen mit Band* (Knie zur Brust, Unterschenkel nach oben, dann Bein senkrecht strecken, anderes Bein angewinkelt) und *Tuck Jumps* (vier Phasen: Hocke mit Armen hinten → Strecken mit Armschwung → Knie zur Brust auf dem Höhepunkt → weiche Landung).
+- **Band befestigen**: Unter den Figuren (Info-Fenster) und auf der Übungskarte steht bei jeder der 38 Band-Übungen eine aufklappbare Karte „Band befestigen“ mit Skizze, drei Schritten und – wo nötig – einem besonderen Hinweis. Arten: an der Tür (oben · Brust · Hüfte · unten), um eine Stange, unter beiden Füßen, unter einem Fuß, in den Händen, um die Oberschenkel, um die Knöchel, um den Fuß mit Enden in den Händen, hinter dem Rücken, um die Füße im Sitzen (`BAND_ARTEN`, `BAND_ANKER` in `daten.js`, `bandAnkerHTML`/`bandSkizze` in `js/02-bibliothek.js`).
+
 ## 2026-10-14 · Logik-Durchgang (Fassung 2026-10-14-9)
 
 - Durchgang durch die neuen Wege (Plan, Blöcke, Modus je Zeile, RPE/RIR, Rekorde, Training speichern) mit Einzelprüfungen der Rechenwege; vier Randfälle behoben:
