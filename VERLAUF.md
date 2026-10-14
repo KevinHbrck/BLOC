@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Workouts, Summit, Übungstexte, Band-Befestigung, Kalender-Stil (Fassungen 2026-10-14-34 und -35)
+
+- **Workouts**: neue Studio-Workouts (Oberkörper und Ganzkörper mit Kurzhanteln) und Einsteiger-Programme ohne Geräte (Ganzkörper, Beine, Oberkörper; 2 Runden à 30 s); schwere und explosive Übungen früh, Aktivierung vor Zugkraft; Kettlebell HIIT ohne doppelten Swing; Arme ohne Geräte als Trizeps und Schulter benannt; Deckblatt-Hinweise zu Belastung und Sicherheit.
+- **Neue Übungen** (mit Figuren): Kurzhantel-Bankdrücken, Step-ups mit Kurzhanteln, Sumo-Kniebeuge mit Kurzhantel, Einbeiniges Kreuzheben, Nordic Curl (Quelle [22]), Knie-Liegestütz, Einbeiniges Wadenheben, Negative Dips.
+- **Übungstexte** (Prüf-Läufe Freiluft, Studio, Stange): Sicherheits- und Technikhinweise bei Dragon Flag, Skin the Cat, Muscle-Up, Dips, Langhantel, Multipresse, Stange und Griff, Hangelleiter, Liegestütz-Familie, Rotationsübungen, Rückenstrecker; Knie in Richtung der Zehen einheitlich.
+- **Daten**: Stufen (EX_LEVEL) für 22 Übungen ergänzt, Seiten-Flag bei drei Geräteübungen, Pausen bei Zugübungen; Ketten leichter/schwerer ergänzt.
+- **Summit**: 25 Programme als eigene Abwandlung umgebaut (andere Zahlen, Runden, einzelne Übungen); quellen.html nennt die Herkunft ehrlich.
+- **Band befestigen**: vierter Sicherheitsschritt bei Pfosten, Stange, Knöchel und Rücken.
+- **Kalender auf der Startseite**: weiße Zeile mit farbigem Rahmen, farbiger Ring und farbiges Dreieck wie bei den Play-Knöpfen der Favoriten.
+
 ## 2026-10-14 · Band nachgeschärft, zwei neue Dehn-/Mobilisationsübungen (Fassung 2026-10-14-33)
 
 Literaturprüfung des Band-Bereichs (Probelauf des Agenten), **keine** Fachprüfung; Quelle [21] in `quellen.html`.
