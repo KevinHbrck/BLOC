@@ -323,10 +323,10 @@ function kalHinzuMenue(tag){
 }
 
 /* ---------- Startseite: heute geplant ---------- */
-function kalHeuteHTML(){
+function kalHeuteZeilenHTML(){   // Zeilen "Heute im Kalender" - stehen in der Wochenkarte der Startseite
   var heute = kalTagKey(Date.now()), liste = kalAn(heute).filter(function(e){ return !e.erledigt; });
   if(!liste.length) return "";
-  return '<div class="kal-heute"><div class="section-title">'+esc(t("kalHeuteTitel"))+'</div>'+liste.slice(0, 3).map(function(e){
+  return '<div class="kal-heute-in"><div class="kh-label">'+esc(t("kalHeuteTitel"))+'</div>'+liste.slice(0, 3).map(function(e){
     var o = kalAufloesen(e);
     return '<button type="button" class="kal-heute-zeile" data-kalheutestart="'+esc(e.id)+'" style="--kc:'+o.farbe+'"><i class="ke-balken"></i><span class="ke-text"><b>'+esc(o.name)+'</b><small>'+esc(o.sub)+'</small></span>'+
       '<span class="kh-play">'+svgIcon('<path d="M7 4l13 8-13 8z"/>')+'</span></button>';
@@ -334,6 +334,6 @@ function kalHeuteHTML(){
 }
 function kalHeuteBinden(){
   app.querySelectorAll("[data-kalheutestart]").forEach(function(b){
-    b.addEventListener("click", function(){ var e = kalFinde(b.getAttribute("data-kalheutestart")); if(e) kalStarten(e); });
+    b.addEventListener("click", function(ev){ ev.stopPropagation(); var e = kalFinde(b.getAttribute("data-kalheutestart")); if(e) kalStarten(e); });
   });
 }

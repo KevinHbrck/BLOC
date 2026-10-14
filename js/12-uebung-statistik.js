@@ -144,8 +144,10 @@ function wocheHTML(opt){
   }).join("");
   var kopf = '<span class="wo-links"><b class="wo-titel">'+esc(titel)+'</b><span class="wo-summe">'+esc(summe)+'</span></span>';
   if(opt.kal) return '<div class="woche woche-kal">'+kopf+'<span class="wo-tage">'+tage+'</span></div>';
-  return '<div class="woche woche-link" data-nav="#kalender" role="button" tabindex="0" aria-label="'+esc(titel+": "+summe+" – "+t("tabKalender"))+'">'+kopf+
+  var heuteZeilen = opt.heute && typeof kalHeuteZeilenHTML === "function" ? kalHeuteZeilenHTML() : "";
+  var karte = '<div class="woche woche-link" data-nav="#kalender" role="button" tabindex="0" aria-label="'+esc(titel+": "+summe+" – "+t("tabKalender"))+'">'+kopf+
     '<span class="wo-tage" aria-hidden="true">'+tage+'</span><span class="wo-chev" aria-hidden="true">&#8250;</span></div>';
+  return heuteZeilen ? '<div class="woche-karte">'+karte+heuteZeilen+'</div>' : karte;
 }
 /* ============ Statistik ============
    Alles aus den lokal gespeicherten Daten, nichts verlässt das Gerät. Zeigt nur Bereiche, die im Fokus (Einstellungen) eingeschaltet sind;
