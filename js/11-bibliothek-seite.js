@@ -259,7 +259,9 @@ function renderLibrary(){
     var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
     eigene += myWoCard(mw, exs, woMains(exs), workoutDuration(myRun(mw)));
   });
-  var list = '<div class="section-title">'+esc(t("katEigeneWo"))+'</div>'+(eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+katPlaeneHTML();
+  var nZeit = (state.db.myWorkouts || []).filter(function(mw){ return !mw.ws; }).length;
+  var list = katSektionHTML("zeit", "zeit", HOME_ICON.intervall, t("katSekZeit"), t("katSekZeitSub"), nZeit, eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+
+    katPlaeneHTML()+katTrainingsSektionHTML();
   app.innerHTML =
     katKopfHTML("workouts", hw.knopf) +
     list + '<div style="height:40px"></div>';
@@ -268,6 +270,8 @@ function renderLibrary(){
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   bindTrash(neu);
   katPlaeneBinden();
+  katSektionBinden();
+  statTrainingsBinden(neu);   // gespeicherte Trainings: Tipp zeigt Sätze und Notiz
   app.querySelectorAll("[data-fav]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neu(); }); });
   app.querySelectorAll("[data-cover]").forEach(function(el){ el.addEventListener("click", function(e){
     e.stopPropagation(); if(el.disabled) return; coverDraft = null; go("#cover/"+el.getAttribute("data-cover"));

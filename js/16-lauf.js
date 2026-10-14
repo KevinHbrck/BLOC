@@ -549,7 +549,7 @@ function renderRunDetail(id){
 /* Eigenes Workout als Karte (Air › Meine und Mobility & Stretch › Meine) */
 function myWoCard(mw, exs, mains, dur){
   var ids = exs.map(function(e){ return e.id; }), gr = planGruppen(ids), ort = mw.ws ? "" : planOrt(ids); return '<div class="list-item entry tpl-item lib-card my-item" style="--cat:'+woFarbe(exs)+'" data-nav="#mybuild/'+mw.id+'" data-q="'+esc(woSearchText(mw.name, exs))+'">'+
-    '<button class="playbtn cat" data-cover="my/'+mw.id+'" '+(exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
+    '<button class="playbtn cat" data-cover="my/'+mw.id+'" '+(exs.length?'':'disabled style="opacity:.3"')+' title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+(mw.ws ? '' : ortThumbHTML(ids))+
     '<div class="meta"><div class="name">'+esc(mw.name)+'</div>'+
     '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDauerKurz(dur)+(ort ? SEP+esc(ort) : '')+'</div>'+(gr ? '<div class="sub pl-gruppen">'+esc(gr)+'</div>' : '')+
     '</div><div class="card-aside"><div class="card-acts">'+favBtn("my:"+mw.id)+trashBtn("my", mw.id, mw.name)+'</div></div></div>';

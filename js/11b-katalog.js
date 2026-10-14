@@ -494,19 +494,47 @@ function planOrt(ids){
   var exs = ids.map(findExercise).filter(Boolean), s = exs.filter(exIstStudio).length;
   return !exs.length ? "" : s === 0 ? t("katOrtFrei") : s === exs.length ? t("katOrtStudio") : t("katOrtBeide");
 }
+/* ---------- Meine: Abschnitte und Orts-Fotos ----------
+   Die Abschnitte (Nach Zeit · Nach Sätzen · Gespeicherte Trainings) sind aufklappbare Karten mit Symbol, Untertitel und Zahl; offen oder zu merkt sich
+   katOffen für diesen Besuch. Jeder Eintrag trägt das Foto seines Ortes (Fitnessstudio, Freiluft oder beides geteilt). */
+function ortThumbHTML(ids){
+  var s = 0, f = 0;
+  (ids || []).forEach(function(id){ var ex = findExercise(id); if(!ex) return; if(exIstStudio(ex)) s++; else f++; });
+  if(!s && !f) return "";
+  function img(k){ return '<img src="'+KAT_FOTO[k]+'" alt="" draggable="false">'; }
+  return '<span class="ort-thumb'+(s && f ? ' zwei' : '')+'" aria-hidden="true">'+(s ? img("studio") : '')+(f ? img("frei") : '')+'</span>';
+}
+/* farbe: Name der Akzentfarbe des Abschnitts (zeit | saetze | training) */
+function katSektionHTML(id, farbe, ikon, titel, sub, n, inhalt){
+  var offen = katOffenStd("sek-"+id, true);
+  return '<details class="kat-sek kat-sek-'+farbe+'" data-katsek="'+esc(id)+'"'+(offen ? ' open' : '')+'><summary>'+
+    '<span class="ks-ico">'+svgIcon(ikon)+'</span><span class="ks-t"><b>'+esc(titel)+'</b><small>'+esc(sub)+'</small></span>'+
+    '<span class="ks-n">'+n+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+    '<div class="ks-inhalt">'+inhalt+'</div></details>';
+}
+function katSektionBinden(){
+  app.querySelectorAll("details.kat-sek > summary").forEach(function(sm){
+    sm.addEventListener("click", function(e){
+      e.preventDefault();
+      var d = sm.parentNode; d.open = !d.open; katOffen["sek-"+d.getAttribute("data-katsek")] = d.open;
+    });
+  });
+}
+var KAT_ICON_SAETZE = KAT_ICON_STUDIO;   // Hantel
+var KAT_ICON_TRAININGS = '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4M9 15l2 2 4-4"/>';
 function katPlaeneHTML(){
   var pl = stPlaene().filter(function(x){ return !x.entwurf; }).sort(function(a, b){ return (b.updatedAt || 0) - (a.updatedAt || 0); });
-  return '<div class="section-title">'+esc(t("katPlaene"))+'</div>'+
-    (pl.length ? pl.map(function(p){
+  var inhalt = (pl.length ? pl.map(function(p){
       var ids = stPlanIds(p), namen = ids.slice(0, 3).map(function(id){ return tplText(findExercise(id).name); }).join(", ")+(ids.length > 3 ? " …" : "");
       var gr = planGruppen(ids), ort = planOrt(ids);
-      return '<div class="list-item entry plan-item" data-plan="'+esc(p.id)+'" role="button" tabindex="0">'+
+      return '<div class="list-item entry plan-item" data-plan="'+esc(p.id)+'" role="button" tabindex="0">'+ortThumbHTML(ids)+
         '<div class="meta"><div class="name">'+esc(p.name)+'</div><div class="sub">'+esc(planAnzahl(ids.length))+(ort ? SEP+esc(ort) : '')+'</div>'+
         (gr ? '<div class="sub pl-gruppen">'+esc(gr)+'</div>' : '')+
         (ids.length ? '<div class="sub pl-namen">'+esc(namen)+'</div>' : '')+'</div>'+
         '<div class="card-aside"><div class="card-acts">'+favBtn("plan:"+p.id)+trashBtn("plan", p.id, p.name)+'</div></div></div>';
     }).join("") : '<div class="fav-empty">'+esc(t("planNone"))+'</div>')+
     (pl.length > 1 ? auswertungHTML(pl.reduce(function(a, p){ return a.concat(stPlanIds(p)); }, []), { gesamt:true, titel:t("ausAll") }) : '');
+  return katSektionHTML("saetze", "saetze", KAT_ICON_SAETZE, t("katSekSaetze"), t("katSekSaetzeSub"), pl.length, inhalt);
 }
 function katPlaeneBinden(){
   app.querySelectorAll("[data-plan]").forEach(function(el){

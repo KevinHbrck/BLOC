@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-14 · Meine: Abschnitte, Fotos, Trainings; Rückfrage nach dem Speichern (Fassung 2026-10-14-13)
+
+- **Training speichern** löst einen noch nicht gespeicherten Plan aus dem Entwurf: er steht danach unter Meine. Die gespeicherten Trainings stehen dort als dritter Abschnitt **„Gespeicherte Trainings“** (Tipp = Sätze, Notiz, Löschen; weiter auch in der Statistik).
+- **Rückfrage nach „Speichern“ im Plan-Bau** (`planLoslegenFrage`): „Plan gespeichert – willst du direkt loslegen?“ **Ja** zeigt die Plan-Seite, **Nein** führt zurück zum Baukasten; der Plan liegt in beiden Fällen unter Meine.
+- **Meine** gliedert sich in drei aufklappbare Abschnitte mit Symbol, Untertitel und Zahl (**Nach Zeit** · **Nach Sätzen** · **Gespeicherte Trainings**; `katSektionHTML`), und jeder Eintrag trägt das **Foto seines Ortes** (Fitnessstudio, Freiluft oder beide geteilt; `ortThumbHTML`).
+
 ## 2026-10-14 · Figuren nachgeschärft, Band befestigen (Fassung 2026-10-14-12)
 
 - **Halteübungen sind statisch**: Wall Sit, Kniebeuge halten, Hängen, Plank und Hollow Hold zeigen nur die Haltung (kein Hin und Her mehr aus dem Stand; `daten.js`, Block „Halteübungen“).

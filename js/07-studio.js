@@ -580,6 +580,24 @@ function planZeilenBinden(root, fn, neuZeichnen, p){
     });
   });
 }
+/* Nach dem ersten Speichern eines neuen Plans: „Willst du direkt loslegen?“ - Ja zeigt die Plan-Seite (Start, Sätze, Timer), Nein führt zurück zum
+   Baukasten; der Plan liegt in beiden Fällen unter Meine. Die Plan-Seite steht schon dahinter. */
+function planLoslegenFrage(p){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet" role="dialog" aria-label="'+esc(t("loslegenTitel"))+'">'+
+    '<h3>'+esc(t("loslegenTitel"))+SEP+esc(p.name)+'</h3><p>'+esc(t("loslegenText"))+'</p>'+
+    '<div class="btn-row"><button class="btn btn-secondary" data-lnein>'+esc(t("loslegenNein"))+'</button>'+
+    '<button class="btn btn-primary" data-lja>'+ICON_PLAY+' '+esc(t("loslegenJa"))+'</button></div></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  function nein(){
+    zu();
+    katTabSetzen("baukasten");   // setzt auch den geöffneten Plan zurück
+    renderKatalog(); window.scrollTo(0, 0);
+  }
+  root.querySelector("[data-lja]").addEventListener("click", zu);
+  root.querySelector("[data-lnein]").addEventListener("click", nein);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+}
 function renderStudioPlan(){
   var p = stPlanAktiv && stPlanFind(stPlanAktiv);
   if(!p){ stPlanAktiv = null; stPlanBauen = false; return renderKatalog(); }
@@ -669,8 +687,10 @@ function renderStudioPlan(){
     if(su) su.textContent = planSummeText(stPlanIds(p));
   }, neu, p);
   an("[data-plandone]", function(){
-    if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); showToast(t("planGespeichert")); }   // erst jetzt steht der neue Plan unter Meine
+    var neuGespeichert = !!p.entwurf;
+    if(neuGespeichert){ delete p.entwurf; p.updatedAt = Date.now(); save(); }   // erst jetzt steht der neue Plan unter Meine
     stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);
+    if(neuGespeichert) planLoslegenFrage(p);   // neu gespeichert: gleich fragen, ob es losgehen soll
   });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */

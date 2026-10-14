@@ -1534,6 +1534,42 @@
       klick(await bis(function () { return $('[data-pzlink="0"].an'); }, 3000, "Trennen-Knopf"));
       await bis(function () { return !$(".pz-block"); }, 3000, "Block getrennt");
     }],
+    ["Meine: Abschnitte, Orts-Fotos, gespeicherte Trainings; Plan speichern fragt nach dem Loslegen", async function () {
+      await heim();
+      klick('[data-herostart]');
+      await zuBaukasten("timer");
+      klick("[data-bauselber]");
+      await bis(function () { return $("#plan-name") && $("[data-plandone]"); }, 3000, "Plan-Bau");
+      klick(await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats"));
+      klick(await bis(function () { return $("[data-plandone]:not([disabled])"); }, 2000, "Speichern"));
+      await bis(function () { return $("#overlayRoot [data-lnein]") && $("#overlayRoot [data-lja]") && $("[data-planedit]"); }, 3000, "Rückfrage: direkt loslegen?");
+      var plNeu = W.stPlaene().filter(function (p) { return !p.entwurf; }).pop();
+      pruefe(plNeu && plNeu.ids.indexOf("air-squats") > -1, "Der Plan steht nach „Speichern“ unter Meine");
+      klick("#overlayRoot [data-lnein]");   // Nein: zurück zum Baukasten
+      await bis(function () { return $('[data-kattab="baukasten"].active') && $("[data-bauselber]") && !$("#overlayRoot [data-lnein]"); }, 3000, "zurück im Baukasten");
+      // Ja bleibt auf der Plan-Seite
+      W.go("#studioplan/" + plNeu.id);
+      await bis(function () { return $$(".pz-zeile").length === 1; }, 3000, "Plan-Seite");
+      // Meine: drei Abschnitte, Fotos, zuklappbar
+      await zuMeine();
+      pruefe($$("details.kat-sek").length === 3 && $$("details.kat-sek[open]").length === 3, "Meine: drei aufgeklappte Abschnitte erwartet: " + $$("details.kat-sek").length);
+      pruefe($(".plan-item .ort-thumb img") && /freiluft/.test($(".plan-item .ort-thumb img").getAttribute("src")), "Plan mit Foto des Ortes (Freiluft) erwartet");
+      klick($('details[data-katsek="saetze"] > summary'));
+      pruefe(!$('details[data-katsek="saetze"]').open, "Abschnitt lässt sich zuklappen");
+      klick($('details[data-katsek="saetze"] > summary'));
+      // Training speichern legt einen noch nicht gespeicherten Plan unter Meine ab und steht dort bei den gespeicherten Trainings
+      var entw = { id: "p-entw", name: "Entwurf", ids: ["push-ups"], updatedAt: Date.now(), entwurf: true };
+      W.stPlaene().push(entw); W.save();
+      W.studioSatzLog("push-ups", 0, 15);
+      var e0 = W.trainingSpeichern({ plan: entw, ids: ["push-ups"] }, "Test");
+      pruefe(e0 && !W.stPlanFind("p-entw").entwurf, "Training speichern soll den Plan aus dem Entwurf lösen");
+      W.renderKatalog();
+      await bis(function () { return $('details[data-katsek="trainings"] .tr-zeile'); }, 3000, "Gespeichertes Training bei Meine");
+      pruefe($('details[data-katsek="trainings"] .tr-zeile .ort-thumb'), "Training mit Foto des Ortes");
+      klick($('details[data-katsek="trainings"] .tr-zeile'));
+      await bis(function () { return /Entwurf/.test(($("#overlayRoot .tr-sheet") || {}).textContent || ""); }, 2000, "Detail des Trainings");
+      klick("#overlayRoot [data-cancel]");
+    }],
     ["Figuren: Haltübungen statisch, Band-Karte „Band befestigen“", async function () {
       await heim();
       pruefe(W.ILLU["wall-sit"] && W.ILLU["wall-sit"][0] && !W.ILLU["wall-sit"][1], "Wall Sit soll statisch sein (eine Pose)");

@@ -433,6 +433,7 @@ function trainingHeute(ids){
 function trainingSpeichern(k, notiz){
   var d = trainingHeute(k.ids);
   if(!d.ex.length) return null;
+  if(k.plan && k.plan.entwurf){ delete k.plan.entwurf; k.plan.updatedAt = Date.now(); }   // ein noch nicht gespeicherter Plan kommt mit dem Training unter Meine
   var l = einheitenListe(), vorh = einheitHeute(k.plan);
   var e = vorh || { id:uid(), tag:einheitTagKey(), plan:k.plan ? k.plan.id : "" };
   e.at = Date.now(); e.name = k.plan ? k.plan.name : ""; e.ex = d.ex; e.saetze = d.saetze; e.vol = d.vol; e.wdh = d.wdh; e.dauer = d.dauer; e.rek = d.rek;
@@ -503,16 +504,26 @@ function trainingLeisteBinden(k, nachher){
   var b = app.querySelector("[data-trsave]");
   if(b) b.addEventListener("click", function(){ openTrainingSpeichern(k, nachher); });
 }
+function trainingsZeilenHTML(l){
+  return l.map(function(x){
+    var tag = new Date(x.tag+"T12:00:00").toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" });
+    var thumb = ortThumbHTML(x.ex.map(function(a){ return a.id; }));
+    return '<button type="button" class="tr-zeile" data-trdetail="'+esc(x.id)+'">'+thumb+'<span class="tr-links"><b>'+esc(tag)+'</b><small>'+esc(x.name || t("trFrei"))+'</small></span>'+
+      '<span class="tr-rechts">'+esc(trLeisteText(x.saetze, x.ex.length)+(x.dauer >= 60 ? " · "+Math.round(x.dauer/60)+" min" : "")+(x.rek ? " · ★ "+x.rek : ""))+'</span></button>';
+  }).join("");
+}
 /* Statistik: die zuletzt gespeicherten Trainings */
 function statTrainingsHTML(){
   var l = einheitenListe().slice().sort(function(a, b){ return b.at - a.at; }).slice(0, 10);
   if(!l.length) return "";
   return '<div class="card stat-karte stat-trainings"><div class="sk-kopf"><b>'+esc(t("trStatTitel"))+'</b><span class="sk-sub">'+esc(t("trStatSub", { n:einheitenListe().length }))+'</span></div>'+
-    l.map(function(x){
-      var tag = new Date(x.tag+"T12:00:00").toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" });
-      return '<button type="button" class="tr-zeile" data-trdetail="'+esc(x.id)+'"><span><b>'+esc(tag)+'</b><small>'+esc(x.name || t("trFrei"))+'</small></span>'+
-        '<span class="tr-rechts">'+esc(trLeisteText(x.saetze, x.ex.length)+(x.dauer >= 60 ? " · "+Math.round(x.dauer/60)+" min" : "")+(x.rek ? " · ★ "+x.rek : ""))+'</span></button>';
-    }).join("")+'</div>';
+    trainingsZeilenHTML(l)+'</div>';
+}
+/* Workout › Meine: die gespeicherten Trainings als dritter Abschnitt (mit Foto des Ortes, Tipp = Sätze und Notiz) */
+function katTrainingsSektionHTML(){
+  var alle = einheitenListe().slice().sort(function(a, b){ return b.at - a.at; });
+  var inhalt = alle.length ? trainingsZeilenHTML(alle.slice(0, 15)) : '<div class="fav-empty">'+esc(t("trMeineLeer"))+'</div>';
+  return katSektionHTML("trainings", "training", KAT_ICON_TRAININGS, t("katSekTrainings"), t("katSekTrainingsSub"), alle.length, inhalt);
 }
 function statTrainingsBinden(neu){
   app.querySelectorAll("[data-trdetail]").forEach(function(b){
