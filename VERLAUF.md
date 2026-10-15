@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · New: minimalistischer (Fassung 2026-10-16-10)
+
+- Nach der Durchsicht des UX-Designers (nur CSS, Block „Minimal“ am Ende von `layout-new.css`): ein gemeinsamer Foto-Verlauf (`--foto-fuss`) statt mehrerer Lagen und Bereichsschimmer, keine Ränder und Schatten auf Fotokarten (Schatten nur für Pille und Hauptknopf), kein Textschatten, Symbolfelder neutral außer Workout (orange) und Mobility (grün), Pfeil ohne Kreis, Kopfsymbole und Woche ohne Glas, Kopf-Verlauf auf zwei Lagen (Gruß bleibt auch in Hell lesbar), Builder-Foto ohne Weichzeichner, `.gn-play` nur als orangenes Dreieck (der Hauptknopf ist der einzige gefüllte Kreis).
+
 ## 2026-10-16 · New: ein Hauch Farbe auf Training und bei den Favoriten (Fassung 2026-10-16-8)
 
 - Bereichskarten auf Training im bisherigen dunklen Foto-Stil, dazu je Bereich ein zarter Farbschimmer (Orange Workout, Grün Mobility, Blau Timer, Gold Summit, Violett Run); farbige Symbolfelder nur bei Workout und Mobility, die übrigen einfarbig (Fassung 2026-10-16-9). Favoriten tragen dieselben Farben nur als schwacher Schimmer von unten (`data-art`). Zwischenstände mit stärkerer Farbe waren zu bunt.
