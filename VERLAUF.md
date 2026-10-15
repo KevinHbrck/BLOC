@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · Kopfblock mit Auswahl, Timer in BLOC-Farben (Fassung 2026-10-15-3)
+
+- **Kopfblock**: Titel bleibt „Bereit für dein Training?“; darunter stehen Dauer und Ort, unten in der Taste der Name des heutigen Trainings. Bei mehreren heutigen Trainings öffnet der Tipp eine Auswahl („Was startest du jetzt?“).
+- **Timer in BLOC-Farben** (`phaseVars` in `js/19-timer-motor.js`): Belastung und Vorbereitung auf dem Hintergrund und in der Schriftfarbe des gewählten Designs, jede Pause und Blockpause in BLOC-Orange (statt Grün/Blau).
+
 ## 2026-10-15 · Kopfblock mit heutigem Training, Meine Woche, Woche kopieren, Rad im Run (Fassung 2026-10-15-1)
 
 - **Kopfblock der Startseite** mit Rangfolge: (A) heute im Kalender eingeplant → Name(n) mit „&“, Dauer und Ort (z. B. „29 Min · Fitnessstudio“), ein Tipp startet das erste offene Training; (B) nichts eingeplant, aber Favoriten da → „Bereit für dein Training?“ springt zu den Favoriten; (C) auch keine Favoriten → Baukasten. Code: `heroHTML`/`heroHeutige` in `js/04-start.js`, `kalHeroInfo` in `js/19a-kalender.js`.

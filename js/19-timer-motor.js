@@ -110,11 +110,13 @@ function rememberLastRun(w, source){
   save();
 }
 
+/* Timer in den BLOC-Farben: Belastung und Vorbereitung auf dem Hintergrund und in der Schriftfarbe des gewählten Designs,
+   jede Pause (auch Blockpause) in BLOC-Orange */
 function phaseVars(phase){
-  if(phase==="work") return { bg:"var(--accent)", text:"var(--accent-text)", label:t("phWork") };
-  if(phase==="rest") return { bg:"var(--rest)", text:"var(--rest-text)", label:t("phRest") };
-  if(phase==="blockrest") return { bg:"var(--blockrest)", text:"#ffffff", label:t("phBlockrest") };
-  if(phase==="prep") return { bg:"var(--blockrest)", text:"#ffffff", label:t("phPrep") };
+  if(phase==="work") return { bg:"var(--bg)", text:"var(--text)", label:t("phWork") };
+  if(phase==="rest") return { bg:"var(--accent)", text:"var(--accent-text)", label:t("phRest") };
+  if(phase==="blockrest") return { bg:"var(--accent)", text:"var(--accent-text)", label:t("phBlockrest") };
+  if(phase==="prep") return { bg:"var(--bg)", text:"var(--text)", label:t("phPrep") };
   return { bg:"var(--bg)", text:"var(--text)", label:"" };
 }
 

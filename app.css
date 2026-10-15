@@ -2386,6 +2386,7 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .home-hero .hh-main{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; width:100%; min-height:168px; padding:16px 16px 14px; border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
 .hh-label{ font-size:13px; font-weight:600; letter-spacing:.02em; opacity:.95; }
 .hh-titel{ display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; max-width:13em; font-size:27px; line-height:1.14; font-weight:800; text-wrap:balance; text-shadow:0 1px 8px rgba(0,0,0,.25); }
+.hh-sub{ font-size:14px; font-weight:600; opacity:.95; }
 .hh-los{ margin-top:auto; display:inline-flex; align-items:center; gap:8px; max-width:100%; padding:9px 14px; border-radius:999px; background:rgba(255,255,255,.94); color:#1c1c1e; font-size:14px; font-weight:700; }
 .hh-los svg{ width:13px; height:13px; flex:none; color:var(--accent); }
 .hh-los > span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

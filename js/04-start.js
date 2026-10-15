@@ -113,16 +113,16 @@ function heroHeutige(){
   return kalAn(heute).filter(function(e){ return !st[e.id] && kalAufloesen(e).ok; });
 }
 /* Kopfblock der Startseite, in dieser Rangfolge:
-   A) heute ist etwas eingeplant: Name(n), Dauer und Ort, ein Tipp startet das Training (bei mehreren erscheint eine Auswahl)
+   A) heute ist etwas eingeplant: unten Name(n) des Trainings, darüber Dauer und Ort; ein Tipp startet es (bei mehreren erscheint eine Auswahl)
    B) nichts eingeplant, aber Favoriten da: „Bereit für dein Training?“, ein Tipp springt zu den Favoriten
    C) auch keine Favoriten: ein Tipp führt direkt in den Baukasten (Workout › Baukasten). Foto: Pexels (siehe quellen.html) */
 function heroHTML(){
   if(fokusAus("katalog")) return "";   // Workout in den Einstellungen ausgeblendet: dann auch kein Kopfblock
   var tag = new Date().toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long" });
-  var heute = heroHeutige(), modus = "baukasten", titel = t("heroTitel"), los = t("heroLos");
-  if(heute.length){
+  var heute = heroHeutige(), modus = "baukasten", los = t("heroLos"), sub = "";
+  if(heute.length){   // der Titel bleibt „Bereit für dein Training?“, unten steht das Training mit Namen (darüber Dauer und Ort)
     var info = kalHeroInfo(heute);
-    modus = "plan"; titel = info.titel; los = info.sub;
+    modus = "plan"; los = info.titel; sub = info.sub;
   } else if(favEntries().length){
     modus = "fav"; los = t("heroFav");
   }
@@ -130,7 +130,8 @@ function heroHTML(){
     '<img class="hh-bild" src="img/start-halle.jpg" alt="" draggable="false">'+
     '<button type="button" class="hh-main" data-herostart="'+modus+'">'+
       '<span class="hh-label">'+esc(t("heroHeute", { d:tag }))+'</span>'+
-      '<b class="hh-titel">'+esc(titel)+'</b>'+
+      '<b class="hh-titel">'+esc(t("heroTitel"))+'</b>'+
+      (sub ? '<span class="hh-sub">'+esc(sub)+'</span>' : '')+
       '<span class="hh-los">'+ICON_PLAY+'<span>'+esc(los)+'</span></span>'+
     '</button>'+
   '</section>';

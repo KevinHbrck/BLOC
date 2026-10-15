@@ -1635,7 +1635,7 @@
       W.save();
       await heim();
       // Kopfblock, Stufe A: das heute eingeplante Training steht im Kopfblock (statt „Bereit für dein Training?“)
-      pruefe(/Zufallstraining/.test($(".hh-titel").textContent) && $('[data-herostart="plan"]'), "Kopfblock zeigt das heutige Training nicht: " + $(".hh-titel").textContent);
+      pruefe(/Bereit für dein Training/.test($(".hh-titel").textContent) && /Zufallstraining/.test($(".hh-los").textContent) && $('[data-herostart="plan"]'), "Kopfblock: Titel bleibt, unten steht das heutige Training: " + $(".hh-los").textContent);
       pruefe($(".woche-link") && !$(".woche-link").hasAttribute("aria-expanded"), "Meine Woche soll nicht aufklappbar sein");
       // mehrere heute eingeplant: ein Tipp auf den Kopfblock öffnet die Auswahl
       W.kalHinzu(heuteKey, { art: "zufall" }).erledigt = false;
