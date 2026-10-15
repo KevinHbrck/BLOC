@@ -840,9 +840,13 @@ function renderSettings(){
       return '<button type="button" data-fokus="'+k+'" aria-pressed="'+!fokusAus(k)+'" class="'+(i > 1 ? 'halb' : '')+(fokusAus(k) ? '' : ' active')+'">'+esc(bereichDaten(k)[1])+'</button>';
     }).join("")+'</div><div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t("fokusHint"))+'</div></div>'+
     '<div class="section-title">'+t("optWichtig")+'</div>'+
-    '<div class="card">'+einstKopf(EINST_ICON.darstellung, t("appearance"))+'<div class="theme-pick">'+
-      themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+
-      themeBtn("nacht",t("thNacht"),"halb")+themeBtn("kodak",t("thKodak"),"vintage halb")+
+    '<div class="card">'+einstKopf(EINST_ICON.darstellung, t("appearance"))+
+    '<div class="label">'+esc(t("layoutLabel"))+'</div>'+
+    '<div class="theme-pick lang-pick">'+layoutBtn("classic",t("layClassic"))+layoutBtn("new",t("layNew"))+'</div>'+
+    '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t("layoutInfo"))+'</div>'+
+    '<div class="label" style="margin-top:16px;">'+esc(t("brightLabel"))+'</div>'+
+    '<div class="theme-pick vier">'+
+      themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+themeBtn("nacht",t("thNacht"))+
     '</div>'+
     '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+t("themeInfo")+'</div>'+
     '</div>'+
@@ -909,12 +913,22 @@ function renderSettings(){
     var classes = (cls||"") + (s.theme===val ? " active" : "");
     return '<button data-theme="'+val+'" class="'+classes.trim()+'">'+label+'</button>';
   }
+  function layoutBtn(val, label){
+    var an = (s.layout === "new" ? "new" : "classic") === val;
+    return '<button type="button" data-layoutwahl="'+val+'" aria-pressed="'+an+'" class="'+(an ? "active" : "")+'">'+esc(label)+'</button>';
+  }
   function langBtn(val, label){
     return '<button data-lang="'+val+'" class="'+(currentLang()===val ? "active" : "")+'">'+label+'</button>';
   }
   app.querySelectorAll("[data-theme]").forEach(function(btn){
     btn.addEventListener("click", function(){
       s.theme = btn.getAttribute("data-theme");
+      save(); applyTheme(); renderSettings();
+    });
+  });
+  app.querySelectorAll("[data-layoutwahl]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      s.layout = btn.getAttribute("data-layoutwahl") === "new" ? "new" : "classic";
       save(); applyTheme(); renderSettings();
     });
   });

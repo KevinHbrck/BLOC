@@ -197,7 +197,7 @@ function renderHome(){
   var bereicheListe = bereicheHTML();
   app.innerHTML =
     topbar("BLOC", { home:true, sub:"Modular Training Builder" }) +
-    installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
+    c60HinweisHTML() + installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
     '<div class="sec-head" data-favsek><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
@@ -205,9 +205,9 @@ function renderHome(){
     favHTML +
     /* Weitere Bereiche: Workout, Mobility & Stretch, Timer, Summit und Run als ruhige Liste */
     (bereicheListe ? '<div class="sec-head"><div class="section-title">'+t("areasMore")+'</div>'+
-      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+bereicheListe : '') +
-    KODAK_BADGE;
+      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+bereicheListe : '');
   bindCommon();
+  bindC60Hinweis();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var heroKnopf = app.querySelector("[data-herostart]");
   if(heroKnopf) heroKnopf.addEventListener("click", function(){

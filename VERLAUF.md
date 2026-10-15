@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · C60 entfällt, Aussehen „New“ neben „Klassik“ (Fassung 2026-10-15-5)
+
+- **C60 ersatzlos entfernt** (Kassetten-Look): CSS von rund 2.690 auf rund 2.220 Zeilen (alle `:root[data-vintage]`-/`kodak`-Regeln, Walzenzähler `.tc`/`.odo-*`, Kassetten-Etikett, `kodak-word`), im Code `isVintageTheme`, `KODAK_BADGE`, der Walzenzähler-Teil von `js/20-walzen-start.js` (die Datei bleibt, dort liegen weiter Timer-Takt, Pause, Beenden und der Service-Worker-Start), die Texte `thKodak` und der C60-Satz in `themeInfo`. Gespeichertes `kodak` (auch die alten Retro-Namen) wird in `migrateTheme` zu `light`; ein einmaliger, schließbarer Hinweis steht auf der Startseite (`c60HinweisHTML`, `c60WegTitel`/`c60WegText`).
+- **Aussehen „New“** als zweites Layout: `settings.layout` (`classic` | `new`, fehlt = Klassik), gesetzt als `data-layout` in `applyTheme`. Auswahl in Einstellungen › Darstellung: Zeile „Aussehen“ (Klassik · New) und eigene Zeile „Helligkeit“ (System · Hell · Dunkel · Nacht in vier Spalten). Neue Datei `layout-new.css` (in `index.html` und `GRUNDGERUEST` eingetragen), nur Regeln unter `:root[data-layout="new"]`: größere Rundungen mit kleiner Ecke oben links, ruhige Konturen, Pillen-Auswahl, runde Symboltasten, Wochenpunkte (weiß = frei, orange = trainiert, Ring = geplant), untere Leiste als schwebende Pille mit Milchglas (deckender Rückfall ohne `backdrop-filter`) und orangenem aktivem Reiter, Fenster mit größeren Rundungen.
+- Navigation, Inhalte und Abläufe sind unverändert; Standard bleibt Klassik. Fotos aus dem Entwurf sind noch nicht eingebaut (Lizenzbelege liefert der Nutzer nach).
+
 ## 2026-10-15 · Timer: Übung orange, Pause weiß, kleines BLOC-Zeichen; Ton nach Hintergrund (Fassung 2026-10-15-4)
 
 - **Timer-Farben** (`phaseVars`, `js/19-timer-motor.js`): Übung (Belastung) auf BLOC-Orange mit weißer Schrift, Pause, Blockpause und Vorbereitung auf Weiß mit dunkler Schrift. Oben unter der Leiste steht ein kleines „BLOC“ (`.pl-logo`): weiß auf Orange, orange auf Weiß; im Querformat und in den Vintage-Designs aus. Die Vintage-Designs (C60 usw.) behalten ihre eigenen Farben.

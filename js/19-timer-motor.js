@@ -90,7 +90,6 @@ function launchPlayer(w, source){
   };
   document.getElementById("playerRoot").innerHTML = playerTemplate();
   bindPlayerControls();
-  odo = null; // Walzen drehen beim Start von 0:00 auf die erste Phase
   var ctx = audioCtx();   // noch im Tipp freischalten (iOS)
   if(ctx && ctx.state==="suspended") try{ ctx.resume(); }catch(e){}
   schedCancel();
@@ -150,7 +149,6 @@ function playerTemplate(){
     '<div class="progressbar"><div class="progressbar-fill" id="pl-progress" style="width:0%"></div></div>'+
     '<div class="pl-logo" aria-hidden="true">BLOC</div>'+
     '<div id="pl-body" class="player-mid"></div>'+
-    KODAK_BADGE +
     '</div>';
 }
 
@@ -208,9 +206,7 @@ function stepBodyHTML(step){
   var repInfo = step.totalReps ? '<div class="rep-dots" id="pl-dots"></div>' : "";
   // Vorbereitung und Blockpause: die Figur macht die kommende Übung vor und steht im Mittelpunkt
   var vorschau = (step.phase==="blockrest" || step.phase==="prep") && step.ex && ILLU[step.ex];
-  var timeHTML = isVintageTheme()
-    ? '<div class="time" id="pl-time">'+odoHTML(step.duration)+'</div>'
-    : '<div class="ring-wrap'+(vorschau ? ' mit-figur' : '')+'" id="pl-ringwrap">'+ringHTML()+
+  var timeHTML = '<div class="ring-wrap'+(vorschau ? ' mit-figur' : '')+'" id="pl-ringwrap">'+ringHTML()+
         (vorschau ? illuHTML(step.ex, "pl-vorschau") : '')+'<div class="time" id="pl-time">'+esc(fmtTime(step.duration))+'</div></div>';
   var phLabel = pv.label;
   if(step.stretch){
@@ -224,7 +220,6 @@ function stepBodyHTML(step){
       (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+(step.kg ? '<small class="pl-kg">'+esc(step.kg)+'</small>' : '')+'</div>'+
     (step.kg && step.ex && step.phase !== "done" ? '<button type="button" class="pl-kg-btn" data-plkg="'+step.ex+'">'+esc(t("stSetDone"))+'</button>' : '')+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+
-    (vorschau && isVintageTheme() ? illuHTML(step.ex, "pl-illu pl-vorschau-v") : "")+
     '</div>'+   // Hinweis zur Übung steht in der Info (ⓘ), im Timer bleibt es ruhig
     timeHTML+
     '<div class="pl-b">'+repInfo+
@@ -286,7 +281,6 @@ function enterStep(idx, opt){
   });
   var infoBtn = document.querySelector("#pl-body [data-plinfo]");
   if(infoBtn) infoBtn.addEventListener("click", function(){ openExInfo(infoBtn.getAttribute("data-plinfo"), true); });
-  if(step.phase!=="done" && isVintageTheme()) odoInit(document.getElementById("pl-time"), step.duration);
   updateExDots(step);
 
   if(step.phase!=="done"){

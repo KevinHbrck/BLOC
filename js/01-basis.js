@@ -42,17 +42,17 @@ function defaultDB(){
     settings: { theme:"system", sound:true, soundStyle:"sanft", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
   };
 }
-/* Frühere Versionen hatten „Retro Hell" und „Retro Dunkel" - beide gehen im neuen Retro-Design auf. */
-/* 2026-09-29 ausgedünnt: System, Hell, Dunkel, Nacht, C60 - frühere Designs landen beim nächsten Verwandten */
+/* Frühere Designs landen beim nächsten Verwandten: System, Hell, Dunkel, Nacht.
+   2026-10-15: C60 (intern "kodak", auch die alten Retro-Namen) entfällt und wird zu Hell;
+   c60Umgestellt merkt sich das für den einmaligen Hinweis auf der Startseite. */
+/* Weicher Verlauf für die Figuren-Übergänge (js/02-bibliothek.js); stand früher im Walzenzähler-Teil */
+function easeInOutCubic(x){ return x<.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; }
+var c60Umgestellt = false;
 function migrateTheme(t){
-  if(t==="retro" || t==="retro-light" || t==="retro-dark") return "kodak";
+  if(t==="kodak" || t==="retro" || t==="retro-light" || t==="retro-dark"){ c60Umgestellt = true; return "light"; }
   if(t==="tapedeck") return "nacht";
   if(t==="klar") return "system";
   return t;
-}
-/* C60 (intern "kodak"): Vintage-Look mit Walzenzähler statt Fortschrittsring */
-function isVintageTheme(){
-  return state.db.settings.theme === "kodak";
 }
 
 var ICON_SAVE = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
@@ -75,13 +75,6 @@ var ICON_PLUS = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" s
 var ICON_SHARE = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg>';
 var ICON_WORKOUT = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12l9 4.5 9-4.5"/><path d="M3 16.5l9 4.5 9-4.5"/></svg>';
 var ICON_BLOCK = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7.5"/><path d="M12 14v-4"/><path d="M9.5 2.5h5"/><path d="M12 2.5v4"/></svg>';
-/* Kassetten-Etikett für das C60-Design (intern "kodak"): rotes C-Signet und Bandtyp - bewusst ohne fremde Marken */
-var KODAK_BADGE = '<div class="kodak-badge" aria-hidden="true">'+
-  '<svg viewBox="0 0 44 40"><rect width="44" height="40" rx="2.5" fill="#e1251b"/>'+
-  '<path d="M24.5 9.5A11 11 0 1 0 24.5 30.5" fill="none" stroke="#fff" stroke-width="6.5"/>'+
-  '<g fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="6.2" text-anchor="middle">'+
-  '</g></svg>'+
-  '<div><span>LOW NOISE</span></div></div>';
 
 /* Auswählbare Klänge: jeweils Liste von Tönen {f:Frequenz, d:Verzögerung(ms), dur:Dauer(ms), v:Lautstärke-Faktor, type:Wellenform} */
 /* Bausteine für die natürlich klingenden Stile. Teiltöne als [Frequenzverhältnis, Lautstärke,

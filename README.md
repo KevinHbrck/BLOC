@@ -39,15 +39,21 @@ und Mobility & Stretch immer unten.
 **Was ein „Training“ ist:** Alle Timer-Einträge mit höchstens 60 Minuten Abstand gelten als ein Besuch; die Trainingszeit
 läuft vom ersten Start bis zum Ende des letzten Timers (`besuche()` in `js/01-basis.js`). Läufe zählen einzeln.
 
-**Timer:** Vollbild mit Fortschrittsring (C60: Walzenzähler), Figur der Übung, Sprachansagen, Töne im Voraus geplant.
+**Timer:** Vollbild mit Fortschrittsring, Figur der Übung, Sprachansagen, Töne im Voraus geplant.
 Musik anderer Apps läuft weiter.
 
 **Figuren:** Strichfiguren als Skelett mit Gelenken (`ILLU_POSES`/`ILLU_SEQ` in `daten.js`).
 
 ## Designs
 
-**System · Hell · Dunkel · Nacht · C60.** Farben nach 60-30-10: ruhige Flächen, Bereichsfarben je Bereich, Akzentfarbe nur für
+**Helligkeit: System · Hell · Dunkel · Nacht.** Farben nach 60-30-10: ruhige Flächen, Bereichsfarben je Bereich, Akzentfarbe nur für
 die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`).
+
+**Aussehen: Klassik · New** (seit 2026-10-15, Einstellungen › Darstellung, `settings.layout`, Standard Klassik). „New“ ist ein reiner Look in
+`layout-new.css` (alles unter `:root[data-layout="new"]`, gesetzt in `applyTheme`): größere Rundungen mit kleiner Ecke oben links, ruhige
+Konturen, Wochenpunkte weiß / orange / Ring, die untere Leiste als schwebende Pille mit orangenem aktivem Reiter. Navigation, Inhalte und
+Abläufe sind in beiden gleich. Das frühere Design C60 (Kassetten-Look mit Walzenzähler) gibt es nicht mehr; gespeicherte C60-Stände werden
+beim Laden zu Hell (`migrateTheme`), mit einem einmaligen Hinweis auf der Startseite.
 
 ## Daten und Sicherheit
 
@@ -63,6 +69,7 @@ die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist r
 |---|---|
 | `index.html` | Gerüst (lädt `app.css`, `texte.js`, `daten.js` und die Teile in `js/`) |
 | `app.css` | Gestaltung aller Designs |
+| `layout-new.css` | Aussehen „New“ (nur Regeln unter `:root[data-layout="new"]`) |
 | `js/01-basis.js` … `js/20-walzen-start.js` (dazu `js/11b-katalog.js`) | Programmlogik in 21 Teilen (je ein Themenbereich: Basis und Speicher, Bibliothek, Router, Start, Suche, Studio, Körperkarte, Statistik, Editor, Lauf, Audio, Timer-Motor, Katalog …). Es sind gewöhnliche Skripte, die **nacheinander im selben Gültigkeitsbereich** laufen (Reihenfolge = Reihenfolge der `<script>`-Zeilen in `index.html`). **Regel:** Code, der schon beim Laden ausgeführt wird (z. B. `var state = { db: loadDB() }`), darf nur Funktionen aus demselben oder einem früheren Teil aufrufen – beim Laden sind spätere Teile noch nicht da. Deshalb stehen die Verlauf-Hilfen für `loadDB` am Ende von `01-basis.js`. Funktionsaufrufe innerhalb von Funktionen sind unkritisch. |
 | `texte.js` | Alle Oberflächentexte Deutsch/Englisch, **ein Schlüssel pro Zeile** (gut zu vergleichen) |
 | `quellen.html` | Quellen und Hintergrund: woran sich BLOC orientiert, was eigene Zusammenstellung ist (aus der App verlinkt) |

@@ -125,14 +125,16 @@ function triggerInstall(){
 
 /* ============ Theme ============ */
 /* Farbe der Browser-/Statusleiste passend zum Seitenhintergrund */
-var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214", nacht:"#16110d", kodak:"#f5f2ea" };
+var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214", nacht:"#16110d" };
 function applyTheme(){
   var t = state.db.settings.theme;
   var root = document.documentElement;
   if(THEME_BAR_COLORS[t]) root.setAttribute("data-theme", t);
   else root.removeAttribute("data-theme");
-  if(isVintageTheme()) root.setAttribute("data-vintage", "");
-  else root.removeAttribute("data-vintage");
+  root.removeAttribute("data-vintage");   // früheres C60-Design, gibt es nicht mehr
+  /* Aussehen: Klassik (Standard, fehlt in alten Ständen) oder New - unabhängig von Hell/Dunkel/Nacht */
+  if(state.db.settings.layout === "new") root.setAttribute("data-layout", "new");
+  else root.removeAttribute("data-layout");
   var dunkel = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
   var bar = THEME_BAR_COLORS[t] || (dunkel ? THEME_BAR_COLORS.dark : THEME_BAR_COLORS.light);
   var meta = document.querySelector('meta[name="theme-color"]');
@@ -247,8 +249,7 @@ function topbar(title, opts){
   opts = opts || {};
   var back = opts.back ? '<button class="iconbtn back" data-back="'+opts.back+'" title="'+t("back")+'">'+ICON_BACK+'</button>' : "";
   var right = opts.right || "";
-  var brand = opts.home ? '<span class="kodak-word">C60<small>Modular Training Builder</small></span>' : "";
-  return '<div class="topbar'+(opts.home?' home':'')+'">'+back+'<h1>'+brand+'<span class="ttl">'+esc(title)+'</span>'+
+  return '<div class="topbar'+(opts.home?' home':'')+'">'+back+'<h1><span class="ttl">'+esc(title)+'</span>'+
     (opts.sub ? '<span class="ttl-sub">'+esc(opts.sub)+'</span>' : '')+'</h1>'+right+'</div>';
 }
 var SEP = ' <span class="sep-dot">&middot;</span> ';

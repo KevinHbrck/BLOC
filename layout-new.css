@@ -1,0 +1,82 @@
+/* BLOC - Aussehen „New“ (seit 2026-10-15), zusätzlich zu „Klassik“.
+   Alles steht unter :root[data-layout="new"]; ohne das Attribut ändert sich nichts. Farben kommen weiter aus den Designs
+   (System, Hell, Dunkel, Nacht), hier ändern sich nur Formen, Flächen und die untere Leiste.
+   Grundsätze: ruhige Flächen, große Rundungen mit einer kleinen Ecke oben links, Milchglas nur auf der unteren Leiste und den
+   Fenstern (Sheets), dort mit deckendem Rückfall; Navigation, Inhalte und Abläufe sind unverändert. */
+
+:root[data-layout="new"]{
+  --radius:24px;
+  --ecke:8px;                       /* kleine Ecke oben links */
+  --nl-linie:color-mix(in srgb, var(--text) 9%, transparent);
+}
+
+/* ---------- Flächen ---------- */
+:root[data-layout="new"] .card,
+:root[data-layout="new"] .list-item,
+:root[data-layout="new"] .area-tile,
+:root[data-layout="new"] .installtip,
+:root[data-layout="new"] .woche{
+  border:1px solid var(--nl-linie);
+  border-top-left-radius:var(--ecke);
+}
+:root[data-layout="new"] .home-hero{ border-top-left-radius:var(--ecke); border:1px solid var(--nl-linie); }
+:root[data-layout="new"] .list-item{ padding:16px 18px; }
+
+/* ---------- Knöpfe ---------- */
+:root[data-layout="new"] .btn{ border-radius:28px; border-top-left-radius:10px; padding:18px 22px; }
+:root[data-layout="new"] .btn-secondary{ border:1px solid var(--nl-linie); }
+:root[data-layout="new"] .playbtn{ border-radius:50%; }
+:root[data-layout="new"] .iconbtn{ width:52px; height:52px; border-radius:50%; border:1px solid var(--nl-linie); }
+:root[data-layout="new"] .fab{ border-radius:50%; width:64px; height:64px; }
+
+/* ---------- Auswahl: Pillen statt Kästen ---------- */
+:root[data-layout="new"] .seg-row button,
+:root[data-layout="new"] .theme-pick button,
+:root[data-layout="new"] .lib-chip,
+:root[data-layout="new"] .fc-chip,
+:root[data-layout="new"] .fc-seg button{ border-radius:999px; }
+:root[data-layout="new"] .chip{ border:1px solid var(--nl-linie); }
+
+/* ---------- Überschriften ---------- */
+:root[data-layout="new"] .section-title{ letter-spacing:.09em; font-weight:600; }
+:root[data-layout="new"] .topbar h1 .ttl{ letter-spacing:.06em; }
+
+/* ---------- Wochenpunkte: weiß = frei, orange = trainiert, Ring = geplant ---------- */
+:root[data-layout="new"] .wo-tag i{ width:13px; height:13px; background:#fff; box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--text) 22%, transparent); }
+:root[data-layout="new"] .wo-tag.an i{ background:var(--accent); box-shadow:none; }
+:root[data-layout="new"] .wo-tag.plan i{ background:transparent; box-shadow:inset 0 0 0 2.5px var(--accent); }
+:root[data-layout="new"] .wo-tag.heute i{ outline:2px solid var(--text); outline-offset:2px; }
+
+/* ---------- Untere Leiste: schwebende Pille, aktiver Reiter in Orange ---------- */
+:root[data-layout="new"] .tabbar{
+  left:50%; right:auto; transform:translateX(-50%);
+  width:calc(100% - 28px); max-width:532px;
+  bottom:calc(14px + env(safe-area-inset-bottom));
+  padding:6px; gap:2px;
+  border:1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  border-radius:999px;
+  background:color-mix(in srgb, var(--surface) 96%, transparent);   /* ohne Blur deckend genug für den Kontrast */
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :root[data-layout="new"] .tabbar{
+    background:color-mix(in srgb, var(--surface) 86%, transparent);
+    -webkit-backdrop-filter:blur(20px) saturate(150%); backdrop-filter:blur(20px) saturate(150%);
+  }
+}
+@media (prefers-reduced-transparency: reduce){
+  :root[data-layout="new"] .tabbar{ background:var(--surface); -webkit-backdrop-filter:none; backdrop-filter:none; }
+}
+:root[data-layout="new"] .tabbar .tab{ max-width:none; border-radius:999px; padding:8px 4px 7px; }
+:root[data-layout="new"] .tabbar .tab.active{ color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, transparent); }
+:root[data-layout="new"] .tabbar .tab.active > span:last-child{ font-weight:700; }
+:root[data-layout="new"] body.mit-tabs #app{ padding-bottom:calc(112px + env(safe-area-inset-bottom)); }
+:root[data-layout="new"] body.mit-tabs .fab{ bottom:calc(98px + env(safe-area-inset-bottom)); }
+:root[data-layout="new"] body.mit-tabs .fab-menu{ bottom:calc(176px + env(safe-area-inset-bottom)); }
+
+/* ---------- Fenster (Sheets) ---------- */
+:root[data-layout="new"] .confirm-sheet{ border-radius:32px 32px 0 0; border-top-left-radius:32px; border:1px solid var(--nl-linie); border-bottom:0; }
+
+@media (prefers-reduced-motion: reduce){
+  :root[data-layout="new"] *{ transition-duration:0s !important; }
+}
