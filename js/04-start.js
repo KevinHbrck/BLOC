@@ -113,7 +113,7 @@ function heroHeutige(){
   return kalAn(heute).filter(function(e){ return !st[e.id] && kalAufloesen(e).ok; });
 }
 /* Kopfblock der Startseite, in dieser Rangfolge:
-   A) heute ist etwas eingeplant: Name(n), Dauer und Ort, ein Tipp startet das Training (das erste, wenn mehrere)
+   A) heute ist etwas eingeplant: Name(n), Dauer und Ort, ein Tipp startet das Training (bei mehreren erscheint eine Auswahl)
    B) nichts eingeplant, aber Favoriten da: „Bereit für dein Training?“, ein Tipp springt zu den Favoriten
    C) auch keine Favoriten: ein Tipp führt direkt in den Baukasten (Workout › Baukasten). Foto: Pexels (siehe quellen.html) */
 function heroHTML(){

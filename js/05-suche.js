@@ -212,7 +212,14 @@ function renderHome(){
   var heroKnopf = app.querySelector("[data-herostart]");
   if(heroKnopf) heroKnopf.addEventListener("click", function(){
     var modus = heroKnopf.getAttribute("data-herostart");
-    if(modus === "plan"){ var h = heroHeutige(); if(h.length) return kalStarten(h[0]); }
+    if(modus === "plan"){
+      var h = heroHeutige();
+      if(h.length === 1) return kalStarten(h[0]);
+      if(h.length > 1) return openActionSheet(t("heroWaehlen"), h.map(function(e){   // mehrere heute eingeplant: Auswahl, welches jetzt startet
+        var o = kalDauerOrt(e);
+        return { ico:P_PLAY, label:kalAufloesen(e).name+" · "+(o.sek > 0 ? fmtDuration(Math.max(60, Math.round(o.sek/60)*60)) : o.sub), fn:function(){ kalStarten(e); } };
+      }));
+    }
     if(modus === "fav"){ var fs = app.querySelector("[data-favsek]"); if(fs && fs.scrollIntoView) return fs.scrollIntoView({ block:"start", behavior:"smooth" }); }
     katTabSetzen("baukasten"); go("#katalog");
   });

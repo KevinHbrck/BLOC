@@ -1637,6 +1637,15 @@
       // Kopfblock, Stufe A: das heute eingeplante Training steht im Kopfblock (statt „Bereit für dein Training?“)
       pruefe(/Zufallstraining/.test($(".hh-titel").textContent) && $('[data-herostart="plan"]'), "Kopfblock zeigt das heutige Training nicht: " + $(".hh-titel").textContent);
       pruefe($(".woche-link") && !$(".woche-link").hasAttribute("aria-expanded"), "Meine Woche soll nicht aufklappbar sein");
+      // mehrere heute eingeplant: ein Tipp auf den Kopfblock öffnet die Auswahl
+      W.kalHinzu(heuteKey, { art: "zufall" }).erledigt = false;
+      W.save();
+      await heim();
+      klick("[data-herostart]");
+      await bis(function () { return $$("#overlayRoot [data-act]").length === 2; }, 2000, "Auswahl mit beiden heutigen Trainings");
+      W.document.getElementById("overlayRoot").innerHTML = "";
+      var zweiter = W.kalAn(heuteKey).pop(); W.kalEntferne(zweiter.id);
+      await heim();
       // Woche kopieren: aus dem Kalender auf die nächsten Wochen
       klick($(".woche-link"));
       await bis(function () { return W.location.hash === "#kalender" && $("[data-kalkopieren]"); }, 3000, "Meine Woche führt in den Kalender, dort steht „Woche kopieren“");
