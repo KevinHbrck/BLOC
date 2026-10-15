@@ -360,10 +360,12 @@ function favEntries(){
       if(bl && state.db.blocks.indexOf(bl) > -1) e = { name:bl.name, sub:blockSpec(bl), cls:"ti", go:"#playblock/"+id, ok:true };
     } else if(kind==="lib"){
       var lw = findLibWorkout(id);
-      if(lw) e = { name:tplText(lw.name), sub:fmtDuration(workoutDuration(libWorkoutRun(lw))), cls:libIstWarmDehn(lw) ? "ws" : "tp", cover:"lib/"+id, ok:true };
+      if(lw) e = { name:tplText(lw.name), sub:fmtDuration(workoutDuration(libWorkoutRun(lw))), cls:libIstWarmDehn(lw) ? "ws" : "tp", cover:"lib/"+id, ok:true,
+        ort:katWoOrt(lw.exercises.map(findExercise).filter(Boolean)) };   // „studio“, wenn eine Übung Geräte im Fitnessstudio braucht
     } else if(kind==="my"){
       var mw = findMy(id);
-      if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:mw.ws ? "ws" : "tp", cover:"my/"+id, ok:mw.items.length > 0 };
+      if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:mw.ws ? "ws" : "tp", cover:"my/"+id, ok:mw.items.length > 0,
+        ort:katWoOrt((mw.items || []).map(function(x){ return findExercise(typeof x === "string" ? x : x && x.ex); }).filter(Boolean)) };
     } else if(kind==="plan"){   // Studio › Mein Plan
       var pl = stPlanFind(id);
       if(pl) e = { name:pl.name, sub:planAnzahl(stPlanIds(pl).length), cls:"st", go:"#studioplan/"+id, ok:true };
@@ -381,7 +383,7 @@ function favItemsHTML(){
   if(!list.length) return "";
   var shown = favShowAll ? list : list.slice(0, FAV_LIMIT);
   if(typeof layoutNeu === "function" && layoutNeu()){   // Aussehen New: Fotokarten in einer Reihe zum Wischen (wie im Entwurf)
-    var fotos = fotosZuteilen(list.map(function(e){ return { key:e.key || e.name, pool:e.cls }; }));   // kein Foto doppelt, solange es freie gibt
+    var fotos = fotosZuteilen(list.map(function(e){ return { key:e.key || e.name, pool:(e.cls === "tp" && e.ort === "studio") ? "st" : e.cls }; }));   // Fitnessstudio-Workouts bekommen Studio-Bilder, nicht die Calisthenics-Anlage   // kein Foto doppelt, solange es freie gibt
     var BEREICH = { ti:t("tabTimer"), ws:t("warmTitle"), tp:t("katalog"), st:t("katalog"), rep:t("repTitle") };
     return '<div class="fav-fotos">'+shown.map(function(e){
       return '<div class="fav-foto" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+

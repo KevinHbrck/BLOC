@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · Feinauswahl sichtbar, Fotos nach Ort (Fassung 2026-10-16-5)
+
+- **Überrasch mich › Feinauswahl**: Beim Aufklappen springt das Fenster jetzt so, dass die Feinauswahl oben steht und ihr Inhalt zu sehen ist. Vorher klappte sie zwar auf, der neue Inhalt lag aber unter dem Fuß der Leiste und wirkte, als passiere nichts (`spFeinZeigen`, `js/13-teilen-editor.js`).
+- **New, Fotos nach Ort**: Workouts aus dem Fitnessstudio (mindestens eine Übung mit Geräten, `katWoOrt`) bekommen Studio-Bilder (Hanteln, Gewichtsblock, Halle), Freiluft-Workouts Anlagen und Meer; das Freiluft-Pool enthält kein Studio-Bild mehr. Reichen die Bilder einer Art nicht, kommen zuerst verwandte Arten dran, dann alle (Fassung 2026-10-16-4, mit `fotosZuteilen`).
+
 ## 2026-10-16 · New: kein Foto doppelt (Fassung 2026-10-16-3)
 
 - **`fotosZuteilen`** (`js/03-router.js`, Pool `FOTO_POOL`): Favoriten und die Bereichskarten auf Training bekommen ihre Fotos so zugeteilt, dass kein Bild doppelt vorkommt, solange es freie gibt. Erst das nächste freie Bild der eigenen Art (ab einem festen Startpunkt), danach das nächste freie aus allen anderen. Die Vergabe läuft nach Schlüssel sortiert, damit sie stabil bleibt. Geprüft mit 20 Favoriten gleichzeitig: 20 verschiedene Bilder.

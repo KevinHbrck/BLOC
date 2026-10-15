@@ -156,7 +156,7 @@ function layoutNeu(){ return state.db.settings.layout === "new"; }
 var FOTO_POOL = (function(){
   var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
   return {
-    tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw"), P("studio-hantelreihe")],
+    tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw")],
     st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
     ti:  ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
     ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
@@ -171,6 +171,11 @@ function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
   items.slice().sort(function(a, b){ return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; }).forEach(function(it){
     var pool = FOTO_POOL[it.pool] || FOTO_POOL.st, h = fotoHash(it.key), w = null, i, f;
     for(i = 0; i < pool.length && !w; i++){ f = pool[(h + i) % pool.length]; if(!belegt[f]) w = f; }
+    var VERWANDT = { st:["st"], tp:["tp", "rep"], ti:["ti", "st"], ws:["ws"], rep:["rep", "tp"], run:["run"] };   // erst Bilder aus verwandten Arten
+    (VERWANDT[it.pool] || []).forEach(function(a){
+      var p2 = FOTO_POOL[a] || [];
+      for(i = 0; i < p2.length && !w; i++){ f = p2[(h + i) % p2.length]; if(!belegt[f]) w = f; }
+    });
     for(i = 0; i < alle.length && !w; i++){ f = alle[(h + i) % alle.length]; if(!belegt[f]) w = f; }
     if(!w) w = pool[h % pool.length];   // mehr Karten als Bilder: dann darf sich eines wiederholen
     belegt[w] = true; out[it.key] = w;

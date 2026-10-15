@@ -817,6 +817,7 @@ function spDauerTreffen(d, ziel, tm){
     best.it.reps += best.s;
   }
 }
+var spFeinZeigen = false;   // nach dem Aufklappen einmal an die Feinauswahl scrollen
 var spFeinOffen = false;   // Feinauswahl in „Überrasch mich“ aufgeklappt (bleibt so, solange die App offen ist)
 /* Das Zusammenstell-Fenster des Baukastens („Überrasch mich“): zwei Wege mit je eigenem Inhalt - Zufall (Dauer, Bereiche, Ausrüstung)
    und Nach Gewichtung (Regler je Muskelgruppe, ergibt einen Plan). „Selber bauen“ hat kein Fenster: es führt gleich in die Übungsauswahl
@@ -882,10 +883,15 @@ function openSurprise(twId, modusStart){
       '<button class="btn btn-primary" data-spgo>'+esc(t(modus === "gewicht" ? "genMake" : "spGo"))+'</button></div>'+
     '</div></div>';
     root.querySelector(".sp-sheet").scrollTop = scrollAlt;
+    if(spFeinZeigen){   // gerade aufgeklappt: die Feinauswahl nach oben holen, damit man den neuen Inhalt sieht (er steht sonst unter dem Fuß der Leiste)
+      spFeinZeigen = false;
+      var sh = root.querySelector(".sp-sheet"), mb = root.querySelector("[data-spmore]");
+      if(sh && mb) sh.scrollTop += mb.getBoundingClientRect().top - sh.getBoundingClientRect().top - 72;
+    }
     function on(sel, fn){ root.querySelectorAll(sel).forEach(function(b){ b.addEventListener("click", function(){ fn(b); draw(); }); }); }
     bauOrtBinden(function(){ draw(); }, root);
     on("[data-spmodus]", function(b){ modus = b.getAttribute("data-spmodus"); });
-    on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; });
+    on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; spFeinZeigen = spFeinOffen; });
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
     on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
     on("[data-spmain]", function(b){ p.mains = selToggle(p.mains, b.getAttribute("data-spmain")); });
