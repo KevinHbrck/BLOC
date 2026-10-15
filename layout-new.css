@@ -217,3 +217,29 @@
 :root[data-layout="new"] .ff-bereich{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,.85); }
 :root[data-layout="new"] .ff-name{ font-size:16px; line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 :root[data-layout="new"] .ff-sub{ font-size:12.5px; color:rgba(255,255,255,.9); }
+
+/* ---------- Training: ein Hauch Farbe im bisherigen dunklen Stil - Symbolfeld und ein zarter Schimmer pro Bereich ---------- */
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="katalog"]{ --nc:#ff5a36; }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="warm"]{ --nc:#1fa56f; }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="intervall"]{ --nc:#2a8fe0; }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="reps"]{ --nc:#d99a12; }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ --nc:#8a6cf0; }
+:root[data-layout="new"] .training-seite .area-tile.zeile::before{
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--nc, #444) 20%, transparent) 0%, color-mix(in srgb, var(--nc, #444) 0%, transparent) 70%),
+    linear-gradient(180deg, rgba(8,9,11,.20) 0%, rgba(8,9,11,.50) 40%, rgba(8,9,11,.86) 100%);
+}
+:root[data-layout="new"] .training-seite .area-tile .at-ico{
+  background:color-mix(in srgb, var(--nc, #fff) 78%, #000); color:#fff; border:1px solid rgba(255,255,255,.3); box-shadow:none;
+}
+
+/* Favoriten: gleiche Bereichsfarben, nur als zarter Schimmer von unten */
+:root[data-layout="new"] .fav-foto[data-art="tp"], :root[data-layout="new"] .fav-foto[data-art="st"]{ --nc:#ff5a36; }
+:root[data-layout="new"] .fav-foto[data-art="ws"]{ --nc:#1fa56f; }
+:root[data-layout="new"] .fav-foto[data-art="ti"]{ --nc:#2a8fe0; }
+:root[data-layout="new"] .fav-foto[data-art="rep"]{ --nc:#d99a12; }
+:root[data-layout="new"] .fav-foto::before{
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--nc, #444) 0%, transparent) 40%, color-mix(in srgb, var(--nc, #444) 22%, transparent) 100%),
+    linear-gradient(180deg, rgba(8,9,11,.12) 0%, rgba(8,9,11,.45) 50%, rgba(8,9,11,.86) 100%);
+}

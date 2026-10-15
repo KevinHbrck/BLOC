@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · New: ein Hauch Farbe auf Training und bei den Favoriten (Fassung 2026-10-16-8)
+
+- Bereichskarten auf Training im bisherigen dunklen Foto-Stil, dazu je Bereich ein zarter Farbschimmer (Orange Workout, Grün Mobility, Blau Timer, Gold Summit, Violett Run) und ein farbiges Symbolfeld. Favoriten tragen dieselben Farben nur als schwacher Schimmer von unten (`data-art`). Zwischenstände mit stärkerer Farbe waren zu bunt.
+
 ## 2026-10-16 · Feinauswahl sichtbar, Fotos nach Ort (Fassung 2026-10-16-5)
 
 - **Überrasch mich › Feinauswahl**: Beim Aufklappen springt das Fenster jetzt so, dass die Feinauswahl oben steht und ihr Inhalt zu sehen ist. Vorher klappte sie zwar auf, der neue Inhalt lag aber unter dem Fuß der Leiste und wirkte, als passiere nichts (`spFeinZeigen`, `js/13-teilen-editor.js`).
