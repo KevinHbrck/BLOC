@@ -147,16 +147,32 @@ applyLang();
 var app = document.getElementById("app");
 
 /* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
-var TAB_ROUTEN = { home:"#home", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
+var TAB_ROUTEN = { home:"#home", training:"#training", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
+/* Aussehen „New“ (settings.layout): vier Ziele (Heute · Training · Kalender · Fortschritt), Suche und Einstellungen als Symbole in der Kopfzeile */
+function layoutNeu(){ return state.db.settings.layout === "new"; }
+var builderAuto = null;   // "zufall" | "selber": der Workout-Builder auf Heute löst im Baukasten gleich die Wahl aus
+/* Kopfzeilen-Symbole für Heute und Training im Aussehen „New“ */
+function kopfSymboleNeu(){
+  if(!layoutNeu()) return "";
+  return '<button type="button" class="iconbtn kopf-sym" data-nav="#search" aria-label="'+esc(t("search"))+'">'+
+      svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'</button>'+
+    '<button type="button" class="iconbtn kopf-sym" data-nav="#settings" aria-label="'+esc(t("settings"))+'">'+ICON_SETTINGS+'</button>';
+}
 /* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
 var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
   var el = document.getElementById("tabbar");
   if(!el) return;
   var imBereich = !!BEREICH_LEISTE[route] && !(stPlanAktiv && stPlanFind(stPlanAktiv));
-  var aktiv = TAB_ROUTEN[route] || (imBereich ? "#home" : null);   // im Bereich leuchtet „Start“ (die Bereiche liegen unter der Startseite)
+  var neu = layoutNeu();
+  var aktiv = TAB_ROUTEN[route] || (imBereich ? (neu ? "#training" : "#home") : null);   // im Bereich leuchtet „Start“ (Klassik) bzw. „Training“ (New)
   if(!aktiv){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
-  var eintraege = [
+  var eintraege = neu ? [
+    ["#home", t("tabHeute"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
+    ["#training", t("tabTraining"), '<path d="M6 7v10M3 10v4M18 7v10M21 10v4M6 12h12"/>'],
+    ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
+    ["#stats", t("tabFortschritt"), '<path d="M5 20V11M12 20V4M19 20v-6"/>']
+  ] : [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],
     ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
@@ -182,7 +198,7 @@ function render(){
   var parts = parseHash();
   var route = parts[0] || "home";
   tabLeiste(route);
-  if(route==="home"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
+  if(route==="home" || route==="training"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
     stPlanAktiv = null; stPlanBauen = false;   // ein zuletzt geöffneter Plan gilt nicht weiter (Satz-/Timer-Wahl und Training speichern folgen sonst einem alten Plan)
     var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.repFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
     /* Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl; Summit) werden nicht aufbewahrt: jeder neue Besuch beginnt ohne Filter.
@@ -195,6 +211,7 @@ function render(){
   if(repRun && route !== "repplay") repStop();   // Rep-Workout verlassen: Stoppuhr aus
   if(studioPause && route !== "studio") studioPauseStop();
   if(route==="home") return renderHome();
+  if(route==="training") return renderTraining();
   if(route==="reps") return renderReps();
   if(route==="warmstretch") return renderWarmStretch();
   if(route==="rep") return renderRepDetail(parts[1]);

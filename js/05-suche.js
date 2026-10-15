@@ -194,9 +194,10 @@ function renderSearch(){
 function renderHome(){
   var favHTML = favItemsHTML();
   var nFav = favEntries().length;
-  var bereicheListe = bereicheHTML();
+  var neu = layoutNeu();
+  var bereicheListe = neu ? "" : bereicheHTML();   // New: die Bereiche stehen unter „Training“, hier der Workout-Builder
   app.innerHTML =
-    topbar("BLOC", { home:true, sub:"Modular Training Builder" }) +
+    topbar("BLOC", { home:true, sub:"Modular Training Builder", right:kopfSymboleNeu() }) +
     c60HinweisHTML() + installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
     '<div class="sec-head" data-favsek><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
@@ -205,9 +206,11 @@ function renderHome(){
     favHTML +
     /* Weitere Bereiche: Workout, Mobility & Stretch, Timer, Summit und Run als ruhige Liste */
     (bereicheListe ? '<div class="sec-head"><div class="section-title">'+t("areasMore")+'</div>'+
-      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+bereicheListe : '');
+      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+bereicheListe : '') +
+    (neu ? builderKarteHTML() : '');
   bindCommon();
   bindC60Hinweis();
+  bindBuilderKarte();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var heroKnopf = app.querySelector("[data-herostart]");
   if(heroKnopf) heroKnopf.addEventListener("click", function(){
@@ -231,6 +234,31 @@ function renderHome(){
     wl.addEventListener("click", zumKalender);
     wl.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); zumKalender(); } });
   }
+  var wib = app.querySelector("[data-wasistwas]");
+  if(wib) wib.addEventListener("click", openWasIstWas);
+}
+/* Aussehen „New“: Workout-Builder auf Heute (Foto, zwei Wege in den Baukasten); ohne Workout (Fokus aus) entfällt er */
+function builderKarteHTML(){
+  if(fokusAus("katalog")) return "";
+  return '<div class="sec-head"><div class="section-title">'+esc(t("builderTitel"))+'</div></div>'+
+    '<section class="builder-neu"><div class="bn-text"><span class="bn-kicker">'+esc(t("builderKicker"))+'</span><b>'+esc(t("builderText"))+'</b><small>'+esc(t("builderSub"))+'</small></div>'+
+    '<div class="bn-knoepfe"><button type="button" class="btn btn-primary" data-builder="zufall">'+esc(t("builderZufall"))+'</button>'+
+    '<button type="button" class="btn btn-secondary" data-builder="selber">'+esc(t("builderSelber"))+'</button></div></section>';
+}
+function bindBuilderKarte(){
+  app.querySelectorAll("[data-builder]").forEach(function(b){
+    b.addEventListener("click", function(){ builderAuto = b.getAttribute("data-builder"); katTabSetzen("baukasten"); go("#katalog"); });
+  });
+}
+/* Aussehen „New“: Seite „Training“ - alle Bereiche (Workout, Mobility & Stretch, Timer, Summit, Run) als Fotokarten, darüber die Suche */
+function renderTraining(){
+  app.innerHTML =
+    topbar(t("tabTraining"), { right:kopfSymboleNeu() }) +
+    '<button type="button" class="suchfeld-neu" data-nav="#search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'<span>'+esc(t("trainingSuche"))+'</span></button>'+
+    '<div class="training-seite">'+bereicheHTML()+'</div>'+
+    '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
+  bindCommon();
+  app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }

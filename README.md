@@ -49,11 +49,15 @@ Musik anderer Apps läuft weiter.
 **Helligkeit: System · Hell · Dunkel · Nacht.** Farben nach 60-30-10: ruhige Flächen, Bereichsfarben je Bereich, Akzentfarbe nur für
 die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`).
 
-**Aussehen: Klassik · New** (seit 2026-10-15, Einstellungen › Darstellung, `settings.layout`, Standard Klassik). „New“ ist ein reiner Look in
+**Aussehen: Klassik · New** (seit 2026-10-15, Einstellungen › Darstellung, `settings.layout`, Standard Klassik). Der Look von „New“ steht in
 `layout-new.css` (alles unter `:root[data-layout="new"]`, gesetzt in `applyTheme`): größere Rundungen mit kleiner Ecke oben links, ruhige
-Konturen, Wochenpunkte weiß / orange / Ring, die untere Leiste als schwebende Pille mit orangenem aktivem Reiter. Navigation, Inhalte und
-Abläufe sind in beiden gleich. Das frühere Design C60 (Kassetten-Look mit Walzenzähler) gibt es nicht mehr; gespeicherte C60-Stände werden
-beim Laden zu Hell (`migrateTheme`), mit einem einmaligen Hinweis auf der Startseite.
+Konturen, Wochenpunkte weiß / orange / Ring, die untere Leiste als schwebende Pille mit orangenem aktivem Reiter. Dazu ändert „New“ die
+Navigation (nur das, Funktionen bleiben): unten **Heute · Training · Kalender · Fortschritt**; Suche und Einstellungen sind Symbole oben auf
+Heute und Training (`kopfSymboleNeu`, `layoutNeu` in `js/03-router.js`); die Bereiche (Workout, Mobility & Stretch, Timer, Summit, Run) stehen
+als Fotokarten auf der neuen Seite **Training** (`#training`, `renderTraining` in `js/05-suche.js`); auf Heute ersetzt der **Workout-Builder**
+(Überrasch mich · Selber bauen, `builderKarteHTML`) die Bereichsliste. Fotos für New: `img/neu-*.jpg` und `img/neu-builder.webp`. Das frühere
+Design C60 (Kassetten-Look mit Walzenzähler) gibt es nicht mehr; gespeicherte C60-Stände werden beim Laden zu Hell (`migrateTheme`), mit einem
+einmaligen Hinweis auf der Startseite.
 
 ## Daten und Sicherheit
 

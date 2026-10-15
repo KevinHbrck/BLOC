@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · New: vier Ziele unten, Seite „Training“, Workout-Builder, Fotos (Fassung 2026-10-15-6)
+
+- **Navigation im Aussehen „New“** (nur dort, Klassik bleibt): unten Heute · Training · Kalender · Fortschritt; Suche und Einstellungen als Symbole in der Kopfzeile von Heute und Training (`kopfSymboleNeu`); in den Bereichslisten leuchtet „Training“. Neue Route `#training` (`renderTraining`, `js/05-suche.js`) mit den Bereichen als Fotokarten und einer Suchzeile.
+- **Heute in New:** die Bereichsliste entfällt, an ihrer Stelle steht der **Workout-Builder** (Foto, „Überrasch mich“ löst im Baukasten gleich das Fenster aus, „Selber bauen“ die Übungsauswahl; `builderAuto` in `js/11b-katalog.js`). Kopfblock mit warmem Verlauf von rechts unten.
+- **Fotos** (laut Nutzer Pexels, unverändert): `img/neu-workout.jpg`, `neu-mobility.jpg`, `neu-timer.jpg`, `neu-summit.jpg`, `neu-run.jpg`, `neu-builder.webp` (in `sw.js` vorab gespeichert). Einzelbelege liefert der Nutzer nach.
+
 ## 2026-10-15 · C60 entfällt, Aussehen „New“ neben „Klassik“ (Fassung 2026-10-15-5)
 
 - **C60 ersatzlos entfernt** (Kassetten-Look): CSS von rund 2.690 auf rund 2.220 Zeilen (alle `:root[data-vintage]`-/`kodak`-Regeln, Walzenzähler `.tc`/`.odo-*`, Kassetten-Etikett, `kodak-word`), im Code `isVintageTheme`, `KODAK_BADGE`, der Walzenzähler-Teil von `js/20-walzen-start.js` (die Datei bleibt, dort liegen weiter Timer-Takt, Pause, Beenden und der Service-Worker-Start), die Texte `thKodak` und der C60-Satz in `themeInfo`. Gespeichertes `kodak` (auch die alten Retro-Namen) wird in `migrateTheme` zu `light`; ein einmaliger, schließbarer Hinweis steht auf der Startseite (`c60HinweisHTML`, `c60WegTitel`/`c60WegText`).

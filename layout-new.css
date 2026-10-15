@@ -80,3 +80,57 @@
 @media (prefers-reduced-motion: reduce){
   :root[data-layout="new"] *{ transition-duration:0s !important; }
 }
+
+/* ---------- Seite „Training“ und Workout-Builder auf Heute (nur New) ---------- */
+:root[data-layout="new"] .topbar .kopf-sym{ width:46px; height:46px; margin-left:2px; }
+:root[data-layout="new"] .suchfeld-neu{
+  display:flex; align-items:center; gap:12px; width:100%; margin:6px 0 16px; padding:15px 18px;
+  border:1px solid var(--nl-linie); border-radius:999px; background:var(--surface); color:var(--text-dim);
+  font:inherit; font-size:15px; text-align:left; cursor:pointer; box-shadow:var(--shadow);
+}
+:root[data-layout="new"] .suchfeld-neu svg{ width:20px; height:20px; flex:none; color:var(--text); }
+
+/* Bereiche als Fotokarten */
+:root[data-layout="new"] .training-seite .area-bereiche{ gap:0; }
+:root[data-layout="new"] .training-seite .area-gruppe{ background:none; box-shadow:none; border-radius:0; overflow:visible; display:grid; gap:12px; }
+:root[data-layout="new"] .training-seite .area-tile.zeile{
+  position:relative; isolation:isolate; overflow:hidden; min-height:124px; padding:16px 16px; gap:14px; align-items:flex-end;
+  border:1px solid var(--nl-linie); border-radius:var(--radius); border-top-left-radius:var(--ecke); color:#fff;
+  background-color:#2a2a2e; background-size:cover; background-position:50% 45%;
+}
+:root[data-layout="new"] .training-seite .area-tile.zeile::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg, rgba(8,9,11,.18) 0%, rgba(8,9,11,.35) 45%, rgba(8,9,11,.82) 100%);
+}
+:root[data-layout="new"] .training-seite .area-tile.zeile + .area-tile.zeile{ border-top:1px solid var(--nl-linie); }
+:root[data-layout="new"] .training-seite .area-tile .at-ico{ background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.26); }
+:root[data-layout="new"] .training-seite .area-tile .at-name{ color:#fff; font-size:18px; }
+:root[data-layout="new"] .training-seite .area-tile .at-sub{ color:rgba(255,255,255,.86); }
+:root[data-layout="new"] .training-seite .area-tile .at-chev{ color:#fff; }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="katalog"]{ background-image:url("img/neu-workout.jpg"); }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="warm"]{ background-image:url("img/neu-mobility.jpg"); }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="intervall"]{ background-image:url("img/neu-timer.jpg"); }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="reps"]{ background-image:url("img/neu-summit.jpg"); }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ background-image:url("img/neu-run.jpg"); }
+
+/* Workout-Builder */
+:root[data-layout="new"] .builder-neu{
+  position:relative; isolation:isolate; overflow:hidden; min-height:200px; padding:18px; margin:0 0 14px; color:#fff;
+  border:1px solid var(--nl-linie); border-radius:var(--radius); border-top-left-radius:var(--ecke); box-shadow:var(--shadow);
+  background:#2a2a2e url("img/neu-builder.webp") 50% 38%/cover;
+  display:flex; flex-direction:column; gap:14px;
+}
+:root[data-layout="new"] .builder-neu::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg, rgba(8,9,11,.14) 0%, rgba(8,9,11,.36) 45%, rgba(8,9,11,.80) 100%);
+}
+:root[data-layout="new"] .bn-text{ display:flex; flex-direction:column; gap:4px; margin-top:auto; }
+:root[data-layout="new"] .bn-kicker{ font-size:12px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.82); }
+:root[data-layout="new"] .bn-text b{ font-size:22px; line-height:1.2; }
+:root[data-layout="new"] .bn-text small{ font-size:13.5px; color:rgba(255,255,255,.86); }
+:root[data-layout="new"] .bn-knoepfe{ display:flex; gap:10px; }
+:root[data-layout="new"] .bn-knoepfe .btn{ margin-top:0; padding:14px 12px; font-size:15px; }
+:root[data-layout="new"] .bn-knoepfe .btn-secondary{ background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.3); }
+
+/* Kopfblock auf Heute: oben links dunkler, damit das Logo ruhig steht; Farbverlauf kommt von rechts unten */
+:root[data-layout="new"] .home-hero::after{ background:linear-gradient(to top left, rgba(255,92,50,.78) 0%, rgba(255,140,60,.38) 45%, rgba(20,10,6,.4) 100%); }

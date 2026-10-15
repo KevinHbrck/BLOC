@@ -358,6 +358,11 @@ function renderKatalogBaukasten(){
     go("#katalog");
     katPlanNeu();   // immer der Plan: Übungen wählen, dann je Übung Satz für Satz oder Timer (die Art oben ist die Voreinstellung)
   });
+  if(builderAuto){   // Workout-Builder auf Heute (Aussehen New): gleich Überrasch mich bzw. Selber bauen auslösen
+    var baZiel = app.querySelector(builderAuto === "zufall" ? "[data-surprise]" : "[data-bauselber]");
+    builderAuto = null;
+    if(baZiel) baZiel.click();
+  }
 }
 
 /* ---------- Übungskatalog (dritte Abteilung des Katalogs; #uebungskatalog führt dorthin) ---------- */
