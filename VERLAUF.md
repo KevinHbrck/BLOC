@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · New: kein Foto doppelt (Fassung 2026-10-16-3)
+
+- **`fotosZuteilen`** (`js/03-router.js`, Pool `FOTO_POOL`): Favoriten und die Bereichskarten auf Training bekommen ihre Fotos so zugeteilt, dass kein Bild doppelt vorkommt, solange es freie gibt. Erst das nächste freie Bild der eigenen Art (ab einem festen Startpunkt), danach das nächste freie aus allen anderen. Die Vergabe läuft nach Schlüssel sortiert, damit sie stabil bleibt. Geprüft mit 20 Favoriten gleichzeitig: 20 verschiedene Bilder.
+
 ## 2026-10-16 · New: Heute wie im Entwurf (Fassung 2026-10-16-1)
 
 - **Kopf von Heute** in New: Foto-Kopf (`img/neu-kopf.jpg`) mit dem BLOC-Schriftzug oben links, Symbolen oben rechts (Hell/Dunkel/Nacht, Suche, Einstellungen), Datum und Gruß (Guten Morgen/Tag/Abend, ohne Namen: die App kennt keinen); oben links abgedunkelt, warmer Verlauf von rechts unten, unten weich in die Seite übergehend. Die Woche liegt darüber (`.woche-neu`).

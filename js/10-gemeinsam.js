@@ -381,24 +381,11 @@ function favItemsHTML(){
   if(!list.length) return "";
   var shown = favShowAll ? list : list.slice(0, FAV_LIMIT);
   if(typeof layoutNeu === "function" && layoutNeu()){   // Aussehen New: Fotokarten in einer Reihe zum Wischen (wie im Entwurf)
-    /* je Art ein kleiner Pool; welches Foto, hängt stabil vom Favoriten ab (gleicher Favorit = gleiches Foto) */
-    var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
-    var POOL = {
-      tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw"), P("studio-hantelreihe")],
-      st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
-      ti:  ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
-      ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
-      rep: ["img/neu-summit.jpg", P("freiluft-sw"), P("freiluft-park"), P("freiluft-meer")]
-    };
-    var fotoFuer = function(e){
-      var pool = POOL[e.cls] || POOL.st, h = 0, s = String(e.key || e.name || "");
-      for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003;
-      return pool[h % pool.length];
-    };
+    var fotos = fotosZuteilen(list.map(function(e){ return { key:e.key || e.name, pool:e.cls }; }));   // kein Foto doppelt, solange es freie gibt
     var BEREICH = { ti:t("tabTimer"), ws:t("warmTitle"), tp:t("katalog"), st:t("katalog"), rep:t("repTitle") };
     return '<div class="fav-fotos">'+shown.map(function(e){
       return '<div class="fav-foto" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+
-          (e.ok ? '' : ' aria-disabled="true"')+' style="background-image:url('+fotoFuer(e)+')">'+
+          (e.ok ? '' : ' aria-disabled="true"')+' style="background-image:url('+fotos[e.key || e.name]+')">'+
         '<span class="ff-stern" aria-hidden="true">'+svgIcon(ICON_STAR)+'</span>'+
         '<span class="ff-text"><small class="ff-bereich">'+esc(BEREICH[e.cls] || "")+'</small><b class="ff-name">'+esc(e.name)+'</b><small class="ff-sub">'+e.sub+'</small></span>'+
       '</div>';

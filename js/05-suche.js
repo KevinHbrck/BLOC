@@ -280,24 +280,14 @@ function renderTraining(){
     '<div class="training-seite">'+bereicheHTML()+'</div>'+
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
   bindCommon();
-  /* Abwechslung: je Bereich ein kleiner Foto-Pool, das Bild wechselt von Tag zu Tag (stabil innerhalb eines Tages) */
-  var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
-  var POOL = {
-    katalog:   ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("freiluft-park"), P("liegestuetz-strand")],
-    warm:      ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
-    intervall: ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
-    reps:      ["img/neu-summit.jpg", P("freiluft-leiter"), P("freiluft-meer"), P("freiluft-sw")],
-    run:       ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")]
-  };
-  var tag = Math.floor(Date.now()/86400000);
-  app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){
-    var k = el.getAttribute("data-bereich"), pool = POOL[k];
-    if(!pool) return;
-    var h = tag, s = k;
-    for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003;
-    el.style.backgroundImage = "url(" + pool[h % pool.length] + ")";
-  });
-  app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
+  /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd; kein Bild doppelt (fotosZuteilen) */
+  var tag = Math.floor(Date.now()/86400000), kacheln = [].slice.call(app.querySelectorAll(".training-seite .area-tile[data-bereich]"));
+  var ART = { katalog:"st", warm:"ws", intervall:"ti", reps:"rep", run:"run" };
+  var zu = fotosZuteilen(kacheln.map(function(el){ var k = el.getAttribute("data-bereich"); return { key:k + ":" + tag, pool:ART[k] }; }));
+  kacheln.forEach(function(el){
+    var k = el.getAttribute("data-bereich");
+    if(zu[k + ":" + tag]) el.style.backgroundImage = "url(" + zu[k + ":" + tag] + ")";
+  });  app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }

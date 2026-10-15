@@ -150,7 +150,33 @@ var app = document.getElementById("app");
 var TAB_ROUTEN = { home:"#home", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
 /* Aussehen „New“ (settings.layout): vier Ziele (Heute · Training · Kalender · Fortschritt), Suche und Einstellungen als Symbole in der Kopfzeile */
 function layoutNeu(){ return state.db.settings.layout === "new"; }
-var builderAuto = null;   // "zufall" | "selber": der Workout-Builder auf Heute löst im Baukasten gleich die Wahl aus
+/* Foto-Pool für das Aussehen New: je Art mehrere Bilder. fotosZuteilen vergibt sie so, dass kein Bild doppelt vorkommt,
+   solange es freie gibt: zuerst das passende der eigenen Art (ab einem festen Startpunkt, dann das nächste freie), danach das
+   nächste freie aus allen anderen. Die Reihenfolge der Vergabe ist nach Schlüssel sortiert, damit es stabil bleibt. */
+var FOTO_POOL = (function(){
+  var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
+  return {
+    tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw"), P("studio-hantelreihe")],
+    st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
+    ti:  ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
+    ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
+    rep: ["img/neu-summit.jpg", P("freiluft-leiter"), P("freiluft-meer"), P("freiluft-sw"), P("freiluft-park")],
+    run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")]
+  };
+})();
+function fotoHash(s){ var h = 0; s = String(s); for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003; return h; }
+function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
+  var alle = [], belegt = {}, out = {};
+  Object.keys(FOTO_POOL).forEach(function(k){ FOTO_POOL[k].forEach(function(f){ if(alle.indexOf(f) < 0) alle.push(f); }); });
+  items.slice().sort(function(a, b){ return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; }).forEach(function(it){
+    var pool = FOTO_POOL[it.pool] || FOTO_POOL.st, h = fotoHash(it.key), w = null, i, f;
+    for(i = 0; i < pool.length && !w; i++){ f = pool[(h + i) % pool.length]; if(!belegt[f]) w = f; }
+    for(i = 0; i < alle.length && !w; i++){ f = alle[(h + i) % alle.length]; if(!belegt[f]) w = f; }
+    if(!w) w = pool[h % pool.length];   // mehr Karten als Bilder: dann darf sich eines wiederholen
+    belegt[w] = true; out[it.key] = w;
+  });
+  return out;
+}var builderAuto = null;   // "zufall" | "selber": der Workout-Builder auf Heute löst im Baukasten gleich die Wahl aus
 /* Kopfzeilen-Symbole im Aussehen „New“ wie im Entwurf: Heute = Hell/Dunkel + Suche + Einstellungen, Training = Suche + Einstellungen,
    Fortschritt = Einstellungen */
 var SYM_SUCHE = '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>';
