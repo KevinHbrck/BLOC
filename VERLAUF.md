@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · Timer: Übung orange, Pause weiß, kleines BLOC-Zeichen; Ton nach Hintergrund (Fassung 2026-10-15-4)
+
+- **Timer-Farben** (`phaseVars`, `js/19-timer-motor.js`): Übung (Belastung) auf BLOC-Orange mit weißer Schrift, Pause, Blockpause und Vorbereitung auf Weiß mit dunkler Schrift. Oben unter der Leiste steht ein kleines „BLOC“ (`.pl-logo`): weiß auf Orange, orange auf Weiß; im Querformat und in den Vintage-Designs aus. Die Vintage-Designs (C60 usw.) behalten ihre eigenen Farben.
+- **Ton nach dem Hintergrund** (Ursache laut IT-Durchsicht: der Audio-Takt steht still, solange die App nicht im Vordergrund ist, die Anzeige läuft über die Wanduhr weiter, vorab eingeplante Töne kamen um die Standzeit zu spät): beim Zurückkommen (`visibilitychange`, `pageshow`, `focus`) wird erst der laufende Audio-Takt abgewartet (`audioBereit`), dann der Tonplan immer neu gebaut; auch wenn genau ein Schritt im Hintergrund ablief (`advanceIfDue`); ein Sicherheitsnetz (`audioDriftPruefen`, `audioAbweichung`) plant neu, wenn der Audio-Takt um mehr als 0,15 s abweicht. Dasselbe für die Satzpause im Fitnessstudio (`studioPauseTonPlan`). `interrupted` (iOS) wird wie `suspended` fortgesetzt. Auf dem Handy noch zu bestätigen.
 ## 2026-10-15 · Kopfblock mit Auswahl, Timer in BLOC-Farben (Fassung 2026-10-15-3)
 
 - **Kopfblock**: Titel bleibt „Bereit für dein Training?“; darunter stehen Dauer und Ort, unten in der Taste der Name des heutigen Trainings. Bei mehreren heutigen Trainings öffnet der Tipp eine Auswahl („Was startest du jetzt?“).

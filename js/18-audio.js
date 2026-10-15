@@ -213,7 +213,7 @@ function tone(n, at){
   if(!state.db.settings.sound) return null;
   var ctx = audioCtx();
   if(!ctx) return null;
-  if(ctx.state==="suspended") ctx.resume();
+  if(ctx.state==="suspended" || ctx.state==="interrupted") try{ ctx.resume(); }catch(e){}   // „interrupted“: iOS nach App-Wechsel oder Anruf
   var level = (n.v==null?0.7:n.v) * (state.db.settings.volume!=null ? state.db.settings.volume : 1);
   if(level<=0) return null;
   var now = at != null ? Math.max(at, ctx.currentTime) : ctx.currentTime, durS = n.dur/1000, att = (n.att||8)/1000, end = now + durS;
@@ -368,9 +368,26 @@ function planAudio(full){
     tEnd += st.duration*1000;
     if(tEnd > horizon && j > i+4) break;
   }
+  if(full) sched.ref = { ct:actx.currentTime, wall:Date.now() };   // Bezugspunkt, an dem sich Audio-Takt und Wanduhr gleichen
   // abgespielte Einträge vergessen
   var now = actx.currentTime;
   sched.list = sched.list.filter(function(x){ return x.at > now - 5; });
+}
+/* Der Audio-Takt (currentTime) steht still, solange der Context angehalten ist (App im Hintergrund, Bildschirm gesperrt, Mail-Check);
+   die Anzeige läuft über die Wanduhr weiter. Danach käme jeder vorab eingeplante Ton um die Standzeit zu spät.
+   audioAbweichung: Sekunden, um die der Audio-Takt seit dem letzten vollen Plan hinter (negativ) der Wanduhr liegt. */
+function audioAbweichung(){
+  if(!actx || !sched.ref || actx.state !== "running") return 0;
+  return (actx.currentTime - sched.ref.ct) - (Date.now() - sched.ref.wall)/1000;
+}
+/* Erst planen, wenn der Audio-Takt wirklich läuft (nach 1,5 s trotzdem, falls resume() hängt - iOS ohne neue Berührung) */
+function audioBereit(fn){
+  var ctx = audioCtx();
+  if(!ctx || ctx.state === "running"){ fn(); return; }
+  var fertig = false;
+  function los(){ if(!fertig){ fertig = true; fn(); } }
+  try{ var p = ctx.resume(); if(p && p.then) p.then(los, los); }catch(e){}
+  setTimeout(los, 1500);
 }
 
 /* ============ Wake Lock ============ */

@@ -273,6 +273,22 @@
       gleich(W.kalAn("2026-10-12").length, 1, "die Ausgangswoche bleibt unverändert");
     } finally { s.kalender = alt; }
   });
+  test("Timer-Ton: Abweichung zwischen Audio-Takt und Wanduhr wird erkannt", function () {
+    var altCtx = W.actx, altRef = W.sched.ref;
+    try {
+      W.actx = { state: "running", currentTime: 100 };
+      W.sched.ref = { ct: 90, wall: Date.now() - 10000 };
+      nah(W.audioAbweichung(), 0, 0.05, "Takt läuft mit der Wanduhr");
+      W.sched.ref = { ct: 85, wall: Date.now() - 10000 };
+      nah(W.audioAbweichung(), 5, 0.05, "Takt ist 5 s vorgelaufen");
+      W.sched.ref = { ct: 90, wall: Date.now() - 20000 };
+      nah(W.audioAbweichung(), -10, 0.05, "Takt stand 10 s still (App im Hintergrund)");
+      W.actx.state = "suspended";
+      gleich(W.audioAbweichung(), 0, "angehaltener Context: keine Aussage");
+      W.sched.ref = undefined; W.actx.state = "running";
+      gleich(W.audioAbweichung(), 0, "ohne Plan: keine Abweichung");
+    } finally { W.actx = altCtx; W.sched.ref = altRef; }
+  });
   test("Run: Rad zeigt Tempo in km/h und eigene Ansage", function () {
     gleich(W.runKmh(3600, 25000), "25,0", "25 km in einer Stunde");
     gleich(W.runKmh(0, 1000), "–,–", "ohne Zeit"); gleich(W.runKmh(60, 10), "–,–", "zu kurze Strecke");

@@ -135,13 +135,13 @@ function advanceIfDue(){
   if(!playerState || playerState.paused) return false;
   var steps = playerState.steps, now = Date.now();
   if(!steps[playerState.idx] || steps[playerState.idx].phase==="done" || playerState.endAt > now) return false;
-  var idx = playerState.idx + 1, startAt = playerState.endAt, skipped = 0;
+  var idx = playerState.idx + 1, startAt = playerState.endAt, skipped = 0, spaet = now - playerState.endAt > 1000;   // spät: im Hintergrund hängen geblieben
   while(steps[idx] && steps[idx].phase!=="done" && startAt + steps[idx].duration*1000 <= now){
     startAt += steps[idx].duration*1000; idx++; skipped++;
   }
   if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
   enterStep(idx, { startAt:startAt, quiet: skipped > 0 });
-  if(skipped > 0 && playerState && !playerState.paused) planAudio(true);   // Tonplan an die echte Position anpassen
+  if((skipped > 0 || spaet) && playerState && !playerState.paused) planAudio(true);   // Tonplan an die echte Position anpassen (auch bei nur einem abgelaufenen Schritt)
   return true;
 }
 /* Im Hintergrund läuft requestAnimationFrame nicht - ein Intervall hält die Logik
@@ -159,12 +159,25 @@ function stopBgTicker(){ if(bgTicker){ clearInterval(bgTicker); bgTicker = null;
 window.addEventListener("resize", function(){
   if(playerState && playerState.steps[playerState.idx]) updateDots(playerState.steps[playerState.idx]);
 });
-document.addEventListener("visibilitychange", function(){
+/* Zurück aus dem Hintergrund (andere App, gesperrter Bildschirm): Anzeige sofort richtigstellen, dann - sobald der Audio-Takt
+   wieder läuft - alle Töne neu an die Wanduhr binden (immer, auch wenn gerade ein Schritt nachgeholt wurde) */
+function beimWiederkehren(){
   if(document.visibilityState!=="visible" || !playerState || playerState.paused) return;
-  var ctx = audioCtx();
-  if(ctx && ctx.state!=="running") try{ ctx.resume(); }catch(e){}
-  if(!advanceIfDue()) planAudio(true);   // Uhr und Audio-Takt neu abgleichen
-});
+  advanceIfDue();
+  audioBereit(function(){ if(playerState && !playerState.paused) planAudio(true); });
+}
+document.addEventListener("visibilitychange", beimWiederkehren);
+window.addEventListener("pageshow", beimWiederkehren);
+window.addEventListener("focus", beimWiederkehren);
+var audioPruefAm = 0;
+/* Sicherheitsnetz im Bildlauf: läuft der Audio-Takt aus dem Gleichschritt (Context erst nach dem Plan angelaufen,
+   Kopfhörer-Wechsel), wird neu geplant; geprüft wird höchstens einmal pro Sekunde */
+function audioDriftPruefen(){
+  var jetzt = Date.now();
+  if(jetzt - audioPruefAm < 1000) return;
+  audioPruefAm = jetzt;
+  if(Math.abs(audioAbweichung()) > 0.15) planAudio(true);
+}
 
 function tickLoop(){
   if(playerState.rafId) cancelAnimationFrame(playerState.rafId);
@@ -173,6 +186,7 @@ function tickLoop(){
     var step = playerState.steps[playerState.idx];
     if(!step || step.phase==="done") return;
     if(advanceIfDue()) return;
+    audioDriftPruefen();
     var remaining = playerState.endAt - Date.now();
     playerState.remainingMs = remaining;
     var remSec = Math.ceil(remaining/1000);

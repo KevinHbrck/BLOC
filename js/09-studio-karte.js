@@ -511,11 +511,18 @@ function studioPauseStart(id, sek){
   studioPauseStop();
   var ende = Date.now() + sek*1000;
   studioPause = { id:id, ende:ende, uhr:setInterval(studioPauseZeigen, 250) };
-  if(state.db.settings.sound && audioCtx()){
-    for(var k=3; k>=1; k--) schedNotes(tickNotes(), ende - k*1000);
-    schedNotes(currentSoundStyle().work, ende);
-  }
+  studioPauseTonPlan();
 }
+function studioPauseTonPlan(){
+  if(!studioPause || !state.db.settings.sound || !audioCtx()) return;
+  for(var k=3; k>=1; k--) if(studioPause.ende - k*1000 > Date.now()) schedNotes(tickNotes(), studioPause.ende - k*1000);
+  schedNotes(currentSoundStyle().work, studioPause.ende);
+}
+/* Zurück aus dem Hintergrund: der Audio-Takt stand still, die Töne der Satzpause neu an die Wanduhr binden */
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState !== "visible" || !studioPause) return;
+  audioBereit(function(){ if(studioPause){ schedCancel(); studioPauseTonPlan(); } });
+});
 function studioPauseZeigen(){
   var box = document.getElementById("st-pause"), zeit = document.getElementById("st-pause-zeit");
   if(!studioPause){ if(box) box.hidden = true; return; }

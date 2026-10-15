@@ -901,6 +901,11 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .progressbar{ height:4px; background:rgba(128,128,128,.25); border-radius:100px; margin:14px 18px 0; overflow:hidden; }
 .progressbar-fill{ height:100%; background:currentColor; border-radius:100px; transition:width .3s linear; }
 .player-mid{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px 24px; }
+/* kleines BLOC-Zeichen unter der Fortschrittsleiste: Orange auf Weiß (Pause), Weiß auf Orange (Übung) */
+.pl-logo{ text-align:center; margin-top:8px; font-family:var(--f-brand); font-size:12px; font-weight:900; letter-spacing:.2em; line-height:1; color:var(--accent); transition:color .35s ease; }
+.player[data-phase="work"] .pl-logo{ color:#ffffff; }
+:root[data-vintage] .pl-logo{ display:none; }
+@media (orientation:landscape) and (max-height:520px){ .pl-logo{ display:none; } }
 .phase-label{ font-size:24px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.85; margin-bottom:6px; }
 .block-label{ font-size:20px; font-weight:600; opacity:.75; margin-bottom:22px; min-height:26px; }
 .block-label .pl-kg{ display:block; margin-top:5px; font-size:16px; font-weight:700; font-variant-numeric:tabular-nums; }   /* Fitnessstudio: Gewicht × Wiederholungen */

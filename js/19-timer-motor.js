@@ -110,13 +110,13 @@ function rememberLastRun(w, source){
   save();
 }
 
-/* Timer in den BLOC-Farben: Belastung und Vorbereitung auf dem Hintergrund und in der Schriftfarbe des gewählten Designs,
-   jede Pause (auch Blockpause) in BLOC-Orange */
+/* Timer in den BLOC-Farben: Belastung (die Übung ist zu erledigen) in BLOC-Orange mit weißer Schrift,
+   jede Pause, Blockpause und Vorbereitung auf Weiß mit dunkler Schrift */
 function phaseVars(phase){
-  if(phase==="work") return { bg:"var(--bg)", text:"var(--text)", label:t("phWork") };
-  if(phase==="rest") return { bg:"var(--accent)", text:"var(--accent-text)", label:t("phRest") };
-  if(phase==="blockrest") return { bg:"var(--accent)", text:"var(--accent-text)", label:t("phBlockrest") };
-  if(phase==="prep") return { bg:"var(--bg)", text:"var(--text)", label:t("phPrep") };
+  if(phase==="work") return { bg:"var(--accent)", text:"#ffffff", label:t("phWork") };
+  if(phase==="rest") return { bg:"#ffffff", text:"#1c1c1e", label:t("phRest") };
+  if(phase==="blockrest") return { bg:"#ffffff", text:"#1c1c1e", label:t("phBlockrest") };
+  if(phase==="prep") return { bg:"#ffffff", text:"#1c1c1e", label:t("phPrep") };
   return { bg:"var(--bg)", text:"var(--text)", label:"" };
 }
 
@@ -148,6 +148,7 @@ function playerTemplate(){
       '<span id="pl-vol-val">'+vol+'%</span>'+
     '</div>'+
     '<div class="progressbar"><div class="progressbar-fill" id="pl-progress" style="width:0%"></div></div>'+
+    '<div class="pl-logo" aria-hidden="true">BLOC</div>'+
     '<div id="pl-body" class="player-mid"></div>'+
     KODAK_BADGE +
     '</div>';
