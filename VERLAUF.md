@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · Statistik ruhiger und vorsichtiger (Fassung 2026-10-15-7)
+
+- **Serie** heißt jetzt „n Wochen in Folge mit Training“ (gezählt wird jede Woche mit mindestens einem Training; die laufende Woche bricht die Serie nicht ab).
+- **Pace-Tendenz** („Du wirst schneller …“) erscheint erst ab vier Läufen von mindestens 1 km und ab 5 s Unterschied (vorher 2 Läufe, 3 s): Strecke, Wetter und Tagesform schwanken stark.
+- **Geschätztes 1RM** (Epley) rechnet höchstens mit 10 Wiederholungen: darüber wird die Schätzung unzuverlässig. Gespeichert wird dadurch nichts; Bestwerte können bei sehr hohen Wiederholungen niedriger angezeigt werden als vorher.
+- Nicht übernommen: Sätze je Muskelgruppe statt Prozent. Der Verlauf (`history`) kennt nur die Übungen, nicht die Sätze; das ginge nur aus den gespeicherten Trainings und ist ein eigener Schritt.
+
 ## 2026-10-15 · New: vier Ziele unten, Seite „Training“, Workout-Builder, Fotos (Fassung 2026-10-15-6)
 
 - **Navigation im Aussehen „New“** (nur dort, Klassik bleibt): unten Heute · Training · Kalender · Fortschritt; Suche und Einstellungen als Symbole in der Kopfzeile von Heute und Training (`kopfSymboleNeu`); in den Bereichslisten leuchtet „Training“. Neue Route `#training` (`renderTraining`, `js/05-suche.js`) mit den Bereichen als Fotokarten und einer Suchzeile.

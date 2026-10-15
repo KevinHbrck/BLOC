@@ -485,7 +485,7 @@ function renderStats(){
         var davor = pace.slice(0, pace.length - halb2), neu = pace.slice(-halb2);
         function avg(a){ return a.reduce(function(x, y){ return x + y; }, 0)/a.length; }
         var diff = avg(davor) - avg(neu);
-        html += '<div class="sk-unter">'+esc(diff > 3 ? t("statPaceBesser", { z:statPz(diff) }) : diff < -3 ? t("statPaceLangsamer", { z:statPz(-diff) }) : t("statPaceGleich"))+'</div>';
+        if(letzteL.length >= 4) html += '<div class="sk-unter">'+esc(diff > 5 ? t("statPaceBesser", { z:statPz(diff) }) : diff < -5 ? t("statPaceLangsamer", { z:statPz(-diff) }) : t("statPaceGleich"))+'</div>';   // erst ab vier Läufen und 5 s Unterschied: Strecke, Wetter und Tagesform schwanken stark
       }
       var rek = [];
       var l1 = laeufe.reduce(function(m, x){ return !m || x.dist > m.dist ? x : m; }, null);

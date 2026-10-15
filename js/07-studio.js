@@ -73,7 +73,7 @@ function studioWochen(id, sicht){
 var SATZ_TYPEN = ["n", "w", "d", "f"];   // normal · Aufwärmen · Drop · bis Versagen
 function satzTyp(x){ return x[2] === "w" || x[2] === "d" || x[2] === "f" ? x[2] : "n"; }
 function arbeitsSaetze(l){ return (l.s || []).filter(function(x){ return satzTyp(x) !== "w"; }); }
-function satzSchaetzung1RM(x){ return x[1] <= 1 ? x[0] : x[0]*(1 + x[1]/30); }   // Epley
+function satzSchaetzung1RM(x){ return x[1] <= 1 ? x[0] : x[0]*(1 + Math.min(x[1], 10)/30); }   // Epley, ab 10 Wiederholungen gedeckelt: darüber wird die Schätzung unzuverlässig
 function studioVolumen(l){ return arbeitsSaetze(l).reduce(function(a, x){ return a + x[0]*x[1]; }, 0); }
 function studioWdhSumme(l){ return arbeitsSaetze(l).reduce(function(a, x){ return a + x[1]; }, 0); }
 /* RPE/RIR je Satz (Einstellungen › Training, settings.anstrengung = "rpe" | "rir" | ""): der Satz trägt als vierte Stelle die RPE (6–10; RIR = 10 − RPE) */
