@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · New: mehr Luft, Kopffoto wie Training, ruhige Run-Seite (Fassung 2026-10-16-17)
+
+- **Abstand** zwischen den Bereichskarten auf Training 20 px.
+- **Kopffoto der Bereichsseiten** ist dasselbe Bild wie die Karte auf Training (`bereichFotosNeu`, gemeinsame Zuteilung, wechselt täglich, kein Bild doppelt). Run bekommt im Kopf ein Foto aus dem Run-Pool, die Karte auf Training bleibt ohne Foto.
+- **Run-Seite** ruhiger: keine Karte um die Kilometerzahl, flache Verlaufszeilen, Papierkorb dezent.
+
 ## 2026-10-16 · New: Timer, Summit, Mobility und Run wie im Entwurf, Run ohne Foto (Fassung 2026-10-16-15)
 
 - **Kopf der Bereichsseiten** in New (`bereichKopfNeuHTML`, `js/05-suche.js`): Foto mit Zurück (führt zu Training) und Suche, darunter Zeile in Großbuchstaben und großer Titel; das „?“ der Seite sitzt rechts daneben. Gilt für Timer, Summit, Mobility & Stretch und Run.

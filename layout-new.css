@@ -358,3 +358,15 @@
 :root[data-layout="new"] .woche-neu .wo-tag i{ width:17px; height:17px; }
 :root[data-layout="new"] .woche-neu .wo-tag small{ font-size:11.5px; }
 :root[data-layout="new"] .woche-neu .wo-tage{ gap:8px; }
+
+/* ---------- Mehr Luft zwischen den Karten (Training) ---------- */
+:root[data-layout="new"] .training-seite .area-gruppe{ gap:20px; }
+
+/* ---------- Run-Seite: so ruhig wie im Entwurf - keine Karte um die Zahl, flache Verlaufszeilen ---------- */
+:root[data-layout="new"] .run-hero{ background:none; border:0; box-shadow:none; padding:10px 0 6px; margin-bottom:14px; }
+:root[data-layout="new"] .run-gross{ margin:6px 0 10px; }
+:root[data-layout="new"] .run-item.list-item.entry{
+  background:none; box-shadow:none; border:0; border-radius:0; border-bottom:1px solid var(--nl-linie); margin:0; padding:14px 2px;
+}
+:root[data-layout="new"] .trash-btn{ color:var(--text-dim); }
+:root[data-layout="new"] .timer-panel .trash-btn{ color:var(--text-dim); }

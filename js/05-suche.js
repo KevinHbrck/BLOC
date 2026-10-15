@@ -241,8 +241,8 @@ function renderHome(){
 }
 /* Aussehen „New“: Kopf einer Bereichsseite wie im Entwurf (Timer): Foto, Zurück und Suche oben, darunter Zeile und Titel */
 function bereichKopfNeuHTML(key, titel, kicker, extra){
-  var FOTO = { intervall:"img/neu-timer.jpg", warm:"img/neu-mobility.jpg", reps:"img/neu-summit.jpg", run:"img/neu-run.jpg" };
-  return '<section class="kopf-bereich"><img class="kb-bild" src="'+(FOTO[key] || FOTO.intervall)+'" alt="" draggable="false">'+
+  var foto = bereichFotosNeu()[key] || "img/neu-timer.jpg";   // dasselbe Bild wie die Karte auf Training
+  return '<section class="kopf-bereich"><img class="kb-bild" src="'+foto+'" alt="" draggable="false">'+
     '<div class="kb-zeile"><button type="button" class="iconbtn kb-rund" data-back="#training" aria-label="'+esc(t("back"))+'">'+ICON_BACK+'</button>'+
     '<span class="kb-rechts">'+(extra || "")+'<button type="button" class="iconbtn kb-rund" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button></span></div>'+
     '<div class="kb-text"><span class="kb-kicker">'+esc(kicker)+'</span><h1>'+esc(titel)+'</h1></div></section>';
@@ -288,14 +288,13 @@ function renderTraining(){
     '<div class="training-seite">'+bereicheHTML()+'</div>'+
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
   bindCommon();
-  /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd; kein Bild doppelt (fotosZuteilen) */
-  var tag = Math.floor(Date.now()/86400000), kacheln = [].slice.call(app.querySelectorAll(".training-seite .area-tile[data-bereich]"));
-  var ART = { katalog:"st", warm:"ws", intervall:"ti", reps:"rep", run:"run" };
-  var zu = fotosZuteilen(kacheln.map(function(el){ var k = el.getAttribute("data-bereich"); return { key:k + ":" + tag, pool:ART[k] }; }));
-  kacheln.forEach(function(el){
+  /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd, kein Bild doppelt; dieselben Bilder tragen die Köpfe der Bereichsseiten */
+  var fotos = bereichFotosNeu();
+  app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){
     var k = el.getAttribute("data-bereich");
-    if(k !== "run" && zu[k + ":" + tag]) el.style.backgroundImage = "url(" + zu[k + ":" + tag] + ")";   // Run bleibt ohne Foto (Höhenlinien, siehe layout-new.css)
-  });  app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
+    if(k !== "run" && fotos[k]) el.style.backgroundImage = "url(" + fotos[k] + ")";   // Run bleibt auf der Karte ohne Foto (Höhenlinien, siehe layout-new.css)
+  });
+  app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }

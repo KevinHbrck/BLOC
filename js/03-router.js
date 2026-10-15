@@ -181,6 +181,13 @@ function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
     belegt[w] = true; out[it.key] = w;
   });
   return out;
+}/* Foto je Bereich für heute: dieselbe Zuteilung für die Karten auf Training und die Köpfe der Bereichsseiten (kein Bild doppelt,
+   wechselt von Tag zu Tag). Schlüssel wie data-bereich: katalog, warm, intervall, reps, run. */
+function bereichFotosNeu(){
+  var tag = Math.floor(Date.now()/86400000), ART = { katalog:"st", warm:"ws", intervall:"ti", reps:"rep", run:"run" }, out = {};
+  var zu = fotosZuteilen(Object.keys(ART).map(function(k){ return { key:k + ":" + tag, pool:ART[k] }; }));
+  Object.keys(ART).forEach(function(k){ out[k] = zu[k + ":" + tag]; });
+  return out;
 }var builderAuto = null;   // "zufall" | "selber": der Workout-Builder auf Heute löst im Baukasten gleich die Wahl aus
 /* Kopfzeilen-Symbole im Aussehen „New“ wie im Entwurf: Heute = Hell/Dunkel + Suche + Einstellungen, Training = Suche + Einstellungen,
    Fortschritt = Einstellungen */
