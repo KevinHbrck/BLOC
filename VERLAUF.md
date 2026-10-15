@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · New: Heute wie im Entwurf (Fassung 2026-10-16-1)
+
+- **Kopf von Heute** in New: Foto-Kopf (`img/neu-kopf.jpg`) mit dem BLOC-Schriftzug oben links, Symbolen oben rechts (Hell/Dunkel/Nacht, Suche, Einstellungen), Datum und Gruß (Guten Morgen/Tag/Abend, ohne Namen: die App kennt keinen); oben links abgedunkelt, warmer Verlauf von rechts unten, unten weich in die Seite übergehend. Die Woche liegt darüber (`.woche-neu`).
+- **Karte „Heute geplant“** (`heroNeuHTML`): kompakt mit rundem Start-Knopf; ohne Plan „Bereit für dein Training?“ (gleiche Logik wie der Kopfblock, gleiches `data-herostart`).
+- **Favoriten** als Fotokarten in einer Reihe zum Wischen (156 × 196 px, `favItemsHTML`): Foto nach Art (Timer, Mobility, Workout Freiluft/Studio, Summit), Bereich, Name, Dauer. Danach der Workout-Builder.
+- Neue Fotos `img/neu-kopf.jpg`, `img/neu-freiluft.jpg` und ein Pool `img/neu-p-*.jpg` (in `sw.js` vorab gespeichert). Favoriten nehmen je Art ein stabil gewähltes Foto aus dem Pool (gleicher Favorit = gleiches Bild); die Bereichskarten auf Training wechseln ihr Foto von Tag zu Tag (Fassung 2026-10-16-2).
+
 ## 2026-10-15 · Durchsicht mit vier Prüfern: Fehler und Kontraste behoben (Fassung 2026-10-15-9)
 
 - **Layoutwechsel** in den Einstellungen zeichnet jetzt auch die untere Leiste neu (vorher blieb die alte Leiste stehen, bis man weiternavigierte).

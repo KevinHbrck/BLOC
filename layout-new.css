@@ -156,3 +156,64 @@
 
 /* Kopfblock auf Heute: oben links dunkler, damit das Logo ruhig steht; Farbverlauf kommt von rechts unten */
 :root[data-layout="new"] .home-hero::after{ background:linear-gradient(to top left, rgba(255,92,50,.78) 0%, rgba(255,140,60,.38) 45%, rgba(20,10,6,.4) 100%); }
+
+/* ---------- Heute wie im Entwurf: Foto-Kopf, Woche darüber, „Heute geplant“, Favoriten als Fotokarten ---------- */
+:root[data-layout="new"] .kopf-neu{
+  position:relative; isolation:isolate; overflow:hidden; margin:0 -16px 0; min-height:300px;
+  padding:calc(env(safe-area-inset-top) + 14px) 20px 58px; display:flex; flex-direction:column; justify-content:space-between;
+  background:var(--bg); color:#fff;
+}
+:root[data-layout="new"] .kn-bild{ position:absolute; inset:0; z-index:-3; width:100%; height:100%; object-fit:cover; object-position:50% 38%; }
+:root[data-layout="new"] .kn-tint{ position:absolute; inset:0; z-index:-2;
+  background:linear-gradient(to top left, rgba(255,86,44,.82) 0%, rgba(255,140,60,.5) 34%, rgba(255,160,80,0) 72%); }
+:root[data-layout="new"] .kopf-neu::before{ content:""; position:absolute; inset:0; z-index:-1;
+  background:radial-gradient(ellipse 85% 62% at 0% 0%, rgba(6,7,9,.82) 0%, rgba(6,7,9,.58) 38%, rgba(6,7,9,0) 78%); }
+:root[data-layout="new"] .kopf-neu::after{ content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg, rgba(8,9,11,0) 55%, var(--bg) 100%); }
+:root[data-layout="new"] .kn-zeile{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+:root[data-layout="new"] .kn-sym{ display:flex; gap:8px; }
+:root[data-layout="new"] .kn-sym .iconbtn{ width:48px; height:48px; margin:0; background:rgba(20,22,26,.46); color:#fff; border:1px solid rgba(255,255,255,.2);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+:root[data-layout="new"] .marke-neu b{ display:block; font-family:"Helvetica Neue","Arial Black",Roboto,Arial,sans-serif; font-weight:900;
+  font-size:clamp(42px,12.5vw,56px); line-height:.95; letter-spacing:-.035em; color:#ff5a36; }
+:root[data-layout="new"] .marke-neu small{ display:block; margin-top:6px; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,.9); }
+:root[data-layout="new"] .kn-gruss{ display:flex; flex-direction:column; gap:2px; margin-top:auto; }
+:root[data-layout="new"] .kn-gruss span{ font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,.82); }
+:root[data-layout="new"] .kn-gruss b{ font-size:24px; line-height:1.2; }
+
+:root[data-layout="new"] .woche-neu{ position:relative; z-index:2; margin:-44px 0 14px; }
+:root[data-layout="new"] .woche-neu .woche{
+  margin:0; background:color-mix(in srgb, var(--surface) 80%, transparent); border:1px solid var(--nl-linie);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); box-shadow:0 6px 18px rgba(0,0,0,.16);
+}
+
+:root[data-layout="new"] .geplant-neu{ margin:0 0 6px; }
+:root[data-layout="new"] .gn-main{
+  display:flex; align-items:center; gap:14px; width:100%; padding:14px 16px; text-align:left; font:inherit; color:var(--text); cursor:pointer;
+  background:var(--surface); border:1px solid var(--nl-linie); border-radius:var(--radius); border-top-left-radius:var(--ecke); box-shadow:var(--shadow);
+}
+:root[data-layout="new"] .gn-play{ flex:none; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:var(--accent-ink, var(--accent)); color:var(--accent-text); font-size:18px; }
+:root[data-layout="new"] .gn-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+:root[data-layout="new"] .gn-text small{ font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); }
+:root[data-layout="new"] .gn-text b{ font-size:17px; line-height:1.25; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+:root[data-layout="new"] .gn-text span{ font-size:13px; color:var(--text-dim); }
+:root[data-layout="new"] .gn-chev{ flex:none; color:var(--text-dim); display:flex; }
+
+:root[data-layout="new"] .fav-fotos{ display:flex; gap:12px; overflow-x:auto; margin:0 -16px 8px; padding:0 16px 4px; scrollbar-width:none; scroll-snap-type:x proximity; }
+:root[data-layout="new"] .fav-fotos::-webkit-scrollbar{ display:none; }
+:root[data-layout="new"] .fav-foto{
+  position:relative; isolation:isolate; overflow:hidden; flex:none; width:156px; height:196px; padding:12px; scroll-snap-align:start;
+  display:flex; flex-direction:column; justify-content:flex-end; color:#fff; cursor:pointer;
+  background-color:#2a2a2e; background-size:cover; background-position:50% 45%;
+  border:1px solid var(--nl-linie); border-radius:var(--r-m, 20px); border-top-left-radius:var(--ecke);
+}
+:root[data-layout="new"] .fav-foto::before{ content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg, rgba(8,9,11,.12) 0%, rgba(8,9,11,.45) 50%, rgba(8,9,11,.86) 100%); }
+:root[data-layout="new"] .fav-foto[aria-disabled]{ opacity:.5; }
+:root[data-layout="new"] .ff-stern{ position:absolute; top:10px; right:10px; width:18px; height:18px; color:#f0a020; display:flex; }
+:root[data-layout="new"] .ff-stern svg{ width:18px; height:18px; }
+:root[data-layout="new"] .ff-text{ display:flex; flex-direction:column; gap:2px; min-width:0; text-shadow:0 1px 6px rgba(0,0,0,.55); }
+:root[data-layout="new"] .ff-bereich{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,.85); }
+:root[data-layout="new"] .ff-name{ font-size:16px; line-height:1.2; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+:root[data-layout="new"] .ff-sub{ font-size:12.5px; color:rgba(255,255,255,.9); }

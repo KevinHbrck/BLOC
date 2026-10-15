@@ -197,8 +197,9 @@ function renderHome(){
   var neu = layoutNeu();
   var bereicheListe = neu ? "" : bereicheHTML();   // New: die Bereiche stehen unter „Training“, hier der Workout-Builder
   app.innerHTML =
-    topbar("BLOC", { home:true, sub:"Modular Training Builder", right:kopfSymboleNeu("home") }) +
-    c60HinweisHTML() + installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
+    (neu ? kopfNeuHTML() : topbar("BLOC", { home:true, sub:"Modular Training Builder" })) +
+    (neu ? '<div class="woche-neu">'+wocheHTML()+'</div>'+heroNeuHTML()+c60HinweisHTML()+installTipHTML()+backupTipHTML()   // New wie im Entwurf: Kopf mit Foto, Woche darüber gelegt, heute geplant
+         : c60HinweisHTML() + installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML()) +   // die Woche steht oben, darunter der Kopfblock
     '<div class="sec-head" data-favsek><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
@@ -238,6 +239,26 @@ function renderHome(){
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }
+/* Aussehen „New“: Kopf von Heute wie im Entwurf - Foto mit Logo, Symbolen und Gruß (ohne Namen: die App kennt keinen) */
+function kopfNeuHTML(){
+  var h = new Date().getHours(), lang = currentLang() === "en" ? "en-GB" : "de-DE";
+  var gruss = t(h < 11 ? "gruMorgen" : h < 17 ? "gruTag" : "gruAbend");
+  var datum = new Date().toLocaleDateString(lang, { weekday:"long", day:"numeric", month:"long" });
+  return '<section class="kopf-neu"><img class="kn-bild" src="img/neu-kopf.jpg" alt="" draggable="false"><div class="kn-tint"></div>'+
+    '<div class="kn-zeile"><div class="marke-neu"><b>BLOC</b><small>Modular Training Builder</small></div><div class="kn-sym">'+kopfSymboleNeu("home")+'</div></div>'+
+    '<div class="kn-gruss"><span>'+esc(datum)+'</span><b>'+esc(gruss)+'</b></div></section>';
+}
+/* Aussehen „New“: Karte „Heute geplant“ (Plan von heute) bzw. „Bereit für dein Training?“; gleiche Logik wie der Kopfblock, gleiches data-herostart */
+function heroNeuHTML(){
+  if(fokusAus("katalog")) return "";
+  var heute = heroHeutige(), modus = "baukasten", label = t("heroTitel"), titel = t("heroLos"), sub = "";
+  if(heute.length){ var info = kalHeroInfo(heute); modus = "plan"; label = t("heroGeplantNeu"); titel = info.titel; sub = info.sub; }
+  else if(favEntries().length){ modus = "fav"; titel = t("heroFav"); }
+  return '<section class="geplant-neu"><button type="button" class="gn-main" data-herostart="'+modus+'">'+
+    '<span class="gn-play" aria-hidden="true">'+ICON_PLAY+'</span>'+
+    '<span class="gn-text"><small>'+esc(label)+'</small><b>'+esc(titel)+'</b>'+(sub ? '<span>'+esc(sub)+'</span>' : '')+'</span>'+
+    '<span class="gn-chev" aria-hidden="true">'+ICON_CHEV+'</span></button></section>';
+}
 /* Aussehen „New“: Workout-Builder auf Heute (Foto, zwei Wege in den Baukasten); ohne Workout (Fokus aus) entfällt er */
 function builderKarteHTML(){
   if(fokusAus("katalog")) return "";
@@ -259,6 +280,23 @@ function renderTraining(){
     '<div class="training-seite">'+bereicheHTML()+'</div>'+
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
   bindCommon();
+  /* Abwechslung: je Bereich ein kleiner Foto-Pool, das Bild wechselt von Tag zu Tag (stabil innerhalb eines Tages) */
+  var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
+  var POOL = {
+    katalog:   ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("freiluft-park"), P("liegestuetz-strand")],
+    warm:      ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
+    intervall: ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
+    reps:      ["img/neu-summit.jpg", P("freiluft-leiter"), P("freiluft-meer"), P("freiluft-sw")],
+    run:       ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")]
+  };
+  var tag = Math.floor(Date.now()/86400000);
+  app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){
+    var k = el.getAttribute("data-bereich"), pool = POOL[k];
+    if(!pool) return;
+    var h = tag, s = k;
+    for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003;
+    el.style.backgroundImage = "url(" + pool[h % pool.length] + ")";
+  });
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
