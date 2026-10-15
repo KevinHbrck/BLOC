@@ -239,6 +239,14 @@ function renderHome(){
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }
+/* Aussehen „New“: Kopf einer Bereichsseite wie im Entwurf (Timer): Foto, Zurück und Suche oben, darunter Zeile und Titel */
+function bereichKopfNeuHTML(key, titel, kicker, extra){
+  var FOTO = { intervall:"img/neu-timer.jpg", warm:"img/neu-mobility.jpg", reps:"img/neu-summit.jpg", run:"img/neu-run.jpg" };
+  return '<section class="kopf-bereich"><img class="kb-bild" src="'+(FOTO[key] || FOTO.intervall)+'" alt="" draggable="false">'+
+    '<div class="kb-zeile"><button type="button" class="iconbtn kb-rund" data-back="#training" aria-label="'+esc(t("back"))+'">'+ICON_BACK+'</button>'+
+    '<span class="kb-rechts">'+(extra || "")+'<button type="button" class="iconbtn kb-rund" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button></span></div>'+
+    '<div class="kb-text"><span class="kb-kicker">'+esc(kicker)+'</span><h1>'+esc(titel)+'</h1></div></section>';
+}
 /* Aussehen „New“: Kopf von Heute wie im Entwurf - Foto mit Logo, Symbolen und Gruß (ohne Namen: die App kennt keinen) */
 function kopfNeuHTML(){
   var h = new Date().getHours(), lang = currentLang() === "en" ? "en-GB" : "de-DE";
@@ -286,7 +294,7 @@ function renderTraining(){
   var zu = fotosZuteilen(kacheln.map(function(el){ var k = el.getAttribute("data-bereich"); return { key:k + ":" + tag, pool:ART[k] }; }));
   kacheln.forEach(function(el){
     var k = el.getAttribute("data-bereich");
-    if(zu[k + ":" + tag]) el.style.backgroundImage = "url(" + zu[k + ":" + tag] + ")";
+    if(k !== "run" && zu[k + ":" + tag]) el.style.backgroundImage = "url(" + zu[k + ":" + tag] + ")";   // Run bleibt ohne Foto (Höhenlinien, siehe layout-new.css)
   });  app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);

@@ -284,3 +284,77 @@
 :root[data-layout="new"] .gn-main, :root[data-layout="new"] .suchfeld-neu{ box-shadow:none; }
 :root[data-layout="new"] .gn-play{ width:auto; height:auto; background:none; color:var(--accent-ink, var(--accent)); font-size:22px; }
 :root[data-layout="new"] .builder-neu::after{ inset:0; filter:none; }
+
+/* ---------- Run ohne Foto: ruhige Karte mit eigenen Höhenlinien (keine Karte, keine Daten) ---------- */
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{
+  background-color:#15171b;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 120' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.13' stroke-width='1' vector-effect='non-scaling-stroke'%3E%3Cpath id='a' vector-effect='non-scaling-stroke' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(.8) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(.6) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(.4) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(1.25) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(1.6) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:cover; background-position:50% 50%;
+}
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]::before{ background:none; }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(255,255,255,.14); }
+
+/* ---------- Timer-Seite wie im Entwurf: Foto-Kopf, große Abschnittstitel, flache Zeilen mit großem Play-Kreis ---------- */
+:root[data-layout="new"] .kopf-bereich{
+  position:relative; isolation:isolate; overflow:hidden; margin:0 -16px 6px; min-height:228px;
+  padding:calc(env(safe-area-inset-top) + 12px) 16px 18px; display:flex; flex-direction:column; justify-content:space-between;
+  border-radius:0 0 var(--r-sheet, 28px) var(--r-sheet, 28px); background:var(--surface); color:#fff;
+}
+:root[data-layout="new"] .kb-bild{ position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:50% 40%; }
+:root[data-layout="new"] .kopf-bereich::after{ content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(180deg, rgba(8,9,11,.25) 0%, rgba(8,9,11,0) 35%, rgba(8,9,11,.72) 100%); }
+:root[data-layout="new"] .kb-zeile{ display:flex; justify-content:space-between; }
+:root[data-layout="new"] .kb-rund{ width:48px; height:48px; border-radius:50%; background:rgba(20,22,26,.55); color:#fff; border:0; box-shadow:none; }
+:root[data-layout="new"] .kb-text{ display:flex; flex-direction:column; gap:4px; }
+:root[data-layout="new"] .kb-kicker{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.88); }
+:root[data-layout="new"] .kb-text h1{ margin:0; font-size:34px; line-height:1.1; letter-spacing:-.02em; }
+
+:root[data-layout="new"] .timer-panel{ display:flex; flex-direction:column; }
+:root[data-layout="new"] .timer-panel .page-hint{ order:99; margin-top:18px; font-size:13px; color:var(--text-dim); }
+:root[data-layout="new"] .timer-panel .section-title{
+  font-size:22px; font-weight:700; letter-spacing:-.01em; text-transform:none; color:var(--text); margin:24px 2px 8px;
+}
+:root[data-layout="new"] .timer-panel .list-item.entry{
+  background:none; box-shadow:none; border:0; border-radius:0; border-bottom:1px solid var(--nl-linie); margin:0; padding:12px 2px; gap:14px;
+}
+:root[data-layout="new"] .timer-panel .list-item.entry:last-of-type{ border-bottom:0; }
+:root[data-layout="new"] .timer-panel .playbtn{ width:52px; height:52px; font-size:20px; background:var(--text); color:var(--bg); }
+:root[data-layout="new"] .timer-panel [data-playblock]{ width:44px; height:44px; font-size:17px; background:color-mix(in srgb, var(--text) 10%, transparent); color:var(--text); }
+:root[data-layout="new"] .timer-panel .name{ font-size:17px; }
+:root[data-layout="new"] .timer-panel .fav-empty{ border-radius:var(--radius); border-top-left-radius:var(--ecke); }
+:root[data-layout="new"] .kb-rechts{ display:flex; gap:8px; }
+:root[data-layout="new"] .kb-rechts .iconbtn:not(.kb-rund), :root[data-layout="new"] .kb-rechts .hint-btn{ width:48px; height:48px; border-radius:50%; background:rgba(20,22,26,.55); color:#fff; border:0; box-shadow:none; }
+
+/* ---------- Reiter als Pille (Summit, Mobility, Workout) wie im Entwurf ---------- */
+:root[data-layout="new"] .rz{ gap:2px; padding:4px; margin:12px 0 12px; border:1px solid var(--nl-linie); border-radius:999px;
+  background:color-mix(in srgb, var(--text) 5%, transparent); }
+:root[data-layout="new"] .rz button{ border-radius:999px; padding:11px 6px; font-size:14.5px; }
+:root[data-layout="new"] .rz button.active{ background:color-mix(in srgb, var(--accent) 16%, var(--surface)); color:var(--text); font-weight:700;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); }
+:root[data-layout="new"] .rz button.active::after{ display:none; }
+/* Karten dieser Seiten: eine Spur größer gerundet mit der kleinen Ecke, ohne Schatten */
+:root[data-layout="new"] .lib-card, :root[data-layout="new"] .list-item.entry.lib-card{ box-shadow:none; }
+:root[data-layout="new"] .kopf-bereich ~ .bereich-bild{ display:none; }   /* der Foto-Kopf ersetzt das Bild der Seite */
+
+/* Favoriten auf Heute: etwas kleinere Fotokarten (Rückmeldung) */
+:root[data-layout="new"] .fav-foto{ width:132px; height:156px; padding:10px; }
+:root[data-layout="new"] .fav-fotos{ gap:10px; }
+:root[data-layout="new"] .ff-name{ font-size:15px; -webkit-line-clamp:2; }
+:root[data-layout="new"] .ff-sub{ font-size:12px; }
+:root[data-layout="new"] .ff-stern{ top:8px; right:8px; width:16px; height:16px; }
+:root[data-layout="new"] .ff-stern svg{ width:16px; height:16px; }
+
+/* Heute: Kopf mit Foto etwas niedriger (Rückmeldung) */
+:root[data-layout="new"] .kopf-neu{ min-height:228px; padding-bottom:50px; }
+:root[data-layout="new"] .kn-gruss b{ font-size:22px; }
+:root[data-layout="new"] .woche-neu{ margin-top:-38px; }
+
+/* Meine Woche auf Heute: weniger tief ins Foto hinein, dafür etwas größer */
+:root[data-layout="new"] .woche-neu{ margin-top:-18px; }
+:root[data-layout="new"] .woche-neu .woche{ padding:16px 18px; gap:14px; }
+:root[data-layout="new"] .woche-neu .wo-titel{ font-size:16px; }
+:root[data-layout="new"] .woche-neu .wo-summe{ font-size:13.5px; }
+:root[data-layout="new"] .woche-neu .wo-tag{ gap:5px; }
+:root[data-layout="new"] .woche-neu .wo-tag i{ width:17px; height:17px; }
+:root[data-layout="new"] .woche-neu .wo-tag small{ font-size:11.5px; }
+:root[data-layout="new"] .woche-neu .wo-tage{ gap:8px; }

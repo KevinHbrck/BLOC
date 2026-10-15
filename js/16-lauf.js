@@ -452,8 +452,7 @@ function renderRun(){
   var km = runs.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
   var live = s.runLive, art = runArt();
   app.innerHTML =
-    topbar(t("runTitle"), { back:"#home" }) +
-    bereichBildHTML("run") +
+    (layoutNeu() ? bereichKopfNeuHTML("run", t("runTitle"), t("runKicker")) : topbar(t("runTitle"), { back:"#home" }) + bereichBildHTML("run")) +
     (live ?'<div class="card run-live"><b>'+esc(t("runBroken"))+'</b><div class="sub">'+esc(t("runBrokenText", { km:runKm(live.dist) }))+'</div>'+
       '<div class="btn-row"><button type="button" class="btn btn-secondary" data-runlivedel>'+esc(t("runDiscard"))+'</button>'+
       '<button type="button" class="btn btn-primary" data-runlivesave>'+esc(t("runRecover"))+'</button></div></div>' : '')+

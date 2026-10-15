@@ -3,6 +3,15 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · New: Timer, Summit, Mobility und Run wie im Entwurf, Run ohne Foto (Fassung 2026-10-16-15)
+
+- **Kopf der Bereichsseiten** in New (`bereichKopfNeuHTML`, `js/05-suche.js`): Foto mit Zurück (führt zu Training) und Suche, darunter Zeile in Großbuchstaben und großer Titel; das „?“ der Seite sitzt rechts daneben. Gilt für Timer, Summit, Mobility & Stretch und Run.
+- **Timer-Seite**: große Abschnittstitel, flache Zeilen mit großem Play-Kreis (Blöcke kleiner und grau), Seitentext ans Ende gestellt.
+- **Reiter als Pille** (`.rz`) auf Summit, Mobility & Stretch und Workout.
+- **Run auf Training ohne Foto**: ruhige dunkle Karte mit eigenen Höhenlinien (SVG, keine Karte, keine Daten).
+- Favoriten-Fotokarten auf Heute kleiner (132 × 156 px statt 156 × 196) und der Foto-Kopf niedriger (228 px Mindesthöhe statt 300); Meine Woche liegt weniger tief im Foto und ist etwas größer (Fassung 2026-10-16-16).
+- Hinweis: Der Schnelltest „drei Timer in 40 Minuten sind ein Training“ schlägt zwischen 00:00 und 00:40 fehl, weil die Einträge dann vor Mitternacht liegen; das ist unabhängig von der Änderung.
+
 ## 2026-10-16 · New: minimalistischer (Fassung 2026-10-16-10)
 
 - Nach der Durchsicht des UX-Designers (nur CSS, Block „Minimal“ am Ende von `layout-new.css`): ein gemeinsamer Foto-Verlauf (`--foto-fuss`) statt mehrerer Lagen und Bereichsschimmer, keine Ränder und Schatten auf Fotokarten (Schatten nur für Pille und Hauptknopf), kein Textschatten, Symbolfelder neutral außer Workout (orange) und Mobility (grün), Pfeil ohne Kreis, Kopfsymbole und Woche ohne Glas, Kopf-Verlauf auf zwei Lagen (Gruß bleibt auch in Hell lesbar), Builder-Foto ohne Weichzeichner, `.gn-play` nur als orangenes Dreieck (der Hauptknopf ist der einzige gefüllte Kreis).

@@ -132,7 +132,7 @@ function renderWarmStretch(){
   }
   var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
-    topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) }) +
+    (layoutNeu() ? bereichKopfNeuHTML("warm", t("warmTitle"), t("warmKicker"), hw.knopf) : topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) })) +
     wsKopfHTML("workouts", art) +
     (tab === "uebungen" ? '<button type="button" class="btn btn-secondary kat-eigene" data-wsnewex>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' : '')+
     hw.z(0, "rep-intro")+(tab === "workouts" ? tippZeileHTML("workout", "tippWorkout") : tab === "uebungen" ? tippZeileHTML("wsuebung", "tippWsUebung") : "")+
@@ -206,8 +206,8 @@ function renderReps(){
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   var hw = hinweise("reps", [repFilter.tab === "einheiten" ? "repUnitsIntro" : repFilter.tab === "meine" ? "repMineIntro2" : "repIntro"]);
-  var html = topbar(t("repTitle"), { back:"#home", right:hw.knopf+lupeHTML("rs", repQuery) }) +
-    bereichBildHTML("reps") +
+  var html = (layoutNeu() ? bereichKopfNeuHTML("reps", t("repTitle"), t("htReps"), hw.knopf)
+      : topbar(t("repTitle"), { back:"#home", right:hw.knopf+lupeHTML("rs", repQuery) }) + bereichBildHTML("reps")) +
     reiterZeileHTML("var(--rep-color)",
       '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+
       '<button data-repf="tab:programme" class="'+(repFilter.tab==="programme"?"active":"")+'">'+esc(t("repTabProgs"))+'</button>'+
