@@ -242,7 +242,7 @@ function renderHome(){
 /* Aussehen „New“: Kopf einer Bereichsseite wie im Entwurf (Timer): Foto, Zurück und Suche oben, darunter Zeile und Titel */
 function bereichKopfNeuHTML(key, titel, kicker, extra){
   var foto = bereichFotosNeu()[key] || "img/neu-timer.jpg";   // dasselbe Bild wie die Karte auf Training
-  return '<section class="kopf-bereich"><img class="kb-bild" src="'+foto+'" alt="" draggable="false">'+
+  return '<section class="kopf-bereich"><img class="kb-bild" src="'+foto+'" alt="" draggable="false"'+(fotoFokus(foto) ? ' style="object-position:'+fotoFokus(foto)+'"' : '')+'>'+
     '<div class="kb-zeile"><button type="button" class="iconbtn kb-rund" data-back="#training" aria-label="'+esc(t("back"))+'">'+ICON_BACK+'</button>'+
     '<span class="kb-rechts">'+(extra || "")+'<button type="button" class="iconbtn kb-rund" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button></span></div>'+
     '<div class="kb-text"><span class="kb-kicker">'+esc(kicker)+'</span><h1>'+esc(titel)+'</h1></div></section>';
@@ -292,7 +292,7 @@ function renderTraining(){
   var fotos = bereichFotosNeu();
   app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){
     var k = el.getAttribute("data-bereich");
-    if(k !== "run" && fotos[k]) el.style.backgroundImage = "url(" + fotos[k] + ")";   // Run bleibt auf der Karte ohne Foto (Höhenlinien, siehe layout-new.css)
+    if(k !== "run" && fotos[k]){ el.style.backgroundImage = "url(" + fotos[k] + ")"; var fk = fotoFokus(fotos[k]); if(fk) el.style.backgroundPosition = fk; }   // Run bleibt auf der Karte ohne Foto (Höhenlinien, siehe layout-new.css)
   });
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var wib = app.querySelector("[data-wasistwas]");

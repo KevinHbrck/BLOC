@@ -42,6 +42,13 @@ function defaultDB(){
     settings: { theme:"system", sound:true, soundStyle:"sanft", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
   };
 }
+/* Frischer Start (nichts gespeichert, oder „Alles zurücksetzen“): Aussehen „New“ in Dunkel.
+   Bestehende Stände und Sicherungen ohne diese Felder bleiben bei defaultDB() = Klassik, damit sich dort nichts verstellt. */
+function frischDB(){
+  var d = defaultDB();
+  d.settings.layout = "new"; d.settings.theme = "dark";
+  return d;
+}
 /* Frühere Designs landen beim nächsten Verwandten: System, Hell, Dunkel, Nacht.
    2026-10-15: C60 (intern "kodak", auch die alten Retro-Namen) entfällt und wird zu Hell;
    c60Umgestellt merkt sich das für den einmaligen Hinweis auf der Startseite. */
@@ -177,7 +184,7 @@ function migrateSound(key){
 function loadDB(){
   try{
     var raw = localStorage.getItem(DB_KEY);
-    if(!raw) return defaultDB();
+    if(!raw) return frischDB();
     var parsed = JSON.parse(raw);
     var db = defaultDB();
     db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];

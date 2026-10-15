@@ -387,7 +387,7 @@ function favItemsHTML(){
     var BEREICH = { ti:t("tabTimer"), ws:t("warmTitle"), tp:t("katalog"), st:t("katalog"), rep:t("repTitle") };
     return '<div class="fav-fotos">'+shown.map(function(e){
       return '<div class="fav-foto" data-art="'+e.cls+'" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+
-          (e.ok ? '' : ' aria-disabled="true"')+' style="background-image:url('+fotos[e.key || e.name]+')">'+
+          (e.ok ? '' : ' aria-disabled="true"')+' style="background-image:url('+fotos[e.key || e.name]+')'+(fotoFokus(fotos[e.key || e.name]) ? ';background-position:'+fotoFokus(fotos[e.key || e.name]) : '')+'">'+
         '<span class="ff-stern" aria-hidden="true">'+svgIcon(ICON_STAR)+'</span>'+
         '<span class="ff-text"><small class="ff-bereich">'+esc(BEREICH[e.cls] || "")+'</small><b class="ff-name">'+esc(e.name)+'</b><small class="ff-sub">'+e.sub+'</small></span>'+
       '</div>';

@@ -1013,7 +1013,7 @@ function renderSettings(){
   });
   app.querySelector("[data-reset]").addEventListener("click", function(){
     confirmSheet(t("deleteAllQ"), t("deleteAllText"), t("deleteAllBtn"), function(){
-      state.db = defaultDB(); save(); syncCustomEx(); applyTheme(); applyLang(); applySpace();
+      state.db = frischDB(); save(); syncCustomEx(); applyTheme(); applyLang(); applySpace();
       go("#home");
     });
   });

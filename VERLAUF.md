@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · New: Bildausschnitt je Foto, New + Dunkel als Start (Fassung 2026-10-16-18)
+
+- **Bildausschnitt**: `FOTO_FOKUS` / `fotoFokus` in `js/03-router.js` legt je Foto fest, welcher Streifen auf den flachen Karten und Kopfbildern sichtbar bleibt; Summit zeigt jetzt Reck, Meer und Radfahrer statt nur Himmel. Das doppelte Reck-Foto (`neu-p-freiluft-leiter`) ist aus dem Summit-Pool entfernt.
+- **Frischer Start** (nichts gespeichert oder „Alles zurücksetzen“): Aussehen **New** und Helligkeit **Dunkel** (`frischDB` in `js/01-basis.js`). Bestehende Stände und Sicherungen ohne diese Felder bleiben Klassik/unverändert.
+
 ## 2026-10-16 · New: mehr Luft, Kopffoto wie Training, ruhige Run-Seite (Fassung 2026-10-16-17)
 
 - **Abstand** zwischen den Bereichskarten auf Training 20 px.

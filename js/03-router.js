@@ -160,10 +160,19 @@ var FOTO_POOL = (function(){
     st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
     ti:  ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
     ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
-    rep: ["img/neu-summit.jpg", P("freiluft-leiter"), P("freiluft-meer"), P("freiluft-sw"), P("freiluft-park")],
+    rep: ["img/neu-summit.jpg", P("freiluft-meer"), P("freiluft-sw"), P("freiluft-park")],
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")]
   };
 })();
+/* Bildausschnitt je Foto: breite, flache Karten zeigen nur einen Streifen; hier steht, welcher Teil des Bildes dabei
+   sichtbar bleiben soll (Prozent für background-position bzw. object-position). Ohne Eintrag gilt der Wert aus layout-new.css. */
+var FOTO_FOKUS = {
+  "img/neu-summit.jpg":"50% 73%",            // Reck und Meer liegen im unteren Drittel, oben nur Himmel
+  "img/neu-p-freiluft-meer.jpg":"50% 76%",   // Sportplatz am Meer
+  "img/neu-p-freiluft-park.jpg":"50% 50%",   // Stangen in der Mitte
+  "img/neu-p-freiluft-sw.jpg":"50% 45%"
+};
+function fotoFokus(pfad){ return FOTO_FOKUS[pfad] || ""; }
 function fotoHash(s){ var h = 0; s = String(s); for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003; return h; }
 function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
   var alle = [], belegt = {}, out = {};
