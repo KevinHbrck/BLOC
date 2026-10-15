@@ -197,7 +197,7 @@ function renderHome(){
   var neu = layoutNeu();
   var bereicheListe = neu ? "" : bereicheHTML();   // New: die Bereiche stehen unter „Training“, hier der Workout-Builder
   app.innerHTML =
-    topbar("BLOC", { home:true, sub:"Modular Training Builder", right:kopfSymboleNeu() }) +
+    topbar("BLOC", { home:true, sub:"Modular Training Builder", right:kopfSymboleNeu("home") }) +
     c60HinweisHTML() + installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
     '<div class="sec-head" data-favsek><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
@@ -211,6 +211,7 @@ function renderHome(){
   bindCommon();
   bindC60Hinweis();
   bindBuilderKarte();
+  bindThemeToggle();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var heroKnopf = app.querySelector("[data-herostart]");
   if(heroKnopf) heroKnopf.addEventListener("click", function(){
@@ -253,7 +254,7 @@ function bindBuilderKarte(){
 /* Aussehen „New“: Seite „Training“ - alle Bereiche (Workout, Mobility & Stretch, Timer, Summit, Run) als Fotokarten, darüber die Suche */
 function renderTraining(){
   app.innerHTML =
-    topbar(t("tabTraining"), { right:kopfSymboleNeu() }) +
+    topbar(t("tabTraining"), { right:kopfSymboleNeu("training") }) +
     '<button type="button" class="suchfeld-neu" data-nav="#search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'<span>'+esc(t("trainingSuche"))+'</span></button>'+
     '<div class="training-seite">'+bereicheHTML()+'</div>'+
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';

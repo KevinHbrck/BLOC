@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · New: Bedienung wie im Entwurf (Fassung 2026-10-15-8)
+
+- **Leiste** in New: Pille mit vier Reitern (Heute · Training · Kalender · Fortschritt, aktiver Reiter orange) und rechts daneben ein runder **Hauptknopf**: Heute = Training starten (heute eingeplant: dieses Training, sonst gleich „Überrasch mich“), Training = Bauen (Überrasch mich, Selber bauen, Timer, Summit), Kalender = Hinzufügen, Fortschritt = keiner (`hauptAktionNeu`, `js/03-router.js`).
+- Die Leiste steht in New nur auf den vier Hauptseiten (nicht mehr auf Suche, Einstellungen und den Bereichslisten); die Hauptseiten haben keinen Zurück-Pfeil.
+- **Kopfzeile:** Heute = Hell/Dunkel-Knopf, Suche, Einstellungen; Training = Suche, Einstellungen; Fortschritt = Einstellungen. Titel „Kalender“ und „Fortschritt“ wie die Reiter.
+
 ## 2026-10-15 · Statistik ruhiger und vorsichtiger (Fassung 2026-10-15-7)
 
 - **Serie** heißt jetzt „n Wochen in Folge mit Training“ (gezählt wird jede Woche mit mindestens einem Training; die laufende Woche bricht die Serie nicht ab).

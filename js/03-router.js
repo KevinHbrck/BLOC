@@ -151,13 +151,54 @@ var TAB_ROUTEN = { home:"#home", training:"#training", search:"#search", kalende
 /* Aussehen „New“ (settings.layout): vier Ziele (Heute · Training · Kalender · Fortschritt), Suche und Einstellungen als Symbole in der Kopfzeile */
 function layoutNeu(){ return state.db.settings.layout === "new"; }
 var builderAuto = null;   // "zufall" | "selber": der Workout-Builder auf Heute löst im Baukasten gleich die Wahl aus
-/* Kopfzeilen-Symbole für Heute und Training im Aussehen „New“ */
-function kopfSymboleNeu(){
-  if(!layoutNeu()) return "";
-  return '<button type="button" class="iconbtn kopf-sym" data-nav="#search" aria-label="'+esc(t("search"))+'">'+
-      svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'</button>'+
-    '<button type="button" class="iconbtn kopf-sym" data-nav="#settings" aria-label="'+esc(t("settings"))+'">'+ICON_SETTINGS+'</button>';
+/* Kopfzeilen-Symbole im Aussehen „New“ wie im Entwurf: Heute = Hell/Dunkel + Suche + Einstellungen, Training = Suche + Einstellungen,
+   Fortschritt = Einstellungen */
+var SYM_SUCHE = '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>';
+var SYM_SONNE = '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>';
+function themeIstDunkel(){
+  var th = state.db.settings.theme;
+  if(th === "dark" || th === "nacht") return true;
+  if(th === "light") return false;
+  return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
 }
+function kopfSymboleNeu(art){
+  if(!layoutNeu()) return "";
+  var s = "";
+  if(art === "home"){
+    var d = themeIstDunkel();
+    s += '<button type="button" class="iconbtn kopf-sym" data-themetoggle aria-label="'+esc(t(d ? "thLight" : "thDark"))+'">'+svgIcon(d ? SYM_SONNE : ICON_MOON)+'</button>';
+  }
+  if(art === "home" || art === "training")
+    s += '<button type="button" class="iconbtn kopf-sym" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button>';
+  s += '<button type="button" class="iconbtn kopf-sym" data-nav="#settings" aria-label="'+esc(t("settings"))+'">'+ICON_SETTINGS+'</button>';
+  return s;
+}
+function bindThemeToggle(){
+  var b = app.querySelector("[data-themetoggle]");
+  if(b) b.addEventListener("click", function(){
+    state.db.settings.theme = themeIstDunkel() ? "light" : "dark";
+    save(); applyTheme(); render();
+  });
+}
+/* Runder Hauptknopf rechts neben der Leiste (New): Heute = Training starten, Training = Bauen, Kalender = Einplanen, Fortschritt = keiner */
+function hauptAktionNeu(route){
+  if(route === "home") return { svg:P_PLAY, label:t("hauptStart"), fn:function(){
+    var hk = app.querySelector("[data-herostart]");
+    if(hk && hk.getAttribute("data-herostart") === "plan"){ hk.click(); return; }   // heute eingeplant: dieses Training starten
+    builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog");               // sonst gleich „Überrasch mich“
+  } };
+  if(route === "training") return { svg:P_PLUS, label:t("hauptBauen"), fn:function(){
+    openActionSheet(t("hauptBauen"), [
+      { ico:HOME_ICON.katalog, label:t("builderZufall"), fn:function(){ builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog"); } },
+      { ico:P_PLUS, label:t("builderSelber"), fn:function(){ builderAuto = "selber"; katTabSetzen("baukasten"); go("#katalog"); } },
+      { ico:HOME_ICON.intervall, label:t("tabTimer"), fn:function(){ go("#intervall"); } },
+      { ico:HOME_ICON.reps, label:t("repTitle"), fn:function(){ go("#reps"); } }
+    ]);
+  } };
+  if(route === "kalender") return { svg:P_PLUS, label:t("kalAdd"), fn:function(){ kalHinzuMenue(kalAuswahl || kalTagKey(Date.now())); } };
+  return null;
+}
+var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", stats:"#stats" };
 /* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
 var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
@@ -165,7 +206,8 @@ function tabLeiste(route){
   if(!el) return;
   var imBereich = !!BEREICH_LEISTE[route] && !(stPlanAktiv && stPlanFind(stPlanAktiv));
   var neu = layoutNeu();
-  var aktiv = TAB_ROUTEN[route] || (imBereich ? (neu ? "#training" : "#home") : null);   // im Bereich leuchtet „Start“ (Klassik) bzw. „Training“ (New)
+  /* New: die Leiste steht nur auf den vier Hauptseiten (wie im Entwurf); Klassik: auch auf Suche, Einstellungen und den Bereichslisten */
+  var aktiv = neu ? (NEU_TABS[route] || null) : (TAB_ROUTEN[route] || (imBereich ? "#home" : null));
   if(!aktiv){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
   var eintraege = neu ? [
     ["#home", t("tabHeute"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
@@ -179,11 +221,18 @@ function tabLeiste(route){
     ["#stats", t("tabStats"), '<path d="M5 20V11M12 20V4M19 20v-6"/>'],
     ["#settings", t("settings"), null]
   ];
-  el.innerHTML = eintraege.map(function(x){
+  var tabsHTML = eintraege.map(function(x){
     return '<button type="button" class="tab'+(x[0] === aktiv ? ' active' : '')+'" data-nav="'+x[0]+'"'+(x[0] === aktiv ? ' aria-current="page"' : '')+'>'+
       (x[2] ? svgIcon(x[2]) : '<span class="ico">'+ICON_SETTINGS+'</span>')+'<span>'+esc(x[1])+'</span></button>';
   }).join("");
+  var haupt = neu ? hauptAktionNeu(route) : null;
+  el.innerHTML = neu
+    ? '<div class="pille">'+tabsHTML+'</div>'+(haupt ? '<button type="button" class="hauptknopf" data-haupt aria-label="'+esc(haupt.label)+'" title="'+esc(haupt.label)+'">'+svgIcon(haupt.svg)+'</button>' : '')
+    : tabsHTML;
+  el.classList.toggle("mit-haupt", !!haupt);
   el.classList.remove("hidden"); document.body.classList.add("mit-tabs");
+  var hb = el.querySelector("[data-haupt]");
+  if(hb) hb.addEventListener("click", function(){ haupt.fn(); });
   el.querySelectorAll("[data-nav]").forEach(function(b){
     b.addEventListener("click", function(){
       var h = b.getAttribute("data-nav");
