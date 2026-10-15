@@ -5,7 +5,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 ## 2026-10-16 · New: ein Hauch Farbe auf Training und bei den Favoriten (Fassung 2026-10-16-8)
 
-- Bereichskarten auf Training im bisherigen dunklen Foto-Stil, dazu je Bereich ein zarter Farbschimmer (Orange Workout, Grün Mobility, Blau Timer, Gold Summit, Violett Run) und ein farbiges Symbolfeld. Favoriten tragen dieselben Farben nur als schwacher Schimmer von unten (`data-art`). Zwischenstände mit stärkerer Farbe waren zu bunt.
+- Bereichskarten auf Training im bisherigen dunklen Foto-Stil, dazu je Bereich ein zarter Farbschimmer (Orange Workout, Grün Mobility, Blau Timer, Gold Summit, Violett Run); farbige Symbolfelder nur bei Workout und Mobility, die übrigen einfarbig (Fassung 2026-10-16-9). Favoriten tragen dieselben Farben nur als schwacher Schimmer von unten (`data-art`). Zwischenstände mit stärkerer Farbe waren zu bunt.
 
 ## 2026-10-16 · Feinauswahl sichtbar, Fotos nach Ort (Fassung 2026-10-16-5)
 
