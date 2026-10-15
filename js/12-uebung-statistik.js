@@ -124,7 +124,7 @@ function wocheDaten(basis){   // basis: ein Tag der gewünschten Woche (Voreinst
   var hi = Math.round((jetzt.getTime() - start)/86400000);
   return { tage:tage, n:n, sek:sek, heute:hi >= 0 && hi <= 6 ? hi : -1, start:start };
 }
-/* Die Woche als Karte: Tage (gefüllt = trainiert, Ring = im Kalender geplant), Anzahl, Dauer, Geplantes. Auf der Startseite führt sie in den Kalender;
+/* Meine Woche als Karte: Tage (gefüllt = trainiert, Ring = im Kalender geplant), Anzahl, Dauer, Geplantes. Auf der Startseite führt sie in den Kalender;
    im Kalender (opt.kal) steht dieselbe Karte oben, ein Tipp auf einen Tag springt dorthin. opt: { basis, titel, kal } */
 function wocheHTML(opt){
   opt = opt || {};
@@ -144,11 +144,8 @@ function wocheHTML(opt){
   }).join("");
   var kopf = '<span class="wo-links"><b class="wo-titel">'+esc(titel)+'</b><span class="wo-summe">'+esc(summe)+'</span></span>';
   if(opt.kal) return '<div class="woche woche-kal">'+kopf+'<span class="wo-tage">'+tage+'</span></div>';
-  var auf = !!(opt.heute && typeof kalHomeAuf !== "undefined" && kalHomeAuf);
-  var vorschau = auf && typeof kalVorschauHTML === "function" ? kalVorschauHTML() : "";
-  var karte = '<div class="woche woche-link'+(auf ? ' auf' : '')+'" data-wocheauf="1" role="button" tabindex="0" aria-expanded="'+(auf ? "true" : "false")+'" aria-label="'+esc(titel+": "+summe+" – "+t("tabKalender"))+'">'+kopf+
+  return '<div class="woche woche-link" data-wocheauf="1" role="button" tabindex="0" aria-label="'+esc(titel+": "+summe+" – "+t("tabKalender"))+'">'+kopf+
     '<span class="wo-tage" aria-hidden="true">'+tage+'</span><span class="wo-chev" aria-hidden="true">&#8250;</span></div>';
-  return vorschau ? '<div class="woche-karte">'+karte+vorschau+'</div>' : karte;
 }
 /* ============ Statistik ============
    Alles aus den lokal gespeicherten Daten, nichts verlässt das Gerät. Zeigt nur Bereiche, die im Fokus (Einstellungen) eingeschaltet sind;
@@ -478,7 +475,8 @@ function renderStats(){
       (chipsK ? '<div class="chips-stat">'+chipsK.map(function(c){ return '<span><b>'+esc(c[0])+'</b><small>'+esc(c[1])+'</small></span>'; }).join("")+'</div>' : '');
     if(k !== "run" && vk.some(function(v){ return v > 0; })) html += statBalken(vk, labels, statMin, d[3]);
     if(k === "run" && runs.length){
-      var gut = runs.filter(function(x){ return x.dist >= 1000; }).sort(function(a, b){ return a.at - b.at; }), letzteL = gut.slice(-60);
+      var laeufe = runs.filter(function(x){ return !runIstRad(x); });   // Pace und Rekorde nur aus den Läufen, nicht aus Radfahrten
+      var gut = laeufe.filter(function(x){ return x.dist >= 1000; }).sort(function(a, b){ return a.at - b.at; }), letzteL = gut.slice(-60);
       var wk = reihe.map(function(b){ return runs.filter(function(x){ return x.at >= b.ab && x.at < b.bis; }).reduce(function(a, x){ return a + x.dist; }, 0); });
       if(wk.some(function(v){ return v > 0; })) html += '<div class="sk-unter titel">'+esc(t("statKmPro", { u:einheit }))+'</div>'+statBalken(wk, labels, function(v){ return runKm(v).replace(/[,.]00$/, ""); }, d[3]);
       if(letzteL.length >= 2){
@@ -490,9 +488,9 @@ function renderStats(){
         html += '<div class="sk-unter">'+esc(diff > 3 ? t("statPaceBesser", { z:statPz(diff) }) : diff < -3 ? t("statPaceLangsamer", { z:statPz(-diff) }) : t("statPaceGleich"))+'</div>';
       }
       var rek = [];
-      var l1 = runs.reduce(function(m, x){ return !m || x.dist > m.dist ? x : m; }, null);
+      var l1 = laeufe.reduce(function(m, x){ return !m || x.dist > m.dist ? x : m; }, null);
       if(l1) rek.push([t("statRekLang"), runKm(l1.dist)+" km", l1.at]);
-      var bk = null; runs.forEach(function(x){ var b = runBesterKm(x); if(b !== null && (!bk || b < bk.v)) bk = { v:b, at:x.at }; });
+      var bk = null; laeufe.forEach(function(x){ var b = runBesterKm(x); if(b !== null && (!bk || b < bk.v)) bk = { v:b, at:x.at }; });
       if(bk) rek.push([t("statRekKm"), repUhr(bk.v)+" /km", bk.at]);
       var bp = gut.reduce(function(m, x){ return !m || x.dur/x.dist < m.dur/m.dist ? x : m; }, null);
       if(bp) rek.push([t("statRekPace"), runPace(bp.dur/1000, bp.dist)+" /km", bp.at]);

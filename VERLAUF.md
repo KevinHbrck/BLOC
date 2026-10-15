@@ -3,6 +3,15 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · Kopfblock mit heutigem Training, Meine Woche, Woche kopieren, Rad im Run (Fassung 2026-10-15-1)
+
+- **Kopfblock der Startseite** mit Rangfolge: (A) heute im Kalender eingeplant → Name(n) mit „&“, Dauer und Ort (z. B. „29 Min · Fitnessstudio“), ein Tipp startet das erste offene Training; (B) nichts eingeplant, aber Favoriten da → „Bereit für dein Training?“ springt zu den Favoriten; (C) auch keine Favoriten → Baukasten. Code: `heroHTML`/`heroHeutige` in `js/04-start.js`, `kalHeroInfo` in `js/19a-kalender.js`.
+- **Workout** hat wieder eine eigene Kachel (orange, erste unter „Weitere Bereiche“), neues Symbol (schräge Kurzhantel). Mobility & Stretch: Figur mit gefülltem Kopf und kräftigerem Körper.
+- **„Meine Woche“** (statt „Diese Woche“) klappt nicht mehr auf, sondern führt in den Kalender; die Vorschau (`kalVorschauHTML`, `kalNaechste`) ist entfernt.
+- **Kalender › Woche kopieren**: alle Einträge der Woche auf die nächsten 1–12 Wochen; Gleiches wird nicht doppelt angelegt, Erledigt-Haken nicht mitgenommen (`kalWocheKopieren`).
+- **Run**: Auswahl Laufen · Rad (`settings.runArt`, gespeichert als `art:"rad"`), Tempo in km/h, GPS-Sprunggrenze 90 km/h, Ansage mit Tempo, Intervall nur zu Fuß; Pace-Kurve und Rekorde nur aus Läufen. Kalender-Run-Einträge können Rad sein (`rad:true`).
+- **Run-Bedienung**: Knöpfe lösen nach 2 s aus, „Beenden“ nach 1 s (`runHalten(el, fn, ms)`, `--halt` im CSS); abgedunkelt stehen Zeit, Kilometer und Tempo (größer, heller).
+
 ## 2026-10-14 · Band befestigen: Übersicht aller Arten mit Bildern
 
 - In der Band-Info gibt es unter „Mit dem Band“ den Knopf **Alle Befestigungsarten mit Bildern**: ein Fenster mit allen zehn Arten (Pfosten, Stange, unter den Füßen, in den Händen, Oberschenkel, Knöchel, Fußschlaufe, Rücken, Sitzen) samt Skizze, Schritten und den Sicherheitshinweisen; Zurück führt in die Übungsinfo. Texte stehen im Code (js/02-bibliothek.js), weil texte.js gerade in Arbeit war.

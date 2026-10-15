@@ -216,7 +216,7 @@
       var d = document.createElement("div"); d.innerHTML = W.wocheHTML();
       gleich(d.querySelectorAll(".wo-tag.plan").length, 2, "zwei geplante Tage als Ring");
       wahr(/2 geplant/.test(d.textContent), "Summe nennt das Geplante: " + d.textContent);
-      wahr(d.querySelector(".woche-link[data-wocheauf]"), "Startseiten-Karte klappt die Vorschau auf");
+      wahr(d.querySelector(".woche-link[data-wocheauf]") && !d.querySelector("[aria-expanded]"), "Startseiten-Karte führt in den Kalender und klappt nicht auf");
       e2.erledigt = true;
       d.innerHTML = W.wocheHTML({ kal: true, basis: mo });
       gleich(d.querySelectorAll(".wo-tag.plan").length, 1, "Erledigtes zählt nicht mehr als geplant");
@@ -255,6 +255,31 @@
       W.kalEntferne(a.id);
       gleich(W.kalListe().length, 2, "nach dem Löschen");
     } finally { s.kalender = alt; }
+  });
+  test("Kalender: Woche kopieren auf die nächsten Wochen, ohne Doppeltes", function () {
+    var s = W.state.db.settings, alt = s.kalender;
+    try {
+      s.kalender = { e: [] };
+      var woche = ["2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16", "2026-10-17", "2026-10-18"];
+      W.kalHinzu("2026-10-12", { art: "run", name: "Dauerlauf", km: 7.5 });
+      W.kalHinzu("2026-10-14", { art: "zufall" }).erledigt = true;
+      W.kalHinzu("2026-10-18", { art: "run", name: "Tour", km: 40, rad: true });
+      gleich(W.kalWocheKopieren(woche, 3), 9, "drei Einträge auf drei Wochen");
+      gleich(W.kalAn("2026-10-19").length, 1, "Montag der nächsten Woche"); gleich(W.kalAn("2026-11-02").length, 1, "Montag der dritten Woche");
+      gleich(W.kalAn("2026-10-21")[0].erledigt, undefined, "Erledigt-Haken wird nicht mitkopiert");
+      gleich(W.kalAn("2026-10-25")[0].rad, true, "Rad bleibt Rad"); gleich(W.kalAn("2026-10-25")[0].km, 40, "Strecke bleibt");
+      gleich(W.kalWocheKopieren(woche, 3), 0, "zweites Kopieren legt nichts doppelt an");
+      gleich(W.kalWocheKopieren(woche, 4), 3, "eine weitere Woche kommt dazu");
+      gleich(W.kalAn("2026-10-12").length, 1, "die Ausgangswoche bleibt unverändert");
+    } finally { s.kalender = alt; }
+  });
+  test("Run: Rad zeigt Tempo in km/h und eigene Ansage", function () {
+    gleich(W.runKmh(3600, 25000), "25,0", "25 km in einer Stunde");
+    gleich(W.runKmh(0, 1000), "–,–", "ohne Zeit"); gleich(W.runKmh(60, 10), "–,–", "zu kurze Strecke");
+    gleich(W.runTempo({ art: "rad" }, 3600, 25000), "25,0", "Rad: km/h"); gleich(W.runTempo({}, 300, 1000), "5:00", "Lauf: Pace");
+    gleich(W.runTempoEinheit({ art: "rad" }), "km/h", "Einheit Rad"); gleich(W.runTempoEinheit({}), "/km", "Einheit Lauf");
+    var t = W.runAnsageText(2, [150000, 300000], { every: 1, was: "pace" }, true, true);
+    gleich(t, "2 Kilometer. Tempo 24,0 Kilometer pro Stunde.", "Ansage auf dem Rad");
   });
   test("Kalender: Anzeige der Einträge (Name, Zeile, fehlende Ziele)", function () {
     var s = W.state.db.settings, alt = s.kalender;

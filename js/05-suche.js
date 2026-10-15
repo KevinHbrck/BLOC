@@ -190,37 +190,40 @@ function renderSearch(){
   zeigen();
   if(!gesamtQuery && !suchKoerperAuf) feld.focus();
 }
-/* Startseite: Kopf, Hinweise, Kopfblock „Bereit für dein Training?“ (führt in den Baukasten), Diese Woche, Favoriten, darunter die Bereiche */
+/* Startseite: Kopf, Hinweise, Meine Woche (führt in den Kalender), Kopfblock (heutiges Training › Favoriten › Baukasten), Favoriten, darunter die Bereiche */
 function renderHome(){
   var favHTML = favItemsHTML();
   var nFav = favEntries().length;
   var bereicheListe = bereicheHTML();
   app.innerHTML =
     topbar("BLOC", { home:true, sub:"Modular Training Builder" }) +
-    installTipHTML() + backupTipHTML() + wocheHTML({ heute:true }) + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
-    '<div class="sec-head"><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
+    installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML() +   // die Woche steht oben, darunter der Kopfblock
+    '<div class="sec-head" data-favsek><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
     '</div>'+
     favHTML +
-    /* Weitere Bereiche: Mobility & Stretch, Timer, Summit und Run als ruhige Liste (Workout ist der Kopfblock oben) */
+    /* Weitere Bereiche: Workout, Mobility & Stretch, Timer, Summit und Run als ruhige Liste */
     (bereicheListe ? '<div class="sec-head"><div class="section-title">'+t("areasMore")+'</div>'+
       '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+bereicheListe : '') +
     KODAK_BADGE;
   bindCommon();
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var heroKnopf = app.querySelector("[data-herostart]");
-  if(heroKnopf) heroKnopf.addEventListener("click", function(){ katTabSetzen("baukasten"); go("#katalog"); });
+  if(heroKnopf) heroKnopf.addEventListener("click", function(){
+    var modus = heroKnopf.getAttribute("data-herostart");
+    if(modus === "plan"){ var h = heroHeutige(); if(h.length) return kalStarten(h[0]); }
+    if(modus === "fav"){ var fs = app.querySelector("[data-favsek]"); if(fs && fs.scrollIntoView) return fs.scrollIntoView({ block:"start", behavior:"smooth" }); }
+    katTabSetzen("baukasten"); go("#katalog");
+  });
   bindFavItems(renderHome);
   bindBackupTip();
-  kalHeuteBinden();
   var wl = app.querySelector(".woche-link");
-  if(wl){
-    var umschalten = function(){ kalHomeAuf = !kalHomeAuf; kalBasis = null; kalAnsicht = "woche"; renderHome(); };
-    wl.addEventListener("click", umschalten);
-    wl.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); umschalten(); } });
+  if(wl){   // Meine Woche klappt nicht mehr auf, sondern führt direkt in den Kalender
+    var zumKalender = function(){ kalBasis = null; kalAnsicht = "woche"; go("#kalender"); };
+    wl.addEventListener("click", zumKalender);
+    wl.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); zumKalender(); } });
   }
-  app.querySelectorAll(".kh-mehr").forEach(function(b){ b.addEventListener("click", function(){ kalBasis = null; kalAnsicht = "woche"; go("#kalender"); }); });
   var wib = app.querySelector("[data-wasistwas]");
   if(wib) wib.addEventListener("click", openWasIstWas);
 }

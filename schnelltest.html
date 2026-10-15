@@ -152,13 +152,14 @@
       klick("[data-introweg]");
       pruefe(!$("#overlayRoot .intro-sheet"), "„Überspringen“ schließt nicht");
     }],
-    ["Startseite: Workouts vorn, vier weitere Bereiche (Lauf), Wochenzeile", async function () {
+    ["Startseite: Kopfblock, Workout vorn in „Weitere Bereiche“, Meine Woche", async function () {
       await heim();
-      pruefe($$(".area-tile[data-bereich]").length === 4, "erwartet 4 Bereichs-Kacheln (ohne Workout), gefunden " + $$(".area-tile[data-bereich]").length);
+      pruefe($$(".area-tile[data-bereich]").length === 5, "erwartet 5 Bereichs-Kacheln (mit Workout), gefunden " + $$(".area-tile[data-bereich]").length);
       pruefe($('.area-tile[data-bereich="intervall"][data-nav="#intervall"]'), "Timer fehlt als Bereich auf der Startseite");
-      pruefe($(".home-hero [data-herostart]") && !$('.area-tile[data-bereich="katalog"]') && !$(".area-tile.gross"), "Workout ist der große Kopfblock, es gibt keine Workout-Kachel und keine großen Felder mehr");
+      pruefe($(".home-hero [data-herostart]") && $('.area-tile[data-bereich="katalog"][data-nav="#katalog"]') && !$(".area-tile.gross"), "Kopfblock und eigene Workout-Kachel sollen beide da sein, keine großen Felder");
       pruefe($$(".sec-head .section-title").some(function (e) { return /^Weitere Bereiche/.test(e.textContent.trim()); }), "Überschrift „Weitere Bereiche“ fehlt");
-      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "warm,intervall,reps,run", "Mobility & Stretch, Timer, Summit und Run sollen gleichrangig in einer Liste stehen: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
+      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "katalog,warm,intervall,reps,run", "Workout, Mobility & Stretch, Timer, Summit und Run sollen gleichrangig in einer Liste stehen: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
+      pruefe(/Meine Woche/.test($(".woche .wo-titel").textContent), "Wochenkarte heißt nicht „Meine Woche“: " + $(".woche .wo-titel").textContent);
       pruefe($('.area-tile[data-bereich="warm"] .at-ico') && W.getComputedStyle($('.area-tile[data-bereich="warm"] .at-ico')).color !== W.getComputedStyle(W.document.body).color, "Mobility & Stretch soll grün bleiben");
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
       pruefe(!$("[data-surprise]"), "Überrasch mich steht noch als Karte auf der Startseite");
@@ -1256,7 +1257,8 @@
       await heim();
       var body = W.getComputedStyle(W.document.body).color;
       pruefe($(".area-tile") && parseFloat(W.getComputedStyle($$(".area-gruppe .area-tile")[0]).borderTopWidth) === 0, "Die erste Bereichs-Kachel soll keine farbige Kontur haben (sah vorausgewählt aus)");
-      pruefe($$(".area-tile:not([data-bereich=\"warm\"]) .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen (außer Mobility & Stretch in Grün)");
+      pruefe($$(".area-tile:not([data-bereich=\"warm\"]):not([data-bereich=\"katalog\"]) .at-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Startseite sollen in der Textfarbe stehen (außer Mobility & Stretch in Grün und Workout in Orange)");
+      pruefe($('.area-tile[data-bereich="katalog"] .at-ico') && W.getComputedStyle($('.area-tile[data-bereich="katalog"] .at-ico')).color !== body, "Das Workout-Symbol soll orange sein");
       klick('[data-herostart]');
       await zuKatalogTab();
       klick(await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Workoutkatalog"));
@@ -1628,11 +1630,30 @@
       await bis(function () { return !$(".km-zelle.heute"); }, 2000, "anderer Monat");
       klick($("[data-kalheute]"));
       await bis(function () { return $(".km-zelle.heute") && $(".kal-panel.heute"); }, 2000, "Heute: aktueller Monat, heutiger Tag gewählt");
-      W.kalHinzu(W.kalTagKey(new Date()), { art: "zufall" }).erledigt = false;   // heutige Trainings der Testläufe sollen ihn nicht automatisch abhaken
+      var heuteKey = W.kalTagKey(new Date());
+      W.kalHinzu(heuteKey, { art: "zufall" }).erledigt = false;   // heutige Trainings der Testläufe sollen ihn nicht automatisch abhaken
       W.save();
       await heim();
+      // Kopfblock, Stufe A: das heute eingeplante Training steht im Kopfblock (statt „Bereit für dein Training?“)
+      pruefe(/Zufallstraining/.test($(".hh-titel").textContent) && $('[data-herostart="plan"]'), "Kopfblock zeigt das heutige Training nicht: " + $(".hh-titel").textContent);
+      pruefe($(".woche-link") && !$(".woche-link").hasAttribute("aria-expanded"), "Meine Woche soll nicht aufklappbar sein");
+      // Woche kopieren: aus dem Kalender auf die nächsten Wochen
       klick($(".woche-link"));
-      await bis(function () { return $(".kal-heute-zeile"); }, 3000, "Aufklappen zeigt, was ansteht");
+      await bis(function () { return W.location.hash === "#kalender" && $("[data-kalkopieren]"); }, 3000, "Meine Woche führt in den Kalender, dort steht „Woche kopieren“");
+      var n0 = daten().settings.kalender.e.length;
+      klick($("[data-kalkopieren]"));
+      await bis(function () { return $("#overlayRoot #kk-n"); }, 2000, "Kopieren-Fenster");
+      $("#overlayRoot #kk-n").value = "2";
+      klick($("#overlayRoot [data-ok]"));
+      await bis(function () { return daten().settings.kalender.e.length > n0; }, 2000, "Einträge der Woche sind in den nächsten Wochen angelegt");
+      klick($("[data-kalheute]"));
+      klick($("[data-kalkopieren]"));
+      await bis(function () { return $("#overlayRoot #kk-n"); }, 2000, "Kopieren-Fenster (zweites Mal)");
+      var n1 = daten().settings.kalender.e.length;
+      $("#overlayRoot #kk-n").value = "2";
+      klick($("#overlayRoot [data-ok]"));
+      await warte(300);
+      pruefe(daten().settings.kalender.e.length === n1, "Zweites Kopieren darf nichts doppelt anlegen");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

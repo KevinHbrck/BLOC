@@ -4,9 +4,9 @@ var HOME_ICON = {
   timer:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',   /* Freies Training: Hantel */
   intervall:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 3h5M18 7l1.5-1.5"/>',   /* Timer: Stoppuhr */
   lib:'<path d="M3 8.5h10a3 3 0 1 0-3-3"/><path d="M3 12.5h15a3 3 0 1 1-3 3"/><path d="M3 16.5h6"/>',   /* Air: Wind (Menüs beim langen Drücken) */
-  katalog:'<rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/>',   /* Katalog: vier Kacheln */
+  katalog:'<path d="M4.5 19.5L19.5 4.5"/><path stroke-width="3.2" d="M4.6 13.4l6 6M13.4 4.6l6 6"/><path stroke-width="3.2" d="M3.2 16.2l4.6 4.6M16.2 3.2l4.6 4.6"/>',   /* Workout: schräge Kurzhantel mit je zwei Scheiben (Katalog und Baukasten) */
   reps:'<path d="M2.5 20l6.5-11.5 3.8 6.3 2.7-4.3 6 9.5z"/><path d="M9 8.5V3.5l3.5 1.5L9 6.5"/>',   /* Summit: Gipfel mit Fahne */
-  warm:'<circle cx="18.4" cy="6.7" r="2.2"/><path d="M3.5 18.3H11c2.4 0 4.4-1.7 5.3-5.9l1.2-3.2M16.3 12.6l-.5 6.9M3 21h18"/>',   /* Mobility & Stretch: Figur liegt auf dem Boden und drückt den Oberkörper nach oben (Kobra) */
+  warm:'<circle cx="19" cy="5.6" r="2.6" fill="currentColor" stroke="none"/><path d="M3.5 18H10.2L16.2 9.2M16.2 9.5V18"/><path d="M3 21.5H21"/>',   /* Mobility & Stretch: Figur liegt auf dem Boden und drückt den Oberkörper nach oben (Kobra); klare Linien, Kopf gefüllt, damit es auch klein scharf bleibt */
   run:'<circle cx="14" cy="4.5" r="2"/><path d="M6 21l3-6 3 2v5M9 15l1-4 4-1 2 3 3 1M10 11L8 8"/>'   /* Lauf: Läufer */
 };
 /* „Überrasch mich“: ein schlichter Würfel (erwachsener als der frühere Zauberstab mit Funken) */
@@ -24,7 +24,7 @@ function areaTile(key, href, titel, unter, farbe, art){
 /* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
 var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Bereiche im Verlauf (gespeichert bleibt Air = lib und Studio = timer); die Statistik zeigt beide gemeinsam als „Workout“
 var HOME_KEYS = ["katalog", "warm", "intervall", "reps", "run"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
-var HOME_GROSS = ["katalog"];   // steht fest vorn und ist als Kopfblock „Bereit für dein Training?“ (heroHTML) die große Kachel; Mobility & Stretch, Timer, Summit und Run sind „Weitere Bereiche“ als Liste
+var HOME_GROSS = ["katalog"];   // steht fest vorn (nicht sortierbar): der Kopfblock (heroHTML) führt dorthin, und Workout hat zusätzlich die erste Kachel unter „Weitere Bereiche“
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--accent)"];
@@ -47,14 +47,12 @@ function bereichReihe(){
    Der Katalog ist nur aus, wenn Air und Studio beide aus sind (im Verlauf bleiben sie getrennt gespeichert). */
 function fokusAusRoh(k){ return selArr(state.db.settings.fokusAus).indexOf(k) > -1; }
 function fokusAus(k){ return k === "katalog" ? fokusAusRoh("lib") && fokusAusRoh("timer") : fokusAusRoh(k); }
-/* „Weitere Bereiche“: Mobility & Stretch, Timer, Summit und Run als eine ruhige Liste in der gewählten Reihenfolge; Workout ist der Kopfblock darüber.
-   Leer, wenn nur Workout übrig ist; die Hinweiskarte erscheint erst, wenn gar nichts mehr eingeblendet ist (auch Workout nicht). */
+/* „Weitere Bereiche“: Workout (immer vorn, orange), Mobility & Stretch, Timer, Summit und Run als eine ruhige Liste in der gewählten Reihenfolge.
+   Die Hinweiskarte erscheint erst, wenn gar nichts mehr eingeblendet ist. */
 function bereicheHTML(){
   var r = bereichReihe().filter(function(k){ return !fokusAus(k); });
   if(!r.length) return '<div class="card fokus-leer"><div>'+esc(t("fokusAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
-  var klein = r.filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
-  if(!klein.length) return "";
-  return '<div class="area-bereiche"><div class="area-gruppe">'+klein.map(function(k){ var d = bereichDaten(k); return areaTile(k, d[0], d[1], d[2], d[3], "zeile"); }).join("")+'</div></div>';
+  return '<div class="area-bereiche"><div class="area-gruppe">'+r.map(function(k){ var d = bereichDaten(k); return areaTile(k, d[0], d[1], d[2], d[3], "zeile"); }).join("")+'</div></div>';
 }
 /* Langes Drücken (0,5 s, ohne zu wischen); der Klick danach wird geschluckt, damit die Seite nicht wechselt */
 var langDruckSperre = 0;
@@ -75,7 +73,7 @@ function langDruck(el, fn){
   el.addEventListener("contextmenu", function(e){ e.preventDefault(); });
 }
 function openBereicheSheet(){
-  /* sortiert werden nur Timer, Summit und Run; Workout und Mobility & Stretch stehen fest oben */
+  /* sortiert werden alle außer Workout; Workout steht fest vorn */
   var root = document.getElementById("overlayRoot"), r = bereichReihe().filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
   function zeichnen(){
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bereiche-sheet">'+
@@ -108,16 +106,32 @@ var BEREICH_BILD = { suche:"img/bereich-suche.jpg", warm:"img/bereich-mobility.j
 function bereichBildHTML(key){
   return '<div class="bereich-bild"><img src="'+BEREICH_BILD[key]+'" alt="" draggable="false"></div>';
 }
-/* Kopfblock der Startseite („Bereit für dein Training?“): ein Tipp führt direkt in den Baukasten (Workout › Baukasten). Foto: Pexels (siehe quellen.html) */
+/* Heute im Kalender eingeplante Trainings, die noch offen sind (leer, wenn nichts oder alles erledigt) */
+function heroHeutige(){
+  if(typeof kalAn !== "function") return [];
+  var heute = kalTagKey(Date.now()), st = kalStatus(heute);
+  return kalAn(heute).filter(function(e){ return !st[e.id] && kalAufloesen(e).ok; });
+}
+/* Kopfblock der Startseite, in dieser Rangfolge:
+   A) heute ist etwas eingeplant: Name(n), Dauer und Ort, ein Tipp startet das Training (das erste, wenn mehrere)
+   B) nichts eingeplant, aber Favoriten da: „Bereit für dein Training?“, ein Tipp springt zu den Favoriten
+   C) auch keine Favoriten: ein Tipp führt direkt in den Baukasten (Workout › Baukasten). Foto: Pexels (siehe quellen.html) */
 function heroHTML(){
   if(fokusAus("katalog")) return "";   // Workout in den Einstellungen ausgeblendet: dann auch kein Kopfblock
-  var tag =new Date().toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long" });
+  var tag = new Date().toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long" });
+  var heute = heroHeutige(), modus = "baukasten", titel = t("heroTitel"), los = t("heroLos");
+  if(heute.length){
+    var info = kalHeroInfo(heute);
+    modus = "plan"; titel = info.titel; los = info.sub;
+  } else if(favEntries().length){
+    modus = "fav"; los = t("heroFav");
+  }
   return '<section class="home-hero">'+
     '<img class="hh-bild" src="img/start-halle.jpg" alt="" draggable="false">'+
-    '<button type="button" class="hh-main" data-herostart>'+
+    '<button type="button" class="hh-main" data-herostart="'+modus+'">'+
       '<span class="hh-label">'+esc(t("heroHeute", { d:tag }))+'</span>'+
-      '<b class="hh-titel">'+esc(t("heroTitel"))+'</b>'+
-      '<span class="hh-los">'+ICON_PLAY+'<span>'+esc(t("heroLos"))+'</span></span>'+
+      '<b class="hh-titel">'+esc(titel)+'</b>'+
+      '<span class="hh-los">'+ICON_PLAY+'<span>'+esc(los)+'</span></span>'+
     '</button>'+
   '</section>';
 }

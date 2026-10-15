@@ -5,7 +5,8 @@
    Hinzufügen nur über „+ Hinzufügen“ am Tag (Workouts › Meine Workouts, Meine Pläne, Zufallstraining, Katalog, Mobility; Run; Summit). Im Monat
    wählt ein Tipp den Tag, seine Einträge stehen unter dem Raster. Einträge verschiebt man über ihr Menü
    („Auf einen anderen Tag“). Daten: settings.kalender = { e:[{ id, tag:"JJJJ-MM-TT", art, ref, name, km, erledigt, at }] }
-   - nur auf dem Gerät, wie alles andere. Art: workout | plan | lib | summit | run | zufall. */
+   - nur auf dem Gerät, wie alles andere. Art: workout | plan | lib | summit | run | zufall; bei run steht rad:true für eine Radfahrt.
+   „Woche kopieren“ legt alle Einträge der Woche auf die gleichen Wochentage der nächsten 1-12 Wochen. */
 var kalAnsicht = "woche";      // "woche" | "monat"
 var kalBasis = null;           // ein Tag der angezeigten Woche bzw. des Monats
 var kalAuswahl = null;         // im Monat gewählter Tag (Einträge stehen unter dem Raster)
@@ -37,6 +38,7 @@ function kalAn(tag){
 function kalFinde(id){ var l = kalListe(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
 function kalHinzu(tag, o){
   var e = { id:uid(), tag:tag, art:o.art, ref:o.ref || "", name:o.name || "", km:+o.km || 0, at:Date.now() };   // erledigt fehlt: das ergibt sich aus den Trainings des Tages
+  if(o.rad) e.rad = true;   // Run-Eintrag mit dem Rad statt zu Fuß
   kalListe().push(e); save();
   return e;
 }
@@ -65,14 +67,6 @@ function kalStatus(tag){   // { Eintrags-ID: erledigt? }
   return res;
 }
 function kalErledigt(e){ return !!kalStatus(e.tag)[e.id]; }
-/* Die nächsten offenen Einträge ab heute (für die Vorschau auf der Startseite) */
-function kalNaechste(n){
-  var heute = kalTagKey(Date.now()), out = [];
-  kalListe().filter(function(e){ return e.tag >= heute; }).sort(function(a, b){
-    return a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : (a.at || 0) - (b.at || 0);
-  }).forEach(function(e){ if(out.length < n && !kalErledigt(e)) out.push(e); });
-  return out;
-}
 function kalVerschiebe(id, tag){
   var e = kalFinde(id);
   if(!e || e.tag === tag) return false;
@@ -120,8 +114,8 @@ function kalAufloesen(e){
       o.name = q.name; o.sub = (R === 1 ? t("repRound1") : t("repRoundsN", { n:R }))+" · "+t("repReps", { n:repQWdh(q) });
     }
   } else if(e.art === "run"){
-    o.name = e.name || t("kalRunName");
-    o.sub = e.km > 0 ? runKm(e.km*1000)+" km" : t("kalRunFrei");
+    o.name = e.name || t(e.rad ? "kalRadName" : "kalRunName");
+    o.sub = (e.km > 0 ? runKm(e.km*1000)+" km" : t("kalRunFrei"))+(e.rad ? " · "+t("runArtRad") : "");
   } else {   // zufall
     o.name = t("kalZufall"); o.sub = t("kalZufallSub");
   }
@@ -133,7 +127,7 @@ function kalStarten(e){
   else if(e.art === "lib"){ coverDraft = null; go("#cover/lib/"+e.ref); }
   else if(e.art === "plan"){ var pl = stPlanFind(e.ref); if(pl && stPlanIds(pl).length) planAlsWorkout(pl); else go("#studioplan/"+e.ref); }
   else if(e.art === "summit") go("#rep/"+e.ref);
-  else if(e.art === "run"){ runGeplant = { name:e.name || t("kalRunName"), km:e.km || 0, t:Date.now() }; go("#run"); }
+  else if(e.art === "run"){ state.db.settings.runArt = e.rad ? "rad" : "lauf"; save(); runGeplant ={ name:e.name || t(e.rad ? "kalRadName" : "kalRunName"), km:e.km || 0, rad:!!e.rad, t:Date.now() }; go("#run"); }
   else openSurprise();
 }
 
@@ -175,7 +169,8 @@ function renderKalender(){
       '<button type="button" class="iconbtn" data-kalnav="1" aria-label="'+esc(t("kalVor"))+'">&#8250;</button></div>'+
     // Woche: dieselbe Karte wie „Diese Woche“ auf der Startseite (Tage mit Punkt = trainiert, Ring = geplant); Monat: nur die Summe
     (!monat ? wocheHTML({ basis:tage[0], kal:true, titel:kalTagKey(tage[0]) === kalTagKey(kalMontag(new Date())) ? t("weekTitle") : t("kalKW", { n:kalKW(tage[0]) }) })+
-      (sum.km > 0 ? '<div class="kal-summe">'+esc(runKm(sum.km*1000).replace(/[,.]00$/, "")+" km Run")+'</div>' : '') : '')+
+      (sum.km > 0 ? '<div class="kal-summe">'+esc(runKm(sum.km*1000).replace(/[,.]00$/, "")+" km Run")+'</div>' : '')+
+      (sum.n ? '<button type="button" class="btn btn-secondary kal-kopieren" data-kalkopieren>'+svgIcon('<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/>')+' '+esc(t("kalKopieren"))+'</button>' : '') : '')+
     (monat ? '<div class="kal-summe">'+esc(sum.n ? t("kalGeplant", { n:sum.n })+(sum.ok ? " · "+t("kalErledigtN", { n:sum.ok }) : "")+(sum.km > 0 ? " · "+runKm(sum.km*1000).replace(/[,.]00$/, "")+" km Run" : "") : t("kalNichtsGeplant"))+'</div>' : '');
   if(!monat){
     html += tage.map(function(d, i){
@@ -226,6 +221,8 @@ function renderKalender(){
     if(z && z.scrollIntoView) z.scrollIntoView({ block:"center", behavior:"smooth" });
   });
   app.querySelectorAll("[data-kaladd]").forEach(function(b){ b.addEventListener("click", function(){ kalHinzuMenue(b.getAttribute("data-kaladd")); }); });
+  var kk = app.querySelector("[data-kalkopieren]");
+  if(kk) kk.addEventListener("click", function(){ kalKopierenSheet(tage.map(kalTagKey), kopfText, sum.n); });
   app.querySelectorAll("[data-kaltap]").forEach(function(b){
     b.addEventListener("click", function(){   // Monat: den Tag auswählen, die Ansicht bleibt (Einträge stehen unter dem Raster)
       var key = b.getAttribute("data-kaltap"), d = kalTagDatum(key);
@@ -300,17 +297,29 @@ function kalRunSheet(tag){
   var root = document.getElementById("overlayRoot");
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet" role="dialog" aria-label="'+esc(t("kalRunTitel"))+'">'+
     '<h3>'+esc(t("kalRunTitel"))+'</h3>'+
+    '<label>'+esc(t("runArt"))+'</label><div class="theme-pick rep-pick seg-2" id="kr-art">'+
+      '<button type="button" data-krart="lauf" class="active">'+esc(t("runArtLauf"))+'</button><button type="button" data-krart="rad">'+esc(t("runArtRad"))+'</button></div>'+
     '<label for="kr-n">'+esc(t("name"))+'</label><input type="text" id="kr-n" maxlength="40" value="'+esc(t("kalRunName"))+'">'+
-    '<label for="kr-km">'+esc(t("kalRunZiel"))+'</label><input type="number" id="kr-km" inputmode="decimal" min="0" max="100" step="0.5" value="5">'+
+    '<label for="kr-km">'+esc(t("kalRunZiel"))+'</label><input type="number" id="kr-km" inputmode="decimal" min="0" max="300" step="0.5" value="5">'+
     '<div class="tm-hint">'+esc(t("kalRunHint"))+'</div>'+
     '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button><button class="btn btn-primary" data-ok>'+esc(t("kalAdd"))+'</button></div></div></div>';
   function zu(){ root.innerHTML = ""; }
+  var rad = false, nameFeld = root.querySelector("#kr-n");
+  root.querySelectorAll("[data-krart]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var neuRad = b.getAttribute("data-krart") === "rad";
+      if(neuRad === rad) return;
+      if(nameFeld.value === t(rad ? "kalRadName" : "kalRunName")) nameFeld.value = t(neuRad ? "kalRadName" : "kalRunName");   // nur den Vorschlagsnamen mitnehmen
+      rad = neuRad;
+      root.querySelectorAll("[data-krart]").forEach(function(x){ x.classList.toggle("active", x === b); });
+    });
+  });
   root.querySelector("[data-cancel]").addEventListener("click", zu);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
   root.querySelector("[data-ok]").addEventListener("click", function(){
-    var km = clamp(parseFloat(String(root.querySelector("#kr-km").value).replace(",", ".")) || 0, 0, 100);
-    var n = root.querySelector("#kr-n").value.trim() || t("kalRunName");
-    zu(); kalHinzu(tag, { art:"run", name:n, km:km }); kalNeu();
+    var km = clamp(parseFloat(String(root.querySelector("#kr-km").value).replace(",", ".")) || 0, 0, 300);
+    var n = nameFeld.value.trim() || t(rad ? "kalRadName" : "kalRunName");
+    zu(); kalHinzu(tag, { art:"run", name:n, km:km, rad:rad }); kalNeu();
   });
 }
 /* „Hinzufügen“ an einem Tag: erst die Art - Workouts (dann Meine Workouts zuerst, Meine Pläne, Zufallstraining, Workoutkatalog, Mobility & Stretch), Run oder Summit */
@@ -359,27 +368,71 @@ function kalHinzuMenue(tag){
   ]);
 }
 
-/* ---------- Startseite: aufklappbare Vorschau unter „Diese Woche“ ---------- */
-var kalHomeAuf = false;   // „Diese Woche“ aufgeklappt (nur innerhalb des Besuchs gemerkt)
-function kalTagLabel(tag){
-  var heute = kalTagKey(Date.now()), morgen = kalTagKey(kalPlus(new Date(), 1));
-  if(tag === heute) return t("kalHeute");
-  if(tag === morgen) return t("kalMorgen");
-  return kalTagDatum(tag).toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"numeric" });
+/* ---------- Woche kopieren ---------- */
+/* Alle Einträge der Woche (tage = sieben Tagesschlüssel) auf die gleichen Wochentage der nächsten n Wochen. Was dort schon gleich eingetragen ist,
+   wird nicht doppelt angelegt (so lässt sich das Kopieren gefahrlos wiederholen); Erledigt-Haken werden nicht mitgenommen. Gibt die Zahl neuer Einträge zurück. */
+function kalWocheKopieren(tage, n){
+  var liste = kalListe(), vorhanden = liste.slice(), neu = 0;
+  for(var w = 1; w <= n; w++){
+    tage.forEach(function(key){
+      var ziel = kalTagKey(kalPlus(kalTagDatum(key), 7*w));
+      kalAn(key).forEach(function(e){
+        var gleich = vorhanden.some(function(x){ return x.tag === ziel && x.art === e.art && (x.ref || "") === (e.ref || "") && (x.name || "") === (e.name || "") && (+x.km || 0) === (+e.km || 0) && !!x.rad === !!e.rad; });
+        if(gleich) return;
+        var k = { id:uid(), tag:ziel, art:e.art, ref:e.ref || "", name:e.name || "", km:+e.km || 0, at:Date.now() + neu };
+        if(e.rad) k.rad = true;
+        liste.push(k); neu++;
+      });
+    });
+  }
+  if(neu) save();
+  return neu;
 }
-/* Was als Nächstes ansteht (bis zu fünf offene Einträge ab heute) mit Start-Pfeil, dazu der Weg in den ganzen Kalender */
-function kalVorschauHTML(){
-  var liste = kalNaechste(5);
-  return '<div class="kal-heute-in">'+(liste.length ? liste.map(function(e){
-    var o = kalAufloesen(e);
-    return '<button type="button" class="kal-heute-zeile" data-kalheutestart="'+esc(e.id)+'" style="--kc:'+o.farbe+'"><i class="ke-balken"></i>'+
-      '<span class="ke-text"><small class="kh-tag">'+esc(kalTagLabel(e.tag))+'</small><b>'+esc(o.name)+'</b><small>'+esc(o.ok ? o.sub : t("kalFehlt"))+'</small></span>'+
-      '<span class="kh-play">'+svgIcon('<path d="M7 4l13 8-13 8z"/>')+'</span></button>';
-  }).join("") : '<div class="kh-leer">'+esc(t("kalNichtsGeplant"))+'</div>')+
-    '<button type="button" class="kh-mehr" data-nav="#kalender">'+esc(t("kalOeffnen"))+' &#8250;</button></div>';
-}
-function kalHeuteBinden(){
-  app.querySelectorAll("[data-kalheutestart]").forEach(function(b){
-    b.addEventListener("click", function(ev){ ev.stopPropagation(); var e = kalFinde(b.getAttribute("data-kalheutestart")); if(e) kalStarten(e); });
+function kalKopierenSheet(tage, kopfText, anzahl){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet" role="dialog" aria-label="'+esc(t("kalKopierenTitel"))+'">'+
+    '<h3>'+esc(t("kalKopierenTitel"))+'</h3>'+
+    '<p>'+esc(t("kalKopierenText", { n:anzahl, w:kopfText }))+'</p>'+
+    '<label for="kk-n">'+esc(t("kalKopierenWochen"))+'</label>'+stepperHTML("kk-n", 4, 1, 12, 1)+
+    '<div class="tm-hint">'+esc(t("kalKopierenHint"))+'</div>'+
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button><button class="btn btn-primary" data-ok>'+esc(t("kalKopierenOk"))+'</button></div></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  bindSteppers(root, function(){});
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+  root.querySelector("[data-ok]").addEventListener("click", function(){
+    var n = clamp(parseInt(root.querySelector("#kk-n").value) || 1, 1, 12);
+    zu();
+    var neu = kalWocheKopieren(tage, n);
+    showToast(neu ? t("kalKopiert", { n:neu }) : t("kalKopiertNichts"));
+    if(neu) kalNeu();
   });
+}
+
+/* ---------- Startseite: Kopfblock mit dem heutigen Training ---------- */
+/* Dauer und Ort eines Eintrags für den Kopfblock: { sek, ort, sub } – sek 0, wenn es keine feste Dauer gibt */
+function kalDauerOrt(e){
+  function ortName(exs){ return t(katWoOrt(exs) === "studio" ? "katOrtStudio" : "katOrtFrei"); }
+  var o = kalAufloesen(e), r = { sek:0, ort:"", sub:o.sub };
+  if(e.art === "workout"){
+    var mw = findMy(e.ref);
+    if(mw){ r.sek = workoutDuration(myRun(mw)); r.ort = mw.ws ? t("warmTitle") : ortName(mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean)); }
+  } else if(e.art === "lib"){
+    var lw = findLibWorkout(e.ref);
+    if(lw){ r.sek = workoutDuration(libWorkoutRun(lw)); r.ort = libIstWarmDehn(lw) ? t("warmTitle") : ortName(lw.exercises.map(findExercise).filter(Boolean)); }
+  } else if(e.art === "plan"){
+    var p = stPlanFind(e.ref);
+    if(p){ var ids = stPlanIds(p); r.ort = ortName(ids.map(findExercise).filter(Boolean)); r.sub = planAnzahl(ids.length)+" · "+r.ort; }
+  }
+  return r;
+}
+/* Titel (Namen mit „&“) und Zeile darunter („29 Min · Fitnessstudio“) für die heutigen Einträge */
+function kalHeroInfo(liste){
+  var namen = [], teile = liste.map(function(e){ namen.push(kalAufloesen(e).name); return kalDauerOrt(e); });
+  var sek = teile.reduce(function(a, x){ return a + x.sek; }, 0), orte = [], sub;
+  teile.forEach(function(x){ if(x.ort && orte.indexOf(x.ort) < 0) orte.push(x.ort); });
+  if(sek > 0 && teile.every(function(x){ return x.sek > 0; })) sub = fmtDuration(Math.max(60, Math.round(sek/60)*60))+(orte.length ? " · "+orte.join(" + ") : "");
+  else if(teile.length === 1) sub = teile[0].sub;
+  else sub = t("heroAnzahl", { n:teile.length });
+  return { titel:namen.join(" & "), sub:sub };
 }

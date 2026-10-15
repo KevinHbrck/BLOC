@@ -3,10 +3,11 @@
    GPS-Lauf mit Zeit, Kilometern, Pace, Kilometer-Zwischenzeiten und Routenlinie. Bewusst ohne Hintergrundkarte:
    Die Position wird nur auf dem Gerät verarbeitet, nichts geht ins Internet. Der Bildschirm bleibt an (Wake Lock);
    im Hintergrund oder bei gesperrtem Handy zeichnet eine Web-App nicht zuverlässig auf - dafür gibt es „Abdunkeln“.
-   Gespeichert: settings.runs = [{ id, at, dur (ms, ohne Pausen), dist (m), pts:[[lat,lon]…], splits:[ms bis km 1, 2, …] }].
+   Gespeichert: settings.runs = [{ id, at, dur (ms, ohne Pausen), dist (m), pts:[[lat,lon]…], splits:[ms bis km 1, 2, …], art:"rad" (nur bei Radfahrten) }].
    Ein laufender Lauf wird alle 10 s als settings.runLive gesichert (falls die Seite beendet wird). */
 var RUN_GENAU = 35;   // Fixes mit schlechterer Genauigkeit (m) werden ignoriert
 var RUN_MAX_MS = 12;  // schneller als 12 m/s (43 km/h) gilt als GPS-Sprung
+var RUN_MAX_RAD = 25; // auf dem Rad erst ab 25 m/s (90 km/h)
 var run = null;       // laufende Aufzeichnung
 var runWake = null;
 function runMeter(a, b){   // Haversine
@@ -27,6 +28,17 @@ function runIvEinst(){
   return { an:!!a.an, lauf:clamp(Math.round(+a.lauf) || 60, 10, 900), geh:clamp(Math.round(+a.geh) || 60, 10, 900) };
 }
 function runKm(m){ return (m/1000).toFixed(2).replace(".", currentLang() === "en" ? "." : ","); }
+/* Art der Aufzeichnung: „lauf“ (zu Fuß, Pace in min/km) oder „rad“ (Tempo in km/h). Die letzte Wahl merkt settings.runArt; gespeichert wird art:"rad" nur bei Fahrten */
+function runArt(){ return state.db.settings.runArt === "rad" ? "rad" : "lauf"; }
+function runIstRad(x){ return !!x && x.art === "rad"; }
+function runKmh(sek, m){   // „24,5“ km/h
+  if(!m || m < 20 || !sek) return "–,–";
+  var v = (m/1000)/(sek/3600);
+  return v > 99.9 ? "–,–" : v.toFixed(1).replace(".", currentLang() === "en" ? "." : ",");
+}
+/* Tempo-Wert und Einheit je nach Art: Lauf „5:32“ + „/km“, Rad „24,5“ + „km/h“ */
+function runTempo(x, sek, m){ return runIstRad(x) ? runKmh(sek, m) : runPace(sek, m); }
+function runTempoEinheit(x){ return runIstRad(x) ? "km/h" : "/km"; }
 function runZeit(r){ return (r.pauseAb || Date.now()) - r.start - r.pausenMs; }
 function runWachen(an){
   if(!an){ if(runWake){ try{ runWake.release(); }catch(e){} runWake = null; } return; }
@@ -52,7 +64,7 @@ function runPunkt(lat, lon, acc, ts, speed){
   if(dt <= 0) return;
   var d = runMeter(r.letzte.p, p);
   if(d < Math.max(3, acc*0.5)) return;   // Rauschen im Stand
-  if(d/dt > RUN_MAX_MS) return;           // Sprung
+  if(d/dt > (r.art === "rad" ? RUN_MAX_RAD : RUN_MAX_MS)) return;           // Sprung
   var vor = r.dist, nun = runZeit(r);
   if(speed == null || speed >= 0.5) r.lastMove = Date.now();   // Zittern im Stand (Tempo ~0) zählt nicht als Bewegung
   r.dist += d; r.letzte = { p:p, ts:ts };
@@ -137,20 +149,26 @@ function runSprechZeit(ms, de){
   else { if(h) out.push(h+" hours"); if(m) out.push(m+" minutes"); if(x && !h) out.push(x+" seconds"); }
   return out.join(" ");
 }
-function runAnsageText(k, splits, e, de){
+function runSprechKmh(ms, m, de){   // „24,5 Kilometer pro Stunde“
+  var v = (m/1000)/(ms/3600000), z = v.toFixed(1).replace(".", de ? "," : ".");
+  return de ? z+" Kilometer pro Stunde" : z+" kilometres per hour";
+}
+function runAnsageText(k, splits, e, de, rad){
   var seg = splits[k-1] - (k - e.every > 0 ? splits[k-e.every-1] : 0);
   var txt = de ? k+(k === 1 ? " Kilometer." : " Kilometer.") : k+(k === 1 ? " kilometre." : " kilometres.");
-  if(e.was !== "km") txt += de ? " Pace "+runSprechPace(seg/1000, e.every*1000, true)+" pro Kilometer." : " Pace "+runSprechPace(seg/1000, e.every*1000, false)+" per kilometre.";
+  if(e.was !== "km") txt += rad ? (de ? " Tempo " : " Speed ")+runSprechKmh(seg, e.every*1000, de)+"."
+    : de ? " Pace "+runSprechPace(seg/1000, e.every*1000, true)+" pro Kilometer." : " Pace "+runSprechPace(seg/1000, e.every*1000, false)+" per kilometre.";
   if(e.was === "alles"){
     txt += de ? " Zeit "+runSprechZeit(splits[k-1], true)+"." : " Time "+runSprechZeit(splits[k-1], false)+".";
-    if(k > e.every) txt += de ? " Durchschnitt "+runSprechPace(splits[k-1]/1000, k*1000, true)+"." : " Average "+runSprechPace(splits[k-1]/1000, k*1000, false)+".";
+    if(k > e.every) txt += rad ? (de ? " Durchschnitt " : " Average ")+runSprechKmh(splits[k-1], k*1000, de)+"."
+      : de ? " Durchschnitt "+runSprechPace(splits[k-1]/1000, k*1000, true)+"." : " Average "+runSprechPace(splits[k-1]/1000, k*1000, false)+".";
   }
   return txt;
 }
 function runAnsage(k){
   var r = run, e = runAnsageEinst();
   if(!r || !e.every || r.stumm || k % e.every !== 0) return;
-  var txt = runAnsageText(k, r.splits, e, currentLang() !== "en");
+  var txt = runAnsageText(k, r.splits, e, currentLang() !== "en", r.art === "rad");
   (r.gesagt || (r.gesagt = [])).push(txt);
   runSag(txt);
 }
@@ -197,8 +215,9 @@ function runVorLos(){
   runLosgehts();
 }
 function runLosgehts(){
+  var art = runArt();
   run = { id:uid(), start:Date.now(), pauseAb:0, pausenMs:0, dist:0, pts:[], letzte:null, splits:[], tZ:0, verlauf:[], gps:null, fehler:0, stumm:false, gesagt:[], n:0, sumAcc:0,
-    lastMove:Date.now(), auto:false, iv:runIvEinst().an ? runIvEinst() : null, ivPhase:null,
+    lastMove:Date.now(), auto:false, art:art, iv:art !== "rad" && runIvEinst().an ? runIvEinst() : null, ivPhase:null,
     ziel:runGeplant && Date.now() - runGeplant.t < 6*3600000 ? runGeplant : null };
   runGeplant = null;
   runLauschen();
@@ -231,6 +250,7 @@ function runSichern(){   // alle 10 s eine Kopie, damit ein beendeter Browser de
   if(!r || Date.now() - runSichernAm < 10000) return;
   runSichernAm = Date.now();
   state.db.settings.runLive = { id:r.id, start:r.start, dur:runZeit(r), dist:r.dist, pts:r.pts, splits:r.splits, at:Date.now() };
+  if(r.art === "rad") state.db.settings.runLive.art = "rad";
   save();
 }
 function runSpeichern(d){   // d: { id, start, dur, dist, pts, splits } -> in den Verlauf; zu kurze Läufe werden nicht behalten
@@ -240,6 +260,7 @@ function runSpeichern(d){   // d: { id, start, dur, dist, pts, splits } -> in de
   if(d.pause > 1000) x.pause = Math.round(d.pause);   // herausgerechnete Pausen/Stehzeit (ms)
   if(d.iv) x.iv = { lauf:d.iv.lauf, geh:d.iv.geh };
   if(d.name) x.name = d.name;
+  if(d.art === "rad") x.art = "rad";
   (s.runs || (s.runs = [])).push(x);
   pruneHistory(state.db);
   state.db.history.push({ at:d.start, dur:Math.round(d.dur/1000), ex:[], b:"run" });   // zählt in der Wochenzeile
@@ -256,7 +277,7 @@ function runBeenden(speichern){
   var dunkel = document.getElementById("run-dunkel"); if(dunkel) dunkel.remove();
   run = null;
   delete state.db.settings.runLive;
-  var ok = speichern ? runSpeichern({ id:r.id, start:r.start, dur:dauer, dist:r.dist, pts:r.pts, splits:r.splits, pause:pausen, iv:iv, name:r.ziel && r.ziel.name }) : (save(), false);
+  var ok = speichern ? runSpeichern({ id:r.id, start:r.start, dur:dauer, dist:r.dist, pts:r.pts, splits:r.splits, pause:pausen, iv:iv, name:r.ziel && r.ziel.name, art:r.art }) : (save(), false);
   if(ok){ runNeu = r.id; go("#rundetail/"+r.id); } else renderRun();   // runNeu: Abschlusskarte oben im Detail
 }
 var runNeu = null;
@@ -267,7 +288,13 @@ function runBesterKm(r){   // schnellster einzelner Kilometer (ms) oder null
 }
 /* Was bei diesem Lauf besonders war - im Vergleich zu den früheren Läufen */
 function runHighlights(x){
-  var others = (state.db.settings.runs || []).filter(function(o){ return o.id !== x.id; }), out = [];
+  var rad = runIstRad(x);   // Läufe und Fahrten werden nur untereinander verglichen
+  var others = (state.db.settings.runs || []).filter(function(o){ return o.id !== x.id && runIstRad(o) === rad; }), out = [];
+  if(rad){
+    if(!others.length) out.push(t("runErsteRad"));
+    else if(x.dist > Math.max.apply(null, others.map(function(o){ return o.dist; }))) out.push(t("runLaengsteRad"));
+    return out;
+  }
   if(!others.length) out.push(t("runErster"));
   else {
     if(x.dist > Math.max.apply(null, others.map(function(o){ return o.dist; }))) out.push(t("runLaengster"));
@@ -282,10 +309,10 @@ function runHighlights(x){
   return out;
 }
 function runOptionenHTML(){
-  var iv = runIvEinst(), a = runAutoSek();
+  var iv = runIvEinst(), a = runAutoSek(), rad = runArt() === "rad";
   return '<div class="card run-opt">'+
-    toggleRow("run-iv-an", esc(t("runIvAn")), esc(t("runIvHint")), iv.an)+
-    (iv.an ? '<div class="ru-felder"><div><label>'+esc(t("runIvLaufS"))+'</label>'+stepperHTML("run-iv-lauf", iv.lauf, 10, 900, 10)+'</div>'+
+    (rad ? '' : toggleRow("run-iv-an", esc(t("runIvAn")), esc(t("runIvHint")), iv.an))+   // Laufen und Gehen im Wechsel gibt es nur zu Fuß
+    (!rad && iv.an ? '<div class="ru-felder"><div><label>'+esc(t("runIvLaufS"))+'</label>'+stepperHTML("run-iv-lauf", iv.lauf, 10, 900, 10)+'</div>'+
       '<div><label>'+esc(t("runIvGehS"))+'</label>'+stepperHTML("run-iv-geh", iv.geh, 10, 900, 10)+'</div></div>' : '')+
     '<div class="run-auto"><div class="label">'+esc(t("runAutoTitel"))+'<b id="run-auto-wert">'+esc(a ? t("runAutoNach", { s:a }) : t("runAus"))+'</b></div>'+
       '<input type="range" id="run-auto" min="0" max="16" step="1" value="'+(a ? a - 4 : 0)+'" aria-label="'+esc(t("runAutoTitel"))+'">'+
@@ -339,7 +366,7 @@ function runTempoJetzt(r){
   var v = r.verlauf;
   if(v.length < 2) return "–:––";
   var a = v[0], b = v[v.length-1];
-  return runPace((b.t - a.t)/1000, b.d - a.d);
+  return runTempo(r, (b.t - a.t)/1000, b.d - a.d);
 }
 /* Anzeige im Aufzeichnen-Fenster aktualisieren (ohne neu zu zeichnen) */
 function runAnzeige(){
@@ -347,9 +374,9 @@ function runAnzeige(){
   if(!r) return;
   var sek = runZeit(r)/1000;
   function setze(id, txt){ var el = document.getElementById(id); if(el && el.textContent !== txt) el.textContent = txt; }
-  var zeit = repUhr(runZeit(r));
-  setze("run-zeit", zeit); setze("run-km", runKm(r.dist)); setze("run-pace", runPace(sek, r.dist)); setze("run-jetzt", runTempoJetzt(r));
-  setze("run-dz", zeit); setze("run-dk", runKm(r.dist)+" km");
+  var zeit = repUhr(runZeit(r)), tempo = runTempo(r, sek, r.dist);
+  setze("run-zeit", zeit); setze("run-km", runKm(r.dist)); setze("run-pace", tempo); setze("run-jetzt", runTempoJetzt(r));
+  setze("run-dz", zeit); setze("run-dk", runKm(r.dist)+" km"); setze("run-dp", tempo+" "+runTempoEinheit(r));   // abgedunkelt: Zeit, Kilometer und Tempo bleiben zu sehen
   var gps = r.fehler === 1 ? t("runGpsDenied") : r.fehler ? t("runGpsLost") : r.gps == null ? t("runGpsWait") :
     t(r.gps <= 15 ? "runGpsOk" : "runGpsWeak", { m:Math.round(r.gps) });
   setze("run-gps", r.pauseAb ? t(r.auto ? "runAutoPausiert" : "runPaused") : gps);
@@ -364,7 +391,7 @@ function runAnzeige(){
 function runDunkel(){
   var d = document.createElement("div");
   d.id = "run-dunkel"; d.className = "run-dunkel";
-  d.innerHTML = '<div id="run-dz" class="rd-z"></div><div id="run-dk" class="rd-k"></div><div class="rd-h">'+esc(t("runDarkHint"))+'</div><div class="rd-balken"><i></i></div>';
+  d.innerHTML = '<div id="run-dz" class="rd-z"></div><div id="run-dk" class="rd-k"></div><div id="run-dp" class="rd-k rd-p"></div><div class="rd-h">'+esc(t("runDarkHint"))+'</div><div class="rd-balken"><i></i></div>';
   // Gegen versehentliche Berührungen in der Tasche: erst 2 s gedrückt halten (Balken füllt sich), ein kurzer Tipp tut nichts
   var tm = 0;
   function los(){ if(tm){ clearTimeout(tm); tm = 0; } d.classList.remove("halten"); }
@@ -375,18 +402,19 @@ function runDunkel(){
   if(runVor && !run){ var dz0 = d.querySelector("#run-dz"); dz0.textContent = Math.max(1, Math.ceil((runVor.ende - Date.now())/1000)); }
   runAnzeige();
 }
-/* Im Lauf (nicht abgedunkelt) lösen alle Knöpfe erst nach 3 s Gedrückthalten aus - gegen Fehlbedienung in der Tasche oder mit nassen Händen.
-   Der Knopf füllt sich währenddessen (.halten). Ein Tastatur-Klick (detail 0) löst sofort aus, damit die Bedienung ohne Touch erreichbar bleibt. */
-var RUN_HALTEN = 3000;
-function runHalten(el, fn){
+/* Im Lauf (nicht abgedunkelt) lösen alle Knöpfe erst nach 2 s Gedrückthalten aus, „Beenden“ nach 1 s - gegen Fehlbedienung in der Tasche oder mit nassen Händen.
+   Der Knopf füllt sich währenddessen (.halten, Dauer über --halt). Ein Tastatur-Klick (detail 0) löst sofort aus, damit die Bedienung ohne Touch erreichbar bleibt. */
+var RUN_HALTEN = 2000, RUN_HALTEN_ENDE = 1000;
+function runHalten(el, fn, ms){
   if(!el) return;
-  var tm = 0, fertig = false;
+  var tm = 0, fertig = false, dauer = ms || RUN_HALTEN;
   function los(){ if(tm){ clearTimeout(tm); tm = 0; } el.classList.remove("halten"); }
   el.classList.add("hold");
+  el.style.setProperty("--halt", dauer+"ms");
   el.addEventListener("pointerdown", function(e){
     if(e.button) return;
     los(); fertig = false; el.classList.add("halten");
-    tm = setTimeout(function(){ tm = 0; fertig = true; el.classList.remove("halten"); vibrate(60); fn(); }, RUN_HALTEN);
+    tm = setTimeout(function(){ tm = 0; fertig = true; el.classList.remove("halten"); vibrate(60); fn(); }, dauer);
   });
   ["pointerup", "pointercancel", "pointerleave"].forEach(function(ev){ el.addEventListener(ev, los); });
   el.addEventListener("contextmenu", function(e){ e.preventDefault(); });
@@ -422,7 +450,7 @@ function renderRun(){
   if(runVor) return renderRunVor();
   var runs = (s.runs || []).slice().sort(function(a, b){ return b.at - a.at; });
   var km = runs.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
-  var live = s.runLive;
+  var live = s.runLive, art = runArt();
   app.innerHTML =
     topbar(t("runTitle"), { back:"#home" }) +
     bereichBildHTML("run") +
@@ -434,12 +462,15 @@ function renderRun(){
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button>'+
       '<button type="button" class="ghost" data-rungeplantweg>'+esc(t("runGeplantWeg"))+'</button></div>' : '')+
     '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div><div class="rh-sub">'+esc(runs.length ? t("runLaeufe", { n:runs.length }) : t("runTeaser"))+'</div>'+
-      '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button></div>'+
+      '<div class="theme-pick rep-pick seg-2 run-art" role="group" aria-label="'+esc(t("runArt"))+'">'+
+        '<button type="button" data-runart="lauf" class="'+(art === "lauf" ? "active" : "")+'">'+esc(t("runArtLauf"))+'</button>'+
+        '<button type="button" data-runart="rad" class="'+(art === "rad" ? "active" : "")+'">'+esc(t("runArtRad"))+'</button></div>'+
+      '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t(art === "rad" ? "runStartRad" : "runStart"))+'</button></div>'+
     (runs.length ? '<div class="section-title">'+esc(t("runVerlauf"))+'</div>' : '')+
     (runs.length ? runs.map(function(x){
       var d = new Date(x.at);
-      return '<div class="list-item entry run-item" data-nav="#rundetail/'+x.id+'"><div class="meta"><div class="name">'+esc(runKm(x.dist))+' km'+(x.name ? '<span class="run-name"> · '+esc(x.name)+'</span>' : '')+'</div>'+
-        '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(repUhr(x.dur))+SEP+esc(runPace(x.dur/1000, x.dist))+' /km</div></div>'+
+      return '<div class="list-item entry run-item" data-nav="#rundetail/'+x.id+'"><div class="meta"><div class="name">'+esc(runKm(x.dist))+' km'+(runIstRad(x) ? '<span class="run-name"> · '+esc(t("runArtRad"))+'</span>' : '')+(x.name ? '<span class="run-name"> · '+esc(x.name)+'</span>' : '')+'</div>'+
+        '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+'</div></div>'+
         '<div class="card-aside"><div class="card-acts">'+trashBtn("run", x.id, runKm(x.dist)+" km")+'</div></div></div>';
     }).join("") : '<div class="empty" style="padding:24px 20px;">'+esc(t("runNone"))+'</div>')+
     runOptionenHTML()+runAnsageHTML()+
@@ -447,10 +478,13 @@ function renderRun(){
     '<div style="height:40px"></div>';
   bindCommon();
   bindTrash(function(){ renderRun(); });
-  bindToggle("run-iv-an", function(v){ var e = runIvEinst(); s.runIv = { an:v, lauf:e.lauf, geh:e.geh }; save(); renderRun(); });
+  if(app.querySelector("#run-iv-an")) bindToggle("run-iv-an", function(v){ var e = runIvEinst(); s.runIv = { an:v, lauf:e.lauf, geh:e.geh }; save(); renderRun(); });
   bindSteppers(app, function(){
     var l = app.querySelector("#run-iv-lauf"), g = app.querySelector("#run-iv-geh");
     if(l && g){ s.runIv = { an:true, lauf:clamp(parseInt(l.value) || 60, 10, 900), geh:clamp(parseInt(g.value) || 60, 10, 900) }; save(); }
+  });
+  app.querySelectorAll("[data-runart]").forEach(function(b){
+    b.addEventListener("click", function(){ s.runArt = b.getAttribute("data-runart") === "rad" ? "rad" : "lauf"; save(); renderRun(); });
   });
   var au = app.querySelector("#run-auto");
   au.addEventListener("input", function(){
@@ -476,7 +510,7 @@ function renderRun(){
   var lv = app.querySelector("[data-runlivesave]");
   if(lv) lv.addEventListener("click", function(){
     var l = s.runLive; delete s.runLive;
-    if(runSpeichern({ id:l.id, start:l.start, dur:l.dur, dist:l.dist, pts:l.pts, splits:l.splits })) go("#rundetail/"+l.id); else renderRun();
+    if(runSpeichern({ id:l.id, start:l.start, dur:l.dur, dist:l.dist, pts:l.pts, splits:l.splits, art:l.art })) go("#rundetail/"+l.id); else renderRun();
   });
   var ld = app.querySelector("[data-runlivedel]");
   if(ld) ld.addEventListener("click", function(){ delete s.runLive; save(); renderRun(); });
@@ -488,8 +522,8 @@ function renderRunLive(){
     '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+(r.ziel && r.ziel.km > 0 ? '<div class="run-ziel">'+esc(t("runZielKm", { km:runKm(r.ziel.km*1000) }))+'</div>' : '')+'</div>'+
     '<div class="run-raster">'+
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
-      '<div><b id="run-pace">–:––</b><small>'+esc(t("runPaceAvg"))+' /km</small></div>'+
-      '<div><b id="run-jetzt">–:––</b><small>'+esc(t("runPaceNow"))+' /km</small></div></div>'+
+      '<div><b id="run-pace">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t(runIstRad(r) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(r)+'</small></div>'+
+      '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div></div>'+
     '<div id="run-karte" class="run-karte" data-n="-1"></div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
       '<button type="button" class="btn btn-secondary run-dunkelbtn" data-rundark>'+svgIcon(ICON_MOON)+' '+esc(t("runDark"))+'</button>'+
@@ -516,7 +550,7 @@ function renderRunLive(){
   });
   runHalten(app.querySelector("[data-runend]"), function(){
     confirmSheet(t("runEndQ"), t("runEndText"), t("runSave"), function(){ runBeenden(true); });
-  });
+  }, RUN_HALTEN_ENDE);
   runAnzeige();
 }
 function renderRunDetail(id){
@@ -531,7 +565,7 @@ function renderRunDetail(id){
     topbar(t("runDetail"), { back:"#run" }) +
     // Abschlusskarte direkt nach dem Lauf: was geschafft wurde (der Lauf ist schon gespeichert)
     (neu ? '<div class="card run-fertig"><div class="rf-titel">'+esc(t("runGeschafft"))+'</div><div class="rf-km">'+esc(runKm(x.dist))+' <small>km</small></div>'+
-      '<div class="rf-zeile">'+esc(repUhr(x.dur))+SEP+esc(runPace(x.dur/1000, x.dist))+' /km</div>'+
+      '<div class="rf-zeile">'+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+'</div>'+
       (hl.length ? '<ul class="rf-liste">'+hl.map(function(h){ return '<li>'+svgIcon(ICON_STAR)+'<span>'+esc(h)+'</span></li>'; }).join("")+'</ul>' : '')+
       '<div class="rf-gespeichert">'+esc(t("runGespeichert"))+'</div></div>' : '')+
     '<div class="rep-meta">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long", day:"numeric", month:"long", year:"numeric" }))+
@@ -539,7 +573,7 @@ function renderRunDetail(id){
     '<div class="card run-notiz"><input type="text" id="run-name" maxlength="40" value="'+esc(x.name || "")+'" placeholder="'+esc(t("runNamePh"))+'" aria-label="'+esc(t("runNamePh"))+'">'+
       '<textarea id="run-note" rows="2" maxlength="400" placeholder="'+esc(t("runNotePh"))+'" aria-label="'+esc(t("runNotePh"))+'">'+esc(x.note || "")+'</textarea></div>'+
     '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(repUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
-      '<div><b>'+esc(runPace(x.dur/1000, x.dist))+'</b><small>'+esc(t("runPaceAvg"))+' /km</small></div></div>'+
+      '<div><b>'+esc(runTempo(x, x.dur/1000, x.dist))+'</b><small>'+esc(t(runIstRad(x) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(x)+'</small></div></div>'+
     '<div class="section-title">'+esc(t("runRoute"))+'</div><div class="run-karte">'+runSvg(x.pts)+'</div>'+
     (sp.length ? '<div class="section-title">'+esc(t("runSplits"))+'</div><div class="card run-kms">'+runKmZeilen(x)+'</div>' : '')+
     '<button type="button" class="btn btn-secondary" data-rungpx style="margin-top:14px;">'+esc(t("runGpx"))+'</button>'+
