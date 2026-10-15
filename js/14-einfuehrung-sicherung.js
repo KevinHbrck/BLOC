@@ -160,7 +160,7 @@ function c60HinweisHTML(){
 }
 function bindC60Hinweis(){
   var weg = app.querySelector("[data-hidec60]");
-  if(weg) weg.addEventListener("click", function(){ c60Umgestellt = false; render(); });
+  if(weg) weg.addEventListener("click", function(){ c60Umgestellt = false; save(); render(); });   // save: die umgestellte Darstellung bleibt, der Hinweis kommt nicht wieder
 }
 
 /* Schnappschuss: alle 7 Tage eine vollständige Kopie von state.db in IndexedDB (nicht in localStorage -

@@ -836,9 +836,10 @@ function renderSettings(){
   app.innerHTML =
     topbar(t("settings"), { back:"#home" }) +
     '<div class="section-title">'+esc(t("fokusTitel"))+'</div>'+
-    '<div class="card">'+einstKopf(EINST_ICON.fokus, t("fokusLabel"))+'<div class="theme-pick">'+HOME_KEYS.map(function(k, i){
+    '<div class="card">'+einstKopf(EINST_ICON.fokus, t(layoutNeu() ? "fokusLabelNeu" : "fokusLabel"))+'<div class="theme-pick">'+HOME_KEYS.map(function(k, i){
       return '<button type="button" data-fokus="'+k+'" aria-pressed="'+!fokusAus(k)+'" class="'+(i > 1 ? 'halb' : '')+(fokusAus(k) ? '' : ' active')+'">'+esc(bereichDaten(k)[1])+'</button>';
-    }).join("")+'</div><div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t("fokusHint"))+'</div></div>'+
+    }).join("")+'</div><div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t(layoutNeu() ? "fokusHintNeu" : "fokusHint"))+'</div>'+
+      (layoutNeu() ? '<button type="button" class="btn btn-secondary" data-bereichreihe style="margin-top:12px">'+esc(t("areasSort"))+'</button>' : '')+'</div>'+
     '<div class="section-title">'+t("optWichtig")+'</div>'+
     '<div class="card">'+einstKopf(EINST_ICON.darstellung, t("appearance"))+
     '<div class="label">'+esc(t("layoutLabel"))+'</div>'+
@@ -926,10 +927,15 @@ function renderSettings(){
       save(); applyTheme(); renderSettings();
     });
   });
+  var brb = app.querySelector("[data-bereichreihe]");
+  if(brb) brb.addEventListener("click", openBereicheSheet);
   app.querySelectorAll("[data-layoutwahl]").forEach(function(btn){
     btn.addEventListener("click", function(){
       s.layout = btn.getAttribute("data-layoutwahl") === "new" ? "new" : "classic";
-      save(); applyTheme(); renderSettings();
+      var y = window.scrollY;
+      save(); applyTheme();
+      render();   // nicht nur die Seite: auch die untere Leiste ist in New anders gebaut
+      window.scrollTo(0, y);
     });
   });
   app.querySelectorAll("[data-lang]").forEach(function(btn){

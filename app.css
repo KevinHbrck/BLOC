@@ -837,7 +837,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .progressbar-fill{ height:100%; background:currentColor; border-radius:100px; transition:width .3s linear; }
 .player-mid{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px 24px; }
 /* kleines BLOC-Zeichen unter der Fortschrittsleiste: Orange auf Weiß (Pause), Weiß auf Orange (Übung) */
-.pl-logo{ text-align:center; margin-top:8px; font-family:var(--f-brand); font-size:12px; font-weight:900; letter-spacing:.2em; line-height:1; color:var(--accent); transition:color .35s ease; }
+.pl-logo{ text-align:center; margin-top:8px; font-family:var(--f-brand, "Helvetica Neue","Arial Black",Arial,sans-serif); font-size:12px; font-weight:900; letter-spacing:.2em; line-height:1; color:var(--accent); transition:color .35s ease; }
 .player[data-phase="work"] .pl-logo{ color:#ffffff; }
 
 @media (orientation:landscape) and (max-height:520px){ .pl-logo{ display:none; } }
@@ -1175,7 +1175,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .lib-card.ua .lib-illu{ background:color-mix(in srgb, var(--surface) 82%, transparent); }
 /* im Timer: Flagge als Hintergrund der ganzen Übung (Arbeit und Pausen), Schrift weiß */
 .player.ua{ color:#fff !important; }
-.player.ua .phase-label, .player.ua .block-label, .player.ua .next-up, .player.ua #pl-counter{ color:#fff !important; text-shadow:0 1px 3px rgba(0,0,0,.45); }
+.player.ua .phase-label, .player.ua .block-label, .player.ua .next-up{ color:#fff !important; text-shadow:0 1px 3px rgba(0,0,0,.45); }
 
 
 /* Timer: Ring nur über transform, Phasenfarben per Überblenden (opacity) statt Farb-Transition */

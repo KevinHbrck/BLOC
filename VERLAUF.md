@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-15 · Durchsicht mit vier Prüfern: Fehler und Kontraste behoben (Fassung 2026-10-15-9)
+
+- **Layoutwechsel** in den Einstellungen zeichnet jetzt auch die untere Leiste neu (vorher blieb die alte Leiste stehen, bis man weiternavigierte).
+- **Rekord**: mehr Wiederholungen bei gleichem Bestgewicht zählt als Rekord (`wBest` in `studioBestwerte`), auch über 10 Wiederholungen; Einheitstest dazu und zu `migrateTheme`.
+- **New**: Hauptknopf im Kalender nimmt in der Wochenansicht „heute“ (nicht den zuletzt im Monat gewählten Tag); ohne Workout (Fokus) kein Start-Knopf und kein Bauen-Eintrag zu ausgeblendeten Bereichen; Hell/Dunkel-Knopf läuft Hell → Dunkel → Nacht; `#training` in Klassik führt zu Heute; `builderAuto` wird außerhalb des Baukastens gelöscht; Reihenfolge der Bereiche auch in Einstellungen › Fokus, zeichnet Training neu, Texte nennen „Training“ statt „Startseite“.
+- **Kontrast/Formen** (`layout-new.css`): aktiver Reiter in Hell mit `--accent-ink`, Hauptknopf mit `--accent-ink`, Pille 91 % deckend mit Rückfall ohne `color-mix`, Fotokarten mit stärkerem Verlauf und Textschatten, `.btn`-Padding mit Spezifität 0 (Kompaktleisten gewinnen wieder), Wochenpunkte „frei“ mit sichtbarem Ring, Kalenderpunkte wieder 16 px, Kopfsymbole 48 px, Builder-Foto mit 1,5 px Weichzeichner, Beschriftung der Reiter kürzt statt zu überlaufen.
+- **Texte**: WHO-Hinweis vollständig und ohne „keine Diagnose“, Pace-Tendenz beschreibend („Im Schnitt … schneller … Strecke, Wetter und Tagesform spielen mit“), Nacht-Hinweis ohne Wirkversprechen, Sicherungs-Hinweis allgemeiner, Steigerungsvorschlag mit „nur, wenn die Technik sauber blieb“.
+- **Aufgeräumt**: ungenutztes `img/neu-kopf.jpg`, toter Selektor `#pl-counter`, Kommentare; C60-Hinweis wird beim Schließen gespeichert.
+- **Offen** (Entscheidung beim Nutzer): Pace nach Distanz gewichten; Aufwärmen/Dehnen-Chip und gemeinsame Vorschau; Sätze je Muskelgruppe; Name „New“; Foto-Einzelbelege in `quellen.html`; `20-walzen-start.js` umbenennen.
+
 ## 2026-10-15 · New: Bedienung wie im Entwurf (Fassung 2026-10-15-8)
 
 - **Leiste** in New: Pille mit vier Reitern (Heute · Training · Kalender · Fortschritt, aktiver Reiter orange) und rechts daneben ein runder **Hauptknopf**: Heute = Training starten (heute eingeplant: dieses Training, sonst gleich „Überrasch mich“), Training = Bauen (Überrasch mich, Selber bauen, Timer, Summit), Kalender = Hinzufügen, Fortschritt = keiner (`hauptAktionNeu`, `js/03-router.js`).

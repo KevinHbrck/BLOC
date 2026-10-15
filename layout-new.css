@@ -1,8 +1,8 @@
 /* BLOC - Aussehen „New“ (seit 2026-10-15), zusätzlich zu „Klassik“.
    Alles steht unter :root[data-layout="new"]; ohne das Attribut ändert sich nichts. Farben kommen weiter aus den Designs
    (System, Hell, Dunkel, Nacht), hier ändern sich nur Formen, Flächen und die untere Leiste.
-   Grundsätze: ruhige Flächen, große Rundungen mit einer kleinen Ecke oben links, Milchglas nur auf der unteren Leiste und den
-   Fenstern (Sheets), dort mit deckendem Rückfall; Navigation, Inhalte und Abläufe sind unverändert. */
+   Grundsätze: ruhige Flächen, große Rundungen mit einer kleinen Ecke oben links, Milchglas nur auf der unteren Leiste (mit deckendem
+   Rückfall), dazu die Navigation „Heute · Training · Kalender · Fortschritt“ mit Hauptknopf (js/03-router.js). Funktionen bleiben. */
 
 :root[data-layout="new"]{
   --radius:24px;
@@ -23,7 +23,8 @@
 :root[data-layout="new"] .list-item{ padding:16px 18px; }
 
 /* ---------- Knöpfe ---------- */
-:root[data-layout="new"] .btn{ border-radius:28px; border-top-left-radius:10px; padding:18px 22px; }
+/* :where: Spezifität 0, damit Kompaktregeln (Knopfleisten in Studio, Plan, Lauf) weiter gewinnen */
+:where(:root[data-layout="new"]) .btn{ border-radius:28px; border-top-left-radius:var(--ecke); padding:18px 22px; }
 :root[data-layout="new"] .btn-secondary{ border:1px solid var(--nl-linie); }
 :root[data-layout="new"] .playbtn{ border-radius:50%; }
 :root[data-layout="new"] .iconbtn{ width:52px; height:52px; border-radius:50%; border:1px solid var(--nl-linie); }
@@ -39,10 +40,11 @@
 
 /* ---------- Überschriften ---------- */
 :root[data-layout="new"] .section-title{ letter-spacing:.09em; font-weight:600; }
-:root[data-layout="new"] .topbar h1 .ttl{ letter-spacing:.06em; }
 
 /* ---------- Wochenpunkte: weiß = frei, orange = trainiert, Ring = geplant ---------- */
-:root[data-layout="new"] .wo-tag i{ width:13px; height:13px; background:#fff; box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--text) 22%, transparent); }
+:root[data-layout="new"] .wo-tag i{ width:13px; height:13px; background:#fff; box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--text) 45%, transparent); }
+:root[data-layout="new"] .woche-kal .wo-tag i{ width:16px; height:16px; }
+:root[data-layout="new"] .wo-tag small{ font-size:11px; }
 :root[data-layout="new"] .wo-tag.an i{ background:var(--accent); box-shadow:none; }
 :root[data-layout="new"] .wo-tag.plan i{ background:transparent; box-shadow:inset 0 0 0 2.5px var(--accent); }
 :root[data-layout="new"] .wo-tag.heute i{ outline:2px solid var(--text); outline-offset:2px; }
@@ -60,12 +62,13 @@
   flex:1; min-width:0; display:flex; justify-content:space-around; gap:2px; padding:6px;
   border:1px solid color-mix(in srgb, var(--text) 14%, transparent);
   border-radius:999px;
+  background:var(--surface); border-color:var(--border);   /* Rückfall für Browser ohne color-mix */
   background:color-mix(in srgb, var(--surface) 96%, transparent);   /* ohne Blur deckend genug für den Kontrast */
   box-shadow:0 10px 30px rgba(0,0,0,.18);
 }
 @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
   :root[data-layout="new"] .tabbar .pille{
-    background:color-mix(in srgb, var(--surface) 86%, transparent);
+    background:color-mix(in srgb, var(--surface) 91%, transparent);
     -webkit-backdrop-filter:blur(20px) saturate(150%); backdrop-filter:blur(20px) saturate(150%);
   }
 }
@@ -75,14 +78,16 @@
 :root[data-layout="new"] .tabbar .hauptknopf{
   flex:none; width:64px; height:64px; border-radius:50%; border:0; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
-  background:var(--accent); color:var(--accent-text); box-shadow:0 10px 28px rgba(0,0,0,.28);
+  background:var(--accent-ink, var(--accent)); color:var(--accent-text); box-shadow:0 10px 28px rgba(0,0,0,.28);
 }
 :root[data-layout="new"] .tabbar .hauptknopf:active{ transform:scale(.94); }
 :root[data-layout="new"] .tabbar .hauptknopf svg{ width:28px; height:28px; }
-:root[data-layout="new"] .tabbar .tab{ flex:1; max-width:none; border-radius:999px; padding:8px 2px 7px; }
+:root[data-layout="new"] .tabbar .tab{ flex:1; min-width:0; max-width:none; border-radius:999px; padding:8px 2px 7px; }
+:root[data-layout="new"] .tabbar .tab > span:last-child{ max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media (max-width:359px){ :root[data-layout="new"] .tabbar .tab{ font-size:10px; } }
 /* Hauptseiten haben in New keinen Zurück-Pfeil (sie sind über die Leiste erreichbar) */
 :root[data-layout="new"] body.mit-tabs .topbar .back{ display:none; }
-:root[data-layout="new"] .tabbar .tab.active{ color:var(--accent); background:color-mix(in srgb, var(--accent) 14%, transparent); }
+:root[data-layout="new"] .tabbar .tab.active{ color:var(--accent-ink, var(--accent)); background:color-mix(in srgb, var(--accent) 11%, transparent); }   /* accent-ink: in Hell dunkleres Orange (Kontrast) */
 :root[data-layout="new"] .tabbar .tab.active > span:last-child{ font-weight:700; }
 :root[data-layout="new"] body.mit-tabs #app{ padding-bottom:calc(112px + env(safe-area-inset-bottom)); }
 :root[data-layout="new"] body.mit-tabs .fab{ bottom:calc(98px + env(safe-area-inset-bottom)); }
@@ -96,7 +101,7 @@
 }
 
 /* ---------- Seite „Training“ und Workout-Builder auf Heute (nur New) ---------- */
-:root[data-layout="new"] .topbar .kopf-sym{ width:46px; height:46px; margin-left:2px; }
+:root[data-layout="new"] .topbar .kopf-sym{ width:48px; height:48px; margin-left:2px; }
 :root[data-layout="new"] .suchfeld-neu{
   display:flex; align-items:center; gap:12px; width:100%; margin:6px 0 16px; padding:15px 18px;
   border:1px solid var(--nl-linie); border-radius:999px; background:var(--surface); color:var(--text-dim);
@@ -114,26 +119,29 @@
 }
 :root[data-layout="new"] .training-seite .area-tile.zeile::before{
   content:""; position:absolute; inset:0; z-index:-1;
-  background:linear-gradient(180deg, rgba(8,9,11,.18) 0%, rgba(8,9,11,.35) 45%, rgba(8,9,11,.82) 100%);
+  background:linear-gradient(180deg, rgba(8,9,11,.20) 0%, rgba(8,9,11,.50) 40%, rgba(8,9,11,.86) 100%);
 }
 :root[data-layout="new"] .training-seite .area-tile.zeile + .area-tile.zeile{ border-top:1px solid var(--nl-linie); }
 :root[data-layout="new"] .training-seite .area-tile .at-ico{ background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.26); }
 :root[data-layout="new"] .training-seite .area-tile .at-name{ color:#fff; font-size:18px; }
-:root[data-layout="new"] .training-seite .area-tile .at-sub{ color:rgba(255,255,255,.86); }
+:root[data-layout="new"] .training-seite .area-tile .at-sub{ color:rgba(255,255,255,.92); font-size:13px; }
+:root[data-layout="new"] .training-seite .area-tile .at-name, :root[data-layout="new"] .training-seite .area-tile .at-sub{ text-shadow:0 1px 6px rgba(0,0,0,.55); }
+:root[data-layout="new"] .training-seite .area-tile .at-ico{ box-shadow:none; }
 :root[data-layout="new"] .training-seite .area-tile .at-chev{ color:#fff; }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="katalog"]{ background-image:url("img/neu-workout.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="warm"]{ background-image:url("img/neu-mobility.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="intervall"]{ background-image:url("img/neu-timer.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="reps"]{ background-image:url("img/neu-summit.jpg"); }
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ background-image:url("img/neu-run.jpg"); }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ background-image:url("img/neu-run.jpg"); background-position:50% 72%; }
 
 /* Workout-Builder */
 :root[data-layout="new"] .builder-neu{
   position:relative; isolation:isolate; overflow:hidden; min-height:200px; padding:18px; margin:0 0 14px; color:#fff;
   border:1px solid var(--nl-linie); border-radius:var(--radius); border-top-left-radius:var(--ecke); box-shadow:var(--shadow);
-  background:#2a2a2e url("img/neu-builder.webp") 50% 38%/cover;
+  background:#2a2a2e;
   display:flex; flex-direction:column; gap:14px;
 }
+:root[data-layout="new"] .builder-neu::after{ content:""; position:absolute; inset:-6px; z-index:-2; background:url("img/neu-builder.webp") 50% 38%/cover; filter:blur(1.5px); }
 :root[data-layout="new"] .builder-neu::before{
   content:""; position:absolute; inset:0; z-index:-1;
   background:linear-gradient(180deg, rgba(8,9,11,.14) 0%, rgba(8,9,11,.36) 45%, rgba(8,9,11,.80) 100%);

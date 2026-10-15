@@ -91,6 +91,21 @@
     wahr(!W.studioIstRekord({ kg: 0, rm: 0, wdh: 10 }, { kg: 0, rm: 0, wdh: 10 }), "ohne Gewicht: Gleichstand");
     wahr(!W.studioIstRekord({ kg: 30, rm: 40, wdh: 10 }, { kg: 40, rm: 53, wdh: 10 }), "weniger ist kein Rekord");
   });
+  test("1RM-Schätzung rechnet höchstens mit 10 Wiederholungen; mehr Wiederholungen bei gleichem Gewicht bleibt ein Rekord", function () {
+    gleich(W.satzSchaetzung1RM([60, 15]), W.satzSchaetzung1RM([60, 10]), "15 Wdh. zählen wie 10");
+    nah(W.satzSchaetzung1RM([60, 10]), 80, 0.01, "60 kg × 10 = 80 kg");
+    gleich(W.satzSchaetzung1RM([100, 1]), 100, "1 Wdh. = das Gewicht selbst");
+    var vor = W.studioBestwerte([{ s: [[60, 10], [60, 10]] }]);
+    var jetzt = W.studioBestwerte([{ s: [[60, 10], [60, 10]] }, { s: [[60, 12]] }]);
+    gleich(vor.wBest, 10, "Wiederholungen beim Bestgewicht davor"); gleich(jetzt.wBest, 12, "danach");
+    wahr(W.studioIstRekord(jetzt, vor), "60 kg × 12 nach 60 kg × 10 ist ein Rekord, obwohl das 1RM gleich bleibt");
+    wahr(!W.studioIstRekord(vor, vor), "Gleichstand ist kein Rekord");
+  });
+  test("Frühere Designs: C60 und Retro werden zu Hell, Tapedeck zu Nacht, Klar zu System", function () {
+    gleich(W.migrateTheme("kodak"), "light", "kodak"); gleich(W.migrateTheme("retro"), "light", "retro");
+    gleich(W.migrateTheme("tapedeck"), "nacht", "tapedeck"); gleich(W.migrateTheme("klar"), "system", "klar");
+    gleich(W.migrateTheme("dark"), "dark", "Dunkel bleibt");
+  });
   test("Wochenwerte: je Kalenderwoche (Montag) der beste Wert, der niedrigste bei Zeiten, die Summe beim Volumen", function () {
     var mo = new Date(2026, 9, 5, 10).getTime(), mi = new Date(2026, 9, 7, 18).getTime(), naechste = new Date(2026, 9, 12, 9).getTime();
     var l = [[mo, 40], [mi, 50], [naechste, 30]];

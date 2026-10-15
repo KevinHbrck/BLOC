@@ -77,7 +77,7 @@ function openBereicheSheet(){
   var root = document.getElementById("overlayRoot"), r = bereichReihe().filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
   function zeichnen(){
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bereiche-sheet">'+
-      '<h3>'+esc(t("areasSort"))+'</h3><p>'+esc(t("areasSortHint"))+'</p>'+
+      '<h3>'+esc(t("areasSort"))+'</h3><p>'+esc(t(layoutNeu() ? "areasSortHintNeu" : "areasSortHint"))+'</p>'+
       '<div class="bs-liste">'+r.map(function(k, i){
         var d = bereichDaten(k);
         return '<div class="bs-zeile" data-bereich="'+k+'" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><b>'+esc(d[1])+'</b>'+
@@ -94,7 +94,8 @@ function openBereicheSheet(){
     root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) schliessen(); });
     root.querySelector("[data-ok]").addEventListener("click", function(){
       state.db.settings.bereiche = HOME_GROSS.concat(r); save(); schliessen();
-      if((parseHash()[0] || "home") === "home") renderHome();
+      var rt = parseHash()[0] || "home";
+      if(rt === "home") renderHome(); else if(rt === "training" && typeof renderTraining === "function") renderTraining();   // New: die Bereiche stehen unter „Training“
     });
   }
   function schliessen(){ root.innerHTML = ""; }

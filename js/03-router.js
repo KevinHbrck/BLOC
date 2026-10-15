@@ -131,7 +131,7 @@ function applyTheme(){
   var root = document.documentElement;
   if(THEME_BAR_COLORS[t]) root.setAttribute("data-theme", t);
   else root.removeAttribute("data-theme");
-  root.removeAttribute("data-vintage");   // früheres C60-Design, gibt es nicht mehr
+  root.removeAttribute("data-vintage");   // altes Attribut des früheren Designs C60, falls es noch an der Seite hängt
   /* Aussehen: Klassik (Standard, fehlt in alten Ständen) oder New - unabhängig von Hell/Dunkel/Nacht */
   if(state.db.settings.layout === "new") root.setAttribute("data-layout", "new");
   else root.removeAttribute("data-layout");
@@ -147,7 +147,7 @@ applyLang();
 var app = document.getElementById("app");
 
 /* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
-var TAB_ROUTEN = { home:"#home", training:"#training", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
+var TAB_ROUTEN = { home:"#home", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
 /* Aussehen „New“ (settings.layout): vier Ziele (Heute · Training · Kalender · Fortschritt), Suche und Einstellungen als Symbole in der Kopfzeile */
 function layoutNeu(){ return state.db.settings.layout === "new"; }
 var builderAuto = null;   // "zufall" | "selber": der Workout-Builder auf Heute löst im Baukasten gleich die Wahl aus
@@ -166,7 +166,7 @@ function kopfSymboleNeu(art){
   var s = "";
   if(art === "home"){
     var d = themeIstDunkel();
-    s += '<button type="button" class="iconbtn kopf-sym" data-themetoggle aria-label="'+esc(t(d ? "thLight" : "thDark"))+'">'+svgIcon(d ? SYM_SONNE : ICON_MOON)+'</button>';
+    s += '<button type="button" class="iconbtn kopf-sym" data-themetoggle aria-label="'+esc(t("themeWechsel"))+'">'+svgIcon(d ? ICON_MOON : SYM_SONNE)+'</button>';
   }
   if(art === "home" || art === "training")
     s += '<button type="button" class="iconbtn kopf-sym" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button>';
@@ -176,26 +176,32 @@ function kopfSymboleNeu(art){
 function bindThemeToggle(){
   var b = app.querySelector("[data-themetoggle]");
   if(b) b.addEventListener("click", function(){
-    state.db.settings.theme = themeIstDunkel() ? "light" : "dark";
+    /* Kreis: Hell → Dunkel → Nacht → Hell (aus „System“ wird das Gegenteil des aktuellen Aussehens) */
+    var th = state.db.settings.theme;
+    state.db.settings.theme = th === "light" ? "dark" : th === "dark" ? "nacht" : th === "nacht" ? "light" : (themeIstDunkel() ? "light" : "dark");
     save(); applyTheme(); render();
   });
 }
 /* Runder Hauptknopf rechts neben der Leiste (New): Heute = Training starten, Training = Bauen, Kalender = Einplanen, Fortschritt = keiner */
 function hauptAktionNeu(route){
+  if(route === "home" && fokusAus("katalog")) return null;   // ohne Workout (Fokus) gibt es hier nichts zu starten
   if(route === "home") return { svg:P_PLAY, label:t("hauptStart"), fn:function(){
     var hk = app.querySelector("[data-herostart]");
     if(hk && hk.getAttribute("data-herostart") === "plan"){ hk.click(); return; }   // heute eingeplant: dieses Training starten
     builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog");               // sonst gleich „Überrasch mich“
   } };
   if(route === "training") return { svg:P_PLUS, label:t("hauptBauen"), fn:function(){
-    openActionSheet(t("hauptBauen"), [
-      { ico:HOME_ICON.katalog, label:t("builderZufall"), fn:function(){ builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog"); } },
-      { ico:P_PLUS, label:t("builderSelber"), fn:function(){ builderAuto = "selber"; katTabSetzen("baukasten"); go("#katalog"); } },
-      { ico:HOME_ICON.intervall, label:t("tabTimer"), fn:function(){ go("#intervall"); } },
-      { ico:HOME_ICON.reps, label:t("repTitle"), fn:function(){ go("#reps"); } }
-    ]);
+    var m = [];
+    if(!fokusAus("katalog")){
+      m.push({ ico:HOME_ICON.katalog, label:t("builderZufall"), fn:function(){ builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog"); } });
+      m.push({ ico:P_PLUS, label:t("builderSelber"), fn:function(){ builderAuto = "selber"; katTabSetzen("baukasten"); go("#katalog"); } });
+    }
+    if(!fokusAus("intervall")) m.push({ ico:HOME_ICON.intervall, label:t("tabTimer"), fn:function(){ go("#intervall"); } });
+    if(!fokusAus("reps")) m.push({ ico:HOME_ICON.reps, label:t("repTitle"), fn:function(){ go("#reps"); } });
+    if(!m.length) return go("#settings");
+    openActionSheet(t("hauptBauen"), m);
   } };
-  if(route === "kalender") return { svg:P_PLUS, label:t("kalAdd"), fn:function(){ kalHinzuMenue(kalAuswahl || kalTagKey(Date.now())); } };
+  if(route === "kalender") return { svg:P_PLUS, label:t("kalAdd"), fn:function(){ kalHinzuMenue(kalAnsicht === "monat" && kalAuswahl ? kalAuswahl : kalTagKey(Date.now())); } };
   return null;
 }
 var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", stats:"#stats" };
@@ -229,7 +235,6 @@ function tabLeiste(route){
   el.innerHTML = neu
     ? '<div class="pille">'+tabsHTML+'</div>'+(haupt ? '<button type="button" class="hauptknopf" data-haupt aria-label="'+esc(haupt.label)+'" title="'+esc(haupt.label)+'">'+svgIcon(haupt.svg)+'</button>' : '')
     : tabsHTML;
-  el.classList.toggle("mit-haupt", !!haupt);
   el.classList.remove("hidden"); document.body.classList.add("mit-tabs");
   var hb = el.querySelector("[data-haupt]");
   if(hb) hb.addEventListener("click", function(){ haupt.fn(); });
@@ -246,6 +251,8 @@ function render(){
   if(document.getElementById("playerRoot").innerHTML) return; // don't re-render behind active player
   var parts = parseHash();
   var route = parts[0] || "home";
+  if(route === "training" && !layoutNeu()){ route = "home"; navStack[navStack.length-1] = "#home"; setUrl("#home"); }   // Seite „Training“ gibt es nur im Aussehen New
+  if(route !== "katalog") builderAuto = null;   // ein nicht ausgelöster Wunsch des Workout-Builders gilt nicht für den nächsten Besuch
   tabLeiste(route);
   if(route==="home" || route==="training"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
     stPlanAktiv = null; stPlanBauen = false;   // ein zuletzt geöffneter Plan gilt nicht weiter (Satz-/Timer-Wahl und Training speichern folgen sonst einem alten Plan)

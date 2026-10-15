@@ -473,7 +473,8 @@ function renderStudioKarte(id){
     studioPR = typ === "w" ? null :
       kg === 0 && davor.kg === 0 ? (davor.wdh > 0 && w > davor.wdh ? { id:id, art:"wdh", w:w, vorher:davor.wdh } : null) :   // ohne Gewicht: mehr Wiederholungen
       davor.kg > 0 && kg > davor.kg ? { id:id, art:"kg", kg:kg, w:w, vorher:davor.kg } :
-      davor.rm > 0 && rm > davor.rm + .05 ? { id:id, art:"rm", kg:kg, w:w, rm:rm, vorherRm:davor.rm } : null;
+      davor.rm > 0 && rm > davor.rm + .05 ? { id:id, art:"rm", kg:kg, w:w, rm:rm, vorherRm:davor.rm } :
+      davor.kg > 0 && kg === davor.kg && w > davor.wBest ? { id:id, art:"wdh", w:w, vorher:davor.wBest } : null;   // gleiches Gewicht, mehr Wiederholungen
     studioSatzTypWahl = "n"; studioRpeWahl = 0;
     if(!koerper) en.kg = kg;
     en.zuletzt = jetzt;

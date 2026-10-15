@@ -84,19 +84,25 @@ function satzText(x){   // „40×12“, ohne Gewicht „12 Wdh.“, bei besonde
   return (ty === "n" ? "" : t("satzTyp_"+ty)+" ")+(x[0] > 0 ? studioKg(x[0])+"×"+x[1] : x[1]+" "+t("wdhKurz"))+(x[3] > 0 ? " @ "+anstrengungText(x[3]) : "");
 }
 /* Geschätztes 1RM und Bestgewicht über alle Einheiten (nur Arbeitssätze); davor = nur Einheiten vor dem Index i.
-   wdh: die meisten Wiederholungen in einem Satz, wsum: die meisten in einer Einheit (für Übungen ohne Gewicht) */
+   wdh: die meisten Wiederholungen in einem Satz, wsum: die meisten in einer Einheit (für Übungen ohne Gewicht),
+   wBest: die meisten Wiederholungen beim Bestgewicht (mehr Wiederholungen bei gleichem Gewicht ist ein Fortschritt, auch über 10 Wdh.) */
 function studioBestwerte(log, bis){
-  var kg = 0, rm = 0, vol = 0, wdh = 0, wsum = 0;
+  var kg = 0, rm = 0, vol = 0, wdh = 0, wsum = 0, wBest = 0;
   log.forEach(function(l, i){
     if(bis != null && i >= bis) return;
-    arbeitsSaetze(l).forEach(function(x){ kg = Math.max(kg, x[0]); rm = Math.max(rm, satzSchaetzung1RM(x)); wdh = Math.max(wdh, x[1]); });
+    arbeitsSaetze(l).forEach(function(x){
+      if(x[0] > kg){ kg = x[0]; wBest = x[1]; } else if(x[0] === kg){ wBest = Math.max(wBest, x[1]); }
+      rm = Math.max(rm, satzSchaetzung1RM(x)); wdh = Math.max(wdh, x[1]);
+    });
     vol = Math.max(vol, studioVolumen(l)); wsum = Math.max(wsum, studioWdhSumme(l));
   });
-  return { kg:kg, rm:rm, vol:vol, wdh:wdh, wsum:wsum };
+  return { kg:kg, rm:rm, vol:vol, wdh:wdh, wsum:wsum, wBest:wBest };
 }
-/* Neuer Rekord einer Einheit gegenüber allem davor: mit Gewicht Bestgewicht oder 1RM, ohne Gewicht die meisten Wiederholungen in einem Satz */
+/* Neuer Rekord einer Einheit gegenüber allem davor: mit Gewicht Bestgewicht, 1RM oder mehr Wiederholungen beim Bestgewicht,
+   ohne Gewicht die meisten Wiederholungen in einem Satz */
 function studioIstRekord(jetzt, vor){
-  if(jetzt.kg > 0 || vor.kg > 0) return jetzt.kg > vor.kg || jetzt.rm > vor.rm + .001;
+  if(jetzt.kg > 0 || vor.kg > 0)
+    return jetzt.kg > vor.kg || jetzt.rm > vor.rm + .001 || (vor.kg > 0 && jetzt.kg === vor.kg && jetzt.wBest > vor.wBest);
   return jetzt.wdh > vor.wdh;
 }
 function studioTag(ts){ var d = new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
