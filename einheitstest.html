@@ -168,6 +168,14 @@
     gleich(W.gearChipsHTML(W.findExercise("pull-ups"), true), "", "live: nichts");
     gleich(W.gearChipsHTML(null, false), "", "ohne Übung");
   });
+  test("Foto-Thema eines Workouts: Name zuerst, sonst größte Muskelgruppe, gemischt = ganz", function () {
+    gleich(W.workoutThema([], "Bauch & Core Basis"), "core", "Bauch → Core");
+    gleich(W.workoutThema([], "Rücken Zugkraft"), "ruecken", "Rücken");
+    gleich(W.workoutThema(["push-ups"], "Brust (ohne Geräte)"), "brust", "Brust");
+    gleich(W.workoutThema(["air-squats", "air-squats"], ""), "beine", "Kniebeugen ohne Namenshinweis");
+    gleich(W.workoutThema(["air-squats"], "Cardio Express"), "ganz", "Cardio = ganz");
+    gleich(W.workoutThema([], ""), "ganz", "ohne Übungen");
+  });
 
   /* ---------- Summit: Mengen und Zeiten ---------- */
   test("Mengen halbieren: Wiederholungen mindestens 1, Strecken in m/km, Zeiten unverändert", function () {

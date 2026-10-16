@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · Favoriten: Bilder passend zum Inhalt (Fassung 2026-10-16-26)
+
+- **Foto-Wahl nach Inhalt** (Modern, Heute › Favoriten): `workoutThema()` (js/08-koerperkarte.js) bestimmt je Workout das Thema, zuerst über den Namen (Bauch/Core, Rücken/Zug, Brust, Schulter, Arme, Beine; „Cardio/Full Body/HIIT“ = gemischt), sonst über die größte Muskelgruppe. Mobility bekommt Dehnen-Bilder, Timer Hallenbilder, Fitnessstudio-Workouts Studio-Bilder; je Thema ein eigener Pool in Dunkel und Hell (`FOTO_POOL`/`FOTO_POOL_HELL`, `favFotoPool` in js/10-gemeinsam.js). Kein Bild doppelt, solange es freie gibt. Neuer Einheitstest (38).
+- Helle Favoritenkarten: der warme Verlauf beginnt früher und deckt die Schrift besser.
+- Noch offen: weitere Motive (Bauch/Core dunkel, Brust hell) – dafür fehlen passende Fotos im Vorrat; die Recherche läuft.
+
 ## 2026-10-16 · Modern: feste Leiste, Run-Seite mit Blur-Foto, lockere Begrüßung, Classic/Modern (Fassung 2026-10-16-25)
 
 - **Untere Leiste** (Modern) jetzt fest am unteren Rand über die volle Breite mit eigenem, deckendem Hintergrund (Rückmeldung eines Testers): nichts scheint mehr durch, Pille und runder Hauptknopf bleiben, die Seiten haben unten Polster.

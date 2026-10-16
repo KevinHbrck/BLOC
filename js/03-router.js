@@ -161,7 +161,16 @@ var FOTO_POOL = (function(){
     ti:  ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
     ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
     rep: ["img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
-    run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")]
+    run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
+    /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
+    core:     [P("liegestuetz-halle"), P("liegestuetz-feld"), P("kraft-sw")],
+    beine:    [P("mobility-ausfall"), P("freiluft-meer"), P("studio-gewichtsblock")],
+    ruecken:  [P("freiluft-park"), "img/neu-freiluft.jpg", P("freiluft-sw")],
+    brust:    [P("liegestuetz-strand"), P("liegestuetz-stadt"), P("liegestuetz-feld")],
+    arme:     [P("studio-hantelreihe"), P("kraft-sw"), P("studio-halle")],
+    schulter: [P("kraft-sw"), P("studio-hantelreihe"), P("freiluft-park")],
+    mobility: ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
+    timer:    ["img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-halle")]
   };
 })();
 /* Heller Modus: helle Fotos (Pexels, siehe BilderBloc\Helle Bilder). Silhouetten und Schwarz-Weiß-Bilder bleiben dem Dunkel überlassen;
@@ -172,7 +181,15 @@ var FOTO_POOL_HELL = {
   ti:  ["img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
   ws:  ["img/neu-h-dehnen.jpg", "img/neu-h-band.jpg"],
   rep: ["img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],   // nur Querformat (flache Summit-Karte)
-  run: FOTO_POOL.run
+  run: FOTO_POOL.run,
+  core:     ["img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
+  beine:    ["img/neu-h-kreuzheben.jpg", "img/neu-h-band.jpg", "img/neu-h-halle.jpg"],
+  ruecken:  ["img/neu-h-klimmzug-rueck.jpg", "img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],
+  brust:    ["img/neu-h-rack.jpg", "img/neu-h-halle.jpg", "img/neu-h-kreuzheben.jpg"],
+  arme:     ["img/neu-h-kb-gelb.jpg", "img/neu-h-rack.jpg", "img/neu-h-kettlebell.jpg"],
+  schulter: ["img/neu-h-rack.jpg", "img/neu-h-ringe.jpg", "img/neu-h-klimmzug.jpg"],
+  mobility: ["img/neu-h-dehnen.jpg", "img/neu-h-band.jpg"],
+  timer:    ["img/neu-h-halle.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"]
 };
 function fotoPool(){ return themeIstDunkel() ? FOTO_POOL : FOTO_POOL_HELL; }
 /* Bildausschnitt je Foto: breite, flache Karten zeigen nur einen Streifen; hier steht, welcher Teil des Bildes dabei
@@ -216,7 +233,7 @@ function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
     var pool = POOL[it.pool] || POOL.st, h = fotoHash(it.key), w = null, i, f;
     for(i = 0; i < pool.length && !w; i++){ f = pool[(h + i) % pool.length]; if(!belegt[f]) w = f; }
     var VERWANDT = { st:["st"], tp:["tp", "rep"], ti:["ti", "st"], ws:["ws"], rep:["rep"], run:["run"] };   // erst Bilder aus verwandten Arten
-    (VERWANDT[it.pool] || []).forEach(function(a){
+    (VERWANDT[it.pool] || ["st", "tp"]).forEach(function(a){
       var p2 = POOL[a] || [];
       for(i = 0; i < p2.length && !w; i++){ f = p2[(h + i) % p2.length]; if(!belegt[f]) w = f; }
     });

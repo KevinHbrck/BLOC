@@ -24,6 +24,26 @@ function mgVerteilung(ex){
   }
   return res;
 }
+/* Thema eines Workouts für die Foto-Wahl (Favoriten): die Muskelgruppe mit dem größten Anteil (ab 30 %, bei Gleichstand feste Rangfolge), sonst „ganz“ (gemischt).
+   ids: Übungs-IDs oder Einträge { ex }. Rumpf heißt „core“. */
+function workoutThema(ids, name){
+  var nm = String(name || "").toLowerCase();   // der Name sagt oft mehr als die Mischung der Muskeln („Brust“, „Rücken Zug“, „Bauch & Core“, „Cardio“)
+  if(/cardio|full body|ganzkörper|hiit|conditioning/.test(nm)) return "ganz";
+  var NAME = [[/bauch|core|rumpf/, "core"], [/rücken|zug|pull/, "ruecken"], [/brust|push|drück/, "brust"], [/schulter/, "schulter"], [/arm|bizeps|trizeps/, "arme"], [/bein|leg|\bpo\b|gesäß|kniebeug|squat/, "beine"]];
+  for(var i = 0; i < NAME.length; i++) if(NAME[i][0].test(nm)) return NAME[i][1];
+  var sum = {}, tot = 0;
+  (ids || []).forEach(function(x){
+    var ex = findExercise(typeof x === "string" ? x : x && x.ex);
+    if(!ex || ex.main === "stretch") return;
+    var v = mgVerteilung(ex);
+    Object.keys(v).forEach(function(g){ sum[g] = (sum[g] || 0) + v[g]; tot += v[g]; });
+  });
+  if(!tot) return "ganz";
+  var mx = 0, best = "";
+  Object.keys(sum).forEach(function(g){ if(sum[g] > mx) mx = sum[g]; });
+  ["beine", "ruecken", "brust", "rumpf", "schulter", "arme"].forEach(function(g){ if(!best && (sum[g] || 0) >= mx*0.9) best = g; });   // fast gleichauf: feste Rangfolge
+  return mx/tot < 0.3 ? "ganz" : (best === "rumpf" ? "core" : best);
+}
 function mgProzent(ids){   // Zeilen in fester Reihenfolge, Summe 100 (größter Rest)
   var sum = {}, tot = 0;
   ids.forEach(function(id){
