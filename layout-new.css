@@ -132,7 +132,7 @@
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="warm"]{ background-image:url("img/neu-mobility.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="intervall"]{ background-image:url("img/neu-timer.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="reps"]{ background-image:url("img/neu-summit.jpg"); }
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ background-image:url("img/neu-run.jpg"); background-position:50% 72%; }
+:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ background-image:url("img/bereich-run.jpg"); background-position:50% 50%; }
 
 /* Workout-Builder */
 :root[data-layout="new"] .builder-neu{
@@ -285,14 +285,6 @@
 :root[data-layout="new"] .gn-play{ width:auto; height:auto; background:none; color:var(--accent-ink, var(--accent)); font-size:22px; }
 :root[data-layout="new"] .builder-neu::after{ inset:0; filter:none; }
 
-/* ---------- Run ohne Foto: ruhige Karte mit eigenen Höhenlinien (keine Karte, keine Daten) ---------- */
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{
-  background-color:#15171b;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 120' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.13' stroke-width='1' vector-effect='non-scaling-stroke'%3E%3Cpath id='a' vector-effect='non-scaling-stroke' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(.8) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(.6) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(.4) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(1.25) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3Cpath vector-effect='non-scaling-stroke' transform='translate(300 62) scale(1.6) translate(-300 -62)' d='M250 18C285 6 340 16 362 42S372 100 330 108 232 112 206 90 215 30 250 18Z'/%3E%3C/g%3E%3C/svg%3E");
-  background-size:cover; background-position:50% 50%;
-}
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]::before{ background:none; }
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(255,255,255,.14); }
 
 /* ---------- Timer-Seite wie im Entwurf: Foto-Kopf, große Abschnittstitel, flache Zeilen mit großem Play-Kreis ---------- */
 :root[data-layout="new"] .kopf-bereich{

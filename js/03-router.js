@@ -160,17 +160,38 @@ var FOTO_POOL = (function(){
     st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
     ti:  ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
     ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
-    rep: ["img/neu-summit.jpg", P("freiluft-meer"), P("freiluft-sw"), P("freiluft-park")],
+    rep: ["img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")]
   };
 })();
 /* Bildausschnitt je Foto: breite, flache Karten zeigen nur einen Streifen; hier steht, welcher Teil des Bildes dabei
    sichtbar bleiben soll (Prozent für background-position bzw. object-position). Ohne Eintrag gilt der Wert aus layout-new.css. */
 var FOTO_FOKUS = {
-  "img/neu-summit.jpg":"50% 73%",            // Reck und Meer liegen im unteren Drittel, oben nur Himmel
+  "img/neu-summit.jpg":"50% 62%",            // Reck, Horizont und Radfahrer; oben nur Himmel
+  "img/neu-p-freiluft-leiter.jpg":"50% 62%",
   "img/neu-p-freiluft-meer.jpg":"50% 76%",   // Sportplatz am Meer
   "img/neu-p-freiluft-park.jpg":"50% 50%",   // Stangen in der Mitte
-  "img/neu-p-freiluft-sw.jpg":"50% 45%"
+  "img/neu-p-freiluft-sw.jpg":"50% 45%",
+  "img/neu-freiluft.jpg":"50% 66%",          // Gerüste knapp unter der Mitte
+  "img/bereich-run.jpg":"85% 50%",           // klassisches Run-Bild: Läufer rechts der Mitte
+  "img/neu-run.jpg":"50% 60%",
+  "img/neu-p-run-licht.jpg":"50% 70%",
+  "img/neu-p-run-strasse.jpg":"50% 68%",
+  "img/neu-p-run-sw.jpg":"50% 70%",
+  "img/neu-p-run-wald.jpg":"50% 40%",
+  "img/neu-p-run-weg.jpg":"50% 82%",
+  "img/neu-mobility.jpg":"50% 25%",          // Kopf und Arme statt nur der Hände
+  "img/neu-p-mobility-ausfall.jpg":"50% 35%",
+  "img/neu-p-mobility-sitz.jpg":"50% 60%",
+  "img/neu-workout.jpg":"50% 48%",
+  "img/neu-timer.jpg":"50% 66%",             // Person auf der Box im unteren Drittel
+  "img/neu-kopf.jpg":"50% 60%",
+  "img/neu-p-kraft-sw.jpg":"50% 25%",
+  "img/neu-p-liegestuetz-strand.jpg":"50% 70%",
+  "img/neu-p-liegestuetz-stadt.jpg":"50% 55%",
+  "img/neu-p-liegestuetz-halle.jpg":"50% 75%",
+  "img/neu-p-liegestuetz-feld.jpg":"50% 55%",
+  "img/neu-p-studio-halle.jpg":"50% 55%"
 };
 function fotoFokus(pfad){ return FOTO_FOKUS[pfad] || ""; }
 function fotoHash(s){ var h = 0; s = String(s); for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003; return h; }
@@ -180,7 +201,7 @@ function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
   items.slice().sort(function(a, b){ return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; }).forEach(function(it){
     var pool = FOTO_POOL[it.pool] || FOTO_POOL.st, h = fotoHash(it.key), w = null, i, f;
     for(i = 0; i < pool.length && !w; i++){ f = pool[(h + i) % pool.length]; if(!belegt[f]) w = f; }
-    var VERWANDT = { st:["st"], tp:["tp", "rep"], ti:["ti", "st"], ws:["ws"], rep:["rep", "tp"], run:["run"] };   // erst Bilder aus verwandten Arten
+    var VERWANDT = { st:["st"], tp:["tp", "rep"], ti:["ti", "st"], ws:["ws"], rep:["rep"], run:["run"] };   // erst Bilder aus verwandten Arten
     (VERWANDT[it.pool] || []).forEach(function(a){
       var p2 = FOTO_POOL[a] || [];
       for(i = 0; i < p2.length && !w; i++){ f = p2[(h + i) % p2.length]; if(!belegt[f]) w = f; }
@@ -196,6 +217,7 @@ function bereichFotosNeu(){
   var tag = Math.floor(Date.now()/86400000), ART = { katalog:"st", warm:"ws", intervall:"ti", reps:"rep", run:"run" }, out = {};
   var zu = fotosZuteilen(Object.keys(ART).map(function(k){ return { key:k + ":" + tag, pool:ART[k] }; }));
   Object.keys(ART).forEach(function(k){ out[k] = zu[k + ":" + tag]; });
+  out.run = "img/bereich-run.jpg";   // Run behält das klassische Läuferbild (Karte und Kopf der Run-Seite)
   return out;
 }var builderAuto = null;   // "zufall" | "selber": der Workout-Builder auf Heute löst im Baukasten gleich die Wahl aus
 /* Kopfzeilen-Symbole im Aussehen „New“ wie im Entwurf: Heute = Hell/Dunkel + Suche + Einstellungen, Training = Suche + Einstellungen,

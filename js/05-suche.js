@@ -292,7 +292,7 @@ function renderTraining(){
   var fotos = bereichFotosNeu();
   app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){
     var k = el.getAttribute("data-bereich");
-    if(k !== "run" && fotos[k]){ el.style.backgroundImage = "url(" + fotos[k] + ")"; var fk = fotoFokus(fotos[k]); if(fk) el.style.backgroundPosition = fk; }   // Run bleibt auf der Karte ohne Foto (Höhenlinien, siehe layout-new.css)
+    if(fotos[k]){ el.style.backgroundImage = "url(" + fotos[k] + ")"; var fk = fotoFokus(fotos[k]); if(fk) el.style.backgroundPosition = fk; }
   });
   app.querySelectorAll("[data-bereich]").forEach(function(el){ langDruck(el, openBereicheSheet); });
   var wib = app.querySelector("[data-wasistwas]");
