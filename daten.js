@@ -820,7 +820,7 @@ var ILLU_SEQ = {
    Nur die Zeiten, die Posen bleiben unverändert. Klatsch-Liegestütz: kontrolliert runter, explosiv hoch, kurze Flugphase. */
 ILLU_SEQ["mountain-climbers"] = { k:[ILLU_POSES["mountain-climbers"][0], ILLU_POSES["mountain-climbers"][1]], t:[[.05,.26],[.05,.26]] };
 ILLU_SEQ["high-knees"]        = { k:[ILLU_POSES["high-knees"][0], ILLU_POSES["high-knees"][1]], t:[[.04,.18],[.04,.18]] };
-ILLU_SEQ["sprint-in-place"]   = { k:[ILLU_POSES["sprint-in-place"][0], ILLU_POSES["sprint-in-place"][1]], t:[[.03,.13],[.03,.13]] };
+ILLU_SEQ["sprint-in-place"]   = { k:[ILLU_POSES["sprint-in-place"][0], ILLU_POSES["sprint-in-place"][1]], t:[[.04,.17],[.04,.17]] };
 ILLU_SEQ["clap-push-ups"]     = { k:[ILLU_POSES["clap-push-ups"][0], ILLU_POSES["clap-push-ups"][1]], t:[[.3,.16],[.04,.32]] };
 /* Standbilder (Listen) zeigen eine typische Phase */
 Object.assign(ILLU_POSES, {
