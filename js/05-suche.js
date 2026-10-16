@@ -252,7 +252,7 @@ function kopfNeuHTML(){
   var h = new Date().getHours(), lang = currentLang() === "en" ? "en-GB" : "de-DE";
   var gruss = t(h < 11 ? "gruMorgen" : h < 17 ? "gruTag" : "gruAbend");
   var datum = new Date().toLocaleDateString(lang, { weekday:"long", day:"numeric", month:"long" });
-  return '<section class="kopf-neu"><img class="kn-bild" src="img/neu-kopf.jpg" alt="" draggable="false"><div class="kn-tint"></div>'+
+  return '<section class="kopf-neu"><img class="kn-bild" src="img/neu-kopf.jpg" alt="" draggable="false"><img class="kn-bild kn-hell" src="img/neu-kopf-hell.jpg" alt="" draggable="false"><div class="kn-tint"></div>'+
     '<div class="kn-zeile"><div class="marke-neu"><b>BLOC</b><small>Modular Training Builder</small></div><div class="kn-sym">'+kopfSymboleNeu("home")+'</div></div>'+
     '<div class="kn-gruss"><span>'+esc(datum)+'</span><b>'+esc(gruss)+'</b></div></section>';
 }
