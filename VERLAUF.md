@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · Modern: feste Leiste, Run-Seite mit Blur-Foto, lockere Begrüßung, Classic/Modern (Fassung 2026-10-16-25)
+
+- **Untere Leiste** (Modern) jetzt fest am unteren Rand über die volle Breite mit eigenem, deckendem Hintergrund (Rückmeldung eines Testers): nichts scheint mehr durch, Pille und runder Hauptknopf bleiben, die Seiten haben unten Polster.
+- **Run-Seite** (Modern): das Läuferfoto liegt geblurrt hinter der ganzen Seite (dunkel: Gegenlicht-Läufer `bereich-run.jpg`, hell: Waldweg `neu-h-trail.jpg`, Pexels 32798750), Kopf ohne eigenes Foto, Statistik und Verlauf als Karten; **während des Laufens** steht alles in einer weißen Karte (im dunklen Modus bleibt sie weiß, „Nacht“ bleibt dunkel).
+- **Begrüßung** auf Heute: statt „Guten Morgen/Tag/Abend“ lockere Varianten (Moin, Servus, Grüß dich …; Englisch: Hey, Hi there …) aus `gru…Liste` in texte.js, pro Tag und Tageszeit stabil.
+- **Umbenannt**: „Klassik“ heißt jetzt **Classic**, „New“ heißt **Modern** (Einstellungen, Texte, README); die Speicherwerte `classic`/`new` bleiben, alte Stände laufen weiter.
+- Offen: Karten-Ansicht der Lauf-App nach Referenzbild (liegt mir nicht vor, eine echte Karte bräuchte Netz), FAQ-Bereich (wartet auf den Entwurf der Sportwissenschaft), Bilder inhaltlich den Workouts zuordnen (folgt).
+
 ## 2026-10-16 · Hell: helle Karten und Fotos, Gerätechips, Kalender-/Katalog-Kopf, Lesbarkeit (Fassung 2026-10-16-24, Nummer -23 hatte zuvor schon die Tempo-Korrektur der Figuren)
 
 - **Geräte-Chips** unter der Figur im Info-Fenster einer Übung (Symbol aus `EQUIP_ICON` plus Name der Ausrüstung, DE/EN über die vorhandenen Gerätenamen); im Timer-Fenster (live) keine. Neuer Einheitstest (37).

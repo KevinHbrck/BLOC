@@ -244,15 +244,20 @@ function renderHome(){
 function bereichKopfNeuHTML(key, titel, kicker, extra, opt){
   opt = opt || {};
   var foto = opt.foto ? (themeIstDunkel() || !opt.fotoHell ? opt.foto : opt.fotoHell) : (bereichFotosNeu()[key] || "img/neu-timer.jpg");   // sonst dasselbe Bild wie die Karte auf Training
-  return '<section class="kopf-bereich"><img class="kb-bild" src="'+foto+'" alt="" draggable="false"'+(fotoFokus(foto) ? ' style="object-position:'+fotoFokus(foto)+'"' : '')+'>'+
+  return '<section class="kopf-bereich'+(opt.klar ? ' klar' : '')+'">'+(opt.klar ? '' : '<img class="kb-bild" src="'+foto+'" alt="" draggable="false"'+(fotoFokus(foto) ? ' style="object-position:'+fotoFokus(foto)+'"' : '')+'>')+
     '<div class="kb-zeile">'+(opt.zurueck === false ? '<span></span>' : '<button type="button" class="iconbtn kb-rund" data-back="'+(opt.zurueck || "#training")+'" aria-label="'+esc(t("back"))+'">'+ICON_BACK+'</button>')+
     '<span class="kb-rechts">'+(extra || "")+(opt.ohneSuche ? "" : '<button type="button" class="iconbtn kb-rund" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button>')+'</span></div>'+
     '<div class="kb-text"><span class="kb-kicker">'+esc(kicker)+'</span><h1>'+esc(titel)+'</h1></div></section>';
 }
 /* Aussehen „New“: Kopf von Heute wie im Entwurf - Foto mit Logo, Symbolen und Gruß (ohne Namen: die App kennt keinen) */
+/* Begrüßung: lockere Varianten je Tageszeit (texte.js, durch | getrennt); pro Tag und Tageszeit stabil, damit sie beim Neuzeichnen nicht wechselt */
+function grussWort(h){
+  var per = h < 11 ? "Morgen" : h < 17 ? "Tag" : "Abend", liste = t("gru" + per + "Liste").split("|");
+  return liste[fotoHash(per + Math.floor(Date.now()/86400000)) % liste.length];
+}
 function kopfNeuHTML(){
   var h = new Date().getHours(), lang = currentLang() === "en" ? "en-GB" : "de-DE";
-  var gruss = t(h < 11 ? "gruMorgen" : h < 17 ? "gruTag" : "gruAbend");
+  var gruss = grussWort(h);
   var datum = new Date().toLocaleDateString(lang, { weekday:"long", day:"numeric", month:"long" });
   return '<section class="kopf-neu"><img class="kn-bild" src="img/neu-kopf.jpg" alt="" draggable="false"><img class="kn-bild kn-hell" src="img/neu-kopf-hell.jpg" alt="" draggable="false"><div class="kn-tint"></div>'+
     '<div class="kn-zeile"><div class="marke-neu"><b>BLOC</b><small>Modular Training Builder</small></div><div class="kn-sym">'+kopfSymboleNeu("home")+'</div></div>'+

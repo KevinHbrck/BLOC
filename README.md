@@ -49,7 +49,7 @@ Musik anderer Apps läuft weiter.
 **Helligkeit: System · Hell · Dunkel · Nacht.** Farben nach 60-30-10: ruhige Flächen, Bereichsfarben je Bereich, Akzentfarbe nur für
 die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`).
 
-**Aussehen: Klassik · New** (seit 2026-10-15, Einstellungen › Darstellung, `settings.layout`, Standard Klassik). Der Look von „New“ steht in
+**Aussehen: Classic · Modern** (heißt seit 2026-10-16 so, früher Klassik · New; Einstellungen › Darstellung, `settings.layout` mit den Werten `classic` und `new` unverändert; Standard bei einem frischen Start: Modern in Dunkel, bestehende Stände bleiben Classic). Der Look von „New“ steht in
 `layout-new.css` (alles unter `:root[data-layout="new"]`, gesetzt in `applyTheme`): größere Rundungen mit kleiner Ecke oben links, ruhige
 Konturen, Wochenpunkte weiß / orange / Ring, die untere Leiste als schwebende Pille mit orangenem aktivem Reiter. Dazu ändert „New“ die
 Navigation (nur das, Funktionen bleiben): unten **Heute · Training · Kalender · Fortschritt**; Suche und Einstellungen sind Symbole oben auf

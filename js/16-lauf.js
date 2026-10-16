@@ -426,7 +426,9 @@ function runDunkelWeg(){ var d = document.getElementById("run-dunkel"); if(d) d.
 function renderRunVor(){
   var v = runVor;
   app.innerHTML =
+    (layoutNeu() ? runHintergrundHTML() : '') +
     topbar(t("runTitle"), { back:"#home" }) +
+    (layoutNeu() ? '<div class="run-weiss">' : '') +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runVorTitel"))+'</div><div id="run-vor" class="rg-zeit rg-vor">'+Math.max(1, Math.ceil((v.ende - Date.now())/1000))+'</div></div>'+
     '<div class="run-gps" id="run-vor-gps">'+esc(runVorText())+'</div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary run-dunkelbtn" data-rundark>'+svgIcon(ICON_MOON)+' '+esc(t("runDark"))+'</button>'+
@@ -443,6 +445,10 @@ function renderRunVor(){
   app.querySelector("[data-runjetzt]").addEventListener("click", runVorLos);
   app.querySelector("[data-runabbr]").addEventListener("click", weg);
 }
+/* Aussehen „Modern“: das Läuferfoto liegt geblurrt hinter der ganzen Run-Seite (dunkel: Gegenlicht-Läufer, hell: Waldweg), darüber stehen weiße Karten */
+function runHintergrundHTML(){
+  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+(themeIstDunkel() ? "img/bereich-run.jpg" : "img/neu-h-trail.jpg")+')"></i></div>';
+}
 function renderRun(){
   var s = state.db.settings;
   if(!run && !runVor) runDunkelWeg();
@@ -452,7 +458,7 @@ function renderRun(){
   var km = runs.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
   var live = s.runLive, art = runArt();
   app.innerHTML =
-    (layoutNeu() ? bereichKopfNeuHTML("run", t("runTitle"), t("runKicker")) : topbar(t("runTitle"), { back:"#home" }) + bereichBildHTML("run")) +
+    (layoutNeu() ? runHintergrundHTML() + bereichKopfNeuHTML("run", t("runTitle"), t("runKicker"), "", { klar:true }) : topbar(t("runTitle"), { back:"#home" }) + bereichBildHTML("run")) +
     (live ?'<div class="card run-live"><b>'+esc(t("runBroken"))+'</b><div class="sub">'+esc(t("runBrokenText", { km:runKm(live.dist) }))+'</div>'+
       '<div class="btn-row"><button type="button" class="btn btn-secondary" data-runlivedel>'+esc(t("runDiscard"))+'</button>'+
       '<button type="button" class="btn btn-primary" data-runlivesave>'+esc(t("runRecover"))+'</button></div></div>' : '')+
@@ -517,7 +523,9 @@ function renderRun(){
 function renderRunLive(){
   var r = run;
   app.innerHTML =
+    (layoutNeu() ? runHintergrundHTML() : '') +
     topbar(t("runTitle"), { back:"#home" }) +
+    (layoutNeu() ? '<div class="run-weiss">' : '') +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+(r.ziel && r.ziel.km > 0 ? '<div class="run-ziel">'+esc(t("runZielKm", { km:runKm(r.ziel.km*1000) }))+'</div>' : '')+'</div>'+
     '<div class="run-raster">'+
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
@@ -529,6 +537,7 @@ function renderRunLive(){
       (runAnsageEinst().every ? '<button type="button" class="btn btn-secondary run-stumm" data-runstumm aria-pressed="'+!!r.stumm+'">'+esc(t(r.stumm ? "runStummAus" : "runStummAn"))+'</button>' : '')+
       '<button type="button" class="btn btn-danger run-ende" data-runend>'+esc(t("runEnd"))+'</button></div>'+
     '<div class="tm-hint run-haltehint">'+esc(t("runHaltenHint"))+'</div>'+
+    (layoutNeu() ? '</div>' : '') +
     '<div style="height:40px"></div>';
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
