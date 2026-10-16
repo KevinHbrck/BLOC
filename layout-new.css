@@ -374,7 +374,7 @@
 /* Heute, Kopf im hellen Modus (Hell oder System bei hellem Gerät): helles Foto statt des dunklen Studios, Schrift dunkel, Verlauf nach unten in die helle Fläche.
    Zwei gleiche Regelsätze, weil „System“ kein data-theme setzt und nur per prefers-color-scheme erkannt wird. */
 :root[data-layout="new"] .kn-hell{ display:none; }
-:root[data-layout="new"][data-theme="light"] .kn-hell{ display:block; object-position:50% 45%; }
+:root[data-layout="new"][data-theme="light"] .kn-hell{ display:block; object-position:50% 25%; }
 :root[data-layout="new"][data-theme="light"] .kn-bild:not(.kn-hell){ display:none; }
 :root[data-layout="new"][data-theme="light"] .kopf-neu{ color:var(--text); }
 :root[data-layout="new"][data-theme="light"] .kn-tint{ background:linear-gradient(to top left, rgba(255,90,54,.30) 0%, rgba(255,90,54,0) 52%); }
@@ -383,7 +383,7 @@
 :root[data-layout="new"][data-theme="light"] .marke-neu small,
 :root[data-layout="new"][data-theme="light"] .kn-gruss span{ color:var(--text); opacity:.78; }
 @media (prefers-color-scheme: light){
-  :root[data-layout="new"]:not([data-theme]) .kn-hell{ display:block; object-position:50% 45%; }
+  :root[data-layout="new"]:not([data-theme]) .kn-hell{ display:block; object-position:50% 25%; }
   :root[data-layout="new"]:not([data-theme]) .kn-bild:not(.kn-hell){ display:none; }
   :root[data-layout="new"]:not([data-theme]) .kopf-neu{ color:var(--text); }
   :root[data-layout="new"]:not([data-theme]) .kn-tint{ background:linear-gradient(to top left, rgba(255,90,54,.30) 0%, rgba(255,90,54,0) 52%); }
