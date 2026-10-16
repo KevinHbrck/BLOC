@@ -816,6 +816,12 @@ var ILLU_SEQ = {
   "burpee-pull-ups": { k:jSeq([J_ST, B_SQH, B_PL, B_PUL, B_PL, B_SQH, BP_HANG, BP_PULL, BP_HANG], .78).map(function(q){ return qWith(q, { x:gBar(8,26,74) }); }),
                        t:[[.18,.34],[.03,.26],[.06,.3],[.08,.3],[.03,.26],[.03,.32,"o"],[.1,.45],[.16,.45],[.06,.4,"i"]] }
 };
+/* Tempo der schnellen Übungen: Die Standard-Schleife (ca. 2 s je Wiederholung) wirkte hier viel zu träge.
+   Nur die Zeiten, die Posen bleiben unverändert. Klatsch-Liegestütz: kontrolliert runter, explosiv hoch, kurze Flugphase. */
+ILLU_SEQ["mountain-climbers"] = { k:[ILLU_POSES["mountain-climbers"][0], ILLU_POSES["mountain-climbers"][1]], t:[[.05,.26],[.05,.26]] };
+ILLU_SEQ["high-knees"]        = { k:[ILLU_POSES["high-knees"][0], ILLU_POSES["high-knees"][1]], t:[[.04,.18],[.04,.18]] };
+ILLU_SEQ["sprint-in-place"]   = { k:[ILLU_POSES["sprint-in-place"][0], ILLU_POSES["sprint-in-place"][1]], t:[[.03,.13],[.03,.13]] };
+ILLU_SEQ["clap-push-ups"]     = { k:[ILLU_POSES["clap-push-ups"][0], ILLU_POSES["clap-push-ups"][1]], t:[[.3,.16],[.04,.32]] };
 /* Standbilder (Listen) zeigen eine typische Phase */
 Object.assign(ILLU_POSES, {
   "jumping-jacks": [JJ_AUF, JJ_ZU],
