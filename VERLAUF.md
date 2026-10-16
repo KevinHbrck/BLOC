@@ -3,7 +3,7 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-16 · Hell: helle Karten und Fotos, Gerätechips, Kalender-/Katalog-Kopf, Lesbarkeit (Fassung 2026-10-16-23)
+## 2026-10-16 · Hell: helle Karten und Fotos, Gerätechips, Kalender-/Katalog-Kopf, Lesbarkeit (Fassung 2026-10-16-24, Nummer -23 hatte zuvor schon die Tempo-Korrektur der Figuren)
 
 - **Geräte-Chips** unter der Figur im Info-Fenster einer Übung (Symbol aus `EQUIP_ICON` plus Name der Ausrüstung, DE/EN über die vorhandenen Gerätenamen); im Timer-Fenster (live) keine. Neuer Einheitstest (37).
 - **Hell**: Karten auf Training und Favoriten als helle Karte (Foto oben, unten warm-heller Verlauf, dunkle Schrift); `FOTO_POOL_HELL` (10 neue Fotos `img/neu-h-*.jpg`, 900 px, 30–78 KB) wird im hellen Modus statt des dunklen Pools zugeteilt, jeweils mit Bildausschnitt (`FOTO_FOKUS`). Run bleibt in beiden Modi beim klassischen Läuferbild; Baukasten und Titelbilder unberührt. Vorrat: BilderBloc (Pexels), Belege liegen in den Quellenlisten, `quellen.html` noch offen.
