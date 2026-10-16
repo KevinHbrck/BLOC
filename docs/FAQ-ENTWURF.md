@@ -230,7 +230,7 @@ Stand: 2026-10-16. **Entwurf nur als Text, nichts davon ist im App-Code.** Gepla
 - **Erholung und Schlaf:** Alkohol kann den Schlaf verschlechtern und die Flüssigkeitsbilanz verändern; beides beeinflusst die Erholung.
 - **Energie:** Alkohol liefert viele Kalorien ohne Nährstoffe.
 - **Verletzungen:** Übermäßiger Konsum kann Reaktion und Koordination verschlechtern und das Verletzungsrisiko erhöhen.
-- **Gesundheit insgesamt:** Alkohol hat auch ohne Sport Gesundheitsrisiken; das geht über Trainingsfortschritt hinaus.
+- **Gesundheit insgesamt:** Nach einer Stellungnahme der WHO gibt es keine Menge, bei der Alkohol sicher ohne Wirkung auf die Gesundheit bleibt; das Risiko steigt mit der Menge. Das geht über Trainingsfortschritt hinaus.
 
 **Studienlage:** Die Hauptstudie ist **klein und kurz** (junge, trainierte Männer, sehr hohe Dosis, eine einzelne Einheit). Langzeitwirkungen auf echten Muskelzuwachs und moderater Konsum sind **kaum untersucht**. Übersichtsarbeiten sehen Hinweise auf schlechtere Erholung, aber die Qualität der Studien ist begrenzt.
 
@@ -238,6 +238,7 @@ Stand: 2026-10-16. **Entwurf nur als Text, nichts davon ist im App-Code.** Gepla
 - Parr EB et al. (2014): Alcohol ingestion impairs maximal post-exercise rates of myofibrillar protein synthesis following a single bout of concentric training. *PLoS ONE* 9(2):e88384. doi:10.1371/journal.pone.0088384
 - Barnes MJ (2014): Alcohol: impact on sports performance and recovery in male athletes. *Sports Med* 44:909–919. doi:10.1007/s40279-014-0192-8
 - Vella LD, Cameron-Smith D (2010): Alcohol, athletic performance and recovery. *Nutrients* 2(8):781–789. doi:10.3390/nu2080781
+- WHO Regional Office for Europe (2023): No level of alcohol consumption is safe for our health (Pressemitteilung, 4. Januar 2023, Stellungnahme in *The Lancet Public Health*). https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health (am Original geprüft; allgemeine Gesundheit, kein Trainingsbezug)
 
 ---
 
@@ -426,11 +427,11 @@ Stand: 2026-10-16. **Entwurf nur als Text, nichts davon ist im App-Code.** Gepla
 - **Recovery and sleep:** Alcohol can worsen sleep and change fluid balance; both affect recovery.
 - **Energy:** Alcohol provides many calories without nutrients.
 - **Injuries:** Heavy drinking can impair reaction and coordination and raise the injury risk.
-- **Overall health:** Alcohol has health risks even without sport; that goes beyond training progress.
+- **Overall health:** According to a WHO statement there is no amount at which alcohol is safely without effect on health; the risk rises with the amount. That goes beyond training progress.
 
 **Evidence:** The main study is **small and short** (young trained men, very high dose, a single session). Long-term effects on actual muscle gain and moderate drinking are **hardly studied**. Reviews see hints of poorer recovery, but study quality is limited.
 
-**Sources:** Parr et al. (2014); Barnes (2014); Vella & Cameron-Smith (2010).
+**Sources:** Parr et al. (2014); Barnes (2014); Vella & Cameron-Smith (2010); WHO Regional Office for Europe (2023).
 
 ---
 
@@ -438,6 +439,6 @@ Stand: 2026-10-16. **Entwurf nur als Text, nichts davon ist im App-Code.** Gepla
 
 1. **Quellen prüfen:** ACSM 2009 und WHO 2020 am Original bestätigen (nicht über Crossref geprüft); Ainsworth 2011 Heft/Seiten (43(8):1575–1581) bitte gegen `quellen.html` abgleichen, dort ist die Quelle schon als [25] geführt.
 2. **Studienlage ehrlich lassen:** Die „Studienlage“-Absätze nicht wegkürzen; sie sind der Kern der Ehrlichkeit.
-3. **Alkohol (Frage 13):** Bewusst vorsichtig formuliert. Falls ein allgemeiner Gesundheitshinweis gewünscht ist, wäre eine Quelle einer Gesundheitsbehörde (z. B. WHO oder Bundeszentrale für gesundheitliche Aufklärung) zu ergänzen, ich habe keine ungeprüfte Behauptung aufgenommen.
+3. **Alkohol (Frage 13):** Bewusst vorsichtig formuliert. Der allgemeine Gesundheitshinweis stützt sich auf die WHO-Stellungnahme (Original gelesen). Eine Pressemitteilung der BIÖG (ehem. BZgA) von 2020 wurde nicht aufgenommen, weil ich das Original nicht lesen konnte.
 4. **Kalorien (Frage 11):** Der Satz zur Schätzung in BLOC entspricht dem aktuellen Stand der Berechnung (MET plus Ruheumsatz nach Mifflin–St Jeor); bei Änderungen der Berechnung anpassen.
 5. **Zusätzliche Fragen** (nicht im Auftrag, optional): Muskelkater, Eiweißbedarf, Aufwärmen/Dehnen, „Wie oft pro Woche?“. Dafür sind eigene Recherchen nötig.
