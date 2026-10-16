@@ -634,16 +634,21 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 }
 .toast.weg{ opacity:0; }
 /* Piktogramme: Strichfigur, zwei Posen im Wechsel */
-.illu{ fill:none; stroke:currentColor; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; }
+/* Strichstärken der Figur (2026-10-16, „Klein“): feiner als vorher (6 / 9,5 / 12,5 / 5 / 2); alles über diese Variablen, zum Zurücknehmen Werte ersetzen.
+   Die Lücke um den vorderen Arm (Maske, js/02-bibliothek.js) folgt der Armstärke: Strich + 3 = gleiche Lücke wie früher. */
+.illu{ --illu-strich:5.2; --illu-rumpf:8.4; --illu-brust:11; --illu-hals:4.4; --illu-boden:1.8;
+  fill:none; stroke:currentColor; stroke-width:var(--illu-strich); stroke-linecap:round; stroke-linejoin:round; }
+.illu mask path{ stroke-width:calc(var(--illu-strich) + 3); }
 .illu circle{ fill:currentColor; stroke:none; }
-.illu .illu-floor{ stroke-width:2; opacity:.35; }
+.illu .illu-floor{ stroke-width:var(--illu-boden); opacity:.4; }
+.info-illu .illu-floor, .pl-illu .illu-floor, .rp-karte .illu .illu-floor{ stroke-width:1.5; opacity:.5; stroke-dasharray:1 5; }   /* große Figuren: ruhiger gepunkteter Boden, kleine bleiben durchgezogen und dünn */
 .illu .pose-b{ opacity:0; }
-.illu .lb{ opacity:.45; }
-.illu .tr{ stroke-width:9.5; }
+.illu .lb{ opacity:.55; }
+.illu .tr{ stroke-width:var(--illu-rumpf); }
 .illu .illu-matte{ fill:currentColor; stroke:none; opacity:.1; }
-.illu .nk{ stroke-width:5; }
-.illu .br{ stroke-width:12.5; }
-.illu .ip{ stroke-width:4; }
+.illu .nk{ stroke-width:var(--illu-hals); }
+.illu .br{ stroke-width:var(--illu-brust); }
+.illu .ip{ stroke-width:3.4; }
 .illu .ipf{ fill:currentColor; stroke:none; }
 /* Widerstandsband: dünne Linie in der Gerätefarbe */
 .illu .gb{ stroke-width:2.6; stroke:var(--accent); }

@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · Figuren feiner („Klein“) (Fassung 2026-10-16-22)
+
+- **Strichfiguren** etwas feiner und ruhiger, nur CSS in `app.css` (Block „Strichstärken der Figur“, Variablen `--illu-strich` 5,2 · `--illu-rumpf` 8,4 · `--illu-brust` 11 · `--illu-hals` 4,4 · `--illu-boden` 1,8; vorher 6 / 9,5 / 12,5 / 5 / 2). Zum Zurücknehmen die Werte ersetzen.
+- **Boden**: bei kleinen Figuren durchgezogen und dünn, bei großen (Übungsinfo, Timer-Vorschau, Summit-Karte) gepunktet. **Hinterglieder** lesbarer (Deckkraft .55 statt .45).
+- Die **Lücke um den vorderen Arm** (Maske) folgt jetzt der Armstärke (Strich + 3, also gleich breit wie vorher); kein JS geändert, Posen (`daten.js`) und Timer-Farben unberührt.
+- Der **Schnelltest** startet mit `?schnelltest` weiter im klassischen Aussehen (seit -18 beginnt ein frischer Start sonst in New + Dunkel und die klassischen Prüfungen schlugen fehl); 39/39 und Einheitstest 36/36.
+- Bewusst nicht dabei: oranger Kopf, Muskelzonen-Farbe, Gerätesymbole, Körperkarte (Mockup liegt außerhalb von BLOC, wartet auf Entscheidung).
+
 ## 2026-10-16 · New: Bildausschnitt je Foto, New + Dunkel als Start (Fassung 2026-10-16-18)
 
 - **Bildausschnitt**: `FOTO_FOKUS` / `fotoFokus` in `js/03-router.js` legt je Foto fest, welcher Streifen auf den flachen Karten und Kopfbildern sichtbar bleibt; Summit zeigt jetzt Reck, Meer und Radfahrer statt nur Himmel. Das doppelte Reck-Foto (`neu-p-freiluft-leiter`) ist aus dem Summit-Pool entfernt.

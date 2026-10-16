@@ -46,6 +46,7 @@ function defaultDB(){
    Bestehende Stände und Sicherungen ohne diese Felder bleiben bei defaultDB() = Klassik, damit sich dort nichts verstellt. */
 function frischDB(){
   var d = defaultDB();
+  if(/[?&]schnelltest\b/.test(location.search)) return d;   // der Schnelltest klickt die klassischen Wege durch
   d.settings.layout = "new"; d.settings.theme = "dark";
   return d;
 }
