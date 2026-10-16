@@ -164,6 +164,17 @@ var FOTO_POOL = (function(){
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")]
   };
 })();
+/* Heller Modus: helle Fotos (Pexels, siehe BilderBloc\Helle Bilder). Silhouetten und Schwarz-Weiß-Bilder bleiben dem Dunkel überlassen;
+   Run behält in beiden Modi das klassische Läuferbild. Karten auf Training und Favoriten sind im Hellen „helle Karten“ (layout-new.css). */
+var FOTO_POOL_HELL = {
+  tp:  ["img/neu-h-klimmzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-ringe.jpg"],
+  st:  ["img/neu-h-halle.jpg", "img/neu-h-kreuzheben.jpg", "img/neu-h-rack.jpg"],
+  ti:  ["img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
+  ws:  ["img/neu-h-dehnen.jpg", "img/neu-h-band.jpg"],
+  rep: ["img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],   // nur Querformat (flache Summit-Karte)
+  run: FOTO_POOL.run
+};
+function fotoPool(){ return themeIstDunkel() ? FOTO_POOL : FOTO_POOL_HELL; }
 /* Bildausschnitt je Foto: breite, flache Karten zeigen nur einen Streifen; hier steht, welcher Teil des Bildes dabei
    sichtbar bleiben soll (Prozent für background-position bzw. object-position). Ohne Eintrag gilt der Wert aus layout-new.css. */
 var FOTO_FOKUS = {
@@ -191,19 +202,22 @@ var FOTO_FOKUS = {
   "img/neu-p-liegestuetz-stadt.jpg":"50% 55%",
   "img/neu-p-liegestuetz-halle.jpg":"50% 75%",
   "img/neu-p-liegestuetz-feld.jpg":"50% 55%",
-  "img/neu-p-studio-halle.jpg":"50% 55%"
+  "img/neu-p-studio-halle.jpg":"50% 55%",
+  "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-kreuzheben.jpg":"50% 70%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
+  "img/neu-h-band.jpg":"50% 62%", "img/neu-h-kettlebell.jpg":"50% 32%", "img/neu-h-kb-gelb.jpg":"50% 70%", "img/neu-h-klimmzug.jpg":"50% 72%",
+  "img/neu-h-klimmzug-rueck.jpg":"50% 28%", "img/neu-h-ringe.jpg":"50% 55%", "img/neu-d-kalender.jpg":"50% 45%", "img/neu-d-katalog.jpg":"50% 42%"
 };
 function fotoFokus(pfad){ return FOTO_FOKUS[pfad] || ""; }
 function fotoHash(s){ var h = 0; s = String(s); for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003; return h; }
 function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
-  var alle = [], belegt = {}, out = {};
-  Object.keys(FOTO_POOL).forEach(function(k){ FOTO_POOL[k].forEach(function(f){ if(alle.indexOf(f) < 0) alle.push(f); }); });
+  var alle = [], belegt = {}, out = {}, POOL = fotoPool();
+  Object.keys(POOL).forEach(function(k){ POOL[k].forEach(function(f){ if(alle.indexOf(f) < 0) alle.push(f); }); });
   items.slice().sort(function(a, b){ return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; }).forEach(function(it){
-    var pool = FOTO_POOL[it.pool] || FOTO_POOL.st, h = fotoHash(it.key), w = null, i, f;
+    var pool = POOL[it.pool] || POOL.st, h = fotoHash(it.key), w = null, i, f;
     for(i = 0; i < pool.length && !w; i++){ f = pool[(h + i) % pool.length]; if(!belegt[f]) w = f; }
     var VERWANDT = { st:["st"], tp:["tp", "rep"], ti:["ti", "st"], ws:["ws"], rep:["rep"], run:["run"] };   // erst Bilder aus verwandten Arten
     (VERWANDT[it.pool] || []).forEach(function(a){
-      var p2 = FOTO_POOL[a] || [];
+      var p2 = POOL[a] || [];
       for(i = 0; i < p2.length && !w; i++){ f = p2[(h + i) % p2.length]; if(!belegt[f]) w = f; }
     });
     for(i = 0; i < alle.length && !w; i++){ f = alle[(h + i) % alle.length]; if(!belegt[f]) w = f; }
@@ -343,7 +357,7 @@ function render(){
   if(route==="repplay") return renderRepPlayer(parts[1]);
   if(route==="repedit") return renderRepEdit(parts[1]);
   if(route==="repunitedit") return renderRepUnitEdit(parts[1]);
-  if(route==="kalender") return renderKalender();
+  if(route==="kalender"){ renderKalender(); setTimeout(kalHeuteSichtbar, 80); return; }   // go() setzt danach nach oben: erst dann den heutigen Tag ins Bild holen
   if(route==="run") return renderRun();
   if(route==="rundetail") return renderRunDetail(parts[1]);
   if(route==="intervall") return renderIntervall();   // Timer: eigene Seite (früher je ein Reiter in Air und Studio)

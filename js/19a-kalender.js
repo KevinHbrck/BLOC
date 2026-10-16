@@ -139,6 +139,14 @@ function kalEintragHTML(e){
     '<i class="ke-balken"></i><span class="ke-text"><b>'+esc(o.name)+'</b><small>'+esc(o.ok ? o.sub : t("kalFehlt"))+'</small></span>'+
     '<button type="button" class="ke-ok" data-kalok="'+esc(e.id)+'" aria-pressed="'+kalErledigt(e)+'" aria-label="'+esc(t("kalErledigt"))+'">'+svgIcon('<path d="M5 12.5l4.5 4.5L19 7"/>')+'</button></div>';
 }
+/* Beim Öffnen der Wochenansicht: liegt der heutige Tag unter der unteren Leiste, wird er ins Bild geholt (sonst sieht man ihn erst nach dem Scrollen) */
+function kalHeuteSichtbar(){
+  if(kalAnsicht === "monat" || window.scrollY > 40) return;
+  var h = app.querySelector(".kal-tag.heute");
+  if(!h) return;
+  var r = h.getBoundingClientRect();
+  if(r.bottom > window.innerHeight - 112) window.scrollTo(0, Math.max(0, window.scrollY + r.bottom - (window.innerHeight - 132)));
+}
 function renderKalender(){
   var s = state.db.settings, lang = currentLang() === "en" ? "en-GB" : "de-DE";
   if(!kalBasis) kalBasis = new Date();
@@ -160,7 +168,9 @@ function renderKalender(){
   }
   var sichtbar = tage.filter(function(d){ return !monat || d.getMonth() === kalBasis.getMonth(); }).map(kalTagKey);
   var sum = kalSumme(sichtbar);
-  html = topbar(layoutNeu() ? t("tabKalender") : t("kalTitel"), { back:"#home", right:'<button type="button" class="kal-heutebtn" data-kalheute aria-label="'+esc(t("kalHeuteSpringen"))+'">'+svgIcon('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>')+'<span>'+esc(t("kalHeute"))+'</span></button>' }) +
+  var heuteKnopf = '<button type="button" class="kal-heutebtn" data-kalheute aria-label="'+esc(t("kalHeuteSpringen"))+'">'+svgIcon('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>')+'<span>'+esc(t("kalHeute"))+'</span></button>';
+  html = (layoutNeu() ? bereichKopfNeuHTML("kal", t("tabKalender"), t("kalKicker"), heuteKnopf, { foto:"img/neu-d-kalender.jpg", fotoHell:"img/neu-h-kettlebell.jpg", zurueck:false, ohneSuche:true })
+      : topbar(t("kalTitel"), { back:"#home", right:heuteKnopf })) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
       '<button type="button" data-kalansicht="woche" class="'+(!monat ? 'active' : '')+'">'+esc(t("kalWoche"))+'</button>'+
       '<button type="button" data-kalansicht="monat" class="'+(monat ? 'active' : '')+'">'+esc(t("kalMonat"))+'</button></div></div>'+

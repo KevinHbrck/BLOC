@@ -118,7 +118,8 @@ function katSuche(q, standard){
 /* ---------- Kopf: Titel, Reiter, Überrasch mich ---------- */
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
-  var kopf = topbar(t("katalog"), { back:"#home", right:right || "" }) +
+  var kopf = (layoutNeu() ? bereichKopfNeuHTML("kat", t("katalog"), t("katKicker"), right || "", { foto:"img/neu-d-katalog.jpg", fotoHell:"img/neu-h-halle.jpg", zurueck:"#home", ohneSuche:(right || "").indexOf("lib-lupe") > -1 })
+      : topbar(t("katalog"), { back:"#home", right:right || "" })) +
     '<div class="rz kat-rz" style="--rz:var(--text)">'+b("baukasten", t("katTabBaukasten"))+b("workouts", t("katTabKatalog"))+'</div>';
   if(tab !== "workouts") return kopf;
   // Katalog: drei gleichrangige Abteilungen Meine · Workoutkatalog · Übungskatalog, im Workoutkatalog ganz vorn der Ort

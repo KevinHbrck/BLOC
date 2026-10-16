@@ -384,3 +384,32 @@
   :root[data-layout="new"]:not([data-theme]) .marke-neu small,
   :root[data-layout="new"]:not([data-theme]) .kn-gruss span{ color:var(--text); opacity:.78; }
 }
+
+/* ---------- Hell (2026-10-16): Karten auf Training und Favoriten als helle Karte - Foto oben, unten warm-heller Verlauf, dunkle Schrift;
+   dazu helle Fotos aus FOTO_POOL_HELL (js/03-router.js). Baukasten und Titelbilder bleiben unveraendert. "System" hat kein data-theme,
+   deshalb steht jede Regel zweimal (data-theme="light" und prefers-color-scheme). Dazu Lesbarkeit im Heute-Kopf. ---------- */:root[data-layout="new"][data-theme="light"] .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 18%, rgba(255,250,244,.80) 64%, rgba(255,250,244,.94) 100%); }
+:root[data-layout="new"][data-theme="light"] .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 28%, rgba(255,250,244,.84) 66%, rgba(255,250,244,.96) 100%); }
+:root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-name, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-chev, :root[data-layout="new"][data-theme="light"] .ff-name{ color:var(--text); }
+:root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-sub, :root[data-layout="new"][data-theme="light"] .ff-bereich, :root[data-layout="new"][data-theme="light"] .ff-sub{ color:var(--text-dim); }
+:root[data-layout="new"][data-theme="light"] .ff-stern{ color:#c98200; }
+:root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="intervall"] .at-ico,
+:root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="reps"] .at-ico,
+:root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(28,28,30,.1); color:var(--text); }
+:root[data-layout="new"][data-theme="light"] .marke-neu b{ color:#df4a22; }
+:root[data-layout="new"][data-theme="light"] .kn-sym .iconbtn{ background:rgba(255,255,255,.66); color:var(--text); border-color:rgba(0,0,0,.1); }
+:root[data-layout="new"][data-theme="light"] .kn-gruss span, :root[data-layout="new"][data-theme="light"] .kn-gruss b{ text-shadow:0 0 10px rgba(255,255,255,.95), 0 0 3px rgba(255,255,255,.85); }
+@media (prefers-color-scheme: light){
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 18%, rgba(255,250,244,.80) 64%, rgba(255,250,244,.94) 100%); }
+  :root[data-layout="new"]:not([data-theme]) .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 28%, rgba(255,250,244,.84) 66%, rgba(255,250,244,.96) 100%); }
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-name, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-chev, :root[data-layout="new"]:not([data-theme]) .ff-name{ color:var(--text); }
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub, :root[data-layout="new"]:not([data-theme]) .ff-bereich, :root[data-layout="new"]:not([data-theme]) .ff-sub{ color:var(--text-dim); }
+  :root[data-layout="new"]:not([data-theme]) .ff-stern{ color:#c98200; }
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="intervall"] .at-ico,
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="reps"] .at-ico,
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(28,28,30,.1); color:var(--text); }
+  :root[data-layout="new"]:not([data-theme]) .marke-neu b{ color:#df4a22; }
+  :root[data-layout="new"]:not([data-theme]) .kn-sym .iconbtn{ background:rgba(255,255,255,.66); color:var(--text); border-color:rgba(0,0,0,.1); }
+  :root[data-layout="new"]:not([data-theme]) .kn-gruss span, :root[data-layout="new"]:not([data-theme]) .kn-gruss b{ text-shadow:0 0 10px rgba(255,255,255,.95), 0 0 3px rgba(255,255,255,.85); }
+}
+/* Meine Woche: der Untertitel darf umbrechen statt mit ... abzuschneiden (auch im Dunkeln) */
+:root[data-layout="new"] .woche-neu .wo-summe{ white-space:normal; overflow:visible; text-overflow:clip; line-height:1.3; }

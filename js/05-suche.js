@@ -240,11 +240,13 @@ function renderHome(){
   if(wib) wib.addEventListener("click", openWasIstWas);
 }
 /* Aussehen „New“: Kopf einer Bereichsseite wie im Entwurf (Timer): Foto, Zurück und Suche oben, darunter Zeile und Titel */
-function bereichKopfNeuHTML(key, titel, kicker, extra){
-  var foto = bereichFotosNeu()[key] || "img/neu-timer.jpg";   // dasselbe Bild wie die Karte auf Training
+/* opt (optional): { foto, fotoHell } festes Bild statt der Tageszuteilung (Kalender, Katalog); zurueck: Ziel des Zurück-Knopfs oder false (Hauptseite); ohneSuche: eigene Lupe steckt schon in extra */
+function bereichKopfNeuHTML(key, titel, kicker, extra, opt){
+  opt = opt || {};
+  var foto = opt.foto ? (themeIstDunkel() || !opt.fotoHell ? opt.foto : opt.fotoHell) : (bereichFotosNeu()[key] || "img/neu-timer.jpg");   // sonst dasselbe Bild wie die Karte auf Training
   return '<section class="kopf-bereich"><img class="kb-bild" src="'+foto+'" alt="" draggable="false"'+(fotoFokus(foto) ? ' style="object-position:'+fotoFokus(foto)+'"' : '')+'>'+
-    '<div class="kb-zeile"><button type="button" class="iconbtn kb-rund" data-back="#training" aria-label="'+esc(t("back"))+'">'+ICON_BACK+'</button>'+
-    '<span class="kb-rechts">'+(extra || "")+'<button type="button" class="iconbtn kb-rund" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button></span></div>'+
+    '<div class="kb-zeile">'+(opt.zurueck === false ? '<span></span>' : '<button type="button" class="iconbtn kb-rund" data-back="'+(opt.zurueck || "#training")+'" aria-label="'+esc(t("back"))+'">'+ICON_BACK+'</button>')+
+    '<span class="kb-rechts">'+(extra || "")+(opt.ohneSuche ? "" : '<button type="button" class="iconbtn kb-rund" data-nav="#search" aria-label="'+esc(t("search"))+'">'+svgIcon(SYM_SUCHE)+'</button>')+'</span></div>'+
     '<div class="kb-text"><span class="kb-kicker">'+esc(kicker)+'</span><h1>'+esc(titel)+'</h1></div></section>';
 }
 /* Aussehen „New“: Kopf von Heute wie im Entwurf - Foto mit Logo, Symbolen und Gruß (ohne Namen: die App kennt keinen) */

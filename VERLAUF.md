@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-16 · Hell: helle Karten und Fotos, Gerätechips, Kalender-/Katalog-Kopf, Lesbarkeit (Fassung 2026-10-16-23)
+
+- **Geräte-Chips** unter der Figur im Info-Fenster einer Übung (Symbol aus `EQUIP_ICON` plus Name der Ausrüstung, DE/EN über die vorhandenen Gerätenamen); im Timer-Fenster (live) keine. Neuer Einheitstest (37).
+- **Hell**: Karten auf Training und Favoriten als helle Karte (Foto oben, unten warm-heller Verlauf, dunkle Schrift); `FOTO_POOL_HELL` (10 neue Fotos `img/neu-h-*.jpg`, 900 px, 30–78 KB) wird im hellen Modus statt des dunklen Pools zugeteilt, jeweils mit Bildausschnitt (`FOTO_FOKUS`). Run bleibt in beiden Modi beim klassischen Läuferbild; Baukasten und Titelbilder unberührt. Vorrat: BilderBloc (Pexels), Belege liegen in den Quellenlisten, `quellen.html` noch offen.
+- **Kalender und Katalog** (New) bekommen einen Fotokopf (`neu-d-kalender`/`neu-d-katalog` dunkel, im Hellen `neu-h-kettlebell`/`neu-h-halle`), `bereichKopfNeuHTML` mit Option `opt`. Die Wochenansicht holt den heutigen Tag beim Öffnen ins Bild, wenn er unter der Leiste läge.
+- **Lesbarkeit**: „Meine Woche“-Untertitel bricht um statt abzuschneiden; Heute-Kopf im Hellen: Datum mit hellem Schein, Logo dunkleres Orange (3,7:1), Kopfsymbole als helle Kreise; Hinweiskarte „Damit deine Daten nicht verloren gehen“: Text, × und Link ≥ 4,5:1 (`--link-ink`).
+- Die sechs neuen Titelbilder stehen im Vorabcache (`GRUNDGERUEST`), die übrigen helle Fotos werden beim ersten Anzeigen geladen.
+
 ## 2026-10-16 · Figuren feiner („Klein“) (Fassung 2026-10-16-22)
 
 - **Strichfiguren** etwas feiner und ruhiger, nur CSS in `app.css` (Block „Strichstärken der Figur“, Variablen `--illu-strich` 5,2 · `--illu-rumpf` 8,4 · `--illu-brust` 11 · `--illu-hals` 4,4 · `--illu-boden` 1,8; vorher 6 / 9,5 / 12,5 / 5 / 2). Zum Zurücknehmen die Werte ersetzen.

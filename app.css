@@ -193,6 +193,9 @@ h1, h2, h3{ margin:0 0 4px; }
 .info-x{ border:none; background:var(--surface-2); color:var(--text); width:38px; height:38px; border-radius:50%; font-size:22px; cursor:pointer; flex-shrink:0; }
 .info-live{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; padding:8px 8px 8px 12px; border-radius:12px; background:var(--surface-2); font-size:14px; }
 .info-live .tpl-adopt{ margin:0; }
+.info-gear{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:0 0 10px; }
+.gchip{ display:inline-flex; align-items:center; gap:6px; padding:3px 11px 3px 8px; border-radius:999px; font-size:12.5px; font-weight:500; color:var(--text); background:var(--surface-2); }
+.gchip .ico{ width:16px; height:16px; flex:none; color:var(--bereich, var(--tp-color)); }
 .info-illu{ display:block; width:150px; height:150px; margin:10px auto 4px; color:var(--bereich, var(--tp-color)); }
 .info-views{ display:flex; justify-content:center; gap:10px; margin:10px 0 4px; }
 .info-views figure{ margin:0; flex:1; max-width:170px; text-align:center; }
@@ -809,10 +812,10 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .theme-pick.vier button{ grid-column:span 1; font-size:14px; padding-left:2px; padding-right:2px; }
 
 .installtip{
-  background:var(--surface-2); border-radius:var(--radius); padding:14px 16px; margin:14px 0; font-size:13px; color:var(--text-dim); display:flex; gap:10px; align-items:flex-start;
+  background:var(--surface-2); border-radius:var(--radius); padding:14px 16px; margin:14px 0; font-size:13px; color:color-mix(in srgb, var(--text) 78%, var(--surface-2)); display:flex; gap:10px; align-items:flex-start;   /* Kontrast ≥ 4,5:1 auf der Zweitfläche */
 }
-.installtip a{ color:var(--accent-ink, var(--accent)); font-weight:600; text-decoration:none; }
-.installtip button{ border:none; background:transparent; color:var(--text-dim); font-size:20px; cursor:pointer; padding:0 0 0 6px; width:28px; height:28px; flex-shrink:0; }
+.installtip a{ color:var(--link-ink, var(--accent-ink, var(--accent))); font-weight:600; text-decoration:none; }
+.installtip button{ border:none; background:transparent; color:color-mix(in srgb, var(--text) 78%, var(--surface-2)); font-size:20px; cursor:pointer; padding:0 0 0 6px; width:28px; height:28px; flex-shrink:0; }
 
 .step-row{ display:flex; gap:12px; margin-bottom:16px; }
 .step-row:last-child{ margin-bottom:0; }
@@ -1859,9 +1862,9 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .area-tile[data-bereich="katalog"] .at-ico, .bs-zeile[data-bereich="katalog"] .at-ico, .wi-zeile[data-bereich="katalog"] .at-ico{
   background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent); }
 /* Kontrast: kleine Schrift in der Akzentfarbe nimmt --accent-ink (Koralle auf Weiß hat nur 3,1:1; so 4,6:1) */
-:root{ --accent-ink:#d93a14; }
-:root[data-theme="dark"], :root[data-theme="nacht"]{ --accent-ink:var(--accent); }
-@media (prefers-color-scheme: dark){ :root:not([data-theme]){ --accent-ink:var(--accent); } }
+:root{ --accent-ink:#d93a14; --link-ink:#b9330f; }   /* link-ink: Links auf grauer Zweitfläche (Hinweiskarte) mit ≥ 4,5:1 */
+:root[data-theme="dark"], :root[data-theme="nacht"]{ --accent-ink:var(--accent); --link-ink:var(--accent); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme]){ --accent-ink:var(--accent); --link-ink:var(--accent); } }
 
 /* Mobility & Stretch: der Schalter Mobility · Stretch ist grün getönt wie der Rest des Bereichs */
 .ws-art button.active{ background:color-mix(in srgb, var(--ws-color) 14%, var(--surface)); border-color:var(--ws-color); color:var(--text); box-shadow:inset 0 0 0 1px var(--ws-color); }

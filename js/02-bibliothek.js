@@ -152,6 +152,11 @@ function findCustom(id){
 syncCustomEx();
 function equipName(id){ for(var i=0;i<EQUIPS.length;i++) if(EQUIPS[i].id===id) return tplText(EQUIPS[i]); return id; }
 function exEquipText(ex){ return ex.equip.map(equipName).join(" / "); }
+/* Geräte-Chips unter der Figur im Info-Fenster: Symbol (EQUIP_ICON) + Name der Ausrüstung; nicht im Timer (live), dort bleibt die Figur frei */
+function gearChipsHTML(ex, live){
+  if(live || !ex || !ex.equip || !ex.equip.length) return "";
+  return '<div class="info-gear">'+ex.equip.map(function(g){ return '<span class="gchip">'+svgIcon(EQUIP_ICON[g] || "", "ico")+esc(equipName(g))+'</span>'; }).join("")+'</div>';
+}
 /* passt eine Übung zu Ausrüstung und Level? "all" = egal */
 /* Mehrfachauswahl: leere Liste = alles */
 function selArr(v){ return Array.isArray(v) ? v.slice() : (v && v!=="all" ? [v] : []); }
@@ -905,6 +910,7 @@ function openExInfo(exId, live, lib){
       ? '<div class="info-views"><figure>'+illuHTML(exId, "info-illu")+'<figcaption>'+t(ILLU_VIEW2[exId].haupt === "front" ? "viewFront" : "viewSide")+'</figcaption></figure>'+
         '<figure>'+illuHTML(exId, "info-illu", true)+'<figcaption>'+t({ top:"viewTop", side:"viewSide" }[ILLU_VIEW2[exId].typ] || "viewFront")+'</figcaption></figure></div>'
       : illuHTML(exId, "info-illu"))+
+    gearChipsHTML(ex, live)+
     bandAnkerHTML(exId)+   // Band-Übungen: wo und wie das Band befestigt wird (aufklappbar, unter den Figuren)
     (EX_MUSCLES[exId] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+
       (musclesAssist(ex) ? '<div class="info-mus-2">'+esc(t(ex.cats.indexOf("stretch") > -1 ? "musAlsoStretched" : "musAssist"))+': '+esc(musclesAssist(ex))+'</div>' : '')+'</div>'+

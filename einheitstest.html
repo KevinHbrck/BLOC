@@ -161,6 +161,13 @@
     gleich(W.studioArt("push-ups"), "koerper", "Liegestütze");
     gleich(W.studioArt("band-squat"), "band", "Band-Kniebeuge");
   });
+  test("Geräte-Chip im Info-Fenster: Symbol und Name je Ausrüstung, im Timer (live) keiner", function () {
+    var band = W.gearChipsHTML(W.findExercise("band-standing-row"), false);
+    wahr(band.indexOf("gchip") > -1 && band.indexOf(W.equipName("band")) > -1 && band.indexOf("<svg") > -1, "Band: Chip mit Symbol und Name");
+    gleich(W.gearChipsHTML(W.findExercise("goblet-squat"), false).split("gchip").length - 1, 2, "zwei Geräte = zwei Chips");
+    gleich(W.gearChipsHTML(W.findExercise("pull-ups"), true), "", "live: nichts");
+    gleich(W.gearChipsHTML(null, false), "", "ohne Übung");
+  });
 
   /* ---------- Summit: Mengen und Zeiten ---------- */
   test("Mengen halbieren: Wiederholungen mindestens 1, Strecken in m/km, Zeiten unverändert", function () {
