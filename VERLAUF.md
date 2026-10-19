@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-19 · Training im dunklen Glas-Design, FAQ einklappbar (Fassung 2026-10-19-5)
+
+- **Timer-Training (Player)** in Modern: in allen Phasen dasselbe ruhige dunkle Glas-Design mit sanften Farbverläufen, die Farbe wechselt nicht mehr zwischen Übung und Pause (nur die Beschriftung); Texte schweben ohne Kachel, der Trennstreifen (Fortschrittsleiste) entfällt, oben steht klein BLOC, Knöpfe als Glas, Hauptknopf weiß; die Figur ist während der Übung größer (`phaseVars` in js/19-timer-motor.js, CSS in layout-new.css). Classic-Pfad unverändert (nur Schnelltest).
+- **Fragen & Antworten** unten auf Training ist als Ganzes einklappbar (zu beim Öffnen).
+- Offen (Hintergrundfoto Herbstweg für Timer/Summit wartet auf die Recherche; Summit-Player und Run-Live folgen).
+
 ## 2026-10-19 · Nur noch Modern, Reiter „Körper“ mit Plan und Fortschritt, ruhigere Karten (Fassung 2026-10-19-4)
 
 Aufgabenliste von Kevin (Wochenend-Dokument), erster Teil. Vorab gesichert: Git-Tag `sicherung-vor-modern-only-2026-10-19` auf GitHub und Zip `BLOC-Sicherung-2026-10-19-vor-Modern-only.zip` auf dem Desktop (Stand Fassung 2026-10-19-3).

@@ -293,8 +293,7 @@ function bindBuilderKarte(){
 function faqHTML(){
   var F = window.BLOC_FAQ;
   if(!F) return "";
-  var sp = currentLang() === "en" ? "en" : "de", h = '<section class="faq" aria-labelledby="faq-titel">'+
-    '<div class="sec-head"><div class="section-title" id="faq-titel">'+esc(t("faqTitel"))+'</div></div>'+
+  var sp = currentLang() === "en" ? "en" : "de", h = '<details class="faq faq-bereich"><summary class="sec-head"><span class="section-title" id="faq-titel">'+esc(t("faqTitel"))+'</span></summary>'+
     '<p class="faq-hinweis" role="note">'+F.hinweis[sp]+'</p>', gruppe = -1;
   F.fragen.forEach(function(f, i){
     var x = f[sp];
@@ -313,7 +312,7 @@ function faqHTML(){
   h += '<details class="faq-q faq-verz"><summary><span class="faq-t">'+esc(t("faqVerz"))+'</span></summary><div class="faq-a">'+
     '<p class="dim">'+esc(t("faqVerzSub"))+'</p><ol class="faq-refs">'+
     Object.keys(F.quellen).map(function(n){ return '<li value="'+n+'"><span class="faq-refnr">[F'+n+']</span> '+F.quellen[n][sp]+'</li>'; }).join("")+
-    '</ol></div></details></section>';
+    '</ol></div></details></details>';
   return h;
 }
 /* Aussehen „New“: Seite „Training“ - alle Bereiche (Workout, Mobility & Stretch, Timer, Summit, Run) als Fotokarten, darüber die Suche */

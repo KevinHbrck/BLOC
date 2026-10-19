@@ -112,6 +112,11 @@ function rememberLastRun(w, source){
 /* Timer in den BLOC-Farben: Belastung (die Übung ist zu erledigen) in BLOC-Orange mit weißer Schrift,
    jede Pause, Blockpause und Vorbereitung auf Weiß mit dunkler Schrift */
 function phaseVars(phase){
+  /* Modern: ein ruhiges dunkles Glas-Design in allen Phasen, die Farbe wechselt nicht (nur die Beschriftung sagt, was gerade ist) */
+  if(layoutNeu()){
+    var lb = { work:t("phWork"), rest:t("phRest"), blockrest:t("phBlockrest"), prep:t("phPrep") };
+    return { bg:"#0b0d10", text:"#f4f4f6", label:lb[phase] || "" };
+  }
   if(phase==="work") return { bg:"var(--accent)", text:"#ffffff", label:t("phWork") };
   if(phase==="rest") return { bg:"#ffffff", text:"#1c1c1e", label:t("phRest") };
   if(phase==="blockrest") return { bg:"#ffffff", text:"#1c1c1e", label:t("phBlockrest") };

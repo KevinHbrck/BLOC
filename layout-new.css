@@ -538,3 +538,28 @@
 /* gewählte Übungen im Baukasten: statt grauer ein leichter grüner Rahmen */
 :root[data-layout="new"] .wb-kachel.gewaehlt{ box-shadow:0 0 0 3px color-mix(in srgb, #2fa88a 70%, transparent), var(--shadow); background:color-mix(in srgb, #2fa88a 7%, var(--surface)); }
 :root[data-layout="new"] .wb-kachel.gewaehlt .fig-bild{ background:color-mix(in srgb, #2fa88a 14%, transparent); color:#2fa88a; }
+
+/* ---------- Training (Timer-Player), Modern: dunkles Glas in allen Phasen, Texte schweben ohne Kachel, kein Trennstreifen ---------- */
+:root[data-layout="new"] .player{ background:#0b0d10; color:#f4f4f6; }
+:root[data-layout="new"] .player::before{ content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(120% 60% at 90% -5%, rgba(255,120,70,.20), transparent 62%), radial-gradient(100% 55% at 5% 105%, rgba(90,130,255,.14), transparent 60%); }
+:root[data-layout="new"] .player .progressbar{ display:none; }
+:root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ color:rgba(255,255,255,.92); margin-top:12px; font-size:13px; }
+:root[data-layout="new"] .player-top .exit{ background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); color:#fff; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+:root[data-layout="new"] .player .ctrl-btn{ background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); color:#fff; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+:root[data-layout="new"] .player .ctrl-btn.main{ background:#fff; border-color:#fff; color:#111; }
+:root[data-layout="new"] .player .ctrl-btn.main span{ color:#111; }
+:root[data-layout="new"] .player .ring-bg{ stroke:rgba(255,255,255,.14); }
+:root[data-layout="new"] .player .phase-label{ font-size:15px; letter-spacing:.24em; opacity:.7; margin-bottom:8px; }
+:root[data-layout="new"] .player .block-label{ font-size:27px; font-weight:700; opacity:1; margin-bottom:14px; line-height:1.15; }
+:root[data-layout="new"] .player .next-up{ opacity:.6; font-size:16px; }
+:root[data-layout="new"] .player .player-mid .pl-illu{ width:min(54vw,220px); height:min(54vw,220px); margin:0 0 2px; opacity:1; }
+:root[data-layout="new"] .player .player-mid .pl-illu{ width:min(44vw,172px); height:min(44vw,172px); }
+:root[data-layout="new"] .player[data-phase="work"] .ring-wrap{ width:min(54vw,214px); height:min(54vw,214px); }
+:root[data-layout="new"] .player[data-phase="work"] .block-label{ margin-bottom:6px; }
+:root[data-layout="new"] .player .rep-dots{ margin-top:16px; }
+/* FAQ-Bereich als Ganzes einklappbar (zu beim Öffnen der Seite) */
+:root[data-layout="new"] .faq-bereich > summary.sec-head{ cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; }
+:root[data-layout="new"] .faq-bereich > summary.sec-head::-webkit-details-marker{ display:none; }
+:root[data-layout="new"] .faq-bereich > summary.sec-head::after{ content:"▾"; color:var(--text-dim); transition:transform .2s; }
+:root[data-layout="new"] .faq-bereich[open] > summary.sec-head::after{ transform:rotate(180deg); }
