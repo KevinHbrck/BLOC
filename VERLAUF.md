@@ -12,6 +12,17 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Fragen & Antworten** unten auf Training ist als Ganzes einklappbar (zu beim Öffnen).
 - Offen (Hintergrundfoto Herbstweg für Timer/Summit wartet auf die Recherche; Summit-Player und Run-Live folgen).
 
+## 2026-10-19 · Einführung mit Sprache, Name, Gewicht, Größe und Aufbau; schlankere Einstellungen; zwei Klänge (Fassung 2026-10-19-6)
+
+Aufgabenliste von Kevin, Teil „IT“.
+
+- **Einführung** (`js/14-einfuehrung-sicherung.js`): neue Seiten vorn – **Sprache** (wirkt sofort), **Über dich** (Name, Gewicht, Größe; freiwillig, nur lokal; `settings.name`, `settings.koerper.kg/cm` – dieselben Felder wie die Kalorien-Schätzung; Eingaben werden geprüft, unplausible Werte überschreiben nichts; Name auch in den Körperdaten änderbar, erscheint in der Begrüßung auf Heute) und **So ist BLOC aufgebaut** (selbstgezeichnetes SVG-Schaubild Übung → BLOC → Workout → Trainingsplan nach Kevins Vorlage, Beschriftung für Screenreader). Danach wie bisher Katalog, Aufwärmen, Summit.
+- **Einstellungen** (`js/17-aufwaermen-einstellungen.js`): Fokus „Bereiche unter Training“ samt Reihenfolge-Knopf und die Aussehen-Auswahl entfernt; weniger Text (Beschreibungen unter den Schaltern weg). Ein früher gespeichertes `settings.fokusAus` bleibt liegen, wird aber nicht mehr beachtet (alle Bereiche sichtbar). **Countdown-Pieps und Bildschirm anlassen sind immer an** und nicht mehr einstellbar (die Abfragen entfallen); **Vibration** nicht mehr einstellbar, bleibt beim bisherigen Wert (Standard: an) – Kevins Satz dazu war mehrdeutig („Vibration aus“?), bitte bei Gelegenheit bestätigen.
+- **Klänge**: nur noch **Klangschale** und **Triangel** (Standard Klangschale); `migrateSound` setzt jeden anderen gespeicherten Klang auf Klangschale (Xylophon, Glocke u. ä. auf Triangel). „Raumklang“ bleibt.
+- **Namen**: neue Pläne heißen „BLOC 1, BLOC 2 …“ (`planDefault`, Deutsch und Englisch); gespeicherte Namen bleiben.
+- **„Lange nicht gesichert“**: BLOC macht ohnehin alle 7 Tage einen Schnappschuss auf dem Gerät (IndexedDB, `snapPruefen`). Die Datei-Erinnerung erscheint deshalb nur noch bei eigenen Inhalten, **nach 60 Tagen** ohne Datei (vorher 14), erst nach einem ersten Schnappschuss; das × blendet sie **30 Tage** aus (vorher nur für die Sitzung). Text kürzer („Datei-Sicherung“).
+- Tests: Einheitstest +5 Prüfungen (Klänge, Namen, Einführung/Profil, Schaubild, Erinnerung); Schnelltest an die entfallenen Einstellungen angepasst.
+
 ## 2026-10-19 · Nur noch Modern, Reiter „Körper“ mit Plan und Fortschritt, ruhigere Karten (Fassung 2026-10-19-4)
 
 Aufgabenliste von Kevin (Wochenend-Dokument), erster Teil. Vorab gesichert: Git-Tag `sicherung-vor-modern-only-2026-10-19` auf GitHub und Zip `BLOC-Sicherung-2026-10-19-vor-Modern-only.zip` auf dem Desktop (Stand Fassung 2026-10-19-3).

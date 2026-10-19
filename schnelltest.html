@@ -130,18 +130,21 @@
   }
 
   var TESTS = [
-    ["Einführung: nur beim ersten Start, vier Seiten mit Zahlen, danach in den Einstellungen", async function () {
+    ["Einführung: nur beim ersten Start, sechs Seiten (Sprache, Über dich, Aufbau, drei Bereiche mit Zahlen), danach in den Einstellungen", async function () {
       await heim();   // der Test startet ohne gespeicherte Daten - wie eine neue Installation
       await bis(function () { return $("#overlayRoot .intro-sheet"); }, 3000, "Einführung beim ersten Start");
       var titel = [];
-      for (var i = 0; i < 4; i++) {
+      for (var i = 0; i < 6; i++) {
         titel.push($(".intro-seite h2").textContent);
-        pruefe($$(".intro-punkte i").length === 4 && $$(".intro-punkte i")[i].classList.contains("an"), "Punkt " + (i + 1) + " nicht markiert");
+        pruefe($$(".intro-punkte i").length === 6 && $$(".intro-punkte i")[i].classList.contains("an"), "Punkt " + (i + 1) + " nicht markiert");
         pruefe(!/\{\w+\}/.test($(".intro-seite p").textContent), "Zahl fehlt: " + $(".intro-seite p").textContent);
-        if (i > 0) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));
+        if (i > 2) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));
+        if (i === 0) pruefe($$("[data-introlang]").length === 2 && $("[data-introlang].active"), "Sprachwahl fehlt");
+        if (i === 1) pruefe($("#i-name") && $("#i-kg") && $("#i-cm"), "Felder Name, Gewicht, Größe fehlen");
+        if (i === 2) pruefe($("svg.intro-schaubild"), "Schaubild fehlt");
         klick("[data-introweiter]");
       }
-      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Workout | Mobility & Stretch | Summit", "Seiten: " + titel.join(" | "));
+      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Über dich | So ist BLOC aufgebaut | Workout | Mobility & Stretch | Summit", "Seiten: " + titel.join(" | "));
       pruefe(!$("#overlayRoot .intro-sheet"), "„Los geht's“ schließt die Einführung nicht");
       await heim();
       await warte(500);
