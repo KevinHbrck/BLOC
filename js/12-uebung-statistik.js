@@ -371,7 +371,7 @@ function renderStats(){
   while(si >= 0 && voll[si].n){ serie++; si--; }
   var einheit = t(statGran === "woche" ? "statUWoche" : statGran === "monat" ? "statUMonat" : "statUJahr");
   var labels = reihe.map(function(b){ return b.label; });
-  var html = topbar(layoutNeu() ? t("tabFortschritt") : t("tabStats"), { back:"#home", right:kopfSymboleNeu("stats")+'<button type="button" class="iconbtn" data-koerper title="'+esc(t("koerperTitel"))+'" aria-label="'+esc(t("koerperTitel"))+'">'+svgIcon('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>')+'</button>' });
+  var html = topbar(layoutNeu() ? t("tabKoerper") : t("tabStats"), { back:"#home", right:kopfSymboleNeu("stats")+'<button type="button" class="iconbtn" data-koerper title="'+esc(t("koerperTitel"))+'" aria-label="'+esc(t("koerperTitel"))+'">'+svgIcon('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>')+'</button>' });
   if(!aktiv.length){
     app.innerHTML = html + '<div class="card fokus-leer"><div>'+esc(t("statAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
     return bindCommon();

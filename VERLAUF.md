@@ -3,6 +3,17 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-19 · Nur noch Modern, Reiter „Körper“ mit Plan und Fortschritt, ruhigere Karten (Fassung 2026-10-19-4)
+
+Aufgabenliste von Kevin (Wochenend-Dokument), erster Teil. Vorab gesichert: Git-Tag `sicherung-vor-modern-only-2026-10-19` auf GitHub und Zip `BLOC-Sicherung-2026-10-19-vor-Modern-only.zip` auf dem Desktop (Stand Fassung 2026-10-19-3).
+- **Classic abgeschafft**: es gilt immer Modern (`LAYOUT_NUR_MODERN` in js/03-router.js; alte Stände ohne `settings.layout` werden zu Modern). Nur der Schnelltest (`?schnelltest`) prüft noch die alten Wege und bleibt in Classic; sie sind jetzt unerreichbarer Code und werden später entfernt, sobald der Schnelltest auf Modern umgeschrieben ist.
+- **Untere Leiste** wieder schwebend und leicht transparent wie vorher (die feste, deckende Variante aus -25 ist zurückgenommen). Vierter Reiter heißt **Körper** (Figur-Symbol) statt Fortschritt.
+- **Körper** (neu, js/21-koerper.js): zwei Seiten unter einem Reiter, umschaltbar: **Plan** (Tipps, Wochen 4/6/8/12, Trainingstage, je Tag ein Workout aus Meine Workouts/Katalog/Run/Zufall, „In den Kalender eintragen“ legt normale Kalender-Einträge ab dem nächsten Montag an) und **Fortschritt** (die bisherige Statistik). Einheitstest für die Planlogik.
+- **Heute**: „Aus deinen Favoriten wählen“ erscheint nicht mehr; die Karte steht nur noch, wenn heute etwas geplant ist. Favoriten haben nur noch bei Workouts aus dem Katalog ein Foto, sonst eine ruhige Glas-Kachel mit Namen.
+- **Überrasch mich** dezenter (Baukasten: Karte wie „Selber bauen“ mit kleinem orangen Rahmen; Heute: beide Knöpfe als Glas, „Überrasch mich“ mit orangem Rahmen). Gewählte Übungen im Baukasten bekommen einen leichten grünen statt grauen Rahmen.
+- Bild `neu-p-liegestuetz-halle` (Personen mit Masken) entfernt und durch `neu-p-liegestuetz-feld` ersetzt.
+- Offen aus der Liste: Glas-Optik für Training/Run/Timer/Summit, Muskel-Filter mit Körperfigur, Timer vereinfachen, Workout-Planer, Listen kleiner, Run-Konfiguration; Einführung, Einstellungen, Sicherungshinweis, Namen „BLOC n“ (IT-Sitzung), FAQ-Erweiterung und Thoracic-Rotation-Figur (Sportwissenschaft), Hintergrundfotos (Recherche).
+
 ## 2026-10-19 · Favoriten: Bauch/Core und Brust mit passenden Fotos (Fassung 2026-10-19-3)
 
 - Fünf neue Pool-Fotos (Pexels, 600–900 px, 50–73 KB, Gesicht nicht erkennbar geprüft): **Bauch/Core** hell `neu-h-core-1` (hängendes Beinheben), `neu-h-core-2` (Ab-Roller), dunkel `neu-d-core` (Ab-Wheel); **Brust** hell `neu-h-brust-1` und `-2` (Liegestütze im Park). Bildausschnitt je Foto gesetzt. Nicht übernommen: drei Fotos, auf denen ein Gesicht im Profil erkennbar wäre (`4803930`, `4804031`, `416747`).

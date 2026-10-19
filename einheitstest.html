@@ -176,6 +176,19 @@
     gleich(W.workoutThema(["air-squats"], "Cardio Express"), "ganz", "Cardio = ganz");
     gleich(W.workoutThema([], ""), "ganz", "ohne Übungen");
   });
+  test("Trainingsplan: Wochen × Trainingstage ergeben Kalender-Einträge ab einem Montag, leere Tage fallen weg", function () {
+    var e = W.planEintraege({ wochen: 4, tage: [2, 0], wahl: { 0: "zufall", 2: "run" } });
+    gleich(e.length, 8, "4 Wochen × 2 Tage");
+    gleich([e[0].art, e[1].art], ["zufall", "run"], "Reihenfolge nach Wochentag");
+    gleich(W.kalTagDatum(e[0].tag).getDay(), 1, "erster Eintrag am Montag");
+    gleich(W.planEintraege({ wochen: 6, tage: [0, 1], wahl: { 0: "zufall" } }).length, 6, "Tag ohne Auswahl bleibt leer");
+    var lib = W.LIB_WORKOUTS.filter(function (l) { return !W.libIstWarmDehn(l); })[0];
+    gleich(W.planEintraege({ wochen: 4, tage: [3], wahl: { 3: "lib:" + lib.id } })[0].ref, lib.id, "Katalog-Workout als Verweis");
+  });
+  test("Classic ist abgeschafft: Modern gilt immer, nur ?schnelltest bleibt klassisch", function () {
+    wahr(W.LAYOUT_NUR_MODERN === !/[?&]schnelltest\b/.test(W.location.search), "Schalter folgt der Adresse");
+    gleich(W.layoutNeu(), W.LAYOUT_NUR_MODERN || W.state.db.settings.layout === "new", "layoutNeu");
+  });
 
   /* ---------- Summit: Mengen und Zeiten ---------- */
   test("Mengen halbieren: Wiederholungen mindestens 1, Strecken in m/km, Zeiten unverändert", function () {

@@ -124,6 +124,7 @@ function triggerInstall(){
 }
 
 /* ============ Theme ============ */
+var LAYOUT_NUR_MODERN = !/[?&]schnelltest\b/.test(location.search);
 /* Farbe der Browser-/Statusleiste passend zum Seitenhintergrund */
 var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214", nacht:"#16110d" };
 function applyTheme(){
@@ -133,7 +134,7 @@ function applyTheme(){
   else root.removeAttribute("data-theme");
   root.removeAttribute("data-vintage");   // altes Attribut des früheren Designs C60, falls es noch an der Seite hängt
   /* Aussehen: Klassik (Standard, fehlt in alten Ständen) oder New - unabhängig von Hell/Dunkel/Nacht */
-  if(state.db.settings.layout === "new") root.setAttribute("data-layout", "new");
+  if(LAYOUT_NUR_MODERN || state.db.settings.layout === "new") root.setAttribute("data-layout", "new");
   else root.removeAttribute("data-layout");
   var dunkel = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
   var bar = THEME_BAR_COLORS[t] || (dunkel ? THEME_BAR_COLORS.dark : THEME_BAR_COLORS.light);
@@ -149,7 +150,8 @@ var app = document.getElementById("app");
 /* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
 var TAB_ROUTEN = { home:"#home", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
 /* Aussehen „New“ (settings.layout): vier Ziele (Heute · Training · Kalender · Fortschritt), Suche und Einstellungen als Symbole in der Kopfzeile */
-function layoutNeu(){ return state.db.settings.layout === "new"; }
+/* Classic ist abgeschafft (2026-10-19): es gibt nur noch das Aussehen Modern. Nur der Schnelltest (?schnelltest) prüft noch die alten Wege und bleibt in Classic. */
+function layoutNeu(){ return LAYOUT_NUR_MODERN || state.db.settings.layout === "new"; }
 /* Foto-Pool für das Aussehen New: je Art mehrere Bilder. fotosZuteilen vergibt sie so, dass kein Bild doppelt vorkommt,
    solange es freie gibt: zuerst das passende der eigenen Art (ab einem festen Startpunkt, dann das nächste freie), danach das
    nächste freie aus allen anderen. Die Reihenfolge der Vergabe ist nach Schlüssel sortiert, damit es stabil bleibt. */
@@ -158,19 +160,19 @@ var FOTO_POOL = (function(){
   return {
     tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw")],
     st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
-    ti:  ["img/neu-timer.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("studio-halle")],
+    ti:  ["img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
     ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
     rep: ["img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
-    core:     ["img/neu-d-core.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("kraft-sw")],
+    core:     ["img/neu-d-core.jpg", P("liegestuetz-feld"), P("kraft-sw")],
     beine:    [P("mobility-ausfall"), P("freiluft-meer"), P("studio-gewichtsblock")],
     ruecken:  [P("freiluft-park"), "img/neu-freiluft.jpg", P("freiluft-sw")],
     brust:    [P("liegestuetz-strand"), P("liegestuetz-stadt"), P("liegestuetz-feld")],
     arme:     [P("studio-hantelreihe"), P("kraft-sw"), P("studio-halle")],
     schulter: [P("kraft-sw"), P("studio-hantelreihe"), P("freiluft-park")],
     mobility: ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
-    timer:    ["img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-halle")]
+    timer:    ["img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-feld")]
   };
 })();
 /* Heller Modus: helle Fotos (Pexels, siehe BilderBloc\Helle Bilder). Silhouetten und Schwarz-Weiß-Bilder bleiben dem Dunkel überlassen;
@@ -217,7 +219,6 @@ var FOTO_FOKUS = {
   "img/neu-p-kraft-sw.jpg":"50% 25%",
   "img/neu-p-liegestuetz-strand.jpg":"50% 70%",
   "img/neu-p-liegestuetz-stadt.jpg":"50% 55%",
-  "img/neu-p-liegestuetz-halle.jpg":"50% 75%",
   "img/neu-p-liegestuetz-feld.jpg":"50% 55%",
   "img/neu-p-studio-halle.jpg":"50% 55%",
   "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-kreuzheben.jpg":"50% 70%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
@@ -304,7 +305,7 @@ function hauptAktionNeu(route){
   if(route === "kalender") return { svg:P_PLUS, label:t("kalAdd"), fn:function(){ kalHinzuMenue(kalAnsicht === "monat" && kalAuswahl ? kalAuswahl : kalTagKey(Date.now())); } };
   return null;
 }
-var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", stats:"#stats" };
+var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", koerper:"#koerper", stats:"#koerper" };
 /* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
 var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
@@ -319,7 +320,7 @@ function tabLeiste(route){
     ["#home", t("tabHeute"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#training", t("tabTraining"), '<path d="M6 7v10M3 10v4M18 7v10M21 10v4M6 12h12"/>'],
     ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
-    ["#stats", t("tabFortschritt"), '<path d="M5 20V11M12 20V4M19 20v-6"/>']
+    ["#koerper", t("tabKoerper"), '<circle cx="12" cy="7" r="3.2"/><path d="M5.5 20c.6-4 3.2-6 6.5-6s5.9 2 6.5 6"/>']
   ] : [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],
@@ -396,7 +397,8 @@ function render(){
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
   if(route==="search") return renderSearch();
-  if(route==="stats") return renderStats();
+  if(route==="koerper") return renderKoerper();
+  if(route==="stats"){ if(layoutNeu()){ state.db.settings.koerperTab = "fortschritt"; return renderKoerper(); } return renderStats(); }
   if(route==="studio") return renderStudioKarte(parts[1]);
   if(route==="install") return renderInstallGuide();
   if(route==="play") return startPlayer(parts[1]);

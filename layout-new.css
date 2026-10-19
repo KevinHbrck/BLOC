@@ -413,15 +413,6 @@
 }
 /* Meine Woche: der Untertitel darf umbrechen statt mit ... abzuschneiden (auch im Dunkeln) */
 :root[data-layout="new"] .woche-neu .wo-summe{ white-space:normal; overflow:visible; text-overflow:clip; line-height:1.3; }
-/* ---------- Untere Leiste fest und deckend (Rückmeldung eines Testers, 2026-10-16): volle Breite am unteren Rand mit eigenem Hintergrund,
-   kein Inhalt scheint mehr durch; die Pille und der runde Hauptknopf bleiben, die Seiten haben unten genug Polster (body.mit-tabs #app). ---------- */
-:root[data-layout="new"] .tabbar{
-  left:0; right:0; transform:none; width:auto; max-width:none; bottom:0;
-  padding:10px max(14px, calc((100% - 532px) / 2)) calc(10px + env(safe-area-inset-bottom));
-  background:var(--bg); border-top:1px solid var(--nl-linie);
-}
-:root[data-layout="new"] .tabbar .pille{ background:var(--surface); -webkit-backdrop-filter:none; backdrop-filter:none; box-shadow:none; border-color:var(--border); }
-:root[data-layout="new"] body.mit-tabs #app{ padding-bottom:calc(104px + env(safe-area-inset-bottom)); }
 
 /* ---------- Run-Seite (Modern, 2026-10-16): das Läuferfoto liegt geblurrt hinter der ganzen Seite (dunkel: Gegenlicht-Läufer, hell: Waldweg),
    darüber weiße Karten; während des Laufens steht alles in einer weißen Karte. Der Kopf hat kein eigenes Foto mehr. ---------- */
@@ -513,3 +504,37 @@
 }
 :root[data-layout="new"] .rs-chip.links{ transform:translate(calc(-100% - 10px), -50%); }
 :root[data-layout="new"] .run-hoehen{ stroke:rgba(255,255,255,.5); }
+
+/* ---------- Körper (Plan · Fortschritt) ---------- */
+:root[data-layout="new"] .koerper-rz{ margin:4px 0 14px; }
+:root[data-layout="new"] .kp-titel{ font-weight:700; font-size:15px; margin:0 0 8px; }
+:root[data-layout="new"] .kp-tipps ul{ margin:0 0 8px; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:14px; line-height:1.4; }
+:root[data-layout="new"] .kp-fuss{ font-size:12.5px; color:var(--text-dim); margin-top:6px; line-height:1.35; }
+:root[data-layout="new"] .kp-bau .kp-titel{ margin-top:14px; }
+:root[data-layout="new"] .kp-bau .kp-titel:first-child{ margin-top:0; }
+:root[data-layout="new"] .kp-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+:root[data-layout="new"] .kp-chip{ min-width:46px; padding:10px 14px; border-radius:999px; border:1px solid var(--nl-linie); background:color-mix(in srgb, var(--text) 5%, transparent); color:var(--text); font:inherit; font-size:14.5px; cursor:pointer; }
+:root[data-layout="new"] .kp-chip.an{ background:color-mix(in srgb, var(--accent) 16%, var(--surface)); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent); font-weight:700; }
+:root[data-layout="new"] .kp-zeilen{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+:root[data-layout="new"] .kp-zeile{ display:grid; grid-template-columns:44px 1fr; gap:10px; align-items:center; font-size:14px; }
+:root[data-layout="new"] .kp-zeile select{ width:100%; min-width:0; padding:11px 10px; border-radius:14px; border:1px solid var(--nl-linie); background:var(--surface); color:var(--text); font:inherit; font-size:14.5px; }
+:root[data-layout="new"] .kp-leer{ margin-top:14px; font-size:14px; color:var(--text-dim); }
+:root[data-layout="new"] .kp-ok{ margin-top:16px; width:100%; }
+:root[data-layout="new"] .kp-ok[disabled]{ opacity:.45; }
+:root[data-layout="new"] .kp-text{ font-size:14px; line-height:1.45; color:var(--text-dim); }
+/* Favoriten ohne Katalog-Foto: ruhige Glas-Kachel mit Name */
+:root[data-layout="new"] .fav-foto.ohne{ background-image:none; background-color:rgba(255,255,255,.07); border:1px solid var(--nl-linie); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+:root[data-layout="new"] .fav-foto.ohne::before{ display:none; }
+:root[data-layout="new"] .fav-foto.ohne .ff-name, :root[data-layout="new"] .fav-foto.ohne .ff-stern{ color:var(--text); }
+:root[data-layout="new"] .fav-foto.ohne .ff-bereich, :root[data-layout="new"] .fav-foto.ohne .ff-sub{ color:var(--text-dim); }
+:root[data-layout="new"][data-theme="light"] .fav-foto.ohne{ background-color:var(--surface); }
+@media (prefers-color-scheme: light){ :root[data-layout="new"]:not([data-theme]) .fav-foto.ohne{ background-color:var(--surface); } }
+
+/* Baukasten: „Überrasch mich“ dezenter (wie „Selber bauen“, nur mit kleinem orangen Rahmen); auf Heute beide Knöpfe als Glas, „Überrasch mich“ mit orangem Rahmen */
+:root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau){ background:var(--surface); border:1.5px solid color-mix(in srgb, var(--accent) 75%, transparent); color:var(--text); }
+:root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau) .bk-ico{ background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent-ink, var(--accent)); }
+:root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau) .bk-t small, :root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau) .bk-pfeil{ color:var(--text-dim); opacity:1; }
+:root[data-layout="new"] .bn-knoepfe .btn-primary{ background:rgba(255,255,255,.12); color:#fff; border:1.5px solid var(--accent); box-shadow:none; }
+/* gewählte Übungen im Baukasten: statt grauer ein leichter grüner Rahmen */
+:root[data-layout="new"] .wb-kachel.gewaehlt{ box-shadow:0 0 0 3px color-mix(in srgb, #2fa88a 70%, transparent), var(--shadow); background:color-mix(in srgb, #2fa88a 7%, var(--surface)); }
+:root[data-layout="new"] .wb-kachel.gewaehlt .fig-bild{ background:color-mix(in srgb, #2fa88a 14%, transparent); color:#2fa88a; }
