@@ -11,6 +11,12 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - Einheitstest: zwei neue Prüfungen (Daten vollständig/zweisprachig, Anzeige zugeklappt, Links nur https mit noopener); der Lauf wartet nach Prüfungen mit Versprechen 250 ms (Wettlauf zwischen zwei Test-Rahmen).
 - Offen: Quellen am Original lesen (Kevin), ACSM-Stand 2026 und WHO sind am Original bestätigt, die übrigen Quellen nur per Crossref auf Existenz geprüft.
 
+## 2026-10-19 · Run (Modern): Stil nach Vorlage – Höhenlinien, Glas-Kacheln, weißer Start, Strecke mit Zwischenwerten (Fassung 2026-10-19-2)
+
+- **Start-Seite**: hinter dem geblurrten Foto liegen selbst berechnete **Höhenlinien** (`runHoehenlinien`, reine Zierde, keine Kartendaten); Strecke gesamt und Anzahl der Läufe als **Glas-Kacheln**, Laufen/Rad als Glas-Pille, **großer weißer Start-Knopf**. Glas = halbtransparent mit Blur, ohne `backdrop-filter` eine deckendere Fläche.
+- **Lauf-Details**: die Strecke als weiße Linie mit Punkten bei jedem Kilometer und kleinen Glas-Chips „3 km · 5:35 /km“ (`runStreckeNeu`, aus den vorhandenen Punkten und Kilometerzeiten; Chips nahe am rechten Rand klappen nach links). Statt der Puls-Werte der Vorlage stehen Pace-Werte, weil die App keinen Puls misst. Keine Kartenkacheln, kein Netz.
+- Hell und Dunkel (inkl. „System“) geprüft; Fassung 2026-10-19-2. Außerdem: der Kalender-Test im Schnelltest nimmt einen Tag ohne „heute“, weil an einem Tag mit erledigten Trainings (montags nach den Vortests) das Abhaken ein Zurücknehmen war.
+
 ## 2026-10-16 · Favoriten: Bilder passend zum Inhalt (Fassung 2026-10-16-26)
 
 - **Foto-Wahl nach Inhalt** (Modern, Heute › Favoriten): `workoutThema()` (js/08-koerperkarte.js) bestimmt je Workout das Thema, zuerst über den Namen (Bauch/Core, Rücken/Zug, Brust, Schulter, Arme, Beine; „Cardio/Full Body/HIIT“ = gemischt), sonst über die größte Muskelgruppe. Mobility bekommt Dehnen-Bilder, Timer Hallenbilder, Fitnessstudio-Workouts Studio-Bilder; je Thema ein eigener Pool in Dunkel und Hell (`FOTO_POOL`/`FOTO_POOL_HELL`, `favFotoPool` in js/10-gemeinsam.js). Kein Bild doppelt, solange es freie gibt. Neuer Einheitstest (38).

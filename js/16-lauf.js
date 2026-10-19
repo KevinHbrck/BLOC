@@ -446,8 +446,51 @@ function renderRunVor(){
   app.querySelector("[data-runabbr]").addEventListener("click", weg);
 }
 /* Aussehen „Modern“: das Läuferfoto liegt geblurrt hinter der ganzen Run-Seite (dunkel: Gegenlicht-Läufer, hell: Waldweg), darüber stehen weiße Karten */
+/* Höhenlinien als Zierde: ineinanderliegende, leicht verzogene Ringe (selbst berechnet, keine Kartendaten, kein Netz) */
+function runHoehenlinien(){
+  function blob(cx, cy, r, ph){
+    var n = 10, p = [], i, a, rr;
+    for(i = 0; i < n; i++){ a = i/n*2*Math.PI; rr = r*(1 + .16*Math.sin(2*a + ph) + .09*Math.sin(3*a + 2*ph)); p.push([cx + Math.cos(a)*rr*1.15, cy + Math.sin(a)*rr]); }
+    var d = "M" + p[0][0].toFixed(1) + " " + p[0][1].toFixed(1);
+    for(i = 0; i < n; i++){   // geschlossene Kurve durch alle Punkte (Catmull-Rom → Bézier)
+      var p0 = p[(i + n - 1) % n], p1 = p[i], p2 = p[(i + 1) % n], p3 = p[(i + 2) % n];
+      d += "C" + (p1[0] + (p2[0] - p0[0])/6).toFixed(1) + " " + (p1[1] + (p2[1] - p0[1])/6).toFixed(1) + " " + (p2[0] - (p3[0] - p1[0])/6).toFixed(1) + " " + (p2[1] - (p3[1] - p1[1])/6).toFixed(1) + " " + p2[0].toFixed(1) + " " + p2[1].toFixed(1);
+    }
+    return '<path d="' + d + 'Z"/>';
+  }
+  var s = "", k;
+  for(k = 0; k < 8; k++) s += blob(90, 260, 34 + k*26, .4 + k*.12);
+  for(k = 0; k < 6; k++) s += blob(330, 650, 28 + k*24, 1.7 + k*.15);
+  return '<svg class="run-hoehen" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke-width="1.2">' + s + '</svg>';
+}
 function runHintergrundHTML(){
-  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+(themeIstDunkel() ? "img/bereich-run.jpg" : "img/neu-h-trail.jpg")+')"></i></div>';
+  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+(themeIstDunkel() ? "img/bereich-run.jpg" : "img/neu-h-trail.jpg")+')"></i>'+runHoehenlinien()+'</div>';
+}
+/* Strecke mit Zwischenwerten (Modern, Lauf-Details): weiße Linie, Punkte bei jedem Kilometer, daran kleine Glas-Chips „1 km · 5:44“ */
+function runStreckeNeu(x){
+  var pts = x.pts || [];
+  if(pts.length < 2) return '<div class="run-leer">'+esc(t("runRoutePh"))+'</div>';
+  var minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
+  pts.forEach(function(p){ minLa = Math.min(minLa, p[0]); maxLa = Math.max(maxLa, p[0]); minLo = Math.min(minLo, p[1]); maxLo = Math.max(maxLo, p[1]); });
+  var kx = Math.cos((minLa + maxLa)/2*Math.PI/180), W = 300, H = 260, pad = 30;
+  var bw = Math.max((maxLo - minLo)*kx, 1e-6), bh = Math.max(maxLa - minLa, 1e-6);
+  var sk = Math.min((W - 2*pad)/bw, (H - 2*pad)/bh), ox = (W - bw*sk)/2, oy = (H - bh*sk)/2;
+  function xy(p){ return [ox + (p[1] - minLo)*kx*sk, oy + (maxLa - p[0])*sk]; }
+  var pl = pts.map(function(p){ var q = xy(p); return q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" ");
+  var sp = x.splits || [], marken = [], cum = 0, naechster = 1, i;
+  for(i = 1; i < pts.length && naechster <= sp.length; i++){
+    cum += runMeter(pts[i-1], pts[i]);
+    if(cum >= naechster*1000){ var dauer = sp[naechster-1] - (naechster > 1 ? sp[naechster-2] : 0); marken.push({ km:naechster, p:xy(pts[i]), dauer:dauer }); naechster++; }
+  }
+  var schritt = Math.max(1, Math.ceil(marken.length/6)), punkte = "", chips = "";
+  marken.forEach(function(m, j){
+    punkte += '<circle cx="'+m.p[0].toFixed(1)+'" cy="'+m.p[1].toFixed(1)+'" r="4.5" class="rs-punkt"/>';
+    if(j % schritt === 0) chips += '<span class="rs-chip'+(m.p[0]/W > .62 ? ' links' : '')+'" style="left:'+(m.p[0]/W*100).toFixed(1)+'%;top:'+(m.p[1]/H*100).toFixed(1)+'%"><b>'+m.km+' km</b><small>'+esc(repUhr(m.dauer))+(runIstRad(x) ? '' : ' /km')+'</small></span>';
+  });
+  var a = xy(pts[0]), z = xy(pts[pts.length-1]);
+  return '<div class="run-strecke"><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'">'+
+    '<polyline points="'+pl+'" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+punkte+
+    '<circle cx="'+a[0].toFixed(1)+'" cy="'+a[1].toFixed(1)+'" r="5.5" class="rs-start"/><circle cx="'+z[0].toFixed(1)+'" cy="'+z[1].toFixed(1)+'" r="9" class="rs-ring"/><circle cx="'+z[0].toFixed(1)+'" cy="'+z[1].toFixed(1)+'" r="5" class="rs-ziel"/></svg>'+chips+'</div>';
 }
 function renderRun(){
   var s = state.db.settings;
@@ -570,6 +613,7 @@ function renderRunDetail(id){
   runNeu = null;
   var hl = neu ? runHighlights(x) : [];
   app.innerHTML =
+    (layoutNeu() ? runHintergrundHTML() : '') +
     topbar(t("runDetail"), { back:"#run" }) +
     // Abschlusskarte direkt nach dem Lauf: was geschafft wurde (der Lauf ist schon gespeichert)
     (neu ? '<div class="card run-fertig"><div class="rf-titel">'+esc(t("runGeschafft"))+'</div><div class="rf-km">'+esc(runKm(x.dist))+' <small>km</small></div>'+
@@ -582,7 +626,7 @@ function renderRunDetail(id){
       '<textarea id="run-note" rows="2" maxlength="400" placeholder="'+esc(t("runNotePh"))+'" aria-label="'+esc(t("runNotePh"))+'">'+esc(x.note || "")+'</textarea></div>'+
     '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(repUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
       '<div><b>'+esc(runTempo(x, x.dur/1000, x.dist))+'</b><small>'+esc(t(runIstRad(x) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(x)+'</small></div></div>'+
-    '<div class="section-title">'+esc(t("runRoute"))+'</div><div class="run-karte">'+runSvg(x.pts)+'</div>'+
+    '<div class="section-title">'+esc(t("runRoute"))+'</div>'+(layoutNeu() ? runStreckeNeu(x) : '<div class="run-karte">'+runSvg(x.pts)+'</div>')+
     (sp.length ? '<div class="section-title">'+esc(t("runSplits"))+'</div><div class="card run-kms">'+runKmZeilen(x)+'</div>' : '')+
     '<button type="button" class="btn btn-secondary" data-rungpx style="margin-top:14px;">'+esc(t("runGpx"))+'</button>'+
     '<div style="height:40px"></div>';

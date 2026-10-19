@@ -453,3 +453,63 @@
   :root[data-layout="new"]:not([data-theme]) .run-weiss{ --text:#1c1c1e; --text-dim:#6c6c70; --surface:#fff; --surface-2:#ececea; --border:#e2e1dd; background:#fff; color:#1c1c1e; }
 }
 :root[data-layout="new"] .run-bg ~ .topbar{ background:transparent; box-shadow:none; border:0; }
+
+/* ---------- Run (Modern), Stil nach einer Vorlage von Kevin (nur Stil und Aufbau, alles selbst gezeichnet): Höhenlinien, Glas-Kacheln,
+   großer weißer Start-Knopf, Strecke als weiße Linie mit Zwischenwerten. Glas = halbtransparent mit Blur; ohne backdrop-filter bleibt es eine
+   deckendere Fläche. ---------- */
+:root[data-layout="new"]{ --glas:rgba(255,255,255,.14); --glas-rand:rgba(255,255,255,.22); --glas-text:#fff; --glas-dim:rgba(255,255,255,.78); --linie:#fff; }
+:root[data-layout="new"] .run-hoehen{ position:absolute; inset:0; width:100%; height:100%; stroke:rgba(255,255,255,.3); }
+:root[data-layout="new"] .run-bg ~ .run-hero{ background:none; border:0; padding:0; margin-bottom:14px; display:grid; grid-template-columns:1fr 1fr; gap:10px; color:var(--glas-text); }
+:root[data-layout="new"] .run-bg ~ .run-hero .rh-km,
+:root[data-layout="new"] .run-bg ~ .run-hero .rh-sub,
+:root[data-layout="new"] .run-bg ~ .run-hero .run-art,
+:root[data-layout="new"] .run-bg ~ .run-raster > div,
+:root[data-layout="new"] .rs-chip{
+  background:rgba(34,36,40,.72); border:1px solid var(--glas-rand); color:var(--glas-text);
+}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :root[data-layout="new"] .run-bg ~ .run-hero .rh-km,
+  :root[data-layout="new"] .run-bg ~ .run-hero .rh-sub,
+  :root[data-layout="new"] .run-bg ~ .run-hero .run-art,
+  :root[data-layout="new"] .run-bg ~ .run-raster > div,
+  :root[data-layout="new"] .rs-chip,
+  :root[data-layout="new"] .run-strecke{ background:var(--glas); -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%); }
+}
+:root[data-layout="new"] .run-bg ~ .run-hero .rh-km{ grid-column:1; margin:0; padding:16px 16px 14px; border-radius:24px; font-size:36px; line-height:1; text-align:left; display:flex; align-items:baseline; gap:6px; }
+:root[data-layout="new"] .run-bg ~ .run-hero .rh-km small{ font-size:15px; color:var(--glas-dim); }
+:root[data-layout="new"] .run-bg ~ .run-hero .rh-sub{ grid-column:2; margin:0; padding:16px; border-radius:24px; font-size:14px; line-height:1.3; color:var(--glas-dim); display:flex; align-items:center; }
+:root[data-layout="new"] .run-bg ~ .run-hero .run-art{ grid-column:1 / -1; margin:0; border-radius:999px; padding:4px; }
+:root[data-layout="new"] .run-bg ~ .run-hero .run-art button{ border-radius:999px; color:var(--glas-text); background:none; }
+:root[data-layout="new"] .run-bg ~ .run-hero .run-art button.active{ background:rgba(255,255,255,.92); color:#1c1c1e; box-shadow:none; }
+:root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn{ grid-column:1 / -1; margin:2px 0 0; height:76px; border-radius:28px; font-size:22px; font-weight:800;
+  background:#fff; color:#111; box-shadow:0 12px 30px rgba(0,0,0,.28); }
+:root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn svg{ color:var(--accent-ink, var(--accent)); }
+/* Lauf-Details: Strecke als Linie mit Zwischenwerten */
+:root[data-layout="new"] .run-strecke{ position:relative; margin:0 0 16px; border-radius:24px; border:1px solid var(--glas-rand); color:var(--linie); background:rgba(34,36,40,.72); overflow:hidden; }
+:root[data-layout="new"] .run-strecke svg{ display:block; width:100%; height:auto; }
+:root[data-layout="new"] .rs-punkt{ fill:var(--linie); opacity:.9; }
+:root[data-layout="new"] .rs-start{ fill:var(--linie); }
+:root[data-layout="new"] .rs-ring{ fill:none; stroke:var(--linie); opacity:.5; stroke-width:2; }
+:root[data-layout="new"] .rs-ziel{ fill:var(--accent); }
+:root[data-layout="new"] .rs-chip{ position:absolute; transform:translate(10px,-50%); display:flex; flex-direction:column; padding:4px 9px; border-radius:12px; font-size:12px; line-height:1.15; white-space:nowrap; }
+:root[data-layout="new"] .rs-chip b{ font-size:12.5px; }
+:root[data-layout="new"] .rs-chip small{ font-size:11px; color:var(--glas-dim); }
+:root[data-layout="new"] .run-bg ~ .run-raster > div{ border-radius:18px; }
+:root[data-layout="new"] .run-bg ~ .run-raster small{ color:var(--glas-dim); }
+:root[data-layout="new"] .run-bg ~ .run-raster b{ color:var(--glas-text); }:root[data-layout="new"][data-theme="light"]{ --glas:rgba(255,255,255,.66); --glas-rand:rgba(255,255,255,.85); --glas-text:#1c1c1e; --glas-dim:#55555a; --linie:#1c1c1e; }
+:root[data-layout="new"][data-theme="light"] .run-hoehen{ stroke:rgba(255,255,255,.75); }
+:root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .rh-km, :root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .rh-sub, :root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .run-art, :root[data-layout="new"][data-theme="light"] .run-bg ~ .run-raster > div, :root[data-layout="new"][data-theme="light"] .rs-chip, :root[data-layout="new"][data-theme="light"] .run-strecke{ background:rgba(255,255,255,.86); }
+:root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .run-art button.active{ background:#1c1c1e; color:#fff; }
+:root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .run-startbtn{ border:1px solid rgba(0,0,0,.08); }
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .rh-km, :root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .rh-sub, :root[data-layout="new"][data-theme="light"] .run-bg ~ .run-hero .run-art,
+  :root[data-layout="new"][data-theme="light"] .run-bg ~ .run-raster > div, :root[data-layout="new"][data-theme="light"] .rs-chip, :root[data-layout="new"][data-theme="light"] .run-strecke{ background:var(--glas); }
+}@media (prefers-color-scheme: light){
+  :root[data-layout="new"]:not([data-theme]){ --glas:rgba(255,255,255,.66); --glas-rand:rgba(255,255,255,.85); --glas-text:#1c1c1e; --glas-dim:#55555a; --linie:#1c1c1e; }
+  :root[data-layout="new"]:not([data-theme]) .run-hoehen{ stroke:rgba(255,255,255,.75); }
+  :root[data-layout="new"]:not([data-theme]) .run-bg ~ .run-hero .rh-km, :root[data-layout="new"]:not([data-theme]) .run-bg ~ .run-hero .rh-sub, :root[data-layout="new"]:not([data-theme]) .run-bg ~ .run-hero .run-art, :root[data-layout="new"]:not([data-theme]) .run-bg ~ .run-raster > div, :root[data-layout="new"]:not([data-theme]) .rs-chip, :root[data-layout="new"]:not([data-theme]) .run-strecke{ background:rgba(255,255,255,.86); }
+  :root[data-layout="new"]:not([data-theme]) .run-bg ~ .run-hero .run-art button.active{ background:#1c1c1e; color:#fff; }
+  :root[data-layout="new"]:not([data-theme]) .run-bg ~ .run-hero .run-startbtn{ border:1px solid rgba(0,0,0,.08); }
+}
+:root[data-layout="new"] .rs-chip.links{ transform:translate(calc(-100% - 10px), -50%); }
+:root[data-layout="new"] .run-hoehen{ stroke:rgba(255,255,255,.5); }
