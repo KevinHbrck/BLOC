@@ -12,7 +12,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Fragen & Antworten** unten auf Training ist als Ganzes einklappbar (zu beim Öffnen).
 - Offen (Hintergrundfoto Herbstweg für Timer/Summit wartet auf die Recherche; Summit-Player und Run-Live folgen).
 
-## 2026-10-19 · Einführung mit Sprache, Name, Gewicht, Größe und Aufbau; schlankere Einstellungen; zwei Klänge (Fassung 2026-10-19-6)
+## 2026-10-19 · Einführung mit Sprache, Name, Gewicht, Größe und Aufbau; schlankere Einstellungen; zwei Klänge (Fassung 2026-10-19-7)
 
 Aufgabenliste von Kevin, Teil „IT“.
 
