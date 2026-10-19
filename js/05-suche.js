@@ -287,13 +287,43 @@ function bindBuilderKarte(){
     b.addEventListener("click", function(){ builderAuto = b.getAttribute("data-builder"); katTabSetzen("baukasten"); go("#katalog"); });
   });
 }
+/* Fragen & Antworten am Ende der Seite „Training“ (Inhalt: faq.js, erzeugt aus docs/FAQ-ENTWURF.md). Reine Anzeige, nichts wird gespeichert oder geladen.
+   Aufklappbar mit <details>/<summary> (Tastatur und Screenreader ohne eigenes Skript); der Hinweis „keine Beratung“ steht immer sichtbar darüber.
+   Die Texte in faq.js sind festes Material mit <b>/<i>/<a>, kein Nutzereingabe-Text - deshalb ohne esc(). Die Quellen heißen hier F1, F2 …, weil quellen.html eigene Nummern hat. */
+function faqHTML(){
+  var F = window.BLOC_FAQ;
+  if(!F) return "";
+  var sp = currentLang() === "en" ? "en" : "de", h = '<section class="faq" aria-labelledby="faq-titel">'+
+    '<div class="sec-head"><div class="section-title" id="faq-titel">'+esc(t("faqTitel"))+'</div></div>'+
+    '<p class="faq-hinweis" role="note">'+F.hinweis[sp]+'</p>', gruppe = -1;
+  F.fragen.forEach(function(f, i){
+    var x = f[sp];
+    if(f.g !== gruppe){
+      if(gruppe >= 0) h += '</div>';
+      gruppe = f.g;
+      h += '<h3 class="faq-gruppe">'+F.gruppen[sp][gruppe]+'</h3><div class="faq-liste">';
+    }
+    h += '<details class="faq-q"><summary><span class="faq-nr" aria-hidden="true">'+(i+1)+'</span><span class="faq-t">'+x.t+'</span></summary>'+
+      '<div class="faq-a"><p><b>'+esc(t("faqKurz"))+':</b> '+x.k+'</p>'+
+      '<ul>'+x.p.map(function(p){ return '<li>'+p+'</li>'; }).join("")+'</ul>'+
+      '<p><b>'+esc(t("faqStudie"))+':</b> '+x.s+'</p>'+
+      '<p class="faq-quellen"><b>'+esc(t("faqQuellen"))+':</b> '+f.q.map(function(n){ return '[F'+n+']'; }).join(" ")+'</p></div></details>';
+  });
+  if(gruppe >= 0) h += '</div>';
+  h += '<details class="faq-q faq-verz"><summary><span class="faq-t">'+esc(t("faqVerz"))+'</span></summary><div class="faq-a">'+
+    '<p class="dim">'+esc(t("faqVerzSub"))+'</p><ol class="faq-refs">'+
+    Object.keys(F.quellen).map(function(n){ return '<li value="'+n+'"><span class="faq-refnr">[F'+n+']</span> '+F.quellen[n][sp]+'</li>'; }).join("")+
+    '</ol></div></details></section>';
+  return h;
+}
 /* Aussehen „New“: Seite „Training“ - alle Bereiche (Workout, Mobility & Stretch, Timer, Summit, Run) als Fotokarten, darüber die Suche */
 function renderTraining(){
   app.innerHTML =
     topbar(t("tabTraining"), { right:kopfSymboleNeu("training") }) +
     '<button type="button" class="suchfeld-neu" data-nav="#search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'<span>'+esc(t("trainingSuche"))+'</span></button>'+
     '<div class="training-seite">'+bereicheHTML()+'</div>'+
-    '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
+    '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
+    faqHTML();
   bindCommon();
   /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd, kein Bild doppelt; dieselben Bilder tragen die Köpfe der Bereichsseiten */
   var fotos = bereichFotosNeu();

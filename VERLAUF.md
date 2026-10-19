@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-19 · Fragen & Antworten unten auf der Seite Training (Fassung 2026-10-19-1)
+
+- **Neu**: 13 Fragen in drei Gruppen (Grundlagen & Einstieg · Trainingseffekte & Mechanik · Ernährung & Stoffwechsel), Deutsch und Englisch, je Frage Kurzantwort, Stichpunkte, „Studienlage“ und Quellen. Aufklappbar mit `<details>`/`<summary>` (Tastatur und Screenreader ohne eigenes Skript), alles zugeklappt; der Hinweis „allgemeine Informationen für gesunde Erwachsene, keine individuelle Beratung, Stand Oktober 2026“ steht immer sichtbar darüber. Dazu ein aufklappbares **Quellenverzeichnis** (27 Quellen, Links nur als Textlinks, öffnen erst beim Antippen, `rel="noopener noreferrer"`, ohne Referrer).
+- **Inhalt**: `faq.js` (`window.BLOC_FAQ`), erzeugt aus `docs/FAQ-ENTWURF.md` (Fassung 2; Texte der Sportwissenschaft-Sitzung, in eigenen Worten, Quellen nur genannt). Änderungen im Entwurf machen und neu erzeugen. Anzeige: `faqHTML()` in `js/05-suche.js`, Beschriftungen in `texte.js` (`faq…`), Stile am Ende von `app.css`. Quellen heißen in der App **F1–F28** (Nummer 13 frei), weil `quellen.html` eigene Nummern hat; dort steht die Liste zusätzlich in beiden Sprachen.
+- Seite Training gibt es nur im Aussehen „Modern“; im Aussehen „Classic“ ist der Bereich nicht sichtbar. Nichts wird nachgeladen oder gespeichert.
+- Einheitstest: zwei neue Prüfungen (Daten vollständig/zweisprachig, Anzeige zugeklappt, Links nur https mit noopener); der Lauf wartet nach Prüfungen mit Versprechen 250 ms (Wettlauf zwischen zwei Test-Rahmen).
+- Offen: Quellen am Original lesen (Kevin), ACSM-Stand 2026 und WHO sind am Original bestätigt, die übrigen Quellen nur per Crossref auf Existenz geprüft.
+
 ## 2026-10-16 · Favoriten: Bilder passend zum Inhalt (Fassung 2026-10-16-26)
 
 - **Foto-Wahl nach Inhalt** (Modern, Heute › Favoriten): `workoutThema()` (js/08-koerperkarte.js) bestimmt je Workout das Thema, zuerst über den Namen (Bauch/Core, Rücken/Zug, Brust, Schulter, Arme, Beine; „Cardio/Full Body/HIIT“ = gemischt), sonst über die größte Muskelgruppe. Mobility bekommt Dehnen-Bilder, Timer Hallenbilder, Fitnessstudio-Workouts Studio-Bilder; je Thema ein eigener Pool in Dunkel und Hell (`FOTO_POOL`/`FOTO_POOL_HELL`, `favFotoPool` in js/10-gemeinsam.js). Kein Bild doppelt, solange es freie gibt. Neuer Einheitstest (38).

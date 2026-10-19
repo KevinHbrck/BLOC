@@ -480,6 +480,39 @@
     gleich(W.save(), true, "danach wieder normal");
   });
 
+  /* ---------- Fragen & Antworten (faq.js): Daten vollständig und zweisprachig, Anzeige zugeklappt, Links nur https ---------- */
+  test("FAQ: 13 Fragen in Deutsch und Englisch, alle Quellen vorhanden, Gruppen lückenlos", function () {
+    var F = W.BLOC_FAQ;
+    wahr(F && F.fragen && F.quellen, "faq.js geladen");
+    gleich(F.fragen.length, 13, "Fragen");
+    var gr = F.fragen.map(function (f) { return f.g; });
+    gleich(gr.filter(function (g, i) { return i === 0 || g !== gr[i - 1]; }), [0, 1, 2], "Gruppen A, B, C nacheinander");
+    ["de", "en"].forEach(function (sp) {
+      gleich(F.gruppen[sp].length, 3, "Gruppennamen " + sp); wahr(F.hinweis[sp].length > 100, "Hinweis " + sp);
+      F.fragen.forEach(function (f, i) {
+        var x = f[sp];
+        wahr(x && x.t && x.k && x.s && x.p.length >= 3, "Frage " + (i + 1) + " " + sp + " vollständig");
+        wahr(f.q.length >= 1 && f.q.every(function (n) { return F.quellen[n] && F.quellen[n].de && F.quellen[n].en; }), "Frage " + (i + 1) + ": Quellen im Verzeichnis");
+      });
+    });
+    gleich(Object.keys(F.quellen).length, 27, "Quellen (Nummer 13 bleibt frei)");
+    wahr(!F.quellen[13], "Nummer 13 ist frei");
+  });
+  test("FAQ: Anzeige – Hinweis sichtbar, Fragen zugeklappt, Quellenverzeichnis, Links nur https mit noopener", function () {
+    var d = document.createElement("div"); d.innerHTML = W.faqHTML();
+    wahr(d.querySelector(".faq-hinweis") && !d.querySelector("details .faq-hinweis"), "Hinweis „keine Beratung“ steht außerhalb der zugeklappten Teile");
+    gleich(d.querySelectorAll("details.faq-q").length, 14, "13 Fragen + Quellenverzeichnis");
+    gleich(d.querySelectorAll("details[open]").length, 0, "alles zugeklappt");
+    gleich(d.querySelectorAll("summary").length, 14, "jede Frage hat eine Kopfzeile");
+    var links = d.querySelectorAll("a");
+    wahr(links.length >= 20, "Links im Verzeichnis: " + links.length);
+    for (var i = 0; i < links.length; i++) {
+      wahr(/^https:\/\//.test(links[i].getAttribute("href")), "Link nur https: " + links[i].getAttribute("href"));
+      wahr(/noopener/.test(links[i].getAttribute("rel") || "") && links[i].getAttribute("target") === "_blank", "Link mit noopener: " + links[i].getAttribute("href"));
+    }
+    wahr(!d.querySelector("img, script, iframe, link, [src]"), "nichts wird nachgeladen oder eingebettet");
+  });
+
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
   document.getElementById("los").addEventListener("click", async function () {
     var knopf = this;
@@ -493,7 +526,7 @@
       await laden();
       for (var n = 0; n < T.length; n++) {
         var li = eintrag(T[n][0]);
-        try { var erg = T[n][1](); if (erg && erg.then) await erg; li.className = "ok"; li.textContent = "✓ " + T[n][0]; ok++; }
+        try { var erg = T[n][1](); if (erg && erg.then) { await erg; await warte(250); } li.className = "ok"; li.textContent = "✓ " + T[n][0]; ok++; }
         catch (e) {
           li.className = "fail"; li.textContent = "✗ " + T[n][0];
           var sm = document.createElement("small"); sm.textContent = e && e.message ? e.message : String(e); li.appendChild(sm);
