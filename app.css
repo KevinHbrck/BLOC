@@ -2250,3 +2250,21 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .faq-refs a{ color:inherit; text-decoration:underline; word-break:break-all; }
 .faq-refnr{ font-weight:700; }
 @media (prefers-reduced-motion: reduce){ .faq-q summary::after{ transition:none; } }
+
+/* ---------- Einführung (2026-10-19): Sprache, „Über dich“, Schaubild Aufbau ---------- */
+.intro-sprache{ margin-top:18px; width:100%; max-width:280px; }
+.intro-profil{ width:100%; max-width:300px; margin-top:16px; text-align:left; }
+.intro-profil .koerper-feld input[type=text]{ width:150px; text-align:right; padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text); font:inherit; }
+.intro-schaubild{ width:100%; max-width:340px; height:auto; margin:16px 0 4px; }
+.intro-schaubild .sb-kasten{ fill:var(--surface-2); stroke:var(--border); stroke-width:1.2; }
+.intro-schaubild .sb-bloc{ fill:var(--surface); stroke:var(--accent); stroke-width:1.4; }
+.intro-schaubild .sb-linie{ fill:none; stroke:var(--text-dim); stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; }
+.intro-schaubild text{ fill:var(--text); font-size:11px; }
+.intro-schaubild .sb-t{ font-size:12.5px; font-weight:600; letter-spacing:.02em; }
+.intro-schaubild .sb-bt{ fill:var(--accent); font-size:14px; font-weight:800; letter-spacing:.04em; }
+.intro-schaubild .sb-ex{ fill:var(--text-dim); font-size:11px; }
+.intro-seite .intro-kette{ margin-top:10px; max-width:none; font-size:13px; font-weight:600; color:var(--text-dim); }
+.intro-sheet.kompakt .intro-ico{ width:60px; height:60px; border-radius:18px; margin-bottom:12px; }
+.intro-sheet.kompakt .intro-ico .ico{ width:32px; height:32px; }
+.intro-sheet.kompakt .intro-seite{ padding-bottom:10px; }
+.intro-sheet.kompakt .intro-seite h2{ font-size:22px; margin-bottom:8px; }

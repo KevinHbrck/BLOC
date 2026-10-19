@@ -1100,22 +1100,20 @@
       await bis(function () { return /Statistik/.test($(".topbar").textContent) && $(".tabbar .tab.active") && /Statistik/.test($(".tabbar .tab.active").textContent); }, 3000, "Statistik-Seite mit aktiver Leiste");
       pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 5 && !$(".woche") && /Workout/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")) && !/Air|Studio/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")), "Statistik ohne Kopf, ohne fünf Bereiche (Air und Studio als Workout), oder mit Wochenzeile");
       klick('.tabbar [data-nav="#settings"]');
-      var fk = await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Fokus in den Einstellungen");
-      pruefe(/Fokus/.test($$(".section-title")[0].textContent) && $$("[data-fokus]").length === 5, "Fokus steht nicht ganz oben oder nicht als Chips");
-      klick(fk);
-      pruefe((daten().settings.fokusAus || []).indexOf("run") > -1, "Fokus nicht gespeichert");
+      await bis(function () { return $(".section-title") && $("#f-volume"); }, 3000, "Einstellungen");
+      /* 2026-10-19: Fokus („Bereiche unter Training“), Aussehen-Auswahl und die festen Schalter gibt es nicht mehr */
+      pruefe(!$("[data-fokus]") && !$("[data-bereichreihe]") && !$("[data-layoutwahl]"), "Fokus, Reihenfolge der Bereiche und Aussehen-Auswahl sollen entfallen sein");
+      pruefe(!$("#f-countin") && !$("#f-keepawake") && !$("#f-vibration"), "Countdown, Bildschirm anlassen und Vibration sollen nicht mehr einstellbar sein");
+      pruefe($("#f-space") && $("#f-sound") && $("[data-opensounds]"), "Ton, Klang und Raumklang bleiben");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent); }, 3000, "Statistik");
-      pruefe(!$$(".stat-bereichkarte").some(function (e) { return /Run/.test(e.querySelector(".sb-name").textContent); }) && $$(".stat-bereichkarte").length === 4, "Statistik zeigt ausgeblendeten Bereich oder falsche Anzahl");
+      pruefe($$(".stat-bereichkarte").length === 5, "Statistik zeigt immer alle fünf Bereiche: " + $$(".stat-bereichkarte").length);
       klick('.tabbar [data-nav="#home"]');
-      await bis(function () { return $(".area-tile") && !$('.area-tile[data-nav="#run"]'); }, 3000, "Run von der Startseite verschwunden");
+      await bis(function () { return $(".area-tile") && $('.area-tile[data-nav="#run"]'); }, 3000, "Run steht auf der Startseite");
       klick('.area-tile[data-nav="#reps"]');
       await bis(function () { return /^#reps/.test(W.location.hash) && !$(".tabbar .tab"); }, 3000, "Leiste in Listen ausgeblendet");
       klick("button.back");
       await bis(function () { return $(".woche"); }, 3000, "zurück auf der Startseite");
-      klick('.tabbar [data-nav="#settings"]');
-      klick(await bis(function () { return $('[data-fokus="run"]'); }, 3000, "Einstellungen"));
-      pruefe((daten().settings.fokusAus || []).indexOf("run") < 0, "Fokus nicht zurückgesetzt");
     }],
     ["Statistik: ein Training = Timer bis 60 Minuten Abstand, Woche · Monat · Jahr, Archiv", async function () {
       await heim();
@@ -1142,7 +1140,7 @@
       klick('[data-statgran="woche"]');
       await bis(function () { return $(".stat-karte .bchart .bc.jetzt"); }, 2000, "Wochenansicht");
       klick('.tabbar [data-nav="#settings"]');   // eine Änderung speichern, damit der Stand (inkl. Archiv) in den Speicher kommt
-      klick(await bis(function () { return $('[data-fokus="warm"]'); }, 3000, "Fokus")); klick($('[data-fokus="warm"]'));
+      klick(await bis(function () { return $('[data-theme="dark"]'); }, 3000, "Einstellungen"));
       var sw = JSON.parse(W.localStorage.getItem(KEY)).settings.statW;
       var wo = Object.keys(sw)[0];
       pruefe(wo && sw[wo].bn === 1 && sw[wo].bs === 2100, "alte Einträge sollten als ein Besuch von 35 min archiviert sein: " + JSON.stringify(sw));

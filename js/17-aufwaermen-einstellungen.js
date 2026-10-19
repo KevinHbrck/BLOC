@@ -589,7 +589,7 @@ function repLos(){
 }
 function repStarten(){
   var r = repRun;
-  if(!state.db.settings.countIn){ repLos(); return; }
+  // Countdown immer an (nicht mehr einstellbar)
   r.zaehlt = 3;
   phaseBeep("tick");
   repZeichnen();
@@ -789,7 +789,9 @@ function koerperFormHTML(s){
   function feld(id, label, wert, min, max){
     return '<label class="koerper-feld"><span>'+esc(label)+'</span><input type="number" inputmode="decimal" id="'+id+'" min="'+min+'" max="'+max+'" value="'+(wert ? esc(String(wert)) : "")+'"></label>';
   }
-  return '<div class="koerper-form">'+feld("k-kg", t("koerperKg"), k.kg, 30, 250)+feld("k-cm", t("koerperCm"), k.cm, 120, 230)+feld("k-alter", t("koerperAlter"), k.alter, 10, 99)+
+  return '<div class="koerper-form"><label class="koerper-feld"><span>'+esc(t("koerperName"))+'</span>'+
+    '<input type="text" id="k-name" maxlength="30" autocomplete="given-name" value="'+esc(s.name || "")+'"></label>'+
+    feld("k-kg", t("koerperKg"), k.kg, 30, 250)+feld("k-cm", t("koerperCm"), k.cm, 120, 230)+feld("k-alter", t("koerperAlter"), k.alter, 10, 99)+
     '<div class="label" style="margin:10px 0 6px">'+esc(t("koerperSex"))+'</div><div class="seg-row" role="group">'+
     [["w", t("koerperW")], ["m", t("koerperM")], ["", t("koerperKeine")]].map(function(x){
       return '<button type="button" data-ksex="'+x[0]+'" class="'+((k.sex || "") === x[0] ? "active" : "")+'">'+esc(x[1])+'</button>'; }).join("")+'</div>'+
@@ -801,9 +803,12 @@ function koerperBinden(wurzel){
   function speichern(){
     var kk = s.koerper = s.koerper || {};
     function zahl(id, lo, hi){ var v = parseFloat(String(wurzel.querySelector("#"+id).value).replace(",", ".")); return v >= lo && v <= hi ? Math.round(v*10)/10 : 0; }
-    kk.kg = zahl("k-kg", 30, 250); kk.cm = Math.round(zahl("k-cm", 120, 230)); kk.alter = Math.round(zahl("k-alter", 10, 99)); save();
+    kk.kg = zahl("k-kg", 30, 250); kk.cm = Math.round(zahl("k-cm", 120, 230)); kk.alter = Math.round(zahl("k-alter", 10, 99));
+    var nm = wurzel.querySelector("#k-name"); if(nm) s.name = String(nm.value).replace(/\s+/g, " ").trim().slice(0, 30);
+    save();
   }
-  ["k-kg", "k-cm", "k-alter"].forEach(function(id){ var el = wurzel.querySelector("#"+id); if(el) el.addEventListener("change", speichern); });
+  ["k-name", "k-kg", "k-cm", "k-alter"].forEach(function(id){ var el = wurzel.querySelector("#"+id); if(el) el.addEventListener("change", speichern); });
+  var nameFeld = wurzel.querySelector("#k-name"); if(nameFeld) nameFeld.addEventListener("blur", speichern);
   wurzel.querySelectorAll("[data-ksex]").forEach(function(b){
     b.addEventListener("click", function(){
       s.koerper = s.koerper || {}; s.koerper.sex = b.getAttribute("data-ksex"); save();
@@ -835,29 +840,18 @@ function renderSettings(){
   }
   app.innerHTML =
     topbar(t("settings"), { back:"#home" }) +
-    '<div class="section-title">'+esc(t("fokusTitel"))+'</div>'+
-    '<div class="card">'+einstKopf(EINST_ICON.fokus, t(layoutNeu() ? "fokusLabelNeu" : "fokusLabel"))+'<div class="theme-pick">'+HOME_KEYS.map(function(k, i){
-      return '<button type="button" data-fokus="'+k+'" aria-pressed="'+!fokusAus(k)+'" class="'+(i > 1 ? 'halb' : '')+(fokusAus(k) ? '' : ' active')+'">'+esc(bereichDaten(k)[1])+'</button>';
-    }).join("")+'</div><div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t(layoutNeu() ? "fokusHintNeu" : "fokusHint"))+'</div>'+
-      (layoutNeu() ? '<button type="button" class="btn btn-secondary" data-bereichreihe style="margin-top:12px">'+esc(t("areasSort"))+'</button>' : '')+'</div>'+
     '<div class="section-title">'+t("optWichtig")+'</div>'+
     '<div class="card">'+einstKopf(EINST_ICON.darstellung, t("appearance"))+
-    '<div class="label">'+esc(t("layoutLabel"))+'</div>'+
-    '<div class="theme-pick lang-pick">'+layoutBtn("classic",t("layClassic"))+layoutBtn("new",t("layNew"))+'</div>'+
-    '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+esc(t("layoutInfo"))+'</div>'+
-    '<div class="label" style="margin-top:16px;">'+esc(t("brightLabel"))+'</div>'+
     '<div class="theme-pick vier">'+
       themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+themeBtn("nacht",t("thNacht"))+
     '</div>'+
-    '<div style="font-size:12px;color:var(--text-dim);margin-top:10px;">'+t("themeInfo")+'</div>'+
     '</div>'+
     '<div class="card">'+einstKopf(EINST_ICON.training, t("optTraining"))+
       '<div class="range-row"><div class="label">'+t("volume")+' <span id="f-volume-label">'+Math.round(s.volume*100)+'%</span></div>'+
       '<input type="range" id="f-volume" min="0" max="100" step="5" value="'+Math.round(s.volume*100)+'">'+
-      '<div class="range-scale"><span>0</span><span>100</span></div>'+
-      '<div class="range-hint">'+t("volMusicHint")+'</div></div>'+
-      toggleRow("f-voice",t("voice"), t("voiceDesc"), s.voice !== false)+
-      toggleRow("f-rpe", t("rpeSetting"), t("rpeSettingDesc"), !!anstrengungModus())+
+      '<div class="range-scale"><span>0</span><span>100</span></div></div>'+
+      toggleRow("f-voice",t("voice"), "", s.voice !== false)+
+      toggleRow("f-rpe", t("rpeSetting"), "", !!anstrengungModus())+
       (anstrengungModus() ? '<div class="seg-row rpe-wahl" role="group">'+["rpe", "rir"].map(function(m){
         return '<button type="button" data-rpemodus="'+m+'" class="'+(anstrengungModus() === m ? "active" : "")+'">'+(m === "rpe" ? t("rpeName") : t("rirName"))+'</button>'; }).join("")+'</div>' : "")+
     '</div>'+
@@ -870,15 +864,12 @@ function renderSettings(){
     '</div>'+
     '<div class="section-title">'+t("optMehr")+'</div>'+
     einstMehr("timer", t("mehrTimer"), t("mehrTimerSub"),
-      toggleRow("f-sound",t("sound"), t("soundDesc"), s.sound)+
+      toggleRow("f-sound",t("sound"), "", s.sound)+
       '<div class="range-row" data-opensounds style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
         '<div><div class="label" style="margin:0 0 2px;">'+t("soundStyle")+'</div><div style="font-size:13px;color:var(--text-dim);">'+esc(soundLabel(s.soundStyle))+'</div></div>'+
         '<span class="chip chev">'+ICON_CHEV+'</span>'+
       '</div>'+
-      toggleRow("f-space",t("space"), t("spaceDesc"), s.space)+
-      toggleRow("f-countin",t("countIn"), t("countInDesc"), s.countIn)+
-      toggleRow("f-vibration",t("vibration"), t("vibrationDesc"), s.vibration)+
-      toggleRow("f-keepawake",t("keepAwake"), t("keepAwakeDesc"), s.keepAwake), HOME_ICON.intervall)+
+      toggleRow("f-space",t("space"), "", s.space), HOME_ICON.intervall)+
     einstMehr("sprache", t("language"), currentLang() === "en" ? "English" : "Deutsch",
       '<div class="theme-pick lang-pick">'+langBtn("de","Deutsch")+langBtn("en","English")+'</div>',
       '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.5 5.4 3.5 8.5s-1 5.9-3.5 8.5c-2.5-2.6-3.5-5.4-3.5-8.5s1-5.9 3.5-8.5z"/>')+
@@ -899,24 +890,10 @@ function renderSettings(){
   });
 
   bindCommon();
-  app.querySelectorAll("[data-fokus]").forEach(function(b){
-    b.addEventListener("click", function(){
-      var k = b.getAttribute("data-fokus"), an = !b.classList.contains("active");
-      var ks = k === "katalog" ? ["lib", "timer"] : [k];   // der Katalog schaltet Air und Studio zusammen
-      var aus = selArr(s.fokusAus).filter(function(x){ return ks.indexOf(x) < 0; });
-      if(!an) ks.forEach(function(x){ aus.push(x); });
-      s.fokusAus = aus; save();
-      b.classList.toggle("active", an); b.setAttribute("aria-pressed", String(an));
-    });
-  });
 
   function themeBtn(val, label, cls){
     var classes = (cls||"") + (s.theme===val ? " active" : "");
     return '<button data-theme="'+val+'" class="'+classes.trim()+'">'+label+'</button>';
-  }
-  function layoutBtn(val, label){
-    var an = (s.layout === "new" ? "new" : "classic") === val;
-    return '<button type="button" data-layoutwahl="'+val+'" aria-pressed="'+an+'" class="'+(an ? "active" : "")+'">'+esc(label)+'</button>';
   }
   function langBtn(val, label){
     return '<button data-lang="'+val+'" class="'+(currentLang()===val ? "active" : "")+'">'+label+'</button>';
@@ -925,17 +902,6 @@ function renderSettings(){
     btn.addEventListener("click", function(){
       s.theme = btn.getAttribute("data-theme");
       save(); applyTheme(); renderSettings();
-    });
-  });
-  var brb = app.querySelector("[data-bereichreihe]");
-  if(brb) brb.addEventListener("click", openBereicheSheet);
-  app.querySelectorAll("[data-layoutwahl]").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      s.layout = btn.getAttribute("data-layoutwahl") === "new" ? "new" : "classic";
-      var y = window.scrollY;
-      save(); applyTheme();
-      render();   // nicht nur die Seite: auch die untere Leiste ist in New anders gebaut
-      window.scrollTo(0, y);
     });
   });
   app.querySelectorAll("[data-lang]").forEach(function(btn){
@@ -954,9 +920,6 @@ function renderSettings(){
 
   bindToggle("f-sound", function(v){ s.sound=v; save(); });
   bindToggle("f-space", function(v){ s.space=v; save(); applySpace(); phaseBeep("work"); });
-  bindToggle("f-countin", function(v){ s.countIn=v; save(); });
-  bindToggle("f-vibration", function(v){ s.vibration=v; save(); });
-  bindToggle("f-keepawake", function(v){ s.keepAwake=v; save(); });
   bindToggle("f-voice", function(v){ s.voice=v; save(); });
   function settingsNeu(){ var y = window.scrollY; renderSettings(); window.scrollTo(0, y); }
   bindToggle("f-rpe", function(v){ s.anstrengung = v ? (anstrengungModus() || "rpe") : ""; save(); settingsNeu(); });
@@ -1019,7 +982,7 @@ function renderSettings(){
   });
 }
 function toggleRow(id, label, desc, checked){
-  return '<div class="toggle-row"><div><div class="label">'+label+'</div><div class="desc">'+desc+'</div></div>'+
+  return '<div class="toggle-row"><div><div class="label">'+label+'</div>'+(desc ? '<div class="desc">'+desc+'</div>' : '')+'</div>'+
     '<label class="switch"><input type="checkbox" id="'+id+'" '+(checked?"checked":"")+'><span class="track"></span><span class="thumb"></span></label></div>';
 }
 function bindToggle(id, cb){

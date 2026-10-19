@@ -3,6 +3,53 @@
    Fünf Seiten: Willkommen und je Bereich eine Seite in dessen Farbe mit dessen Symbol. Die Zahlen zählt die App
    selbst, damit sie mit neuen Übungen und Programmen stimmen. Beim ersten Start von selbst, sonst über die Einstellungen. */
 var ICON_BAUSTEINE = '<rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><rect x="8" y="3" width="8" height="8" rx="1.5"/>';
+var ICON_PERSON = '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>';
+/* Seite 1: Sprache wählen (wirkt sofort, die Einführung zeichnet sich in der neuen Sprache neu) */
+function introSpracheHTML(){
+  return '<div class="theme-pick lang-pick intro-sprache" role="group" aria-label="'+esc(t("language"))+'">'+
+    [["de", "Deutsch"], ["en", "English"]].map(function(x){
+      return '<button type="button" data-introlang="'+x[0]+'" aria-pressed="'+(currentLang() === x[0])+'" class="'+(currentLang() === x[0] ? "active" : "")+'">'+x[1]+'</button>';
+    }).join("")+'</div>';
+}
+/* Seite 2: Name, Gewicht, Größe - freiwillig, nur lokal; Gewicht und Größe nutzt die Kalorien-Schätzung (settings.koerper), der Name die Begrüßung (settings.name) */
+function introProfilHTML(){
+  var s = state.db.settings, k = s.koerper || {};
+  function feld(id, label, wert, min, max){
+    return '<label class="koerper-feld"><span>'+esc(label)+'</span><input type="number" inputmode="decimal" id="'+id+'" min="'+min+'" max="'+max+'" value="'+(wert ? esc(String(wert)) : "")+'"></label>';
+  }
+  return '<div class="koerper-form intro-profil"><label class="koerper-feld"><span>'+esc(t("koerperName"))+'</span>'+
+    '<input type="text" id="i-name" maxlength="30" autocomplete="given-name" value="'+esc(s.name || "")+'"></label>'+
+    feld("i-kg", t("koerperKg"), k.kg, 30, 250)+feld("i-cm", t("koerperCm"), k.cm, 120, 230)+'</div>';
+}
+function introProfilSpeichern(wurzel){
+  var n = wurzel.querySelector("#i-name");
+  if(!n) return;   // diese Seite war nicht zu sehen
+  var s = state.db.settings, kk = s.koerper = s.koerper || {};
+  function zahl(id, lo, hi){ var v = parseFloat(String(wurzel.querySelector("#"+id).value).replace(",", ".")); return v >= lo && v <= hi ? v : 0; }
+  var name = String(n.value).replace(/\s+/g, " ").trim().slice(0, 30), kg = zahl("i-kg", 30, 250), cm = zahl("i-cm", 120, 230);
+  if(name || n.value === "") s.name = name;
+  if(kg) kk.kg = Math.round(kg*10)/10;
+  if(cm) kk.cm = Math.round(cm);
+  save();
+}
+/* Seite 3: Aufbau als kleines selbstgezeichnetes Schaubild (nur Stil nach der Vorlage von Kevin): Trainingsplan → Workouts → BLOCs mit Übungen.
+   Die Beschriftungen kommen aus texte.js, die Zeichnung selbst ist reines SVG ohne Bilddatei. */
+function introSchaubildHTML(){
+  function box(x, y, w, h, cls){ return '<rect class="'+cls+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="8"/>'; }
+  function txt(x, y, s, cls){ return '<text class="'+cls+'" x="'+x+'" y="'+y+'" text-anchor="middle">'+esc(s)+'</text>'; }
+  function bloc(x, namen){
+    return box(x, 118, 100, 82, "sb-bloc")+txt(x+50, 138, "BLOC", "sb-bt")+namen.map(function(n, i){ return txt(x+50, 156+i*15, n, "sb-ex"); }).join("");
+  }
+  var a = [t("inExKniebeuge"), t("inExBankdruecken"), t("inExKreuzheben")], b = [t("inExKlimmzug"), t("inExRudern"), t("inExSchulterdruecken")];
+  return '<svg class="intro-schaubild" viewBox="0 0 340 208" role="img" aria-label="'+esc(t("inSchaubildAlt"))+'">'+
+    '<path class="sb-linie" d="M170 38V54M60 54H280M60 54V70M170 54V70M280 54V70M60 100V118M170 100V118"/>'+
+    box(100, 8, 140, 30, "sb-kasten")+txt(170, 28, t("inDPlan"), "sb-t")+
+    box(10, 70, 100, 30, "sb-kasten")+txt(60, 90, t("inDWorkout")+" A", "sb-t")+
+    box(120, 70, 100, 30, "sb-kasten")+txt(170, 90, t("inDWorkout")+" B", "sb-t")+
+    box(230, 70, 100, 30, "sb-kasten")+txt(280, 90, "Run", "sb-t")+
+    bloc(10, a)+bloc(120, b)+'</svg>'+
+    '<p class="intro-kette">'+esc(t("inKette"))+'</p>';
+}
 function introSeiten(){
   var mitgeliefert = EXERCISES.filter(function(ex){ return !ex.custom; });
   var wsEx = {};
@@ -10,7 +57,9 @@ function introSeiten(){
   mitgeliefert.forEach(function(ex){ if(ex.main === "stretch") wsEx[ex.id] = true; });
   var einheiten = Array.isArray(REP_EINHEITEN) ? REP_EINHEITEN.length : Object.keys(REP_EINHEITEN).length;
   return [
-    { ico:ICON_BAUSTEINE, farbe:"var(--accent)", titel:t("in1T"), text:t("in1"), notiz:t("in1N") },
+    { ico:ICON_BAUSTEINE, farbe:"var(--accent)", titel:t("in1T"), text:t("in1"), notiz:t("in1N"), extra:introSpracheHTML(), art:"sprache" },
+    { ico:ICON_PERSON, farbe:"var(--accent)", titel:t("inProfilT"), text:t("inProfil"), notiz:t("inProfilN"), extra:introProfilHTML(), art:"profil" },
+    { ico:ICON_BAUSTEINE, farbe:"var(--accent)", titel:t("inAufbauT"), text:t("inAufbau"), extra:introSchaubildHTML(), art:"aufbau" },
     { ico:HOME_ICON.katalog, farbe:"var(--accent)", titel:t("katalog"),
       text:t("inKat", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:mitgeliefert.filter(function(ex){ return ex.main !== "stretch"; }).length }) },
     { ico:HOME_ICON.warm, farbe:"var(--ws-color)", titel:t("warmTitle"),
@@ -19,19 +68,22 @@ function introSeiten(){
   ];
 }
 function openIntro(){
-  var seiten = introSeiten(), nr = 0, root = document.getElementById("overlayRoot");
+  var seiten = introSeiten(), nr = 0, root = document.getElementById("overlayRoot"), sprache0 = currentLang(), name0 = state.db.settings.name || "";
   function schliessen(){
+    introProfilSpeichern(root);   // was auf der Seite „Über dich“ schon eingetippt ist, geht nicht verloren
     root.innerHTML = "";
-    if(!state.db.settings.introGesehen){ state.db.settings.introGesehen = true; save(); }
+    if(currentLang() !== sprache0 || (state.db.settings.name || "") !== name0) render();   // Sprache oder Name geändert: die Seite dahinter neu zeichnen
+    if(!state.db.settings.introGesehen){ state.db.settings.introGesehen = true; }
+    save();
   }
-  function blaettern(d){ var n = nr + d; if(n < 0 || n >= seiten.length) return; nr = n; draw(); }
+  function blaettern(d){ var n = nr + d; if(n < 0 || n >= seiten.length) return; introProfilSpeichern(root); nr = n; draw(); }
   function draw(){
     var s = seiten[nr], letzte = nr === seiten.length - 1;
-    root.innerHTML = '<div class="confirm-overlay intro-overlay"><div class="confirm-sheet intro-sheet" role="dialog" aria-label="'+esc(t("introTitle"))+'" style="--intro-farbe:'+s.farbe+'">'+
+    root.innerHTML = '<div class="confirm-overlay intro-overlay"><div class="confirm-sheet intro-sheet'+(s.art === "profil" || s.art === "aufbau" ? ' kompakt' : '')+'" role="dialog" aria-label="'+esc(t("introTitle"))+'" style="--intro-farbe:'+s.farbe+'">'+
       '<div class="intro-kopf"><div class="intro-punkte" aria-hidden="true">'+seiten.map(function(x, i){ return '<i class="'+(i === nr ? 'an' : '')+'"></i>'; }).join("")+'</div>'+
         (letzte ? '' : '<button type="button" class="intro-weg" data-introweg>'+esc(t("introSkip"))+'</button>')+'</div>'+
       '<div class="intro-seite"><span class="intro-ico">'+svgIcon(s.ico)+'</span>'+
-        '<h2>'+esc(s.titel)+'</h2><p>'+esc(s.text)+'</p>'+(s.notiz ? '<p class="intro-notiz">'+esc(s.notiz)+'</p>' : '')+'</div>'+
+        '<h2>'+esc(s.titel)+'</h2><p>'+esc(s.text)+'</p>'+(s.extra || "")+(s.notiz ? '<p class="intro-notiz">'+esc(s.notiz)+'</p>' : '')+'</div>'+
       '<div class="intro-knoepfe">'+(nr ? '<button type="button" class="btn btn-secondary" data-introzurueck>'+esc(t("back"))+'</button>' : '')+
         '<button type="button" class="btn btn-primary" data-introweiter>'+esc(t(letzte ? "letsGo" : "introNext"))+'</button></div>'+
     '</div></div>';
@@ -39,6 +91,12 @@ function openIntro(){
     root.querySelector("[data-introweiter]").addEventListener("click", function(){ if(letzte) schliessen(); else blaettern(1); });
     var z = root.querySelector("[data-introzurueck]"); if(z) z.addEventListener("click", function(){ blaettern(-1); });
     var w = root.querySelector("[data-introweg]"); if(w) w.addEventListener("click", schliessen);
+    root.querySelectorAll("[data-introlang]").forEach(function(b){   // Sprache wählen: gilt sofort für die ganze App, die Einführung zeichnet sich neu
+      b.addEventListener("click", function(){
+        state.db.settings.lang = b.getAttribute("data-introlang"); save(); applyLang();
+        seiten = introSeiten(); draw();
+      });
+    });
     root.querySelector(".intro-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("intro-overlay")) schliessen(); });   // daneben tippen, Android-Zurück
     // wischen: nach links weiter, nach rechts zurück
     var x0 = null;
@@ -130,12 +188,14 @@ function hatEigenes(db){
   return !!(db && ((db.blocks||[]).length || (db.workouts||[]).length || (db.myWorkouts||[]).length || (db.customEx||[]).length ||
     Object.keys(st.studio || {}).length || (st.myReps || []).length || (st.myRepUnits || []).length));   // auch Gewichte im Freien Training und eigene Challenges
 }
-/* Erinnerung: eigene Inhalte, aber seit 14 Tagen (oder nie) exportiert. Der Installations-Hinweis hat Vorrang,
-   × blendet sie nur für diese Sitzung aus. */
-var BACKUP_TAGE = 14;
+/* Erinnerung an die Sicherungsdatei - bewusst selten: BLOC kopiert den Stand ohnehin alle 7 Tage auf dem Gerät (Schnappschuss, siehe unten),
+   die Datei schützt zusätzlich bei neuem Handy oder gelöschten Website-Daten. Sie erscheint nur, wenn es eigene Inhalte gibt, seit 60 Tagen (oder nie)
+   keine Datei gesichert wurde und es schon einen Schnappschuss gibt; × blendet sie für 30 Tage aus. Der Installations-Hinweis hat Vorrang. */
+var BACKUP_TAGE = 60, BACKUP_RUHE_TAGE = 30;
 function backupTipHTML(){
   if(installTipHTML()) return "";
-  try{ if(sessionStorage.getItem("bloc-backup-tip-weg") === "1") return ""; }catch(e){}
+  if(Date.now() < (state.db.settings.backupTipBis || 0)) return "";
+  if(!snapZeit) return "";   // noch kein automatischer Schnappschuss (null = noch nicht nachgesehen, 0 = keiner)
   if(!hatEigenes(state.db)) return "";
   var zuletzt = state.db.settings.lastExport || 0;
   if(Date.now() - zuletzt < BACKUP_TAGE*86400000) return "";
@@ -148,7 +208,7 @@ function bindBackupTip(){
   if(jetzt) jetzt.addEventListener("click", function(){ if(kannBackupTeilen()) shareBackup(render); else { exportBackup(); render(); } });
   var weg = app.querySelector("[data-hidebackup]");
   if(weg) weg.addEventListener("click", function(){
-    try{ sessionStorage.setItem("bloc-backup-tip-weg", "1"); }catch(e){}
+    state.db.settings.backupTipBis = Date.now() + BACKUP_RUHE_TAGE*86400000; save();
     render();
   });
 }

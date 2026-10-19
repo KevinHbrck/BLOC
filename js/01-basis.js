@@ -39,7 +39,7 @@ function defaultDB(){
     myWorkouts: [],   // eigene Workouts aus Bibliotheksübungen - getrennt von den Timer-Workouts
     customEx: [],     // selbst angelegte Übungen
     history: [],      // nur Übungen der letzten 14 Tage { at, ex:[ids] } - für „Überrasch mich“
-    settings: { theme:"system", sound:true, soundStyle:"sanft", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
+    settings: { theme:"system", sound:true, soundStyle:"klangschale", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
   };
 }
 /* Frischer Start (nichts gespeichert, oder „Alles zurücksetzen“): Aussehen „New“ in Dunkel.
@@ -106,15 +106,6 @@ function triangleRoll(){
   notes.push(triangleHit(640, 760, .8, 3600));
   return notes;
 }
-/* Händeklatschen: mehrere schnelle Rauschstöße - die Handflächen treffen nie ganz gleichzeitig.
-   Die kurzen Stöße sind von Natur aus leise, deshalb kräftig verstärkt (der Begrenzer fängt Spitzen ab). */
-function clap(d, v, pan, f){ return { f:f||1250, d:d, v:v*3, dur:110, noise:true, filterType:"bandpass", q:.8, bursts:[0,9,17,27], pan:pan||0 }; }
-/* Applaus: viele Klatscher durcheinander, im ganzen Raum verteilt */
-function applause(){
-  var notes = [], rnd = seededRandom(11);
-  for(var i=0;i<45;i++) notes.push(clap(Math.round(rnd()*2400), .25 + rnd()*.35, (rnd()-.5)*1.4, 950 + rnd()*700));
-  return notes;
-}
 
 var SOUND_STYLES = {
   /* ---- Natürlich: nachgebaute echte Klangquellen ---- */
@@ -134,52 +125,14 @@ var SOUND_STYLES = {
     prep:[triangleHit(640, 0, .6, 1200, -.15), triangleHit(640, 180, .6, 2600, .15)],
     done: triangleRoll()
   },
-  klatschen: { label:"Klatschen", natural:true,
-    /* Countdown als Fingerschnippen, am Ende Applaus */
-    tick:[{ f:2300, d:0, v:2.2, dur:35, att:1, noise:true, filterType:"bandpass", q:1.5 }, { f:1850, d:0, v:.3, dur:20, att:1 }],
-    work:[clap(0, .9), clap(170, .9)],
-    rest:[clap(0, .7)],
-    blockrest:[clap(0, .75, -.1), clap(150, .75, .1), clap(300, .8, 0)],
-    prep:[clap(0, .75, -.1), clap(150, .75, .1), clap(300, .8, 0)],
-    done: applause()
-  },
-  /* ---- Elektronisch ---- */
-  sanft: { label:"Sanft",
-    tick:[{f:700,d:0,dur:140,v:0.3,type:"sine"}],
-    work:[{f:520,d:0,dur:320,v:0.7,type:"sine"}],
-    rest:[{f:380,d:0,dur:320,v:0.6,type:"sine"}],
-    blockrest:[{f:440,d:0,dur:320,v:0.6,type:"sine"}],
-    prep:[{f:440,d:0,dur:320,v:0.6,type:"sine"}],
-    done:[{f:520,d:0,dur:260,v:0.7,type:"sine"},{f:660,d:260,dur:360,v:0.75,type:"sine"}]
-  },
-  arcade: { label:"Arcade",
-    tick:[{f:1200,d:0,dur:35,v:0.35,type:"square"}],
-    work:[{f:523,d:0,dur:70,v:0.9,type:"square"},{f:659,d:70,dur:70,v:0.9,type:"square"},{f:784,d:140,dur:120,v:1,type:"square"}],
-    rest:[{f:392,d:0,dur:100,v:0.6,type:"square"}],
-    blockrest:[{f:494,d:0,dur:80,v:0.7,type:"square"},{f:587,d:90,dur:100,v:0.7,type:"square"}],
-    prep:[{f:494,d:0,dur:80,v:0.7,type:"square"},{f:587,d:90,dur:100,v:0.7,type:"square"}],
-    done:[{f:523,d:0,dur:80,v:0.9,type:"square"},{f:659,d:90,dur:80,v:0.9,type:"square"},{f:784,d:180,dur:80,v:0.9,type:"square"},{f:1046,d:270,dur:260,v:1,type:"square"}]
-  },
-  weich: { label:"Weich",
-    tick:[{f:600,d:0,dur:160,v:0.22,type:"sine"}],
-    work:[{f:480,d:0,dur:380,v:0.55,type:"sine"},{f:604,d:0,dur:380,v:0.22,type:"sine"}],
-    rest:[{f:360,d:0,dur:380,v:0.45,type:"sine"},{f:453,d:0,dur:380,v:0.18,type:"sine"}],
-    blockrest:[{f:400,d:0,dur:380,v:0.45,type:"sine"},{f:504,d:0,dur:380,v:0.18,type:"sine"}],
-    prep:[{f:400,d:0,dur:380,v:0.45,type:"sine"},{f:504,d:0,dur:380,v:0.18,type:"sine"}],
-    done:[{f:480,d:0,dur:320,v:0.55,type:"sine"},{f:604,d:0,dur:320,v:0.22,type:"sine"},{f:604,d:340,dur:460,v:0.5,type:"sine"},{f:760,d:340,dur:460,v:0.2,type:"sine"}]
-  },
 
 };
-/* Entfernte Klänge: wer einen davon eingestellt hatte, bekommt den ähnlichsten verbliebenen */
-var REMOVED_SOUNDS = { xylophon:"triangel", perkussiv:"klatschen", pfeife:"arcade", gong:"klangschale",
-  pong:"arcade", laser:"arcade", sirene:"arcade", klar:"sanft",
-  /* 2026-09 auf sechs Klänge reduziert */
-  boxglocke:"klangschale", trillerpfeife:"arcade", holzblock:"klatschen", kuechenwecker:"triangel", marimba:"triangel",
-  kuhglocke:"triangel", achtbit:"arcade", classic:"sanft", doppel:"arcade", digital:"arcade", glocke:"triangel",
-  hupe:"arcade", trommel:"klatschen", ruhe:"weich" };
+/* Es gibt nur noch Klangschale und Triangel (2026-10-19). Wer einen früheren Klang eingestellt hatte, bekommt die Klangschale;
+   nur die ehemals schon auf Triangel verwiesenen Klänge (Xylophon, Glocke …) bleiben bei der Triangel. */
+var REMOVED_SOUNDS = { xylophon:"triangel", kuechenwecker:"triangel", marimba:"triangel", kuhglocke:"triangel", glocke:"triangel" };
 function migrateSound(key){
   if(SOUND_STYLES[key]) return key;
-  return REMOVED_SOUNDS[key] || "sanft";
+  return REMOVED_SOUNDS[key] || "klangschale";
 }
 
 function loadDB(){
@@ -266,7 +219,7 @@ function migrateExIds(db){
 /* ============ Sprache (Deutsch / Englisch) ============ */
 var I18N = window.BLOC_TEXTE;   // Texte stehen in texte.js (ein Schlüssel pro Zeile)
 var SOUND_LABELS_EN = {
-  klangschale:"Singing bowl", triangel:"Triangle", klatschen:"Clapping", sanft:"Gentle", arcade:"Arcade", weich:"Soft"
+  klangschale:"Singing bowl", triangel:"Triangle"
 };
 /* Ohne eigene Einstellung gilt die Sprache des Geräts */
 function currentLang(){
@@ -283,7 +236,7 @@ function t(key, vars){
   return s;
 }
 function soundLabel(key){
-  var st = SOUND_STYLES[key] || SOUND_STYLES.sanft;
+  var st = SOUND_STYLES[key] || SOUND_STYLES.klangschale;
   return (currentLang() === "en" && SOUND_LABELS_EN[key]) || st.label;
 }
 function applyLang(){ document.documentElement.lang = currentLang(); }

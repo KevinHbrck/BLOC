@@ -39,17 +39,14 @@ function confirmSheet(title, desc, actionLabel, onConfirm){
 function openSoundSheet(onClose){
   var root = document.getElementById("overlayRoot");
   var current = state.db.settings.soundStyle;
-  function tiles(natural){
-    return Object.keys(SOUND_STYLES).filter(function(key){ return !!SOUND_STYLES[key].natural === natural; }).map(function(key){
+  function tiles(){   // nur noch Klangschale und Triangel
+    return Object.keys(SOUND_STYLES).map(function(key){
       return '<button type="button" class="sound-tile'+(key===current?" active":"")+'" data-pick="'+key+'">'+esc(soundLabel(key))+'</button>';
     }).join("");
   }
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet">'+
     '<h3>'+t("chooseSound")+'</h3>'+
-    '<div class="sound-group">'+t("natural")+'</div>'+
-    '<div class="sound-tiles">'+tiles(true)+'</div>'+
-    '<div class="sound-group">'+t("electronic")+'</div>'+
-    '<div class="sound-tiles">'+tiles(false)+'</div>'+
+    '<div class="sound-tiles">'+tiles()+'</div>'+
     '<button type="button" class="btn btn-secondary" data-cancel style="margin-top:4px;">'+t("close")+'</button>'+
     '</div></div>';
   function close(){ root.innerHTML=""; if(onClose) onClose(); }
@@ -287,7 +284,7 @@ function tone(n, at){
   return gain;
 }
 function currentSoundStyle(){
-  return SOUND_STYLES[state.db.settings.soundStyle] || SOUND_STYLES.sanft;
+  return SOUND_STYLES[state.db.settings.soundStyle] || SOUND_STYLES.klangschale;
 }
 function playNotes(notes){
   tonStandard();
@@ -340,7 +337,7 @@ function schedNotes(notes, wallMs){
   });
 }
 function schedCountdown(endMs, step){
-  if(!state.db.settings.countIn || step.phase==="done") return;
+  if(step.phase==="done") return;   // Countdown-Pieps sind immer an (nicht mehr einstellbar)
   for(var k=3;k>=1;k--){
     var at = endMs - k*1000;
     if(step.duration > k && at >= Date.now() - 50) schedNotes(tickNotes(), at);
@@ -393,7 +390,6 @@ function audioBereit(fn){
 /* ============ Wake Lock ============ */
 var wakeLock = null;
 function requestWakeLock(){
-  if(!state.db.settings.keepAwake) return;
   if(!("wakeLock" in navigator)) return;
   navigator.wakeLock.request("screen").then(function(wl){ wakeLock = wl; }).catch(function(){});
 }

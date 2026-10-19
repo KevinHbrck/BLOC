@@ -526,6 +526,54 @@
     wahr(!d.querySelector("img, script, iframe, link, [src]"), "nichts wird nachgeladen oder eingebettet");
   });
 
+  /* ---------- Einführung, Klänge, Namen, Sicherungs-Erinnerung (2026-10-19) ---------- */
+  test("Klänge: nur Klangschale und Triangel; frühere Klänge werden zur Klangschale (Xylophon bleibt bei der Triangel)", function () {
+    gleich(Object.keys(W.SOUND_STYLES), ["klangschale", "triangel"], "vorhandene Klänge");
+    ["sanft", "arcade", "klatschen", "weich", "gong", "unbekannt", "", undefined].forEach(function (k) { gleich(W.migrateSound(k), "klangschale", "Klang " + k); });
+    gleich(W.migrateSound("xylophon"), "triangel", "Xylophon"); gleich(W.migrateSound("triangel"), "triangel", "Triangel bleibt");
+    gleich(W.defaultDB().settings.soundStyle, "klangschale", "Standard");
+    var s = W.state.db.settings, alt = s.soundStyle;
+    try { s.soundStyle = "arcade"; gleich(W.currentSoundStyle(), W.SOUND_STYLES.klangschale, "ein unbekannter gespeicherter Klang fällt auf die Klangschale"); } finally { s.soundStyle = alt; }
+  });
+  test("Namen: neue Pläne heißen BLOC 1, BLOC 2 … (Deutsch und Englisch)", function () {
+    gleich(W.t("planDefault", { n: 1 }), "BLOC 1", "Name"); gleich(W.t("planDefault", { n: 12 }), "BLOC 12", "Name zweistellig");
+    gleich(W.BLOC_TEXTE.en.planDefault, "BLOC {n}", "Englisch");
+  });
+  test("Einführung: Name, Gewicht, Größe werden geprüft und gespeichert (ungültige Werte überschreiben nichts)", function () {
+    var s = W.state.db.settings, altName = s.name, altK = s.koerper;
+    try {
+      s.name = ""; s.koerper = {};
+      var d = document.createElement("div"); d.innerHTML = W.introProfilHTML();
+      d.querySelector("#i-name").value = "  Kevin   Test  "; d.querySelector("#i-kg").value = "82.5"; d.querySelector("#i-cm").value = "181";
+      W.introProfilSpeichern(d);
+      gleich(s.name, "Kevin Test", "Name ohne doppelte Leerzeichen"); gleich(s.koerper.kg, 82.5, "Gewicht"); gleich(s.koerper.cm, 181, "Größe");
+      d.querySelector("#i-kg").value = "5"; d.querySelector("#i-cm").value = "999"; d.querySelector("#i-name").value = new Array(60).join("x");
+      W.introProfilSpeichern(d);
+      gleich(s.koerper.kg, 82.5, "unplausibles Gewicht ändert nichts"); gleich(s.koerper.cm, 181, "unplausible Größe ändert nichts"); gleich(s.name.length, 30, "Name höchstens 30 Zeichen");
+      gleich(W.koerperDaten().kg, 82.5, "die Kalorien-Schätzung nutzt das Gewicht");
+      var leer = document.createElement("div"); W.introProfilSpeichern(leer);   // Seite nicht sichtbar: nichts passiert
+      gleich(s.name.length, 30, "ohne Formular bleibt alles");
+    } finally { s.name = altName; s.koerper = altK; }
+  });
+  test("Einführung: Sprache, Über dich und Aufbau stehen vorn; das Schaubild hat eine Beschriftung für Screenreader", function () {
+    var seiten = W.introSeiten();
+    gleich(seiten.slice(0, 3).map(function (x) { return x.art; }), ["sprache", "profil", "aufbau"], "Reihenfolge");
+    var d = document.createElement("div"); d.innerHTML = seiten[2].extra;
+    wahr(d.querySelector("svg[role=img][aria-label]"), "Schaubild mit Beschriftung für Screenreader");
+    wahr(/BLOC/.test(d.querySelector("svg").textContent) && /Trainingsplan/.test(d.querySelector("svg").textContent), "Schaubild nennt Trainingsplan und BLOC");
+  });
+  test("Sicherungs-Erinnerung: selten (60 Tage ohne Datei, Schnappschuss vorhanden, × ruht 30 Tage)", function () {
+    var s = W.state.db.settings, tag = 86400000, alt = { z: W.snapZeit, ex: s.lastExport, bis: s.backupTipBis, bl: W.state.db.blocks };
+    try {
+      W.state.db.blocks = [{ id: "t" }]; W.snapZeit = Date.now(); s.backupTipBis = 0;
+      s.lastExport = Date.now() - 20 * tag; gleich(W.backupTipHTML(), "", "vor 20 Tagen gesichert: keine Karte");
+      s.lastExport = Date.now() - 70 * tag; wahr(/data-backup-now/.test(W.backupTipHTML()), "70 Tage ohne Datei: Karte");
+      s.backupTipBis = Date.now() + 10 * tag; gleich(W.backupTipHTML(), "", "weggeklickt: ruht");
+      s.backupTipBis = 0; W.snapZeit = 0; gleich(W.backupTipHTML(), "", "noch kein Schnappschuss: keine Karte");
+      W.snapZeit = Date.now(); W.state.db.blocks = []; gleich(W.backupTipHTML(), "", "ohne eigene Inhalte: keine Karte");
+    } finally { W.snapZeit = alt.z; s.lastExport = alt.ex; s.backupTipBis = alt.bis; W.state.db.blocks = alt.bl; }
+  });
+
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
   document.getElementById("los").addEventListener("click", async function () {
     var knopf = this;

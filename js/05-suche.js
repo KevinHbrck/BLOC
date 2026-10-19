@@ -257,7 +257,8 @@ function grussWort(h){
 }
 function kopfNeuHTML(){
   var h = new Date().getHours(), lang = currentLang() === "en" ? "en-GB" : "de-DE";
-  var gruss = grussWort(h);
+  var gruss = grussWort(h), name = state.db.settings.name;
+  if(name) gruss += ", " + name;   // Name aus der Einführung bzw. den Körperdaten (freiwillig, nur lokal)
   var datum = new Date().toLocaleDateString(lang, { weekday:"long", day:"numeric", month:"long" });
   return '<section class="kopf-neu"><img class="kn-bild" src="img/neu-kopf.jpg" alt="" draggable="false"><img class="kn-bild kn-hell" src="img/neu-kopf-hell.jpg" alt="" draggable="false"><div class="kn-tint"></div>'+
     '<div class="kn-zeile"><div class="marke-neu"><b>BLOC</b><small>Modular Training Builder</small></div><div class="kn-sym">'+kopfSymboleNeu("home")+'</div></div>'+

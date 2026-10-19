@@ -45,7 +45,8 @@ function bereichReihe(){
 }
 /* Fokus (Einstellungen): Bereiche, die man nicht braucht, verschwinden von der Startseite (settings.fokusAus = Liste der Schlüssel); die Daten bleiben, die Suche findet weiterhin alles.
    Der Katalog ist nur aus, wenn Air und Studio beide aus sind (im Verlauf bleiben sie getrennt gespeichert). */
-function fokusAusRoh(k){ return selArr(state.db.settings.fokusAus).indexOf(k) > -1; }
+/* Seit 2026-10-19 gibt es die Einstellung „Bereiche unter Training“ nicht mehr: alle Bereiche sind immer sichtbar. Ein früher gespeichertes settings.fokusAus bleibt unberührt, wird aber nicht mehr beachtet. */
+function fokusAusRoh(k){ return false; }
 function fokusAus(k){ return k === "katalog" ? fokusAusRoh("lib") && fokusAusRoh("timer") : fokusAusRoh(k); }
 /* „Weitere Bereiche“: Workout (immer vorn, orange), Mobility & Stretch, Timer, Summit und Run als eine ruhige Liste in der gewählten Reihenfolge.
    Die Hinweiskarte erscheint erst, wenn gar nichts mehr eingeblendet ist. */
