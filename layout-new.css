@@ -559,7 +559,27 @@
 :root[data-layout="new"] .player[data-phase="work"] .block-label{ margin-bottom:6px; }
 :root[data-layout="new"] .player .rep-dots{ margin-top:16px; }
 /* FAQ-Bereich als Ganzes einklappbar (zu beim Öffnen der Seite) */
-:root[data-layout="new"] .faq-bereich > summary.sec-head{ cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; }
-:root[data-layout="new"] .faq-bereich > summary.sec-head::-webkit-details-marker{ display:none; }
-:root[data-layout="new"] .faq-bereich > summary.sec-head::after{ content:"▾"; color:var(--text-dim); transition:transform .2s; }
-:root[data-layout="new"] .faq-bereich[open] > summary.sec-head::after{ transform:rotate(180deg); }
+:root[data-layout="new"] .faq-kopf{ cursor:pointer; display:flex; align-items:center; justify-content:space-between; width:100%; background:none; border:0; color:var(--text); font:inherit; padding:0; }
+:root[data-layout="new"] .faq-kopf::after{ content:"▾"; color:var(--text-dim); transition:transform .2s; }
+:root[data-layout="new"] .faq-kopf[aria-expanded="true"]::after{ transform:rotate(180deg); }
+
+/* ---------- Run (Modern), Aufzeichnung: schwebende Texte auf dem geblurrten Foto, Glas-Knöpfe (statt weißer Karte); weniger Text auf der Start-Seite ---------- */
+:root[data-layout="new"] .run-weiss{ background:none; padding:4px 0 8px; color:#fff; --text:#fff; --text-dim:rgba(255,255,255,.75); --surface:rgba(255,255,255,.14); --surface-2:rgba(255,255,255,.12); --border:rgba(255,255,255,.2); }
+:root[data-layout="new"][data-theme="dark"] .run-weiss{ --text:#fff; --text-dim:rgba(255,255,255,.75); --surface:rgba(255,255,255,.14); --surface-2:rgba(255,255,255,.12); --border:rgba(255,255,255,.2); background:none; color:#fff; }
+:root[data-layout="new"] .run-weiss .rg-zeit{ font-size:min(22vw,92px); text-shadow:0 2px 18px rgba(0,0,0,.35); }
+:root[data-layout="new"] .run-weiss .run-raster{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+:root[data-layout="new"] .run-weiss .run-raster > div{ background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.2); border-radius:20px; color:#fff; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+:root[data-layout="new"] .run-weiss .run-raster small{ color:rgba(255,255,255,.75); }
+:root[data-layout="new"] .run-weiss .run-karte{ background:none; border:0; color:#fff; }
+:root[data-layout="new"] .run-weiss .btn-secondary{ background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.22); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+:root[data-layout="new"] .run-weiss .btn-danger{ background:rgba(255,255,255,.06); color:#ff8a7a; border:1px solid rgba(255,138,122,.55); }
+:root[data-layout="new"] .run-weiss .run-haltehint{ display:none; }
+:root[data-layout="new"] .run-laut{ background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.2); }
+:root[data-layout="new"] .run-laut.aus{ opacity:.55; }
+:root[data-layout="new"] .run-bg ~ .run-eigen, :root[data-layout="new"] .run-bg ~ .run-opt, :root[data-layout="new"] .run-bg ~ .run-ansage{ background:rgba(34,36,40,.72); border:1px solid rgba(255,255,255,.18); color:#f4f4f6; --text:#f4f4f6; --text-dim:rgba(255,255,255,.72); --surface:rgba(255,255,255,.1); --border:rgba(255,255,255,.2); }
+:root[data-layout="new"] .run-bg ~ .run-opt .desc, :root[data-layout="new"] .run-bg ~ .run-opt .toggle-row .desc, :root[data-layout="new"] .run-bg ~ .run-ansage .tm-hint, :root[data-layout="new"] .run-bg ~ .page-hint{ display:none; }
+:root[data-layout="new"] .run-bg ~ .run-eigen .kp-chip{ color:#f4f4f6; background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.2); }
+:root[data-layout="new"] .run-bg ~ .run-eigen .kp-chip.an{ background:rgba(255,255,255,.92); color:#111; }
+:root[data-layout="new"] .run-bg ~ .run-eigen .kp-titel{ color:rgba(255,255,255,.85); }
+:root[data-layout="new"] .run-weiss .run-knoepfe{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+:root[data-layout="new"] .run-weiss .run-knoepfe .run-ende{ grid-column:auto; }

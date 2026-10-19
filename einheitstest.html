@@ -185,6 +185,13 @@
     var lib = W.LIB_WORKOUTS.filter(function (l) { return !W.libIstWarmDehn(l); })[0];
     gleich(W.planEintraege({ wochen: 4, tage: [3], wahl: { 3: "lib:" + lib.id } })[0].ref, lib.id, "Katalog-Workout als Verweis");
   });
+  test("Run: Pace-Vorgabe sagt nach jedem Kilometer, wie weit man vom Ziel liegt", function () {
+    gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "lauf", splits: [342000] }, 1), "12 Sekunden zu langsam.", "zu langsam");
+    gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "lauf", splits: [342000, 660000] }, 2), "12 Sekunden schneller als geplant.", "schneller");
+    gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "lauf", splits: [331000] }, 1), "Im Plan.", "im Plan");
+    gleich(W.runPaceHinweis({ ziel: null, art: "lauf", splits: [1] }, 1), "", "ohne Vorgabe");
+    gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "rad", splits: [342000] }, 1), "", "Rad: keine Pace");
+  });
   test("Classic ist abgeschafft: Modern gilt immer, nur ?schnelltest bleibt klassisch", function () {
     wahr(W.LAYOUT_NUR_MODERN === !/[?&]schnelltest\b/.test(W.location.search), "Schalter folgt der Adresse");
     gleich(W.layoutNeu(), W.LAYOUT_NUR_MODERN || W.state.db.settings.layout === "new", "layoutNeu");

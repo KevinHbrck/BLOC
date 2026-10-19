@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-19 · Run: eigener Lauf mit Pace-Vorgabe, Aufnahme im Glas-Stil, FAQ als Ganzes einklappbar (Fassung 2026-10-19-7)
+
+- **Eigener Lauf** (Run-Seite, Modern): Ziel-Distanz (frei, 3, 5, 10, 15, 21 km) und optional eine **Pace-Vorgabe**; nach jedem Kilometer sagt die App (auch ohne regelmäßige Ansage), wie viele Sekunden man zu langsam oder schneller als geplant war (`runPaceHinweis`, Einheitstest). Weniger Text auf der Seite (Beschreibungen ausgeblendet).
+- **Aufnahme** (Modern): schwebende Texte auf dem geblurrten Foto statt weißer Karte, Glas-Kacheln für Strecke, Pace, Tempo jetzt und einen bpm-Platzhalter, Glas-Knöpfe (Abdunkeln, Pause, Beenden); „Ansagen aus“ ist als Lautsprecher-Symbol oben rechts.
+- **FAQ** unten auf Training: der Bereich lässt sich als Ganzes ein- und ausklappen; der Hinweis „keine Beratung“ bleibt sichtbar.
+- Zusammen mit den Paketen der anderen Sitzungen (Einführung, Einstellungen, Klänge, BLOC-Namen: -19-5/-6 und 3ba0680; Figur Thoracic Rotation).
+
 ## 2026-10-19 · Figur Thoracic Rotation klarer (Fassung 2026-10-19-6)
 
 - **Brustwirbelsäule drehen (Vierfüßler)**: Die drehende Hand ist jetzt der vordere, volle Arm (vorher war es der blasse hintere, deshalb wirkte die Figur unklar). Start: Ellbogen unter der Brust Richtung Boden, Hand hinter dem Kopf, Blick zum Boden. Ende: Brustkorb geöffnet, Ellbogen zur Decke, Kopf nach oben (Blick folgt dem Ellbogen). Nur die Posen in daten.js geändert, kein Animations- oder Skelettcode.

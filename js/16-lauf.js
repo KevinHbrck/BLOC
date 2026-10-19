@@ -165,10 +165,21 @@ function runAnsageText(k, splits, e, de, rad){
   }
   return txt;
 }
+/* Pace-Vorgabe (optional, aus „Eigener Lauf“): nach jedem Kilometer sagt die App, wie weit man vom Ziel liegt */
+function runPaceHinweis(r, k){
+  if(!r.ziel || !r.ziel.pace || r.art === "rad" || !r.splits[k-1]) return "";
+  var de = currentLang() !== "en", seg = (r.splits[k-1] - (k > 1 ? r.splits[k-2] : 0))/1000, diff = Math.round(seg - r.ziel.pace), n = Math.abs(diff);
+  if(n < 3) return de ? "Im Plan." : "On target.";
+  if(diff > 0) return de ? n+" Sekunden zu langsam." : n+" seconds too slow.";
+  return de ? n+" Sekunden schneller als geplant." : n+" seconds faster than planned.";
+}
 function runAnsage(k){
   var r = run, e = runAnsageEinst();
-  if(!r || !e.every || r.stumm || k % e.every !== 0) return;
-  var txt = runAnsageText(k, r.splits, e, currentLang() !== "en", r.art === "rad");
+  if(!r || r.stumm) return;
+  var extra = runPaceHinweis(r, k), regulaer = e.every && k % e.every === 0;
+  if(!regulaer && !extra) return;
+  var txt = regulaer ? runAnsageText(k, r.splits, e, currentLang() !== "en", r.art === "rad") : "";
+  if(extra) txt += (txt ? " " : "") + extra;
   (r.gesagt || (r.gesagt = [])).push(txt);
   runSag(txt);
 }
@@ -308,6 +319,19 @@ function runHighlights(x){
   });
   return out;
 }
+/* Eigener Lauf (Modern): Ziel-Distanz und optional eine Pace-Vorgabe; „Start“ übernimmt beides wie ein Lauf aus dem Kalender (runGeplant) */
+var RUN_ZIELE = [0, 3, 5, 10, 15, 21];
+var RUN_PACES = [0, 270, 300, 330, 360, 390, 420, 480];   // Sekunden je Kilometer, 0 = keine Vorgabe
+function runZielEinst(){ var s = state.db.settings; if(!s.runZiel || typeof s.runZiel !== "object") s.runZiel = { km:0, pace:0 }; return s.runZiel; }
+function runEigenerLaufHTML(){
+  var z = runZielEinst();
+  function chip(attr, wert, an, text){ return '<button type="button" class="kp-chip'+(an ? ' an' : '')+'" data-'+attr+'="'+wert+'" aria-pressed="'+an+'">'+esc(text)+'</button>'; }
+  return '<div class="card run-eigen"><div class="kp-titel">'+esc(t("runEigen"))+'</div>'+
+    '<div class="kp-chips" role="group" aria-label="'+esc(t("runZielKmL"))+'">'+RUN_ZIELE.map(function(k){ return chip("runzielkm", k, z.km === k, k ? k+" km" : t("runZielFrei")); }).join("")+'</div>'+
+    (z.km ? '<div class="kp-titel" style="margin-top:12px">'+esc(t("runPaceVorgabe"))+'</div><div class="kp-chips" role="group" aria-label="'+esc(t("runPaceVorgabe"))+'">'+
+      RUN_PACES.map(function(p){ return chip("runzielpace", p, z.pace === p, p ? repUhr(p*1000)+" /km" : t("runZielFrei")); }).join("")+'</div>' : '')+
+  '</div>';
+}
 function runOptionenHTML(){
   var iv = runIvEinst(), a = runAutoSek(), rad = runArt() === "rad";
   return '<div class="card run-opt">'+
@@ -435,6 +459,7 @@ function renderRunVor(){
       '<button type="button" class="btn btn-secondary" data-runplus>'+esc(t("runPlus10"))+'</button>'+
       '<button type="button" class="btn btn-primary" data-runjetzt>'+esc(t("runJetzt"))+'</button>'+
       '<button type="button" class="btn btn-danger" data-runabbr>'+esc(t("runAbbrechen"))+'</button></div>'+
+    (layoutNeu() ? '</div>' : '') +
     '<div style="height:40px"></div>';
   var zur = app.querySelector("[data-back]");
   function weg(){ runVorStop(); runDunkelWeg(); runWachen(false); renderRun(); }
@@ -521,7 +546,7 @@ function renderRun(){
         '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+'</div></div>'+
         '<div class="card-aside"><div class="card-acts">'+trashBtn("run", x.id, runKm(x.dist)+" km")+'</div></div></div>';
     }).join("") : '<div class="empty" style="padding:24px 20px;">'+esc(t("runNone"))+'</div>')+
-    runOptionenHTML()+runAnsageHTML()+
+    (layoutNeu() ? runEigenerLaufHTML() : "")+runOptionenHTML()+runAnsageHTML()+
     '<div class="page-hint">'+esc(t("runBetaHint"))+'</div>'+
     '<div style="height:40px"></div>';
   bindCommon();
@@ -540,7 +565,13 @@ function renderRun(){
     s.runAuto = sek; save();
     app.querySelector("#run-auto-wert").textContent = sek ? t("runAutoNach", { s:sek }) : t("runAus");
   });
-  app.querySelectorAll("[data-runstart]").forEach(function(b){ b.addEventListener("click", runStart); });
+  app.querySelectorAll("[data-runstart]").forEach(function(b){ b.addEventListener("click", function(){
+    var z = runZielEinst();
+    if(layoutNeu() && z.km > 0 && !runGeplant) runGeplant = { name:"", km:z.km, pace:z.pace || 0, rad:runArt() === "rad", t:Date.now() };   // eigener Lauf mit Ziel
+    runStart();
+  }); });
+  app.querySelectorAll("[data-runzielkm]").forEach(function(b){ b.addEventListener("click", function(){ var z = runZielEinst(); z.km = +b.getAttribute("data-runzielkm"); if(!z.km) z.pace = 0; save(); renderRun(); }); });
+  app.querySelectorAll("[data-runzielpace]").forEach(function(b){ b.addEventListener("click", function(){ runZielEinst().pace = +b.getAttribute("data-runzielpace"); save(); renderRun(); }); });
   var gw = app.querySelector("[data-rungeplantweg]");
   if(gw) gw.addEventListener("click", function(){ runGeplant = null; renderRun(); });
   app.querySelectorAll("[data-runevery]").forEach(function(b){
@@ -567,17 +598,17 @@ function renderRunLive(){
   var r = run;
   app.innerHTML =
     (layoutNeu() ? runHintergrundHTML() : '') +
-    topbar(t("runTitle"), { back:"#home" }) +
+    topbar(t("runTitle"), { back:"#home", right:(layoutNeu() && runAnsageEinst().every ? '<button type="button" class="iconbtn run-laut' + (r.stumm ? ' aus' : '') + '" data-runlaut aria-pressed="' + !!r.stumm + '" aria-label="' + esc(t(r.stumm ? "runStummAus" : "runStummAn")) + '">' + ICON_VOLUME + '</button>' : '') }) +
     (layoutNeu() ? '<div class="run-weiss">' : '') +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+(r.ziel && r.ziel.km > 0 ? '<div class="run-ziel">'+esc(t("runZielKm", { km:runKm(r.ziel.km*1000) }))+'</div>' : '')+'</div>'+
     '<div class="run-raster">'+
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
       '<div><b id="run-pace">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t(runIstRad(r) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(r)+'</small></div>'+
-      '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div></div>'+
+      '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div>'+(layoutNeu() ? '<div><b>–</b><small>bpm</small></div>' : '')+'</div>'+
     '<div id="run-karte" class="run-karte" data-n="-1"></div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
       '<button type="button" class="btn btn-secondary run-dunkelbtn" data-rundark>'+svgIcon(ICON_MOON)+' '+esc(t("runDark"))+'</button>'+
-      (runAnsageEinst().every ? '<button type="button" class="btn btn-secondary run-stumm" data-runstumm aria-pressed="'+!!r.stumm+'">'+esc(t(r.stumm ? "runStummAus" : "runStummAn"))+'</button>' : '')+
+      (!layoutNeu() && runAnsageEinst().every ? '<button type="button" class="btn btn-secondary run-stumm" data-runstumm aria-pressed="'+!!r.stumm+'">'+esc(t(r.stumm ? "runStummAus" : "runStummAn"))+'</button>' : '')+
       '<button type="button" class="btn btn-danger run-ende" data-runend>'+esc(t("runEnd"))+'</button></div>'+
     '<div class="tm-hint run-haltehint">'+esc(t("runHaltenHint"))+'</div>'+
     (layoutNeu() ? '</div>' : '') +
@@ -593,6 +624,12 @@ function renderRunLive(){
   bindCommon();   // erst nach dem Entfernen von data-back, sonst würde „Zurück“ zusätzlich die Seite verlassen
   runHalten(app.querySelector("[data-runpause]"), runPause);
   runHalten(app.querySelector("[data-rundark]"), runDunkel);
+  var laut = app.querySelector("[data-runlaut]");
+  if(laut) laut.addEventListener("click", function(){
+    r.stumm = !r.stumm;
+    if(r.stumm) try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+    renderRunLive();
+  });
   var stm = app.querySelector("[data-runstumm]");
   if(stm) runHalten(stm, function(){   // Ansagen für diesen Lauf aus/an (die Einstellung bleibt)
     r.stumm = !r.stumm;

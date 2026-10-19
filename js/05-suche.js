@@ -294,8 +294,8 @@ function bindBuilderKarte(){
 function faqHTML(){
   var F = window.BLOC_FAQ;
   if(!F) return "";
-  var sp = currentLang() === "en" ? "en" : "de", h = '<details class="faq faq-bereich"><summary class="sec-head"><span class="section-title" id="faq-titel">'+esc(t("faqTitel"))+'</span></summary>'+
-    '<p class="faq-hinweis" role="note">'+F.hinweis[sp]+'</p>', gruppe = -1;
+  var sp = currentLang() === "en" ? "en" : "de", h = '<section class="faq faq-bereich" aria-labelledby="faq-titel"><button type="button" class="sec-head faq-kopf" data-faqtoggle aria-expanded="false"><span class="section-title" id="faq-titel">'+esc(t("faqTitel"))+'</span></button>'+
+    '<p class="faq-hinweis" role="note">'+F.hinweis[sp]+'</p><div class="faq-inhalt" hidden>', gruppe = -1;
   F.fragen.forEach(function(f, i){
     var x = f[sp];
     if(f.g !== gruppe){
@@ -313,7 +313,7 @@ function faqHTML(){
   h += '<details class="faq-q faq-verz"><summary><span class="faq-t">'+esc(t("faqVerz"))+'</span></summary><div class="faq-a">'+
     '<p class="dim">'+esc(t("faqVerzSub"))+'</p><ol class="faq-refs">'+
     Object.keys(F.quellen).map(function(n){ return '<li value="'+n+'"><span class="faq-refnr">[F'+n+']</span> '+F.quellen[n][sp]+'</li>'; }).join("")+
-    '</ol></div></details></details>';
+    '</ol></div></details></div></section>';
   return h;
 }
 /* Aussehen „New“: Seite „Training“ - alle Bereiche (Workout, Mobility & Stretch, Timer, Summit, Run) als Fotokarten, darüber die Suche */
@@ -325,6 +325,8 @@ function renderTraining(){
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+
     faqHTML();
   bindCommon();
+  var ft = app.querySelector("[data-faqtoggle]");
+  if(ft) ft.addEventListener("click", function(){ var inh = app.querySelector(".faq-inhalt"), auf = inh.hasAttribute("hidden"); if(auf) inh.removeAttribute("hidden"); else inh.setAttribute("hidden", ""); ft.setAttribute("aria-expanded", String(auf)); });
   /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd, kein Bild doppelt; dieselben Bilder tragen die Köpfe der Bereichsseiten */
   var fotos = bereichFotosNeu();
   app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){
