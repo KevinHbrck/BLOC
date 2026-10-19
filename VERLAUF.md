@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-19 · Favoriten: Bauch/Core und Brust mit passenden Fotos (Fassung 2026-10-19-3)
+
+- Fünf neue Pool-Fotos (Pexels, 600–900 px, 50–73 KB, Gesicht nicht erkennbar geprüft): **Bauch/Core** hell `neu-h-core-1` (hängendes Beinheben), `neu-h-core-2` (Ab-Roller), dunkel `neu-d-core` (Ab-Wheel); **Brust** hell `neu-h-brust-1` und `-2` (Liegestütze im Park). Bildausschnitt je Foto gesetzt. Nicht übernommen: drei Fotos, auf denen ein Gesicht im Profil erkennbar wäre (`4803930`, `4804031`, `416747`).
+- Die Pool-Bilder werden bewusst erst beim ersten Ansehen zwischengespeichert (nur die Titelbilder stehen im Vorabcache).
+
 ## 2026-10-19 · Fragen & Antworten unten auf der Seite Training (Fassung 2026-10-19-1)
 
 - **Neu**: 13 Fragen in drei Gruppen (Grundlagen & Einstieg · Trainingseffekte & Mechanik · Ernährung & Stoffwechsel), Deutsch und Englisch, je Frage Kurzantwort, Stichpunkte, „Studienlage“ und Quellen. Aufklappbar mit `<details>`/`<summary>` (Tastatur und Screenreader ohne eigenes Skript), alles zugeklappt; der Hinweis „allgemeine Informationen für gesunde Erwachsene, keine individuelle Beratung, Stand Oktober 2026“ steht immer sichtbar darüber. Dazu ein aufklappbares **Quellenverzeichnis** (27 Quellen, Links nur als Textlinks, öffnen erst beim Antippen, `rel="noopener noreferrer"`, ohne Referrer).

@@ -163,7 +163,7 @@ var FOTO_POOL = (function(){
     rep: ["img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
-    core:     [P("liegestuetz-halle"), P("liegestuetz-feld"), P("kraft-sw")],
+    core:     ["img/neu-d-core.jpg", P("liegestuetz-halle"), P("liegestuetz-feld"), P("kraft-sw")],
     beine:    [P("mobility-ausfall"), P("freiluft-meer"), P("studio-gewichtsblock")],
     ruecken:  [P("freiluft-park"), "img/neu-freiluft.jpg", P("freiluft-sw")],
     brust:    [P("liegestuetz-strand"), P("liegestuetz-stadt"), P("liegestuetz-feld")],
@@ -182,10 +182,10 @@ var FOTO_POOL_HELL = {
   ws:  ["img/neu-h-dehnen.jpg", "img/neu-h-band.jpg"],
   rep: ["img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],   // nur Querformat (flache Summit-Karte)
   run: FOTO_POOL.run,
-  core:     ["img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
+  core:     ["img/neu-h-core-1.jpg", "img/neu-h-core-2.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"],
   beine:    ["img/neu-h-kreuzheben.jpg", "img/neu-h-band.jpg", "img/neu-h-halle.jpg"],
   ruecken:  ["img/neu-h-klimmzug-rueck.jpg", "img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],
-  brust:    ["img/neu-h-rack.jpg", "img/neu-h-halle.jpg", "img/neu-h-kreuzheben.jpg"],
+  brust:    ["img/neu-h-brust-1.jpg", "img/neu-h-brust-2.jpg", "img/neu-h-rack.jpg"],
   arme:     ["img/neu-h-kb-gelb.jpg", "img/neu-h-rack.jpg", "img/neu-h-kettlebell.jpg"],
   schulter: ["img/neu-h-rack.jpg", "img/neu-h-ringe.jpg", "img/neu-h-klimmzug.jpg"],
   mobility: ["img/neu-h-dehnen.jpg", "img/neu-h-band.jpg"],
@@ -222,7 +222,7 @@ var FOTO_FOKUS = {
   "img/neu-p-studio-halle.jpg":"50% 55%",
   "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-kreuzheben.jpg":"50% 70%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
   "img/neu-h-band.jpg":"50% 62%", "img/neu-h-kettlebell.jpg":"50% 32%", "img/neu-h-kb-gelb.jpg":"50% 70%", "img/neu-h-klimmzug.jpg":"50% 72%",
-  "img/neu-h-klimmzug-rueck.jpg":"50% 28%", "img/neu-h-ringe.jpg":"50% 55%", "img/neu-d-kalender.jpg":"50% 45%", "img/neu-d-katalog.jpg":"50% 42%"
+  "img/neu-h-klimmzug-rueck.jpg":"50% 28%", "img/neu-h-ringe.jpg":"50% 55%", "img/neu-d-kalender.jpg":"50% 45%", "img/neu-h-brust-1.jpg":"50% 50%", "img/neu-h-brust-2.jpg":"50% 66%", "img/neu-h-core-1.jpg":"50% 50%", "img/neu-h-core-2.jpg":"50% 62%", "img/neu-d-core.jpg":"50% 68%", "img/neu-d-katalog.jpg":"50% 42%"
 };
 function fotoFokus(pfad){ return FOTO_FOKUS[pfad] || ""; }
 function fotoHash(s){ var h = 0; s = String(s); for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003; return h; }
