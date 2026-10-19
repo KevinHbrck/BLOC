@@ -3,6 +3,9 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-19 · Figur Thoracic Rotation klarer (Fassung 2026-10-19-6)
+
+- **Brustwirbelsäule drehen (Vierfüßler)**: Die drehende Hand ist jetzt der vordere, volle Arm (vorher war es der blasse hintere, deshalb wirkte die Figur unklar). Start: Ellbogen unter der Brust Richtung Boden, Hand hinter dem Kopf, Blick zum Boden. Ende: Brustkorb geöffnet, Ellbogen zur Decke, Kopf nach oben (Blick folgt dem Ellbogen). Nur die Posen in daten.js geändert, kein Animations- oder Skelettcode.
 ## 2026-10-19 · Training im dunklen Glas-Design, FAQ einklappbar (Fassung 2026-10-19-5)
 
 - **Timer-Training (Player)** in Modern: in allen Phasen dasselbe ruhige dunkle Glas-Design mit sanften Farbverläufen, die Farbe wechselt nicht mehr zwischen Übung und Pause (nur die Beschriftung); Texte schweben ohne Kachel, der Trennstreifen (Fortschrittsleiste) entfällt, oben steht klein BLOC, Knöpfe als Glas, Hauptknopf weiß; die Figur ist während der Übung größer (`phaseVars` in js/19-timer-motor.js, CSS in layout-new.css). Classic-Pfad unverändert (nur Schnelltest).

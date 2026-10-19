@@ -641,7 +641,9 @@ Object.assign(ILLU_POSES, {
   "neck-stretch":       [Q([43,14],[50,21],[50,52],P_FLEGS,[[40,14,42,6],[56,34,58,48]],"",true), null],
   /* Kinn einziehen: Kopf wandert waagerecht nach hinten (Seitenansicht); Brustwirbelsäule drehen: Vierfüßler, Ellbogen der Kopfhand öffnet sich nach oben */
   "chin-tuck":          [Q([57,9],[50,20],[50,50],[[50,70,50,89,58,89]],[[58,30,57,17]]), Q([48,9],[50,20],[50,50],[[50,70,50,89,58,89]],[[56,30,50,18]])],
-  "thoracic-rotation":  [Q(null,[66,66],[40,66],[[40,88,22,88,18,89]],[[67,78,68,89],[71,77,78,67]]), Q(null,[66,66],[40,66],[[40,88,22,88,18,89]],[[67,78,68,89],[71,55,78,64]])],
+  /* Thoracic Rotation: die drehende Hand ist der vordere (volle) Arm, der Stützarm der hintere (blasser). Start: Ellbogen unter der Brust Richtung Boden, Hand hinter dem Kopf, Blick zum Boden.
+     Ende: Brustkorb geöffnet, Ellbogen zur Decke, Kopf nach oben (Blick folgt dem Ellbogen). */
+  "thoracic-rotation":  [Q([75,69],[66,66],[40,66],[[40,88,22,88,18,89]],[[69.5,77,72.5,64.5],[62,77.5,61,89]]), Q([72.5,57],[66,64],[40,66],[[40,88,22,88,18,89]],[[60,52.5,70.5,58.5],[62,77.5,61,89]])],
   "shoulder-stretch":   [Q(null,[50,20],[50,52],P_FLEGS,[[40,27,30,27],[44,36,40,28]],"",true), null],
   "triceps-stretch":    [Q(null,[50,20],[50,50],[[50,70,50,89,58,89]],[[53,6,45,16],[59,14,54,7]]), null],
   "biceps-stretch":     [Q(null,[52,20],[52,50],[[52,70,52,89,60,89]],[[40,25,26,26]], gWall(22)), null],
