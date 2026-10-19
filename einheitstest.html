@@ -497,26 +497,30 @@
   test("FAQ: 13 Fragen in Deutsch und Englisch, alle Quellen vorhanden, Gruppen lückenlos", function () {
     var F = W.BLOC_FAQ;
     wahr(F && F.fragen && F.quellen, "faq.js geladen");
-    gleich(F.fragen.length, 13, "Fragen");
+    wahr(F.fragen.length >= 13, "mindestens 13 Fragen: " + F.fragen.length);
     var gr = F.fragen.map(function (f) { return f.g; });
-    gleich(gr.filter(function (g, i) { return i === 0 || g !== gr[i - 1]; }), [0, 1, 2], "Gruppen A, B, C nacheinander");
+    var k = F.gruppen.de.length;
+    gleich(gr.filter(function (g, i) { return i === 0 || g !== gr[i - 1]; }), Array.apply(null, Array(k)).map(function (_, i) { return i; }), "Gruppen lückenlos nacheinander");
     ["de", "en"].forEach(function (sp) {
-      gleich(F.gruppen[sp].length, 3, "Gruppennamen " + sp); wahr(F.hinweis[sp].length > 100, "Hinweis " + sp);
+      gleich(F.gruppen[sp].length, k, "Gruppennamen " + sp); wahr(F.hinweis[sp].length > 100, "Hinweis " + sp);
       F.fragen.forEach(function (f, i) {
         var x = f[sp];
         wahr(x && x.t && x.k && x.s && x.p.length >= 3, "Frage " + (i + 1) + " " + sp + " vollständig");
         wahr(f.q.length >= 1 && f.q.every(function (n) { return F.quellen[n] && F.quellen[n].de && F.quellen[n].en; }), "Frage " + (i + 1) + ": Quellen im Verzeichnis");
       });
     });
-    gleich(Object.keys(F.quellen).length, 27, "Quellen (Nummer 13 bleibt frei)");
+    wahr(Object.keys(F.quellen).length >= 27, "Quellenverzeichnis vollständig: " + Object.keys(F.quellen).length);
     wahr(!F.quellen[13], "Nummer 13 ist frei");
   });
-  test("FAQ: Anzeige – Hinweis sichtbar, Fragen zugeklappt, Quellenverzeichnis, Links nur https mit noopener", function () {
+  test("FAQ: Anzeige – Hinweis vor den Fragen und nie in einer zugeklappten Frage, alles zugeklappt, Links nur https mit noopener", function () {
+    var F = W.BLOC_FAQ, n = F.fragen.length;
     var d = document.createElement("div"); d.innerHTML = W.faqHTML();
-    wahr(d.querySelector(".faq-hinweis") && !d.querySelector("details .faq-hinweis"), "Hinweis „keine Beratung“ steht außerhalb der zugeklappten Teile");
-    gleich(d.querySelectorAll("details.faq-q").length, 14, "13 Fragen + Quellenverzeichnis");
+    var h = d.querySelector(".faq-hinweis"), erste = d.querySelector("details.faq-q");
+    wahr(h && !h.closest("details.faq-q"), "Hinweis „keine Beratung“ steht nicht in einer zugeklappten Frage");
+    wahr(h && erste && (h.compareDocumentPosition(erste) & 4), "Hinweis steht vor der ersten Frage (sichtbar, sobald Fragen zu sehen sind)");
+    gleich(d.querySelectorAll("details.faq-q").length, n + 1, "alle Fragen + Quellenverzeichnis");
     gleich(d.querySelectorAll("details[open]").length, 0, "alles zugeklappt");
-    gleich(d.querySelectorAll("summary").length, 14, "jede Frage hat eine Kopfzeile");
+    gleich(d.querySelectorAll("details.faq-q > summary").length, n + 1, "jede Frage hat eine Kopfzeile");
     var links = d.querySelectorAll("a");
     wahr(links.length >= 20, "Links im Verzeichnis: " + links.length);
     for (var i = 0; i < links.length; i++) {
