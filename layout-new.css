@@ -702,3 +702,5 @@
 :root[data-layout="new"] .cover-info-klapp > summary{ list-style:none; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-weight:600; font-size:14px; padding:6px 0; }
 :root[data-layout="new"] .cover-info-klapp > summary::-webkit-details-marker{ display:none; }
 :root[data-layout="new"] .cover-info-klapp[open] > summary .tpl-chev{ transform:rotate(180deg); }
+:root[data-layout="new"] .pz-art{ margin:6px 0 8px; }
+:root[data-layout="new"] .pz-art + .plan-start{ margin-top:0; }

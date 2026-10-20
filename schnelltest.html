@@ -872,6 +872,7 @@
       pruefe(rs.top >= 0 && rs.top < 160 && W.scrollY > 300, "Der Plan soll beim Scrollen oben stehen bleiben: Abstand " + Math.round(rs.top) + ", gescrollt " + Math.round(W.scrollY));
       W.scrollTo(0, 0);
       klick("[data-plandone]");
+      klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
       klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s"));
       await bis(function () { return /^#playmy\//.test(W.location.hash) && $("#pl-body"); }, 3000, "Training startet direkt");
       var mw = (JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || []).filter(function (m) { return m.fromPlan; })[0];
@@ -1167,6 +1168,7 @@
       var zr = $('.pz-zeile[data-pz="chest-press-machine"]');
       pruefe(zr && zr.querySelector('[data-feld="saetze"] input').value === "3" && zr.querySelector('[data-feld="wdh"] input').value === "12", "Plan-Zeile ohne Ziel 3 Sätze × 12: " + (zr && zr.textContent));
       // „Mit Timer starten“ aus dem Plan: im Timer steht Gewicht × Wiederholungen unter dem Namen
+      klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
       klick($("[data-planlos]"));
       await bis(function () { return $("#pl-body .pl-kg"); }, 3000, "Gewicht im Timer");
       pruefe(/\d+ Sätze × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Sätze × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
@@ -1321,6 +1323,7 @@
       klick(await bis(function () { return $("[data-blocplus]"); }, 2000, "BLOC hinzufügen"));
       klick(await bis(function () { return $('#overlayRoot [data-bwmeine="p-zwei"]'); }, 2000, "BLOC aus Meine"));
       await bis(function () { return $$(".pz-fz").length === 1; }, 2000, "weiterer BLOC steht unter dem Planer");
+      klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
       klick($("[data-planlos]"));
       await bis(function () { return /^#playmy\//.test(W.location.hash) && $("#pl-body"); }, 3000, "Los geht’s startet direkt das Training");
       var mwN = (W.state.db.myWorkouts || []).filter(function (m) { return m.fromPlan === pl2.id; })[0];
@@ -1419,8 +1422,16 @@
       klick("#overlayRoot [data-cancel]");
       W.go("#studioplan/p-prog");
       await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
+      // Wahl über Los geht’s: nach Sätzen öffnet die erste Übung, mit Timer startet das Training
+      klick(await bis(function () { return $('[data-planart="saetze"]'); }, 3000, "Nach Sätzen"));
+      await bis(function () { return $('[data-planart="saetze"].active'); }, 2000, "Wahl Nach Sätzen gilt");
+      klick($("[data-planlos]"));
+      await bis(function () { return /^#studio\//.test(W.location.hash); }, 3000, "Nach Sätzen: erste Übung öffnet");
+      W.go("#studioplan/p-prog");
+      await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
       // Plan als Timer-Workout: Runden = Sätze, im Timer Gewicht eintragen, letztes Mal im Fenster, landet in der Statistik
       W.go("#studioplan/p-prog");
+      klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
       klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s"));
       var mw = (daten().myWorkouts || []).filter(function (m) { return m.fromPlan === "p-prog"; })[0];
       pruefe(mw && mw.items[0].ex === "leg-press" && mw.items[0].reps === s0 + 2, "Timer-Workout aus dem Plan: " + JSON.stringify(mw && mw.items[0]));

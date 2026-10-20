@@ -504,6 +504,12 @@ function planKopfKarteBinden(p, ids, neu){
 }
 /* ---------- Workout-Planer: ein BLOC (die Übungen mit Sätzen, Gewicht, Pause) oder mehrere hintereinander, ein „Los geht’s“ ----------
    p.folge = [BLOC-IDs]: weitere BLOCs, die nach diesem kommen. Zwischen zwei BLOCs fragt das Training „Bereit für …?“ (Pause mit Überspringen). */
+/* Wie das Training läuft: nach Sätzen (Gewicht × Wiederholungen je Übung eintragen) oder mit Timer; ohne Wahl gilt die Art, mit der der BLOC angelegt wurde */
+function planStartArt(p){
+  if(p.startArt === "saetze" || p.startArt === "timer") return p.startArt;
+  if(p.standard === "saetze" || p.standard === "timer") return p.standard;
+  return bauModus() === "timer" ? "timer" : "saetze";
+}
 function planFolge(p){ return (Array.isArray(p.folge) ? p.folge : []).map(stPlanFind).filter(function(q){ return q && q !== p; }); }
 function planKetteIds(p){   // alle Übungen des BLOCs und der folgenden, jede nur einmal (für Training speichern)
   var out = stPlanIds(p).slice();
@@ -726,7 +732,9 @@ function renderStudioPlan(){
     html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
       (p.entwurf && ids.length ? '<div class="page-hint plan-entwurf">'+esc(t("planEntwurfHinweis"))+'</div>' : '')+
       (ids.length ? hw.z(0, "page-hint") : '')+
-      (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planlos>'+ICON_PLAY+' '+esc(t("letsGoBig"))+'</button>'+
+      (ids.length ? '<div class="seg-row pz-art" role="group" aria-label="'+esc(t("planArtFrage"))+'">'+
+          ['saetze', 'timer'].map(function(m){ var an = planStartArt(p) === m; return '<button type="button" data-planart="'+m+'" class="'+(an ? 'active' : '')+'" aria-pressed="'+an+'">'+(m === 'timer' ? ICON_PLAY+' ' : '')+esc(t(m === 'timer' ? 'stModusTimer' : 'stModusSaetze'))+'</button>'; }).join("")+'</div>'+
+        '<button type="button" class="btn btn-primary plan-start" data-planlos>'+ICON_PLAY+' '+esc(t("letsGoBig"))+'</button>'+
         '<div class="pz-akt"><button type="button" data-planfav aria-pressed="'+isFav("plan:"+p.id)+'" class="'+(isFav("plan:"+p.id) ? 'on' : '')+'">'+svgIcon(ICON_STAR)+'<span>'+esc(t("favorite"))+'</span></button>'+
         '<button type="button" data-plankopie>'+svgIcon(ICON_COPY)+'<span>'+esc(t("actCopy"))+'</span></button>'+
         '<button type="button" data-planteilen>'+ICON_SHARE+'<span>'+esc(t("share"))+'</span></button></div>' : '')+
@@ -766,7 +774,12 @@ function renderStudioPlan(){
   });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */
-  an("[data-planlos]", function(){ if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); } planAlsWorkout(p, true); });   // ein einziges „Los geht’s“: direkt in den Training-Bereich
+  app.querySelectorAll("[data-planart]").forEach(function(b){ b.addEventListener("click", function(){ p.startArt = b.getAttribute("data-planart"); p.updatedAt = Date.now(); save(); neu(); }); });
+  an("[data-planlos]", function(){   // erst die Wahl darüber (nach Sätzen oder mit Timer), dann ein einziges Los geht’s in den passenden Bereich
+    if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); }
+    if(planStartArt(p) === "timer") planAlsWorkout(p, true);
+    else go("#studio/"+stPlanIds(p)[0]);   // nach Sätzen: die erste Übung, Gewicht × Wiederholungen je Satz eintragen
+  });
   an("[data-planfav]", function(){ toggleFav("plan:"+p.id); neu(); });
   an("[data-plankopie]", function(){ var q = planKopie(p); showToast(t("planKopiert", { n:q.name })); });
   an("[data-planteilen]", function(){ var mw = planMw(p); shareDraft(draftFromMy(mw)); });

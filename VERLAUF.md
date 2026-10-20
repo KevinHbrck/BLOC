@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · BLOC-Seite: erst wählen, wie trainiert wird (Fassung 2026-10-20-2)
+
+- Über **LOS GEHTS!** steht jetzt die Wahl **Nach Sätzen | Mit Timer** (`p.startArt`, sonst die Art, mit der der BLOC angelegt wurde; `planStartArt`). Nach Sätzen öffnet die erste Übung (Gewicht × Wiederholungen eintragen), Mit Timer startet das Training mit Timer. Behebt: „Nach Sätzen“ + Selber bauen + Los geht’s landete im Timer.
+
 ## 2026-10-20 · Muskel-Auswahl, Workout-Planer mit BLOCs, Run mit Live-Karte, Plan mit mehreren Workouts, ein Plus beim Timer (Fassung 2026-10-20-1)
 
 Aufgabenliste von Kevin (Promt2 plus Nachrichten).
