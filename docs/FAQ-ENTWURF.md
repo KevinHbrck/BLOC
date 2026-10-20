@@ -30,6 +30,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Kraft (Freiluft, Fitness):** Du wirst stärker, Gehtempo, Gleichgewicht und Aufstehen vom Stuhl verbessern sich. Beobachtungsstudien sahen 10–17 % weniger Risiko für Tod, Herz-Kreislauf-Erkrankungen, Krebs insgesamt und Diabetes.
 - **Nur eines von beiden:** Muskelaufbau und Maximalkraft kommen vom Krafttraining, die Ausdauerleistung vom Ausdauertraining. Das eine ersetzt das andere nicht.
 - **Zusammen:** Kraft und Ausdauer zusammen waren mit einem niedrigeren Risiko verbunden als beides nicht zu tun. Zusätzliches Ausdauertraining bremste Muskelwachstum und Maximalkraft nicht.
+- **Mehr als Muskeln:** Starke Muskeln halten Rumpf und Gelenke stabil, geben den Knochen einen Reiz und lindern in Studien Rücken- und Knieschmerzen (siehe Frage 14).
 - **In BLOC:** Freiluft und Fitness trainieren Kraft, Laufen die Ausdauer, Summit beides in kurzen, harten Intervallen.
 
 **Studienlage:** Belegt: Die WHO empfiehlt Ausdauer und Krafttraining. Die Risikozahlen stammen aus Beobachtungsstudien: Sie zeigen einen Zusammenhang, keinen bewiesenen Schutz. Reines Körpergewichtstraining ist weniger gut untersucht als Training mit Gewichten.
@@ -50,17 +51,17 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ### 3. In welcher Reihenfolge trainiere ich die Muskeln?
 
-**Kurzantwort:** Erst die großen Übungen, dann die kleinen: Beine, Rücken, Brust, danach Schultern, Arme, Bauch. Was dir am wichtigsten ist, kommt ganz an den Anfang.
+**Kurzantwort:** Beine, Rücken, Brust, Schultern, Arme, Bauch zum Schluss. Große Übungen kommen zuerst, weil du da am frischsten bist. Willst du etwas besonders verbessern, zieh es an den Anfang.
 
-- **Warum vorn:** Die erste Übung der Einheit bringt in Studien den größten Kraftzuwachs, weil du dann frisch bist.
-- **Große vor kleinen:** Kniebeuge, Rudern und Liegestütz kosten viel Kraft. Bizepscurl und Waden danach, sonst fehlt dir die Energie für das Schwere.
-- **Beispiel:** Kniebeuge, Rudern, Liegestütz, Schulterdrücken, Planke, Arme.
-- **Druck und Zug im Wechsel:** So ermüdet nicht derselbe Muskel zweimal hintereinander. Das ist eine Praxisregel.
+- **Die Reihenfolge:** 1. Beine, 2. Rücken, 3. Brust, 4. Schultern, 5. Arme, 6. Bauch und Rumpf.
+- **Ein Beispiel:** Kniebeuge, Rudern, Liegestütz, Schulterdrücken, Bizepscurl und Trizeps, zum Schluss Planke.
+- **Dein Ziel zuerst:** Willst du bessere Liegestütze, mach Brust vor Beinen. Was am Anfang steht, bekommt die meiste Kraft: In Studien nahm die Kraft bei Übungen am Anfang der Einheit am stärksten zu.
+- **Warum Bauch zuletzt:** Der Rumpf stabilisiert bei Kniebeuge und Rudern mit. Ist er schon müde, leidet die Technik (Praxis).
+- **Druck und Zug im Wechsel,** zum Beispiel Rudern nach Liegestütz: So ermüdet nicht derselbe Muskel zweimal hintereinander (Praxis).
 
-**Studienlage:** Belegt: Die Übung am Anfang gewinnt mehr Kraft. „Große vor kleinen“ ist eine bewährte Praxisregel; für den Muskelaufbau ist die Reihenfolge nicht klar belegt.
+**Studienlage:** Belegt: Was du am Anfang der Einheit trainierst, gewinnt am meisten Kraft. Die genaue Rangfolge „Beine, Rücken, Brust …“ ist bewährte Praxis, nicht getestet. Für den Muskelaufbau ist die Reihenfolge nicht klar belegt.
 
 **Quellen:** [3], [4]
-
 ### 4. Wie viele Sätze, Wiederholungen und Pausen?
 
 **Kurzantwort:** Pro Übung 2–3 Sätze mit 6–12 Wiederholungen. Pause: 1–2 Minuten bei leichten, bis 3 Minuten bei schweren Übungen. Der letzte Satz darf hart sein, die Technik muss sauber bleiben.
@@ -88,7 +89,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ---
 
-## B. Was Training mit dir macht
+## B. Was Training dir bringt
 
 ### 6. Was macht Krafttraining mit meinem Körper?
 
@@ -136,7 +137,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Beweglichkeit:** Alle Dehnarten verbesserten sie, der Effekt hielt aber meist nur unter 30 Minuten.
 - **Vor dem Training:** Langes Dehnen (ab 60 Sekunden pro Muskel) senkte die Leistung im Mittel um 4,6 %, kurzes um 1,1 %. Dynamisches Dehnen steigerte sie leicht.
 - **Danach:** Gegenüber Ausruhen brachte Dehnen weder weniger Muskelkater noch bessere Kraft-Erholung.
-- **Verletzungen:** Dehnen allein verringerte Sportverletzungen nicht. Krafttraining schon (siehe Frage 30).
+- **Verletzungen:** Dehnen allein verringerte Sportverletzungen nicht. Krafttraining schon (siehe Frage 31).
 
 **Studienlage:** Belegt: kurzfristiger Beweglichkeitsgewinn; kein belegter Verletzungsschutz. Sehr unsicher: Erholungseffekte; die Studien sind klein und von geringer Qualität. Langzeitwirkung regelmäßigen Dehnens wurde hier nicht ausgewertet.
 
@@ -199,7 +200,20 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## C. Muskeln & Technik
 
-### 14. Was bringen Widerstandsbänder?
+### 14. Stabilität, Rücken, Gelenke: was bringt Krafttraining für den Halteapparat?
+
+**Kurzantwort:** Starke Muskeln halten Rumpf und Gelenke stabil, nehmen ihnen im Alltag Last ab und geben den Knochen einen Reiz. In Studien linderte Training chronische Rückenschmerzen und Knieschmerzen bei Arthrose, und gezieltes Rumpftraining wirkte kurzfristig sogar besser als allgemeines Training.
+
+- **Rumpf und Rücken:** Bei chronischen Rückenschmerzen sank der Schmerz mit Training im Schnitt um etwa 15 von 100 Punkten gegenüber Nichtstun, ein spürbarer Unterschied. Übungen für die Rumpfstabilität (Planke, Brücke) halfen kurzfristig mehr als allgemeines Training; nach 6 Monaten war der Vorteil nicht mehr zu sehen.
+- **Gelenke:** Bei Kniearthrose senkte Training den Schmerz um etwa 12 von 100 Punkten und verbesserte die Funktion.
+- **Knochen:** Muskelzug und Belastung sind der Wachstumsreiz für den Knochen. Bei Frauen nach den Wechseljahren stieg die Knochendichte an Lendenwirbelsäule und Hüfte leicht.
+- **Alltag:** Stabile Muskulatur heißt sicherer stehen, tragen und aufstehen; in Studien verbesserten sich Gleichgewicht und Gehtempo.
+- **Praxis:** Planke, Seitstütz, Brücke, Kniebeuge und Rudern trainieren Rumpf und Beine zugleich.
+
+**Studienlage:** Rückenschmerz: mittlere Sicherheit; der Vorteil von Rumpfübungen gegenüber allgemeinem Training stammt aus nur 5 kleinen Studien (414 Teilnehmende). Arthrose: hohe Sicherheit für den Schmerz. Knochen: kleiner Effekt, belegt vor allem für Frauen nach den Wechseljahren. Bei akuten, starken oder ausstrahlenden Beschwerden vorher ärztlich abklären.
+
+**Quellen:** [3], [52], [65], [66], [67]
+### 15. Was bringen Widerstandsbänder?
 
 **Kurzantwort:** Ein Band ist ein Fitnessstudio für die Hosentasche: Es steigert Kraft und Muskeln nachweislich, und die Kraftgewinne waren ähnlich wie mit Gewichten.
 
@@ -212,7 +226,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [14]
 
-### 15. Wie wachsen Muskeln, und welche Reize brauche ich?
+### 16. Wie wachsen Muskeln, und welche Reize brauche ich?
 
 **Kurzantwort:** Muskeln wachsen durch viele harte Sätze, regelmäßig über Wochen. Ziel: 10 oder mehr Sätze pro Muskelgruppe und Woche, jeder so hart, dass du noch 2–3 Wiederholungen übrig hättest.
 
@@ -225,7 +239,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [6], [7], [8], [11], [12]
 
-### 16. Wie sind Muskeln aufgebaut?
+### 17. Wie sind Muskeln aufgebaut?
 
 **Kurzantwort:** Ein Muskel ist ein Bündel aus Tausenden Fasern. Training macht die einzelnen Fasern dicker.
 
@@ -238,7 +252,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [15]
 
-### 17. Push und Pull: was ist das?
+### 18. Push und Pull: was ist das?
 
 **Kurzantwort:** Push heißt wegdrücken (Liegestütz), Pull heißt heranziehen (Rudern, Klimmzug). Plane etwa gleich viele Druck- wie Zugsätze, dazu Beine und Rumpf.
 
@@ -251,7 +265,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3]
 
-### 18. Hypertrophie, Maximalkraft, Kraftausdauer: was ist der Unterschied?
+### 19. Hypertrophie, Maximalkraft, Kraftausdauer: was ist der Unterschied?
 
 **Kurzantwort:** Drei Ziele, ein Werkzeug: Muskeln aufbauen (viele Sätze), möglichst stark werden (schwere Lasten, wenige Wiederholungen) oder lange durchhalten. Einsteiger fahren mit 8–12 Wiederholungen gut.
 
@@ -268,7 +282,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## D. Ernährung & Stoffwechsel
 
-### 19. Was hat Krafttraining mit Kalorien zu tun?
+### 20. Was hat Krafttraining mit Kalorien zu tun?
 
 **Kurzantwort:** Eine Krafteinheit verbrennt etwa so viel wie zügiges Gehen bis lockeres Laufen. Mehr Muskeln erhöhen den Ruheverbrauch nur wenig. Die Kalorienzahl in BLOC ist eine Schätzung.
 
@@ -281,7 +295,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [20], [21]
 
-### 20. Was bringt Eiweiß?
+### 21. Was bringt Eiweiß?
 
 **Kurzantwort:** Eiweiß liefert die Bausteine für Muskeln. Beim Krafttraining brachte zusätzliches Eiweiß einen kleinen Vorteil, im Schnitt etwa 0,3 kg mehr fettfreie Masse. Der Reiz bleibt das Training. Richtwert für Trainierende: 1,4–2,0 g pro kg Körpergewicht und Tag.
 
@@ -295,7 +309,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [30], [31]
 
-### 21. Wann sollte ich mehr Eiweiß essen?
+### 22. Wann sollte ich mehr Eiweiß essen?
 
 **Kurzantwort:** Wenn du regelmäßig trainierst, älter bist oder abnimmst. Wichtiger als der Zeitpunkt ist die Tagesmenge. Bei Nierenerkrankungen vorher ärztlich klären.
 
@@ -310,12 +324,12 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [31], [32], [33], [34], [35]
 
-### 22. Brauche ich Pulver, Riegel und Ähnliches?
+### 23. Brauche ich Pulver, Riegel und Ähnliches?
 
 **Kurzantwort:** Nein. Wer genug Eiweiß isst, braucht kein Pulver. Es ist bequem, wenn der Alltag es schwer macht. Dann auf Qualität und Inhaltsstoffe achten.
 
 - **Zuerst Essen:** Fachgesellschaften sehen Ernährung als Grundlage; Nahrungsergänzung ist höchstens ein kleiner Zusatz.
-- **Was Pulver kann:** Eiweiß bequem und kalorienarm liefern. Der kleine Zusatzeffekt aus Frage 20 gilt für Eiweiß zusätzlich zur normalen Ernährung.
+- **Was Pulver kann:** Eiweiß bequem und kalorienarm liefern. Der kleine Zusatzeffekt aus Frage 21 gilt für Eiweiß zusätzlich zur normalen Ernährung.
 - **Was nicht:** Pulver baut allein keine Muskeln auf. Ob es besser wirkt als dieselbe Menge aus Lebensmitteln, wurde in den ausgewerteten Studien nicht direkt verglichen.
 - **Qualität:** Bei Ergänzungen gibt es das Risiko von Verunreinigungen oder nicht deklarierten Stoffen; im Leistungssport kann das zu Dopingverstößen führen. Für den Freizeitsport weniger relevant, aber ein Grund für seriöse Hersteller.
 - **Riegel:** können viel Zucker und Energie enthalten. Das Etikett zeigt es.
@@ -324,7 +338,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [31], [36]
 
-### 23. Was ist der glykämische Index, und spielt er im Sport eine Rolle?
+### 24. Was ist der glykämische Index, und spielt er im Sport eine Rolle?
 
 **Kurzantwort:** Der glykämische Index (GI) zeigt, wie schnell ein Lebensmittel den Blutzucker steigen lässt. Für Freizeitsport spielt er kaum eine Rolle. Gesamtmenge an Kohlenhydraten und ausgewogenes Essen zählen mehr.
 
@@ -337,7 +351,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [22], [23], [24]
 
-### 24. Was macht Alkohol mit dem Trainingsfortschritt?
+### 25. Was macht Alkohol mit dem Trainingsfortschritt?
 
 **Kurzantwort:** In Studien bremste viel Alkohol nach dem Training Erholung und Muskelaufbau. Für kleine Mengen ist die Studienlage dünn. Wer Fortschritte will, lässt Alkohol rund ums Training am besten weg.
 
@@ -354,7 +368,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## E. Sicherheit
 
-### 25. Worauf muss ich achten: Warnzeichen, Aufwärmen, Steigerung?
+### 26. Worauf muss ich achten: Warnzeichen, Aufwärmen, Steigerung?
 
 **Kurzantwort:** Vier Regeln: aufwärmen, langsam steigern, Pausen einhalten, auf Warnzeichen hören. Bei Brustschmerz, ungewöhnlicher Atemnot oder Schwindel sofort aufhören und ärztlich klären.
 
@@ -372,7 +386,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## F. Plan & Fortgeschrittene
 
-### 26. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach?
+### 27. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach?
 
 **Kurzantwort:** Mindestens 2 Krafttage pro Woche mit allen großen Muskelgruppen, den Reiz langsam steigern und Erholung einplanen. Ein Block dauert in der Praxis 4–8 Wochen, danach folgt eine leichte Woche und ein neuer Block mit leicht veränderten Übungen.
 
@@ -387,7 +401,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [1], [3], [44], [45], [46]
 
-### 27. Ich trainiere schon 4–6 Mal pro Woche: wie viel Umfang und Häufigkeit sind sinnvoll?
+### 28. Ich trainiere schon 4–6 Mal pro Woche: wie viel Umfang und Häufigkeit sind sinnvoll?
 
 **Kurzantwort:** Mehr Einheiten brauchen mehr Struktur, nicht mehr Härte. Verteile 10–20 Sätze pro Muskelgruppe und Woche auf 2–3 Einheiten. Bei mehr bringt jeder weitere Satz kaum noch etwas dazu.
 
@@ -399,7 +413,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [6], [8], [46]
 
-### 28. Periodisierung und Entlastungswoche (Deload): wann und wie?
+### 29. Periodisierung und Entlastungswoche (Deload): wann und wie?
 
 **Kurzantwort:** Geplantes Wechseln der Belastung (Periodisierung) brachte bei der Maximalkraft etwas, ist aber weniger wichtig als sauberes Steigern. Eine leichte Woche alle 4–8 Wochen oder wenn die Leistung stockt, ist gängige Praxis.
 
@@ -412,7 +426,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [44], [45]
 
-### 29. Erholung, Schlaf, Übertraining: woran erkenne ich, dass es zu viel ist?
+### 30. Erholung, Schlaf, Übertraining: woran erkenne ich, dass es zu viel ist?
 
 **Kurzantwort:** Ernstzunehmende Zeichen: Die Leistung sinkt über mehrere Tage trotz Pause, du bist dauernd müde, schläfst schlecht, bist gereizt. Dann den Umfang für 1–2 Wochen etwa halbieren (Praxis), mehr schlafen und Ursachen prüfen.
 
@@ -425,7 +439,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [16], [59], [60]
 
-### 30. Wie beuge ich Verletzungen vor?
+### 31. Wie beuge ich Verletzungen vor?
 
 **Kurzantwort:** Krafttraining ist in den Studien die wirksamste Vorbeugung: Es senkte Sportverletzungen um etwa zwei Drittel. Dehnen allein brachte nichts. Wichtig sind außerdem saubere Technik, langsames Steigern und genug Erholung.
 
@@ -438,7 +452,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [57], [61]
 
-### 31. Eiweiß und Energie bei hohem Umfang: was brauche ich?
+### 32. Eiweiß und Energie bei hohem Umfang: was brauche ich?
 
 **Kurzantwort:** Wer viel trainiert, muss auch genug essen. Wer über längere Zeit zu wenig Energie aufnimmt, baut weniger Muskeln auf, die Kraft litt in der Auswertung aber nicht. Dazu 1,4–2,0 g Eiweiß pro kg und Tag, auf mehrere Mahlzeiten verteilt.
 
@@ -451,7 +465,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [31], [32], [59], [64]
 
-### 32. Gibt es beim Training geschlechtsspezifische Unterschiede?
+### 33. Gibt es beim Training geschlechtsspezifische Unterschiede?
 
 **Kurzantwort:** Frauen und Männer können nach denselben Prinzipien trainieren. Männer haben im Schnitt mehr Muskelmasse, aber beim Muskelwachstum reagieren beide ähnlich. Programme nach Geschlecht sind nicht belegt.
 
@@ -480,6 +494,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Strength (outdoor, fitness):** You get stronger, and walking speed, balance and getting up from a chair improve. Observational studies saw 10–17 % lower risk of death, cardiovascular disease, total cancer and diabetes.
 - **Only one of the two:** Muscle building and maximal strength come from strength training, endurance performance from endurance training. One does not replace the other.
 - **Together:** Strength and endurance together were linked to a lower risk than doing neither. Additional endurance training did not hold back muscle growth or maximal strength.
+- **More than muscle:** Strong muscles keep trunk and joints stable, give bones a stimulus and ease back and knee pain in studies (see question 14).
 - **In BLOC:** Outdoor and fitness train strength, running trains endurance, Summit does both in short, hard intervals.
 
 **Evidence:** Established: WHO recommends both endurance and strength training. The risk numbers come from observational studies: they show an association, not proven protection. Pure bodyweight training is less well studied than training with weights.
@@ -500,17 +515,17 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ### 3. In which order do I train the muscles?
 
-**Short answer:** Big exercises first, small ones after: legs, back, chest, then shoulders, arms, core. Whatever matters most to you goes right at the start.
+**Short answer:** Legs, back, chest, shoulders, arms, core last. Big exercises come first because you are freshest then. If you want to improve something in particular, move it to the start.
 
-- **Why first:** The first exercise of the session gave the biggest strength gain in studies, because you are fresh.
-- **Big before small:** Squat, row and push-up cost a lot of energy. Biceps curls and calves come after, otherwise you lack energy for the heavy work.
-- **Example:** squat, row, push-up, overhead press, plank, arms.
-- **Push and pull in turn:** That way the same muscle doesn't tire twice in a row. It is a rule of practice.
+- **The order:** 1. legs, 2. back, 3. chest, 4. shoulders, 5. arms, 6. core.
+- **An example:** squat, row, push-up, overhead press, biceps curl and triceps, plank at the end.
+- **Your goal first:** If you want better push-ups, do chest before legs. Whatever comes first gets the most strength: in studies strength rose most for exercises at the start of the session.
+- **Why core last:** The trunk stabilises during squats and rows. If it is already tired, technique suffers (practice).
+- **Push and pull in turn,** for example row after push-up: That way the same muscle doesn't tire twice in a row (practice).
 
-**Evidence:** Established: the exercise at the start gains more strength. "Big before small" is a proven rule of practice; for muscle building the order is not clearly established.
+**Evidence:** Established: what you train at the start of the session gains the most strength. The exact ranking "legs, back, chest …" is proven practice, not tested. For muscle building the order is not clearly established.
 
 **Sources:** [3], [4]
-
 ### 4. How many sets, reps and how much rest?
 
 **Short answer:** 2–3 sets of 6–12 reps per exercise. Rest 1–2 minutes on light and up to 3 minutes on heavy exercises. The last set may be hard; technique must stay clean.
@@ -538,7 +553,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ---
 
-## B. What training does for you
+## B. What training gives you
 
 ### 6. What does strength training do to my body?
 
@@ -586,7 +601,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Flexibility:** All kinds of stretching improved it, but the effect usually lasted under 30 minutes.
 - **Before training:** Long stretching (60 seconds or more per muscle) lowered performance by 4.6 % on average, short stretching by 1.1 %. Dynamic stretching raised it slightly.
 - **Afterwards:** Compared with resting, stretching brought neither less soreness nor better strength recovery.
-- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see question 30).
+- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see question 31).
 
 **Evidence:** Established: short-term gain in flexibility; no proven injury protection. Very uncertain: recovery effects; the studies are small and of low quality. The long-term effect of regular stretching was not analysed here.
 
@@ -649,7 +664,20 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## C. Muscles & technique
 
-### 14. What do resistance bands do?
+### 14. Stability, back, joints: what does strength training do for the supporting structures?
+
+**Short answer:** Strong muscles keep your trunk and joints stable, take load off them in daily life and give your bones a stimulus. In studies, training eased chronic back pain and knee pain in osteoarthritis, and targeted core training even worked better than general exercise in the short term.
+
+- **Trunk and back:** With chronic back pain, exercise lowered pain by about 15 of 100 points compared with doing nothing, a noticeable difference. Core stability exercises (plank, bridge) helped more than general exercise in the short term; after 6 months the advantage was no longer visible.
+- **Joints:** In knee osteoarthritis, exercise lowered pain by about 12 of 100 points and improved function.
+- **Bones:** Muscle pull and load are the growth stimulus for bone. In women after menopause, bone density at the lumbar spine and hip rose slightly.
+- **Everyday life:** Stable muscles mean standing, carrying and getting up more safely; in studies balance and walking speed improved.
+- **In practice:** Plank, side plank, bridge, squat and row train trunk and legs together.
+
+**Evidence:** Back pain: moderate certainty; the advantage of core exercises over general exercise comes from only 5 small studies (414 participants). Osteoarthritis: high certainty for pain. Bones: small effect, shown mainly for women after menopause. With acute, severe or radiating symptoms, get checked first.
+
+**Sources:** [3], [52], [65], [66], [67]
+### 15. What do resistance bands do?
 
 **Short answer:** A band is a gym for your pocket: it demonstrably improves strength and muscle, and strength gains were similar to those with weights.
 
@@ -662,7 +690,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [14]
 
-### 15. How do muscles grow, and which stimuli do I need?
+### 16. How do muscles grow, and which stimuli do I need?
 
 **Short answer:** Muscles grow from many hard sets, regularly, over weeks. Aim for 10 or more sets per muscle group per week, each hard enough that you'd have 2–3 reps left.
 
@@ -675,7 +703,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [6], [7], [8], [11], [12]
 
-### 16. How is muscle built?
+### 17. How is muscle built?
 
 **Short answer:** A muscle is a bundle of thousands of fibres. Training makes the individual fibres thicker.
 
@@ -688,7 +716,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [15]
 
-### 17. Push and pull: what is that?
+### 18. Push and pull: what is that?
 
 **Short answer:** Push means pressing away (push-up), pull means pulling towards you (row, pull-up). Plan about as many pushing as pulling sets, plus legs and core.
 
@@ -701,7 +729,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3]
 
-### 18. Hypertrophy, maximal strength, strength endurance: what is the difference?
+### 19. Hypertrophy, maximal strength, strength endurance: what is the difference?
 
 **Short answer:** Three goals, one tool: build muscle (many sets), get as strong as possible (heavy loads, few reps) or last long. Beginners do well with 8–12 reps.
 
@@ -718,7 +746,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## D. Nutrition & metabolism
 
-### 19. How is strength training related to calories?
+### 20. How is strength training related to calories?
 
 **Short answer:** A strength session burns about as much as brisk walking up to easy running. More muscle raises resting energy use only slightly. The calorie number in BLOC is an estimate.
 
@@ -731,7 +759,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [20], [21]
 
-### 20. What does protein do?
+### 21. What does protein do?
 
 **Short answer:** Protein supplies the building blocks for muscle. In strength training, extra protein gave a small advantage, on average about 0.3 kg more fat-free mass. The stimulus remains the training. Guide value for people who train: 1.4–2.0 g per kg body weight per day.
 
@@ -745,7 +773,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [30], [31]
 
-### 21. When should I eat more protein?
+### 22. When should I eat more protein?
 
 **Short answer:** If you train regularly, are older, or are losing weight. The daily total matters more than timing. With kidney disease, clarify with a doctor first.
 
@@ -760,12 +788,12 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [31], [32], [33], [34], [35]
 
-### 22. Do I need powder, bars and the like?
+### 23. Do I need powder, bars and the like?
 
 **Short answer:** No. If you eat enough protein, you don't need powder. It is convenient when daily life makes it hard. Then check quality and ingredients.
 
 - **Food first:** Professional bodies see diet as the foundation; supplements are at most a small extra.
-- **What powder can do:** supply protein conveniently and with few calories. The small extra effect from question 20 applies to protein on top of a normal diet.
+- **What powder can do:** supply protein conveniently and with few calories. The small extra effect from question 21 applies to protein on top of a normal diet.
 - **What it can't:** Powder alone doesn't build muscle. Whether it works better than the same amount from food was not compared directly in the studies analysed.
 - **Quality:** With supplements there is a risk of contamination or undeclared substances; in competitive sport that can cause doping violations. Less relevant for recreational sport, but a reason to choose reputable makers.
 - **Bars:** can contain a lot of sugar and energy. The label shows it.
@@ -774,7 +802,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [31], [36]
 
-### 23. What is the glycaemic index, and does it matter in sport?
+### 24. What is the glycaemic index, and does it matter in sport?
 
 **Short answer:** The glycaemic index (GI) shows how fast a food raises blood sugar. For recreational sport it hardly matters. Total carbohydrate amount and balanced eating count more.
 
@@ -787,7 +815,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [22], [23], [24]
 
-### 24. What does alcohol do to training progress?
+### 25. What does alcohol do to training progress?
 
 **Short answer:** In studies, a lot of alcohol after training slowed recovery and muscle building. For small amounts the evidence is thin. If you want progress, it is best to leave alcohol out around training.
 
@@ -804,7 +832,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## E. Safety
 
-### 25. What should I watch for: warning signs, warm-up, progression?
+### 26. What should I watch for: warning signs, warm-up, progression?
 
 **Short answer:** Four rules: warm up, progress slowly, keep your rest, listen to warning signs. With chest pain, unusual shortness of breath or dizziness, stop at once and get checked.
 
@@ -822,7 +850,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## F. Plan & advanced
 
-### 26. How do I build a training plan, how long does a block run, and what comes next?
+### 27. How do I build a training plan, how long does a block run, and what comes next?
 
 **Short answer:** At least 2 strength days a week covering all major muscle groups, raise the stimulus slowly and plan recovery. In practice a block runs 4–8 weeks, then comes an easy week and a new block with slightly changed exercises.
 
@@ -837,7 +865,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [1], [3], [44], [45], [46]
 
-### 27. I already train 4–6 times a week: how much volume and frequency make sense?
+### 28. I already train 4–6 times a week: how much volume and frequency make sense?
 
 **Short answer:** More sessions need more structure, not more hardness. Spread 10–20 sets per muscle group per week over 2–3 sessions. Beyond that each further set adds little.
 
@@ -849,7 +877,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [6], [8], [46]
 
-### 28. Periodisation and deload week: when and how?
+### 29. Periodisation and deload week: when and how?
 
 **Short answer:** Planned variation of the load (periodisation) added something for maximal strength, but matters less than clean progression. An easy week every 4–8 weeks, or when performance stalls, is common practice.
 
@@ -862,7 +890,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [44], [45]
 
-### 29. Recovery, sleep, overtraining: how do I know it's too much?
+### 30. Recovery, sleep, overtraining: how do I know it's too much?
 
 **Short answer:** Signs to take seriously: performance falls over several days despite rest, you are constantly tired, sleep badly, feel irritable. Then roughly halve the volume for 1–2 weeks (practice), sleep more and check causes.
 
@@ -875,7 +903,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [16], [59], [60]
 
-### 30. How do I prevent injuries?
+### 31. How do I prevent injuries?
 
 **Short answer:** In studies strength training is the most effective prevention: it cut sports injuries by about two thirds. Stretching alone did nothing. Clean technique, slow progression and enough recovery matter too.
 
@@ -888,7 +916,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [57], [61]
 
-### 31. Protein and energy at high volume: what do I need?
+### 32. Protein and energy at high volume: what do I need?
 
 **Short answer:** If you train a lot, you also have to eat enough. Too little energy over a long time means less muscle gained, though strength did not suffer in the analysis. Plus 1.4–2.0 g protein per kg per day, spread over several meals.
 
@@ -901,7 +929,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [31], [32], [59], [64]
 
-### 32. Are there sex-specific differences in training?
+### 33. Are there sex-specific differences in training?
 
 **Short answer:** Women and men can train by the same principles. On average men have more muscle mass, but for muscle growth both respond similarly. Programmes by sex are not supported.
 
@@ -986,6 +1014,9 @@ Prüfstand 2026-10-16: **geprüft = Crossref-Abfrage (Titel, Jahr, Band, Seiten,
 62. Riebe D et al. (2015): Updating ACSM's recommendations for exercise preparticipation health screening. *Med Sci Sports Exerc* 47(11):2473–2479. doi:10.1249/MSS.0000000000000664 (geprüft; Zusammenfassung gelesen)
 63. Milanović Z et al. (2015): Effectiveness of high-intensity interval training (HIT) and continuous endurance training for VO2max improvements: a systematic review and meta-analysis of controlled trials. *Sports Med* 45(10):1469–1481. doi:10.1007/s40279-015-0365-0 (geprüft; Zusammenfassung gelesen)
 64. Murphy C, Koehler K (2022): Energy deficiency impairs resistance training gains in lean mass but not strength: a meta-analysis and meta-regression. *Scand J Med Sci Sports* 32(1):125–137. doi:10.1111/sms.14075 (geprüft; Zusammenfassung gelesen)
+65. Hayden JA et al. (2021): Exercise therapy for chronic low back pain. *Cochrane Database Syst Rev* 2021(9):CD009790. doi:10.1002/14651858.CD009790.pub2 (geprüft; Zusammenfassung gelesen)
+66. Wang XQ et al. (2012): A meta-analysis of core stability exercise versus general exercise for chronic low back pain. *PLoS ONE* 7(12):e52082. doi:10.1371/journal.pone.0052082 (geprüft; Zusammenfassung gelesen)
+67. Fransen M et al. (2015): Exercise for osteoarthritis of the knee. *Cochrane Database Syst Rev* 2015(1):CD004376. doi:10.1002/14651858.CD004376.pub3 (geprüft; Zusammenfassung gelesen)
 
 ---
 
@@ -1000,3 +1031,5 @@ Prüfstand 2026-10-16: **geprüft = Crossref-Abfrage (Titel, Jahr, Band, Seiten,
 - **Vorsichtig formuliert:** Beobachtungsstudien als „Zusammenhang, kein bewiesener Schutz“, bei Herzrhythmus ausdrücklich J-förmig und mit Hinweis auf Warnzeichen und ärztliche Abklärung. Keine Heilversprechen.
 - **Praxis ohne Studienzahl** (bitte beim Gegenlesen prüfen): Einstiegs-Workout (4 Übungen, 2 Sätze), Reihenfolge der Muskeln, Pausenlänge, 4–8 Wochen Blocklänge, halbe Sätze in der Deload-Woche, Umfang halbieren bei Übertraining-Zeichen. Das sind BLOC-Empfehlungen, keine Studienwerte, und im Text als „Praxis“ gekennzeichnet.
 - **Offen für Kevin:** Der Rest des Textbausteins zu Geschlechterunterschieden (nach „Frauen profitieren häufig von:“). Quellen nur als Zusammenfassung gelesen; Volltexte bei Bedarf nachlesen.
+
+**Nachtrag (2026-10-20, Fassung 4b):** Frage 1 vergleicht jetzt Ausdauer- und Krafttraining. Neue Frage 14 „Stabilität, Rücken, Gelenke“ arbeitet die positiven Wirkungen des Krafttrainings auf Rumpf, Rücken, Gelenke und Knochen heraus (Quellen 65–67, per Crossref geprüft). Fragen ab 14 sind um 1 nach hinten gerückt (Querverweise angepasst), die Gruppe heißt jetzt „Was Training dir bringt“.

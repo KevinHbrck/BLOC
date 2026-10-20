@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ: Stabilität, Rücken, Gelenke als neue Frage, Reihenfolge der Muskeln klarer (Fassung 2026-10-20-9)
+
+- **Neue Frage 14** „Stabilität, Rücken, Gelenke“: Krafttraining stabilisiert Rumpf und Gelenke, gibt den Knochen einen Reiz und linderte in Studien chronische Rücken- und Knieschmerzen (Quellen F65–F67). Die Gruppe heißt jetzt „Was Training dir bringt“; Fragen ab 14 rücken um 1, jetzt 33 Fragen. Frage 1 und 6 verweisen darauf.
+- **Frage 3** nennt die Reihenfolge jetzt als klare Liste (Beine, Rücken, Brust, Schultern, Arme, Bauch) mit Beispiel und Begründung; die Studienlage trennt Belegtes (Übung am Anfang gewinnt mehr Kraft) von Praxis. Einheitstest 51/51.
+
 ## 2026-10-20 · FAQ: Frage 1 beantwortet jetzt „Was bringt Ausdauertraining, was bringt Krafttraining?“ (Fassung 2026-10-20-8)
 
 - Die erste Frage vergleicht klar, was Ausdauer und was Kraft bringen (mit Zahlen aus den Studien), was nur eines von beiden bringt, wie beides zusammenwirkt und wie die BLOC-Bereiche dazu passen. Quellen [F1], [F3], [F19], [F46], [F47], [F48], [F63]. Einheitstest 51/51.
