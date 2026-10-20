@@ -991,3 +991,10 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
 :root[data-layout="new"]:has(.run-bg) #app .section-title, :root[data-layout="new"]:has(.run-bg) #app .page-hint{ color:rgba(255,255,255,.88); }
 :root[data-layout="new"]:has(.run-bg) .kopf-bereich.klar .kb-rund, :root[data-layout="new"]:has(.run-bg) .kopf-bereich.klar .kb-rechts .iconbtn{ background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.24); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+/* Start-Knöpfe (Run, Timer, Summit) als helles Glas statt voll weiß: durchscheinend, weißes Symbol bzw. weiße Schrift */
+:root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn, :root[data-layout="new"]:has(.run-bg) #app .playbtn, :root[data-layout="new"] .rep-glas .rp-go{
+  background:rgba(255,255,255,.2) !important; color:#fff !important; border:1px solid rgba(255,255,255,.4) !important; box-shadow:0 8px 26px rgba(0,0,0,.2);
+  -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%); }
+:root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn svg{ color:#ff8f6b; }
+:root[data-layout="new"]:has(.run-bg) #app .playbtn svg{ color:#fff; fill:#fff; }
+:root[data-layout="new"]:has(.run-bg) #app .run-hero{ background:none !important; border:0 !important; box-shadow:none !important; -webkit-backdrop-filter:none; backdrop-filter:none; }
