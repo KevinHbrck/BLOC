@@ -354,7 +354,8 @@ function runWoSpeichern(){
 function runEigenerLaufHTML(){
   var z = runZielEinst(), rad = runArt() === "rad", liste = runWorkouts().slice().sort(function(a, b){ return b.at - a.at; });
   function chip(attr, wert, an, text){ return '<button type="button" class="kp-chip'+(an ? ' an' : '')+'" data-'+attr+'="'+wert+'" aria-pressed="'+an+'">'+esc(text)+'</button>'; }
-  return '<div class="card run-eigen"><div class="kp-titel run-ziel-kopf"><span>'+esc(t("runEigen"))+'</span><b id="run-ziel-wert">'+esc(runZielText(z.km, rad))+'</b></div>'+
+  /* einklappbar: die Zeile oben nennt Titel und aktuelle Strecke, der Rest steht darunter (offen/zu merkt sich runKlapp bis zum Schließen der App) */
+  return '<details class="card run-eigen run-klapp" data-k="eigen"'+(runKlapp.eigen ? ' open' : '')+'><summary class="kp-titel run-ziel-kopf"><span>'+esc(t("runEigen"))+'</span><b id="run-ziel-wert">'+esc(runZielText(z.km, rad))+'</b><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
     '<input type="range" id="run-ziel" min="0" max="'+(rad ? 200 : 42)+'" step="'+(rad ? 5 : 1)+'" value="'+runReglerVonKm(z.km, rad)+'" aria-label="'+esc(t("runZielKmL"))+'">'+
     '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runZielFrei"))+'</span>'+(rad ? '<span>50</span><span>100</span><span>200</span>' : '<span>10</span><span>21</span><span>42</span>')+'</div>'+
     (z.km && !rad ? '<div class="kp-titel run-ziel-kopf" style="margin-top:12px"><span>'+esc(t("runPaceVorgabe"))+'</span><b id="run-pace-wert">'+esc(runPaceText(z.pace))+'</b></div>'+
@@ -364,16 +365,24 @@ function runEigenerLaufHTML(){
     (liste.length ? '<div class="kp-titel" style="margin-top:14px">'+esc(t("runWoTitel"))+'</div><div class="run-wos">'+liste.map(function(w){
       return '<div class="run-wo"><button type="button" class="run-wo-go" data-runwostart="'+esc(w.id)+'">'+ICON_PLAY+'<b>'+esc(runWoName(w))+'</b></button>'+
         '<button type="button" class="run-wo-weg" data-runwodel="'+esc(w.id)+'" aria-label="'+esc(t("del"))+'">&times;</button></div>'; }).join("")+'</div>' : '')+
-  '</div>';
+  '</details>';
 }
+/* Kachel oben rechts auf der Run-Seite: die insgesamt verbrauchten Kalorien aller Läufe und Fahrten (geschätzt, nur mit Körperdaten; sonst ein Link zum Eintragen und die Zahl der Läufe) */
+function runHeroRechtsHTML(runs){
+  if(!koerperDaten()) return '<div class="rh-sub"><button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button></div>';
+  if(!runs.length) return '<div class="rh-sub">'+esc(t("runTeaser"))+'</div>';
+  var sum = runs.reduce(function(a, x){ return a + runKcal(x.dist, x.dur/1000, runIstRad(x)); }, 0);
+  return '<div class="rh-sub rh-kcal"><b>≈ '+esc(sum.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"))+'</b><small>'+esc(t("runKcalGesamt"))+SEP+esc(t("runLaeufeKurz", { n:runs.length }))+'</small></div>';
+}
+var runKlapp = { eigen:false, iv:false };   // welche Karten auf der Run-Seite aufgeklappt sind
 function runOptionenHTML(){
   var iv = runIvEinst(), rad = runArt() === "rad";
   if(rad) return "";   // auf dem Rad gibt es nichts einzustellen (Laufen und Gehen im Wechsel gibt es nur zu Fuß)
-  return '<div class="card run-opt">'+
-    (rad ? '' : toggleRow("run-iv-an", esc(t("runIvAn")), esc(t("runIvHint")), iv.an))+   // Laufen und Gehen im Wechsel gibt es nur zu Fuß
+  return '<details class="card run-opt run-klapp" data-k="iv"'+(runKlapp.iv ? ' open' : '')+'><summary class="kp-titel run-ziel-kopf"><span>'+esc(t("runIvAn"))+'</span><b>'+esc(iv.an ? repUhr(iv.lauf*1000)+" / "+repUhr(iv.geh*1000) : t("runAus"))+'</b><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+    toggleRow("run-iv-an", esc(t("runIvAktiv")), esc(t("runIvHint")), iv.an)+
     (!rad && iv.an ? '<div class="ru-felder"><div><label>'+esc(t("runIvLaufS"))+'</label>'+stepperHTML("run-iv-lauf", iv.lauf, 10, 900, 10)+'</div>'+
       '<div><label>'+esc(t("runIvGehS"))+'</label>'+stepperHTML("run-iv-geh", iv.geh, 10, 900, 10)+'</div></div>' : '')+
-    '</div>';
+    '</details>';
 }
 function runAnsageHTML(){
   var e = runAnsageEinst();
@@ -643,7 +652,7 @@ function renderRun(){
       (runGeplant.km > 0 ? '<div class="sub">'+esc(t("runZielKm", { km:runKm(runGeplant.km*1000) }))+'</div>' : '')+
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button>'+
       '<button type="button" class="ghost" data-rungeplantweg>'+esc(t("runGeplantWeg"))+'</button></div>' : '')+
-    '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div><div class="rh-sub">'+esc(runs.length ? t("runLaeufe", { n:runs.length }) : t("runTeaser"))+'</div>'+
+    '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div>'+runHeroRechtsHTML(runs)+
       '<div class="theme-pick rep-pick seg-2 run-art" role="group" aria-label="'+esc(t("runArt"))+'">'+
         '<button type="button" data-runart="lauf" class="'+(art === "lauf" ? "active" : "")+'">'+esc(t("runArtLauf"))+'</button>'+
         '<button type="button" data-runart="rad" class="'+(art === "rad" ? "active" : "")+'">'+esc(t("runArtRad"))+'</button></div>'+
@@ -660,6 +669,8 @@ function renderRun(){
     '<div style="height:40px"></div>';
   bindCommon();
   bindTrash(function(){ renderRun(); });
+  app.querySelectorAll("details.run-klapp").forEach(function(d){ d.addEventListener("toggle", function(){ runKlapp[d.getAttribute("data-k")] = d.open; }); });
+  var kh = app.querySelector("[data-koerper]"); if(kh) kh.addEventListener("click", function(){ openKoerperSheet(function(){ renderRun(); }); });
   if(app.querySelector("#run-iv-an")) bindToggle("run-iv-an", function(v){ var e = runIvEinst(); s.runIv = { an:v, lauf:e.lauf, geh:e.geh }; save(); renderRun(); });
   bindSteppers(app, function(){
     var l = app.querySelector("#run-iv-lauf"), g = app.querySelector("#run-iv-geh");
