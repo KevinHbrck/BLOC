@@ -1035,3 +1035,16 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 :root[data-layout="new"] details.run-verlauf > summary::-webkit-details-marker{ display:none; }
 :root[data-layout="new"] details.run-verlauf > summary .tpl-chev{ opacity:.8; transition:transform .2s; }
 :root[data-layout="new"] details.run-verlauf[open] > summary .tpl-chev{ transform:rotate(180deg); }
+/* Heute: Maße wachsen mit der Bildschirmhöhe, damit die Seite den Bildschirm füllt, ohne zu scrollen (auf kleinen Handys bleibt es kompakt) */
+:root[data-layout="new"] .kopf-neu{ min-height:clamp(150px, 25vh, 250px); padding-bottom:clamp(44px, 6vh, 56px); }
+:root[data-layout="new"] .marke-neu b{ font-size:clamp(36px, 11vw, 50px); }
+:root[data-layout="new"] .kn-gruss b{ font-size:clamp(20px, 3vh, 26px); }
+:root[data-layout="new"] .woche-neu{ margin:-40px 0 clamp(8px, 1.6vh, 16px); }
+:root[data-layout="new"] .woche-neu .woche{ padding-top:clamp(10px, 1.6vh, 16px); padding-bottom:clamp(10px, 1.6vh, 16px); }
+:root[data-layout="new"] .fav-foto{ width:clamp(128px, 36vw, 162px); height:clamp(112px, 19.5vh, 190px); padding:clamp(9px, 1.4vh, 13px); }
+:root[data-layout="new"] .ff-name{ font-size:clamp(13.5px, 2vh, 16px); }
+:root[data-layout="new"] .ff-sub{ font-size:clamp(11.5px, 1.6vh, 13px); }
+:root[data-layout="new"] .builder-neu{ min-height:clamp(0px, 23vh, 230px); padding:clamp(14px, 2.2vh, 20px); gap:clamp(10px, 1.6vh, 16px); margin-bottom:clamp(8px, 1.6vh, 16px); }
+:root[data-layout="new"] .bn-text b{ font-size:clamp(19px, 2.9vh, 24px); }
+:root[data-layout="new"] .bn-text small{ font-size:clamp(12.5px, 1.8vh, 14px); }
+:root[data-layout="new"] .bn-knoepfe .btn{ padding:clamp(10px, 1.7vh, 15px) 12px; font-size:clamp(14.5px, 2vh, 16px); }
