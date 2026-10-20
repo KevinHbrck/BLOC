@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ: neue Frage „Darf ich jeden Tag trainieren?“ (Fassung 2026-10-20-10)
+
+- Neue Frage 27 in der Gruppe Sicherheit: täglich bewegen ist gut, täglich hart bringt keinen Zusatz; Empfehlung höchstens 2–3 harte Krafttage pro Muskelgruppe und Woche, sonst Gehen, lockere Ausdauer oder Mobility; Zeichen von Überlastung. Fragen ab 27 rücken um 1, jetzt 34 Fragen. Einheitstest 51/51.
+
 ## 2026-10-20 · FAQ: Stabilität, Rücken, Gelenke als neue Frage, Reihenfolge der Muskeln klarer (Fassung 2026-10-20-9)
 
 - **Neue Frage 14** „Stabilität, Rücken, Gelenke“: Krafttraining stabilisiert Rumpf und Gelenke, gibt den Knochen einen Reiz und linderte in Studien chronische Rücken- und Knieschmerzen (Quellen F65–F67). Die Gruppe heißt jetzt „Was Training dir bringt“; Fragen ab 14 rücken um 1, jetzt 33 Fragen. Frage 1 und 6 verweisen darauf.

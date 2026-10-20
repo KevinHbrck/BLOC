@@ -137,7 +137,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Beweglichkeit:** Alle Dehnarten verbesserten sie, der Effekt hielt aber meist nur unter 30 Minuten.
 - **Vor dem Training:** Langes Dehnen (ab 60 Sekunden pro Muskel) senkte die Leistung im Mittel um 4,6 %, kurzes um 1,1 %. Dynamisches Dehnen steigerte sie leicht.
 - **Danach:** Gegenüber Ausruhen brachte Dehnen weder weniger Muskelkater noch bessere Kraft-Erholung.
-- **Verletzungen:** Dehnen allein verringerte Sportverletzungen nicht. Krafttraining schon (siehe Frage 31).
+- **Verletzungen:** Dehnen allein verringerte Sportverletzungen nicht. Krafttraining schon (siehe Frage 32).
 
 **Studienlage:** Belegt: kurzfristiger Beweglichkeitsgewinn; kein belegter Verletzungsschutz. Sehr unsicher: Erholungseffekte; die Studien sind klein und von geringer Qualität. Langzeitwirkung regelmäßigen Dehnens wurde hier nicht ausgewertet.
 
@@ -386,7 +386,20 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## F. Plan & Fortgeschrittene
 
-### 27. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach?
+### 27. Darf ich jeden Tag trainieren, oder schadet das?
+
+**Kurzantwort:** Jeden Tag bewegen ist gut, jeden Tag hart dieselben Muskeln belasten bringt nichts und kann dich ausbremsen. Empfehlung: höchstens 2–3 harte Krafttage pro Muskelgruppe und Woche, an den anderen Tagen Gehen, lockere Ausdauer oder Mobility.
+
+- **Täglich bewegen:** Mehr Bewegung ging in Studien mit weniger Todesfällen einher, auch beim Zehnfachen der Mindestempfehlung zeigte sich kein Schaden bei der Sterblichkeit.
+- **Täglich hart bringt nichts extra:** Für Kraft reichen mindestens 2 Einheiten pro Muskelgruppe und Woche. Für Muskelwachstum spielte die Häufigkeit bei gleicher Satzzahl kaum eine Rolle. Mehr Tage heißen also nicht mehr Muskeln.
+- **Wenn du trotzdem täglich trainierst:** Wechsle die Schwerpunkte (Oberkörper, Unterkörper, Ausdauer, Mobility) und halte nur 1–2 Tage wirklich hart (Praxis).
+- **Wann es kippt:** Die Leistung sinkt über Tage trotz Pause, du bist dauernd müde, schläfst schlecht, bist gereizt. Das passiert, wenn Belastung und Erholung nicht im Gleichgewicht sind. Dann Umfang senken und mehr schlafen.
+- **Erholung gehört dazu:** Schlaf und genug Essen entscheiden mit, wie viel Training du verträgst.
+
+**Studienlage:** Belegt: Mehr Bewegung ist mit mehr Gesundheitsnutzen verbunden, eine harte Kraftfrequenz über 2× pro Woche bringt keinen klaren Zusatz. Offen: Eine feste Obergrenze für die Trainingshäufigkeit lässt sich aus den Studien nicht ableiten. Übertraining ist in Expertenkonsens beschrieben, schwer abzugrenzen und zeigt sich individuell.
+
+**Quellen:** [3], [16], [48], [59], [60]
+### 28. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach?
 
 **Kurzantwort:** Mindestens 2 Krafttage pro Woche mit allen großen Muskelgruppen, den Reiz langsam steigern und Erholung einplanen. Ein Block dauert in der Praxis 4–8 Wochen, danach folgt eine leichte Woche und ein neuer Block mit leicht veränderten Übungen.
 
@@ -401,7 +414,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [1], [3], [44], [45], [46]
 
-### 28. Ich trainiere schon 4–6 Mal pro Woche: wie viel Umfang und Häufigkeit sind sinnvoll?
+### 29. Ich trainiere schon 4–6 Mal pro Woche: wie viel Umfang und Häufigkeit sind sinnvoll?
 
 **Kurzantwort:** Mehr Einheiten brauchen mehr Struktur, nicht mehr Härte. Verteile 10–20 Sätze pro Muskelgruppe und Woche auf 2–3 Einheiten. Bei mehr bringt jeder weitere Satz kaum noch etwas dazu.
 
@@ -413,7 +426,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [6], [8], [46]
 
-### 29. Periodisierung und Entlastungswoche (Deload): wann und wie?
+### 30. Periodisierung und Entlastungswoche (Deload): wann und wie?
 
 **Kurzantwort:** Geplantes Wechseln der Belastung (Periodisierung) brachte bei der Maximalkraft etwas, ist aber weniger wichtig als sauberes Steigern. Eine leichte Woche alle 4–8 Wochen oder wenn die Leistung stockt, ist gängige Praxis.
 
@@ -426,7 +439,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [44], [45]
 
-### 30. Erholung, Schlaf, Übertraining: woran erkenne ich, dass es zu viel ist?
+### 31. Erholung, Schlaf, Übertraining: woran erkenne ich, dass es zu viel ist?
 
 **Kurzantwort:** Ernstzunehmende Zeichen: Die Leistung sinkt über mehrere Tage trotz Pause, du bist dauernd müde, schläfst schlecht, bist gereizt. Dann den Umfang für 1–2 Wochen etwa halbieren (Praxis), mehr schlafen und Ursachen prüfen.
 
@@ -439,7 +452,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [16], [59], [60]
 
-### 31. Wie beuge ich Verletzungen vor?
+### 32. Wie beuge ich Verletzungen vor?
 
 **Kurzantwort:** Krafttraining ist in den Studien die wirksamste Vorbeugung: Es senkte Sportverletzungen um etwa zwei Drittel. Dehnen allein brachte nichts. Wichtig sind außerdem saubere Technik, langsames Steigern und genug Erholung.
 
@@ -452,7 +465,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [57], [61]
 
-### 32. Eiweiß und Energie bei hohem Umfang: was brauche ich?
+### 33. Eiweiß und Energie bei hohem Umfang: was brauche ich?
 
 **Kurzantwort:** Wer viel trainiert, muss auch genug essen. Wer über längere Zeit zu wenig Energie aufnimmt, baut weniger Muskeln auf, die Kraft litt in der Auswertung aber nicht. Dazu 1,4–2,0 g Eiweiß pro kg und Tag, auf mehrere Mahlzeiten verteilt.
 
@@ -465,7 +478,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [31], [32], [59], [64]
 
-### 33. Gibt es beim Training geschlechtsspezifische Unterschiede?
+### 34. Gibt es beim Training geschlechtsspezifische Unterschiede?
 
 **Kurzantwort:** Frauen und Männer können nach denselben Prinzipien trainieren. Männer haben im Schnitt mehr Muskelmasse, aber beim Muskelwachstum reagieren beide ähnlich. Programme nach Geschlecht sind nicht belegt.
 
@@ -601,7 +614,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Flexibility:** All kinds of stretching improved it, but the effect usually lasted under 30 minutes.
 - **Before training:** Long stretching (60 seconds or more per muscle) lowered performance by 4.6 % on average, short stretching by 1.1 %. Dynamic stretching raised it slightly.
 - **Afterwards:** Compared with resting, stretching brought neither less soreness nor better strength recovery.
-- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see question 31).
+- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see question 32).
 
 **Evidence:** Established: short-term gain in flexibility; no proven injury protection. Very uncertain: recovery effects; the studies are small and of low quality. The long-term effect of regular stretching was not analysed here.
 
@@ -850,7 +863,20 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## F. Plan & advanced
 
-### 27. How do I build a training plan, how long does a block run, and what comes next?
+### 27. May I train every day, or does it do harm?
+
+**Short answer:** Moving every day is good; hitting the same muscles hard every day brings nothing and can slow you down. Recommendation: at most 2–3 hard strength days per muscle group a week, and on the other days walking, easy endurance or mobility.
+
+- **Moving daily:** More activity went with fewer deaths in studies, and even at ten times the minimum recommendation no harm showed up for mortality.
+- **Hard every day adds nothing:** For strength, at least 2 sessions per muscle group a week are enough. For muscle growth, frequency made little difference at equal sets. More days don't mean more muscle.
+- **If you still train daily:** Rotate the focus (upper body, lower body, endurance, mobility) and keep only 1–2 days truly hard (practice).
+- **When it tips:** Performance falls over days despite rest, you are constantly tired, sleep badly, feel irritable. That happens when load and recovery are out of balance. Then reduce volume and sleep more.
+- **Recovery is part of it:** Sleep and enough food help decide how much training you can handle.
+
+**Evidence:** Established: more activity goes with more health benefit; hard strength frequency above 2× a week adds no clear extra. Open: a fixed upper limit for training frequency cannot be derived from the studies. Overtraining is described by expert consensus, is hard to tell apart and varies by person.
+
+**Sources:** [3], [16], [48], [59], [60]
+### 28. How do I build a training plan, how long does a block run, and what comes next?
 
 **Short answer:** At least 2 strength days a week covering all major muscle groups, raise the stimulus slowly and plan recovery. In practice a block runs 4–8 weeks, then comes an easy week and a new block with slightly changed exercises.
 
@@ -865,7 +891,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [1], [3], [44], [45], [46]
 
-### 28. I already train 4–6 times a week: how much volume and frequency make sense?
+### 29. I already train 4–6 times a week: how much volume and frequency make sense?
 
 **Short answer:** More sessions need more structure, not more hardness. Spread 10–20 sets per muscle group per week over 2–3 sessions. Beyond that each further set adds little.
 
@@ -877,7 +903,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [6], [8], [46]
 
-### 29. Periodisation and deload week: when and how?
+### 30. Periodisation and deload week: when and how?
 
 **Short answer:** Planned variation of the load (periodisation) added something for maximal strength, but matters less than clean progression. An easy week every 4–8 weeks, or when performance stalls, is common practice.
 
@@ -890,7 +916,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [44], [45]
 
-### 30. Recovery, sleep, overtraining: how do I know it's too much?
+### 31. Recovery, sleep, overtraining: how do I know it's too much?
 
 **Short answer:** Signs to take seriously: performance falls over several days despite rest, you are constantly tired, sleep badly, feel irritable. Then roughly halve the volume for 1–2 weeks (practice), sleep more and check causes.
 
@@ -903,7 +929,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [16], [59], [60]
 
-### 31. How do I prevent injuries?
+### 32. How do I prevent injuries?
 
 **Short answer:** In studies strength training is the most effective prevention: it cut sports injuries by about two thirds. Stretching alone did nothing. Clean technique, slow progression and enough recovery matter too.
 
@@ -916,7 +942,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [57], [61]
 
-### 32. Protein and energy at high volume: what do I need?
+### 33. Protein and energy at high volume: what do I need?
 
 **Short answer:** If you train a lot, you also have to eat enough. Too little energy over a long time means less muscle gained, though strength did not suffer in the analysis. Plus 1.4–2.0 g protein per kg per day, spread over several meals.
 
@@ -929,7 +955,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [31], [32], [59], [64]
 
-### 33. Are there sex-specific differences in training?
+### 34. Are there sex-specific differences in training?
 
 **Short answer:** Women and men can train by the same principles. On average men have more muscle mass, but for muscle growth both respond similarly. Programmes by sex are not supported.
 
@@ -1033,3 +1059,5 @@ Prüfstand 2026-10-16: **geprüft = Crossref-Abfrage (Titel, Jahr, Band, Seiten,
 - **Offen für Kevin:** Der Rest des Textbausteins zu Geschlechterunterschieden (nach „Frauen profitieren häufig von:“). Quellen nur als Zusammenfassung gelesen; Volltexte bei Bedarf nachlesen.
 
 **Nachtrag (2026-10-20, Fassung 4b):** Frage 1 vergleicht jetzt Ausdauer- und Krafttraining. Neue Frage 14 „Stabilität, Rücken, Gelenke“ arbeitet die positiven Wirkungen des Krafttrainings auf Rumpf, Rücken, Gelenke und Knochen heraus (Quellen 65–67, per Crossref geprüft). Fragen ab 14 sind um 1 nach hinten gerückt (Querverweise angepasst), die Gruppe heißt jetzt „Was Training dir bringt“.
+
+**Nachtrag (2026-10-20, Fassung 4c):** Neue Frage 27 „Darf ich jeden Tag trainieren?“ (Gruppe Sicherheit, ohne neue Quellen, nur Zusammenfassungen schon genutzter Arbeiten). Fragen ab 27 um 1 nach hinten, jetzt 34 Fragen; Querverweis Dehnen auf Frage 32.
