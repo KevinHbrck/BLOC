@@ -16,6 +16,11 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · Fachprüfung zweiter Teil eingearbeitet (Fassung 2026-10-20-59)
+
+- 87 neue Übungen (Drehcrunch mit Cross-Body-Crunch und Obergriff-Trizepsdrücken mit dem vorhandenen Pushdown zusammengelegt). Kabel-Positionen, Sicherheit (Judo Flip, Blick-nach-oben-Dehnung, Ab Wheel, Clean, JM Press, Battle Ropes), Pausen und Zeiten angepasst.
+- „Griff / Aufsatz“ jetzt auch bei 15 vorhandenen Kabelzug-Übungen (Latzug, Rudern, Face Pull, Curl, Pushdown u. a.).
+
 ## 2026-10-20 · 89 neue Studio-Übungen, Griff-Anzeige, Battle Rope (Fassung 2026-10-20-58)
 
 - Übungen aus Kevins Liste (Brust, Rücken, Schultern, Bizeps, Trizeps, Beine, Core, Unterarme, Nacken-Dehnungen, Cross Jacks), soweit es sie noch nicht gab; Doppelte (z. B. Bench Dip, Step-Up, Plyo Squat, Cable Woodchopper, Farmer's Carry) nicht neu angelegt. Texte in eigenen Worten, vom Sportwissenschaftler geprüft (erste Runde eingearbeitet).

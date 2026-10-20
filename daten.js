@@ -3042,16 +3042,16 @@ G("kneeling-cable-triceps-extension", "Trizepsstrecken am Kabel (kniend, über K
 G("incline-cable-triceps-extension", "Trizepsstrecken am Kabel (Schrägbank)", "Incline Cable Triceps Extension", "weight arms", 3, 40, 0,
   "Auf der Schrägbank liegend, Seil hinter dem Kopf strecken", "Lying on an incline bench, extend the rope from behind your head", 60, 2, 1, "gym",
   ["Trizeps (langer Kopf)", "Unterarme", "Triceps (long head)", "Forearms"],
-  "Eine Schrägbank vor den tiefen Kabelturm stellen, hinlegen und das Seil hinter dem Kopf greifen.|Die Arme nach vorn oben strecken, die Oberarme bleiben ruhig.|Langsam wieder beugen, bis du eine Dehnung am Trizeps spürst.",
-  "Place an incline bench in front of the low cable tower, lie back and grip the rope behind your head.|Extend your arms forward and up while your upper arms stay still.|Bend slowly until you feel a stretch in your triceps.",
+  "Eine Schrägbank mit dem Kopfende zum tiefen Kabelturm stellen, hinlegen und das Seil hinter dem Kopf greifen.|Die Arme nach vorn oben strecken, die Oberarme bleiben ruhig.|Langsam wieder beugen, bis du eine Dehnung am Trizeps spürst.",
+  "Place an incline bench with its head end towards the low cable tower, lie back and grip the rope behind your head.|Extend your arms forward and up while your upper arms stay still.|Bend slowly until you feel a stretch in your triceps.",
   "Schultern an der Lehne, Ellbogen schmal.|Handgelenke gerade.", "Die Ellbogen nach außen kippen lassen.",
   "Shoulders against the pad, elbows narrow.|Wrists straight.", "Letting your elbows tip outward.",
   "arme", ["Seilaufsatz", "Rope attachment"], "schrägbank trizeps kabel");
 G("lying-cable-triceps-extension", "Trizepsstrecken am Kabel (liegend)", "Lying Cable Triceps Extension", "weight arms", 3, 40, 0,
   "Flach auf der Bank liegend, Stange zur Stirn beugen und strecken", "Lying flat, bend the bar towards your forehead and extend", 60, 2, 1, "gym",
   ["Trizeps", "Unterarme", "Triceps", "Forearms"],
-  "Eine flache Bank vor den tiefen Kabelturm stellen, hinlegen und die Stange mit gestreckten Armen über der Brust halten.|Die Unterarme beugen, bis die Stange zur Stirn kommt, die Oberarme bleiben senkrecht.|Wieder strecken und oben kurz anspannen.",
-  "Place a flat bench in front of the low cable tower, lie down and hold the bar above your chest with straight arms.|Bend your forearms until the bar nears your forehead, upper arms stay vertical.|Extend again and squeeze briefly at the top.",
+  "Eine flache Bank mit dem Kopfende zum tiefen Kabelturm stellen, hinlegen und die Stange mit gestreckten Armen über der Brust halten.|Die Unterarme beugen, bis die Stange zur Stirn kommt, die Oberarme bleiben senkrecht.|Wieder strecken und oben kurz anspannen.",
+  "Place a flat bench with its head end towards the low cable tower, lie down and hold the bar above your chest with straight arms.|Bend your forearms until the bar nears your forehead, upper arms stay vertical.|Extend again and squeeze briefly at the top.",
   "Oberarme still, Ellbogen schmal.|Bauch leicht angespannt.", "Die Oberarme nach hinten absinken lassen.",
   "Upper arms still, elbows narrow.|Abs lightly braced.", "Letting your upper arms drift back.",
   "arme", ["SZ-Stange oder gerade Stange (tief eingehängt)", "EZ bar or straight bar (low setting)"], "liegend kabel skull crusher");
@@ -3079,14 +3079,6 @@ G("single-arm-skull-crusher", "Einarmiges Stirndrücken", "Single-Arm Skull Crus
   "Oberarm bleibt senkrecht.|Handgelenk gerade.", "Mit der Schulter nachhelfen.",
   "Upper arm stays vertical.|Wrist straight.", "Helping with your shoulder.",
   "arme", null, "einarmig skull crusher kurzhantel");
-G("pronated-triceps-extension", "Trizepsdrücken im Obergriff (Kabel)", "Pronated Triceps Extension", "weight arms", 3, 40, 0,
-  "Stange von oben im Obergriff nach unten drücken", "Push the bar down from above with an overhand grip", 45, 1, 1, "gym",
-  ["Trizeps", "Unterarme (Griff)", "Triceps", "Forearms (grip)"],
-  "Eine kurze Stange am oberen Kabelturm einhängen, im Obergriff schulterbreit greifen, Ellbogen am Körper.|Die Stange nach unten drücken, bis die Arme fast gestreckt sind.|Langsam zurück bis auf Brusthöhe.",
-  "Attach a short bar to the high cable tower, take an overhand shoulder-width grip, elbows at your sides.|Press the bar down until your arms are almost straight.|Return slowly to chest height.",
-  "Oberarme still, Rücken gerade.|Handgelenke gerade.", "Mit dem Oberkörper mitdrücken.",
-  "Upper arms still, back straight.|Wrists straight.", "Pushing with your torso.",
-  "arme", ["Kurze gerade Stange oder V-Griff, Obergriff", "Short straight bar or V-bar, overhand"], "obergriff pushdown");
 G("supinated-triceps-extension", "Trizepsdrücken im Untergriff (Kabel)", "Supinated Triceps Extension", "weight arms", 3, 40, 0,
   "Stange von oben im Untergriff nach unten drücken", "Push the bar down from above with an underhand grip", 45, 2, 1, "gym",
   ["Trizeps", "Unterarme (Griff)", "Triceps", "Forearms (grip)"],
@@ -3096,12 +3088,12 @@ G("supinated-triceps-extension", "Trizepsdrücken im Untergriff (Kabel)", "Supin
   "Elbows at your sides, wrists neutral.|Moderate weight.", "Going too heavy or letting your wrists bend.",
   "arme", ["Kurze gerade Stange, Untergriff", "Short straight bar, underhand"], "untergriff pushdown reverse");
 G("ez-jm-press", "JM Press (SZ-Stange)", "EZ-Bar JM Press", "weight arms", 3, 40, 0,
-  "Zwischen Bankdrücken und Stirndrücken, Stange zum Kinn absenken", "Between a close-grip bench press and a skull crusher, lower the bar towards your chin", 75, 3, 3, "gym",
+  "Zwischen Bankdrücken und Stirndrücken, Stange zum Kinn absenken", "Between a close-grip bench press and a skull crusher, lower the bar towards your chin", 90, 3, 3, "gym",
   ["Trizeps", "Brust, Vordere Schulter", "Triceps", "Chest, front delts"],
   "Auf der Bank liegen, die SZ-Stange eng im Obergriff über der Brust halten.|Die Ellbogen nach vorn beugen und die Stange Richtung Kinn und oberer Brust absenken.|Mit Kraft aus dem Trizeps zurück nach oben drücken.",
   "Lie on a bench and hold the EZ bar close-grip, overhand, above your chest.|Bend your elbows forward and lower the bar towards your chin and upper chest.|Press back up using your triceps.",
-  "Ellbogen zeigen nach vorn, nicht zur Seite.|Sicherung oder Hilfsperson bei schwerem Gewicht.", "Zu schwer starten oder die Ellbogen weit öffnen.",
-  "Elbows point forward, not out.|Use a spotter or safety on heavy sets.", "Starting too heavy or flaring your elbows.",
+  "Ellbogen zeigen nach vorn, nicht zur Seite.|Sicherung oder Hilfsperson bei schwerem Gewicht.", "Zu schwer starten oder die Ellbogen weit öffnen. Die Stange nie über Gesicht oder Hals ohne Sicherung führen, nicht bis zum Muskelversagen ohne Hilfsperson.",
+  "Elbows point forward, not out.|Use a spotter or safety on heavy sets.", "Starting too heavy or flaring your elbows. Never move the bar over your face or neck without safety, and do not train to failure without a spotter.",
   "arme", ["SZ-Stange, enger Griff", "EZ bar, narrow grip"], "jm press sz stange");
 G("tate-press", "Tate Press", "Tate Press", "weight arms", 3, 40, 0,
   "Liegend, Ellbogen nach außen, Hanteln zur Brust und wieder strecken", "Lying down, elbows out, lower the dumbbells to your chest and extend", 60, 2, 1, "gym db",
@@ -3121,13 +3113,13 @@ G("db-bench-squat", "Kniebeuge zur Bank mit Kurzhantel", "Dumbbell Bench Squat",
   "Knie folgen den Zehen, Rücken gerade.|Brust offen.", "Auf die Bank plumpsen lassen oder die Knie nach innen fallen lassen.",
   "Knees track your toes, back straight.|Chest open.", "Dropping onto the bench or letting your knees cave in.",
   "beine", null, "bank kniebeuge kurzhantel");
-G("db-clean", "Kurzhantel-Umsetzen (Clean)", "Dumbbell Clean", "weight legs", 3, 30, 0,
-  "Hanteln explosiv vom Boden zu den Schultern ziehen", "Pull the dumbbells explosively from the floor to your shoulders", 75, 3, 3, "gym db",
+G("db-clean", "Kurzhantel-Umsetzen (Clean)", "Dumbbell Clean", "weight legs", 3, 20, 0,
+  "Hanteln explosiv vom Boden zu den Schultern ziehen", "Pull the dumbbells explosively from the floor to your shoulders", 90, 3, 3, "gym db",
   ["Gesäß", "Oberschenkel hinten, Rückenstrecker, Schultern, Trapez", "Glutes", "Hamstrings, spinal erectors, shoulders, traps"],
   "Die Hanteln neben den Füßen greifen, Hüfte nach hinten, Rücken gerade, Brust offen.|Mit kräftiger Hüftstreckung hochziehen und die Hanteln flink auf die Schultern bringen.|Kontrolliert wieder absenken und sauber neu ansetzen.",
   "Pick up the dumbbells beside your feet, hips back, back straight, chest open.|Drive your hips through and pull the dumbbells quickly up to your shoulders.|Lower under control and reset cleanly.",
-  "Kraft kommt aus der Hüfte, Rücken neutral.|Leichtes Gewicht zum Üben.", "Mit den Armen reißen oder mit rundem Rücken ansetzen.",
-  "Power comes from the hips, back neutral.|Use light weight to practise.", "Yanking with your arms or starting with a rounded back.",
+  "Kraft kommt aus der Hüfte, Rücken neutral.|Leichtes Gewicht zum Üben.", "Mit den Armen reißen oder mit rundem Rücken ansetzen. Die Hanteln nicht hart auf Schultern oder Schlüsselbeine fallen lassen, die Ellbogen schnell unter die Hanteln bringen.",
+  "Power comes from the hips, back neutral.|Use light weight to practise.", "Yanking with your arms or starting with a rounded back. Do not let the dumbbells crash onto your shoulders or collarbones; get your elbows under them quickly.",
   "beine", null, "umsetzen clean kurzhantel explosiv");
 G("stiff-leg-deadlift", "Gestrecktes Kreuzheben", "Stiff-Leg Deadlift", "weight legs", 3, 40, 0,
   "Knie fast gestreckt, Hüfte nach hinten, Rücken gerade", "Knees almost straight, hips back, back straight", 75, 2, 3, "gym",
@@ -3142,12 +3134,12 @@ G("stiff-leg-deadlift", "Gestrecktes Kreuzheben", "Stiff-Leg Deadlift", "weight 
 G("standing-cable-crunch", "Kabel-Crunch im Stand", "Standing Cable Crunch", "core", 3, 40, 0,
   "Seil am Kopf halten, Oberkörper aus dem Rumpf nach unten rollen", "Hold the rope at your head, curl your torso down from the abs", 45, 2, 2, "gym",
   ["Gerader Bauch", "Schräge Bauchmuskeln", "Rectus abdominis", "Obliques"],
-  "Das Seil hoch einhängen, mit dem Rücken zum Turm stehen und die Seilenden neben den Kopf halten.|Den Oberkörper aus dem Bauch nach unten rollen, die Hüfte bleibt ruhig.|Langsam wieder aufrichten.",
-  "Set the rope high, stand with your back to the tower and hold the rope ends beside your head.|Curl your torso down from your abs while your hips stay still.|Return slowly to upright.",
+  "Das Seil hoch einhängen, mit dem Gesicht zum Turm einen Schritt zurücktreten und die Seilenden neben den Kopf halten.|Den Oberkörper aus dem Bauch nach unten rollen, die Hüfte bleibt ruhig.|Langsam wieder aufrichten.",
+  "Set the rope high, stand facing the tower, take a step back and hold the rope ends beside your head.|Curl your torso down from your abs while your hips stay still.|Return slowly to upright.",
   "Rund einrollen, Hüfte bleibt ruhig.|Atme beim Einrollen aus.", "Aus der Hüfte beugen oder mit den Armen ziehen.",
   "Curl round, hips stay still.|Breathe out as you curl.", "Folding at the hips or pulling with your arms.",
   "bauch", ["Seilaufsatz", "Rope attachment"], "stehend crunch kabel bauch");
-G("cable-lift", "Kabel-Lift (diagonal)", "Cable Lift", "core", 3, 40, 1,
+G("cable-lift", "Kabel-Lift (von unten nach oben)", "Cable Lift (Low to High)", "core", 3, 40, 1,
   "Griff von unten diagonal nach oben über den Körper führen", "Lift the handle diagonally from low to high across your body", 45, 2, 2, "gym",
   ["Schräge Bauchmuskeln", "Rumpf, Schultern", "Obliques", "Core, shoulders"],
   "Den Griff tief einhängen, seitlich zum Turm stehen und den Griff mit beiden Händen an der Hüfte fassen.|Mit gestreckten Armen diagonal nach oben über die gegenüberliegende Schulter führen, der Blick folgt.|Kontrolliert zurück, nach dem Satz die Seite wechseln.",
@@ -3171,13 +3163,13 @@ G("cable-reverse-crunch", "Reverse Crunch am Kabel", "Cable Reverse Crunch", "co
   "Lendenwirbel am Boden, Bewegung aus dem Bauch.|Ruhig atmen.", "Mit Schwung die Beine hochwerfen.",
   "Lower back on the floor, movement from the abs.|Breathe steadily.", "Throwing your legs up with momentum.",
   "bauch", ["Knöchelmanschette", "Ankle cuff"], "reverse crunch kabel beine ziehen");
-G("judo-flip", "Judo Flip", "Judo Flip", "core", 3, 40, 0,
-  "Liegend, Beine und Becken über den Kopf rollen und wieder zurück", "Lying down, roll your legs and hips overhead and back again", 60, 3, 2, "none",
+G("judo-flip", "Judo Flip", "Judo Flip", "core", 3, 20, 0,
+  "Liegend, Beine und Becken über den Kopf rollen und wieder zurück", "Lying down, roll your legs and hips overhead and back again", 60, 3, 3, "none",
   ["Gerader Bauch", "Hüftbeuger, Rumpf", "Rectus abdominis", "Hip flexors, core"],
   "Auf den Rücken legen, die Arme seitlich am Boden, Beine gestreckt senkrecht nach oben.|Das Becken anheben und die Beine kontrolliert über den Kopf rollen.|Langsam Wirbel für Wirbel zurück auf die Matte abrollen.",
   "Lie on your back, arms by your sides, legs straight up.|Lift your pelvis and roll your legs overhead under control.|Roll back down slowly one vertebra at a time.",
-  "Nacken lang, Kontrolle statt Schwung.|Hände drücken in den Boden.", "Mit Schwung über den Kopf rollen oder auf dem Hals landen.",
-  "Neck long, control instead of momentum.|Hands press into the floor.", "Rolling over with momentum or landing on your neck.",
+  "Das Gewicht bleibt auf Schultern und oberem Rücken, nie auf dem Hals.|Kopf geradeaus, nicht drehen; auf einer Matte üben.", "Mit Schwung über den Kopf rollen oder auf dem Hals landen. Nicht bei Nacken- oder Rückenbeschwerden.",
+  "Weight stays on your shoulders and upper back, never on your neck.|Head straight, do not turn it; practise on a mat.", "Rolling over with momentum or landing on your neck. Skip it with neck or back problems.",
   "bauch", null, "judo flip rollen beine überkopf");
 G("crunch", "Crunch", "Crunch", "core", 3, 40, 0,
   "Schultern leicht anheben, unterer Rücken bleibt am Boden", "Lift your shoulders slightly, lower back stays on the floor", 45, 1, 1, "none",
@@ -3210,22 +3202,14 @@ G("cross-body-crunch", "Cross-Body-Crunch", "Cross-Body Crunch", "core", 3, 40, 
   "Lie on your back, hands beside your head, one leg bent and raised.|Rotate your torso and bring your elbow towards the opposite knee.|Return and switch sides.",
   "Drehung aus dem Rumpf, Nacken lang.|Ruhiges Tempo.", "Mit den Händen am Kopf ziehen.",
   "Rotate from the torso, neck long.|Steady tempo.", "Pulling on your head with your hands.",
-  "bauch", null, "gegenüber ellbogen knie schräg crunch");
-G("twisting-crunch", "Drehcrunch", "Twisting Crunch", "core", 3, 40, 0,
-  "Beim Einrollen die Schulter zur Seite drehen", "Rotate one shoulder across as you curl up", 45, 2, 2, "none",
-  ["Schräge Bauchmuskeln", "Gerader Bauch", "Obliques", "Rectus abdominis"],
-  "Auf den Rücken legen, Knie gebeugt, Hände seitlich am Kopf.|Mit dem Einrollen eine Schulter diagonal zur Gegenseite drehen.|Wieder ablegen und im Wechsel weitermachen.",
-  "Lie on your back, knees bent, hands beside your head.|As you curl up, rotate one shoulder diagonally across.|Lower and alternate sides.",
-  "Hüfte bleibt ruhig am Boden.|Blick folgt der Drehung.", "Nur die Ellbogen bewegen, ohne den Oberkörper mitzunehmen.",
-  "Hips stay still on the floor.|Eyes follow the rotation.", "Only moving your elbows without the torso.",
-  "bauch", null, "drehcrunch schräge");
-G("ab-wheel-rollout", "Bauchroller (Ab Wheel)", "Ab Wheel Rollout", "core", 3, 30, 0,
-  "Aus dem Kniestand das Rad nach vorn rollen und wieder zurückziehen", "From your knees roll the wheel out and pull it back", 75, 3, 3, "gym",
+  "bauch", null, "gegenüber ellbogen knie schräg crunch drehcrunch");
+G("ab-wheel-rollout", "Bauchroller (Ab Wheel)", "Ab Wheel Rollout", "core", 3, 20, 0,
+  "Aus dem Kniestand das Rad nach vorn rollen und wieder zurückziehen", "From your knees roll the wheel out and pull it back", 90, 3, 3, "gym",
   ["Gerader Bauch", "Tiefe Bauchmuskeln, Schultern, Breiter Rückenmuskel", "Rectus abdominis", "Deep abs, shoulders, lats"],
   "In den Kniestand gehen, das Rad mit beiden Händen unter den Schultern greifen.|Das Rad langsam nach vorn rollen, der Rücken bleibt gerade und das Becken unter Spannung.|Mit dem Bauch wieder zurückziehen.",
   "Kneel and hold the wheel with both hands under your shoulders.|Roll the wheel slowly forward with a straight back and your pelvis under tension.|Pull yourself back with your abs.",
-  "Becken leicht untergerollt, Bauch fest.|Nur so weit, wie der Rücken gerade bleibt.", "Ins Hohlkreuz durchhängen oder zu weit ausrollen.",
-  "Pelvis slightly tucked, abs firm.|Only as far as your back stays straight.", "Sagging into a hollow back or rolling out too far.",
+  "Becken leicht untergerollt, Bauch fest.|Nur so weit, wie der Rücken gerade bleibt.", "Ins Hohlkreuz durchhängen oder zu weit ausrollen. Zu Beginn nur kurze Strecke rollen (bis zur Mitte); bei Rückenschmerzen weglassen.",
+  "Pelvis slightly tucked, abs firm.|Only as far as your back stays straight.", "Sagging into a hollow back or rolling out too far. Start with a short distance (halfway); skip it with back pain.",
   "bauch", null, "ab roller rollout bauchrad");
 
 /* ---------- Unterarme & Griffkraft ---------- */
@@ -3266,8 +3250,8 @@ G("wrist-roller", "Unterarm-Roller", "Wrist Roller", "weight arms", 3, 30, 0,
   ["Unterarme", "Unterarme (Griff)", "Forearms", "Forearms (grip)"],
   "Den Roller mit beiden Händen im Obergriff vor dir auf Schulterhöhe halten, das Gewicht hängt am Seil.|Durch Drehen der Handgelenke das Seil aufrollen, bis das Gewicht oben ist.|Genauso kontrolliert wieder abrollen.",
   "Hold the roller overhand in front of you at shoulder height with the weight hanging on the rope.|Turn your wrists to roll the rope up until the weight reaches the top.|Roll it back down just as slowly.",
-  "Arme bleiben auf Schulterhöhe, Schultern tief.|Leichtes Gewicht zum Einstieg.", "Das Gewicht fallen lassen oder die Schultern hochziehen.",
-  "Arms stay at shoulder height, shoulders low.|Start light.", "Dropping the weight or shrugging.",
+  "Arme bleiben auf Schulterhöhe, Schultern tief.|Leichtes Gewicht zum Einstieg.", "Das Gewicht fallen lassen oder die Schultern hochziehen. Sätze kurz halten, bei Schmerz im Handgelenk beenden.",
+  "Arms stay at shoulder height, shoulders low.|Start light.", "Dropping the weight or shrugging. Keep sets short and stop if your wrist hurts.",
   "arme", null, "roller handgelenk seil unterarm");
 G("plate-pinch-hold", "Scheibenklemme (Plate Pinch)", "Plate Pinch Hold", "weight arms", 3, 30, 0,
   "Zwei Scheiben mit den Fingern halten, glatte Seiten nach außen", "Pinch two plates between your fingers and thumb, smooth sides out", 60, 2, 2, "gym",
@@ -3282,21 +3266,21 @@ G("plate-pinch-hold", "Scheibenklemme (Plate Pinch)", "Plate Pinch Hold", "weigh
 G("chin-to-chest-stretch", "Nacken beugen (Kinn zur Brust)", "Chin-to-Chest Stretch", "stretch", 1, 30, 0,
   "Kinn sanft zur Brust sinken lassen, Nacken lang", "Let your chin sink gently to your chest, neck long", 5, 1, 1, "none",
   ["Nackenstrecker", "Oberer Trapez", "Neck extensors", "Upper traps"],
-  "Aufrecht sitzen oder stehen, die Schultern locker.|Das Kinn sanft zur Brust sinken lassen, die Hände dürfen leicht am Hinterkopf liegen.|Ruhig atmen und die Dehnung ohne Druck halten.",
-  "Sit or stand tall with relaxed shoulders.|Let your chin sink gently to your chest; your hands may rest lightly on the back of your head.|Breathe calmly and hold the stretch without pressure.",
-  "Schultern tief, Rücken lang.|Nur sanfte Dehnung.", "Mit den Händen nach unten drücken oder ruckartig ziehen.",
-  "Shoulders low, back long.|Gentle stretch only.", "Pushing down with your hands or jerking.",
+  "Aufrecht sitzen oder stehen, die Schultern locker.|Das Kinn sanft zur Brust sinken lassen, die Hände liegen nur auf dem Hinterkopf, ohne zu ziehen.|Ruhig atmen und die Dehnung ohne Druck halten.",
+  "Sit or stand tall with relaxed shoulders.|Let your chin sink gently to your chest; your hands rest on the back of your head without pulling.|Breathe calmly and hold the stretch without pressure.",
+  "Schultern tief, Rücken lang.|Nur sanfte Dehnung.", "Mit den Händen nach unten drücken oder ruckartig ziehen. Bei Kribbeln in Armen oder Händen stoppen.",
+  "Shoulders low, back long.|Gentle stretch only.", "Pushing down with your hands or jerking. Stop if you feel tingling in your arms or hands.",
   "air-stretch", null, "nacken kinn brust dehnen");
-G("ceiling-look-stretch", "Blick zur Decke (Nacken strecken)", "Ceiling Look Stretch", "stretch", 1, 20, 0,
-  "Den Kopf sanft nach hinten neigen, Blick zur Decke", "Tilt your head back gently and look at the ceiling", 5, 1, 1, "none",
+G("ceiling-look-stretch", "Blick sanft nach oben (Nacken)", "Ceiling Look Stretch", "stretch", 1, 20, 0,
+  "Kinn leicht zurückziehen, dann den Blick sanft schräg nach oben richten", "Draw your chin back slightly, then gently look diagonally upward", 5, 1, 1, "none",
   ["Nacken (tiefe Halsbeuger)", "Halsmuskulatur vorn", "Deep neck flexors", "Front neck muscles"],
-  "Aufrecht sitzen oder stehen, Schultern locker nach unten.|Den Kopf sanft nach hinten neigen, bis der Blick zur Decke geht.|Ruhig atmen, nur so weit, wie es angenehm bleibt, dann langsam zurück.",
-  "Sit or stand tall with relaxed shoulders.|Tilt your head back gently until you look at the ceiling.|Breathe calmly, only as far as is comfortable, then return slowly.",
-  "Schultern tief, Kiefer locker.|Kleine, sanfte Bewegung.", "Den Kopf ruckartig nach hinten werfen oder bei Schwindel weitermachen.",
-  "Shoulders low, jaw relaxed.|Small, gentle movement.", "Throwing your head back or continuing if you feel dizzy.",
+  "Aufrecht sitzen oder stehen, Schultern locker nach unten.|Das Kinn erst leicht zurückziehen, dann den Kopf nur sanft nach hinten neigen, der Blick geht schräg nach oben, der Mund bleibt geschlossen.|Ruhig atmen, höchstens 20 Sekunden, dann langsam zurück. Bei Schwindel, Kribbeln oder Taubheit in Armen oder Händen sofort stoppen.",
+  "Sit or stand tall with relaxed shoulders.|Draw your chin back slightly first, then tilt your head back only gently, eyes diagonally upward, mouth closed.|Breathe calmly for 20 seconds at most, then return slowly. Stop immediately with dizziness, tingling or numbness in your arms or hands.",
+  "Schultern tief, Kiefer locker.|Kleine, sanfte Bewegung.", "Den Kopf ruckartig nach hinten werfen, drehen oder länger halten. Bei bekannten Nackenproblemen weglassen.",
+  "Shoulders low, jaw relaxed.|Small, gentle movement.", "Throwing your head back, turning it or holding too long. Skip it with known neck problems.",
   "air-stretch", null, "decke blick nacken überstrecken");
-G("cross-jacks", "Cross Jacks", "Cross Jacks", "cardio", 6, 30, 0,
-  "Wie Hampelmänner, aber Arme und Beine kreuzen sich in der Mitte", "Like jumping jacks, but arms and legs cross in the middle", 15, 1, 1, "none",
+G("cross-jacks", "Cross Jacks", "Cross Jacks", "cardio", 4, 30, 0,
+  "Wie Hampelmänner, aber Arme und Beine kreuzen sich in der Mitte", "Like jumping jacks, but arms and legs cross in the middle", 30, 1, 1, "none",
   ["Ausdauer", "Gesäß, Schultern, Waden", "Cardio", "Glutes, shoulders, calves"],
   "Aufrecht stehen, Füße zusammen, Arme seitlich.|Mit einem Sprung die Füße auseinander und die Arme seitlich nach oben öffnen.|Beim nächsten Sprung die Beine und die Arme vor dem Körper kreuzen, dann wieder öffnen.",
   "Stand tall with your feet together and arms at your sides.|Jump your feet apart and open your arms out and up.|On the next jump cross your legs and arms in front of your body, then open again.",
@@ -3389,6 +3373,41 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
 /* Gruppen im Studio-Reiter und Bereichszuordnung: Studio-Übungen kommen in ihre Gruppe, „Cardio & Ausdauer“ ist neu (Battle Rope);
    Übungen ohne Gerät (air-…) laufen über die Hauptgruppen von Air. Battle Ropes und Haltegriffe zählen nach Zeit: Ziel in Sekunden statt Wiederholungen. */
 (function(){
+  /* Fachprüfung (Sportwissenschaft): Sicherheit der Battle Ropes, Pausen, Hilfsmuskeln */
+  var BR = ["alternating-waves","double-waves","slams","side-to-side","jumping-jacks","circles","snakes","squat-waves","in-out-waves","power-pull"].map(function(x){ return "battle-rope-" + x; });
+  BR.forEach(function(id){
+    EX_POSTURE[id][1] += " Der Anker muss belastbar sein, das Seil nie um Hand oder Handgelenk wickeln, genug Abstand zum Anker halten, rutschfester Boden.";
+    EX_POSTURE[id][3] += " Use a secure anchor, never wrap the rope around your hand or wrist, keep enough distance to the anchor, non-slip floor.";
+  });
+  ["battle-rope-snakes", "battle-rope-squat-waves"].forEach(function(id){
+    EX_POSTURE[id][1] += " Nicht tiefer in die Hocke gehen, als Knie und Rücken sauber bleiben.";
+    EX_POSTURE[id][3] += " Do not squat lower than your knees and back stay in good shape.";
+  });
+  ["battle-rope-slams", "battle-rope-jumping-jacks", "battle-rope-squat-waves"].forEach(function(id){
+    EXERCISE_ROWS.forEach(function(r){ if(r[0] === id) r[9] = 45; });
+  });
+  ["battle-rope-alternating-waves", "battle-rope-double-waves"].forEach(function(id){
+    EX_MUSCLES[id][1] += ", Beine"; EX_MUSCLES[id][3] += ", legs";
+  });
+  /* Griffe an vorhandenen Kabelzug- und Stangenübungen */
+  var GRIFF_ALT = {
+    "lat-pulldown":["Latstange, weiter Obergriff","Lat bar, wide overhand grip"],
+    "close-grip-pulldown":["V-Griff oder enger Griff","V-handle or close grip"],
+    "cable-row":["V-Griff oder gerade Stange","V-handle or straight bar"],
+    "face-pull":["Seilaufsatz","Rope attachment"],
+    "straight-arm-pulldown":["Gerade Stange oder Seil","Straight bar or rope"],
+    "cable-curl":["Gerade oder SZ-Stange, Untergriff","Straight or EZ bar, underhand"],
+    "triceps-pushdown":["Gerade oder V-Stange im Obergriff, oder Seil","Straight or V-bar, overhand, or rope"],
+    "overhead-cable-triceps":["Seilaufsatz","Rope attachment"],
+    "cable-crossover":["Einzelgriffe (D-Griffe)","Single handles (D-handles)"],
+    "cable-lateral-raise":["Einzelgriff (D-Griff) oder Manschette","Single handle (D-handle) or cuff"],
+    "cable-pull-through":["Seilaufsatz","Rope attachment"],
+    "cable-woodchop":["Einzelgriff (D-Griff) oder Seil","Single handle (D-handle) or rope"],
+    "cable-crunch":["Seilaufsatz","Rope attachment"],
+    "glute-kickback-cable":["Knöchelmanschette","Ankle cuff"],
+    "pallof-press":["Einzelgriff (D-Griff)","Single handle (D-handle)"]
+  };
+  Object.keys(GRIFF_ALT).forEach(function(id){ if(!EX_GRIFF[id]) EX_GRIFF[id] = GRIFF_ALT[id]; });
   STUDIO_GRUPPEN.push({ id:"cardio", de:"Cardio & Ausdauer", en:"Cardio & endurance", ids:"" });
   GYM_NEU.forEach(function(x){
     if(x.gr === "air-stretch"){ EX_MAIN_ROWS.stretch += " " + x.id; return; }
