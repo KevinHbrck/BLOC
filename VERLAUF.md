@@ -29,7 +29,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - Zwei Pexels-Fotos (Rückansicht am Kabelzug, Kniebeuge von hinten) in den Bildauswahlen für Workout, Beine und Rücken; Quellen in BilderBlocuellen\-Frauenbilder\.txt\.\
 \
-\#\#\ 2026\-10\-20\ \�\�\ Hell\ ohne\ hellen\ Schleier (Fassung 2026-10-20-37)
+## 2026-10-20 · Hell ohne hellen Schleier (Fassung 2026-10-20-37)
 
 - Training und Favoriten: im Hell-Modus kein heller Schleier mehr; die Karten sehen aus wie im Dunkel (Verlauf von unten, weisse Schrift).
 
