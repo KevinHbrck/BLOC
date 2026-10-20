@@ -181,8 +181,8 @@ var FOTO_POOL_HELL = {
   tp:  ["img/neu-h-klimmzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-ringe.jpg"],
   st:  ["img/neu-h-halle.jpg", "img/neu-h-kreuzheben.jpg", "img/neu-h-rack.jpg"],
   ti:  ["img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
-  ws:  ["img/neu-h-dehnen.jpg", "img/neu-h-band.jpg"],
-  rep: ["img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],   // nur Querformat (flache Summit-Karte)
+  ws:  FOTO_POOL.ws,   // wie im Dunkel (Wunsch: Mobility & Stretch und Summit zeigen in beiden Modi dasselbe Bild)
+  rep: FOTO_POOL.rep,   // wie im Dunkel
   run: FOTO_POOL.run,
   core:     ["img/neu-h-core-1.jpg", "img/neu-h-core-2.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"],
   beine:    ["img/neu-h-kreuzheben.jpg", "img/neu-h-band.jpg", "img/neu-h-halle.jpg"],
@@ -190,7 +190,7 @@ var FOTO_POOL_HELL = {
   brust:    ["img/neu-h-brust-1.jpg", "img/neu-h-brust-2.jpg", "img/neu-h-rack.jpg"],
   arme:     ["img/neu-h-kb-gelb.jpg", "img/neu-h-rack.jpg", "img/neu-h-kettlebell.jpg"],
   schulter: ["img/neu-h-rack.jpg", "img/neu-h-ringe.jpg", "img/neu-h-klimmzug.jpg"],
-  mobility: ["img/neu-h-dehnen.jpg", "img/neu-h-band.jpg"],
+  mobility: FOTO_POOL.mobility,
   timer:    ["img/neu-h-halle.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"]
 };
 function fotoPool(){ return themeIstDunkel() ? FOTO_POOL : FOTO_POOL_HELL; }

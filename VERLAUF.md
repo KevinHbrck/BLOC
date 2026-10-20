@@ -3,6 +3,14 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Fragen & Antworten als eigene Kachel, Zurück-Pfeile, Run auf einem Bildschirm, hellere Timer-Kulisse (Fassung 2026-10-20-4)
+
+- **Fragen & Antworten**: eigene Kachel unter Run auf Training (Kaffee-Foto, `img/neu-faq.jpg`, Foto vom Nutzer aus Pexels), öffnet die Seite `#faq` mit allen Fragen aufgeklappt; unten auf Training steht der Bereich nicht mehr.
+- **Zurück-Pfeil** jetzt auch bei Training, Kalender und Körper (oben links, führt zu Heute).
+- **Run während des Laufens**: Zeit kleiner, vier Werte in einer Reihe, flachere Karte, drei Knöpfe nebeneinander – alles auf einem Bildschirm.
+- **Run-Start**: Pace-Vorgabe (3:00 bis 10:00, 5-s-Schritte) und Ansagen (aus bis alle 10 km) per Schieberegler; die Zähler beim Intervall-Lauf sind auch im Hellen lesbar.
+- **Timer läuft**: helles, bläuliches, geblurrtes Meer-Foto statt des dunklen Herbstwalds. **Hell-Modus**: Mobility & Stretch und Summit zeigen dieselben Bilder wie im Dunkel.
+
 ## 2026-10-20 · BLOC-Seite: erst wählen, wie trainiert wird (Fassung 2026-10-20-2)
 
 - Über **LOS GEHTS!** steht jetzt die Wahl **Nach Sätzen | Mit Timer** (`p.startArt`, sonst die Art, mit der der BLOC angelegt wurde; `planStartArt`). Nach Sätzen öffnet die erste Übung (Gewicht × Wiederholungen eintragen), Mit Timer startet das Training mit Timer. Behebt: „Nach Sätzen“ + Selber bauen + Los geht’s landete im Timer.

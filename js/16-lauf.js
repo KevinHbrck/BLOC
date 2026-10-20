@@ -124,7 +124,7 @@ function runIvTick(){
    Gesprochen wird in der App-Sprache. „Pace“ ist die der letzten N Kilometer, „alles“ nimmt Gesamtzeit und Ø-Pace dazu. */
 function runAnsageEinst(){
   var a = state.db.settings.runAnsage || {};
-  return { every:[0, 1, 2, 3, 5].indexOf(+a.every) > -1 ? +a.every : 1, was:["km", "pace", "alles"].indexOf(a.was) > -1 ? a.was : "pace" };
+  return { every:(+a.every >= 0 && +a.every <= 10 && +a.every === Math.floor(+a.every)) ? +a.every : 1, was:["km", "pace", "alles"].indexOf(a.was) > -1 ? a.was : "pace" };
 }
 function runSag(text, sprache){
   try{
@@ -333,6 +333,10 @@ function runZielText(km){
   if(Math.abs(km - RUN_HALB) < .01) return t("runHalbmarathon");
   return (Math.round(km*10)/10).toString().replace(".", currentLang() === "en" ? "." : ",")+" km";
 }
+/* Pace-Vorgabe per Regler: 0 = frei, sonst 3:00 bis 10:00 pro Kilometer in 5-Sekunden-Schritten (Regler 1 bis 85) */
+function runPaceVonRegler(v){ v = +v; return v > 0 ? 175 + 5*v : 0; }
+function runPaceRegler(p){ return p > 0 ? clamp(Math.round((p - 175)/5), 1, 85) : 0; }
+function runPaceText(p){ return p > 0 ? repUhr(p*1000)+" /km" : t("runZielFrei"); }
 function runWorkouts(){ var s = state.db.settings; if(!Array.isArray(s.runWorkouts)) s.runWorkouts = []; return s.runWorkouts; }
 function runWoName(w){ return runZielText(w.km)+(w.pace ? " · "+repUhr(w.pace*1000)+" /km" : "")+(w.rad ? " · "+t("runArtRad") : ""); }
 function runWoFind(id){ var l = runWorkouts(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
@@ -351,8 +355,9 @@ function runEigenerLaufHTML(){
   return '<div class="card run-eigen"><div class="kp-titel run-ziel-kopf"><span>'+esc(t("runEigen"))+'</span><b id="run-ziel-wert">'+esc(runZielText(z.km))+'</b></div>'+
     '<input type="range" id="run-ziel" min="0" max="42" step="1" value="'+runReglerVonKm(z.km)+'" aria-label="'+esc(t("runZielKmL"))+'">'+
     '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runZielFrei"))+'</span><span>10</span><span>21</span><span>42</span></div>'+
-    (z.km ? '<div class="kp-titel" style="margin-top:12px">'+esc(t("runPaceVorgabe"))+'</div><div class="kp-chips" role="group" aria-label="'+esc(t("runPaceVorgabe"))+'">'+
-      RUN_PACES.map(function(p){ return chip("runzielpace", p, z.pace === p, p ? repUhr(p*1000)+" /km" : t("runZielFrei")); }).join("")+'</div>'+
+    (z.km ? '<div class="kp-titel run-ziel-kopf" style="margin-top:12px"><span>'+esc(t("runPaceVorgabe"))+'</span><b id="run-pace-wert">'+esc(runPaceText(z.pace))+'</b></div>'+
+      '<input type="range" id="run-pace" min="0" max="85" step="1" value="'+runPaceRegler(z.pace)+'" aria-label="'+esc(t("runPaceVorgabe"))+'">'+
+      '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runZielFrei"))+'</span><span>4:30</span><span>6:00</span><span>8:00</span><span>10:00</span></div>'+
       '<button type="button" class="btn btn-secondary run-wo-sp" data-runwosave>'+esc(t("runWoSpeichern"))+'</button>' : '')+
     (liste.length ? '<div class="kp-titel" style="margin-top:14px">'+esc(t("runWoTitel"))+'</div><div class="run-wos">'+liste.map(function(w){
       return '<div class="run-wo"><button type="button" class="run-wo-go" data-runwostart="'+esc(w.id)+'">'+ICON_PLAY+'<b>'+esc(runWoName(w))+'</b></button>'+
@@ -370,9 +375,10 @@ function runOptionenHTML(){
 function runAnsageHTML(){
   var e = runAnsageEinst();
   function kn(attr, wert, aktiv, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
-  return '<div class="card run-ansage"><label>'+esc(t("runAnsagen"))+'</label><div class="theme-pick rep-pick">'+
-      [0, 1, 2, 3, 5].map(function(n){ return kn("runevery", n, e.every === n, n ? n+" km" : t("runAus")); }).join("")+'</div>'+
-    (e.every ? '<label>'+esc(t("runInhalt"))+'</label><div class="theme-pick rep-pick">'+
+  return '<div class="card run-ansage"><div class="kp-titel run-ziel-kopf"><span>'+esc(t("runAnsagen"))+'</span><b id="run-every-wert">'+esc(e.every ? t("runAlleKm", { n:e.every }) : t("runAus"))+'</b></div>'+
+      '<input type="range" id="run-every" min="0" max="10" step="1" value="'+e.every+'" aria-label="'+esc(t("runAnsagen"))+'">'+
+      '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runAus"))+'</span><span>2</span><span>5</span><span>10 km</span></div>'+
+    (e.every ? '<label style="margin-top:12px">'+esc(t("runInhalt"))+'</label><div class="theme-pick rep-pick">'+
       kn("runwas", "km", e.was === "km", t("runWasKm"))+kn("runwas", "pace", e.was === "pace", t("runWasPace"))+kn("runwas", "alles", e.was === "alles", t("runWasAlles"))+'</div>'+
       '<button type="button" class="btn btn-secondary" data-runtest>'+esc(t("runTest"))+'</button>' : '')+
     '<div class="tm-hint">'+esc(t("runAnsageHint"))+'</div></div>';
@@ -642,12 +648,18 @@ function renderRun(){
     s.runWorkouts = runWorkouts().filter(function(w){ return w.id !== b.getAttribute("data-runwodel"); }); save();
     var y = window.scrollY; renderRun(); window.scrollTo(0, y);
   }); });
-  app.querySelectorAll("[data-runzielpace]").forEach(function(b){ b.addEventListener("click", function(){ runZielEinst().pace = +b.getAttribute("data-runzielpace"); save(); renderRun(); }); });
+  var pr = app.querySelector("#run-pace");
+  if(pr){
+    pr.addEventListener("input", function(){ var el = app.querySelector("#run-pace-wert"); if(el) el.textContent = runPaceText(runPaceVonRegler(pr.value)); });
+    pr.addEventListener("change", function(){ runZielEinst().pace = runPaceVonRegler(pr.value); save(); });
+  }
   var gw = app.querySelector("[data-rungeplantweg]");
   if(gw) gw.addEventListener("click", function(){ runGeplant = null; renderRun(); });
-  app.querySelectorAll("[data-runevery]").forEach(function(b){
-    b.addEventListener("click", function(){ var e = runAnsageEinst(); s.runAnsage = { every:+b.getAttribute("data-runevery"), was:e.was }; save(); renderRun(); });
-  });
+  var ev = app.querySelector("#run-every");
+  if(ev){
+    ev.addEventListener("input", function(){ var n = +ev.value; app.querySelector("#run-every-wert").textContent = n ? t("runAlleKm", { n:n }) : t("runAus"); });
+    ev.addEventListener("change", function(){ var e = runAnsageEinst(); s.runAnsage = { every:+ev.value, was:e.was }; save(); var y = window.scrollY; renderRun(); window.scrollTo(0, y); });
+  }
   app.querySelectorAll("[data-runwas]").forEach(function(b){
     b.addEventListener("click", function(){ var e = runAnsageEinst(); s.runAnsage = { every:e.every, was:b.getAttribute("data-runwas") }; save(); renderRun(); });
   });

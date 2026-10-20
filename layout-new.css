@@ -584,7 +584,7 @@
 :root[data-layout="new"] .run-weiss .run-knoepfe{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 :root[data-layout="new"] .run-weiss .run-knoepfe .run-ende{ grid-column:auto; }
 /* Hintergrundfoto (geblurrt, abgedunkelt) hinter dem Training in Modern */
-:root[data-layout="new"] .player::after{ content:""; position:absolute; inset:-30px; z-index:-1; pointer-events:none; background:var(--pl-foto) center/cover no-repeat; filter:blur(24px) brightness(.38) saturate(1.1); opacity:.9; }
+:root[data-layout="new"] .player::after{ content:""; position:absolute; inset:-30px; z-index:-1; pointer-events:none; background:var(--pl-foto) center/cover no-repeat; filter:blur(24px) brightness(.66) saturate(1.25); opacity:.95; }
 
 /* Plan: einklappbare Tipps, mehrere Workouts je Tag, Überblick als Raster (Wochen × Tage) */
 :root[data-layout="new"] .kp-klapp > summary{ list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; font-weight:700; font-size:15px; }
@@ -720,3 +720,10 @@
 :root[data-layout="new"] .run-weiss:has(#run-karte) + div{ height:8px !important; }
 :root[data-layout="new"] .run-weiss .run-karte{ height:min(36vh, 300px); }
 .run-karte svg{ overflow:visible; }
+/* Run-Einstellungen auf dunklem Glas: Zähler (Intervall-Lauf) auch im Hellen lesbar */
+:root[data-layout="new"] .run-bg ~ .run-opt .stepper{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); }
+:root[data-layout="new"] .run-bg ~ .run-opt .stepper button, :root[data-layout="new"] .run-bg ~ .run-opt .stepper input{ background:transparent; color:#f4f4f6; -webkit-text-fill-color:#f4f4f6; }
+:root[data-layout="new"] .run-bg ~ .run-opt .ru-felder label{ color:rgba(255,255,255,.8); }
+:root[data-layout="new"] .run-bg ~ .run-eigen input[type=range], :root[data-layout="new"] .run-bg ~ .run-ansage input[type=range]{ width:100%; accent-color:var(--accent); margin:6px 0 2px; }
+:root[data-layout="new"] .run-bg ~ .run-ansage .run-ziel-kopf b{ color:var(--accent-ink, var(--accent)); }
+:root[data-layout="new"] .run-bg ~ .run-eigen .run-ziel-kopf b, :root[data-layout="new"] .run-bg ~ .run-ansage .run-ziel-kopf b{ color:#ff8f6b; }
