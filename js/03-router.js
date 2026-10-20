@@ -161,7 +161,7 @@ var FOTO_POOL = (function(){
     tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw")],
     st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
     ti:  ["img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
-    ws:  ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
+    ws:  [P("mobility-sitz"), P("mobility-ausfall")],   // ohne neu-mobility (Kopf im Profil, passte nicht zum Bereich)
     rep: ["img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
@@ -171,7 +171,7 @@ var FOTO_POOL = (function(){
     brust:    [P("liegestuetz-strand"), P("liegestuetz-stadt"), P("liegestuetz-feld")],
     arme:     [P("studio-hantelreihe"), P("kraft-sw"), P("studio-halle")],
     schulter: [P("kraft-sw"), P("studio-hantelreihe"), P("freiluft-park")],
-    mobility: ["img/neu-mobility.jpg", P("mobility-ausfall"), P("mobility-sitz")],
+    mobility: [P("mobility-sitz"), P("mobility-ausfall")],
     timer:    ["img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-feld")]
   };
 })();

@@ -534,7 +534,7 @@
 :root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau){ background:var(--surface); border:1.5px solid color-mix(in srgb, var(--accent) 75%, transparent); color:var(--text); }
 :root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau) .bk-ico{ background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent-ink, var(--accent)); }
 :root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau) .bk-t small, :root[data-layout="new"] .bau-karte.bau-sp:not(.ws-bau) .bk-pfeil{ color:var(--text-dim); opacity:1; }
-:root[data-layout="new"] .bn-knoepfe .btn-primary{ background:rgba(255,255,255,.12); color:#fff; border:1.5px solid var(--accent); box-shadow:none; }
+:root[data-layout="new"] .bn-knoepfe .btn-primary{ background:var(--accent); color:#fff; border:1.5px solid var(--accent); box-shadow:0 4px 14px rgba(255,90,54,.35); }
 /* gewählte Übungen im Baukasten: statt grauer ein leichter grüner Rahmen */
 :root[data-layout="new"] .wb-kachel.gewaehlt{ box-shadow:0 0 0 3px color-mix(in srgb, #2fa88a 70%, transparent), var(--shadow); background:color-mix(in srgb, #2fa88a 7%, var(--surface)); }
 :root[data-layout="new"] .wb-kachel.gewaehlt .fig-bild{ background:color-mix(in srgb, #2fa88a 14%, transparent); color:#2fa88a; }
@@ -585,3 +585,37 @@
 :root[data-layout="new"] .run-weiss .run-knoepfe .run-ende{ grid-column:auto; }
 /* Hintergrundfoto (geblurrt, abgedunkelt) hinter dem Training in Modern */
 :root[data-layout="new"] .player::after{ content:""; position:absolute; inset:-30px; z-index:-1; pointer-events:none; background:var(--pl-foto) center/cover no-repeat; filter:blur(24px) brightness(.38) saturate(1.1); opacity:.9; }
+
+/* Plan: einklappbare Tipps, mehrere Workouts je Tag, Überblick als Raster (Wochen × Tage) */
+:root[data-layout="new"] .kp-klapp > summary{ list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; font-weight:700; font-size:15px; }
+:root[data-layout="new"] .kp-klapp > summary::-webkit-details-marker{ display:none; }
+:root[data-layout="new"] .kp-klapp[open] > summary{ margin-bottom:10px; }
+:root[data-layout="new"] .kp-klapp[open] > summary .tpl-chev{ transform:rotate(180deg); }
+:root[data-layout="new"] .kp-klapp .kp-text{ margin-top:8px; }
+:root[data-layout="new"] .kp-faq{ margin-top:12px; width:100%; }
+:root[data-layout="new"] .kp-zeile{ align-items:start; }
+:root[data-layout="new"] .kp-zeile > span{ padding-top:11px; font-weight:600; }
+:root[data-layout="new"] .kp-tag{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+:root[data-layout="new"] .kp-wahl{ display:flex; align-items:center; gap:8px; padding:8px 8px 8px 12px; border-radius:14px; border:1px solid var(--nl-linie, var(--border)); background:color-mix(in srgb, var(--surface) 80%, transparent); min-width:0; }
+:root[data-layout="new"] .kp-wahl b{ flex:1; min-width:0; font-weight:600; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+:root[data-layout="new"] .kp-wahl button{ flex:none; width:28px; height:28px; border-radius:50%; border:0; background:rgba(127,127,127,.18); color:inherit; font-size:18px; line-height:1; cursor:pointer; }
+.kv-p{ display:inline-block; flex:none; width:9px; height:9px; border-radius:50%; background:var(--accent); }
+.kv-p.run{ background:#4aa3ff; }
+.kv-p.zufall{ background:#f5b84a; }
+.kv-p.kraft{ background:var(--accent); }
+.kp-vis{ display:flex; flex-direction:column; gap:5px; margin:6px 0 4px; }
+.kv-reihe{ display:grid; grid-template-columns:22px repeat(7, 1fr); gap:5px; align-items:center; }
+.kv-kopf{ font-size:11px; color:var(--text-dim); text-align:center; text-transform:uppercase; letter-spacing:.04em; }
+.kv-kopf .an{ color:var(--text); font-weight:700; }
+.kv-w{ font-size:11px; color:var(--text-dim); text-align:center; }
+.kv-z{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3px; min-height:30px; padding:4px; border-radius:9px; }
+.kv-z.aus{ background:transparent; }
+.kv-z.leer{ border:1.5px dashed rgba(127,127,127,.4); }
+.kv-z.an{ background:color-mix(in srgb, var(--accent) 14%, transparent); border:1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+.kv-legende{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:8px; font-size:12px; color:var(--text-dim); }
+.kv-legende span{ display:inline-flex; align-items:center; gap:5px; }
+
+/* Favoriten ohne Foto: großes ruhiges Symbol statt leerer Fläche (Farbe der Art) */
+:root[data-layout="new"] .fav-foto.ohne .ff-ico{ position:absolute; left:12px; top:12px; width:46px; height:46px; display:grid; place-items:center; border-radius:14px;
+  background:color-mix(in srgb, var(--nc, var(--accent)) 16%, transparent); color:var(--nc, var(--accent)); }
+:root[data-layout="new"] .fav-foto.ohne .ff-ico .ico, :root[data-layout="new"] .fav-foto.ohne .ff-ico svg{ width:26px; height:26px; }

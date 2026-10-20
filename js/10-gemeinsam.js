@@ -386,6 +386,14 @@ function favFotoPool(e){
   if(e.cls === "tp" && e.thema && e.thema !== "ganz") return e.thema;
   return e.cls;
 }
+/* Symbol der Glas-Kachel (Favorit ohne Foto): nach Art bzw. Muskelthema des Workouts */
+function favSymbol(e){
+  if(e.cls === "ti") return HOME_ICON.intervall;
+  if(e.cls === "ws") return HOME_ICON.warm;
+  if(e.cls === "rep") return HOME_ICON.reps;
+  var th = { brust:"brust", ruecken:"ruecken", schulter:"schulter", arme:"arme", core:"bauch", beine:"beine" }[e.thema];
+  return th ? katIcon(th) : (e.cls === "st" || e.ort === "studio" ? KAT_ICON_STUDIO : HOME_ICON.timer);
+}
 function favItemsHTML(){
   var list = favEntries();
   if(!list.length) return "";
@@ -398,6 +406,7 @@ function favItemsHTML(){
       return '<div class="fav-foto'+(mitFoto ? '' : ' ohne')+'" data-art="'+e.cls+'" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+
           (e.ok ? '' : ' aria-disabled="true"')+(mitFoto ? ' style="background-image:url('+fotos[e.key || e.name]+')'+(fotoFokus(fotos[e.key || e.name]) ? ';background-position:'+fotoFokus(fotos[e.key || e.name]) : '')+'"' : '')+'>'+
         '<span class="ff-stern" aria-hidden="true">'+svgIcon(ICON_STAR)+'</span>'+
+        (mitFoto ? '' : '<span class="ff-ico" aria-hidden="true">'+svgIcon(favSymbol(e))+'</span>')+
         '<span class="ff-text"><small class="ff-bereich">'+esc(BEREICH[e.cls] || "")+'</small><b class="ff-name">'+esc(e.name)+'</b><small class="ff-sub">'+e.sub+'</small></span>'+
       '</div>';
     }).join("")+'</div>';
