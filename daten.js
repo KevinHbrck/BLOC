@@ -3689,7 +3689,7 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   var SN_Q = br([46,36],[36,64],BR_TL,SN_ARM);
   P["battle-rope-snakes"] = [brSeile(SN_Q,93,84,[4,-4],2), brSeile(SN_Q,93,84,[-4,4],2)];
 
-  var FR_B = [[42,70,38,89,32,89],[58,70,62,89,68,89]];
+  var FR_B = [[37,70,31,89,25,89],[63,70,69,89,75,89]];
   function frb(a){ return fr([50,26],[50,56],FR_B,a); }
   function brFront(q, amps){ return brSeile(q, 50, 86, amps, 1); }
   P["battle-rope-side-to-side"] = [brFront(frb([[40,38,30,46],[42,40,32,48]]), [3,-3]), brFront(frb([[60,38,70,46],[58,40,68,48]]), [-3,3])];

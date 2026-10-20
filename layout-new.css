@@ -1048,3 +1048,11 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 :root[data-layout="new"] .bn-text b{ font-size:clamp(19px, 2.9vh, 24px); }
 :root[data-layout="new"] .bn-text small{ font-size:clamp(12.5px, 1.8vh, 14px); }
 :root[data-layout="new"] .bn-knoepfe .btn{ padding:clamp(10px, 1.7vh, 15px) 12px; font-size:clamp(14.5px, 2vh, 16px); }
+/* BLOC-Zeichen beim Laufen immer sichtbar (auch im Hochformat, oben in der Mitte) */
+:root[data-layout="new"] .bloc-quer{ display:block; position:fixed; top:calc(env(safe-area-inset-top) + 22px); left:50%; right:auto; transform:translateX(-50%); z-index:5; pointer-events:none;
+  font-family:var(--f-brand, "Helvetica Neue","Arial Black",Arial,sans-serif); font-size:20px; font-weight:900; letter-spacing:.22em; line-height:1; color:var(--accent); text-shadow:0 2px 14px rgba(0,0,0,.35); }
+@media (orientation: landscape) and (max-height: 560px){
+  :root[data-layout="new"] .bloc-quer{ left:auto; right:76px; transform:none; top:24px; }
+}
+/* Hinweisfenster (Toast) auf den Glas-Seiten: dunkel mit heller Schrift statt weiß auf weiß */
+:root[data-layout="new"]:has(.run-bg) .toast{ background:rgba(22,25,30,.94); color:#fff; border:1px solid rgba(255,255,255,.18); }
