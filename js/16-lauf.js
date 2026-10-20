@@ -325,11 +325,13 @@ var RUN_PACES = [0, 270, 300, 330, 360, 390, 420, 480];   // Sekunden je Kilomet
 function runZielEinst(){ var s = state.db.settings; if(!s.runZiel || typeof s.runZiel !== "object") s.runZiel = { km:0, pace:0 }; return s.runZiel; }
 /* Eigener Lauf: Strecke per Regler von „Frei“ bis zum Marathon, optional Pace-Vorgabe; als Lauf-Workout speicherbar (settings.runWorkouts) */
 var RUN_MARATHON = 42.195, RUN_HALB = 21.0975;
-function runZielVonRegler(v){ v = +v; return v >= 42 ? RUN_MARATHON : v === 21 ? RUN_HALB : v; }
-function runReglerVonKm(km){ return km >= 42 ? 42 : Math.round(km); }
-function runZielText(km){
+/* Rad: Regler bis 200 km in 5-km-Schritten, ohne Marathon-Namen und ohne Pace-Vorgabe */
+function runZielVonRegler(v, rad){ v = +v; if(rad) return v; return v >= 42 ? RUN_MARATHON : v === 21 ? RUN_HALB : v; }
+function runReglerVonKm(km, rad){ if(rad) return Math.min(200, Math.round(km/5)*5); return km >= 42 ? 42 : Math.round(km); }
+function runZielText(km, rad){
   if(!(km > 0)) return t("runZielFrei");
-  if(km >= 42) return t("runMarathon");
+  if(!rad && km >= 42) return t("runMarathon");
+  if(rad) return (Math.round(km*10)/10).toString().replace(".", currentLang() === "en" ? "." : ",")+" km";
   if(Math.abs(km - RUN_HALB) < .01) return t("runHalbmarathon");
   return (Math.round(km*10)/10).toString().replace(".", currentLang() === "en" ? "." : ",")+" km";
 }
@@ -338,7 +340,7 @@ function runPaceVonRegler(v){ v = +v; return v > 0 ? 175 + 5*v : 0; }
 function runPaceRegler(p){ return p > 0 ? clamp(Math.round((p - 175)/5), 1, 85) : 0; }
 function runPaceText(p){ return p > 0 ? repUhr(p*1000)+" /km" : t("runZielFrei"); }
 function runWorkouts(){ var s = state.db.settings; if(!Array.isArray(s.runWorkouts)) s.runWorkouts = []; return s.runWorkouts; }
-function runWoName(w){ return runZielText(w.km)+(w.pace ? " · "+repUhr(w.pace*1000)+" /km" : "")+(w.rad ? " · "+t("runArtRad") : ""); }
+function runWoName(w){ return runZielText(w.km, !!w.rad)+(w.pace ? " · "+repUhr(w.pace*1000)+" /km" : "")+(w.rad ? " · "+t("runArtRad") : ""); }
 function runWoFind(id){ var l = runWorkouts(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
 function runWoSpeichern(){
   var z = runZielEinst(), rad = runArt() === "rad";
@@ -350,15 +352,15 @@ function runWoSpeichern(){
   return w;
 }
 function runEigenerLaufHTML(){
-  var z = runZielEinst(), liste = runWorkouts().slice().sort(function(a, b){ return b.at - a.at; });
+  var z = runZielEinst(), rad = runArt() === "rad", liste = runWorkouts().slice().sort(function(a, b){ return b.at - a.at; });
   function chip(attr, wert, an, text){ return '<button type="button" class="kp-chip'+(an ? ' an' : '')+'" data-'+attr+'="'+wert+'" aria-pressed="'+an+'">'+esc(text)+'</button>'; }
-  return '<div class="card run-eigen"><div class="kp-titel run-ziel-kopf"><span>'+esc(t("runEigen"))+'</span><b id="run-ziel-wert">'+esc(runZielText(z.km))+'</b></div>'+
-    '<input type="range" id="run-ziel" min="0" max="42" step="1" value="'+runReglerVonKm(z.km)+'" aria-label="'+esc(t("runZielKmL"))+'">'+
-    '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runZielFrei"))+'</span><span>10</span><span>21</span><span>42</span></div>'+
-    (z.km ? '<div class="kp-titel run-ziel-kopf" style="margin-top:12px"><span>'+esc(t("runPaceVorgabe"))+'</span><b id="run-pace-wert">'+esc(runPaceText(z.pace))+'</b></div>'+
+  return '<div class="card run-eigen"><div class="kp-titel run-ziel-kopf"><span>'+esc(t("runEigen"))+'</span><b id="run-ziel-wert">'+esc(runZielText(z.km, rad))+'</b></div>'+
+    '<input type="range" id="run-ziel" min="0" max="'+(rad ? 200 : 42)+'" step="'+(rad ? 5 : 1)+'" value="'+runReglerVonKm(z.km, rad)+'" aria-label="'+esc(t("runZielKmL"))+'">'+
+    '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runZielFrei"))+'</span>'+(rad ? '<span>50</span><span>100</span><span>200</span>' : '<span>10</span><span>21</span><span>42</span>')+'</div>'+
+    (z.km && !rad ? '<div class="kp-titel run-ziel-kopf" style="margin-top:12px"><span>'+esc(t("runPaceVorgabe"))+'</span><b id="run-pace-wert">'+esc(runPaceText(z.pace))+'</b></div>'+
       '<input type="range" id="run-pace" min="0" max="85" step="1" value="'+runPaceRegler(z.pace)+'" aria-label="'+esc(t("runPaceVorgabe"))+'">'+
-      '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runZielFrei"))+'</span><span>4:30</span><span>6:00</span><span>8:00</span><span>10:00</span></div>'+
-      '<button type="button" class="btn btn-secondary run-wo-sp" data-runwosave>'+esc(t("runWoSpeichern"))+'</button>' : '')+
+      '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runZielFrei"))+'</span><span>4:30</span><span>6:00</span><span>8:00</span><span>10:00</span></div>' : '')+
+    (z.km ? '<button type="button" class="btn btn-secondary run-wo-sp" data-runwosave>'+esc(t("runWoSpeichern"))+'</button>' : '')+
     (liste.length ? '<div class="kp-titel" style="margin-top:14px">'+esc(t("runWoTitel"))+'</div><div class="run-wos">'+liste.map(function(w){
       return '<div class="run-wo"><button type="button" class="run-wo-go" data-runwostart="'+esc(w.id)+'">'+ICON_PLAY+'<b>'+esc(runWoName(w))+'</b></button>'+
         '<button type="button" class="run-wo-weg" data-runwodel="'+esc(w.id)+'" aria-label="'+esc(t("del"))+'">&times;</button></div>'; }).join("")+'</div>' : '')+
@@ -366,6 +368,7 @@ function runEigenerLaufHTML(){
 }
 function runOptionenHTML(){
   var iv = runIvEinst(), rad = runArt() === "rad";
+  if(rad) return "";   // auf dem Rad gibt es nichts einzustellen (Laufen und Gehen im Wechsel gibt es nur zu Fuß)
   return '<div class="card run-opt">'+
     (rad ? '' : toggleRow("run-iv-an", esc(t("runIvAn")), esc(t("runIvHint")), iv.an))+   // Laufen und Gehen im Wechsel gibt es nur zu Fuß
     (!rad && iv.an ? '<div class="ru-felder"><div><label>'+esc(t("runIvLaufS"))+'</label>'+stepperHTML("run-iv-lauf", iv.lauf, 10, 900, 10)+'</div>'+
@@ -564,7 +567,7 @@ function runHoehenlinien(){
   return '<svg class="run-hoehen" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke-width="1.2">' + s + '</svg>';
 }
 function runHintergrundHTML(){
-  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+"img/neu-run-bg.jpg"+')"></i>'+runHoehenlinien()+'</div>';
+  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+"img/neu-p-freiluft-meer.jpg"+')"></i>'+runHoehenlinien()+'</div>';
 }
 /* Strecke mit Zwischenwerten (Modern, Lauf-Details): weiße Linie, Punkte bei jedem Kilometer, daran kleine Glas-Chips „1 km · 5:44“ */
 function runStreckeNeu(x){
@@ -632,7 +635,11 @@ function renderRun(){
     if(l && g){ s.runIv = { an:true, lauf:clamp(parseInt(l.value) || 60, 10, 900), geh:clamp(parseInt(g.value) || 60, 10, 900) }; save(); }
   });
   app.querySelectorAll("[data-runart]").forEach(function(b){
-    b.addEventListener("click", function(){ s.runArt = b.getAttribute("data-runart") === "rad" ? "rad" : "lauf"; save(); renderRun(); });
+    b.addEventListener("click", function(){
+      s.runArt = b.getAttribute("data-runart") === "rad" ? "rad" : "lauf";
+      var zz = runZielEinst(); if(s.runArt === "lauf" && zz.km > RUN_MARATHON) zz.km = RUN_MARATHON; if(s.runArt === "rad") zz.pace = 0;   // Laufen höchstens Marathon, Rad bis 200 km und ohne Pace-Vorgabe
+      save(); renderRun();
+    });
   });
   app.querySelectorAll("[data-runstart]").forEach(function(b){ b.addEventListener("click", function(){
     var z = runZielEinst();
@@ -641,9 +648,9 @@ function renderRun(){
   }); });
   var zr = app.querySelector("#run-ziel");   // Strecke: beim Ziehen nur die Anzeige, beim Loslassen speichern und neu zeichnen (Pace-Wahl und Speichern-Knopf hängen am Ziel)
   if(zr){
-    zr.addEventListener("input", function(){ var el = app.querySelector("#run-ziel-wert"); if(el) el.textContent = runZielText(runZielVonRegler(zr.value)); });
+    zr.addEventListener("input", function(){ var el = app.querySelector("#run-ziel-wert"); if(el) el.textContent = runZielText(runZielVonRegler(zr.value, runArt() === "rad"), runArt() === "rad"); });
     zr.addEventListener("change", function(){
-      var z = runZielEinst(); z.km = runZielVonRegler(zr.value); if(!z.km) z.pace = 0; save();
+      var z = runZielEinst(); z.km = runZielVonRegler(zr.value, runArt() === "rad"); if(!z.km || runArt() === "rad") z.pace = 0; save();
       var y = window.scrollY; renderRun(); window.scrollTo(0, y);
     });
   }

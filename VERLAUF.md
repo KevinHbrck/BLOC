@@ -49,6 +49,11 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Run: Timer-Hintergrund, Rad bis 200 km (Fassung 2026-10-20-20)
+
+- **Hintergrund**: Run nutzt denselben geblurrten, bläulichen Hintergrund wie der Timer, in jedem Design (auch Hell) mit heller Schrift auf dunkler Abdeckung.
+- **Rad**: der Strecken-Regler geht bis **200 km** (5-km-Schritte, keine Marathon-Namen, keine Pace-Vorgabe); beim Wechsel zu Laufen wird die Strecke auf höchstens Marathon gekürzt. Leere Intervall-Karte beim Rad entfällt.
+
 ## 2026-10-20 · Run-Aufnahme im hellen Design (Fassung 2026-10-20-19)
 
 - Titel und Zurück-Knopf der Run-Aufnahme stehen im hellen Design in heller Schrift auf dem dunklen Foto (vorher dunkle Schrift auf dunklem Grund).
