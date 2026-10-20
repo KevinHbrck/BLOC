@@ -49,6 +49,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Run: Hintergrund exakt wie beim Timer (Fassung 2026-10-20-26)
+
+- Gleicher Ausschnitt (zentriert), gleiche Unschärfe (24 px), Helligkeit .66 und Sättigung 1,25 wie hinter dem Timer; die Abdeckung ist nur noch ein Hauch (10 %), die Lesbarkeit tragen die dunklen Glaskacheln.
+
 ## 2026-10-20 · Hell: Fotos auf Training und bei den Favoriten klarer (Fassung 2026-10-20-25)
 
 - Im hellen Design lag über den Fotos der Bereichskarten (Training) und der Favoriten ein sehr dichter heller Schleier, der sie verwaschen wirken ließ. Der Verlauf beginnt jetzt tiefer und ist schwächer (unten etwa 0,86 statt 0,94 Deckkraft); die dunkle Schrift bekommt einen hellen Hof, damit sie lesbar bleibt.

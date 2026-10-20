@@ -899,3 +899,7 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-name, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub,
   :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-name, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-sub, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-bereich{ text-shadow:0 0 8px rgba(255,250,244,.95), 0 0 2px rgba(255,250,244,.9); }
 }
+/* Run: exakt derselbe Ausschnitt wie hinter dem Timer (zentriert, gleiche Unschärfe, Helligkeit und Sättigung); nur eine hauchzarte Abdeckung */
+:root[data-layout="new"] .run-bg{ background:#0b0d10; }
+:root[data-layout="new"] .run-bg i{ inset:-30px; background-position:center; background-repeat:no-repeat; filter:blur(24px) brightness(.66) saturate(1.25); opacity:.95; }
+:root[data-layout="new"] .run-bg::after, :root[data-layout="new"]:has(.run-weiss) .run-bg::after{ background:rgba(8,10,14,.1) !important; }
