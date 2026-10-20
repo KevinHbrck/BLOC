@@ -1,11 +1,11 @@
 # BLOC – FAQ-Entwurf (Fragen und Antworten)
 
-Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Titel bei Gesundheitsthemen, Fachwörter erklärt, 26 Fragen). **Entwurf nur als Text, nichts davon ist im App-Code.** Geplant ist ein Bereich „Fragen & Antworten“ unten unter „Training“.
+Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen und glykämischer Index bleiben als Nutzenfragen, „Wenn du schon länger trainierst“-Hinweise, neue Fragen „Mein Training stockt“ und „Wenig Zeit“). **Entwurf nur als Text, nichts davon ist im App-Code.** Geplant ist ein Bereich „Fragen & Antworten“ unten unter „Training“.
 
 **Hinweise für die Einbindung und Kevins Gegenlesen**
 
 - Alle Texte sind in eigenen Worten geschrieben, nichts ist aus Quellen kopiert, keine Abbildungen oder Tabellen übernommen. Zahlen (Sätze, Wiederholungen, MET, GI-Einteilung) sind Fakten aus den genannten Quellen und gelten als Richtwerte, nicht als harte Grenzen.
-- **Struktur je Frage** (für die Datendatei): Titel, Kurzantwort, Stichpunkte, Studienlage, Quellen-IDs. Hinter einer Überschrift kann ein fester Schlüssel stehen (`{#plan}`), der als `id` in die Datendatei geht (z. B. für Verlinkungen aus der App); Fragennummern dürfen sich ändern, Schlüssel nicht. Die Quellen stehen einmal gesammelt im **Quellenverzeichnis am Ende** (Nummern [1]–[70]) und werden in den Fragen nur per Nummer genannt. Dieselben Nummern gelten für die deutsche und die englische Fassung.
+- **Struktur je Frage** (für die Datendatei): Titel, Kurzantwort, Stichpunkte, Studienlage, Quellen-IDs. Hinter einer Überschrift kann ein fester Schlüssel stehen (`{#plan}`), der als `id` in die Datendatei geht (z. B. für Verlinkungen aus der App); Fragennummern dürfen sich ändern, Schlüssel nicht. Die Quellen stehen einmal gesammelt im **Quellenverzeichnis am Ende** (Nummern [1]–[72]) und werden in den Fragen nur per Nummer genannt. Dieselben Nummern gelten für die deutsche und die englische Fassung.
 - **Prüfstand der Quellen (2026-10-16):** Zeitschriftenartikel per Crossref-Abfrage geprüft (Titel, Jahr, Band, Seiten, DOI stimmen; Abfragedatum jeweils 2026-10-16). Am Original (Volltext bzw. Seite) gelesen: ACSM-Position-Stand 2026 [3], WHO-Leitlinie 2020 (Seite mit ISBN) [1], WHO-Europa-Meldung 2023 [28]. Nur Crossref-Treffer, Inhalt nicht vollständig gelesen: alle übrigen.
 - **Aktualität:** Der ACSM-Position-Stand von 2009 [4] wurde durch den Stand von 2026 [3] ersetzt. Der Entwurf stützt sich jetzt auf [3]; [4] steht nur noch als „älterer Stand“ da, wo ältere Richtwerte genannt werden. Wo [3] etwas anderes sagt als früher üblich, folgt der Text [3].
 - Wo die Studienlage dünn oder umstritten ist, steht **„Studienlage:“** mit einer ehrlichen Einordnung.
@@ -22,18 +22,20 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 ## A. Einstieg
 
-### 1. Was bringt Ausdauertraining, was bringt Krafttraining? {#nutzen}
+### 1. Was bringt Training überhaupt? {#nutzen}
 
-**Kurzantwort:** Ausdauer macht Herz und Lunge leistungsfähiger. Kraft baut Muskeln auf und macht dich im Alltag stabil. Am besten ist beides: 2 Krafttage pro Woche plus 150–300 Minuten Ausdauer.
+**Kurzantwort:** Du wirst leistungsfähiger und stabiler, und in Studien ging regelmäßige Bewegung mit besserer Gesundheit einher. Empfehlung: 2 Krafttage pro Woche plus 150–300 Minuten Ausdauer.
 
-- **Ausdauer:** Du kommst später aus der Puste. Schon wenig Bewegung ging mit einem Fünftel weniger Sterberisiko einher als gar keine. Läuferinnen und Läufer lagen rund ein Viertel niedriger als Nicht-Läufer, schon bei einer Einheit pro Woche.
-- **Kraft:** Du wirst stärker, gehst schneller und stehst leichter vom Stuhl auf. Wer Krafttraining macht, hat 10–17 % weniger Herz-Kreislauf-Erkrankungen, Krebs und Diabetes als wer keins macht. Der größte Nutzen lag bei 30–60 Minuten pro Woche.
-- **Beides zusammen:** Wer Kraft und Ausdauer verbindet, hat ein niedrigeres Risiko als wer keines von beiden macht. Ausdauer nimmt dir keine Muskeln weg.
+- **Leistung:** Mit Ausdauer kommst du später aus der Puste. Mit Kraft wirst du stärker, gehst schneller und stehst leichter vom Stuhl auf. Kräftige Muskeln halten Rumpf und Gelenke stabil und geben den Knochen einen Reiz.
+- **Gesundheit (Zusammenhang):** Wer sich etwas bewegt, hatte in Studien ein Fünftel weniger Sterberisiko als wer sich gar nicht bewegt, Läuferinnen und Läufer rund ein Viertel weniger als Nicht-Läufer. Menschen mit Krafttraining hatten 10–17 % weniger Herz-Kreislauf-Erkrankungen, Krebs und Diabetes. Auch Stimmung, Schlaf, Knochen und Sturzrisiko sind in Studien mit Bewegung verbunden. Das ist ein Zusammenhang, kein Beweis und kein Schutz.
+- **Beides zusammen:** Wer Kraft und Ausdauer verbindet, liegt besser als wer nur eines macht. Ausdauer nimmt dir keine Muskeln weg.
 - **In BLOC:** Freiluft und Fitness trainieren Kraft, Laufen die Ausdauer, Summit beides in kurzen, harten Intervallen.
+- **Wenn du schon länger trainierst:** Der Nutzen steigt mit mehr Training nur flach: Über das Drei- bis Fünffache der Empfehlung hinaus kam kaum noch etwas dazu, und der größte Vorteil beim Krafttraining lag bei 30–60 Minuten pro Woche.
+- **Bei Beschwerden oder Erkrankungen** stimmst du das Training vorher mit deiner Ärztin oder deinem Arzt ab.
 
-**Studienlage:** Das sind Hinweise aus Beobachtungen großer Gruppen, kein Beweis. Die WHO empfiehlt Kraft und Ausdauer gemeinsam.
+**Studienlage:** Die WHO empfiehlt Kraft und Ausdauer gemeinsam. Die Gesundheitszahlen stammen aus Beobachtungen großer Gruppen. Wer sich bewegt, ist vielleicht auch sonst gesünder, deshalb zeigen sie einen Zusammenhang und keine Ursache.
 
-**Quellen:** [1], [2], [3], [19], [46], [47], [48]
+**Quellen:** [1], [2], [3], [19], [47], [48], [52], [53], [54], [56]
 
 ### 2. Wie starte ich, und wie sieht mein erstes Workout aus?
 
@@ -55,9 +57,9 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **Ein Beispiel:** Kniebeuge, Rudern, Liegestütz, Schulterdrücken, Bizepscurl und Trizeps, zum Schluss Planke.
 - **Dein Ziel zuerst:** Willst du bessere Liegestütze, mach Brust vor Beinen. Was am Anfang steht, bekommt die meiste Kraft.
 - **Warum so:** Zu Beginn bist du frisch, und große Übungen kosten die meiste Energie. Der Rumpf stabilisiert bei Kniebeuge und Rudern mit, deshalb kommt er zuletzt (Praxis).
-- **Druck und Zug im Wechsel,** zum Beispiel Rudern nach Liegestütz: So ermüdet nicht derselbe Muskel zweimal hintereinander (Praxis).
+- **Druck und Zug:** Push heißt wegdrücken (Liegestütz, Schulterdrücken: Brust, vordere Schulter, Trizeps), Pull heißt heranziehen (Rudern, Klimmzug: Rücken, hintere Schulter, Bizeps). Plane etwa gleich viele davon und wechsle sie ab, damit nicht derselbe Muskel zweimal hintereinander ermüdet (Praxis).
 
-**Studienlage:** Dass die erste Übung der Einheit am meisten Kraft gewinnt, zeigen Studien. Die Rangfolge selbst ist bewährte Praxis, nicht getestet.
+**Studienlage:** Dass die erste Übung der Einheit am meisten Kraft gewinnt, zeigen Studien. Die Rangfolge und die Aufteilung in Druck und Zug sind bewährte Praxis beziehungsweise Expertenmeinung, nicht getestet.
 
 **Quellen:** [3], [4]
 
@@ -66,13 +68,14 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 **Kurzantwort:** Pro Übung 2–3 Sätze mit 6–12 Wiederholungen. Pause: 1–2 Minuten bei leichten, bis 3 Minuten bei schweren Übungen. Der letzte Satz darf hart sein, die Technik bleibt sauber.
 
 - **Sätze:** 2 Sätze bringen mehr als 1. Für Muskelaufbau zählen am Ende 10 oder mehr harte Sätze pro Muskelgruppe und Woche.
-- **Wiederholungen:** Wenige Wiederholungen mit schwerem Gewicht machen am stärksten. Für Muskelaufbau geht leicht und schwer, solange der Satz anstrengt.
+- **Wiederholungen je nach Ziel:** Stärker werden: schweres Gewicht, wenige Wiederholungen (grob ab 80 % dessen, was du genau einmal heben kannst). Muskeln aufbauen: leicht wie schwer, solange der Satz anstrengt. Durchhalten (Kraftausdauer): leichtes Gewicht, viele Wiederholungen, klassisch ab etwa 15.
 - **Pausen:** Bei schweren Übungen bis 3 Minuten, damit du dich erholst und die Technik sauber bleibt. Bei leichten reicht kürzer (Praxis).
 - **Zeitübungen (Planke, Timer):** Die Zeit ist vorgegeben. Ruhe, bis du wieder sauber starten kannst.
+- **Wenn du schon länger trainierst:** Plane 2–3 Wiederholungen Reserve ein, nutze für Maximalkraft schwere Lasten mit 2–3 Sätzen pro Übung und für Muskelaufbau 10–20 Sätze pro Muskelgruppe und Woche.
 
-**Studienlage:** Dass mehr Sätze und schwerere Gewichte wirken, ist gut belegt. Bei der Pausenlänge sind sich die Studien nicht einig.
+**Studienlage:** Dass mehr Sätze und schwerere Gewichte wirken, ist gut belegt. Bei der Pausenlänge sind sich die Studien nicht einig. Feste Wiederholungszonen für das Durchhalten stammen aus älteren Empfehlungen.
 
-**Quellen:** [3], [6], [7], [9], [10]
+**Quellen:** [3], [4], [6], [7], [9], [10]
 
 ### 5. Wie viel Pause brauche ich, und darf ich jeden Tag trainieren? {#pause}
 
@@ -83,6 +86,7 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **Täglich locker ist gut:** Mehr Bewegung ging mit weniger Todesfällen einher, auch beim Zehnfachen der Mindestempfehlung zeigte sich kein Schaden.
 - **Zu viel erkennst du so:** Die Leistung sinkt über Tage trotz Pause, du bist dauernd müde, schläfst schlecht, bist gereizt. Dann halbiere den Umfang und schlaf mehr (Praxis). Hält es Wochen an, spricht man von Übertraining. Das lässt sich erst feststellen, wenn andere Ursachen wie ein Infekt oder zu wenig Essen ausgeschlossen sind.
 - **Schlaf:** Wer weniger als 7 Stunden pro Nacht schläft, erkrankt häufiger an Atemwegsinfekten. Eine feste Zahl für alle gibt es nicht, richte dich nach deinem Bedarf.
+- **Wenn du schon länger trainierst:** Plane alle 4–8 Wochen eine leichte Woche ein (siehe „Ich trainiere schon 4–6 Mal pro Woche: was ändere ich?“).
 
 **Studienlage:** Dass Erholung nötig ist, ist sicher. Die genaue Zahl der Tage lässt sich aus Studien nicht ableiten, „1–2 Tage“ ist Erfahrung. Übertraining ist als Expertenmeinung beschrieben.
 
@@ -90,91 +94,9 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 ---
 
-## B. Was Training dir bringt
+## B. Technik & Training verstehen
 
-### 6. Was zeigen Studien zu Training und Herz?
-
-**Kurzantwort:** Wer sich mehr bewegt, hat weniger Herz-Kreislauf-Erkrankungen. Das ist ein Zusammenhang, keine Garantie. Beim Herzrhythmus gilt: Mäßig viel Bewegung ging mit weniger Vorhofflimmern (unregelmäßiger Herzschlag) einher, extrem viel nicht mehr.
-
-- **Herz und Kreislauf:** Mehr Bewegung ging mit weniger Todesfällen durch Herz-Kreislauf-Erkrankungen und Krebs einher. Menschen mit Krafttraining hatten 10–17 % weniger Herz-Kreislauf-Erkrankungen.
-- **Blutdruck und Ruhepuls:** Beide sanken bei Übergewichtigen nach mindestens 12 Wochen Intervalltraining.
-- **Vorhofflimmern:** Wer die Empfehlung erreichte, hatte ein etwa 6 % geringeres Risiko. Der Vorteil reichte bis grob 5–8 Stunden zügiges Training pro Woche.
-- **Wichtig:** Herzrasen, Herzstolpern, Brustschmerz, Schwindel oder Ohnmacht beim Training: stoppen und ärztlich abklären.
-
-**Studienlage:** Das sind Hinweise aus Beobachtungen großer Gruppen, kein Beweis. Beim Herzrhythmus ist der Zusammenhang J-förmig: Wenig bis mäßig hilft, bei sehr viel ist die Lage unklar.
-
-**Quellen:** [18], [47], [48], [49], [50], [62]
-
-### 7. Was zeigen Studien zu Training und Typ-2-Diabetes?
-
-**Kurzantwort:** Aktive Menschen erkranken seltener an Typ-2-Diabetes: Wer viel aktiv war, hatte rund ein Drittel weniger Fälle als wer wenig aktiv war. Schon kleine Mengen zeigten einen Nutzen.
-
-- **Aktivität:** Wer viel macht, hatte etwa 35 % weniger Risiko als wer wenig macht. Schon Gehen allein ging mit etwa 15 % weniger Risiko einher.
-- **Krafttraining:** Das Diabetes-Risiko war bei Menschen mit Krafttraining niedriger. Der größte Vorteil lag bei bis zu etwa 60 Minuten pro Woche.
-- **Blutzucker:** Bei Übergewichtigen senkte kurzes Intervalltraining den Nüchternblutzucker leicht.
-- **Wichtig:** Bei bestehendem Diabetes, vor allem mit Medikamenten, stimmst du das Training mit der Ärztin oder dem Arzt ab, wegen möglicher Unterzuckerung.
-
-**Studienlage:** Das sind Hinweise aus Beobachtungen großer Gruppen, kein Beweis. Ein Teil der Wirkung läuft vermutlich über weniger Körperfett. Training ersetzt keine Behandlung.
-
-**Quellen:** [18], [47], [51]
-
-### 8. Knochen, Rücken, Gelenke, Stürze: was zeigen Studien?
-
-**Kurzantwort:** Kräftige Muskeln stabilisieren Rumpf und Gelenke und geben den Knochen einen Reiz. In Studien gingen Training und weniger Rücken- und Knieschmerzen einher, bei Menschen ab 60 sank die Sturzrate um knapp ein Viertel, und nach den Wechseljahren stieg die Knochendichte leicht.
-
-- **Rücken:** Bei chronischen Rückenschmerzen sank der Schmerz mit Training um etwa 15 Punkte auf einer Skala von 0 bis 100, verglichen mit Nichtstun. Rumpfübungen wie Planke und Brücke halfen kurzfristig mehr als allgemeines Training, nach 6 Monaten war der Vorteil weg.
-- **Gelenke:** Bei Kniearthrose lag der Schmerz mit Training etwa 12 Punkte niedriger (Skala 0 bis 100), Alltagsbewegungen fielen leichter.
-- **Stürze:** Programme für Gleichgewicht, Gehen und Muskelkraft senkten die Sturzrate um 23 %. 15 % weniger Menschen stürzten überhaupt.
-- **Knochen:** Bei Frauen nach den Wechseljahren stieg die Knochendichte an Lendenwirbelsäule und Hüfte leicht, die Streuung war groß.
-- **Praxis:** Planke, Seitstütz, Brücke, Kniebeuge, Rudern und Einbeinstand trainieren Rumpf, Beine und Gleichgewicht.
-
-**Studienlage:** Bei Stürzen und Arthrose-Schmerz ist die Lage sehr sicher. Beim Rücken ist sie mittel sicher, und der Vorteil der Rumpfübungen stammt aus nur 5 kleinen Studien. Bei den Knochen ist der Effekt klein, belegt vor allem bei Frauen nach den Wechseljahren. Bei akuten, starken oder ausstrahlenden Beschwerden klärst du vorher ärztlich ab.
-
-**Quellen:** [3], [52], [53], [65], [66], [67]
-
-### 9. Training, Stimmung und Schlaf: was zeigen Studien?
-
-**Kurzantwort:** Bewegung ging in Studien mit besserer Stimmung und besserem Schlaf einher. Sie milderte Depression, Angst und Stress mit mittlerer Wirkung, auch Krafttraining senkte depressive Symptome.
-
-- **Stimmung:** Bewegung milderte Depression, Angst und Stress. Intensiveres Training brachte mehr.
-- **Krafttraining:** Es senkte depressive Symptome mit mittelstarker Wirkung, bei gesunden wie bei kranken Menschen.
-- **Schlaf:** Regelmäßiges Training verbesserte vor allem die Schlafqualität und die Einschlafzeit, die Schlafdauer nur leicht.
-- **Hilfe holen:** Bei anhaltend gedrückter Stimmung suchst du ärztliche oder psychologische Hilfe. Training ergänzt eine Behandlung, ersetzt sie nicht.
-
-**Studienlage:** Viele Studien zeigen das, aber die meisten Zusammenfassungen von Studien haben nur geringe methodische Qualität. Bei sehr langen Programmen wurde der Effekt kleiner.
-
-**Quellen:** [54], [55], [56]
-
-### 10. Was bringen Intervalle (Summit)?
-
-**Kurzantwort:** Kurze, harte Intervalle machen mindestens so fit wie gleichmäßiges Training. Im Schnitt lagen sie sogar leicht vorn.
-
-- **Fitness:** Beide Trainingsarten steigerten die maximale Sauerstoffaufnahme (das Maß, wie viel Sauerstoff dein Körper bei voller Anstrengung nutzt) deutlich. Intervalle lagen nur leicht vorn.
-- **Herz und Stoffwechsel:** Bei Übergewichtigen sanken nach mindestens 12 Wochen Intervalltraining Ruhepuls, Blutdruck, Taillenumfang und Körperfett.
-- **Einstieg:** Starte mit kurzen Intervallen und langen Pausen. Bei Herz-Kreislauf-Erkrankung vorher zur Ärztin oder zum Arzt.
-
-**Studienlage:** Die bessere Ausdauer ist sicher. Auf Blutfette und Insulin zeigte sich kein Effekt. Offen ist, was Intervalle langfristig für die Gesundheit bringen, viele Studien sind klein und kurz.
-
-**Quellen:** [18], [63]
-
-### 11. Was bringen Dehnen und Mobility?
-
-**Kurzantwort:** Dehnen macht dich beweglicher, schützt aber nicht verlässlich vor Verletzungen und lindert keinen Muskelkater. Vor dem Training wärmst du besser dynamisch auf, denn langes Halten (ab 60 Sekunden) macht direkt danach etwas schwächer.
-
-- **Beweglichkeit:** Alle Dehnarten verbessern sie, aber meist nur für unter 30 Minuten.
-- **Vor dem Training:** Wer jeden Muskel 60 Sekunden oder länger dehnte, war danach im Schnitt etwas schwächer (4,6 % weniger Leistung). Bei kürzerem Dehnen waren es 1,1 %. Dynamisches Dehnen (Schwingen, Kreisen) steigerte die Leistung leicht.
-- **Danach:** Im Vergleich zu Ausruhen gab es weder weniger Muskelkater noch bessere Erholung.
-- **Verletzungen:** Dehnen allein senkte die Zahl der Sportverletzungen nicht. Krafttraining schon (siehe „Wie beuge ich Verletzungen vor?“).
-
-**Studienlage:** Dass Dehnen kurzfristig beweglicher macht, ist sicher. Einen Schutz vor Verletzungen konnten die Studien nicht zeigen. Zur Erholung sind sie klein und von geringer Qualität. Was regelmäßiges Dehnen langfristig bringt, wurde hier nicht ausgewertet.
-
-**Quellen:** [57], [58], [61]
-
----
-
-## C. Muskeln & Technik
-
-### 12. Wie wachsen Muskeln, und welche Reize brauche ich? {#muskelwachstum}
+### 6. Wie wachsen Muskeln, und welche Reize brauche ich? {#muskelwachstum}
 
 **Kurzantwort:** Muskeln wachsen durch viele harte Sätze, regelmäßig über Wochen. Ziel: 10 oder mehr Sätze pro Muskelgruppe und Woche, jeder so hart, dass du noch 2–3 Wiederholungen übrig hättest.
 
@@ -182,38 +104,26 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **Menge:** 10 oder mehr Sätze pro Muskelgruppe und Woche. Über etwa 18–20 Sätze nahm der Zusatznutzen deutlich ab.
 - **Anstrengung:** Bis zum totalen Versagen musst du nicht gehen. 2–3 Wiederholungen Reserve sind eine gute Faustregel.
 - **Häufigkeit und Last:** Ob 1× oder öfter pro Woche, spielte bei gleicher Satzzahl kaum eine Rolle. Leichte wie schwere Gewichte bauen Muskeln auf.
-- **Steigern:** Über Wochen mehr Wiederholungen, Sätze oder Gewicht. Sichtbares dauert Wochen bis Monate.
+- **Wenn du schon länger trainierst:** Training bis zum Versagen brachte beim Muskelwachstum keinen Vorteil gegenüber Sätzen mit Reserve. Mehr bringt eher mehr Sätze als mehr Härte.
 
 **Studienlage:** Dass genug Sätze und Regelmäßigkeit Muskeln wachsen lassen, ist gut belegt. Offen sind die genaue Reserve, die ideale Wiederholungszahl und warum Menschen unterschiedlich stark ansprechen. „8–12“ ist eine Konvention, kein Naturgesetz.
 
 **Quellen:** [3], [6], [7], [8], [11], [12], [15]
 
-### 13. Muskeln aufbauen, stärker werden oder länger durchhalten: wie trainiere ich das?
+### 7. Was sind schnelle und langsame Muskelfasern, und was heißt das für mein Training? {#fasern}
 
-**Kurzantwort:** Drei Ziele, ein Werkzeug: Muskeln aufbauen (viele Sätze), möglichst stark werden (schweres Gewicht, wenige Wiederholungen) oder lange durchhalten (leichtes Gewicht, viele Wiederholungen). Einsteiger fahren mit 8–12 Wiederholungen gut.
+**Kurzantwort:** Muskeln bestehen aus langsamen Fasern (Typ I), die lange durchhalten, und schnellen Fasern (Typ II), die viel Kraft liefern, aber schneller ermüden. Die Mischung ist angeboren, Training verschiebt sie nur begrenzt. Für dich heißt das: Du musst dich nicht auf einen Typ festlegen.
 
-- **Stärker werden (Maximalkraft):** Schweres Gewicht, grob ab 80 % dessen, was du genau einmal heben kannst. Dazu 2–3 Sätze pro Übung und lange Pausen.
-- **Muskeln aufbauen (Hypertrophie):** 10 oder mehr Sätze pro Muskelgruppe und Woche. Das Gewicht ist dabei weniger entscheidend.
-- **Durchhalten (Kraftausdauer):** Leichteres Gewicht, viele Wiederholungen (klassisch ab etwa 15), kurze Pausen.
-- **In BLOC:** Lange Haltezeiten und viele Wiederholungen trainieren eher Durchhalten, schwere Varianten eher Kraft.
+- **Langsame Fasern (Typ I):** Sie arbeiten bei Laufen, Gehen und Halten. Sie ermüden langsam.
+- **Schnelle Fasern (Typ II):** Sie springen bei schwerem Gewicht, Sprints und Sprüngen an. Sie sind kräftig, ermüden aber schneller.
+- **Fürs Training:** Schweres Gewicht und Sprünge fordern vor allem die schnellen Fasern, lange gleichmäßige Belastung vor allem die langsamen (Lehrbuchwissen). Wer Kraft und Ausdauer trainiert, trainiert beide Typen.
+- **Leichtes Gewicht geht auch:** Leichtere Gewichte bauten in Studien Muskeln ähnlich gut auf wie schwere, wenn der Satz anstrengend war.
 
-**Studienlage:** Dass schweres Gewicht mehr Maximalkraft und mehr Sätze mehr Muskeln bringen, ist gut belegt. Für das Durchhalten gibt es keine festen Zonen aus Studien, die Zahlen stammen aus älteren Empfehlungen.
+**Studienlage:** Der Aufbau ist etabliertes Lehrbuchwissen. Offen ist, wie stark sich die Mischung durch Training verschieben lässt. Studien beschreiben Unterschiede zwischen Menschen.
 
-**Quellen:** [3], [4], [7]
+**Quellen:** [7], [15], [41]
 
-### 14. Push und Pull: was ist das?
-
-**Kurzantwort:** Push heißt wegdrücken (Liegestütz), Pull heißt heranziehen (Rudern, Klimmzug). Plane etwa gleich viele Druck- wie Zugsätze, dazu Beine und Rumpf.
-
-- **Push:** Brust, vordere Schulter, Trizeps.
-- **Pull:** Rücken, hintere Schulter, Bizeps.
-- **Praxis:** Druck fällt vielen leichter, Zug fehlt oft, zum Beispiel ohne Klimmzugstange. Rudern mit dem Band gleicht das aus.
-
-**Studienlage:** Die Aufteilung ist eine praktische Ordnung, die Autorinnen und Autoren des ACSM-Stands halten Oberkörper/Unterkörper × Druck/Zug für ausreichend. Das ist Expertenmeinung und nicht getestet. Dass Ungleichgewichte Verletzungen verursachen, ist nicht gut belegt.
-
-**Quellen:** [3]
-
-### 15. Gewicht wegdrücken und wieder ablassen: worauf muss ich achten?
+### 8. Gewicht wegdrücken und wieder ablassen: worauf muss ich achten? {#tempo}
 
 **Kurzantwort:** Drücke das Gewicht zügig, aber kontrolliert nach oben, lass es in 2–3 Sekunden ab, nutze den vollen Bewegungsumfang und halte nie dauerhaft die Luft an. Das Ablassen ist kein Nebenprodukt: Es trainiert mit, und hier entscheidet die Kontrolle.
 
@@ -222,12 +132,13 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **Voller Weg:** Ein voller Bewegungsumfang steigerte die Kraft stärker als ein verkürzter, solange die Technik sauber bleibt.
 - **Atmen:** Beim Drücken ausatmen, beim Ablassen einatmen (Praxis). Bei sehr schwerem Gewicht (über 80 % des Maximums) oder Sätzen bis zum Versagen ist kurzes Pressatmen kaum zu vermeiden: Luft anhalten und gegen den Bauch drücken. Es stabilisiert den Rumpf, treibt aber den Blutdruck hoch. Wer Herz-Kreislauf-Probleme oder Bluthochdruck hat, klärt das vorher ärztlich.
 - **Sicherheit (Praxis):** Handgelenke gerade, Schulterblätter ruhig, beim Liegestütz den Körper als eine Linie halten. Bei schwerem Gewicht über Brust oder Gesicht nutzt du eine Partnerin, einen Partner oder die Sicherheitsablage.
+- **Wenn du schon länger trainierst:** Das betonte Absenken (exzentrische Phase) ist ein Hebel, wenn du stockst: Training mit betonter Senkphase brachte mehr Muskelmasse als reines Heben.
 
 **Studienlage:** Das ähnliche Wachstum bei 0,5–8 Sekunden, den Vorteil des vollen Wegs und den Nutzen des langsamen Absenkens zeigen Studien. Ob Pressatmen riskant ist, ist weder bestätigt noch ausgeschlossen. Die Atem- und Sicherheitsregeln sind Praxis.
 
 **Quellen:** [3], [68], [69], [70]
 
-### 16. Was bringen Widerstandsbänder?
+### 9. Was bringen Widerstandsbänder?
 
 **Kurzantwort:** Ein Band ist ein Fitnessstudio für die Hosentasche: Es steigert Kraft und Muskeln nachweislich, und die Kraftgewinne waren ähnlich wie mit Gewichten.
 
@@ -240,38 +151,111 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Quellen:** [3], [14]
 
+### 10. Was bringen Dehnen und Mobility?
+
+**Kurzantwort:** Dehnen macht dich beweglicher, schützt aber nicht verlässlich vor Verletzungen und lindert keinen Muskelkater. Vor dem Training wärmst du besser dynamisch auf, denn langes Halten (ab 60 Sekunden) macht direkt danach etwas schwächer.
+
+- **Beweglichkeit:** Alle Dehnarten verbessern sie, aber meist nur für unter 30 Minuten.
+- **Vor dem Training:** Wer jeden Muskel 60 Sekunden oder länger dehnte, war danach im Schnitt etwas schwächer (4,6 % weniger Leistung). Bei kürzerem Dehnen waren es 1,1 %. Dynamisches Dehnen (Schwingen, Kreisen) steigerte die Leistung leicht.
+- **Danach:** Im Vergleich zu Ausruhen gab es weder weniger Muskelkater noch bessere Erholung.
+- **Verletzungen:** Dehnen allein senkte die Zahl der Sportverletzungen nicht. Krafttraining schon (siehe „Wie beuge ich Verletzungen vor?“).
+
+**Studienlage:** Dass Dehnen kurzfristig beweglicher macht, ist sicher. Einen Schutz vor Verletzungen konnten die Studien nicht zeigen. Zur Erholung sind sie klein und von geringer Qualität. Was regelmäßiges Dehnen langfristig bringt, wurde hier nicht ausgewertet.
+
+**Quellen:** [57], [58], [61]
+
+### 11. Was bringen Intervalle (Summit)?
+
+**Kurzantwort:** Kurze, harte Intervalle machen mindestens so fit wie gleichmäßiges Training. Im Schnitt lagen sie sogar leicht vorn.
+
+- **Fitness:** Beide Trainingsarten steigerten die maximale Sauerstoffaufnahme (das Maß, wie viel Sauerstoff dein Körper bei voller Anstrengung nutzt) deutlich. Intervalle lagen nur leicht vorn.
+- **Herz und Stoffwechsel:** Bei Übergewichtigen sanken nach mindestens 12 Wochen Intervalltraining Ruhepuls, Blutdruck, Taillenumfang und Körperfett.
+- **Einstieg:** Starte mit kurzen Intervallen und langen Pausen. Bei Herz-Kreislauf-Erkrankung vorher zur Ärztin oder zum Arzt.
+
+**Studienlage:** Die bessere Ausdauer ist sicher. Auf Blutfette und Insulin zeigte sich kein Effekt. Offen ist, was Intervalle langfristig für die Gesundheit bringen, viele Studien sind klein und kurz.
+
+**Quellen:** [18], [63]
+
+---
+
+## C. Plan & Fortgeschrittene
+
+### 12. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach? {#plan}
+
+**Kurzantwort:** Mindestens 2 Krafttage pro Woche mit allen großen Muskelgruppen, den Reiz langsam steigern und Erholung einplanen. Ein Block dauert in der Praxis 4–8 Wochen. Danach folgt eine leichte Woche und ein neuer Block mit leicht veränderten Übungen.
+
+- **Wochenstruktur:** 2–3 Ganzkörpertage oder eine Aufteilung (Oberkörper/Unterkörper oder Druck/Zug/Beine). Welche besser ist, ist nicht belegt, nimm die, die in deinen Alltag passt. Ausdauer (Laufen, Summit) ergänzt das.
+- **Umfang:** 10 oder mehr Sätze pro Muskelgruppe und Woche für Muskelaufbau, 2–3 Sätze pro Übung für Kraft. Auch kleine Mengen wirken.
+- **Steigern:** mehr Wiederholungen, mehr Sätze, mehr Gewicht oder die schwerere Variante („Leichter / Schwerer“). Hart, aber nicht bis zum Versagen.
+- **Blocklänge und danach (Praxis):** 4–8 Wochen sind üblich, eine feste Studienzahl gibt es nicht. Danach Struktur behalten und weiter steigern, einzelne Übungen durch Varianten ersetzen, eine leichte Woche einlegen und prüfen, was gut lief.
+- **In BLOC:** Die Plan-Seite im Reiter „Körper“ verweist auf diese Antwort.
+
+**Studienlage:** Gut abgesichert sind Mindesthäufigkeit, genug Sätze, Steigerung und Sicherheit. Offen sind die ideale Blocklänge und die beste Wochenaufteilung. Die ausgewerteten Studien dauerten mindestens 6 Wochen.
+
+**Quellen:** [1], [3], [44], [45], [46]
+
+### 13. Ich trainiere schon 4–6 Mal pro Woche: was ändere ich? {#fortgeschritten}
+
+**Kurzantwort:** Mehr Einheiten brauchen mehr Struktur, nicht mehr Härte. Verteile 10–20 Sätze pro Muskelgruppe und Woche auf 2–3 Einheiten und plane alle 4–8 Wochen eine leichte Woche ein.
+
+- **Umfang:** 10 oder mehr Sätze pro Muskelgruppe und Woche für Muskelaufbau. Der Zusatznutzen flacht ab etwa 18–20 Sätzen deutlich ab.
+- **Häufigkeit:** Für Kraft hilft es, eine Muskelgruppe mindestens 2× pro Woche zu trainieren. Für Muskelwachstum spielte es bei gleicher Satzzahl kaum eine Rolle.
+- **Abwechslung (Periodisierung):** Wer Gewicht und Satzzahl planmäßig wechselt (mal schwer, mal leicht), steigerte die Maximalkraft etwas mehr als bei gleichbleibendem Plan. Bei guter Steigerung war das kein klarer Vorteil.
+- **Leichte Woche (Deload):** Trainerinnen und Trainer empfehlen sie zur Erholung. So geht sie (Praxis): gleiche Übungen, etwa halbe Sätze, Gewicht etwas runter, nichts bis ans Limit. Danach mit etwas mehr Reiz als vorher weitermachen.
+- **Kraft und Ausdauer gleichzeitig:** Zusätzliches Ausdauertraining bremste Muskelwachstum und Maximalkraft nicht, die Schnellkraft aber etwas, vor allem bei beidem in einer Einheit. Trenne beides um mindestens 3 Stunden, wenn möglich.
+
+**Studienlage:** Umfang und Verteilung sind gut belegt. Die ideale Obergrenze für einzelne Menschen ist offen, die Werte sind Durchschnitte aus Studien, die meist mit Einsteigern gemacht wurden. Für die leichte Woche gibt es Expertenmeinung, aber keinen Wirksamkeitsbeleg.
+
+**Quellen:** [3], [6], [8], [44], [45], [46]
+
+### 14. Mein Training stockt: was prüfe ich zuerst? {#plateau}
+
+**Kurzantwort:** Prüfe der Reihe nach Umfang, Anstrengung, Erholung und Essen. Meist liegt es an zu wenig harten Sätzen, zu wenig Schlaf oder zu wenig Energie, nicht an der falschen Übung.
+
+- **Umfang:** Machst du unter 10 harten Sätzen pro Muskelgruppe und Woche? Steigere schrittweise. Über 18–20 Sätze brachte kaum noch etwas.
+- **Anstrengung:** Zu locker? Ziel sind 2–3 Wiederholungen Reserve. Bis zum Versagen musst du nicht, das brachte beim Muskelwachstum keinen Vorteil.
+- **Erholung:** Schläfst du unter 7 Stunden, sinkt die Leistung über Tage? Dann zuerst eine leichte Woche und mehr Schlaf.
+- **Essen:** Länger im Kaloriendefizit? Dann wachsen Muskeln schlechter, die Kraft litt in den Studien nicht.
+- **Abwechslung:** Variation brachte bei der Maximalkraft etwas, ist aber weniger wichtig als sauberes Steigern. Gib einem Plan mindestens 6 Wochen, bevor du alles änderst (Praxis).
+
+**Studienlage:** Umfang, Erholung und Energie sind gut belegt. Wie nah ans Versagen ideal ist, ist offen, ein Vorteil fürs Versagen ließ sich nicht zeigen.
+
+**Quellen:** [3], [11], [44], [59], [60], [64]
+
+### 15. Ich habe wenig Zeit: was ist das Minimum? {#wenigzeit}
+
+**Kurzantwort:** Zwei kurze Krafteinheiten pro Woche reichen für einen guten Anfang: je eine Übung für Beine, Zug und Druck. Pro Muskelgruppe sind mindestens 4 Sätze pro Woche ein sinnvolles Minimum.
+
+- **Das Minimum:** Die WHO empfiehlt Kraft an mindestens 2 Tagen. Der größte Vorteil lag bei 30–60 Minuten Krafttraining pro Woche.
+- **Welche Übungen:** Mehrgelenkübungen, die viele Muskeln auf einmal fordern: eine Beinübung (Kniebeuge), eine Zugübung (Klimmzug, Rudern), eine Druckübung (Liegestütz, Bankdrücken).
+- **Wie viel:** Mindestens 4 Sätze pro Muskelgruppe und Woche mit 6–15 Wiederholungen. Das Wochenvolumen zählt mehr als die Häufigkeit.
+- **Zeit sparen:** Supersätze (zwei Übungen im Wechsel ohne Pause) halbieren die Zeit bei gleichem Volumen. Sie wirken wahrscheinlich besser für den Muskelaufbau als für die Maximalkraft. Aufwärmen reicht mit der ersten Übung.
+- **Wenn du schon länger trainierst:** Nutze Supersätze und halte das Wochenvolumen, denn das Volumen zählt mehr als die Häufigkeit.
+
+**Studienlage:** Die Zahlen stammen aus einer Fachübersicht (Expertenzusammenfassung, kein direkter Studienvergleich). Die große Zusammenfassung von Studien der ACSM bestätigt, dass auch kleine Dosen spürbar Kraft und Muskeln bringen.
+
+**Quellen:** [3], [47], [71]
+
 ---
 
 ## D. Ernährung & Stoffwechsel
 
-### 17. Wie viele Kalorien verbrennt Krafttraining, und wie genau ist die Zahl in BLOC?
-
-**Kurzantwort:** Eine Krafteinheit verbrennt etwa so viel wie zügiges Gehen bis lockeres Laufen. Die Kalorienzahl in BLOC ist eine grobe Schätzung und kann im Einzelfall deutlich abweichen.
-
-- **So rechnet BLOC:** Mit festen Mittelwerten je Art der Einheit (für Katalog-Workouts etwa 4,5 MET, ein Maß für Anstrengung: Ruhen ist 1) und abzüglich dessen, was du ohnehin in Ruhe verbrauchen würdest.
-- **Vergleichswerte:** Moderates Krafttraining liegt in Tabellen bei etwa 3,5 MET, sehr hartes bei etwa 6.
-- **Muskeln und Verbrauch:** Auch in Ruhe verbrauchen Muskeln etwas Energie. Der Effekt von mehr Muskelmasse ist klein.
-- **Fürs Gewicht** zählt die Energiebilanz über Wochen, nicht die einzelne Einheit.
-
-**Studienlage:** Tabellenwerte sind Durchschnitte aus Messungen. Der Einfluss von Training auf den Verbrauch in Ruhe war in einer Zusammenfassung von Studien klein und uneinheitlich, der „Nachbrenneffekt“ ist unsicher.
-
-**Quellen:** [20], [21]
-
-### 18. Wie viel Eiweiß brauche ich? {#eiweiss}
+### 16. Wie viel Eiweiß brauche ich? {#eiweiss}
 
 **Kurzantwort:** Wer Krafttraining macht, kommt mit 1,4–2,0 g Eiweiß pro kg Körpergewicht und Tag gut aus, bei 70 kg sind das etwa 100–140 g. Zusätzliches Eiweiß bringt nur einen kleinen Bonus, der große Hebel ist das Training selbst.
 
 - **Wie viel:** Gesunde Erwachsene brauchen 0,83 g pro kg und Tag (bei 70 kg etwa 58 g). Mit Krafttraining sind es 1,4–2,0 g pro kg. Ab etwa 1,6 g pro kg wuchs die magere Körpermasse nicht weiter.
 - **Was Extra-Eiweiß bringt:** Wer zusätzlich Eiweiß aß, lag nach mehreren Wochen im Schnitt 0,3 kg vorn bei der mageren Körpermasse (alles außer Fett, vor allem Muskeln). Beim schwersten Gewicht, das man einmal heben kann, waren es 2,5 kg mehr, zum Beispiel 102,5 statt 100 kg. Ein kleiner Bonus.
-- **Wann mehr:** Ab 65 mindestens 1,0–1,2 g pro kg und Tag, mit Training eher mehr. Isst du über längere Zeit zu wenig Energie, wachsen Muskeln schlechter, die Kraft litt dabei nicht. Sehr gut Trainierte sollen in Diätphasen mehr essen (2,3–3,1 g pro kg), für Einsteiger ist das nicht belegt.
+- **Wann mehr:** Ab 65 mindestens 1,0–1,2 g pro kg und Tag, mit Training eher mehr. Isst du über längere Zeit zu wenig Energie, wachsen Muskeln schlechter, die Kraft litt dabei nicht.
 - **Verteilen:** Zum Beispiel 4 Mahlzeiten mit je etwa 0,4 g pro kg (bei 70 kg etwa 28 g). Das enge „Zeitfenster“ direkt nach dem Training ist nicht entscheidend, die Tagesmenge zählt.
 - **Nieren:** Bei Nierenerkrankung klärst du die Menge vorher ärztlich. Bei gesunden Nieren zeigten Studien keine schlechteren Nierenwerte.
+- **Wenn du schon länger trainierst:** In Diätphasen werden bei sehr gut Trainierten höhere Mengen genannt (2,3–3,1 g pro kg), um Muskeln zu halten. Für Einsteiger gilt das nicht.
 
-**Studienlage:** Die Studien stimmen darin überein, dass Zusatz-Eiweiß nur wenig bringt. Die Zahlen stammen meist von jungen, gesunden Menschen und sind Durchschnitte. Für Diätphasen und sehr hohe Mengen ist die Datenlage dünn.
+**Studienlage:** Die Studien stimmen darin überein, dass Zusatz-Eiweiß nur wenig bringt und dass die Tagesmenge mehr zählt als der Zeitpunkt. Die Zahlen stammen meist von jungen, gesunden Menschen und sind Durchschnitte.
 
-**Quellen:** [29], [30], [31], [32], [33], [34], [35], [59], [64]
+**Quellen:** [29], [30], [31], [32], [33], [34], [35], [64]
 
-### 19. Brauche ich Pulver, Riegel und Ähnliches?
+### 17. Brauche ich Pulver, Riegel und Ähnliches?
 
 **Kurzantwort:** Nein. Wer genug Eiweiß isst, braucht kein Pulver. Es ist ein bequemer Zusatz, wenn der Alltag es schwer macht. Dann achte auf Qualität.
 
@@ -284,19 +268,20 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Quellen:** [29], [31], [36]
 
-### 20. Was ist der glykämische Index, und spielt er im Sport eine Rolle?
+### 18. Was sagt mir der glykämische Index über mein Essen? {#gi}
 
-**Kurzantwort:** Der glykämische Index (GI) zeigt, wie schnell ein Lebensmittel den Blutzucker steigen lässt. Für Freizeitsport spielt er kaum eine Rolle. Die Gesamtmenge an Kohlenhydraten und ausgewogenes Essen zählen mehr.
+**Kurzantwort:** Der glykämische Index (GI) zeigt, wie schnell ein Lebensmittel mit Kohlenhydraten den Blutzucker steigen lässt. Im normalen Training spielt er kaum eine Rolle. Nützlich kann er sein, wenn zwischen zwei harten Einheiten nur wenige Stunden liegen. Eine Ernährungsvorschrift ergibt sich daraus nicht.
 
-- **Einteilung:** niedrig bis 55, mittel 56–69, hoch ab 70.
-- **Schwankt:** Zubereitung, Reifegrad und das restliche Essen verändern den Wert, auch von Person zu Person.
-- **Im Sport:** Wer sehr hart und mit nur wenigen Stunden Pause erneut trainiert, kann mit schnellen Kohlenhydraten die Speicher schneller füllen. Sonst zählt die Gesamtmenge.
+- **So liest du ihn:** niedrig bis 55, mittel 56–69, hoch ab 70. Zubereitung, Reifegrad und das restliche Essen verändern den Wert, auch von Person zu Person.
+- **Kurze Pause zwischen zwei harten Einheiten (unter 4 Stunden):** Fachgesellschaften empfehlen dann viel Kohlenhydrate (etwa 1,2 g pro kg und Stunde), bevorzugt mit hohem GI, damit die Speicher schnell auffüllen. Das ist Leistungssport-Niveau.
+- **Vor langen Einheiten:** Wer 30–45 Minuten vor 2 bis 2,5 Stunden Belastung Kohlenhydrate mit hohem oder niedrigem GI aß, brachte ähnliche Leistung. Auf den GI kommt es dabei also nicht an.
+- **Im normalen Training:** Mit Ruhetagen dazwischen zählen die Gesamtmenge an Kohlenhydraten und ausgewogenes Essen mehr.
 
-**Studienlage:** Es gibt Hinweise für Leistungssport in engen Wettkampfphasen, kaum für Freizeitsport. Der praktische Nutzen des GI ist umstritten.
+**Studienlage:** Die Empfehlungen stammen aus Positionspapieren für Leistungssport. Wie viel der GI im Alltag aussagt, ist umstritten, weil er so stark schwankt.
 
-**Quellen:** [22], [23], [24]
+**Quellen:** [22], [23], [24], [72]
 
-### 21. Was macht Alkohol mit dem Trainingsfortschritt?
+### 19. Was macht Alkohol mit dem Trainingsfortschritt?
 
 **Kurzantwort:** In Studien bremste viel Alkohol nach dem Training Erholung und Muskelaufbau. Für kleine Mengen ist die Lage dünn. Wer Fortschritte will, lässt Alkohol rund ums Training am besten weg.
 
@@ -308,11 +293,24 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Quellen:** [25], [26], [27], [28]
 
+### 20. Wie viele Kalorien verbrennt Krafttraining, und wie genau ist die Zahl in BLOC?
+
+**Kurzantwort:** Eine Krafteinheit verbrennt etwa so viel wie zügiges Gehen bis lockeres Laufen. Die Kalorienzahl in BLOC ist eine grobe Schätzung und kann im Einzelfall deutlich abweichen.
+
+- **So rechnet BLOC:** Mit festen Mittelwerten je Art der Einheit (für Katalog-Workouts etwa 4,5 MET, ein Maß für Anstrengung: Ruhen ist 1) und abzüglich dessen, was du ohnehin in Ruhe verbrauchen würdest.
+- **Vergleichswerte:** Moderates Krafttraining liegt in Tabellen bei etwa 3,5 MET, sehr hartes bei etwa 6.
+- **Muskeln und Verbrauch:** Auch in Ruhe verbrauchen Muskeln etwas Energie. Der Effekt von mehr Muskelmasse ist klein.
+- **Fürs Gewicht** zählt die Energiebilanz über Wochen, nicht die einzelne Einheit.
+
+**Studienlage:** Tabellenwerte sind Durchschnitte aus Messungen. Der Einfluss von Training auf den Verbrauch in Ruhe war in einer Zusammenfassung von Studien klein und uneinheitlich, der „Nachbrenneffekt“ ist unsicher.
+
+**Quellen:** [20], [21]
+
 ---
 
 ## E. Sicherheit
 
-### 22. Worauf muss ich achten, damit nichts passiert? {#sicherheit}
+### 21. Worauf muss ich achten, damit nichts passiert? {#sicherheit}
 
 **Kurzantwort:** Vier Regeln: aufwärmen, langsam steigern, Pausen einhalten, auf Warnzeichen hören. Bei Brustschmerz, ungewöhnlicher Atemnot oder Schwindel hörst du sofort auf und klärst es ärztlich.
 
@@ -326,7 +324,7 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Quellen:** [3], [4], [5], [62]
 
-### 23. Wie beuge ich Verletzungen vor?
+### 22. Wie beuge ich Verletzungen vor?
 
 **Kurzantwort:** Krafttraining war in den Studien die wirksamste Vorbeugung: Es senkte Sportverletzungen um etwa zwei Drittel. Dehnen allein brachte nichts. Dazu gehören saubere Technik, langsames Steigern und genug Erholung.
 
@@ -341,38 +339,9 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 ---
 
-## F. Plan & Fortgeschrittene
+## F. Allgemeines
 
-### 24. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach? {#plan}
-
-**Kurzantwort:** Mindestens 2 Krafttage pro Woche mit allen großen Muskelgruppen, den Reiz langsam steigern und Erholung einplanen. Ein Block dauert in der Praxis 4–8 Wochen. Danach folgt eine leichte Woche und ein neuer Block mit leicht veränderten Übungen.
-
-- **Wochenstruktur:** 2–3 Ganzkörpertage oder eine Aufteilung (Oberkörper/Unterkörper oder Druck/Zug/Beine). Welche besser ist, ist nicht belegt, nimm die, die in deinen Alltag passt. Ausdauer (Laufen, Summit) ergänzt das.
-- **Umfang:** 10 oder mehr Sätze pro Muskelgruppe und Woche für Muskelaufbau, 2–3 Sätze pro Übung für Kraft. Auch kleine Mengen wirken.
-- **Steigern:** mehr Wiederholungen, mehr Sätze, mehr Gewicht oder die schwerere Variante („Leichter / Schwerer“). Hart, aber nicht bis zum Versagen.
-- **Blocklänge und danach (Praxis):** 4–8 Wochen sind üblich, eine feste Studienzahl gibt es nicht. Danach Struktur behalten und weiter steigern, einzelne Übungen durch Varianten ersetzen, eine leichte Woche einlegen und prüfen, was gut lief.
-- **In BLOC:** Die Plan-Seite im Reiter „Körper“ verweist auf diese Antwort.
-
-**Studienlage:** Gut abgesichert sind Mindesthäufigkeit, genug Sätze, Steigerung und Sicherheit. Offen sind die ideale Blocklänge und die beste Wochenaufteilung. Die ausgewerteten Studien dauerten mindestens 6 Wochen.
-
-**Quellen:** [1], [3], [44], [45], [46]
-
-### 25. Ich trainiere schon 4–6 Mal pro Woche: was ändere ich? {#fortgeschritten}
-
-**Kurzantwort:** Mehr Einheiten brauchen mehr Struktur, nicht mehr Härte. Verteile 10–20 Sätze pro Muskelgruppe und Woche auf 2–3 Einheiten und plane alle 4–8 Wochen eine leichte Woche ein.
-
-- **Umfang:** 10 oder mehr Sätze pro Muskelgruppe und Woche für Muskelaufbau. Der Zusatznutzen flacht ab etwa 18–20 Sätzen deutlich ab.
-- **Häufigkeit:** Für Kraft hilft es, eine Muskelgruppe mindestens 2× pro Woche zu trainieren. Für Muskelwachstum spielte es bei gleicher Satzzahl kaum eine Rolle.
-- **Abwechslung (Periodisierung):** Wer Gewicht und Satzzahl planmäßig wechselt (mal schwer, mal leicht), steigerte die Maximalkraft etwas mehr als bei gleichbleibendem Plan. Bei guter Steigerung war das kein klarer Vorteil.
-- **Leichte Woche (Deload):** Trainerinnen und Trainer empfehlen sie zur Erholung. So geht sie (Praxis): gleiche Übungen, etwa halbe Sätze, Gewicht etwas runter, nichts bis ans Limit. Danach mit etwas mehr Reiz als vorher weitermachen.
-- **Ausdauer dazu:** Zusätzliches Ausdauertraining bremste Muskelwachstum und Maximalkraft nicht, die Schnellkraft aber etwas, vor allem bei beidem in einer Einheit. Trenne beides um mindestens 3 Stunden, wenn möglich.
-- **Essen:** Wer viel trainiert, muss genug essen (siehe „Wie viel Eiweiß brauche ich?“).
-
-**Studienlage:** Umfang und Verteilung sind gut belegt. Die ideale Obergrenze für einzelne Menschen ist offen, die Werte sind Durchschnitte aus Studien, die meist mit Einsteigern gemacht wurden. Für die leichte Woche gibt es Expertenmeinung, aber keinen Wirksamkeitsbeleg.
-
-**Quellen:** [3], [6], [8], [44], [45], [46]
-
-### 26. Gibt es Unterschiede zwischen Frauen und Männern beim Training?
+### 23. Gibt es Unterschiede zwischen Frauen und Männern beim Training?
 
 **Kurzantwort:** Frauen und Männer können nach denselben Regeln trainieren. Männer haben im Schnitt mehr Muskelmasse, aber beim Muskelwachstum reagieren beide ähnlich. Ein belegter Grund für getrennte Programme fehlt.
 
@@ -392,18 +361,20 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 ## A. Getting started
 
-### 1. What does endurance training do, what does strength training do?
+### 1. What does training actually give you? {#nutzen}
 
-**Short answer:** Endurance makes your heart and lungs more capable. Strength builds muscle and keeps you stable in daily life. Best of all is both: 2 strength days a week plus 150–300 minutes of endurance.
+**Short answer:** You become more capable and stable, and in studies regular activity went with better health. Recommendation: 2 strength days a week plus 150–300 minutes of endurance.
 
-- **Endurance:** You get out of breath later. Even a little activity went with one fifth less risk of death than none at all. Runners were about a quarter lower than non-runners, even at one session a week.
-- **Strength:** You get stronger, walk faster and get up from a chair more easily. People who do strength training have 10–17 % less cardiovascular disease, cancer and diabetes than people who don't. The biggest benefit was at 30–60 minutes a week.
-- **Both together:** People who combine strength and endurance have a lower risk than people who do neither. Endurance does not take your muscle away.
+- **Performance:** With endurance you get out of breath later. With strength you get stronger, walk faster and get up from a chair more easily. Strong muscles keep trunk and joints stable and give bones a stimulus.
+- **Health (association):** People who move a little had one fifth less risk of death in studies than people who don't move at all, and runners about a quarter less than non-runners. People who did strength training had 10–17 % less cardiovascular disease, cancer and diabetes. Mood, sleep, bones and fall risk are also linked with activity in studies. This is an association, not proof and not protection.
+- **Both together:** People who combine strength and endurance do better than people who do only one. Endurance does not take your muscle away.
 - **In BLOC:** Outdoor and fitness train strength, running trains endurance, Summit does both in short, hard intervals.
+- **If you have been training for a while:** The benefit rises only flatly with more training: beyond three to five times the recommendation little was added, and the biggest advantage for strength training was at 30–60 minutes a week.
+- **With symptoms or illness,** agree training with your doctor first.
 
-**Evidence:** These are hints from observations of large groups, not proof. WHO recommends strength and endurance together.
+**Evidence:** WHO recommends strength and endurance together. The health numbers come from observations of large groups. People who move may be healthier in other ways too, so they show an association and not a cause.
 
-**Sources:** [1], [2], [3], [19], [46], [47], [48]
+**Sources:** [1], [2], [3], [19], [47], [48], [52], [53], [54], [56]
 
 ### 2. How do I start, and what does my first workout look like?
 
@@ -425,9 +396,9 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **An example:** squat, row, push-up, overhead press, biceps curl and triceps, plank at the end.
 - **Your goal first:** If you want better push-ups, do chest before legs. What comes first gets the most strength.
 - **Why this way:** You are fresh at the start, and big exercises cost the most energy. The trunk stabilises during squats and rows, so it comes last (practice).
-- **Push and pull in turn,** for example row after push-up: That way the same muscle doesn't tire twice in a row (practice).
+- **Push and pull:** Push means pressing away (push-up, overhead press: chest, front of the shoulder, triceps), pull means pulling towards you (row, pull-up: back, rear of the shoulder, biceps). Plan about as many of each and alternate them, so the same muscle doesn't tire twice in a row (practice).
 
-**Evidence:** Studies show that the first exercise of the session gains the most strength. The ranking itself is proven practice, not tested.
+**Evidence:** Studies show that the first exercise of the session gains the most strength. The ranking and the split into push and pull are proven practice or expert opinion, not tested.
 
 **Sources:** [3], [4]
 
@@ -436,15 +407,16 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 **Short answer:** 2–3 sets of 6–12 reps per exercise. Rest 1–2 minutes on light and up to 3 minutes on heavy exercises. The last set may be hard; technique stays clean.
 
 - **Sets:** 2 sets beat 1. For muscle building, 10 or more hard sets per muscle group per week count in the end.
-- **Reps:** Few reps with heavy weight make you strongest. For muscle building, light and heavy both work as long as the set is demanding.
+- **Reps by goal:** Getting stronger: heavy weight, few reps (roughly from 80 % of what you can lift exactly once). Building muscle: light or heavy, as long as the set is demanding. Lasting longer (strength endurance): light weight, many reps, classically about 15 and more.
 - **Rest:** Up to 3 minutes on heavy exercises so you recover and technique stays clean. Shorter is enough on light ones (practice).
 - **Timed exercises (plank, timer):** The time is set. Rest until you can start cleanly again.
+- **If you have been training for a while:** Plan 2–3 reps in reserve, use heavy weights with 2–3 sets per exercise for maximal strength, and 10–20 sets per muscle group per week for muscle building.
 
-**Evidence:** That more sets and heavier weights work is well established. For rest length the studies disagree.
+**Evidence:** That more sets and heavier weights work is well established. For rest length the studies disagree. Fixed rep zones for lasting longer come from older recommendations.
 
-**Sources:** [3], [6], [7], [9], [10]
+**Sources:** [3], [4], [6], [7], [9], [10]
 
-### 5. How much rest do I need, and may I train every day?
+### 5. How much rest do I need, and may I train every day? {#pause}
 
 **Short answer:** Give the same muscles 1–2 days between hard sessions. Moving easily every day is good; hitting the same muscles hard every day brings nothing. Recommendation: at most 2–3 hard strength days per muscle group a week, and in between walking, easy endurance or mobility.
 
@@ -453,6 +425,7 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **Easy every day is good:** More activity went with fewer deaths, and even at ten times the minimum recommendation no harm showed up.
 - **You can tell it's too much when:** performance falls over days despite rest, you are constantly tired, sleep badly, feel irritable. Then halve the volume and sleep more (practice). If it lasts for weeks, it is called overtraining. That can only be diagnosed once other causes such as infection or too little food are ruled out.
 - **Sleep:** People who sleep under 7 hours a night get respiratory infections more often. There is no fixed number for everyone; go by your own needs.
+- **If you have been training for a while:** Plan an easy week every 4–8 weeks (see "I already train 4–6 times a week: what do I change?").
 
 **Evidence:** That recovery is needed is certain. The exact number of days cannot be derived from studies; "1–2 days" is experience. Overtraining is described as expert opinion.
 
@@ -460,91 +433,9 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 ---
 
-## B. What training gives you
+## B. Technique & understanding training
 
-### 6. What do studies show about training and the heart?
-
-**Short answer:** People who move more have less cardiovascular disease. That is an association, not a guarantee. For heart rhythm: moderate amounts of activity went with less atrial fibrillation (irregular heartbeat), extreme amounts no longer did.
-
-- **Heart and circulation:** More activity went with fewer deaths from cardiovascular disease and cancer. People who did strength training had 10–17 % less cardiovascular disease.
-- **Blood pressure and resting heart rate:** Both fell in overweight people after at least 12 weeks of interval training.
-- **Atrial fibrillation:** People who reached the recommendation had about 6 % lower risk. The benefit reached up to roughly 5–8 hours of brisk training a week.
-- **Important:** Racing heart, fluttering, chest pain, dizziness or fainting during training: stop and get checked.
-
-**Evidence:** These are hints from observations of large groups, not proof. For heart rhythm the association is J-shaped: little to moderate helps, with very high amounts the picture is unclear.
-
-**Sources:** [18], [47], [48], [49], [50], [62]
-
-### 7. What do studies show about training and type 2 diabetes?
-
-**Short answer:** Active people get type 2 diabetes less often: those who were very active had about a third fewer cases than those who were little active. Even small amounts showed a benefit.
-
-- **Activity:** People who did a lot had about 35 % less risk than people who did little. Even walking alone went with about 15 % less risk.
-- **Strength training:** Diabetes risk was lower in people who did strength training. The biggest advantage came at up to about 60 minutes a week.
-- **Blood sugar:** In overweight people, short-term interval training lowered fasting blood sugar slightly.
-- **Important:** With existing diabetes, especially on medication, agree training with your doctor because of possible low blood sugar.
-
-**Evidence:** These are hints from observations of large groups, not proof. Part of the effect probably runs through less body fat. Training does not replace treatment.
-
-**Sources:** [18], [47], [51]
-
-### 8. Bones, back, joints, falls: what do studies show?
-
-**Short answer:** Strong muscles stabilise trunk and joints and give bones a stimulus. In studies, training went with less back and knee pain, the fall rate in people aged 60 and over fell by almost a quarter, and bone density rose slightly after menopause.
-
-- **Back:** With chronic back pain, pain fell by about 15 points on a scale of 0 to 100 with exercise, compared with doing nothing. Core exercises such as plank and bridge helped more than general exercise in the short term; after 6 months the advantage was gone.
-- **Joints:** With knee osteoarthritis, pain was about 12 points lower with exercise (scale 0 to 100), and everyday movements were easier.
-- **Falls:** Programmes for balance, walking and muscle strength cut the fall rate by 23 %. 15 % fewer people fell at all.
-- **Bones:** In women after menopause, bone density at the lumbar spine and hip rose slightly; the spread was large.
-- **In practice:** Plank, side plank, bridge, squat, row and single-leg stand train trunk, legs and balance.
-
-**Evidence:** For falls and osteoarthritis pain the picture is very certain. For the back it is moderately certain, and the advantage of core exercises comes from only 5 small studies. For bones the effect is small, shown mainly for women after menopause. With acute, severe or radiating symptoms, get checked first.
-
-**Sources:** [3], [52], [53], [65], [66], [67]
-
-### 9. Training, mood and sleep: what do studies show?
-
-**Short answer:** In studies, exercise went with better mood and better sleep. It eased depression, anxiety and stress with a medium effect, and strength training also lowered depressive symptoms.
-
-- **Mood:** Exercise eased depression, anxiety and stress. Higher-intensity training brought more.
-- **Strength training:** It lowered depressive symptoms with a medium-sized effect, in healthy and ill people.
-- **Sleep:** Regular training mainly improved sleep quality and the time to fall asleep, sleep duration only slightly.
-- **Get help:** If your mood stays low, seek medical or psychological help. Training adds to treatment, it doesn't replace it.
-
-**Evidence:** Many studies show this, but most summaries of studies have only low methodological quality. With very long programmes the effect got smaller.
-
-**Sources:** [54], [55], [56]
-
-### 10. What do intervals (Summit) do?
-
-**Short answer:** Short, hard intervals make you at least as fit as steady training. On average they were even slightly ahead.
-
-- **Fitness:** Both types of training raised maximal oxygen uptake (a measure of how much oxygen your body uses at full effort) clearly. Intervals were only slightly ahead.
-- **Heart and metabolism:** In overweight people, resting heart rate, blood pressure, waist circumference and body fat fell after at least 12 weeks of interval training.
-- **Getting started:** Start with short intervals and long rests. With cardiovascular disease, see a doctor first.
-
-**Evidence:** The better endurance is certain. There was no effect on blood fats and insulin. What intervals do for health in the long run is open; many studies are small and short.
-
-**Sources:** [18], [63]
-
-### 11. What do stretching and mobility do?
-
-**Short answer:** Stretching makes you more flexible, but it doesn't reliably protect against injury and doesn't ease sore muscles. Before training, a dynamic warm-up is better, because holding a stretch for over 60 seconds makes you slightly weaker right afterwards.
-
-- **Flexibility:** All kinds of stretching improve it, but usually for less than 30 minutes.
-- **Before training:** People who stretched each muscle for 60 seconds or longer were slightly weaker afterwards (4.6 % less performance on average). With shorter stretching it was 1.1 %. Dynamic stretching (swinging, circling) raised performance slightly.
-- **Afterwards:** Compared with resting, there was neither less soreness nor better recovery.
-- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see "How do I prevent injuries?").
-
-**Evidence:** That stretching makes you more flexible for a short time is certain. The studies could not show protection from injury. For recovery they are small and of low quality. What regular stretching does in the long run was not analysed here.
-
-**Sources:** [57], [58], [61]
-
----
-
-## C. Muscles & technique
-
-### 12. How do muscles grow, and which stimuli do I need?
+### 6. How do muscles grow, and which stimuli do I need? {#muskelwachstum}
 
 **Short answer:** Muscles grow from many hard sets, regularly, over weeks. Aim for 10 or more sets per muscle group per week, each hard enough that you'd have 2–3 reps left.
 
@@ -552,38 +443,26 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **Amount:** 10 or more sets per muscle group per week. Beyond about 18–20 sets the extra benefit shrank clearly.
 - **Effort:** You don't need to go to total failure. 2–3 reps in reserve is a good rule of thumb.
 - **Frequency and load:** Whether once or more often a week made little difference at equal sets. Light and heavy weights both build muscle.
-- **Progress:** Over weeks, more reps, sets or weight. Visible changes take weeks to months.
+- **If you have been training for a while:** Training to failure brought no advantage for muscle growth over sets with reserve. More sets help more than more hardness.
 
 **Evidence:** That enough sets and regularity make muscles grow is well established. Open are the exact reserve, the ideal rep count and why people respond so differently. "8–12" is a convention, not a law of nature.
 
 **Sources:** [3], [6], [7], [8], [11], [12], [15]
 
-### 13. Build muscle, get stronger or last longer: how do I train for it?
+### 7. What are fast and slow muscle fibres, and what does that mean for my training? {#fasern}
 
-**Short answer:** Three goals, one tool: build muscle (many sets), get as strong as possible (heavy weight, few reps) or last long (light weight, many reps). Beginners do well with 8–12 reps.
+**Short answer:** Muscles consist of slow fibres (type I) that last long, and fast fibres (type II) that deliver a lot of force but tire sooner. The mix is inborn; training shifts it only to a limited extent. For you that means: you don't have to commit to one type.
 
-- **Getting stronger (maximal strength):** Heavy weight, roughly from 80 % of what you can lift exactly once. Plus 2–3 sets per exercise and long rests.
-- **Building muscle (hypertrophy):** 10 or more sets per muscle group per week. The weight matters less here.
-- **Lasting longer (strength endurance):** Lighter weight, many reps (classically about 15 and more), short rests.
-- **In BLOC:** Long holds and many reps train lasting longer, hard variations train strength.
+- **Slow fibres (type I):** They work in running, walking and holding. They tire slowly.
+- **Fast fibres (type II):** They kick in with heavy weight, sprints and jumps. They are powerful but tire sooner.
+- **For training:** Heavy weight and jumps mainly demand the fast fibres, long steady effort mainly the slow ones (textbook knowledge). Whoever trains strength and endurance trains both types.
+- **Light weight works too:** Lighter weights built muscle about as well as heavy ones in studies, if the set was demanding.
 
-**Evidence:** That heavy weight gives more maximal strength and more sets give more muscle is well established. For lasting longer there are no fixed zones from studies; the numbers come from older recommendations.
+**Evidence:** The structure is established textbook knowledge. How much training can shift the mix is open. Studies describe differences between people.
 
-**Sources:** [3], [4], [7]
+**Sources:** [7], [15], [41]
 
-### 14. Push and pull: what is that?
-
-**Short answer:** Push means pressing away (push-up), pull means pulling towards you (row, pull-up). Plan about as many pushing as pulling sets, plus legs and core.
-
-- **Push:** chest, front of the shoulder, triceps.
-- **Pull:** back, rear of the shoulder, biceps.
-- **In practice:** Many find pushing easier; pulling is often missing, for example without a pull-up bar. Rows with a band even it out.
-
-**Evidence:** The split is a practical way of ordering training; the authors of the ACSM statement consider upper/lower body × push/pull enough. That is expert opinion and not tested. That imbalances cause injuries is not well supported.
-
-**Sources:** [3]
-
-### 15. Pressing the weight away and lowering it again: what should I watch for?
+### 8. Pressing the weight away and lowering it again: what should I watch for? {#tempo}
 
 **Short answer:** Press the weight up briskly but under control, lower it over 2–3 seconds, use the full range of motion and never hold your breath for long. Lowering is not a by-product: it trains too, and control is what counts there.
 
@@ -592,12 +471,13 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 - **Full range:** A full range of motion raised strength more than a shortened one, as long as technique stays clean.
 - **Breathing:** Breathe out as you press, in as you lower (practice). With very heavy weight (over 80 % of maximum) or sets to failure a brief Valsalva is hard to avoid: holding your breath and pressing against the belly. It stiffens the trunk but pushes blood pressure up. If you have heart or circulation problems or high blood pressure, clarify this with a doctor first.
 - **Safety (practice):** wrists straight, shoulder blades steady, body in one line in the push-up. With heavy weight over chest or face, use a spotter or the safety catches.
+- **If you have been training for a while:** Emphasised lowering (the eccentric phase) is a lever when you stall: training with an emphasised lowering phase built more muscle than lifting alone.
 
 **Evidence:** Studies show the similar growth at 0.5–8 seconds, the advantage of the full range and the benefit of lowering slowly. Whether the Valsalva is risky is neither confirmed nor ruled out. The breathing and safety rules are practice.
 
 **Sources:** [3], [68], [69], [70]
 
-### 16. What do resistance bands do?
+### 9. What do resistance bands do?
 
 **Short answer:** A band is a gym for your pocket: it demonstrably improves strength and muscle, and strength gains were similar to those with weights.
 
@@ -610,38 +490,111 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Sources:** [3], [14]
 
+### 10. What do stretching and mobility do?
+
+**Short answer:** Stretching makes you more flexible, but it doesn't reliably protect against injury and doesn't ease sore muscles. Before training, a dynamic warm-up is better, because holding a stretch for over 60 seconds makes you slightly weaker right afterwards.
+
+- **Flexibility:** All kinds of stretching improve it, but usually for less than 30 minutes.
+- **Before training:** People who stretched each muscle for 60 seconds or longer were slightly weaker afterwards (4.6 % less performance on average). With shorter stretching it was 1.1 %. Dynamic stretching (swinging, circling) raised performance slightly.
+- **Afterwards:** Compared with resting, there was neither less soreness nor better recovery.
+- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see "How do I prevent injuries?").
+
+**Evidence:** That stretching makes you more flexible for a short time is certain. The studies could not show protection from injury. For recovery they are small and of low quality. What regular stretching does in the long run was not analysed here.
+
+**Sources:** [57], [58], [61]
+
+### 11. What do intervals (Summit) do?
+
+**Short answer:** Short, hard intervals make you at least as fit as steady training. On average they were even slightly ahead.
+
+- **Fitness:** Both types of training raised maximal oxygen uptake (a measure of how much oxygen your body uses at full effort) clearly. Intervals were only slightly ahead.
+- **Heart and metabolism:** In overweight people, resting heart rate, blood pressure, waist circumference and body fat fell after at least 12 weeks of interval training.
+- **Getting started:** Start with short intervals and long rests. With cardiovascular disease, see a doctor first.
+
+**Evidence:** The better endurance is certain. There was no effect on blood fats and insulin. What intervals do for health in the long run is open; many studies are small and short.
+
+**Sources:** [18], [63]
+
+---
+
+## C. Plan & advanced
+
+### 12. How do I build a training plan, how long does a block run, and what comes next? {#plan}
+
+**Short answer:** At least 2 strength days a week covering all major muscle groups, raise the stimulus slowly and plan recovery. In practice a block runs 4–8 weeks. Then comes an easy week and a new block with slightly changed exercises.
+
+- **Weekly structure:** 2–3 whole-body days or a split (upper/lower or push/pull/legs). Which is better is not established; take the one that fits your life. Endurance (running, Summit) adds to it.
+- **Volume:** 10 or more sets per muscle group per week for muscle building, 2–3 sets per exercise for strength. Small amounts work too.
+- **Progress:** more reps, more sets, more weight or the harder variation ("easier / harder"). Hard, but not to failure.
+- **Block length and afterwards (practice):** 4–8 weeks are common; there is no fixed number from studies. Afterwards keep the structure and keep progressing, swap some exercises for variations, add an easy week and review what went well.
+- **In BLOC:** The plan page under the "Body" tab points to this answer.
+
+**Evidence:** Well supported are the minimum frequency, enough sets, progression and safety. Open are the ideal block length and the best weekly split. The analysed studies lasted at least 6 weeks.
+
+**Sources:** [1], [3], [44], [45], [46]
+
+### 13. I already train 4–6 times a week: what do I change? {#fortgeschritten}
+
+**Short answer:** More sessions need more structure, not more hardness. Spread 10–20 sets per muscle group per week over 2–3 sessions and plan an easy week every 4–8 weeks.
+
+- **Volume:** 10 or more sets per muscle group per week for muscle building. The extra benefit flattens clearly from about 18–20 sets.
+- **Frequency:** For strength it helps to train a muscle group at least twice a week. For muscle growth it made little difference at equal sets.
+- **Variation (periodisation):** People who changed weight and sets on a plan (sometimes heavy, sometimes light) improved maximal strength somewhat more than with an unchanged plan. With good progression it was not a clear advantage.
+- **Easy week (deload):** Coaches recommend it for recovery. How it works (practice): same exercises, about half the sets, weight a little lower, nothing to the limit. Afterwards continue with a little more stimulus than before.
+- **Strength and endurance at the same time:** Additional endurance training did not hold back muscle growth or maximal strength, but explosive strength somewhat, mainly with both in one session. Separate them by at least 3 hours if you can.
+
+**Evidence:** Volume and distribution are well established. The ideal ceiling for individuals is open; the values are averages from studies mostly done with beginners. For the easy week there is expert opinion but no proof of effectiveness.
+
+**Sources:** [3], [6], [8], [44], [45], [46]
+
+### 14. My training has stalled: what do I check first? {#plateau}
+
+**Short answer:** Check volume, effort, recovery and food, in that order. Usually the cause is too few hard sets, too little sleep or too little energy, not the wrong exercise.
+
+- **Volume:** Do you do fewer than 10 hard sets per muscle group per week? Raise it step by step. Beyond 18–20 sets little more came of it.
+- **Effort:** Too easy? Aim for 2–3 reps in reserve. You don't need to go to failure; that brought no advantage for muscle growth.
+- **Recovery:** Do you sleep under 7 hours, is performance falling over days? Then first an easy week and more sleep.
+- **Food:** In a calorie deficit for a long time? Then muscle grows worse, while strength did not suffer in the studies.
+- **Variation:** Variation added something for maximal strength, but matters less than clean progression. Give a plan at least 6 weeks before you change everything (practice).
+
+**Evidence:** Volume, recovery and energy are well established. How close to failure is ideal is open; an advantage for failure could not be shown.
+
+**Sources:** [3], [11], [44], [59], [60], [64]
+
+### 15. I have little time: what is the minimum? {#wenigzeit}
+
+**Short answer:** Two short strength sessions a week are enough for a good start: one exercise each for legs, pull and push. At least 4 sets per week per muscle group is a sensible minimum.
+
+- **The minimum:** WHO recommends strength on at least 2 days. The biggest advantage was at 30–60 minutes of strength training a week.
+- **Which exercises:** Multi-joint exercises that demand many muscles at once: one leg exercise (squat), one pull (pull-up, row), one push (push-up, bench press).
+- **How much:** At least 4 sets per muscle group per week with 6–15 reps. Weekly volume matters more than frequency.
+- **Saving time:** Supersets (two exercises in turn without rest) halve the time at the same volume. They probably work better for muscle building than for maximal strength. Warming up with the first exercise is enough.
+- **If you have been training for a while:** Use supersets and keep your weekly volume; volume matters more than frequency.
+
+**Evidence:** The numbers come from an expert review (a summary by specialists, not a direct comparison of studies). The large ACSM summary of studies confirms that even small doses give noticeable strength and muscle.
+
+**Sources:** [3], [47], [71]
+
 ---
 
 ## D. Nutrition & metabolism
 
-### 17. How many calories does strength training burn, and how accurate is the number in BLOC?
-
-**Short answer:** A strength session burns about as much as brisk walking up to easy running. The calorie number in BLOC is a rough estimate and can be well off in individual cases.
-
-- **How BLOC calculates:** With fixed average values per type of session (about 4.5 MET for catalogue workouts, a measure of effort: resting is 1) and minus what you would use at rest anyway.
-- **Comparison values:** Moderate strength training is about 3.5 MET in tables, very hard about 6.
-- **Muscle and energy use:** Muscle also uses some energy at rest. The effect of extra muscle mass is small.
-- **For weight** the energy balance over weeks counts, not the single session.
-
-**Evidence:** Table values are averages from measurements. The influence of training on energy use at rest was small and inconsistent in a summary of studies; the "afterburn effect" is uncertain.
-
-**Sources:** [20], [21]
-
-### 18. How much protein do I need?
+### 16. How much protein do I need? {#eiweiss}
 
 **Short answer:** If you strength-train, 1.4–2.0 g protein per kg body weight per day is plenty, about 100–140 g at 70 kg. Extra protein brings only a small bonus; the big lever is the training itself.
 
 - **How much:** Healthy adults need 0.83 g per kg per day (about 58 g at 70 kg). With strength training it is 1.4–2.0 g per kg. Above about 1.6 g per kg, lean body mass stopped growing further.
 - **What extra protein brings:** People who ate extra protein were on average 0.3 kg ahead in lean body mass after several weeks (everything except fat, mostly muscle). In the heaviest weight they could lift once, they were 2.5 kg ahead, for example 102.5 instead of 100 kg. A small bonus.
-- **When more:** From 65, at least 1.0–1.2 g per kg per day, with training rather more. If you eat too little energy for a long time, muscle grows worse, while strength did not suffer. Very well-trained people are told to eat more in dieting phases (2.3–3.1 g per kg); for beginners that is not established.
+- **When more:** From 65, at least 1.0–1.2 g per kg per day, with training rather more. If you eat too little energy for a long time, muscle grows worse, while strength did not suffer.
 - **Spread it out:** For example 4 meals of about 0.4 g per kg each (about 28 g at 70 kg). The narrow "window" right after training is not decisive; the daily total counts.
 - **Kidneys:** With kidney disease, clarify the amount with a doctor first. With healthy kidneys, studies showed no worse kidney values.
+- **If you have been training for a while:** In dieting phases, very well-trained people are given higher amounts (2.3–3.1 g per kg) to keep muscle. That does not apply to beginners.
 
-**Evidence:** The studies agree that extra protein brings only a little. The numbers come mostly from young, healthy people and are averages. For dieting phases and very high amounts the data are thin.
+**Evidence:** The studies agree that extra protein brings only a little and that the daily total matters more than timing. The numbers come mostly from young, healthy people and are averages.
 
-**Sources:** [29], [30], [31], [32], [33], [34], [35], [59], [64]
+**Sources:** [29], [30], [31], [32], [33], [34], [35], [64]
 
-### 19. Do I need powder, bars and the like?
+### 17. Do I need powder, bars and the like?
 
 **Short answer:** No. If you eat enough protein, you don't need powder. It is a convenient extra when daily life makes it hard. Then pay attention to quality.
 
@@ -654,19 +607,20 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Sources:** [29], [31], [36]
 
-### 20. What is the glycaemic index, and does it matter in sport?
+### 18. What does the glycaemic index tell me about my food? {#gi}
 
-**Short answer:** The glycaemic index (GI) shows how fast a food raises blood sugar. For recreational sport it hardly matters. Total carbohydrate amount and balanced eating count more.
+**Short answer:** The glycaemic index (GI) shows how fast a carbohydrate food raises blood sugar. In normal training it hardly matters. It can be useful when only a few hours lie between two hard sessions. No eating rule follows from it.
 
-- **Categories:** low up to 55, medium 56–69, high from 70.
-- **It varies:** Preparation, ripeness and the rest of the meal change the value, also between people.
-- **In sport:** Training very hard with only a few hours between sessions, fast carbohydrates can refill stores quicker. Otherwise the total amount counts.
+- **How to read it:** low up to 55, medium 56–69, high from 70. Preparation, ripeness and the rest of the meal change the value, also between people.
+- **Short break between two hard sessions (under 4 hours):** Professional bodies then recommend plenty of carbohydrate (about 1.2 g per kg per hour), preferably with high GI, so stores refill quickly. That is elite-sport level.
+- **Before long sessions:** People who ate carbohydrate with high or low GI 30–45 minutes before 2 to 2.5 hours of effort performed similarly. So the GI did not matter there.
+- **In normal training:** With rest days in between, the total amount of carbohydrate and balanced eating count more.
 
-**Evidence:** There are hints for elite sport in tight competition periods, hardly any for recreational sport. The practical value of the GI is disputed.
+**Evidence:** The recommendations come from position papers for elite sport. How much the GI says in everyday life is disputed, because it varies so much.
 
-**Sources:** [22], [23], [24]
+**Sources:** [22], [23], [24], [72]
 
-### 21. What does alcohol do to training progress?
+### 19. What does alcohol do to training progress?
 
 **Short answer:** In studies, a lot of alcohol after training slowed recovery and muscle building. For small amounts the picture is thin. If you want progress, it is best to leave alcohol out around training.
 
@@ -678,11 +632,24 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Sources:** [25], [26], [27], [28]
 
+### 20. How many calories does strength training burn, and how accurate is the number in BLOC?
+
+**Short answer:** A strength session burns about as much as brisk walking up to easy running. The calorie number in BLOC is a rough estimate and can be well off in individual cases.
+
+- **How BLOC calculates:** With fixed average values per type of session (about 4.5 MET for catalogue workouts, a measure of effort: resting is 1) and minus what you would use at rest anyway.
+- **Comparison values:** Moderate strength training is about 3.5 MET in tables, very hard about 6.
+- **Muscle and energy use:** Muscle also uses some energy at rest. The effect of extra muscle mass is small.
+- **For weight** the energy balance over weeks counts, not the single session.
+
+**Evidence:** Table values are averages from measurements. The influence of training on energy use at rest was small and inconsistent in a summary of studies; the "afterburn effect" is uncertain.
+
+**Sources:** [20], [21]
+
 ---
 
 ## E. Safety
 
-### 22. What should I watch for so that nothing happens?
+### 21. What should I watch for so that nothing happens? {#sicherheit}
 
 **Short answer:** Four rules: warm up, progress slowly, keep your rest, listen to warning signs. With chest pain, unusual shortness of breath or dizziness, stop at once and get checked.
 
@@ -696,7 +663,7 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 **Sources:** [3], [4], [5], [62]
 
-### 23. How do I prevent injuries?
+### 22. How do I prevent injuries?
 
 **Short answer:** In studies strength training was the most effective prevention: it cut sports injuries by about two thirds. Stretching alone did nothing. Clean technique, slow progression and enough recovery belong to it.
 
@@ -711,38 +678,9 @@ Stand: 2026-10-20, Fassung 6 (kürzer, Doppelungen zusammengelegt, neutrale Tite
 
 ---
 
-## F. Plan & advanced
+## F. General
 
-### 24. How do I build a training plan, how long does a block run, and what comes next?
-
-**Short answer:** At least 2 strength days a week covering all major muscle groups, raise the stimulus slowly and plan recovery. In practice a block runs 4–8 weeks. Then comes an easy week and a new block with slightly changed exercises.
-
-- **Weekly structure:** 2–3 whole-body days or a split (upper/lower or push/pull/legs). Which is better is not established; take the one that fits your life. Endurance (running, Summit) adds to it.
-- **Volume:** 10 or more sets per muscle group per week for muscle building, 2–3 sets per exercise for strength. Small amounts work too.
-- **Progress:** more reps, more sets, more weight or the harder variation ("easier / harder"). Hard, but not to failure.
-- **Block length and afterwards (practice):** 4–8 weeks are common; there is no fixed number from studies. Afterwards keep the structure and keep progressing, swap some exercises for variations, add an easy week and review what went well.
-- **In BLOC:** The plan page under the "Body" tab points to this answer.
-
-**Evidence:** Well supported are the minimum frequency, enough sets, progression and safety. Open are the ideal block length and the best weekly split. The analysed studies lasted at least 6 weeks.
-
-**Sources:** [1], [3], [44], [45], [46]
-
-### 25. I already train 4–6 times a week: what do I change?
-
-**Short answer:** More sessions need more structure, not more hardness. Spread 10–20 sets per muscle group per week over 2–3 sessions and plan an easy week every 4–8 weeks.
-
-- **Volume:** 10 or more sets per muscle group per week for muscle building. The extra benefit flattens clearly from about 18–20 sets.
-- **Frequency:** For strength it helps to train a muscle group at least twice a week. For muscle growth it made little difference at equal sets.
-- **Variation (periodisation):** People who changed weight and sets on a plan (sometimes heavy, sometimes light) improved maximal strength somewhat more than with an unchanged plan. With good progression it was not a clear advantage.
-- **Easy week (deload):** Coaches recommend it for recovery. How it works (practice): same exercises, about half the sets, weight a little lower, nothing to the limit. Afterwards continue with a little more stimulus than before.
-- **Add endurance:** Additional endurance training did not hold back muscle growth or maximal strength, but explosive strength somewhat, mainly with both in one session. Separate them by at least 3 hours if you can.
-- **Food:** If you train a lot, you have to eat enough (see "How much protein do I need?").
-
-**Evidence:** Volume and distribution are well established. The ideal ceiling for individuals is open; the values are averages from studies mostly done with beginners. For the easy week there is expert opinion but no proof of effectiveness.
-
-**Sources:** [3], [6], [8], [44], [45], [46]
-
-### 26. Are there differences between women and men in training?
+### 23. Are there differences between women and men in training?
 
 **Short answer:** Women and men can train by the same rules. On average men have more muscle mass, but for muscle growth both respond similarly. An established reason for separate programmes is missing.
 
@@ -836,15 +774,21 @@ Prüfstand 2026-10-16: **geprüft = Crossref-Abfrage (Titel, Jahr, Band, Seiten,
 ---
 
 ---
+71. Iversen VM et al. (2021): No time to lift? Designing time-efficient training programs for strength and hypertrophy: a narrative review. *Sports Med* 51(10):2079–2095. doi:10.1007/s40279-021-01490-1 (geprüft; Zusammenfassung gelesen)
+72. Kerksick CM et al. (2017): International Society of Sports Nutrition position stand: nutrient timing. *J Int Soc Sports Nutr* 14:33. doi:10.1186/s12970-017-0189-4 (geprüft; Zusammenfassung und Textstellen zum glykämischen Index gelesen)
+
+---
 
 # Änderungsprotokoll
 
-**Fassung 6 (2026-10-20), nach dem Laien-Gegenlesen der IT-/Produkt-Sitzung und Kevins Rückmeldung:**
+**Fassung 7 (2026-10-20), nach Kevins Entscheidung über die IT-/Produkt-Sitzung:**
 
-- **Kürzer und klarer:** Je Frage Kurzantwort mit Empfehlung zuerst, 3–5 kurze Stichpunkte, eine „Studienlage“-Zeile, die der Kurzantwort nicht widerspricht. Fachwörter an der Stelle erklärt (maximale Sauerstoffaufnahme, magere Körpermasse, Wiederholungsmaximum, Pressatmen, MET, Placebo, Vorhofflimmern, Periodisierung, Deload). Jede Zahl mit Vergleich (z. B. Eiweiß: 0,3 kg mehr magere Körpermasse, 2,5 kg mehr im schwersten Einzelversuch, z. B. 102,5 statt 100 kg).
-- **Zusammengelegt (35 auf 26 Fragen):** Pause, täglich trainieren und Übertraining (eine Frage „Wie viel Pause brauche ich, und darf ich jeden Tag trainieren?“); Eiweiß (drei Fragen auf eine, inkl. höherem Bedarf und Energie bei viel Training); Stabilität/Rücken/Gelenke mit Knochen und Stürzen; Herz mit Blutdruck und Herzrhythmus; Ausdauer/Laufen in die erste Frage; Periodisierung, Deload und „4–6 Mal pro Woche“ in eine Fortgeschrittenen-Frage; „Wie sind Muskeln aufgebaut?“ als Absatz in „Wie wachsen Muskeln?“.
-- **Neutrale Titel** bei Gesundheitsthemen („Was zeigen Studien zu Training und Herz?“ statt „Schützt Training mein Herz?“), weil Kevins Regel „keine Heilversprechen“ gilt. Der Satz zu Beobachtungsstudien steht jetzt einmal im Hinweis oben.
-- **Querverweise nach Nummern entfernt**, Verweise nur noch mit Fragentitel. Feste Schlüssel (`{#nutzen}`, `{#pause}`, `{#muskelwachstum}`, `{#eiweiss}`, `{#sicherheit}`, `{#plan}`, `{#fortgeschritten}`) für spätere Verlinkung.
-- **Bewusst beibehalten:** Gesundheits-Gruppe an zweiter Stelle (Kevin wollte die positiven Wirkungen herausarbeiten), Push/Pull, Glykämischer Index und Kalorien (Kevins Fragenliste).
-- **Praxis ohne Studienzahl** (als „Praxis“ gekennzeichnet, bitte bestätigen): Einstiegs-Workout, Reihenfolge der Muskeln, Pausenlänge, Umfang halbieren bei Übertraining-Zeichen, Blocklänge 4–8 Wochen, halbe Sätze in der leichten Woche.
-- Quellen [1]–[70] unverändert (Nummer 13 bleibt frei).
+- **23 Fragen** in 6 Gruppen: A Einstieg (1–5), B Technik & Training verstehen (6–11), C Plan & Fortgeschrittene (12–15), D Ernährung (16–20), E Sicherheit (21–22), F Allgemeines (23).
+- **Die Gesundheitsfragen sind in „Was bringt Training überhaupt?“ (Frage 1) aufgegangen**, in drei Stufen: Leistung normal formuliert, Gesundheit nur als „Zusammenhang, kein Beweis, kein Schutz“, Krankheit nur mit dem Satz „bei Beschwerden vorher zur Ärztin oder zum Arzt“. Frage 1 steht bewusst an erster Stelle (Kevin wollte die positiven Wirkungen herausarbeiten); die IT-Sitzung hatte „Was bringt Training“ ans Ende gestellt, das lässt sich mit einem Verschieben ändern.
+- **Fasertypen bleiben** (Frage 7, praktisch gefasst: „Was sind schnelle und langsame Muskelfasern, und was heißt das für mein Training?“, ohne Sarkomere im Detail). **Glykämischer Index bleibt** (Frage 18, als Nutzenfrage „Was sagt mir der glykämische Index über mein Essen?“: nützlich bei unter 4 Stunden Pause zwischen zwei harten Einheiten, vor langen Einheiten nicht entscheidend, im normalen Training kaum; Quellen [22]–[24], [72]; ehrlich mit „Aussagekraft umstritten“, ohne Ernährungsvorschriften).
+- **„Wenn du schon länger trainierst“**-Hinweise in den Fragen 1, 4, 5, 6, 8, 15, 16. Neue Fragen für Ehrgeizige: Frage 14 „Mein Training stockt: was prüfe ich zuerst?“ (Umfang, Anstrengung, Erholung, Essen; Quellen [3], [11], [44], [59], [60], [64]) und Frage 15 „Ich habe wenig Zeit: was ist das Minimum?“ (Quellen [3], [47], [71]; Fachübersicht, kein direkter Studienvergleich, ist in der Studienlage so benannt). „Kraft und Ausdauer gleichzeitig“ steht in Frage 13.
+- **Auf Kevins Wunsch entfernt:** Der Satzteil „Dünn: Empfehlungen für Diätphasen und Langzeitdaten zu sehr hohen Mengen“ steht nirgends mehr bei Eiweiß; der Hinweis „2,3–3,1 g pro kg in Diätphasen“ steht nur noch als „Wenn du schon länger trainierst“ und „für sehr gut Trainierte“.
+- **Zusammengelegt:** Push/Pull in die Reihenfolge-Frage (3), Hypertrophie/Maximalkraft/Kraftausdauer in die Sätze-Frage (4), Herz, Diabetes, Knochen/Stürze, Rücken/Gelenke, Stimmung/Schlaf in Frage 1.
+- **Feste Schlüssel** in faq.js: nutzen, pause, muskelwachstum, fasern, tempo, plan, fortgeschritten, plateau, wenigzeit, eiweiss, gi, sicherheit.
+- **Praxis ohne Studienzahl** (im Text als „Praxis“ markiert, bitte bestätigen): Einstiegs-Workout, Reihenfolge der Muskeln, Pausenlänge, halber Umfang bei Übertraining-Zeichen, Blocklänge 4–8 Wochen, halbe Sätze in der leichten Woche, mindestens 6 Wochen pro Plan vor dem Wechsel.
+- Neue Quellen [71] (Iversen 2021) und [72] (Kerksick 2017, ISSN nutrient timing), per Crossref geprüft. Quellen [1]–[72] (Nummer 13 bleibt frei).

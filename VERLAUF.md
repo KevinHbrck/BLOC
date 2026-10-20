@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ nach Kevins Entscheidung umgebaut: 23 Fragen, neue Ehrgeiz-Fragen (Fassung 2026-10-20-15)
+
+- 23 Fragen: „Was bringt Training überhaupt?“ fasst die Gesundheitsthemen als Zusammenhang zusammen (Leistung / Gesundheit nur als Zusammenhang / bei Beschwerden zum Arzt). Fasertypen (praktisch gefasst) und glykämischer Index (als Nutzenfrage) bleiben. „Wenn du schon länger trainierst“-Hinweise bei sieben Fragen, neue Fragen „Mein Training stockt“ und „Ich habe wenig Zeit“. Der Satzteil „Dünn: Empfehlungen für Diätphasen …“ bei Eiweiß ist entfernt.
+- Neue Quellen F71 (Iversen 2021) und F72 (Kerksick 2017) in faq.js und quellen.html. Feste Schlüssel je wichtiger Frage (`id`). Einheitstest 51/51.
+
 ## 2026-10-20 · FAQ: Beschriftung „Wie sicher ist das?“ (Fassung 2026-10-20-14)
 
 - Das Label über dem Absatz zur Beleglage heißt jetzt „Wie sicher ist das?“ (Englisch „How sure is this?“) statt „Studienlage“ (`faqStudie` in `texte.js`) – verständlicher für Laien, Inhalt unverändert.
