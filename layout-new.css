@@ -819,3 +819,19 @@ body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 .satz-ende-glas .satz-weiter, .satz-ende-glas .satz-undo{ width:100%; margin-top:10px; }
 @media (prefers-reduced-motion: reduce){ .satz-saetze i.pop, .satz-los.ok, .satz-haken, .satz-ende{ animation:none; } }
 .satz-root > .satz-ende{ position:absolute; inset:0; z-index:5; }
+/* Fertig-Knopf unten im Satz-Training: grau, bis der letzte Satz eingetragen ist */
+.satz-fuss{ padding:0 14px calc(14px + env(safe-area-inset-bottom)); }
+.satz-fertig{ width:100%; height:58px; border-radius:20px; font-size:18px; font-weight:800; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:rgba(255,255,255,.4); transition:background .3s, color .3s, transform .2s; }
+.satz-fertig:disabled{ cursor:not-allowed; }
+.satz-fertig.bereit{ background:var(--accent); color:#fff; border-color:transparent; cursor:pointer; }
+.satz-fertig.leuchtet{ animation:satz-ok .6s ease-out 2; box-shadow:0 0 0 6px color-mix(in srgb, var(--accent) 35%, transparent); }
+.satz-karte{ padding-bottom:12px; }
+.satz-illu{ max-height:17vh; }
+.satz-fuss{ background:linear-gradient(to top, rgba(0,0,0,.35), rgba(0,0,0,0)); padding-top:8px; }
+/* Run-Aufnahme bei Systemdesign „hell“ (ohne gewählte Helligkeit): trotzdem dunkles Glas auf dem Foto, nicht die weiße Karte */
+@media (prefers-color-scheme: light){
+  :root[data-layout="new"]:not([data-theme]) .run-weiss{ --text:#fff; --text-dim:rgba(255,255,255,.75); --surface:rgba(255,255,255,.14); --surface-2:rgba(255,255,255,.12); --border:rgba(255,255,255,.2); background:none; color:#fff; }
+}
+@media (prefers-color-scheme: dark){
+  :root[data-layout="new"]:not([data-theme]) .run-weiss{ --text:#fff; --text-dim:rgba(255,255,255,.75); --surface:rgba(255,255,255,.14); --surface-2:rgba(255,255,255,.12); --border:rgba(255,255,255,.2); background:none; color:#fff; }
+}

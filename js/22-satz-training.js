@@ -56,6 +56,7 @@ function renderSatzTraining(planId, start){
         '<button type="button" class="exit" data-satzsave aria-label="'+esc(t("trSpeichern"))+'">'+ICON_SAVE+'</button></div>'+
       '<div class="satz-logo" aria-hidden="true"><b>BLOC</b><span id="satz-nr"></span></div>'+
       '<div class="satz-wisch" id="satzWisch">'+ids.map(function(id, i){ return satzKarteHTML(id, i, ids.length); }).join("")+'</div>'+
+      '<div class="satz-fuss"><button type="button" class="satz-fertig" data-satzfertig disabled>'+esc(t("satzFertig"))+'</button></div>'+
     '</div>';
   var root = document.getElementById("satzRoot"), wisch = document.getElementById("satzWisch"), aktuell = -1;
   function breite(){ return wisch.clientWidth || 1; }
@@ -64,11 +65,17 @@ function renderSatzTraining(planId, start){
     root.querySelectorAll(".satz-punkt").forEach(function(d, k){ d.classList.toggle("an", k === i); d.setAttribute("aria-selected", k === i); });
     var el = document.getElementById("satz-nr"); if(el) el.textContent = (i+1)+" / "+ids.length;
   }
+  function fertigKnopf(neuBereit){
+    var b = root.querySelector("[data-satzfertig]"); if(!b) return;
+    var ok = alleFertig(); b.disabled = !ok; b.classList.toggle("bereit", ok);
+    if(ok && neuBereit){ b.classList.add("leuchtet"); vibrate([50, 40, 50, 40, 120]); setTimeout(function(){ b.classList.remove("leuchtet"); }, 1400); }
+  }
   function punkteFertig(){
     root.querySelectorAll(".satz-punkt").forEach(function(d, k){
       var e = studioEintrag(ids[k]) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null, z = studioZiel(ids[k]);
       d.classList.toggle("fertig", !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= z.saetze);
     });
+    fertigKnopf(false);
   }
   function alleFertig(){
     return ids.every(function(id){ var e = studioEintrag(id) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null; return !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= studioZiel(id).saetze; });
@@ -134,7 +141,7 @@ function renderSatzTraining(planId, start){
       if(neuBtn){ var alt = neuBtn.textContent; neuBtn.classList.add("ok"); neuBtn.textContent = "✓ "+t("satzGespeichert", { n:nSatz }); setTimeout(function(){ neuBtn.classList.remove("ok"); neuBtn.textContent = alt; }, 900); }
       var punkte = wisch.children[i].querySelectorAll(".satz-saetze i.an"); if(punkte.length) punkte[punkte.length - 1].classList.add("pop");
       if(state.db.settings.sound) phaseBeep("tick");
-      if(!abschlussGezeigt && alleFertig()){ setTimeout(abschluss, 700); return; }
+      fertigKnopf(true);   // nach dem letzten Satz wird „Fertig“ hell (vorher ausgegraut); das Antippen zeigt die Zusammenfassung
       if(nSatz >= z.saetze && i < ids.length - 1) setTimeout(function(){ if(aktuell === i) geheZu(i + 1, true); }, 900);   // Ziel erreicht: weiter zur nächsten Übung
     });
     if((a = k.querySelector("[data-satzundo]"))) a.addEventListener("click", function(){
@@ -151,6 +158,7 @@ function renderSatzTraining(planId, start){
   Array.prototype.forEach.call(wisch.children, bindKarte);
   if(satzUhr) clearInterval(satzUhr);
   satzUhr = setInterval(function(){ if(!document.getElementById("satzRoot")){ clearInterval(satzUhr); satzUhr = 0; return; } pauseZeigen(); }, 300);
+  root.querySelector("[data-satzfertig]").addEventListener("click", function(){ if(!root.querySelector(".satz-ende")) abschluss(); });
   punkteFertig();
   geheZu(start, false);
   requestAnimationFrame(function(){ geheZu(start, false); });   // nach dem ersten Layout nochmals, falls die Breite erst jetzt feststeht

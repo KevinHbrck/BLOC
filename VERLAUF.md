@@ -35,7 +35,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neue Frage 14** „Stabilität, Rücken, Gelenke“: Krafttraining stabilisiert Rumpf und Gelenke, gibt den Knochen einen Reiz und linderte in Studien chronische Rücken- und Knieschmerzen (Quellen F65–F67). Die Gruppe heißt jetzt „Was Training dir bringt“; Fragen ab 14 rücken um 1, jetzt 33 Fragen. Frage 1 und 6 verweisen darauf.
 - **Frage 3** nennt die Reihenfolge jetzt als klare Liste (Beine, Rücken, Brust, Schultern, Arme, Bauch) mit Beispiel und Begründung; die Studienlage trennt Belegtes (Übung am Anfang gewinnt mehr Kraft) von Praxis. Einheitstest 51/51.
 
-## 2026-10-20 · FAQ: Frage 1 beantwortet jetzt „Was bringt Ausdauertraining, was bringt Krafttraining?“ (Fassung 2026-10-20-8)
+## 2026-10-20 · FAQ: Frage 1 beantwortet jetzt „Was bringt Ausdauertraining, was bringt Krafttraining?“ (Fassung 2026-10-20-16)
 
 - Die erste Frage vergleicht klar, was Ausdauer und was Kraft bringen (mit Zahlen aus den Studien), was nur eines von beiden bringt, wie beides zusammenwirkt und wie die BLOC-Bereiche dazu passen. Quellen [F1], [F3], [F19], [F46], [F47], [F48], [F63]. Einheitstest 51/51.
 
@@ -45,6 +45,12 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Fertig-Knopf im Satz-Training, Kalorien nur noch beim Laufen (Fassung 2026-10-20-16)
+
+- **Satz-Training**: unten ein **Fertig**-Knopf, ausgegraut bis der letzte Satz der letzten Übung eingetragen ist, dann hell (Orange) mit kurzem Aufleuchten und Vibration; Antippen zeigt „Training geschafft“ (speichern · weiter · beenden). Die Zusammenfassung erscheint nicht mehr von selbst.
+- **Kalorien**: Krafttraining und die anderen Bereiche werden nicht mehr geschätzt (zu ungenau). **Run** zeigt die geschätzten kcal während des Laufens (statt der bpm-Kachel), im Lauf-Ergebnis und im Lauf-Detail: Laufen = Ruheumsatz in der Zeit + 1,036 kcal je kg und km, Rad = MET nach Tempo; nur mit Körperdaten (sonst Link zum Eintragen). Der Rückblick „Dein Monat“ rechnet nur noch das Laufen.
+- **Run-Aufnahme** bei Systemdesign (ohne gewählte Helligkeit) ist jetzt immer das dunkle Glas, nicht mehr die weiße Karte.
+
 ## 2026-10-20 · Satz-Training mit mehr Rückmeldung, BLOC-Zeichen orange (Fassung 2026-10-20-7)
 
 - **BLOC-Zeichen** im Timer und im Satz-Training orange und größer.

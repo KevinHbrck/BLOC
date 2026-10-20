@@ -427,7 +427,7 @@ function renderStats(){
       var kd = koerperDaten(), kcalR = 0;
       if(kd){
         var a4 = {}; w4.forEach(function(w){ Object.keys(w.a).forEach(function(g){ a4[g] = (a4[g] || 0) + (w.a[g].s || 0); }); });
-        kcalR = kcalSchaetzung(a4, kd);
+        kcalR = kcalSchaetzung({ run:a4.run || 0 }, kd);   // Krafttraining & Co. werden nicht mehr geschätzt (zu ungenau); nur Laufen
         if(kcalR > 0) chipsR.push(["≈ "+kcalR.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"), t("statRueckKcal")]);
       }
       if(rekR) chipsR.push([rekR+" ★", t("statRueckRek")]);
@@ -435,7 +435,7 @@ function renderStats(){
         (meil ? '<div class="sh-chips" style="margin:2px 0 8px"><span class="sh-serie">'+svgIcon('<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>')+esc(t("statMeilenstein", { n:meil }))+'</span></div>' : '')+
         '<div class="chips-stat">'+chipsR.map(function(c){ return '<span><b>'+esc(c[0])+'</b><small>'+esc(c[1])+'</small></span>'; }).join("")+'</div>'+
         '<div class="sk-unter">'+esc(satzR)+(bestR && zaehlR[bestR] >= 2 ? " "+esc(t("statRueckUebung", { name:tplText(findExercise(bestR).name), n:zaehlR[bestR] })) : "")+'</div>'+
-        (kd ? (kcalR > 0 ? '<div class="sk-unter">'+esc(t("statKcalHint"))+'</div>' : "") : '<button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button>')+'</div>';
+        (kd ? (kcalR > 0 ? '<div class="sk-unter">'+esc(t("runKcalHint"))+'</div>' : "") : '<button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button>')+'</div>';
     }
     // Kalender: letzte 4 Wochen (Tag = Start des Trainings)
     var tage = {}, mo = new Date(); mo.setHours(0, 0, 0, 0); mo.setDate(mo.getDate() - (mo.getDay() + 6) % 7 - 21);

@@ -417,6 +417,16 @@ function runGpxText(r){
   return '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="BLOC" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>BLOC '+new Date(r.at).toISOString().slice(0, 10)+
     '</name><trkseg>'+pts+'</trkseg></trk></gpx>';
 }
+/* Kalorien-Schätzung für einen Lauf oder eine Radfahrt (nur mit Körperdaten, alles lokal): Laufen = Ruheumsatz in der Zeit + 1,036 kcal je kg und km (Laufkosten nach Margaria),
+   Rad = MET nach Tempo (Compendium of Physical Activities) × Gewicht × Stunden. Eine grobe Schätzung; 0 ohne Körperdaten oder ohne Strecke. */
+function runKcal(dist, sek, rad){
+  var kd = koerperDaten();
+  if(!kd || !(dist > 50) || !(sek > 10)) return 0;
+  var km = dist/1000, h = sek/3600, v = km/h;
+  if(rad){ var met = v < 16 ? 6.8 : v < 19 ? 8 : v < 22 ? 10 : 12; return Math.round(met*kd.kg*h); }
+  return Math.round(1.036*kd.kg*km + kcalProStunde(kd)*h);
+}
+function runKcalText(dist, sek, rad){ var k = runKcal(dist, sek, rad); return k > 0 ? "≈ "+k.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE") : "–"; }
 function runTempoJetzt(r){
   var v = r.verlauf;
   if(v.length < 2) return "–:––";
@@ -463,6 +473,7 @@ function runAnzeige(){
   var sek = runZeit(r)/1000;
   function setze(id, txt){ var el = document.getElementById(id); if(el && el.textContent !== txt) el.textContent = txt; }
   var zeit = repUhr(runZeit(r)), tempo = runTempo(r, sek, r.dist);
+  setze("run-kcal", runKcalText(r.dist, runZeit(r)/1000, runIstRad(r)));
   setze("run-zeit", zeit); setze("run-km", runKm(r.dist)); setze("run-pace", tempo); setze("run-jetzt", runTempoJetzt(r));
   setze("run-dz", zeit); setze("run-dk", runKm(r.dist)+" km"); setze("run-dp", tempo+" "+runTempoEinheit(r));   // abgedunkelt: Zeit, Kilometer und Tempo bleiben zu sehen
   var gps = r.fehler === 1 ? t("runGpsDenied") : r.fehler ? t("runGpsLost") : r.gps == null ? t("runGpsWait") :
@@ -687,7 +698,7 @@ function renderRunLive(){
     '<div class="run-raster">'+
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
       '<div><b id="run-pace">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t(runIstRad(r) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(r)+'</small></div>'+
-      '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div>'+(layoutNeu() ? '<div><b>–</b><small>bpm</small></div>' : '')+'</div>'+
+      '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div>'+(layoutNeu() ? '<div><b id="run-kcal">–</b><small>kcal</small></div>' : '')+'</div>'+
     '<div id="run-karte" class="run-karte" data-n="-1"></div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
       '<button type="button" class="btn btn-secondary run-dunkelbtn" data-rundark>'+svgIcon(ICON_MOON)+' '+esc(t("runDark"))+'</button>'+
@@ -737,7 +748,7 @@ function renderRunDetail(id){
     topbar(t("runDetail"), { back:"#run" }) +
     // Abschlusskarte direkt nach dem Lauf: was geschafft wurde (der Lauf ist schon gespeichert)
     (neu ? '<div class="card run-fertig"><div class="rf-titel">'+esc(t("runGeschafft"))+'</div><div class="rf-km">'+esc(runKm(x.dist))+' <small>km</small></div>'+
-      '<div class="rf-zeile">'+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+'</div>'+
+      '<div class="rf-zeile">'+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+(runKcal(x.dist, x.dur/1000, runIstRad(x)) ? SEP+esc(runKcalText(x.dist, x.dur/1000, runIstRad(x)))+' kcal' : '')+'</div>'+
       (hl.length ? '<ul class="rf-liste">'+hl.map(function(h){ return '<li>'+svgIcon(ICON_STAR)+'<span>'+esc(h)+'</span></li>'; }).join("")+'</ul>' : '')+
       '<div class="rf-gespeichert">'+esc(t("runGespeichert"))+'</div></div>' : '')+
     '<div class="rep-meta">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long", day:"numeric", month:"long", year:"numeric" }))+
@@ -745,13 +756,15 @@ function renderRunDetail(id){
     '<div class="card run-notiz"><input type="text" id="run-name" maxlength="40" value="'+esc(x.name || "")+'" placeholder="'+esc(t("runNamePh"))+'" aria-label="'+esc(t("runNamePh"))+'">'+
       '<textarea id="run-note" rows="2" maxlength="400" placeholder="'+esc(t("runNotePh"))+'" aria-label="'+esc(t("runNotePh"))+'">'+esc(x.note || "")+'</textarea></div>'+
     '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(repUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
-      '<div><b>'+esc(runTempo(x, x.dur/1000, x.dist))+'</b><small>'+esc(t(runIstRad(x) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(x)+'</small></div></div>'+
+      '<div><b>'+esc(runTempo(x, x.dur/1000, x.dist))+'</b><small>'+esc(t(runIstRad(x) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(x)+'</small></div>'+(koerperDaten() ? '<div><b>'+esc(runKcalText(x.dist, x.dur/1000, runIstRad(x)))+'</b><small>kcal</small></div>' : '')+'</div>'+
+    (koerperDaten() ? '<div class="sk-unter run-kcal-hinweis">'+esc(t("runKcalHint"))+'</div>' : '<button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button>')+
     '<div class="section-title">'+esc(t("runRoute"))+'</div>'+(layoutNeu() ? runStreckeNeu(x) : '<div class="run-karte">'+runSvg(x.pts)+'</div>')+
     (sp.length ? '<div class="section-title">'+esc(t("runSplits"))+'</div><div class="card run-kms">'+runKmZeilen(x)+'</div>' : '')+
     '<button type="button" class="btn btn-secondary" data-rungpx style="margin-top:14px;">'+esc(t("runGpx"))+'</button>'+
     '<div style="height:40px"></div>';
   bindCommon();
   var nm = app.querySelector("#run-name"), nt = app.querySelector("#run-note");
+  var kb = app.querySelector("[data-koerper]"); if(kb) kb.addEventListener("click", function(){ openKoerperSheet(function(){ renderRunDetail(id); }); });
   nm.addEventListener("input", function(){ x.name = nm.value.trim(); if(!x.name) delete x.name; save(); });
   nt.addEventListener("input", function(){ x.note = nt.value.trim(); if(!x.note) delete x.note; save(); });
   app.querySelector("[data-rungpx]").addEventListener("click", function(){
