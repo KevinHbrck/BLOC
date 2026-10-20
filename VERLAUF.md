@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ: Beschriftung „Wie sicher ist das?“ (Fassung 2026-10-20-14)
+
+- Das Label über dem Absatz zur Beleglage heißt jetzt „Wie sicher ist das?“ (Englisch „How sure is this?“) statt „Studienlage“ (`faqStudie` in `texte.js`) – verständlicher für Laien, Inhalt unverändert.
+
 ## 2026-10-20 · FAQ gekürzt und geordnet: 26 Fragen, neutrale Titel, Fachwörter erklärt (Fassung 2026-10-20-13)
 
 - Nach dem Laien-Gegenlesen: Doppelungen zusammengelegt (Pause/täglich/Übertraining, Eiweiß, Herz, Knochen/Rücken/Stürze, Fortgeschrittene), 35 auf 26 Fragen. Gesundheitsthemen mit neutralen Titeln („Was zeigen Studien zu …“), der Satz zu Beobachtungsstudien steht einmal im Hinweis oben. Fachwörter an Ort und Stelle erklärt, keine Fragennummern mehr in den Texten.
