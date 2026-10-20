@@ -164,9 +164,9 @@ var FOTO_POOL = (function(){
   return {
     tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw")],
     st:  [P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), "img/neu-workout.jpg", P("kraft-sw"), "img/neu-kopf.jpg"],   // Geräte zuerst (Wunsch: Workout-Karte ohne Person)
-    ti:  [P("timer-laeufer"), "img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
+    ti:  [P("timer-box"), "img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
     ws:  [P("mobility-sitz"), P("mobility-ausfall")],   // ohne neu-mobility (Kopf im Profil, passte nicht zum Bereich)
-    rep: [P("summit-bahn"), "img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
+    rep: [P("summit-park"), "img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
     core:     ["img/neu-d-core.jpg", P("frau-kniebeuge"), P("liegestuetz-feld"), P("kraft-sw")],
@@ -184,7 +184,7 @@ var FOTO_POOL = (function(){
 var FOTO_POOL_HELL = {
   tp:  ["img/neu-h-klimmzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-ringe.jpg"],
   st:  ["img/neu-h-halle.jpg", "img/neu-h-rack.jpg", "img/neu-h-kreuzheben.jpg"],
-  ti:  ["img/neu-p-timer-laeufer.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
+  ti:  ["img/neu-p-timer-box.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
   ws:  FOTO_POOL.ws,   // wie im Dunkel (Wunsch: Mobility & Stretch und Summit zeigen in beiden Modi dasselbe Bild)
   rep: FOTO_POOL.rep,   // wie im Dunkel
   run: FOTO_POOL.run,
@@ -225,7 +225,7 @@ var FOTO_FOKUS = {
   "img/neu-p-liegestuetz-stadt.jpg":"50% 55%",
   "img/neu-p-liegestuetz-feld.jpg":"50% 55%",
   "img/neu-p-studio-halle.jpg":"50% 55%",
-  "img/neu-p-timer-laeufer.jpg":"50% 68%", "img/neu-p-summit-bahn.jpg":"50% 66%",
+  "img/neu-p-timer-box.jpg":"50% 62%", "img/neu-p-summit-park.jpg":"50% 57%",
   "img/neu-p-frau-latzug.jpg":"50% 38%", "img/neu-p-frau-klimmzug.jpg":"50% 40%", "img/neu-p-frau-kniebeuge.jpg":"50% 45%",
   "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-kreuzheben.jpg":"50% 70%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
   "img/neu-h-band.jpg":"50% 62%", "img/neu-h-kettlebell.jpg":"50% 32%", "img/neu-h-kb-gelb.jpg":"50% 70%", "img/neu-h-klimmzug.jpg":"50% 72%",

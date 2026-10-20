@@ -18,7 +18,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 ## 2026-10-20 · Neue Fotos für Timer und Summit (Fassung 2026-10-20-54)
 
-- Timer-Kachel: Läufer-Silhouette (s/w), Summit-Kachel: rote Laufbahn im Wald; in Hell und Dunkel gleich. Quellen noch nachzutragen (BilderBloc\Quellen-Frauenbilder.txt).
+- Timer-Kachel: Box Jump im Nebel-Gym (Timer) und Calisthenics-Park am Meer (Summit), in Hell und Dunkel gleich (ersetzt Läufer-Silhouette und Laufbahn aus Fassung -54/-55). Quellen noch nachzutragen (BilderBloc\Quellen-Frauenbilder.txt).
 
 ## 2026-10-20 · Start-Knöpfe als Glas, Play-Symbol im Timer sichtbar (Fassung 2026-10-20-53)
 
