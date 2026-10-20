@@ -163,18 +163,18 @@ var FOTO_POOL = (function(){
   var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
   return {
     tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw")],
-    st:  [P("frau-kniebeuge"), P("studio-hantelreihe"), P("studio-gewichtsblock"), P("frau-latzug"), P("studio-halle"), "img/neu-workout.jpg", P("kraft-sw"), "img/neu-kopf.jpg"],   // Geräte zuerst (Wunsch: Workout-Karte ohne Person)
+    st:  [P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), "img/neu-workout.jpg", P("kraft-sw"), "img/neu-kopf.jpg"],   // Geräte zuerst (Wunsch: Workout-Karte ohne Person)
     ti:  ["img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
     ws:  [P("mobility-sitz"), P("mobility-ausfall")],   // ohne neu-mobility (Kopf im Profil, passte nicht zum Bereich)
     rep: ["img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
-    core:     ["img/neu-d-core.jpg", P("liegestuetz-feld"), P("kraft-sw")],
+    core:     ["img/neu-d-core.jpg", P("frau-kniebeuge"), P("liegestuetz-feld"), P("kraft-sw")],
     beine:    [P("frau-kniebeuge"), P("mobility-ausfall"), P("freiluft-meer"), P("studio-gewichtsblock")],
     ruecken:  [P("frau-latzug"), P("freiluft-park"), "img/neu-freiluft.jpg", P("freiluft-sw")],
     brust:    [P("liegestuetz-strand"), P("liegestuetz-stadt"), P("liegestuetz-feld")],
     arme:     [P("studio-hantelreihe"), P("kraft-sw"), P("studio-halle")],
-    schulter: [P("kraft-sw"), P("studio-hantelreihe"), P("freiluft-park")],
+    schulter: [P("frau-latzug"), P("kraft-sw"), P("studio-hantelreihe"), P("freiluft-park")],
     mobility: [P("mobility-sitz"), P("mobility-ausfall")],
     timer:    ["img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-feld")]
   };
@@ -183,7 +183,7 @@ var FOTO_POOL = (function(){
    Run behält in beiden Modi das klassische Läuferbild. Karten auf Training und Favoriten sind im Hellen „helle Karten“ (layout-new.css). */
 var FOTO_POOL_HELL = {
   tp:  ["img/neu-h-klimmzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-ringe.jpg"],
-  st:  ["img/neu-p-frau-kniebeuge.jpg", "img/neu-h-halle.jpg", "img/neu-h-rack.jpg", "img/neu-p-frau-latzug.jpg", "img/neu-h-kreuzheben.jpg"],
+  st:  ["img/neu-h-halle.jpg", "img/neu-h-rack.jpg", "img/neu-h-kreuzheben.jpg"],
   ti:  ["img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
   ws:  FOTO_POOL.ws,   // wie im Dunkel (Wunsch: Mobility & Stretch und Summit zeigen in beiden Modi dasselbe Bild)
   rep: FOTO_POOL.rep,   // wie im Dunkel
@@ -193,7 +193,7 @@ var FOTO_POOL_HELL = {
   ruecken:  ["img/neu-p-frau-latzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],
   brust:    ["img/neu-h-brust-1.jpg", "img/neu-h-brust-2.jpg", "img/neu-h-rack.jpg"],
   arme:     ["img/neu-h-kb-gelb.jpg", "img/neu-h-rack.jpg", "img/neu-h-kettlebell.jpg"],
-  schulter: ["img/neu-h-rack.jpg", "img/neu-h-ringe.jpg", "img/neu-h-klimmzug.jpg"],
+  schulter: ["img/neu-p-frau-latzug.jpg", "img/neu-h-rack.jpg", "img/neu-h-ringe.jpg", "img/neu-h-klimmzug.jpg"],
   mobility: FOTO_POOL.mobility,
   timer:    ["img/neu-h-halle.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"]
 };

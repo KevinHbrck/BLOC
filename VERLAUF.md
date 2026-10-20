@@ -21,6 +21,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - Training: feine helle Kante und ein Lichtstreifen, der beim Öffnen einmal über die Kacheln gleitet (bei „Bewegung reduzieren“ ruhig).
 - FAQ: die 24 Fragen in sechs Gruppen geordnet (Grundlagen, Einstieg und Plan, Dosis und Ausführung, Beweglichkeit und Ausdauer, Ernährung, Sicherheit); Texte unverändert.
 - Run-Startseite: Hintergrundfoto weniger weichgezeichnet (11 statt 24 px).
+- Fotos mit Frauen nur noch bei den Favoriten (Beine, Rücken, Schultern, Core); Workout-Karte und Katalog zeigen Geräte (Fassung -48).
 
 ## 2026-10-20 · Glas-Optik auf Run, Dauer-Regler, Schleier oben, Quer-Logo, Ukraine-Flagge in Kacheln (Fassung 2026-10-20-45)
 
