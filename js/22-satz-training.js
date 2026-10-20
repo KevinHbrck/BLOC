@@ -43,6 +43,7 @@ function satzKarteHTML(id, i, n){
     '<div class="satz-glas">'+
       '<h2 class="satz-name">'+esc(tplText(ex.name))+(info ? ' <button type="button" class="info-btn" data-satzinfo="'+esc(id)+'" aria-label="'+esc(t("info"))+'">i</button>' : '')+'</h2>'+
       (kachelMuskel(ex) ? '<div class="satz-mus">'+kachelMuskel(ex)+'</div>' : '')+
+      griffHTML(id)+
       (ILLU[id] ? '<div class="satz-figur">'+illuHTML(id, "satz-illu")+'</div>' : '')+
       '<div class="satz-saetze" role="img" aria-label="'+esc((h ? h.s.length : 0)+" / "+z.saetze)+'">'+(function(){ var o = "", n = Math.min(z.saetze, 12), fertigeAnzahl = h ? h.s.length : 0; for(var q = 0; q < n; q++) o += '<i class="'+(q < fertigeAnzahl ? 'an' : q === fertigeAnzahl ? 'jetzt' : '')+'"></i>'; return o; })()+'</div>'+
       (function(){ var tp = h ? null : studioSteigerTipp(id); return tp ? '<div class="satz-tipp"><span>'+esc(studioSteigerTippText(tp))+'</span><button type="button" data-satztipp>'+esc(t("tippUebernehmen"))+'</button></div>' : ''; })()+

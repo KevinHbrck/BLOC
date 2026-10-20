@@ -379,6 +379,7 @@ function renderStudioKarte(id){
       studioStatsLeiste(id)+
       (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
       bandAnkerHTML(id)+   // Band-Übung: „Band befestigen“ gehört direkt unter die bewegte Figur
+      griffHTML(id)+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+satzName(z.saetze)+' × '+z.wdh+
         (e.kg != null && !koerper ? SEP+esc(t("stWeight"))+' '+studioKg(e.kg)+' kg' : '')+'</div>'+
       // Werte vom letzten Mal: ein Tipp auf einen Satz übernimmt Gewicht und Wiederholungen in die Eingabe (nur im Satz-Modus)

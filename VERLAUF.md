@@ -16,6 +16,13 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · 89 neue Studio-Übungen, Griff-Anzeige, Battle Rope (Fassung 2026-10-20-58)
+
+- Übungen aus Kevins Liste (Brust, Rücken, Schultern, Bizeps, Trizeps, Beine, Core, Unterarme, Nacken-Dehnungen, Cross Jacks), soweit es sie noch nicht gab; Doppelte (z. B. Bench Dip, Step-Up, Plyo Squat, Cable Woodchopper, Farmer's Carry) nicht neu angelegt. Texte in eigenen Worten, vom Sportwissenschaftler geprüft (erste Runde eingearbeitet).
+- Neue Gruppe „Cardio & Ausdauer“ im Fitnessstudio mit 9 Battle-Rope-Übungen (4 × 30 s) plus Seil heranziehen.
+- „Griff / Aufsatz“ bei Kabelzug- und Stangenübungen: oben auf der Studio-Karte, im Info-Fenster und im Satz-Training.
+- Einheitstest um eine Prüfung ergänzt (53).
+
 ## 2026-10-20 · Neue Fotos für Timer und Summit (Fassung 2026-10-20-54)
 
 - Timer-Kachel: Box Jump im Nebel-Gym (Timer) und Calisthenics-Park am Meer (Summit), in Hell und Dunkel gleich (ersetzt Läufer-Silhouette und Laufbahn aus Fassung -54/-55). Quellen noch nachzutragen (BilderBloc\Quellen-Frauenbilder.txt).

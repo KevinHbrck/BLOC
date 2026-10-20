@@ -998,3 +998,7 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 :root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn svg{ color:#ff8f6b; }
 :root[data-layout="new"]:has(.run-bg) #app .playbtn svg{ color:#fff; fill:#fff; }
 :root[data-layout="new"]:has(.run-bg) #app .run-hero{ background:none !important; border:0 !important; box-shadow:none !important; -webkit-backdrop-filter:none; backdrop-filter:none; }
+/* Griff / Aufsatz bei Kabelzug- und Stangenübungen */
+.info-griff{ margin:8px 0 2px; padding:8px 12px; border-radius:12px; background:var(--surface-2, rgba(128,128,128,.12)); font-size:14px; line-height:1.35; }
+.info-griff b{ color:var(--accent); }
+.satz-glas .info-griff{ background:rgba(255,255,255,.12); color:#fff; margin:6px 0; font-size:13px; }

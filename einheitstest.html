@@ -632,6 +632,22 @@
     } finally { W.installTipHTML = alt.it; W.snapZeit = alt.z; s.lastExport = alt.ex; s.backupTipBis = alt.bis; W.state.db.blocks = alt.bl; }
   });
 
+  test("Neue Studio-Übungen (Cardio, Griffe): vollständig und zweisprachig, Griff-Angabe als Paar, keine Doppelten", function () {
+    var cardio = W.STUDIO_GRUPPEN.filter(function (g) { return g.id === "cardio"; })[0];
+    wahr(cardio && cardio.ids.split(" ").length >= 9, "Gruppe Cardio mit den Battle Ropes");
+    cardio.ids.split(" ").forEach(function (id) {
+      var ex = W.findExercise(id), i = W.EX_INFO[id], p = W.EX_POSTURE[id], m = W.EX_MUSCLES[id];
+      wahr(ex && ex.name.de && ex.name.en, id + ": Name in zwei Sprachen");
+      wahr(i && i[0].split("|").length === 3 && i[1].split("|").length === 3, id + ": drei Schritte DE und EN");
+      wahr(p && p.length === 4 && p.every(function (x) { return x; }), id + ": Haltung und Vermeiden DE und EN");
+      wahr(m && m.length === 4 && m[0] && m[2], id + ": Muskeln DE und EN");
+    });
+    Object.keys(W.EX_GRIFF).forEach(function (id) { var g = W.EX_GRIFF[id]; wahr(g.length === 2 && g[0] && g[1], id + ": Griff DE und EN"); wahr(W.findExercise(id), id + ": Übung zum Griff existiert"); });
+    var ids = W.EXERCISES.map(function (e) { return e.id; });
+    gleich(ids.length, ids.filter(function (x, k) { return ids.indexOf(x) === k; }).length, "keine doppelte Übungs-ID");
+    wahr(W.griffHTML("rope-triceps-pushdown").indexOf("Seilaufsatz") > -1 && W.griffHTML("plank") === "", "Griff wird gezeigt, wo es einen gibt");
+  });
+
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
   document.getElementById("los").addEventListener("click", async function () {
     var knopf = this;
