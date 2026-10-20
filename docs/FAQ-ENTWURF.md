@@ -244,7 +244,7 @@ Stand: 2026-10-19, Fassung 3 (Fassung 2 vom 2026-10-16 überarbeitet nach dem ne
 
 - **Lebensmittel zuerst:** Fachgesellschaften sehen die Ernährung als Grundlage; Nahrungsergänzung leistet höchstens einen kleinen Beitrag und sollte erst nach einem Blick auf die gesamte Ernährung überlegt werden.
 - **Was Pulver kann:** Es liefert Eiweiß bequem und mit wenig Kalorien. Der kleine Zusatzeffekt aus Frage 14 bezieht sich auf zusätzliches Eiweiß zur normalen Ernährung.
-- **Was Pulver nicht kann:** Es macht allein keine Muskeln und ersetzt kein Training. Ob Pulver besser wirkt als die gleiche Menge Eiweiß aus Lebensmitteln, wurde in den gelesenen Auswertungen nicht direkt verglichen.
+- **Was Pulver nicht kann:** Es macht allein keine Muskeln und ersetzt kein Training. Ob Pulver besser wirkt als die gleiche Menge Eiweiß aus Lebensmitteln, wurde in den ausgewerteten Studien nicht direkt verglichen.
 - **Qualität:** Bei Nahrungsergänzung besteht das Risiko von Verunreinigungen oder nicht deklarierten Inhaltsstoffen; im Leistungssport kann das zu Dopingverstößen führen. Für Freizeitsport ist das weniger relevant, aber ein Grund, auf seriöse Hersteller zu achten.
 - **Riegel:** Sie können viel Zucker und Energie enthalten. Das Etikett zeigt es; vergleiche es mit dem, was du brauchst.
 - **Wirkstoffe mit guter Belegung** (z. B. Koffein, Kreatin) sind ein eigenes Thema und hier nicht behandelt.
@@ -268,6 +268,7 @@ Stand: 2026-10-19, Fassung 3 (Fassung 2 vom 2026-10-16 überarbeitet nach dem ne
 - **Wie lange läuft ein Block?** Eine belastbare Studie, die eine ideale Blocklänge festlegt, gibt es nicht. Die ausgewerteten Studien dauerten mindestens 6 Wochen. In der Praxis sind Blöcke von einigen Wochen üblich (oft wird 4–8 Wochen genannt); das ist **Praxiswissen, nicht belegt**.
 - **Was folgt danach?** Praxis-Vorschlag, nicht belegt: Struktur beibehalten und weiter steigern, einzelne Übungen durch Varianten ersetzen, eine leichtere Woche einlegen und dann neu bewerten, was gut geklappt hat. Periodisierte Pläne (geplante Wechsel von Umfang und Intensität) waren in einer Auswertung für die Maximalkraft etwas besser als nicht periodisierte; der aktuelle Stand der Fachgesellschaft hält sie bei guter Steigerung für weniger wichtig als früher angenommen.
 - **Anpassen:** Der aktuelle Stand betont, dass ein Plan zu dir passen soll (Ziel, Erfahrung, Alltag), weil Dabeibleiben wichtiger ist als genaue Zahlen.
+- **In BLOC:** Die Plan-Seite im Reiter „Körper“ verweist auf diese Antwort.
 
 **Studienlage:** Gut belegt: Mindestfrequenz, ausreichend Sätze, Steigerung, Sicherheit für gesunde Erwachsene. **Dünn bis offen:** ideale Blocklänge, Entlastungswochen, beste Wochenaufteilung. **Umstritten:** wie viel Periodisierung bringt; Auswertungen kommen zu unterschiedlichen Schlüssen.
 
@@ -281,9 +282,9 @@ Stand: 2026-10-19, Fassung 3 (Fassung 2 vom 2026-10-16 überarbeitet nach dem ne
 - **Kraft:** Bei Erwachsenen ist der Kraftunterschied im Oberkörper größer als im Unterkörper. Eine Übersichtsarbeit führt ihn auf die größere Muskelmasse und größere Flächen der schnellen Fasern (Typ II) zurück, nicht auf eine bessere Ansteuerung durch die Nerven.
 - **Reaktion auf Training:** Eine Auswertung von Studien mit gleichem Training für beide Geschlechter fand beim Muskelwachstum und bei der Beinkraft keinen Unterschied. Bei der Oberkörperkraft fiel der relative Zuwachs bei Frauen größer aus (v. a. bei untrainierten, jungen bis mittelalten Personen).
 - **Ermüdung:** Frauen ermüden bei gleich intensiven isometrischen Belastungen meist weniger. Das hängt aber stark von der Aufgabe ab (Art, Intensität, Tempo, Muskelgruppe). Daraus lässt sich nicht allgemein ableiten, dass Frauen zwischen Sätzen kürzere Pausen brauchen oder mehr Wiederholungen schaffen.
-- **Faserverteilung:** Studien beschreiben Unterschiede in der Zusammensetzung der Muskelfasern. Dass Frauen allgemein einen höheren Anteil an ausdauernden Fasern (Typ I) haben, lässt sich aus den gelesenen Zusammenfassungen nicht eindeutig bestätigen; bitte nicht als feste Regel nehmen.
+- **Faserverteilung:** Studien beschreiben Unterschiede in der Zusammensetzung der Muskelfasern. Dass Frauen allgemein einen höheren Anteil an ausdauernden Fasern (Typ I) haben, lässt sich aus den ausgewerteten Quellen nicht eindeutig bestätigen; bitte nicht als feste Regel nehmen.
 - **Menstruationszyklus:** Eine Zusammenfassung der Auswertungen fand keinen belastbaren Einfluss der Zyklusphase auf Kraft oder Trainingserfolg; die Studienqualität ist oft schwach. Eine weitere Auswertung fand nur einen sehr kleinen Unterschied (die frühe Phase nach der Periode lag minimal niedriger). Wer merkt, dass es ihr in bestimmten Phasen besser oder schlechter geht, kann die Belastung entsprechend anpassen.
-- **Programm je Geschlecht?** Die oft gehörte Regel „Frauen profitieren von mehr Umfang und kürzeren Pausen, Männer von höherer Intensität“ konnte ich in den gelesenen Quellen **nicht als belegte Empfehlung** finden. BLOC trennt deshalb nicht nach Geschlecht.
+- **Programm je Geschlecht?** Die oft gehörte Regel „Frauen profitieren von mehr Umfang und kürzeren Pausen, Männer von höherer Intensität“ ließ sich in den ausgewerteten Quellen **nicht als belegte Empfehlung** finden. BLOC trennt deshalb nicht nach Geschlecht.
 
 **Studienlage:** Die Studien vergleichen überwiegend Gruppenmittel von Frauen und Männern; einzelne Personen weichen stark davon ab, und andere Geschlechtsidentitäten sind kaum untersucht. Lange waren Frauen in Studien unterrepräsentiert, viele Studien sind klein. **Dünn oder umstritten:** Faserverteilung, Pausenbedarf, Einfluss des Zyklus.
 
@@ -517,7 +518,7 @@ Stand: 2026-10-19, Fassung 3 (Fassung 2 vom 2026-10-16 überarbeitet nach dem ne
 
 - **Food first:** Professional bodies see diet as the foundation; supplements make at most a small contribution and should be considered only after looking at your whole diet.
 - **What powder can do:** It supplies protein conveniently and with few calories. The small extra effect from question 14 refers to additional protein on top of a normal diet.
-- **What powder cannot do:** It does not build muscle on its own and does not replace training. Whether powder works better than the same amount of protein from food was not directly compared in the reviews I read.
+- **What powder cannot do:** It does not build muscle on its own and does not replace training. Whether powder works better than the same amount of protein from food was not directly compared in the studies reviewed.
 - **Quality:** With supplements there is a risk of contamination or undeclared ingredients; in competitive sport this can lead to doping violations. For recreational sport that matters less, but it is a reason to choose reputable makers.
 - **Bars:** They can contain a lot of sugar and energy. The label shows it; compare it with what you need.
 - **Ingredients with good evidence** (e.g. caffeine, creatine) are a separate topic and not covered here.
@@ -541,6 +542,7 @@ Stand: 2026-10-19, Fassung 3 (Fassung 2 vom 2026-10-16 überarbeitet nach dem ne
 - **How long does a block run?** There is no solid study that fixes an ideal block length. The analysed studies lasted at least 6 weeks. In practice, blocks of a few weeks are common (4–8 weeks is often named); this is **practice knowledge, not proven**.
 - **What comes next?** Practice suggestion, not proven: keep the structure and keep progressing, swap some exercises for variations, add an easier week, then review what worked. Periodised plans (planned changes in volume and intensity) were slightly better for maximal strength in one analysis; the current professional statement considers them less important than once assumed when progression is good.
 - **Adapt it:** The current statement stresses that a plan should fit you (goal, experience, daily life), because sticking with it matters more than exact numbers.
+- **In BLOC:** The plan page under the “Body” tab points to this answer.
 
 **Evidence:** Well supported: minimum frequency, enough sets, progression, safety for healthy adults. **Thin to open:** ideal block length, deload weeks, best weekly split. **Disputed:** how much periodisation adds; analyses reach different conclusions.
 
@@ -554,9 +556,9 @@ Stand: 2026-10-19, Fassung 3 (Fassung 2 vom 2026-10-16 überarbeitet nach dem ne
 - **Strength:** In adults the strength gap is larger in the upper body than in the lower body. A review attributes it to greater muscle mass and larger areas of fast fibres (type II), not to better nerve activation.
 - **Response to training:** An analysis of studies with the same training for both sexes found no difference in muscle growth or leg strength. For upper-body strength the relative gain was larger in women (mainly untrained, young to middle-aged people).
 - **Fatigue:** Women usually fatigue less during isometric contractions of the same intensity. This depends strongly on the task (type, intensity, speed, muscle group). It cannot be generalised to say women need shorter rests between sets or can do more reps.
-- **Fibre distribution:** Studies describe differences in muscle fibre composition. That women in general have a higher share of endurance fibres (type I) cannot be clearly confirmed from the summaries I read; please don't take it as a fixed rule.
+- **Fibre distribution:** Studies describe differences in muscle fibre composition. That women in general have a higher share of endurance fibres (type I) cannot be clearly confirmed from the sources reviewed; please don't take it as a fixed rule.
 - **Menstrual cycle:** An umbrella review found no reliable influence of cycle phase on strength or training success; study quality is often weak. Another analysis found only a very small difference (the early phase after the period was minimally lower). If you notice that you feel better or worse in certain phases, you can adjust load accordingly.
-- **Programme by sex?** The often-heard rule "women benefit from more volume and shorter rests, men from higher intensity" I **could not find as an established recommendation** in the sources I read. BLOC therefore does not separate by sex.
+- **Programme by sex?** The often-heard rule "women benefit from more volume and shorter rests, men from higher intensity" could **not be found as an established recommendation** in the sources reviewed. BLOC therefore does not separate by sex.
 
 **Evidence:** The studies mostly compare group averages of women and men; individuals differ widely, and other gender identities are hardly studied. For a long time women were under-represented in studies, and many studies are small. **Thin or disputed:** fibre distribution, rest needs, influence of the cycle.
 

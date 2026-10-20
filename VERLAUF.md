@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Fragen & Antworten: fünf neue Fragen, neue Gruppe „Trainingsplan & Unterschiede“ (Fassung 2026-10-19-9)
+
+- **Neu** (aus `docs/FAQ-ENTWURF.md`, Fassung 3 der Sportwissenschaft-Sitzung): Frage 14 Eiweiß, 15 wann mehr Eiweiß, 16 Pulver/Riegel (Gruppe Ernährung); neue Gruppe **Trainingsplan & Unterschiede** mit 17 Trainingsplan aufbauen (Blocklänge, Entlastungswoche, „Was folgt danach?“; Praxisaussagen sind als nicht belegt gekennzeichnet) und 18 geschlechtsspezifische Unterschiede. Quellen F29–F46 neu (F1–F28 unverändert), Liste in der App und in `quellen.html` (DE/EN).
+- Frage 17 nennt, dass die **Plan-Seite im Reiter „Körper“** auf diese Antwort verweist (die Verlinkung baut die Design-Sitzung).
+- Prüfung: die Texte sind in eigenen Worten, Zahlen nur mit Quelle, Hinweise zu Nieren, Älteren und Erkrankungen verweisen an Ärztinnen/Ärzte. Drei Formulierungen mit „ich habe gelesen“ im Entwurf habe ich neutral gefasst („in den ausgewerteten Quellen“), weil die App keine Ich-Stimme hat. Prüfvermerke („geprüft“, „Zusammenfassung gelesen“) stehen nicht in der App-Liste.
+- `faq.js` erzeugt mit dem Umwandlungs-Skript (nicht von Hand ändern); die Einheitstest-Prüfungen sind für beliebig viele Fragen und Gruppen offen.
+
 ## 2026-10-20 · Hintergrundfotos für Run und Training (Fassung 2026-10-19-8)
 
 - **Run** (Modern): hinter der Seite liegt jetzt das Waldlaufpfad-Foto (Pexels 31932520, 400×600, geblurrt) in Hell und Dunkel statt der bisherigen zwei Fotos.
