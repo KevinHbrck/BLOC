@@ -137,7 +137,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Beweglichkeit:** Alle Dehnarten verbesserten sie, der Effekt hielt aber meist nur unter 30 Minuten.
 - **Vor dem Training:** Langes Dehnen (ab 60 Sekunden pro Muskel) senkte die Leistung im Mittel um 4,6 %, kurzes um 1,1 %. Dynamisches Dehnen steigerte sie leicht.
 - **Danach:** Gegenüber Ausruhen brachte Dehnen weder weniger Muskelkater noch bessere Kraft-Erholung.
-- **Verletzungen:** Dehnen allein verringerte Sportverletzungen nicht. Krafttraining schon (siehe Frage 32).
+- **Verletzungen:** Dehnen allein verringerte Sportverletzungen nicht. Krafttraining schon (siehe Frage 33).
 
 **Studienlage:** Belegt: kurzfristiger Beweglichkeitsgewinn; kein belegter Verletzungsschutz. Sehr unsicher: Erholungseffekte; die Studien sind klein und von geringer Qualität. Langzeitwirkung regelmäßigen Dehnens wurde hier nicht ausgewertet.
 
@@ -278,11 +278,24 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [4], [7]
 
+### 20. Gewicht wegdrücken und wieder ablassen: worauf muss ich achten?
+
+**Kurzantwort:** Drücke das Gewicht zügig, aber kontrolliert nach oben, lass es in 2–3 Sekunden ab, nutze den vollen Bewegungsumfang und halte nie dauerhaft die Luft an. Das Ablassen ist kein Nebenprodukt: Es trainiert mit, und hier entscheidet die Kontrolle.
+
+- **Tempo:** Wiederholungen von 0,5 bis 8 Sekunden Dauer brachten ähnliches Muskelwachstum; erst sehr langsame (über 10 Sekunden) schnitten schlechter ab. Also zügig hoch, 2–3 Sekunden runter (Praxis).
+- **Ablassen nutzen:** Training mit betonter Senkphase brachte in Studien mehr Muskelmasse und Kraft, vor allem bei höherer Last. Gewicht nicht fallen lassen, sondern bremsen.
+- **Voller Weg:** Ein voller Bewegungsumfang steigerte die Kraft stärker als ein verkürzter, solange die Technik sauber bleibt.
+- **Atmen:** Beim Drücken ausatmen, beim Ablassen einatmen (Praxis). Bei sehr schweren Lasten (über 80 % des Maximums) oder Sätzen bis zum Versagen ist kurzes Pressatmen kaum zu vermeiden. Es erhöht den Druck im Bauchraum und stabilisiert den Rumpf, treibt aber den Blutdruck hoch. Risiken sind weder bestätigt noch ausgeschlossen. Wer Herz-Kreislauf-Probleme oder Bluthochdruck hat, klärt das vorher ärztlich.
+- **Sicherheit (Praxis):** Handgelenke gerade, Schulterblätter ruhig, Körper wie eine Linie (beim Liegestütz). Bei schweren Lasten über Brust oder Gesicht eine Partnerin, einen Partner oder die Sicherheitsablage nutzen.
+
+**Studienlage:** Belegt: Ähnliches Muskelwachstum bei 0,5–8 Sekunden pro Wiederholung; voller Bewegungsumfang steigert die Kraft; betonte Senkphase hilft. Offen: die ideale Dauer im Detail und die Risiken des Pressatmens. Die Atem- und Sicherheitsregeln sind Praxis, keine Studienwerte.
+
+**Quellen:** [3], [68], [69], [70]
 ---
 
 ## D. Ernährung & Stoffwechsel
 
-### 20. Was hat Krafttraining mit Kalorien zu tun?
+### 21. Was hat Krafttraining mit Kalorien zu tun?
 
 **Kurzantwort:** Eine Krafteinheit verbrennt etwa so viel wie zügiges Gehen bis lockeres Laufen. Mehr Muskeln erhöhen den Ruheverbrauch nur wenig. Die Kalorienzahl in BLOC ist eine Schätzung.
 
@@ -295,7 +308,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [20], [21]
 
-### 21. Was bringt Eiweiß?
+### 22. Was bringt Eiweiß?
 
 **Kurzantwort:** Eiweiß liefert die Bausteine für Muskeln. Beim Krafttraining brachte zusätzliches Eiweiß einen kleinen Vorteil, im Schnitt etwa 0,3 kg mehr fettfreie Masse. Der Reiz bleibt das Training. Richtwert für Trainierende: 1,4–2,0 g pro kg Körpergewicht und Tag.
 
@@ -309,7 +322,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [30], [31]
 
-### 22. Wann sollte ich mehr Eiweiß essen?
+### 23. Wann sollte ich mehr Eiweiß essen?
 
 **Kurzantwort:** Wenn du regelmäßig trainierst, älter bist oder abnimmst. Wichtiger als der Zeitpunkt ist die Tagesmenge. Bei Nierenerkrankungen vorher ärztlich klären.
 
@@ -324,12 +337,12 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [31], [32], [33], [34], [35]
 
-### 23. Brauche ich Pulver, Riegel und Ähnliches?
+### 24. Brauche ich Pulver, Riegel und Ähnliches?
 
 **Kurzantwort:** Nein. Wer genug Eiweiß isst, braucht kein Pulver. Es ist bequem, wenn der Alltag es schwer macht. Dann auf Qualität und Inhaltsstoffe achten.
 
 - **Zuerst Essen:** Fachgesellschaften sehen Ernährung als Grundlage; Nahrungsergänzung ist höchstens ein kleiner Zusatz.
-- **Was Pulver kann:** Eiweiß bequem und kalorienarm liefern. Der kleine Zusatzeffekt aus Frage 21 gilt für Eiweiß zusätzlich zur normalen Ernährung.
+- **Was Pulver kann:** Eiweiß bequem und kalorienarm liefern. Der kleine Zusatzeffekt aus Frage 22 gilt für Eiweiß zusätzlich zur normalen Ernährung.
 - **Was nicht:** Pulver baut allein keine Muskeln auf. Ob es besser wirkt als dieselbe Menge aus Lebensmitteln, wurde in den ausgewerteten Studien nicht direkt verglichen.
 - **Qualität:** Bei Ergänzungen gibt es das Risiko von Verunreinigungen oder nicht deklarierten Stoffen; im Leistungssport kann das zu Dopingverstößen führen. Für den Freizeitsport weniger relevant, aber ein Grund für seriöse Hersteller.
 - **Riegel:** können viel Zucker und Energie enthalten. Das Etikett zeigt es.
@@ -338,7 +351,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [31], [36]
 
-### 24. Was ist der glykämische Index, und spielt er im Sport eine Rolle?
+### 25. Was ist der glykämische Index, und spielt er im Sport eine Rolle?
 
 **Kurzantwort:** Der glykämische Index (GI) zeigt, wie schnell ein Lebensmittel den Blutzucker steigen lässt. Für Freizeitsport spielt er kaum eine Rolle. Gesamtmenge an Kohlenhydraten und ausgewogenes Essen zählen mehr.
 
@@ -351,7 +364,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [22], [23], [24]
 
-### 25. Was macht Alkohol mit dem Trainingsfortschritt?
+### 26. Was macht Alkohol mit dem Trainingsfortschritt?
 
 **Kurzantwort:** In Studien bremste viel Alkohol nach dem Training Erholung und Muskelaufbau. Für kleine Mengen ist die Studienlage dünn. Wer Fortschritte will, lässt Alkohol rund ums Training am besten weg.
 
@@ -368,7 +381,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## E. Sicherheit
 
-### 26. Worauf muss ich achten: Warnzeichen, Aufwärmen, Steigerung?
+### 27. Worauf muss ich achten: Warnzeichen, Aufwärmen, Steigerung?
 
 **Kurzantwort:** Vier Regeln: aufwärmen, langsam steigern, Pausen einhalten, auf Warnzeichen hören. Bei Brustschmerz, ungewöhnlicher Atemnot oder Schwindel sofort aufhören und ärztlich klären.
 
@@ -386,7 +399,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## F. Plan & Fortgeschrittene
 
-### 27. Darf ich jeden Tag trainieren, oder schadet das?
+### 28. Darf ich jeden Tag trainieren, oder schadet das?
 
 **Kurzantwort:** Jeden Tag bewegen ist gut, jeden Tag hart dieselben Muskeln belasten bringt nichts und kann dich ausbremsen. Empfehlung: höchstens 2–3 harte Krafttage pro Muskelgruppe und Woche, an den anderen Tagen Gehen, lockere Ausdauer oder Mobility.
 
@@ -399,7 +412,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 **Studienlage:** Belegt: Mehr Bewegung ist mit mehr Gesundheitsnutzen verbunden, eine harte Kraftfrequenz über 2× pro Woche bringt keinen klaren Zusatz. Offen: Eine feste Obergrenze für die Trainingshäufigkeit lässt sich aus den Studien nicht ableiten. Übertraining ist in Expertenkonsens beschrieben, schwer abzugrenzen und zeigt sich individuell.
 
 **Quellen:** [3], [16], [48], [59], [60]
-### 28. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach?
+### 29. Wie baue ich einen Trainingsplan auf, wie lange läuft ein Block, und was folgt danach?
 
 **Kurzantwort:** Mindestens 2 Krafttage pro Woche mit allen großen Muskelgruppen, den Reiz langsam steigern und Erholung einplanen. Ein Block dauert in der Praxis 4–8 Wochen, danach folgt eine leichte Woche und ein neuer Block mit leicht veränderten Übungen.
 
@@ -414,7 +427,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [1], [3], [44], [45], [46]
 
-### 29. Ich trainiere schon 4–6 Mal pro Woche: wie viel Umfang und Häufigkeit sind sinnvoll?
+### 30. Ich trainiere schon 4–6 Mal pro Woche: wie viel Umfang und Häufigkeit sind sinnvoll?
 
 **Kurzantwort:** Mehr Einheiten brauchen mehr Struktur, nicht mehr Härte. Verteile 10–20 Sätze pro Muskelgruppe und Woche auf 2–3 Einheiten. Bei mehr bringt jeder weitere Satz kaum noch etwas dazu.
 
@@ -426,7 +439,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [6], [8], [46]
 
-### 30. Periodisierung und Entlastungswoche (Deload): wann und wie?
+### 31. Periodisierung und Entlastungswoche (Deload): wann und wie?
 
 **Kurzantwort:** Geplantes Wechseln der Belastung (Periodisierung) brachte bei der Maximalkraft etwas, ist aber weniger wichtig als sauberes Steigern. Eine leichte Woche alle 4–8 Wochen oder wenn die Leistung stockt, ist gängige Praxis.
 
@@ -439,7 +452,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [3], [44], [45]
 
-### 31. Erholung, Schlaf, Übertraining: woran erkenne ich, dass es zu viel ist?
+### 32. Erholung, Schlaf, Übertraining: woran erkenne ich, dass es zu viel ist?
 
 **Kurzantwort:** Ernstzunehmende Zeichen: Die Leistung sinkt über mehrere Tage trotz Pause, du bist dauernd müde, schläfst schlecht, bist gereizt. Dann den Umfang für 1–2 Wochen etwa halbieren (Praxis), mehr schlafen und Ursachen prüfen.
 
@@ -452,7 +465,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [16], [59], [60]
 
-### 32. Wie beuge ich Verletzungen vor?
+### 33. Wie beuge ich Verletzungen vor?
 
 **Kurzantwort:** Krafttraining ist in den Studien die wirksamste Vorbeugung: Es senkte Sportverletzungen um etwa zwei Drittel. Dehnen allein brachte nichts. Wichtig sind außerdem saubere Technik, langsames Steigern und genug Erholung.
 
@@ -465,7 +478,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [57], [61]
 
-### 33. Eiweiß und Energie bei hohem Umfang: was brauche ich?
+### 34. Eiweiß und Energie bei hohem Umfang: was brauche ich?
 
 **Kurzantwort:** Wer viel trainiert, muss auch genug essen. Wer über längere Zeit zu wenig Energie aufnimmt, baut weniger Muskeln auf, die Kraft litt in der Auswertung aber nicht. Dazu 1,4–2,0 g Eiweiß pro kg und Tag, auf mehrere Mahlzeiten verteilt.
 
@@ -478,7 +491,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Quellen:** [29], [31], [32], [59], [64]
 
-### 34. Gibt es beim Training geschlechtsspezifische Unterschiede?
+### 35. Gibt es beim Training geschlechtsspezifische Unterschiede?
 
 **Kurzantwort:** Frauen und Männer können nach denselben Prinzipien trainieren. Männer haben im Schnitt mehr Muskelmasse, aber beim Muskelwachstum reagieren beide ähnlich. Programme nach Geschlecht sind nicht belegt.
 
@@ -614,7 +627,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 - **Flexibility:** All kinds of stretching improved it, but the effect usually lasted under 30 minutes.
 - **Before training:** Long stretching (60 seconds or more per muscle) lowered performance by 4.6 % on average, short stretching by 1.1 %. Dynamic stretching raised it slightly.
 - **Afterwards:** Compared with resting, stretching brought neither less soreness nor better strength recovery.
-- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see question 32).
+- **Injuries:** Stretching alone did not reduce sports injuries. Strength training did (see question 33).
 
 **Evidence:** Established: short-term gain in flexibility; no proven injury protection. Very uncertain: recovery effects; the studies are small and of low quality. The long-term effect of regular stretching was not analysed here.
 
@@ -755,11 +768,24 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [4], [7]
 
+### 20. Pressing the weight away and lowering it again: what should I watch for?
+
+**Short answer:** Press the weight up briskly but under control, lower it over 2–3 seconds, use the full range of motion and never hold your breath for long. Lowering is not a by-product: it trains too, and control is what counts there.
+
+- **Tempo:** Repetitions lasting 0.5 to 8 seconds gave similar muscle growth; only very slow ones (over 10 seconds) did worse. So briskly up, 2–3 seconds down (practice).
+- **Use the lowering:** Training with an emphasised lowering phase gave more muscle mass and strength in studies, especially at higher load. Don't drop the weight, brake it.
+- **Full range:** A full range of motion raised strength more than a shortened one, as long as technique stays clean.
+- **Breathing:** Breathe out as you press, in as you lower (practice). With very heavy loads (over 80 % of maximum) or sets to failure a brief Valsalva is hard to avoid. It raises pressure in the abdomen and stiffens the trunk, but pushes blood pressure up. Risks are neither confirmed nor ruled out. If you have heart or circulation problems or high blood pressure, clarify this with a doctor first.
+- **Safety (practice):** wrists straight, shoulder blades steady, body in one line (push-up). With heavy loads over chest or face, use a spotter or the safety catches.
+
+**Evidence:** Established: similar muscle growth at 0.5–8 seconds per repetition; full range of motion raises strength; an emphasised lowering phase helps. Open: the ideal duration in detail and the risks of the Valsalva. The breathing and safety rules are practice, not study values.
+
+**Sources:** [3], [68], [69], [70]
 ---
 
 ## D. Nutrition & metabolism
 
-### 20. How is strength training related to calories?
+### 21. How is strength training related to calories?
 
 **Short answer:** A strength session burns about as much as brisk walking up to easy running. More muscle raises resting energy use only slightly. The calorie number in BLOC is an estimate.
 
@@ -772,7 +798,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [20], [21]
 
-### 21. What does protein do?
+### 22. What does protein do?
 
 **Short answer:** Protein supplies the building blocks for muscle. In strength training, extra protein gave a small advantage, on average about 0.3 kg more fat-free mass. The stimulus remains the training. Guide value for people who train: 1.4–2.0 g per kg body weight per day.
 
@@ -786,7 +812,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [30], [31]
 
-### 22. When should I eat more protein?
+### 23. When should I eat more protein?
 
 **Short answer:** If you train regularly, are older, or are losing weight. The daily total matters more than timing. With kidney disease, clarify with a doctor first.
 
@@ -801,12 +827,12 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [31], [32], [33], [34], [35]
 
-### 23. Do I need powder, bars and the like?
+### 24. Do I need powder, bars and the like?
 
 **Short answer:** No. If you eat enough protein, you don't need powder. It is convenient when daily life makes it hard. Then check quality and ingredients.
 
 - **Food first:** Professional bodies see diet as the foundation; supplements are at most a small extra.
-- **What powder can do:** supply protein conveniently and with few calories. The small extra effect from question 21 applies to protein on top of a normal diet.
+- **What powder can do:** supply protein conveniently and with few calories. The small extra effect from question 22 applies to protein on top of a normal diet.
 - **What it can't:** Powder alone doesn't build muscle. Whether it works better than the same amount from food was not compared directly in the studies analysed.
 - **Quality:** With supplements there is a risk of contamination or undeclared substances; in competitive sport that can cause doping violations. Less relevant for recreational sport, but a reason to choose reputable makers.
 - **Bars:** can contain a lot of sugar and energy. The label shows it.
@@ -815,7 +841,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [31], [36]
 
-### 24. What is the glycaemic index, and does it matter in sport?
+### 25. What is the glycaemic index, and does it matter in sport?
 
 **Short answer:** The glycaemic index (GI) shows how fast a food raises blood sugar. For recreational sport it hardly matters. Total carbohydrate amount and balanced eating count more.
 
@@ -828,7 +854,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [22], [23], [24]
 
-### 25. What does alcohol do to training progress?
+### 26. What does alcohol do to training progress?
 
 **Short answer:** In studies, a lot of alcohol after training slowed recovery and muscle building. For small amounts the evidence is thin. If you want progress, it is best to leave alcohol out around training.
 
@@ -845,7 +871,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## E. Safety
 
-### 26. What should I watch for: warning signs, warm-up, progression?
+### 27. What should I watch for: warning signs, warm-up, progression?
 
 **Short answer:** Four rules: warm up, progress slowly, keep your rest, listen to warning signs. With chest pain, unusual shortness of breath or dizziness, stop at once and get checked.
 
@@ -863,7 +889,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## F. Plan & advanced
 
-### 27. May I train every day, or does it do harm?
+### 28. May I train every day, or does it do harm?
 
 **Short answer:** Moving every day is good; hitting the same muscles hard every day brings nothing and can slow you down. Recommendation: at most 2–3 hard strength days per muscle group a week, and on the other days walking, easy endurance or mobility.
 
@@ -876,7 +902,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 **Evidence:** Established: more activity goes with more health benefit; hard strength frequency above 2× a week adds no clear extra. Open: a fixed upper limit for training frequency cannot be derived from the studies. Overtraining is described by expert consensus, is hard to tell apart and varies by person.
 
 **Sources:** [3], [16], [48], [59], [60]
-### 28. How do I build a training plan, how long does a block run, and what comes next?
+### 29. How do I build a training plan, how long does a block run, and what comes next?
 
 **Short answer:** At least 2 strength days a week covering all major muscle groups, raise the stimulus slowly and plan recovery. In practice a block runs 4–8 weeks, then comes an easy week and a new block with slightly changed exercises.
 
@@ -891,7 +917,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [1], [3], [44], [45], [46]
 
-### 29. I already train 4–6 times a week: how much volume and frequency make sense?
+### 30. I already train 4–6 times a week: how much volume and frequency make sense?
 
 **Short answer:** More sessions need more structure, not more hardness. Spread 10–20 sets per muscle group per week over 2–3 sessions. Beyond that each further set adds little.
 
@@ -903,7 +929,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [6], [8], [46]
 
-### 30. Periodisation and deload week: when and how?
+### 31. Periodisation and deload week: when and how?
 
 **Short answer:** Planned variation of the load (periodisation) added something for maximal strength, but matters less than clean progression. An easy week every 4–8 weeks, or when performance stalls, is common practice.
 
@@ -916,7 +942,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [3], [44], [45]
 
-### 31. Recovery, sleep, overtraining: how do I know it's too much?
+### 32. Recovery, sleep, overtraining: how do I know it's too much?
 
 **Short answer:** Signs to take seriously: performance falls over several days despite rest, you are constantly tired, sleep badly, feel irritable. Then roughly halve the volume for 1–2 weeks (practice), sleep more and check causes.
 
@@ -929,7 +955,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [16], [59], [60]
 
-### 32. How do I prevent injuries?
+### 33. How do I prevent injuries?
 
 **Short answer:** In studies strength training is the most effective prevention: it cut sports injuries by about two thirds. Stretching alone did nothing. Clean technique, slow progression and enough recovery matter too.
 
@@ -942,7 +968,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [57], [61]
 
-### 33. Protein and energy at high volume: what do I need?
+### 34. Protein and energy at high volume: what do I need?
 
 **Short answer:** If you train a lot, you also have to eat enough. Too little energy over a long time means less muscle gained, though strength did not suffer in the analysis. Plus 1.4–2.0 g protein per kg per day, spread over several meals.
 
@@ -955,7 +981,7 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 **Sources:** [29], [31], [32], [59], [64]
 
-### 34. Are there sex-specific differences in training?
+### 35. Are there sex-specific differences in training?
 
 **Short answer:** Women and men can train by the same principles. On average men have more muscle mass, but for muscle growth both respond similarly. Programmes by sex are not supported.
 
@@ -1043,6 +1069,9 @@ Prüfstand 2026-10-16: **geprüft = Crossref-Abfrage (Titel, Jahr, Band, Seiten,
 65. Hayden JA et al. (2021): Exercise therapy for chronic low back pain. *Cochrane Database Syst Rev* 2021(9):CD009790. doi:10.1002/14651858.CD009790.pub2 (geprüft; Zusammenfassung gelesen)
 66. Wang XQ et al. (2012): A meta-analysis of core stability exercise versus general exercise for chronic low back pain. *PLoS ONE* 7(12):e52082. doi:10.1371/journal.pone.0052082 (geprüft; Zusammenfassung gelesen)
 67. Fransen M et al. (2015): Exercise for osteoarthritis of the knee. *Cochrane Database Syst Rev* 2015(1):CD004376. doi:10.1002/14651858.CD004376.pub3 (geprüft; Zusammenfassung gelesen)
+68. Schoenfeld BJ et al. (2015): Effect of repetition duration during resistance training on muscle hypertrophy: a systematic review and meta-analysis. *Sports Med* 45(4):577–585. doi:10.1007/s40279-015-0304-0 (geprüft; Zusammenfassung gelesen)
+69. Roig M et al. (2009): The effects of eccentric versus concentric resistance training on muscle strength and mass in healthy adults: a systematic review with meta-analysis. *Br J Sports Med* 43(8):556–568. doi:10.1136/bjsm.2008.051417 (geprüft; Zusammenfassung gelesen)
+70. Hackett DA, Chow CM (2013): The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise. *J Strength Cond Res* 27(8):2338–2345. doi:10.1519/jsc.0b013e31827de07d (geprüft; Zusammenfassung gelesen)
 
 ---
 
@@ -1061,3 +1090,5 @@ Prüfstand 2026-10-16: **geprüft = Crossref-Abfrage (Titel, Jahr, Band, Seiten,
 **Nachtrag (2026-10-20, Fassung 4b):** Frage 1 vergleicht jetzt Ausdauer- und Krafttraining. Neue Frage 14 „Stabilität, Rücken, Gelenke“ arbeitet die positiven Wirkungen des Krafttrainings auf Rumpf, Rücken, Gelenke und Knochen heraus (Quellen 65–67, per Crossref geprüft). Fragen ab 14 sind um 1 nach hinten gerückt (Querverweise angepasst), die Gruppe heißt jetzt „Was Training dir bringt“.
 
 **Nachtrag (2026-10-20, Fassung 4c):** Neue Frage 27 „Darf ich jeden Tag trainieren?“ (Gruppe Sicherheit, ohne neue Quellen, nur Zusammenfassungen schon genutzter Arbeiten). Fragen ab 27 um 1 nach hinten, jetzt 34 Fragen; Querverweis Dehnen auf Frage 32.
+
+**Nachtrag (2026-10-20, Fassung 4d):** Neue Frage 20 „Gewicht wegdrücken und wieder ablassen“ (Tempo, Senkphase, voller Weg, Atmen, Sicherheit; Quellen 68–70, per Crossref geprüft, Zusammenfassungen gelesen). Fragen ab 20 um 1 nach hinten, Querverweise angepasst.

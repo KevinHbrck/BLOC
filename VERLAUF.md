@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ: neue Frage zum Drücken und Ablassen (Fassung 2026-10-20-11)
+
+- Neue Frage 20 in „Muskeln & Technik“: Gewicht wegdrücken und wieder ablassen (Tempo, Senkphase, voller Weg, Atmen/Pressatmen, Sicherheit); Quellen F68–F70. Jetzt 35 Fragen. Einheitstest 51/51.
+
 ## 2026-10-20 · FAQ: neue Frage „Darf ich jeden Tag trainieren?“ (Fassung 2026-10-20-10)
 
 - Neue Frage 27 in der Gruppe Sicherheit: täglich bewegen ist gut, täglich hart bringt keinen Zusatz; Empfehlung höchstens 2–3 harte Krafttage pro Muskelgruppe und Woche, sonst Gehen, lockere Ausdauer oder Mobility; Zeichen von Überlastung. Fragen ab 27 rücken um 1, jetzt 34 Fragen. Einheitstest 51/51.
