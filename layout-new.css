@@ -387,8 +387,8 @@
 
 /* ---------- Hell (2026-10-16): Karten auf Training und Favoriten als helle Karte - Foto oben, unten warm-heller Verlauf, dunkle Schrift;
    dazu helle Fotos aus FOTO_POOL_HELL (js/03-router.js). Baukasten und Titelbilder bleiben unveraendert. "System" hat kein data-theme,
-   deshalb steht jede Regel zweimal (data-theme="light" und prefers-color-scheme). Dazu Lesbarkeit im Heute-Kopf. ---------- */:root[data-layout="new"][data-theme="light"] .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 0%, rgba(255,250,244,0) 28%, rgba(255,250,244,.56) 64%, rgba(255,250,244,.82) 100%); }
-:root[data-layout="new"][data-theme="light"] .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 0%, rgba(255,250,244,0) 28%, rgba(255,250,244,.56) 64%, rgba(255,250,244,.82) 100%); }
+   deshalb steht jede Regel zweimal (data-theme="light" und prefers-color-scheme). Dazu Lesbarkeit im Heute-Kopf. ---------- */:root[data-layout="new"][data-theme="light"] .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 18%, rgba(255,250,244,.80) 64%, rgba(255,250,244,.94) 100%); }
+:root[data-layout="new"][data-theme="light"] .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 16%, rgba(255,250,244,.88) 56%, rgba(255,250,244,.96) 100%); }
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-name, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-chev, :root[data-layout="new"][data-theme="light"] .ff-name{ color:var(--text); }
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-sub, :root[data-layout="new"][data-theme="light"] .ff-bereich, :root[data-layout="new"][data-theme="light"] .ff-sub{ color:var(--text-dim); }
 :root[data-layout="new"][data-theme="light"] .ff-stern{ color:#c98200; }
@@ -399,8 +399,8 @@
 :root[data-layout="new"][data-theme="light"] .kn-sym .iconbtn{ background:rgba(255,255,255,.66); color:var(--text); border-color:rgba(0,0,0,.1); }
 :root[data-layout="new"][data-theme="light"] .kn-gruss span, :root[data-layout="new"][data-theme="light"] .kn-gruss b{ text-shadow:0 0 10px rgba(255,255,255,.95), 0 0 3px rgba(255,255,255,.85); }
 @media (prefers-color-scheme: light){
-  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 0%, rgba(255,250,244,0) 28%, rgba(255,250,244,.56) 64%, rgba(255,250,244,.82) 100%); }
-  :root[data-layout="new"]:not([data-theme]) .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 0%, rgba(255,250,244,0) 28%, rgba(255,250,244,.56) 64%, rgba(255,250,244,.82) 100%); }
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 18%, rgba(255,250,244,.80) 64%, rgba(255,250,244,.94) 100%); }
+  :root[data-layout="new"]:not([data-theme]) .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 16%, rgba(255,250,244,.88) 56%, rgba(255,250,244,.96) 100%); }
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-name, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-chev, :root[data-layout="new"]:not([data-theme]) .ff-name{ color:var(--text); }
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub, :root[data-layout="new"]:not([data-theme]) .ff-bereich, :root[data-layout="new"]:not([data-theme]) .ff-sub{ color:var(--text-dim); }
   :root[data-layout="new"]:not([data-theme]) .ff-stern{ color:#c98200; }
@@ -914,10 +914,3 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 :root[data-layout="new"] .run-hero .rh-kcal b{ font-size:24px; line-height:1.05; }
 :root[data-layout="new"] .run-hero .rh-kcal small{ font-size:12px; opacity:.85; }
 :root[data-layout="new"] .run-bg ~ .run-opt .run-ziel-kopf b{ color:#ff8f6b; }
-/* Schleier auf Training und Favoriten in allen Modi gleich stark (zweite Abstufung): oben klar, unten bis ca. 91 % abgedeckt. Hell: warmes Weiss (oben), Dunkel und Nacht: Schwarz-Blau */
-:root[data-layout="new"][data-theme="dark"] .training-seite .area-tile.zeile::before, :root[data-layout="new"][data-theme="night"] .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(8,9,11,0) 0%, rgba(8,9,11,0) 28%, rgba(8,9,11,.56) 64%, rgba(8,9,11,.82) 100%); }
-:root[data-layout="new"][data-theme="dark"] .fav-foto:not(.ohne)::before, :root[data-layout="new"][data-theme="night"] .fav-foto:not(.ohne)::before{ background:linear-gradient(180deg, color-mix(in srgb, var(--nc, #444) 0%, transparent) 40%, color-mix(in srgb, var(--nc, #444) 22%, transparent) 100%), linear-gradient(180deg, rgba(8,9,11,0) 0%, rgba(8,9,11,0) 28%, rgba(8,9,11,.56) 64%, rgba(8,9,11,.82) 100%); }
-@media (prefers-color-scheme: dark){
-  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(8,9,11,0) 0%, rgba(8,9,11,0) 28%, rgba(8,9,11,.56) 64%, rgba(8,9,11,.82) 100%); }
-  :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne)::before{ background:linear-gradient(180deg, color-mix(in srgb, var(--nc, #444) 0%, transparent) 40%, color-mix(in srgb, var(--nc, #444) 22%, transparent) 100%), linear-gradient(180deg, rgba(8,9,11,0) 0%, rgba(8,9,11,0) 28%, rgba(8,9,11,.56) 64%, rgba(8,9,11,.82) 100%); }
-}
