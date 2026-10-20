@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ-Feinschliff nach Laien-Gegenlesen (Fassung 2026-10-20-17)
+
+- Verletzungs-Frage ohne Wirksamkeitsaussage („in dieser Zusammenfassung die größte Wirkung“, Risiko „lag bei“ statt „sank“). ACSM einmal als „amerikanische Sportmedizin-Gesellschaft“ erklärt. Frage „Wie viel Pause“ mit einer Kernaussage. Doppelungen gekürzt (Umfang in der Plan-Frage nur noch per Verweis, Nieren und Beschwerden in vorhandene Punkte). Einheitstest 51/51.
+
 ## 2026-10-20 · FAQ nach Kevins Entscheidung umgebaut: 23 Fragen, neue Ehrgeiz-Fragen (Fassung 2026-10-20-15)
 
 - 23 Fragen: „Was bringt Training überhaupt?“ fasst die Gesundheitsthemen als Zusammenhang zusammen (Leistung / Gesundheit nur als Zusammenhang / bei Beschwerden zum Arzt). Fasertypen (praktisch gefasst) und glykämischer Index (als Nutzenfrage) bleiben. „Wenn du schon länger trainierst“-Hinweise bei sieben Fragen, neue Fragen „Mein Training stockt“ und „Ich habe wenig Zeit“. Der Satzteil „Dünn: Empfehlungen für Diätphasen …“ bei Eiweiß ist entfernt.

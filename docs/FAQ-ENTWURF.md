@@ -1,6 +1,6 @@
 # BLOC – FAQ-Entwurf (Fragen und Antworten)
 
-Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen und glykämischer Index bleiben als Nutzenfragen, „Wenn du schon länger trainierst“-Hinweise, neue Fragen „Mein Training stockt“ und „Wenig Zeit“). **Entwurf nur als Text, nichts davon ist im App-Code.** Geplant ist ein Bereich „Fragen & Antworten“ unten unter „Training“.
+Stand: 2026-10-20, Fassung 7b (Feinschliff nach dem Laien-Gegenlesen: keine Wirksamkeitsaussagen bei Verletzungen, ACSM erklärt, Frage 5 in einem Satz, Doppelungen gekürzt). **Entwurf nur als Text, nichts davon ist im App-Code.** Geplant ist ein Bereich „Fragen & Antworten“ unten unter „Training“.
 
 **Hinweise für die Einbindung und Kevins Gegenlesen**
 
@@ -27,11 +27,12 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 **Kurzantwort:** Du wirst leistungsfähiger und stabiler, und in Studien ging regelmäßige Bewegung mit besserer Gesundheit einher. Empfehlung: 2 Krafttage pro Woche plus 150–300 Minuten Ausdauer.
 
 - **Leistung:** Mit Ausdauer kommst du später aus der Puste. Mit Kraft wirst du stärker, gehst schneller und stehst leichter vom Stuhl auf. Kräftige Muskeln halten Rumpf und Gelenke stabil und geben den Knochen einen Reiz.
-- **Gesundheit (Zusammenhang):** Wer sich etwas bewegt, hatte in Studien ein Fünftel weniger Sterberisiko als wer sich gar nicht bewegt, Läuferinnen und Läufer rund ein Viertel weniger als Nicht-Läufer. Menschen mit Krafttraining hatten 10–17 % weniger Herz-Kreislauf-Erkrankungen, Krebs und Diabetes. Auch Stimmung, Schlaf, Knochen und Sturzrisiko sind in Studien mit Bewegung verbunden. Das ist ein Zusammenhang, kein Beweis und kein Schutz.
+- **Gesundheit (Zusammenhang):** Wer sich etwas bewegt, hatte in Studien ein Fünftel weniger Sterberisiko als wer sich gar nicht bewegt, Läuferinnen und Läufer rund ein Viertel weniger als Nicht-Läufer. Menschen mit Krafttraining hatten 10–17 % weniger Herz-Kreislauf-Erkrankungen, Krebs und Diabetes. Auch Stimmung, Schlaf, Knochen und Sturzrisiko sind in Studien mit Bewegung verbunden. Das ist ein Zusammenhang, kein Beweis und kein Schutz. Bei Beschwerden oder Erkrankungen stimmst du das Training vorher mit deiner Ärztin oder deinem Arzt ab.
 - **Beides zusammen:** Wer Kraft und Ausdauer verbindet, liegt besser als wer nur eines macht. Ausdauer nimmt dir keine Muskeln weg.
 - **In BLOC:** Freiluft und Fitness trainieren Kraft, Laufen die Ausdauer, Summit beides in kurzen, harten Intervallen.
 - **Wenn du schon länger trainierst:** Der Nutzen steigt mit mehr Training nur flach: Über das Drei- bis Fünffache der Empfehlung hinaus kam kaum noch etwas dazu, und der größte Vorteil beim Krafttraining lag bei 30–60 Minuten pro Woche.
-- **Bei Beschwerden oder Erkrankungen** stimmst du das Training vorher mit deiner Ärztin oder deinem Arzt ab.
++
+
 
 **Studienlage:** Die WHO empfiehlt Kraft und Ausdauer gemeinsam. Die Gesundheitszahlen stammen aus Beobachtungen großer Gruppen. Wer sich bewegt, ist vielleicht auch sonst gesünder, deshalb zeigen sie einen Zusammenhang und keine Ursache.
 
@@ -79,7 +80,7 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 
 ### 5. Wie viel Pause brauche ich, und darf ich jeden Tag trainieren? {#pause}
 
-**Kurzantwort:** Gib denselben Muskeln 1–2 Tage Pause zwischen harten Einheiten. Jeden Tag locker bewegen ist gut, jeden Tag hart dieselben Muskeln belasten bringt nichts. Empfehlung: höchstens 2–3 harte Krafttage pro Muskelgruppe und Woche, dazwischen Gehen, lockere Ausdauer oder Mobility.
+**Kurzantwort:** Belaste dieselben Muskeln höchstens an 2–3 Tagen pro Woche hart, mit 1–2 Tagen Pause dazwischen, und bewege dich an den anderen Tagen locker (Gehen, lockere Ausdauer, Mobility).
 
 - **Warum Pause:** Muskeln wachsen in der Erholung, nicht im Training.
 - **Täglich hart bringt nichts extra:** Für Kraft reichen 2 Einheiten pro Muskelgruppe und Woche. Beim Muskelwachstum spielte die Häufigkeit bei gleicher Satzzahl kaum eine Rolle.
@@ -185,7 +186,7 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 **Kurzantwort:** Mindestens 2 Krafttage pro Woche mit allen großen Muskelgruppen, den Reiz langsam steigern und Erholung einplanen. Ein Block dauert in der Praxis 4–8 Wochen. Danach folgt eine leichte Woche und ein neuer Block mit leicht veränderten Übungen.
 
 - **Wochenstruktur:** 2–3 Ganzkörpertage oder eine Aufteilung (Oberkörper/Unterkörper oder Druck/Zug/Beine). Welche besser ist, ist nicht belegt, nimm die, die in deinen Alltag passt. Ausdauer (Laufen, Summit) ergänzt das.
-- **Umfang:** 10 oder mehr Sätze pro Muskelgruppe und Woche für Muskelaufbau, 2–3 Sätze pro Übung für Kraft. Auch kleine Mengen wirken.
+- **Umfang:** So viele harte Sätze, wie in „Wie wachsen Muskeln, und welche Reize brauche ich?“ stehen, für Kraft reichen 2–3 Sätze pro Übung. Auch kleine Mengen wirken.
 - **Steigern:** mehr Wiederholungen, mehr Sätze, mehr Gewicht oder die schwerere Variante („Leichter / Schwerer“). Hart, aber nicht bis zum Versagen.
 - **Blocklänge und danach (Praxis):** 4–8 Wochen sind üblich, eine feste Studienzahl gibt es nicht. Danach Struktur behalten und weiter steigern, einzelne Übungen durch Varianten ersetzen, eine leichte Woche einlegen und prüfen, was gut lief.
 - **In BLOC:** Die Plan-Seite im Reiter „Körper“ verweist auf diese Antwort.
@@ -232,7 +233,7 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 - **Zeit sparen:** Supersätze (zwei Übungen im Wechsel ohne Pause) halbieren die Zeit bei gleichem Volumen. Sie wirken wahrscheinlich besser für den Muskelaufbau als für die Maximalkraft. Aufwärmen reicht mit der ersten Übung.
 - **Wenn du schon länger trainierst:** Nutze Supersätze und halte das Wochenvolumen, denn das Volumen zählt mehr als die Häufigkeit.
 
-**Studienlage:** Die Zahlen stammen aus einer Fachübersicht (Expertenzusammenfassung, kein direkter Studienvergleich). Die große Zusammenfassung von Studien der ACSM bestätigt, dass auch kleine Dosen spürbar Kraft und Muskeln bringen.
+**Studienlage:** Die Zahlen stammen aus einer Fachübersicht (Expertenzusammenfassung, kein direkter Studienvergleich). Die große Zusammenfassung von Studien der amerikanischen Sportmedizin-Gesellschaft (ACSM) bestätigt, dass auch kleine Dosen spürbar Kraft und Muskeln bringen.
 
 **Quellen:** [3], [47], [71]
 
@@ -246,9 +247,10 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 
 - **Wie viel:** Gesunde Erwachsene brauchen 0,83 g pro kg und Tag (bei 70 kg etwa 58 g). Mit Krafttraining sind es 1,4–2,0 g pro kg. Ab etwa 1,6 g pro kg wuchs die magere Körpermasse nicht weiter.
 - **Was Extra-Eiweiß bringt:** Wer zusätzlich Eiweiß aß, lag nach mehreren Wochen im Schnitt 0,3 kg vorn bei der mageren Körpermasse (alles außer Fett, vor allem Muskeln). Beim schwersten Gewicht, das man einmal heben kann, waren es 2,5 kg mehr, zum Beispiel 102,5 statt 100 kg. Ein kleiner Bonus.
-- **Wann mehr:** Ab 65 mindestens 1,0–1,2 g pro kg und Tag, mit Training eher mehr. Isst du über längere Zeit zu wenig Energie, wachsen Muskeln schlechter, die Kraft litt dabei nicht.
+- **Wann mehr:** Ab 65 mindestens 1,0–1,2 g pro kg und Tag, mit Training eher mehr. Isst du über längere Zeit zu wenig Energie, wachsen Muskeln schlechter, die Kraft litt dabei nicht. Bei Nierenerkrankung klärst du die Menge vorher ärztlich, bei gesunden Nieren zeigten Studien keine schlechteren Nierenwerte.
 - **Verteilen:** Zum Beispiel 4 Mahlzeiten mit je etwa 0,4 g pro kg (bei 70 kg etwa 28 g). Das enge „Zeitfenster“ direkt nach dem Training ist nicht entscheidend, die Tagesmenge zählt.
-- **Nieren:** Bei Nierenerkrankung klärst du die Menge vorher ärztlich. Bei gesunden Nieren zeigten Studien keine schlechteren Nierenwerte.
++
+
 - **Wenn du schon länger trainierst:** In Diätphasen werden bei sehr gut Trainierten höhere Mengen genannt (2,3–3,1 g pro kg), um Muskeln zu halten. Für Einsteiger gilt das nicht.
 
 **Studienlage:** Die Studien stimmen darin überein, dass Zusatz-Eiweiß nur wenig bringt und dass die Tagesmenge mehr zählt als der Zeitpunkt. Die Zahlen stammen meist von jungen, gesunden Menschen und sind Durchschnitte.
@@ -315,10 +317,10 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 **Kurzantwort:** Vier Regeln: aufwärmen, langsam steigern, Pausen einhalten, auf Warnzeichen hören. Bei Brustschmerz, ungewöhnlicher Atemnot oder Schwindel hörst du sofort auf und klärst es ärztlich.
 
 - **Aufwärmen:** 5–10 Minuten leichte Bewegung, dann die erste Übung mit halber Last.
-- **Steigern:** Klappen alle Sätze sauber, nimm etwa 2–10 % mehr Gewicht (älterer ACSM-Richtwert) oder eine Wiederholung mehr.
+- **Steigern:** Klappen alle Sätze sauber, nimm etwa 2–10 % mehr Gewicht (ältere Faustregel der amerikanischen Sportmedizin-Gesellschaft ACSM) oder eine Wiederholung mehr.
 - **Sofort stoppen und ärztlich klären:** Schmerz oder Druck in der Brust, ungewöhnliche Atemnot, Schwindel oder Ohnmacht, Herzrasen oder Herzstolpern, plötzlich starker Schmerz.
 - **Muskelkater oder Schmerz?** Dumpfer Muskelkater am Folgetag ist normal. Stechender Gelenk- oder Sehnenschmerz ist ein Stoppsignal (Praxis).
-- **Vorher zum Arzt:** bei bekannter Herz-, Stoffwechsel- oder Nierenerkrankung oder bei Beschwerden. Gesunde, schon aktive Menschen ohne Beschwerden brauchen nach dem ACSM-Modell keine Freigabe.
+- **Vorher zum Arzt:** bei bekannter Herz-, Stoffwechsel- oder Nierenerkrankung oder bei Beschwerden. Gesunde, schon aktive Menschen ohne Beschwerden brauchen nach dem Modell der ACSM keine ärztliche Freigabe.
 
 **Studienlage:** Bewegung ist für die meisten sicher. Herz-Kreislauf-Zwischenfälle werden oft von Warnzeichen angekündigt, und das Risiko sinkt mit steigender Fitness. Die Zahlen für Aufwärmen und Steigerung sind Richtwerte.
 
@@ -326,9 +328,9 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 
 ### 22. Wie beuge ich Verletzungen vor?
 
-**Kurzantwort:** Krafttraining war in den Studien die wirksamste Vorbeugung: Es senkte Sportverletzungen um etwa zwei Drittel. Dehnen allein brachte nichts. Dazu gehören saubere Technik, langsames Steigern und genug Erholung.
+**Kurzantwort:** In dieser Zusammenfassung von Studien zeigte Krafttraining die größte Wirkung: Das Verletzungsrisiko lag um etwa zwei Drittel niedriger. Dehnen allein brachte nichts. Dazu gehören saubere Technik, langsames Steigern und genug Erholung.
 
-- **Krafttraining:** Das Verletzungsrisiko sank auf etwa ein Drittel. Überlastungsverletzungen ließen sich fast halbieren.
+- **Krafttraining:** Das Verletzungsrisiko lag bei etwa einem Drittel. Bei Überlastungsverletzungen lag es etwa halb so hoch.
 - **Gleichgewichtstraining und Mischprogramme** senkten das Risiko ebenfalls, Dehnen allein nicht.
 - **Praxis:** Technik vor Gewicht, in kleinen Schritten steigern, aufwärmen, Pausen einhalten.
 - **Schmerz ernst nehmen:** Hält ein Schmerz über Tage an oder wird stechend, passt du das Training an und lässt es bei Bedarf ärztlich abklären.
@@ -366,11 +368,12 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 **Short answer:** You become more capable and stable, and in studies regular activity went with better health. Recommendation: 2 strength days a week plus 150–300 minutes of endurance.
 
 - **Performance:** With endurance you get out of breath later. With strength you get stronger, walk faster and get up from a chair more easily. Strong muscles keep trunk and joints stable and give bones a stimulus.
-- **Health (association):** People who move a little had one fifth less risk of death in studies than people who don't move at all, and runners about a quarter less than non-runners. People who did strength training had 10–17 % less cardiovascular disease, cancer and diabetes. Mood, sleep, bones and fall risk are also linked with activity in studies. This is an association, not proof and not protection.
+- **Health (association):** People who move a little had one fifth less risk of death in studies than people who don't move at all, and runners about a quarter less than non-runners. People who did strength training had 10–17 % less cardiovascular disease, cancer and diabetes. Mood, sleep, bones and fall risk are also linked with activity in studies. This is an association, not proof and not protection. With symptoms or illness, agree training with your doctor first.
 - **Both together:** People who combine strength and endurance do better than people who do only one. Endurance does not take your muscle away.
 - **In BLOC:** Outdoor and fitness train strength, running trains endurance, Summit does both in short, hard intervals.
 - **If you have been training for a while:** The benefit rises only flatly with more training: beyond three to five times the recommendation little was added, and the biggest advantage for strength training was at 30–60 minutes a week.
-- **With symptoms or illness,** agree training with your doctor first.
++
+
 
 **Evidence:** WHO recommends strength and endurance together. The health numbers come from observations of large groups. People who move may be healthier in other ways too, so they show an association and not a cause.
 
@@ -418,7 +421,7 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 
 ### 5. How much rest do I need, and may I train every day? {#pause}
 
-**Short answer:** Give the same muscles 1–2 days between hard sessions. Moving easily every day is good; hitting the same muscles hard every day brings nothing. Recommendation: at most 2–3 hard strength days per muscle group a week, and in between walking, easy endurance or mobility.
+**Short answer:** Train the same muscles hard on at most 2–3 days a week, with 1–2 days of rest in between, and move easily on the other days (walking, easy endurance, mobility).
 
 - **Why rest:** Muscles grow in recovery, not in training.
 - **Hard every day adds nothing:** For strength, 2 sessions per muscle group a week are enough. For muscle growth, frequency made little difference at equal sets.
@@ -524,7 +527,7 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 **Short answer:** At least 2 strength days a week covering all major muscle groups, raise the stimulus slowly and plan recovery. In practice a block runs 4–8 weeks. Then comes an easy week and a new block with slightly changed exercises.
 
 - **Weekly structure:** 2–3 whole-body days or a split (upper/lower or push/pull/legs). Which is better is not established; take the one that fits your life. Endurance (running, Summit) adds to it.
-- **Volume:** 10 or more sets per muscle group per week for muscle building, 2–3 sets per exercise for strength. Small amounts work too.
+- **Volume:** As many hard sets as given in "How do muscles grow, and which stimuli do I need?"; for strength, 2–3 sets per exercise are enough. Small amounts work too.
 - **Progress:** more reps, more sets, more weight or the harder variation ("easier / harder"). Hard, but not to failure.
 - **Block length and afterwards (practice):** 4–8 weeks are common; there is no fixed number from studies. Afterwards keep the structure and keep progressing, swap some exercises for variations, add an easy week and review what went well.
 - **In BLOC:** The plan page under the "Body" tab points to this answer.
@@ -571,7 +574,7 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 - **Saving time:** Supersets (two exercises in turn without rest) halve the time at the same volume. They probably work better for muscle building than for maximal strength. Warming up with the first exercise is enough.
 - **If you have been training for a while:** Use supersets and keep your weekly volume; volume matters more than frequency.
 
-**Evidence:** The numbers come from an expert review (a summary by specialists, not a direct comparison of studies). The large ACSM summary of studies confirms that even small doses give noticeable strength and muscle.
+**Evidence:** The numbers come from an expert review (a summary by specialists, not a direct comparison of studies). The large summary of studies by the American College of Sports Medicine (ACSM) confirms that even small doses give noticeable strength and muscle.
 
 **Sources:** [3], [47], [71]
 
@@ -585,9 +588,10 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 
 - **How much:** Healthy adults need 0.83 g per kg per day (about 58 g at 70 kg). With strength training it is 1.4–2.0 g per kg. Above about 1.6 g per kg, lean body mass stopped growing further.
 - **What extra protein brings:** People who ate extra protein were on average 0.3 kg ahead in lean body mass after several weeks (everything except fat, mostly muscle). In the heaviest weight they could lift once, they were 2.5 kg ahead, for example 102.5 instead of 100 kg. A small bonus.
-- **When more:** From 65, at least 1.0–1.2 g per kg per day, with training rather more. If you eat too little energy for a long time, muscle grows worse, while strength did not suffer.
+- **When more:** From 65, at least 1.0–1.2 g per kg per day, with training rather more. If you eat too little energy for a long time, muscle grows worse, while strength did not suffer. With kidney disease, clarify the amount with a doctor first; with healthy kidneys, studies showed no worse kidney values.
 - **Spread it out:** For example 4 meals of about 0.4 g per kg each (about 28 g at 70 kg). The narrow "window" right after training is not decisive; the daily total counts.
-- **Kidneys:** With kidney disease, clarify the amount with a doctor first. With healthy kidneys, studies showed no worse kidney values.
++
+
 - **If you have been training for a while:** In dieting phases, very well-trained people are given higher amounts (2.3–3.1 g per kg) to keep muscle. That does not apply to beginners.
 
 **Evidence:** The studies agree that extra protein brings only a little and that the daily total matters more than timing. The numbers come mostly from young, healthy people and are averages.
@@ -654,7 +658,7 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 **Short answer:** Four rules: warm up, progress slowly, keep your rest, listen to warning signs. With chest pain, unusual shortness of breath or dizziness, stop at once and get checked.
 
 - **Warm up:** 5–10 minutes of easy movement, then the first exercise at half load.
-- **Progress:** If all sets go cleanly, add about 2–10 % more weight (older ACSM guide value) or one more rep.
+- **Progress:** If all sets go cleanly, add about 2–10 % more weight (older rule of thumb from the American College of Sports Medicine, ACSM) or one more rep.
 - **Stop at once and get checked:** pain or pressure in the chest, unusual shortness of breath, dizziness or fainting, racing or fluttering heart, sudden severe pain.
 - **Soreness or pain?** Dull muscle soreness the next day is normal. Stabbing joint or tendon pain is a stop signal (practice).
 - **See a doctor first:** with known heart, metabolic or kidney disease or with symptoms. Healthy, already active people without symptoms don't need clearance under the ACSM model.
@@ -665,9 +669,9 @@ Stand: 2026-10-20, Fassung 7 (nach Kevins Entscheidung: 23 Fragen, Fasertypen un
 
 ### 22. How do I prevent injuries?
 
-**Short answer:** In studies strength training was the most effective prevention: it cut sports injuries by about two thirds. Stretching alone did nothing. Clean technique, slow progression and enough recovery belong to it.
+**Short answer:** In this summary of studies strength training showed the biggest effect: injury risk was about two thirds lower. Stretching alone did nothing. Clean technique, slow progression and enough recovery belong to it.
 
-- **Strength training:** Injury risk fell to about a third. Overuse injuries could almost be halved.
+- **Strength training:** Injury risk was about a third. For overuse injuries it was about half.
 - **Balance training and mixed programmes** lowered risk too, stretching alone did not.
 - **In practice:** technique before weight, progress in small steps, warm up, keep your rest.
 - **Take pain seriously:** If a pain lasts for days or turns stabbing, adjust training and have it checked if needed.
