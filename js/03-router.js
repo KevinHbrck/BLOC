@@ -320,7 +320,7 @@ function tabLeiste(route){
     ["#home", t("tabHeute"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#training", t("tabTraining"), '<path d="M6 7v10M3 10v4M18 7v10M21 10v4M6 12h12"/>'],
     ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
-    ["#koerper", t("tabKoerper"), '<circle cx="12" cy="7" r="3.2"/><path d="M5.5 20c.6-4 3.2-6 6.5-6s5.9 2 6.5 6"/>']
+    ["#koerper", t("tabKoerper"), '<path d="M4 19V5"/><path d="M4 19h16"/><path d="M7.5 15l4-4.5 3 2.5 5-6"/>']
   ] : [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],
@@ -370,6 +370,7 @@ function render(){
   if(route==="home") return renderHome();
   if(route==="training") return renderTraining();
   if(route==="faq") return renderFaq();
+  if(route==="satz") return renderSatzTraining(parts[1], parts[2]);
   if(route==="reps") return renderReps();
   if(route==="warmstretch") return renderWarmStretch();
   if(route==="rep") return renderRepDetail(parts[1]);

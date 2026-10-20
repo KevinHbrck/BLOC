@@ -8,7 +8,7 @@ var KP_WOCHEN = [4, 6, 8, 12];
 function koerperTab(){ return state.db.settings.koerperTab === "plan" ? "plan" : "fortschritt"; }
 function koerperSegHTML(){
   function b(k, label){ return '<button type="button" data-koerpertab="'+k+'" class="'+(koerperTab() === k ? 'active' : '')+'" aria-pressed="'+(koerperTab() === k)+'">'+esc(label)+'</button>'; }
-  return '<div class="rz koerper-rz" role="group">'+b("plan", t("planTab"))+b("fortschritt", t("tabFortschritt"))+'</div>';
+  return '<div class="rz koerper-rz" role="group">'+b("fortschritt", t("koerperVerlauf"))+b("plan", t("planTab"))+'</div>';
 }
 function renderKoerper(){
   if(koerperTab() === "plan") renderPlanSeite(); else renderStats();

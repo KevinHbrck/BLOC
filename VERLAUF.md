@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Fortschritt, Training nach Sätzen zum Wischen, Zeiten je Übung im Timer-BLOC, Summit im Glas (Fassung 2026-10-20-5)
+
+- **Reiter „Fortschritt“** (vorher „Körper“): Liniendiagramm-Symbol, Umschalter **Verlauf | Plan** (Verlauf zuerst).
+- **Nach Sätzen** (LOS GEHTS auf der BLOC-Seite, auch Tipp auf eine Übung im BLOC): eigener Glas-Bereich (`js/22-satz-training.js`, Route `#satz/<BLOC>/<Nr>`). Eine Karte je Übung, **nach links/rechts wischen**, oben Punkte und „BLOC · 2 / 3“; Gewicht und Wiederholungen per großen Zählern, **Satz eintragen** speichert wie die Übungskarte, danach läuft die Satzpause, bei erreichtem Ziel springt es zur nächsten Übung; Anleitung nur eingeklappt. Die alte Übungskarte bleibt über Katalog und Adresse (`#studio/<id>`).
+- **BLOC mit Timer**: je Übung **Sätze, Arbeitszeit und Pause** einstellbar (statt „3 × 8, 40 s“ fest); die Zeilen folgen der Wahl Nach Sätzen | Mit Timer.
+- **Summit-Player** im selben Glas-Look wie Timer, Satz-Training und Run.
+
 ## 2026-10-20 · Fragen & Antworten als eigene Kachel, Zurück-Pfeile, Run auf einem Bildschirm, hellere Timer-Kulisse (Fassung 2026-10-20-4)
 
 - **Fragen & Antworten**: eigene Kachel unter Run auf Training (Kaffee-Foto, `img/neu-faq.jpg`, Foto vom Nutzer aus Pexels), öffnet die Seite `#faq` mit allen Fragen aufgeklappt; unten auf Training steht der Bereich nicht mehr.

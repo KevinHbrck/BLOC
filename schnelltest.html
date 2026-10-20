@@ -1375,7 +1375,7 @@
       pruefe(!$("[data-pzmodus]") && !$("[data-pzstart]") && z1.querySelector('[data-feld="wdh"]'), "Plan-Zeile: Wiederholungen statt Umschalter erwartet");
       z1 = $('.pz-zeile[data-pz="leg-press"]');
       // Übungskarte: dieselben Werte, Letztes Mal zum Übernehmen, Umschalter Satz für Satz ↔ Timer
-      klick(z1.querySelector(".pz-kopf"));
+      W.go("#studio/leg-press");   // die Übungskarte bleibt über Katalog und Adresse erreichbar
       await bis(function () { return $("#st-kg") && $(".st-uebernehmen"); }, 3000, "Karte mit Letztes Mal");
       pruefe(new RegExp((s0 + 1) + " Sätze").test($(".st-ziel").textContent), "Ziel auf der Karte: " + $(".st-ziel").textContent);
       pruefe($("#st-kg").value === W.studioKg(60 + schritt), "Karte zeigt das Gewicht aus dem Plan nicht: " + $("#st-kg").value);
@@ -1426,7 +1426,12 @@
       klick(await bis(function () { return $('[data-planart="saetze"]'); }, 3000, "Nach Sätzen"));
       await bis(function () { return $('[data-planart="saetze"].active'); }, 2000, "Wahl Nach Sätzen gilt");
       klick($("[data-planlos]"));
-      await bis(function () { return /^#studio\//.test(W.location.hash); }, 3000, "Nach Sätzen: erste Übung öffnet");
+      await bis(function () { return /^#satz\//.test(W.location.hash) && $$(".satz-karte").length === 2; }, 3000, "Nach Sätzen: Wisch-Bereich mit einer Karte je Übung");
+      pruefe($$(".satz-punkt").length === 2 && $(".satz-glas") && $("[data-satzset]"), "Wisch-Bereich: Punkte oben, Glas-Karte, Satz eintragen fehlt");
+      klick($("[data-satzset]"));
+      await bis(function () { var e = W.studioEintrag("leg-press"); return e && e.log && e.log.length && e.log[e.log.length - 1].s.length >= 1; }, 3000, "Satz im Wisch-Bereich gespeichert");
+      klick(await bis(function () { return $("[data-satzundo]"); }, 2000, "Letzten Satz löschen"));   // die späteren Prüfungen gehen von einem leeren Heute aus
+      await bis(function () { var e = W.studioEintrag("leg-press"); return !(e && e.log && e.log.length && W.studioTag(e.log[e.log.length - 1].at) === W.studioTag(Date.now())); }, 2000, "Satz wieder gelöscht");
       W.go("#studioplan/p-prog");
       await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
       // Plan als Timer-Workout: Runden = Sätze, im Timer Gewicht eintragen, letztes Mal im Fenster, landet in der Statistik
@@ -1479,7 +1484,7 @@
       var zk = $('.pz-zeile[data-pz="push-ups"]');
       pruefe(zk.querySelector('[data-feld="work"]') && !zk.querySelector('[data-feld="kg"]') && !zk.querySelector('[data-pzstart]'), "Ohne Gewicht: Arbeit statt Wiederholungen, kein Gewichtsfeld, kein Timer-Start je Übung erwartet");
       W.studioModusSetzen("push-ups", "saetze");   // die Übungskarte darf weiter Satz für Satz oder mit Timer laufen; hier Satz für Satz
-      klick($('.pz-zeile[data-pz="push-ups"] .pz-kopf'));
+      W.go("#studio/push-ups");
       await bis(function () { return $("#st-w"); }, 3000, "Karte im Satz-Modus ohne Gewichtsfeld");
       pruefe(!$("#st-kg") && !$("[data-stschritt]") && !$("[data-stscheiben]"), "Ohne Gewicht: kein kg-Feld, kein Schritt");
       eingeben($("#st-w"), "15");
@@ -1518,7 +1523,7 @@
       pruefe(tim.length === sA * 2 && tim[0].ex === "leg-press" && tim[1].ex === "butterfly" && tim[2].ex === "leg-press" && tim[0].after === 0 && tim[1].after > 0, "Timer-Items eines Supersatzes: " + JSON.stringify(tim.map(function (x) { return [x.ex, x.after]; })));
       klick($('.pz-zeile[data-pz="leg-press"] [data-feld="saetze"] [data-inc]'));
       pruefe(+$('.pz-zeile[data-pz="butterfly"] [data-feld="saetze"] input').value === sA + 1, "Runden-Änderung gilt nicht für die ganze Gruppe");
-      klick($('.pz-zeile[data-pz="leg-press"] .pz-kopf'));
+      W.go("#studio/leg-press");   // die Übungskarte (mit Supersatz-Hinweis) bleibt über Adresse und Katalog erreichbar
       await bis(function () { return $("[data-stblock=\"butterfly\"]") && $(".st-block"); }, 3000, "Karte mit Supersatz-Hinweis");
       klick("[data-stset]");
       await bis(function () { return /1\./.test($(".st-heute").textContent); }, 3000, "Satz im Supersatz eingetragen");

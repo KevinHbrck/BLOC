@@ -711,7 +711,7 @@ function repZeichnen(){
         '<button type="button" class="btn btn-secondary" data-repend>'+esc(t("repEnd"))+'</button>'+
       '</div>';
   }
-  app.innerHTML = html;
+  app.innerHTML = layoutNeu() ? '<div class="rep-glas"><div class="rep-bg" aria-hidden="true"></div>'+html+'</div>' : html;   // Modern: dunkles Glas auf geblurrtem Foto wie in den anderen Trainings-Bereichen
   // eigener Zurück-Knopf: läuft die Uhr, erst nachfragen
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", repBeenden); }

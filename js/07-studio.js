@@ -446,11 +446,11 @@ function planFeldHTML(feld, label, wert, min, max, schritt){
     '<input type="text" inputmode="decimal" value="'+esc(studioKg(wert))+'" aria-label="'+esc(label)+'">'+
     '<button type="button" data-inc aria-label="&plus;">&plus;</button></div></div>';
 }
-function planZeileHTML(id, nr, bl){   // bl: { art, k, n, bid } - die Übung steht in einem Supersatz oder Zirkel
+function planZeileHTML(id, nr, bl, p){   // bl: { art, k, n, bid } - die Übung steht in einem Supersatz oder Zirkel
   var ex = findExercise(id);
   if(!ex) return "";
   var block = studioNurBlock(ex), z = studioZiel(id), tm = studioTimer(id), e = studioEintrag(id) || {}, l = studioLetzte(id, true);
-  var timerModus = block;   // Übungen ohne Gewicht laufen mit Zeit (Arbeit), Übungen mit Gewicht mit Wiederholungen; es gibt nur noch ein „Los geht’s“
+  var timerModus = block || (!!p && planStartArt(p) === "timer");   // mit Timer: Sätze, Arbeitszeit und Pause je Übung einstellbar; nach Sätzen: Wiederholungen und Gewicht
   // Sätze, dann Wiederholungen (Satz-Modus) bzw. Arbeitszeit (Timer), Gewicht (nur Übungen mit Gewicht) und Pause
   var felder = planFeldHTML("saetze", t(bl ? "blkRunden" : "planSaetze"), z.saetze, 1, 20, 1)+
     (timerModus ? planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5) : planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1))+
@@ -477,7 +477,7 @@ function planListeHTML(p){
   planBloecke(p).forEach(function(b){
     var art = blockArt(b.ids.length), im = b.ids.length > 1, zeilen = [];
     b.ids.forEach(function(id, k){
-      zeilen.push(planZeileHTML(id, i+1, im ? { art:art, k:k+1, n:b.ids.length, bid:b.b } : null));
+      zeilen.push(planZeileHTML(id, i+1, im ? { art:art, k:k+1, n:b.ids.length, bid:b.b } : null, p));
       if(k < b.ids.length-1) zeilen.push(verbinder(i, true));
       i++;
     });
@@ -778,7 +778,7 @@ function renderStudioPlan(){
   an("[data-planlos]", function(){   // erst die Wahl darüber (nach Sätzen oder mit Timer), dann ein einziges Los geht’s in den passenden Bereich
     if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); }
     if(planStartArt(p) === "timer") planAlsWorkout(p, true);
-    else go("#studio/"+stPlanIds(p)[0]);   // nach Sätzen: die erste Übung, Gewicht × Wiederholungen je Satz eintragen
+    else go("#satz/"+p.id+"/0");   // nach Sätzen: Glas-Bereich zum Wischen, je Satz Gewicht × Wiederholungen eintragen
   });
   an("[data-planfav]", function(){ toggleFav("plan:"+p.id); neu(); });
   an("[data-plankopie]", function(){ var q = planKopie(p); showToast(t("planKopiert", { n:q.name })); });
@@ -819,7 +819,10 @@ function renderStudioPlan(){
     if(stPlanSel > -1 && stPlanSel < l.length){ l.splice(stPlanSel, 1); p.ids = l; p.updatedAt = Date.now(); save(); }
     stPlanSel = -1; neu();
   });
-  kachelKlick(app, "[data-studio]", function(el){ go("#studio/"+el.getAttribute("data-studio")); });
+  kachelKlick(app, "[data-studio]", function(el){   // im BLOC öffnet der Tipp auf eine Übung den Wisch-Bereich bei dieser Übung (nur beim Auswählen im Plan-Bau bleibt die Übungskarte)
+    var sid = el.getAttribute("data-studio");
+    if(!stPlanBauen && stPlanIds(p).indexOf(sid) > -1) go("#satz/"+p.id+"/"+satzListe(p).indexOf(sid)); else go("#studio/"+sid);
+  });
   app.querySelectorAll("[data-planex]").forEach(function(el){ var id = el.getAttribute("data-planex"); langDruck(el, function(){ openExInfo(id, false); }); });   // Info nur per Langdruck
   if(stPlanBauen){
     var stPl = app.querySelector("#plan-sticky"), tbPl = app.querySelector(".topbar");   // der Plan klebt direkt unter der Kopfzeile
