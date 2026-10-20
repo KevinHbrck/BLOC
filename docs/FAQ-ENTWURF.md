@@ -22,19 +22,19 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## A. Einstieg
 
-### 1. Was bringen die Bereiche – und wie kombiniere ich sie?
+### 1. Was bringt Ausdauertraining, was bringt Krafttraining?
 
-**Kurzantwort:** Jeder Bereich trainiert etwas anderes. Eine solide Mischung: 2 Krafttage pro Woche, dazu 1–2 Einheiten Laufen oder Summit. Damit erfüllst du, was Gesundheitsleitlinien verlangen.
+**Kurzantwort:** Ausdauer macht Herz, Kreislauf und Lunge leistungsfähiger, Kraft baut Muskeln auf und macht dich alltagsfit. Beides senkt das Risiko für frühen Tod und häufige Krankheiten, zusammen wirkt es am besten. Empfehlung: 2 Krafttage plus 150–300 Minuten Ausdauer pro Woche.
 
-- **Ohne Gewicht (Freiluft):** Körpergewicht und Band bauen Kraft auf, solange die Übungen schwerer werden, etwa von Knie- zu normalen Liegestützen. Geht überall.
-- **Fitness (Studio):** Geräte lassen sich in kleinen Schritten steigern. Das macht den Einstieg planbar. Geräte und freie Gewichte wirkten in Studien ähnlich.
-- **Summit:** kurze, harte Intervalle mit Ganzkörperübungen, viele Burpees. Verbessern die Ausdauer.
-- **Laufen:** reines Ausdauertraining. Es ergänzt die Kraft, ersetzt sie nicht.
+- **Ausdauer (Laufen, Summit):** Die maximale Sauerstoffaufnahme, das Maß für deine Ausdauerleistung, steigt deutlich. Schon etwas Bewegung senkte das Sterberisiko um ein Fünftel, Läuferinnen und Läufer lagen rund ein Viertel niedriger.
+- **Kraft (Freiluft, Fitness):** Du wirst stärker, Gehtempo, Gleichgewicht und Aufstehen vom Stuhl verbessern sich. Beobachtungsstudien sahen 10–17 % weniger Risiko für Tod, Herz-Kreislauf-Erkrankungen, Krebs insgesamt und Diabetes.
+- **Nur eines von beiden:** Muskelaufbau und Maximalkraft kommen vom Krafttraining, die Ausdauerleistung vom Ausdauertraining. Das eine ersetzt das andere nicht.
+- **Zusammen:** Kraft und Ausdauer zusammen waren mit einem niedrigeren Risiko verbunden als beides nicht zu tun. Zusätzliches Ausdauertraining bremste Muskelwachstum und Maximalkraft nicht.
+- **In BLOC:** Freiluft und Fitness trainieren Kraft, Laufen die Ausdauer, Summit beides in kurzen, harten Intervallen.
 
-**Studienlage:** Belegt: Die WHO empfiehlt 150–300 Minuten Ausdauer pro Woche und Krafttraining an mindestens 2 Tagen. Offen: das beste Mischverhältnis. Reines Körpergewichtstraining ist weniger gut untersucht als Training mit Gewichten.
+**Studienlage:** Belegt: Die WHO empfiehlt Ausdauer und Krafttraining. Die Risikozahlen stammen aus Beobachtungsstudien: Sie zeigen einen Zusammenhang, keinen bewiesenen Schutz. Reines Körpergewichtstraining ist weniger gut untersucht als Training mit Gewichten.
 
-**Quellen:** [1], [2], [3], [17]
-
+**Quellen:** [1], [3], [19], [46], [47], [48], [63]
 ### 2. Wie starte ich, und wie sieht mein erstes Workout aus?
 
 **Kurzantwort:** Starte mit einem Ganzkörper-Workout, 2–3 Mal pro Woche, etwa 30–40 Minuten. Bleib bei jeder Übung ein paar Wiederholungen unter deinem Limit. Am Anfang zählt saubere Technik, nicht das Gewicht.
@@ -472,19 +472,19 @@ Stand: 2026-10-20, Fassung 4 (Fassung 3 vom 2026-10-19; Fassung 4 schreibt alle 
 
 ## A. Getting started
 
-### 1. What do the sections offer – and how do I combine them?
+### 1. What does endurance training do, what does strength training do?
 
-**Short answer:** Each section trains something different. A solid mix: 2 strength days a week plus 1–2 sessions of running or Summit. That covers what health guidelines ask for.
+**Short answer:** Endurance makes your heart, circulation and lungs more capable, strength builds muscle and makes you fit for everyday life. Both lower the risk of early death and common diseases, and together they work best. Recommendation: 2 strength days plus 150–300 minutes of endurance a week.
 
-- **Without weights (outdoor):** Bodyweight and a band build strength as long as the exercises get harder, e.g. from knee to full push-ups. Works anywhere.
-- **Fitness (gym):** Machines can be raised in small steps, which makes the start easy to plan. Machines and free weights worked similarly in studies.
-- **Summit:** short, hard intervals with full-body exercises, lots of burpees. They improve endurance.
-- **Running:** pure endurance training. It complements strength, it does not replace it.
+- **Endurance (running, Summit):** Maximal oxygen uptake, the measure of your endurance performance, rises clearly. Even a little activity cut the risk of death by a fifth, and runners were about a quarter lower.
+- **Strength (outdoor, fitness):** You get stronger, and walking speed, balance and getting up from a chair improve. Observational studies saw 10–17 % lower risk of death, cardiovascular disease, total cancer and diabetes.
+- **Only one of the two:** Muscle building and maximal strength come from strength training, endurance performance from endurance training. One does not replace the other.
+- **Together:** Strength and endurance together were linked to a lower risk than doing neither. Additional endurance training did not hold back muscle growth or maximal strength.
+- **In BLOC:** Outdoor and fitness train strength, running trains endurance, Summit does both in short, hard intervals.
 
-**Evidence:** Established: WHO recommends 150–300 minutes of endurance a week plus strength training on at least 2 days. Open: the best mix. Pure bodyweight training is less well studied than training with weights.
+**Evidence:** Established: WHO recommends both endurance and strength training. The risk numbers come from observational studies: they show an association, not proven protection. Pure bodyweight training is less well studied than training with weights.
 
-**Sources:** [1], [2], [3], [17]
-
+**Sources:** [1], [3], [19], [46], [47], [48], [63]
 ### 2. How do I start, and what does my first workout look like?
 
 **Short answer:** Start with a whole-body workout, 2–3 times a week, about 30–40 minutes. Stop a few reps short of your limit on every exercise. At the start, clean technique counts, not weight.

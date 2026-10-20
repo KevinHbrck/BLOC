@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ: Frage 1 beantwortet jetzt „Was bringt Ausdauertraining, was bringt Krafttraining?“ (Fassung 2026-10-20-8)
+
+- Die erste Frage vergleicht klar, was Ausdauer und was Kraft bringen (mit Zahlen aus den Studien), was nur eines von beiden bringt, wie beides zusammenwirkt und wie die BLOC-Bereiche dazu passen. Quellen [F1], [F3], [F19], [F46], [F47], [F48], [F63]. Einheitstest 51/51.
+
 ## 2026-10-20 · Fragen & Antworten journalistisch neu, 32 Fragen (Fassung 2026-10-20-6)
 
 - **Texte neu geschrieben:** Jede Antwort beginnt mit einer klaren Empfehlung mit Zahlen, dann kurze Stichpunkte und eine Zeile „Studienlage“ (Belegt / Offen). Praxisregeln ohne feste Studienzahl sind als „(Praxis)“ markiert.
