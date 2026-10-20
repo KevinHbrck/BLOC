@@ -583,3 +583,5 @@
 :root[data-layout="new"] .run-bg ~ .run-eigen .kp-titel{ color:rgba(255,255,255,.85); }
 :root[data-layout="new"] .run-weiss .run-knoepfe{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 :root[data-layout="new"] .run-weiss .run-knoepfe .run-ende{ grid-column:auto; }
+/* Hintergrundfoto (geblurrt, abgedunkelt) hinter dem Training in Modern */
+:root[data-layout="new"] .player::after{ content:""; position:absolute; inset:-30px; z-index:-1; pointer-events:none; background:var(--pl-foto) center/cover no-repeat; filter:blur(24px) brightness(.38) saturate(1.1); opacity:.9; }

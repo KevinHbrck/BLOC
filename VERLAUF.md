@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Hintergrundfotos für Run und Training (Fassung 2026-10-19-8)
+
+- **Run** (Modern): hinter der Seite liegt jetzt das Waldlaufpfad-Foto (Pexels 31932520, 400×600, geblurrt) in Hell und Dunkel statt der bisherigen zwei Fotos.
+- **Training** (Timer-Player, Modern): geblurrtes, abgedunkeltes Herbstwald-Foto (Pexels 35506330) hinter dem Glas; beide Bilder im Vorabcache. Keine Person, kein Gesicht erkennbar. Summit-Player folgt.
+
 ## 2026-10-19 · Run: eigener Lauf mit Pace-Vorgabe, Aufnahme im Glas-Stil, FAQ als Ganzes einklappbar (Fassung 2026-10-19-7)
 
 - **Eigener Lauf** (Run-Seite, Modern): Ziel-Distanz (frei, 3, 5, 10, 15, 21 km) und optional eine **Pace-Vorgabe**; nach jedem Kilometer sagt die App (auch ohne regelmäßige Ansage), wie viele Sekunden man zu langsam oder schneller als geplant war (`runPaceHinweis`, Einheitstest). Weniger Text auf der Seite (Beschreibungen ausgeblendet).

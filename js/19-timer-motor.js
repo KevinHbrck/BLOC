@@ -265,6 +265,7 @@ function enterStep(idx, opt){
   el.style.setProperty("--phase-bg", pv.bg);
   el.style.setProperty("--phase-text", pv.text);
   el.setAttribute("data-phase", step.phase);
+  if(layoutNeu()) el.style.setProperty("--pl-foto", "url(img/neu-herbst-bg.jpg)");   // Modern: geblurrtes Herbstwald-Foto hinter dem Glas
   // Ukraine Twist: während der ganzen Übung die wehende Flagge als Hintergrund
   var ua = step.ex === "russian-twists" && (step.phase === "work" || step.phase === "rest");
   el.classList.toggle("ua", ua);
