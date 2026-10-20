@@ -16,6 +16,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · Neue Fotos für Timer und Summit (Fassung 2026-10-20-54)
+
+- Timer-Kachel: Läufer-Silhouette (s/w), Summit-Kachel: rote Laufbahn im Wald; in Hell und Dunkel gleich. Quellen noch nachzutragen (BilderBloc\Quellen-Frauenbilder.txt).
+
 ## 2026-10-20 · Start-Knöpfe als Glas, Play-Symbol im Timer sichtbar (Fassung 2026-10-20-53)
 
 - Run: „Lauf/Fahrt starten“ halbtransparent mit Blur und weißer Schrift statt voll weiß; ebenso die Play-Knöpfe in der Timer-Liste (im Hellen war das Symbol weiß auf weiß) und der Start-Knopf in Summit.
