@@ -108,6 +108,30 @@ function studioSteigern(id){
   if(!ok || (e.erhoeht && e.erhoeht >= zwei[1].at)) return null;
   return { kg:Math.round((kg + z.schritt)*100)/100, ziel:z.saetze+" × "+z.wdh };
 }
+/* Vorschlag zum Steigern: gleiche Arbeitslast seit mindestens zwei Wochen (mindestens zwei Einheiten) → 5 % mehr, auf den Schritt der Übung gerundet (mindestens ein Schritt);
+   ohne Gewicht: zwei Wiederholungen mehr. Nimmt den strengeren Vorschlag der doppelten Progression (studioSteigern) vorweg, wenn der schon da ist. Nur ein Hinweis, die Technik entscheidet. */
+function studioSteigerTipp(id){
+  var e = studioEintrag(id), z = studioZiel(id);
+  if(!e || !e.log || e.log.length < 2) return null;
+  var tag = 86400000, heute = studioTag(Date.now());
+  var l = e.log.filter(function(x){ return arbeitsSaetze(x).length && studioTag(x.at) !== heute; });   // frühere Einheiten (heute zählt nicht)
+  if(l.length < 2) return null;
+  function top(x){ var b = null; arbeitsSaetze(x).forEach(function(s){ if(!b || s[0] > b[0] || (s[0] === b[0] && s[1] > b[1])) b = s; }); return b; }
+  var letzte = l[l.length-1], tl = top(letzte), n = 1, ab = letzte.at;
+  for(var i = l.length - 2; i >= 0; i--){ var ti = top(l[i]); if(ti[0] === tl[0] && (tl[0] > 0 || ti[1] === tl[1])){ n++; ab = l[i].at; } else break; }
+  if(n < 2) return null;
+  var wochen = Math.floor((Date.now() - ab)/(7*tag));
+  if(wochen < 2) return null;
+  if(e.erhoeht && e.erhoeht >= letzte.at) return null;
+  if(tl[0] > 0){
+    var neu = Math.max(tl[0] + z.schritt, Math.round(tl[0]*1.05/z.schritt)*z.schritt);
+    return { art:"kg", kg:Math.round(neu*100)/100, alt:tl[0], wochen:wochen, prozent:Math.round((neu/tl[0] - 1)*100) };
+  }
+  return { art:"wdh", wdh:tl[1] + 2, alt:tl[1], wochen:wochen };
+}
+function studioSteigerTippText(v){
+  return v.art === "kg" ? t("tippKg", { w:v.wochen, kg:studioKg(v.alt), neu:studioKg(v.kg), p:v.prozent }) : t("tippWdh", { w:v.wochen, n:2, neu:v.wdh });
+}
 function studioPauseStop(){
   if(!studioPause) return;
   clearInterval(studioPause.uhr);

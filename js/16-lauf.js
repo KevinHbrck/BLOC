@@ -453,7 +453,7 @@ function runLiveKarte(r){
   }
   var svg = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'"><defs><filter id="rk-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>'+
     '<radialGradient id="rk-rand" cx="50%" cy="50%" r="60%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".55"/></radialGradient></defs>'+
-    '<g class="rk-kulisse">'+kulisse+'</g><rect width="'+W+'" height="'+H+'" fill="url(#rk-rand)"/>';
+    '<rect x="-200" y="-200" width="700" height="700" fill="#080b10" fill-opacity=".55"/><g class="rk-kulisse">'+kulisse+'</g><rect width="'+W+'" height="'+H+'" fill="url(#rk-rand)"/>';
   if(!pts.length) return svg+'<circle class="rk-puls" cx="150" cy="150" r="10"/><circle class="rk-pos" cx="150" cy="150" r="7"/></svg>';
   var minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
   pts.forEach(function(p){ minLa = Math.min(minLa, p[0]); maxLa = Math.max(maxLa, p[0]); minLo = Math.min(minLo, p[1]); maxLo = Math.max(maxLo, p[1]); });

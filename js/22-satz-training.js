@@ -5,6 +5,27 @@
    Erklärungen stehen eingeklappt darunter. Route: #satz/<BLOC-ID>/<Nummer>. */
 var satzLetzterTick = 0;   // letzte Sekunde, zu der der Pause-Tick vibriert hat
 var satzUhr = 0;   // Zähler der Satzpause (nur eine zugleich)
+/* Zusammenfassung: je Übung der beste Satz heute und der Vergleich mit der Einheit davor (Gewicht, sonst Wiederholungen) */
+function satzVergleichHTML(ids){
+  var heute = studioTag(Date.now()), zeilen = [];
+  function top(l){ var b = null; arbeitsSaetze(l).forEach(function(s){ if(!b || s[0] > b[0] || (s[0] === b[0] && s[1] > b[1])) b = s; }); return b; }
+  function wdhSumme(l){ return arbeitsSaetze(l).reduce(function(a, s){ return a + s[1]; }, 0); }
+  ids.forEach(function(id){
+    var ex = findExercise(id), e = studioEintrag(id), log = (e && e.log) || [];
+    var h = log.length && studioTag(log[log.length-1].at) === heute ? log[log.length-1] : null;
+    if(!ex || !h || !arbeitsSaetze(h).length) return;
+    var vor = null; for(var i = log.length - 2; i >= 0; i--){ if(arbeitsSaetze(log[i]).length && studioTag(log[i].at) !== heute){ vor = log[i]; break; } }
+    var b = top(h), text = b[0] > 0 ? studioKg(b[0])+" kg × "+b[1] : b[1]+" "+t("stReps"), badge = t("satzErstes"), kl = "neu";
+    if(vor){
+      var bv = top(vor), dKg = Math.round((b[0] - bv[0])*100)/100, dW = wdhSumme(h) - wdhSumme(vor);
+      if(b[0] > 0 && dKg !== 0){ badge = (dKg > 0 ? "▲ +" : "▼ −")+studioKg(Math.abs(dKg))+" kg"; kl = dKg > 0 ? "hoch" : "runter"; }
+      else if(dW !== 0){ badge = (dW > 0 ? "▲ " : "▼ ")+t(dW > 0 ? "satzMehrW" : "satzWenigerW", { n:Math.abs(dW) }); kl = dW > 0 ? "hoch" : "runter"; }
+      else { badge = "= "+t("satzGleich"); kl = "gleich"; }
+    }
+    zeilen.push('<div class="satz-vgl"><span class="satz-vgl-n">'+esc(tplText(ex.name))+'</span><span class="satz-vgl-w">'+esc(text)+'</span><span class="satz-vgl-b '+kl+'">'+esc(badge)+'</span></div>');
+  });
+  return zeilen.length ? '<div class="satz-vgls" aria-label="'+esc(t("satzZusammenfassung"))+'">'+zeilen.join("")+'</div>' : '';
+}
 function satzListe(p){
   var l = stPlanIds(p).slice();
   planFolge(p).forEach(function(q){ stPlanIds(q).forEach(function(id){ if(l.indexOf(id) < 0) l.push(id); }); });
@@ -24,6 +45,7 @@ function satzKarteHTML(id, i, n){
       (kachelMuskel(ex) ? '<div class="satz-mus">'+kachelMuskel(ex)+'</div>' : '')+
       (ILLU[id] ? '<div class="satz-figur">'+illuHTML(id, "satz-illu")+'</div>' : '')+
       '<div class="satz-saetze" role="img" aria-label="'+esc((h ? h.s.length : 0)+" / "+z.saetze)+'">'+(function(){ var o = "", n = Math.min(z.saetze, 12), fertigeAnzahl = h ? h.s.length : 0; for(var q = 0; q < n; q++) o += '<i class="'+(q < fertigeAnzahl ? 'an' : q === fertigeAnzahl ? 'jetzt' : '')+'"></i>'; return o; })()+'</div>'+
+      (function(){ var tp = h ? null : studioSteigerTipp(id); return tp ? '<div class="satz-tipp"><span>'+esc(studioSteigerTippText(tp))+'</span><button type="button" data-satztipp>'+esc(t("tippUebernehmen"))+'</button></div>' : ''; })()+
       '<div class="satz-ziel">'+esc(t("stGoal"))+' <b>'+satzName(z.saetze)+' × '+z.wdh+'</b>'+(e.kg != null && !koerper ? ' · <b>'+studioKg(e.kg)+' kg</b>' : '')+'</div>'+
       (letzte ? '<div class="satz-zeile"><span>'+esc(t("stLetztes"))+'</span>'+letzte.s.map(function(x){
         return '<button type="button" class="satz-chip" data-ukg="'+x[0]+'" data-uw="'+x[1]+'" aria-label="'+esc(t("stUebernehmen")+" "+studioKg(x[0])+" × "+x[1])+'">'+esc(satzText(x).replace("×", " × "))+'</button>'; }).join("")+'</div>' : '')+
@@ -67,7 +89,7 @@ function renderSatzTraining(planId, start){
   }
   function fertigKnopf(neuBereit){
     var b = root.querySelector("[data-satzfertig]"); if(!b) return;
-    var ok = alleFertig(); b.disabled = !ok; b.classList.toggle("bereit", ok);
+    var ok = alleFertig() || letzteFertig(); b.disabled = !ok; b.classList.toggle("bereit", ok);
     if(ok && neuBereit){ b.classList.add("leuchtet"); vibrate([50, 40, 50, 40, 120]); setTimeout(function(){ b.classList.remove("leuchtet"); }, 1400); }
   }
   function punkteFertig(){
@@ -77,6 +99,8 @@ function renderSatzTraining(planId, start){
     });
     fertigKnopf(false);
   }
+  function fertig1(id){ var e = studioEintrag(id) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null; return !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= studioZiel(id).saetze; }
+  function letzteFertig(){ return fertig1(ids[ids.length-1]); }   // Fertig wird hell, sobald der letzte Satz der letzten Übung drin ist (oder alles geschafft)
   function alleFertig(){
     return ids.every(function(id){ var e = studioEintrag(id) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null; return !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= studioZiel(id).saetze; });
   }
@@ -86,7 +110,8 @@ function renderSatzTraining(planId, start){
     var d = trainingHeute(ids), box = document.createElement("div");
     box.className = "satz-ende";
     box.innerHTML = '<div class="satz-ende-glas" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-haken" aria-hidden="true">✓</div><h2>'+esc(t("satzGeschafft"))+'</h2>'+
-      '<p>'+esc(trLeisteText(d.saetze, d.ex.length)+(d.vol ? " · "+studioKg(d.vol)+" kg" : "")+(d.dauer >= 60 ? " · "+Math.round(d.dauer/60)+" min" : ""))+'</p>'+
+      '<p class="satz-ende-sum">'+esc(trLeisteText(d.saetze, d.ex.length)+(d.vol ? " · "+studioKg(d.vol)+" kg" : "")+(d.dauer >= 60 ? " · "+Math.round(d.dauer/60)+" min" : ""))+'</p>'+
+      satzVergleichHTML(ids)+
       '<button type="button" class="satz-los" data-endsave>'+esc(t("trSpeichern"))+'</button>'+
       '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button>'+
       '<button type="button" class="satz-undo" data-endraus>'+esc(t("satzBeenden"))+'</button></div>';
@@ -101,7 +126,7 @@ function renderSatzTraining(planId, start){
   root.querySelectorAll("[data-satzgo]").forEach(function(b){ b.addEventListener("click", function(){ geheZu(+b.getAttribute("data-satzgo"), true); }); });
   function raus(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } goBack("#katalog"); }
   root.querySelector("[data-satzexit]").addEventListener("click", raus);
-  root.querySelector("[data-satzsave]").addEventListener("click", function(){ openTrainingSpeichern({ plan:p, ids:ids }, function(){}); });
+  root.querySelector("[data-satzsave]").addEventListener("click", function(){ if(!root.querySelector(".satz-ende")) abschluss(); });
   function pauseZeigen(){
     var el = root.querySelector(".satz-pause:not([hidden])");
     if(!studioPause){ if(el && !el.classList.contains("vorbei")){ el.classList.add("vorbei"); el.querySelector("b").textContent = t("stPauseEnd"); } return; }
@@ -152,6 +177,11 @@ function renderSatzTraining(planId, start){
     if((a = k.querySelector("[data-satzskip]"))) a.addEventListener("click", function(){ studioPauseStop(); k.querySelector(".satz-pause").hidden = true; });
     if((a = k.querySelector("[data-satzweiter]"))) a.addEventListener("click", function(){
       if(i < ids.length - 1) geheZu(i + 1, true); else openTrainingSpeichern({ plan:p, ids:ids }, function(){});
+    });
+    if((a = k.querySelector("[data-satztipp]"))) a.addEventListener("click", function(){
+      var tp = studioSteigerTipp(id), en = studioAlle()[id] || (studioAlle()[id] = { log:[] }); if(!tp) return;
+      if(tp.art === "kg"){ en.kg = tp.kg; if(kgIn) kgIn.value = studioKg(tp.kg); } else if(wIn) wIn.value = tp.wdh;
+      en.erhoeht = Date.now(); save(); vibrate([20, 30, 40]); a.parentNode.remove();
     });
     if((a = k.querySelector("[data-satzinfo]"))) a.addEventListener("click", function(){ openExInfo(id, false); });
   }

@@ -462,6 +462,7 @@ function planZeileHTML(id, nr, bl, p){   // bl: { art, k, n, bid } - die Übung 
       '<span class="pz-text"><span class="pz-name"><i>'+nr+'</i> '+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+
         (bl ? '<span class="pz-bm">'+esc(t(bl.art === "zirkel" ? "blkZirkel" : "blkSuper"))+' · '+bl.k+'/'+bl.n+'</span>' : '')+
         '<span class="pz-letzte'+(l ? ' an' : '')+'">'+(l ? esc(t("planZuletzt", { d:studioTagText(l.at), s:studioLetzteText(l) })) : esc(t("planNochNie")))+'</span>'+
+        (function(){ var tp = studioSteigerTipp(id); return tp ? '<span class="pz-tipp"><span>↑ '+esc(tp.art === "kg" ? t("tippKurzKg", { kg:studioKg(tp.kg), p:tp.prozent }) : t("tippKurzWdh", { n:tp.wdh }))+'</span><button type="button" data-pzup="'+id+'">'+esc(t("tippUebernehmen"))+'</button></span>' : ''; })()+
         (e.notiz && e.notiz.trim() ? '<span class="pz-notiz">'+esc(e.notiz.trim())+'</span>' : '')+'</span>'+   // die Notiz der Übung erscheint beim nächsten Mal wieder
       '<span class="pz-pfeil" aria-hidden="true">'+ICON_CHEV+'</span></div>'+
     '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div></div>';
@@ -571,6 +572,13 @@ function planZeilenBinden(root, fn, neuZeichnen, p){
   });
   root.querySelectorAll(".pz-zeile").forEach(function(zeile){
     var id = zeile.getAttribute("data-pz");
+    var up = zeile.querySelector("[data-pzup]");   // Vorschlag „5 % mehr“ übernehmen: Arbeitsgewicht (bzw. Wiederholungsziel) wird gesetzt
+    if(up) up.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      var tp = studioSteigerTipp(id), a = studioAlle(), en = a[id] || (a[id] = { log:[] }); if(!tp) return;
+      if(tp.art === "kg") en.kg = tp.kg; else { en.ziel = en.ziel || {}; en.ziel.wdh = tp.wdh; }
+      en.erhoeht = Date.now(); save(); if(neuZeichnen) neuZeichnen();
+    });
     function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
     function setzen(feld, v){
       var en = eintrag();

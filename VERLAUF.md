@@ -49,6 +49,12 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Satz-Training: Zusammenfassung mit Steigerung, Vorschläge zum Steigern, besserer Kontrast im Run (Fassung 2026-10-20-18)
+
+- **Fertig** (und der Haken oben) zeigt eine **Zusammenfassung**: je Übung der beste Satz heute und der Vergleich zur Einheit davor (▲ +5 kg · ▲ Wdh. mehr · = gleich · Erstes Mal), darunter Training speichern · Weiter trainieren · Beenden. Der Knopf wird hell, sobald der letzte Satz der letzten Übung eingetragen ist (oder alles geschafft ist).
+- **Vorschläge zum Steigern** (`studioSteigerTipp`): gleiche Last seit mindestens 2 Wochen (mindestens 2 Einheiten) → etwa 5 % mehr, auf den Schritt der Übung gerundet; ohne Gewicht 2 Wiederholungen mehr. Zu sehen auf der BLOC-Seite unter der Übung (mit „Übernehmen“) und oben auf der Karte im Wisch-Bereich.
+- **Run** (Aufnahme): dunkle Abdeckung über dem Foto, dunkles Glas für Werte, Karte und Knöpfe, helle Schrift, Intervall-Anzeige gut lesbar – auch auf hellem Foto und in jedem Design.
+
 ## 2026-10-20 · Fertig-Knopf im Satz-Training, Kalorien nur noch beim Laufen (Fassung 2026-10-20-16)
 
 - **Satz-Training**: unten ein **Fertig**-Knopf, ausgegraut bis der letzte Satz der letzten Übung eingetragen ist, dann hell (Orange) mit kurzem Aufleuchten und Vibration; Antippen zeigt „Training geschafft“ (speichern · weiter · beenden). Die Zusammenfassung erscheint nicht mehr von selbst.
