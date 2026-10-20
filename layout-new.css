@@ -704,3 +704,19 @@
 :root[data-layout="new"] .cover-info-klapp[open] > summary .tpl-chev{ transform:rotate(180deg); }
 :root[data-layout="new"] .pz-art{ margin:6px 0 8px; }
 :root[data-layout="new"] .pz-art + .plan-start{ margin-top:0; }
+
+/* Run während des Laufens: alles auf einem Bildschirm (kleinere Zeit, vier Werte in einer Reihe, flachere Karte, drei Knöpfe nebeneinander) */
+:root[data-layout="new"] .run-weiss:has(#run-karte) .rg-zeit{ font-size:min(15vw, 62px); line-height:1.05; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-gross{ margin:0 0 6px; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-raster{ grid-template-columns:repeat(4, 1fr); gap:6px; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-raster > div{ padding:8px 4px; border-radius:14px; min-width:0; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-raster b{ font-size:17px; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-raster small{ font-size:9.5px; line-height:1.15; display:block; }
+:root[data-layout="new"] .run-weiss .run-karte{ aspect-ratio:auto; height:min(30vh, 250px); max-height:none; margin:8px 0; border-radius:20px; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-knoepfe{ grid-template-columns:repeat(3, 1fr); gap:6px; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-knoepfe .btn{ padding:11px 4px; font-size:13.5px; margin:0; min-width:0; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-knoepfe .btn svg{ width:15px; height:15px; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) .run-knoepfe .run-dunkelbtn{ grid-column:auto; order:0; }
+:root[data-layout="new"] .run-weiss:has(#run-karte) + div{ height:8px !important; }
+:root[data-layout="new"] .run-weiss .run-karte{ height:min(36vh, 300px); }
+.run-karte svg{ overflow:visible; }

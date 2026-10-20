@@ -305,7 +305,7 @@ function hauptAktionNeu(route){
   if(route === "kalender") return { svg:P_PLUS, label:t("kalAdd"), fn:function(){ kalHinzuMenue(kalAnsicht === "monat" && kalAuswahl ? kalAuswahl : kalTagKey(Date.now())); } };
   return null;
 }
-var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", koerper:"#koerper", stats:"#koerper" };
+var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", koerper:"#koerper", stats:"#koerper", faq:"#training" };
 /* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
 var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
@@ -369,6 +369,7 @@ function render(){
   if(studioPause && route !== "studio") studioPauseStop();
   if(route==="home") return renderHome();
   if(route==="training") return renderTraining();
+  if(route==="faq") return renderFaq();
   if(route==="reps") return renderReps();
   if(route==="warmstretch") return renderWarmStretch();
   if(route==="rep") return renderRepDetail(parts[1]);

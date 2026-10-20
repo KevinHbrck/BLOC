@@ -169,7 +169,7 @@ function renderKalender(){
   var sichtbar = tage.filter(function(d){ return !monat || d.getMonth() === kalBasis.getMonth(); }).map(kalTagKey);
   var sum = kalSumme(sichtbar);
   var heuteKnopf = '<button type="button" class="kal-heutebtn" data-kalheute aria-label="'+esc(t("kalHeuteSpringen"))+'">'+svgIcon('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>')+'<span>'+esc(t("kalHeute"))+'</span></button>';
-  html = (layoutNeu() ? bereichKopfNeuHTML("kal", t("tabKalender"), t("kalKicker"), heuteKnopf, { foto:"img/neu-d-kalender.jpg", fotoHell:"img/neu-h-kettlebell.jpg", zurueck:false, ohneSuche:true })
+  html = (layoutNeu() ? bereichKopfNeuHTML("kal", t("tabKalender"), t("kalKicker"), heuteKnopf, { foto:"img/neu-d-kalender.jpg", fotoHell:"img/neu-h-kettlebell.jpg", zurueck:"#home", ohneSuche:true })
       : topbar(t("kalTitel"), { back:"#home", right:heuteKnopf })) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
       '<button type="button" data-kalansicht="woche" class="'+(!monat ? 'active' : '')+'">'+esc(t("kalWoche"))+'</button>'+

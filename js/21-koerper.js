@@ -92,7 +92,7 @@ function renderPlanSeite(){
   function namen(d){ return kalPlus(planStart(), d).toLocaleDateString(lang, { weekday:"short" }).replace(/\.$/, ""); }
   var datum = planStart().toLocaleDateString(lang, { day:"numeric", month:"long" });
   app.innerHTML =
-    topbar(t("tabKoerper"), { right:kopfSymboleNeu("stats") }) +
+    topbar(t("tabKoerper"), { back:"#home", right:kopfSymboleNeu("stats") }) +
     '<details class="card kp-tipps kp-klapp"><summary><span>'+esc(t("planTippsTitel"))+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
       '<ul>'+["planTipp1", "planTipp2", "planTipp3", "planTipp4"].map(function(k){ return '<li>'+esc(t(k))+'</li>'; }).join("")+'</ul>'+
       '<div class="kp-text"><b>'+esc(t("planDanachTitel"))+'</b> '+esc(t("planDanach"))+'</div>'+
