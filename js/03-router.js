@@ -22,9 +22,13 @@ function syncGuard(){
     setUrl(navTop());
   }
 }
+/* Die Hauptseiten (Heute · Training · Kalender · Fortschritt): Heute ist immer die oberste Stufe. Wer zu einer Hauptseite wechselt, hat danach nur Heute dahinter -
+   „Zurück“ (Pfeil oder Android-Taste/-Geste) führt dann zu Heute, nicht durch die zuletzt besuchten Hauptseiten, und erst von Heute aus verlässt man die App. */
+var HAUPTSEITEN = ["#training", "#kalender", "#koerper", "#stats"];
 function go(hash){
   var neueSeite = navTop() !== hash;
   if(hash === "#home") navStack = ["#home"];
+  else if(HAUPTSEITEN.indexOf(hash) > -1) navStack = ["#home", hash];
   else if(neueSeite) navStack.push(hash);
   syncGuard();
   render();
