@@ -865,3 +865,6 @@ body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 :root[data-layout="new"] .run-weiss .rg-zeit{ text-shadow:0 2px 22px rgba(0,0,0,.6); }
 .rk-kulisse .rk-str{ stroke:rgba(255,255,255,.4); }
 .rk-kulisse .rk-neben{ stroke:rgba(255,255,255,.28); }
+/* Run-Aufnahme im hellen Design: Titel und Zurück-Knopf in heller Schrift auf dem dunklen Foto */
+:root[data-layout="new"]:has(.run-weiss) .topbar h1, :root[data-layout="new"]:has(.run-weiss) .topbar .ttl{ color:#fff; text-shadow:0 1px 10px rgba(0,0,0,.5); }
+:root[data-layout="new"]:has(.run-weiss) .topbar .iconbtn{ background:rgba(8,10,14,.5); color:#fff; border:1px solid rgba(255,255,255,.28); }
