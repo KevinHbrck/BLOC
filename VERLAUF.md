@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ gekürzt und geordnet: 26 Fragen, neutrale Titel, Fachwörter erklärt (Fassung 2026-10-20-13)
+
+- Nach dem Laien-Gegenlesen: Doppelungen zusammengelegt (Pause/täglich/Übertraining, Eiweiß, Herz, Knochen/Rücken/Stürze, Fortgeschrittene), 35 auf 26 Fragen. Gesundheitsthemen mit neutralen Titeln („Was zeigen Studien zu …“), der Satz zu Beobachtungsstudien steht einmal im Hinweis oben. Fachwörter an Ort und Stelle erklärt, keine Fragennummern mehr in den Texten.
+- Feste Schlüssel je wichtiger Frage in `faq.js` (`id`: nutzen, pause, muskelwachstum, eiweiss, sicherheit, plan, fortgeschritten) für spätere Verlinkung, z. B. vom Reiter „Körper“ zur Plan-Frage. Einheitstest 51/51.
+
 ## 2026-10-20 · FAQ komplett überarbeitet: roter Faden, klare Zahlen (Fassung 2026-10-20-12)
 
 - Alle 35 Fragen neu geschrieben: Kurzantwort mit klarer Aussage, Begründung in kurzen Stichpunkten, „Studienlage“ ohne Widerspruch zur Kurzantwort. Jede Zahl hat einen Bezug (z. B. Eiweiß: 0,3 kg mehr magere Körpermasse, 2,5 kg mehr im schwersten Einzelversuch, z. B. 102,5 statt 100 kg).
