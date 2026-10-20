@@ -303,11 +303,16 @@ function faqHTML(){
       gruppe = f.g;
       h += '<h3 class="faq-gruppe">'+F.gruppen[sp][gruppe]+'</h3><div class="faq-liste">';
     }
+    /* Felder: t Titel · k Kurzantwort (optional; mit k stehen die Absätze p als Stichpunkte, ohne k als Fließtext) · p Absätze · s „Wie sicher ist das?“ (optional) ·
+       b Begriffe [[Begriff, Erklärung], …] (optional) · q Quellen-Nummern */
     h += '<details class="faq-q"><summary><span class="faq-nr" aria-hidden="true">'+(i+1)+'</span><span class="faq-t">'+x.t+'</span></summary>'+
-      '<div class="faq-a"><p><b>'+esc(t("faqKurz"))+':</b> '+x.k+'</p>'+
-      '<ul>'+x.p.map(function(p){ return '<li>'+p+'</li>'; }).join("")+'</ul>'+
-      '<p><b>'+esc(t("faqStudie"))+':</b> '+x.s+'</p>'+
-      '<p class="faq-quellen"><b>'+esc(t("faqQuellen"))+':</b> '+f.q.map(function(n){ return '[F'+n+']'; }).join(" ")+'</p></div></details>';
+      '<div class="faq-a">'+
+      (x.k ? '<p><b>'+esc(t("faqKurz"))+':</b> '+x.k+'</p><ul>'+(x.p || []).map(function(p){ return '<li>'+p+'</li>'; }).join("")+'</ul>'
+           : (x.p || []).map(function(p){ return '<p>'+p+'</p>'; }).join(""))+
+      (x.s ? '<p><b>'+esc(t("faqStudie"))+':</b> '+x.s+'</p>' : '')+
+      (x.b && x.b.length ? '<div class="faq-begriffe"><p><b>'+esc(t("faqBegriffe"))+'</b></p><dl>'+x.b.map(function(b){ return '<dt>'+b[0]+'</dt><dd>'+b[1]+'</dd>'; }).join("")+'</dl></div>' : '')+
+      (f.q && f.q.length ? '<p class="faq-quellen"><b>'+esc(t("faqQuellen"))+':</b> '+f.q.map(function(n){ return '[F'+n+']'; }).join(" ")+'</p>' : '')+
+      '</div></details>';
   });
   if(gruppe >= 0) h += '</div>';
   h += '<details class="faq-q faq-verz"><summary><span class="faq-t">'+esc(t("faqVerz"))+'</span></summary><div class="faq-a">'+

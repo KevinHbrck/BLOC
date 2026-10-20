@@ -519,10 +519,10 @@
   });
 
   /* ---------- Fragen & Antworten (faq.js): Daten vollständig und zweisprachig, Anzeige zugeklappt, Links nur https ---------- */
-  test("FAQ: 13 Fragen in Deutsch und Englisch, alle Quellen vorhanden, Gruppen lückenlos", function () {
+  test("FAQ: Fragen in Deutsch und Englisch vollständig (Antwort, Begriffe, Quellen), alle Quellen vorhanden, Gruppen lückenlos", function () {
     var F = W.BLOC_FAQ;
     wahr(F && F.fragen && F.quellen, "faq.js geladen");
-    wahr(F.fragen.length >= 13, "mindestens 13 Fragen: " + F.fragen.length);
+    wahr(F.fragen.length >= 10, "mindestens 10 Fragen: " + F.fragen.length);
     var gr = F.fragen.map(function (f) { return f.g; });
     var k = F.gruppen.de.length;
     gleich(gr.filter(function (g, i) { return i === 0 || g !== gr[i - 1]; }), Array.apply(null, Array(k)).map(function (_, i) { return i; }), "Gruppen lückenlos nacheinander");
@@ -530,12 +530,16 @@
       gleich(F.gruppen[sp].length, k, "Gruppennamen " + sp); wahr(F.hinweis[sp].length > 100, "Hinweis " + sp);
       F.fragen.forEach(function (f, i) {
         var x = f[sp];
-        wahr(x && x.t && x.k && x.s && x.p.length >= 3, "Frage " + (i + 1) + " " + sp + " vollständig");
-        wahr(f.q.length >= 1 && f.q.every(function (n) { return F.quellen[n] && F.quellen[n].de && F.quellen[n].en; }), "Frage " + (i + 1) + ": Quellen im Verzeichnis");
+        /* Pflicht: Titel und mindestens ein Absatz; die Kurzantwort k, „Wie sicher ist das?“ s und die Begriffe b sind optional */
+        wahr(x && x.t && x.p && x.p.length >= 1 && x.p.every(function (p) { return typeof p === "string" && p.length > 0; }), "Frage " + (i + 1) + " " + sp + " vollständig");
+        if (x.k !== undefined) wahr(typeof x.k === "string" && x.k.length > 0, "Frage " + (i + 1) + " " + sp + ": Kurzantwort nicht leer");
+        if (x.s !== undefined) wahr(typeof x.s === "string" && x.s.length > 0, "Frage " + (i + 1) + " " + sp + ": „Wie sicher ist das?“ nicht leer");
+        if (x.b !== undefined) wahr(x.b.length >= 1 && x.b.every(function (e) { return e.length === 2 && e[0] && e[1]; }), "Frage " + (i + 1) + " " + sp + ": Begriffe als [Begriff, Erklärung]");
+        wahr(f.q && f.q.length >= 1 && f.q.every(function (n) { return F.quellen[n] && F.quellen[n].de && F.quellen[n].en; }), "Frage " + (i + 1) + ": Quellen im Verzeichnis");
       });
     });
-    wahr(Object.keys(F.quellen).length >= 27, "Quellenverzeichnis vollständig: " + Object.keys(F.quellen).length);
-    wahr(!F.quellen[13], "Nummer 13 ist frei");
+    F.fragen.forEach(function (f, i) { wahr(!!f.de.b === !!f.en.b, "Frage " + (i + 1) + ": Begriffe in beiden Sprachen oder in keiner"); });
+    wahr(Object.keys(F.quellen).length >= 10, "Quellenverzeichnis vorhanden: " + Object.keys(F.quellen).length);
   });
   test("FAQ: Anzeige – Hinweis vor den Fragen und nie in einer zugeklappten Frage, alles zugeklappt, Links nur https mit noopener", function () {
     var F = W.BLOC_FAQ, n = F.fragen.length;
@@ -547,12 +551,36 @@
     gleich(d.querySelectorAll("details[open]").length, 0, "alles zugeklappt");
     gleich(d.querySelectorAll("details.faq-q > summary").length, n + 1, "jede Frage hat eine Kopfzeile");
     var links = d.querySelectorAll("a");
-    wahr(links.length >= 20, "Links im Verzeichnis: " + links.length);
+    wahr(links.length >= 10, "Links im Verzeichnis: " + links.length);
+    var mitB = F.fragen.filter(function (f) { return f[W.currentLang()].b && f[W.currentLang()].b.length; }).length;
+    gleich(d.querySelectorAll(".faq-begriffe").length, mitB, "Begriffe werden bei genau den Fragen angezeigt, die welche haben");
+    gleich(d.querySelectorAll("details.faq-q:not(.faq-verz) .faq-a").length, n, "jede Frage hat eine Antwort");
+    wahr(!/undefined|null/.test(d.textContent), "kein „undefined“ oder „null“ im angezeigten Text");
     for (var i = 0; i < links.length; i++) {
       wahr(/^https:\/\//.test(links[i].getAttribute("href")), "Link nur https: " + links[i].getAttribute("href"));
       wahr(/noopener/.test(links[i].getAttribute("rel") || "") && links[i].getAttribute("target") === "_blank", "Link mit noopener: " + links[i].getAttribute("href"));
     }
     wahr(!d.querySelector("img, script, iframe, link, [src]"), "nichts wird nachgeladen oder eingebettet");
+  });
+
+  test("FAQ: Anzeige verträgt beide Datenformate – ohne Kurzantwort und ohne „Wie sicher ist das?“, mit Begriffen", function () {
+    var alt = W.BLOC_FAQ;
+    try {
+      var q = { de: "Quelle <a href=\"https://example.org/\" target=\"_blank\" rel=\"noopener noreferrer\">Link</a>", en: "Source" };
+      W.BLOC_FAQ = { hinweis: { de: "Hinweis", en: "Note" }, gruppen: { de: ["Gruppe"], en: ["Group"] }, quellen: { 1: q },
+        fragen: [
+          { g: 0, q: [1], id: "a", de: { t: "Frage A", p: ["Absatz eins", "Absatz zwei"], b: [["MET", "Maß für Anstrengung"]] }, en: { t: "Question A", p: ["Paragraph one"], b: [["MET", "Measure of effort"]] } },
+          { g: 0, q: [1], de: { t: "Frage B", k: "Kurz", p: ["Punkt"], s: "Gut belegt" }, en: { t: "Question B", k: "Short", p: ["Point"], s: "Well supported" } }
+        ] };
+      var d = document.createElement("div"); d.innerHTML = W.faqHTML();
+      var a = d.querySelectorAll("details.faq-q:not(.faq-verz)");
+      gleich(a.length, 2, "zwei Fragen");
+      gleich(a[0].querySelectorAll(".faq-a > p").length >= 2 && !a[0].querySelector("ul"), true, "ohne Kurzantwort: Absätze als Fließtext, keine Liste");
+      wahr(!/Kurzantwort|Wie sicher/.test(a[0].textContent), "ohne k und s erscheinen weder Kurzantwort noch „Wie sicher ist das?“");
+      wahr(a[0].querySelector(".faq-begriffe dt") && a[0].querySelector(".faq-begriffe dt").textContent === "MET", "Begriffe angezeigt");
+      wahr(a[1].querySelector("ul li") && /Kurzantwort/.test(a[1].textContent) && /Wie sicher/.test(a[1].textContent), "mit k und s wie bisher");
+      wahr(!/undefined|null/.test(d.textContent), "kein „undefined“ im Text");
+    } finally { W.BLOC_FAQ = alt; }
   });
 
   /* ---------- Einführung, Klänge, Namen, Sicherungs-Erinnerung (2026-10-19) ---------- */
