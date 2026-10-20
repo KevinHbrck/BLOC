@@ -983,3 +983,11 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 @media (prefers-reduced-motion: reduce){ :root[data-layout="new"] .training-seite .area-tile.zeile::after{ animation:none; background-position:50% 0, 0 0; } }
 /* Run-Startseite: Hintergrundfoto weniger weichgezeichnet (Timer und Lauf behalten die stärkere Unschärfe) */
 :root[data-layout="new"]:has(.run-hero) .run-bg i{ filter:blur(11px) brightness(.66) saturate(1.25); }
+/* Timer und Summit (Listen): derselbe Hintergrund und dieselbe Glas-Optik wie auf Run - Karten halbtransparent mit Blur, helle Schrift in jedem Modus */
+:root[data-layout="new"]:has(.run-bg){ --surface:rgba(255,255,255,.12); --surface-2:rgba(255,255,255,.14); --border:rgba(255,255,255,.22); }
+:root[data-layout="new"]:has(.run-bg) #app .card, :root[data-layout="new"]:has(.run-bg) #app .list-item.entry, :root[data-layout="new"]:has(.run-bg) #app .tpl-item,
+:root[data-layout="new"]:has(.run-bg) #app .filter-karte, :root[data-layout="new"]:has(.run-bg) #app .fc-card{
+  background:var(--glas); border:1px solid var(--glas-rand); box-shadow:0 8px 26px rgba(0,0,0,.18); color:var(--glas-text);
+  -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
+:root[data-layout="new"]:has(.run-bg) #app .section-title, :root[data-layout="new"]:has(.run-bg) #app .page-hint{ color:rgba(255,255,255,.88); }
+:root[data-layout="new"]:has(.run-bg) .kopf-bereich.klar .kb-rund, :root[data-layout="new"]:has(.run-bg) .kopf-bereich.klar .kb-rechts .iconbtn{ background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.24); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }

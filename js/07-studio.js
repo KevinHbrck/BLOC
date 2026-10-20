@@ -273,7 +273,7 @@ function timerFabHTML(){
 function renderIntervall(){
   var hw = hinweise("timer", ["timerHint"]);
   var neuK = layoutNeu();   // New: Foto-Kopf wie im Entwurf, Zurück führt zu Training
-  app.innerHTML = (neuK ? bereichKopfNeuHTML("intervall", t("tabTimer"), t("timerKicker"), hw.knopf) : topbar(t("tabTimer"), { back:"#home", right:hw.knopf }) + bereichBildHTML("intervall")) +
+  app.innerHTML = (neuK ? runHintergrundHTML() + bereichKopfNeuHTML("intervall", t("tabTimer"), t("timerKicker"), hw.knopf, { klar:true }) : topbar(t("tabTimer"), { back:"#home", right:hw.knopf }) + bereichBildHTML("intervall")) +
     timerPanelHTML(hw) + '<div style="height:90px"></div>' + timerFabHTML();
   bindCommon();
   function neu(){ var y = window.scrollY; renderIntervall(); window.scrollTo(0, y); }

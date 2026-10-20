@@ -607,7 +607,7 @@ function runHoehenlinien(){
   return '<svg class="run-hoehen" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke-width="1.2">' + s + '</svg>';
 }
 function runHintergrundHTML(){
-  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+"img/neu-p-freiluft-meer.jpg"+')"></i>'+runHoehenlinien()+'</div>';
+  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+"img/neu-p-freiluft-meer.jpg"+')"></i>'+'</div>';
 }
 /* Strecke mit Zwischenwerten (Modern, Lauf-Details): weiße Linie, Punkte bei jedem Kilometer, daran kleine Glas-Chips „1 km · 5:44“ */
 function runStreckeNeu(x){

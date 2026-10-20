@@ -206,7 +206,7 @@ function renderReps(){
       '<span class="chip chev">'+ICON_CHEV+'</span></div>';
   }
   var hw = hinweise("reps", [repFilter.tab === "einheiten" ? "repUnitsIntro" : repFilter.tab === "meine" ? "repMineIntro2" : "repIntro"]);
-  var html = (layoutNeu() ? bereichKopfNeuHTML("reps", t("repTitle"), t("htReps"), hw.knopf)
+  var html = (layoutNeu() ? runHintergrundHTML() + bereichKopfNeuHTML("reps", t("repTitle"), t("htReps"), hw.knopf, { klar:true })
       : topbar(t("repTitle"), { back:"#home", right:hw.knopf+lupeHTML("rs", repQuery) }) + bereichBildHTML("reps")) +
     reiterZeileHTML("var(--rep-color)",
       '<button data-repf="tab:einheiten" class="'+(repFilter.tab==="einheiten"?"active":"")+'">'+esc(t("repTabUnits"))+'</button>'+

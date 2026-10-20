@@ -16,6 +16,11 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · Run ohne Kringel, Timer und Summit in Glas-Optik (Fassung 2026-10-20-51)
+
+- Run: die Höhenlinien (Kringel) im Hintergrund sind weg.
+- Timer- und Summit-Liste: gleicher Hintergrund wie Run (Foto geblurrt), Kopf ohne Foto, Karten und Knöpfe als halbtransparentes Glas mit heller Schrift in jedem Modus.
+
 ## 2026-10-20 · Schimmer auf den Training-Kacheln, FAQ in sechs Gruppen (Fassung 2026-10-20-46)
 
 - Training: feine helle Kante und ein Lichtstreifen, der beim Öffnen einmal über die Kacheln gleitet (bei „Bewegung reduzieren“ ruhig).
