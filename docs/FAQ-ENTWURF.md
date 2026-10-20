@@ -1,11 +1,11 @@
 # BLOC – FAQ-Entwurf (Fragen und Antworten)
 
-Stand: 2026-10-20, Fassung 8 (Kevins redaktionelle Fassung „Sportjournal“ vom 20.10.2026 eingearbeitet: 19 Fragen, Begriffserklärung je Frage, 14 Quellen). **Entwurf nur als Text, nichts davon ist im App-Code.** Geplant ist ein Bereich „Fragen & Antworten“ unten unter „Training“.
+Stand: 2026-10-20, Fassung 9 (Kevins zweite redaktionelle Fassung „Sportjournal“ vom 20.10.2026 eingearbeitet: 24 Fragen, Begriffserklärung je Frage, 23 Quellen). **Entwurf nur als Text, nichts davon ist im App-Code.** Geplant ist ein Bereich „Fragen & Antworten“ unten unter „Training“.
 
 **Hinweise für die Einbindung und Kevins Gegenlesen**
 
 - Alle Texte sind in eigenen Worten geschrieben, nichts ist aus Quellen kopiert, keine Abbildungen oder Tabellen übernommen. Zahlen (Sätze, Wiederholungen, MET, GI-Einteilung) sind Fakten aus den genannten Quellen und gelten als Richtwerte, nicht als harte Grenzen.
-- **Struktur je Frage** (für die Datendatei): Titel, Kurzantwort, Stichpunkte, Studienlage, Quellen-IDs. Hinter einer Überschrift kann ein fester Schlüssel stehen (`{#plan}`), der als `id` in die Datendatei geht (z. B. für Verlinkungen aus der App); Fragennummern dürfen sich ändern, Schlüssel nicht. Die Quellen stehen einmal gesammelt im **Quellenverzeichnis am Ende** (Nummern [1]–[14]) und werden in den Fragen nur per Nummer genannt. Dieselben Nummern gelten für die deutsche und die englische Fassung.
+- **Struktur je Frage** (für die Datendatei): Titel, Kurzantwort, Stichpunkte, Studienlage, Quellen-IDs. Hinter einer Überschrift kann ein fester Schlüssel stehen (`{#plan}`), der als `id` in die Datendatei geht (z. B. für Verlinkungen aus der App); Fragennummern dürfen sich ändern, Schlüssel nicht. Die Quellen stehen einmal gesammelt im **Quellenverzeichnis am Ende** (Nummern [1]–[23]) und werden in den Fragen nur per Nummer genannt. Dieselben Nummern gelten für die deutsche und die englische Fassung.
 - **Prüfstand der Quellen (2026-10-16):** Zeitschriftenartikel per Crossref-Abfrage geprüft (Titel, Jahr, Band, Seiten, DOI stimmen; Abfragedatum jeweils 2026-10-16). Am Original (Volltext bzw. Seite) gelesen: ACSM-Position-Stand 2026 [3], WHO-Leitlinie 2020 (Seite mit ISBN) [1], WHO-Europa-Meldung 2023 [28]. Nur Crossref-Treffer, Inhalt nicht vollständig gelesen: alle übrigen.
 - **Aktualität:** Der ACSM-Position-Stand von 2009 [4] wurde durch den Stand von 2026 [3] ersetzt. Der Entwurf stützt sich jetzt auf [3]; [4] steht nur noch als „älterer Stand“ da, wo ältere Richtwerte genannt werden. Wo [3] etwas anderes sagt als früher üblich, folgt der Text [3].
 - Wo die Studienlage dünn oder umstritten ist, steht **„Studienlage:“** mit einer ehrlichen Einordnung.
@@ -50,7 +50,7 @@ Stand: 2026-10-20, Fassung 8 (Kevins redaktionelle Fassung „Sportjournal“ vo
 **Antwort:** Für den Einstieg zählt ein überschaubarer Plan, der regelmäßig durchgeführt und sauber gesteigert werden kann. [1]
 
 - Zwei Ganzkörpereinheiten pro Woche sind ein praktikabler Ausgangspunkt. Jede Einheit sollte die großen Muskelgruppen berücksichtigen, etwa über eine Beinübung, eine Zugübung, eine Druckübung und eine Rumpfübung. [1]
-- Beginne mit ein bis drei Sätzen pro Übung. Wähle Widerstand und Variante so, dass die Wiederholungen kontrolliert bleiben. Geräte, freie Gewichte, Widerstandsbänder und Übungen mit dem eigenen Körpergewicht können wirksam sein. [1]
+- Beginne mit zwei bis drei Sätzen pro Übung. Wähle Widerstand und Variante so, dass die Wiederholungen kontrolliert bleiben. Geräte, freie Gewichte, Widerstandsbänder und Übungen mit dem eigenen Körpergewicht können wirksam sein. [1]
 
 **Quellen:** [1]
 
@@ -217,15 +217,15 @@ Stand: 2026-10-20, Fassung 8 (Kevins redaktionelle Fassung „Sportjournal“ vo
 **Antwort:** Für viele gesunde Erwachsene im Krafttraining ist eine tägliche Gesamtzufuhr um 1,6 g Eiweiß pro Kilogramm Körpergewicht eine belastbare Orientierung. [12]
 
 - Eine Metaanalyse aus 49 Studien fand oberhalb einer Gesamtzufuhr von 1,62 g/kg/Tag im Mittel keinen weiteren Zuwachs der fettfreien Masse durch zusätzliche Proteinzufuhr. Der Wert ist ein statistischer Orientierungspunkt und keine persönliche Grenze. [12]
-- Bei 70 kg entsprechen 1,6 g/kg ungefähr 112 g Eiweiß pro Tag. Proteinpulver kann die Zufuhr erleichtern, ist aber keine Voraussetzung. Bei Nierenerkrankungen oder anderen medizinischen Besonderheiten sollte die Menge individuell geklärt werden.
+- Bei 70 kg entsprechen 1,6 g/kg ungefähr 112 g Eiweiß pro Tag. Zum Vergleich: Die Nationale Verzehrsstudie II berichtete für Deutschland im Mittel etwa 81 g pro Tag bei Männern und 60 g bei Frauen. Diese Durchschnittswerte stammen aus einer Erhebung der Jahre 2005 bis 2007 (Bericht 2008) und beschreiben die damalige Aufnahme, nicht den persönlichen Bedarf. Die aktuelle DGE-Empfehlung für gesunde Erwachsene von 19 bis unter 65 Jahren liegt bei 0,8 g/kg/Tag; für intensives Krafttraining kann eine höhere Zufuhr sinnvoll sein. Proteinpulver kann die Zufuhr erleichtern, ist aber keine Voraussetzung. [12], [20], [21]
 
-**Quellen:** [12]
+**Quellen:** [12], [20], [21]
 
 ### 17. Was macht Alkohol mit dem Training?
 
 **Antwort:** Größere Alkoholmengen rund um intensive Einheiten sind mit optimaler Erholung schwer vereinbar. [13]
 
-- Experimentelle Untersuchungen zeigen, dass hohe Alkoholmengen nach Belastung die Muskelproteinsynthese beeinträchtigen können. Aus diesen Daten lässt sich keine präzise, für alle Personen gültige Schwelle für kleine Mengen ableiten. [13]
+- Eine kleine experimentelle Studie zeigte, dass hohe Alkoholmengen nach Belastung die Muskelproteinsynthese beeinträchtigen können. Aus diesen Daten lässt sich keine präzise, für alle Personen gültige Schwelle für kleine Mengen ableiten. [13]
 
 **Begriffe kurz erklärt:**
 
@@ -238,22 +238,97 @@ Stand: 2026-10-20, Fassung 8 (Kevins redaktionelle Fassung „Sportjournal“ vo
 **Antwort:** Die Anzeige ist eine Modellschätzung, keine Messung. [14]
 
 - Das Compendium of Physical Activities ordnet unterschiedlichen Trainingsformen verschiedene MET-Werte zu. MET beschreibt, wie hoch der Energieverbrauch einer Aktivität im Verhältnis zum Ruheverbrauch geschätzt wird. Krafttraining, Zirkeltraining und Körpergewichtsübungen lassen sich deshalb nicht seriös mit einem einzigen universellen Wert abbilden. [14]
-- BLOC zeigt einen geschätzten Aktivitätsverbrauch. Er kann im Einzelfall deutlich abweichen. [14]
+- Rechenbeispiel: Bei 70 kg Körpergewicht, 30 Minuten Trainingsdauer und einem angenommenen Wert von 5 MET ergibt die vereinfachte Schätzung 5 × 70 × 0,5 = 175 kcal. Darin ist der Ruheverbrauch während dieser halben Stunde enthalten. Für den zusätzlichen Aktivitätsverbrauch über Ruhe kann mit MET minus 1 gerechnet werden: (5 − 1) × 70 × 0,5 = 140 kcal. Beide Werte bleiben Modellschätzungen. [14], [22]
+- BLOC zeigt einen geschätzten Aktivitätsverbrauch. Er kann im Einzelfall deutlich abweichen. Für Workouts aus dem Katalog rechnet BLOC mit 4,5 MET statt der 5 MET aus dem Beispiel. [14]
 
 **Begriffe kurz erklärt:**
 
 - **MET:** Schätzwert dafür, wie hoch der Energieverbrauch einer Aktivität im Verhältnis zum Ruheverbrauch ist.
 
-**Quellen:** [14]
+**Quellen:** [14], [22]
 
 ### 19. Wie trainiere ich sicher? {#sicherheit}
 
 **Antwort:** Belastung wird sicherer, wenn sie kontrolliert aufgebaut und an die aktuelle Leistungsfähigkeit angepasst wird. [1], [2]
 
-- Beginne neue Übungen mit einer beherrschbaren Variante und steigere Widerstand oder Umfang schrittweise. Bei schweren freien Übungen sind geeignete Sicherheitsablagen oder Unterstützung sinnvoll. [1]
-- Bei Brustschmerz, Ohnmacht, ungewöhnlicher Atemnot, starkem Schwindel oder plötzlich starkem Schmerz sollte das Training beendet und medizinisch abgeklärt werden. Diese Warnzeichen gehören nicht zur normalen Trainingsanstrengung.
+- Beginne die Einheit mit einigen Minuten leichter Bewegung und führe vor anspruchsvollen Kraftübungen spezifische Aufwärmsätze mit geringerer Belastung aus. Ob übungsnahe Aufwärmsätze die unmittelbar folgende Kraftleistung verbessern, ist in der Forschung nicht einheitlich; eine einzige allgemein optimale Aufwärmroutine ist nicht belegt. Beginne neue Übungen mit einer beherrschbaren Variante und steigere Widerstand oder Umfang schrittweise. Bei schweren freien Übungen sind geeignete Sicherheitsablagen oder Unterstützung sinnvoll. [1], [23]
+- Bei Brustschmerz, Ohnmacht, ungewöhnlicher Atemnot, starkem Schwindel oder plötzlich starkem Schmerz sollte das Training beendet und medizinisch abgeklärt werden. Diese Warnzeichen gehören nicht zur normalen Trainingssteigerung.
 
-**Quellen:** [1], [2]
+**Quellen:** [1], [2], [23]
+
+### 20. Was sind schnelle und langsame Muskelfasern?
+
+**Antwort:** Menschliche Skelettmuskeln enthalten verschiedene Muskelfasertypen. Typ-I-Fasern kontrahieren langsamer und sind ermüdungsresistenter. Typ-II-Fasern kontrahieren schneller, können hohe Kräfte entwickeln und ermüden schneller. Die meisten Muskeln enthalten eine Mischung dieser Fasertypen. [15]
+- Aus der individuellen Verteilung lässt sich jedoch kein einfacher Trainingsplan ableiten. Querschnittsuntersuchungen zeigen zwar mehr Typ-I-Fasern bei Ausdauerathleten und mehr Typ-II-Fasern bei Kraft- und Sprintathleten. Längsschnittdaten zur Umwandlung langsamer und schneller Fasertypen sind aber nicht einheitlich. Training verändert vor allem Eigenschaften, Leistungsfähigkeit und Untertypen der Fasern. [15]
+- Für die Praxis ist deshalb wichtiger, nach dem Leistungsziel zu trainieren: längere Belastungen für Ausdauer, hohe Bewegungsgeschwindigkeiten für Schnellkraft und ausreichend fordernde Widerstände für Kraft und Muskelaufbau. Ein spezieller „Fasertyp-Test“ ist für die normale Trainingsplanung nicht erforderlich.
+
+**Begriffe kurz erklärt:**
+
+- **Typ-I-Fasern:** Langsam kontrahierende, vergleichsweise ermüdungsresistente Muskelfasern.
+- **Typ-II-Fasern:** Schneller kontrahierende Fasern mit höherer Kraft- und Leistungsfähigkeit, die schneller ermüden.
+- **Querschnittsuntersuchung:** Vergleich verschiedener Personengruppen zu einem bestimmten Zeitpunkt.
+- **Längsschnittdaten:** Messungen derselben Personen über einen längeren Zeitraum.
+
+**Quellen:** [15]
+
+### 21. Was bedeutet der glykämische Index für das Training?
+
+**Antwort:** Der glykämische Index ordnet kohlenhydrathaltige Lebensmittel danach ein, wie stark sie den Blutzucker unter standardisierten Bedingungen ansteigen lassen. Für die normale Trainingspraxis ist der Index allein jedoch selten entscheidend. Portionsgröße, gesamte Kohlenhydratmenge, Zusammensetzung der Mahlzeit, Verträglichkeit sowie Dauer und Intensität der Belastung sind ebenfalls relevant. [16]
+- Bei langen oder wiederholt intensiven Belastungen sind ausreichend verfügbare Kohlenhydrate und das zeitliche Vorgehen wichtiger als die Einteilung eines einzelnen Lebensmittels in „hoch“ oder „niedrig“. Nach langer intensiver Belastung kann eine zügige Kohlenhydratzufuhr helfen, die begrenzten Speicher in Leber und Muskulatur schneller aufzufüllen. [16]
+- Für kurze Kraft- oder Fitnesseinheiten ergibt sich daraus keine Pflicht zu speziellen hochglykämischen Produkten. Eine gut verträgliche normale Mahlzeit ist häufig ausreichend.
+
+**Begriffe kurz erklärt:**
+
+- **Glykämischer Index (GI):** Vergleichswert dafür, wie stark Kohlenhydrate eines Lebensmittels den Blutzucker ansteigen lassen.
+- **Glykogenspeicher:** Im Muskel und in der Leber gespeicherte Form von Kohlenhydraten.
+- **Kohlenhydrate:** Energieliefernde Nährstoffe, zu denen unter anderem Zucker und Stärke gehören.
+
+**Quellen:** [16]
+
+### 22. Was ist Periodisierung?
+
+**Antwort:** Periodisierung bedeutet, Trainingsbelastung und Trainingsschwerpunkte über einen längeren Zeitraum geplant zu verändern. Dabei können beispielsweise Gewicht, Wiederholungszahl, Satzumfang oder Übungsauswahl zwischen Trainingsphasen wechseln. [17]
+- Bei gleichem Gesamtvolumen zeigte eine Metaanalyse einen kleinen Vorteil periodisierter Programme für die Entwicklung der Maximalkraft. Für Muskelwachstum zeigte sich kein klarer Unterschied gegenüber nicht periodisiertem Training. Zwischen linearer und wellenförmiger Periodisierung bestanden beim Muskelwachstum ebenfalls keine eindeutigen Unterschiede. [17]
+- Für Einsteiger ist eine komplizierte Periodisierung nicht notwendig. Ein stabiler Plan mit nachvollziehbarer Progression reicht meist aus. Mit wachsender Trainingserfahrung kann Periodisierung helfen, Belastung, Erholung und unterschiedliche Ziele systematisch zu ordnen. Diese letzte Einordnung ist eine praktische Empfehlung auf Grundlage der Studienergebnisse.
+
+**Begriffe kurz erklärt:**
+
+- **Periodisierung:** Geplante Veränderung von Trainingsbelastung und Schwerpunkten über mehrere Wochen oder Monate.
+- **Lineare Periodisierung:** Belastung verändert sich schrittweise in eine Hauptrichtung, beispielsweise von mehr Wiederholungen zu höheren Gewichten.
+- **Wellenförmige Periodisierung:** Belastung und Wiederholungsbereiche wechseln häufiger, beispielsweise zwischen Trainingstagen oder Wochen.
+- **Gesamtvolumen:** Gesamte Trainingsmenge innerhalb eines betrachteten Zeitraums.
+
+**Quellen:** [17]
+
+### 23. Was bedeutet Push/Pull?
+
+**Antwort:** Push/Pull ist eine Organisationsform für den Trainingsplan. An Push-Tagen stehen drückende Bewegungen im Mittelpunkt, beispielsweise Liegestütze, Bankdrücken oder Überkopfdrücken. An Pull-Tagen werden überwiegend ziehende Bewegungen trainiert, beispielsweise Rudern oder Klimmzüge. Beine können ergänzt oder als eigener Trainingstag geplant werden.
+- Push/Pull ist nicht grundsätzlich wirksamer als Ganzkörpertraining. Eine Metaanalyse mit 14 Studien und 392 Teilnehmenden fand bei gleichem Trainingsvolumen vergleichbare Zuwächse an Kraft und Muskelmasse für Split- und Ganzkörperprogramme. [18]
+- Die Aufteilung sollte deshalb zum Wochenrhythmus passen. Bei zwei bis drei Einheiten ist Ganzkörpertraining häufig einfacher zu organisieren. Bei mehr Einheiten kann Push/Pull helfen, das Wochenvolumen auf kürzere Einheiten zu verteilen. Die Wahl der Aufteilung ist ein Organisationsproblem, kein eigener Wachstumsreiz.
+
+**Begriffe kurz erklärt:**
+
+- **Push:** Drückende Bewegungen, bei denen ein Widerstand vom Körper wegbewegt wird.
+- **Pull:** Ziehende Bewegungen, bei denen ein Widerstand zum Körper bewegt wird.
+- **Split-Training:** Aufteilung der Muskelgruppen oder Bewegungsmuster auf unterschiedliche Trainingstage.
+- **Ganzkörpertraining:** Training der wichtigsten Muskelgruppen innerhalb derselben Einheit.
+
+**Quellen:** [18]
+
+### 24. Müssen Frauen und Männer unterschiedlich trainieren?
+
+**Antwort:** Die grundlegenden Prinzipien des Krafttrainings gelten für Frauen und Männer: regelmäßiges Training, ausreichend fordernde Sätze, passende Übungsauswahl und schrittweise Progression. [19]
+- Eine Metaanalyse fand bei gleichen Trainingsprogrammen keine signifikanten Unterschiede beim relativen Muskelwachstum und bei der relativen Kraftentwicklung des Unterkörpers. Bei der relativen Kraftentwicklung des Oberkörpers zeigte sich in dieser Auswertung ein Vorteil für Frauen. Absolute Ausgangswerte und absolute Veränderungen können sich dennoch unterscheiden. [19]
+- Für die Planung sind Trainingsstand, Ziel, verfügbare Zeit, Belastbarkeit und individuelle Reaktion deshalb aussagekräftiger als pauschale Programme nach Geschlecht. Besondere Lebensphasen oder Beschwerden können individuelle Anpassungen erfordern; sie werden in dieser allgemeinen FAQ nicht medizinisch bewertet.
+
+**Begriffe kurz erklärt:**
+
+- **Absolute Kraft:** Tatsächlich bewegtes Gewicht oder gemessene Kraft ohne Bezug zum Körpergewicht oder Ausgangswert.
+- **Relative Veränderung:** Fortschritt im Verhältnis zum persönlichen Ausgangswert.
+- **Muskelhypertrophie:** Zunahme der Muskelgröße.
+
+**Quellen:** [19]
+
 
 ---
 
@@ -456,15 +531,15 @@ Stand: 2026-10-20, Fassung 8 (Kevins redaktionelle Fassung „Sportjournal“ vo
 **Answer:** For many healthy adults doing strength training, a daily total intake of about 1.6 g protein per kilogram body weight is a reliable guide. [12]
 
 - A meta-analysis of 49 studies found that above a total intake of 1.62 g/kg/day, additional protein brought on average no further gain in fat-free mass. The value is a statistical reference point and not a personal limit. [12]
-- At 70 kg, 1.6 g/kg is about 112 g protein per day. Protein powder can make intake easier but is not a requirement. With kidney disease or other medical particularities, the amount should be clarified individually.
+- At 70 kg, 1.6 g/kg is about 112 g protein per day. For comparison: the German National Nutrition Survey II reported an average of about 81 g per day for men and 60 g for women. These averages come from a survey carried out in 2005–2007 (report 2008) and describe the intake at that time, not personal need. The current recommendation of the German Nutrition Society (DGE) for healthy adults aged 19 to under 65 is 0.8 g/kg/day; for intensive strength training a higher intake can make sense. Protein powder can make intake easier but is not a requirement. [12], [20], [21]
 
-**Sources:** [12]
+**Sources:** [12], [20], [21]
 
 ### 17. What does alcohol do to training?
 
 **Answer:** Larger amounts of alcohol around intense sessions are hard to reconcile with optimal recovery. [13]
 
-- Experimental studies show that high amounts of alcohol after exercise can impair muscle protein synthesis. No precise threshold valid for everyone can be derived from these data for small amounts. [13]
+- A small experimental study showed that high amounts of alcohol after exercise can impair muscle protein synthesis. No precise threshold valid for everyone can be derived from these data for small amounts. [13]
 
 **Terms explained briefly:**
 
@@ -477,28 +552,107 @@ Stand: 2026-10-20, Fassung 8 (Kevins redaktionelle Fassung „Sportjournal“ vo
 **Answer:** The display is a model estimate, not a measurement. [14]
 
 - The Compendium of Physical Activities assigns different MET values to different forms of training. MET describes how high the energy use of an activity is estimated to be relative to resting use. Strength training, circuit training and bodyweight exercises therefore cannot be represented seriously with a single universal value. [14]
-- BLOC shows an estimated activity energy use. It can deviate considerably in individual cases. [14]
+- Worked example: at 70 kg body weight, 30 minutes of training and an assumed value of 5 MET, the simplified estimate is 5 × 70 × 0.5 = 175 kcal. This includes the resting use during that half hour. For the additional activity use above rest, MET minus 1 can be used: (5 − 1) × 70 × 0.5 = 140 kcal. Both values remain model estimates. [14], [22]
+- BLOC shows an estimated activity energy use. It can deviate considerably in individual cases. For catalog workouts, BLOC calculates with 4.5 MET instead of the 5 MET in the example. [14]
 
 **Terms explained briefly:**
 
 - **MET:** An estimate of how high the energy use of an activity is relative to resting use.
 
-**Sources:** [14]
+**Sources:** [14], [22]
 
 ### 19. How do I train safely? {#sicherheit}
 
 **Answer:** Load becomes safer when it is built up in a controlled way and adapted to your current ability. [1], [2]
 
-- Start new exercises with a variation you can handle and raise resistance or volume step by step. With heavy free exercises, suitable safety catches or a spotter make sense. [1]
-- With chest pain, fainting, unusual shortness of breath, severe dizziness or sudden severe pain, training should be ended and medically checked. These warning signs are not part of normal training effort.
+- Begin the session with a few minutes of light movement and, before demanding strength exercises, do specific warm-up sets with lighter load. Whether warm-up sets close to the exercise improve the strength performance that immediately follows is not consistent in the research; a single generally optimal warm-up routine is not established. Start new exercises with a variation you can handle and raise resistance or volume step by step. With heavy free exercises, suitable safety catches or a spotter make sense. [1], [23]
+- With chest pain, fainting, unusual shortness of breath, severe dizziness or sudden severe pain, training should be ended and medically checked. These warning signs do not belong to normal training progression.
 
-**Sources:** [1], [2]
+**Sources:** [1], [2], [23]
+
+### 20. What are fast and slow muscle fibers?
+
+**Answer:** Human skeletal muscles contain different muscle fiber types. Type I fibers contract more slowly and are more resistant to fatigue. Type II fibers contract faster, can develop high forces and tire faster. Most muscles contain a mixture of these fiber types. [15]
+
+- A simple training plan cannot be derived from the individual distribution, though. Cross-sectional studies show more type I fibers in endurance athletes and more type II fibers in strength and sprint athletes. Longitudinal data on the conversion of slow and fast fiber types are not consistent, however. Training mainly changes the properties, performance and subtypes of the fibers. [15]
+- In practice it is therefore more important to train according to the performance goal: longer efforts for endurance, high movement speeds for fast strength, and sufficiently demanding resistances for strength and muscle growth. A special "fiber type test" is not necessary for normal training planning.
+
+**Terms explained briefly:**
+
+- **Type I fibers:** Slowly contracting, comparatively fatigue-resistant muscle fibers.
+- **Type II fibers:** Faster contracting fibers with higher force and power capacity that tire faster.
+- **Cross-sectional study:** Comparison of different groups of people at one point in time.
+- **Longitudinal data:** Measurements of the same people over a longer period.
+
+**Sources:** [15]
+
+### 21. What does the glycemic index mean for training?
+
+**Answer:** The glycemic index ranks carbohydrate-containing foods by how strongly they raise blood sugar under standardized conditions. For normal training practice, however, the index alone is rarely decisive. Portion size, total carbohydrate amount, the composition of the meal, tolerance, and the duration and intensity of the effort also matter. [16]
+
+- With long or repeatedly intense efforts, sufficient available carbohydrates and timing matter more than classing a single food as "high" or "low". After long intense effort, prompt carbohydrate intake can help refill the limited stores in liver and muscle faster. [16]
+- For short strength or fitness sessions this means no obligation to use special high-glycemic products. A well-tolerated normal meal is often sufficient.
+
+**Terms explained briefly:**
+
+- **Glycemic index (GI):** A comparison value for how strongly the carbohydrates of a food raise blood sugar.
+- **Glycogen stores:** The form in which carbohydrates are stored in muscle and liver.
+- **Carbohydrates:** Energy-supplying nutrients that include sugar and starch, among others.
+
+**Sources:** [16]
+
+### 22. What is periodization?
+
+**Answer:** Periodization means changing training load and training focus in a planned way over a longer period. Weight, number of repetitions, set volume or exercise selection can, for example, change between training phases. [17]
+
+- With equal total volume, a meta-analysis showed a small advantage of periodized programs for the development of maximal strength. For muscle growth there was no clear difference compared with non-periodized training. Between linear and undulating periodization there were likewise no clear differences in muscle growth. [17]
+- Beginners do not need a complicated periodization. A stable plan with comprehensible progression is usually enough. With growing training experience, periodization can help to organize load, recovery and different goals systematically. This last assessment is a practical recommendation based on the study results.
+
+**Terms explained briefly:**
+
+- **Periodization:** Planned change of training load and focus over several weeks or months.
+- **Linear periodization:** Load changes step by step in one main direction, for example from more repetitions to heavier weights.
+- **Undulating periodization:** Load and repetition ranges change more often, for example between training days or weeks.
+- **Total volume:** The total training amount within a period under consideration.
+
+**Sources:** [17]
+
+### 23. What does push/pull mean?
+
+**Answer:** Push/pull is a way of organizing a training plan. On push days, pressing movements are the focus, for example push-ups, bench press or overhead press. On pull days, mainly pulling movements are trained, for example rows or pull-ups. Legs can be added or planned as their own training day.
+
+- Push/pull is not fundamentally more effective than whole-body training. A meta-analysis of 14 studies with 392 participants found comparable gains in strength and muscle mass for split and whole-body programs at equal training volume. [18]
+- The split should therefore fit your weekly rhythm. With two to three sessions, whole-body training is often easier to organize. With more sessions, push/pull can help spread the weekly volume over shorter sessions. The choice of split is an organizational question, not a growth stimulus of its own.
+
+**Terms explained briefly:**
+
+- **Push:** Pressing movements in which a resistance is moved away from the body.
+- **Pull:** Pulling movements in which a resistance is moved toward the body.
+- **Split training:** Dividing muscle groups or movement patterns across different training days.
+- **Whole-body training:** Training the main muscle groups within the same session.
+
+**Sources:** [18]
+
+### 24. Do women and men have to train differently?
+
+**Answer:** The basic principles of strength training apply to women and men: regular training, sufficiently demanding sets, suitable exercise selection and gradual progression. [19]
+
+- A meta-analysis found no significant differences in relative muscle growth and relative lower-body strength development with identical training programs. For relative upper-body strength development, this analysis showed an advantage for women. Absolute starting values and absolute changes can still differ. [19]
+- For planning, training level, goal, available time, resilience and individual response are therefore more informative than blanket programs by sex. Special life phases or complaints can require individual adjustments; they are not assessed medically in this general FAQ.
+
+**Terms explained briefly:**
+
+- **Absolute strength:** Weight actually moved or measured force without reference to body weight or starting value.
+- **Relative change:** Progress in relation to the personal starting value.
+- **Muscle hypertrophy:** Increase in muscle size.
+
+**Sources:** [19]
 
 ---
 
 # Quellenverzeichnis / Reference list
 
-Alle 14 Quellen aus der redaktionellen Fassung vom 20.10.2026, am 20.10.2026 gegen Crossref/PubMed geprüft (Titel, Jahr, Band, Seiten, DOI; Inhalt der zitierten Aussagen gegen die Zusammenfassungen, bei [1] gegen den Volltext).
+Alle 23 Quellen aus der redaktionellen Fassung vom 20.10.2026 (Teil 2 des Word-Updates), am 20.10.2026 gegen Crossref/PubMed geprüft (Titel, Jahr, Band, Seiten, DOI; Inhalt der zitierten Aussagen gegen die Zusammenfassungen, bei [1] gegen den Volltext). Neu in Teil 2: [15]–[19] und [23] per Crossref/Journalseite geprüft; [20]–[22] Webseiten bzw. Bericht (Zahlen zur Verzehrsstudie über den Ernährungsradar, nicht am PDF).
 
 1. Currier BS et al. American College of Sports Medicine Position Stand: Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults. Med Sci Sports Exerc. 2026;58(4):851–872. doi:10.1249/MSS.0000000000003897
 2. World Health Organization. WHO guidelines on physical activity and sedentary behaviour. Geneva: WHO; 2020. https://www.who.int/publications/i/item/9789240015128
@@ -514,9 +668,20 @@ Alle 14 Quellen aus der redaktionellen Fassung vom 20.10.2026, am 20.10.2026 geg
 12. Morton RW et al. Protein supplementation and resistance training-induced gains in muscle mass and strength. Br J Sports Med. 2018;52:376–384. doi:10.1136/bjsports-2017-097608
 13. Parr EB et al. Alcohol ingestion impairs maximal post-exercise rates of myofibrillar protein synthesis. PLoS One. 2014;9:e88384. doi:10.1371/journal.pone.0088384
 14. Herrmann SD et al. 2024 Adult Compendium of Physical Activities. J Sport Health Sci. 2024;13:6–12. doi:10.1016/j.jshs.2023.10.010
+15. Plotkin DL et al. Muscle Fiber Type Transitions with Exercise Training: Shifting Perspectives. Sports (Basel). 2021;9(9):127. doi:10.3390/sports9090127
+16. König D et al. Carbohydrates in Sports Nutrition: Position of the Working Group Sports Nutrition of the German Nutrition Society. Dtsch Z Sportmed. 2020;71:185–191. doi:10.5960/dzsm.2020.456
+17. Moesgaard L et al. Effects of Periodization on Strength and Muscle Hypertrophy in Volume-Equated Resistance Training Programs. Sports Med. 2022;52:1647–1666. doi:10.1007/s40279-021-01636-1
+18. Ramos-Campo DJ et al. Efficacy of Split Versus Full-Body Resistance Training on Strength and Muscle Growth. J Strength Cond Res. 2024;38(7):1330–1340. doi:10.1519/JSC.0000000000004774
+19. Roberts BM et al. Sex Differences in Resistance Training: A Systematic Review and Meta-Analysis. J Strength Cond Res. 2020;34(5):1448–1460. doi:10.1519/JSC.0000000000003521
+20. Deutsche Gesellschaft für Ernährung. Referenzwert Protein. Empfohlene Zufuhr nach Alter und Referenzgewicht. https://www.dge.de/wissenschaft/referenzwerte/protein/
+21. Max Rubner-Institut. Nationale Verzehrsstudie II, Ergebnisbericht Teil 2. Karlsruhe; 2008. https://www.mri.bund.de/fileadmin/MRI/Institute/EV/NVSII_Abschlussbericht_Teil_2.pdf
+22. Compendium of Physical Activities. Corrected METs and limitations of standard MET estimates. https://pacompendium.com/corrected-mets/
+23. Ribeiro B et al. The effect of warm-up in resistance training and strength performance: a systematic review. Motricidade. 2021;17(1):87–94. doi:10.6063/motricidade.21143
 
 ---
 
 # Änderungsprotokoll
+
+**Fassung 9 (2026-10-20):** Kevins Update der Word-Datei eingearbeitet: 24 Fragen (neu: Muskelfasern, glykämischer Index, Periodisierung, Push/Pull, Frauen und Männer), 23 Quellen. Text und Begriffe inhaltlich belassen. Kleine Änderungen: Verweise auf „Dokument/Redaktion/App sollte“ in Nutzertext umformuliert; Frage 16: Verzehrsstudie „2005–2007 erhoben (Bericht 2008)“; Frage 17: eine kleine Studie statt mehrerer; Frage 18: BLOC rechnet für Katalog-Workouts mit 4,5 MET (Beispiel mit 5 MET bleibt Beispiel); Frage 19: Aussage zu Aufwärmsätzen abgeschwächt (Ergebnisse uneinheitlich, [23]). Abschnitt „Redaktionelle Struktur für die App“ nicht übernommen. Englische Fassung für die neuen Fragen ergänzt.
 
 **Fassung 8 (2026-10-20):** Kevins redaktionell geglättete Fassung („Sportjournal“, Word-Datei vom 20.10.2026) ist die neue FAQ: 19 Fragen, Begriffserklärung je Frage, 14 Quellen mit Direktlinks. Der Text wurde inhaltlich belassen; geändert wurden nur Formulierungen, die für Nutzer nicht passen (Verweise auf „das Dokument“ und „die App sollte …“, ein Satz zur Kalorienanzeige). Frühere Fassungen liegen in der Git-Historie.

@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ: Word-Update eingearbeitet, 24 Fragen (Fassung 2026-10-20-36)
+
+- Kevins zweite Word-Fassung ist drin: 24 Fragen (neu: Muskelfasern, glykämischer Index, Periodisierung, Push/Pull, Frauen und Männer), 23 Quellen (quellen.html: F1–F23). Text und Begriffe inhaltlich belassen; kleine Anpassungen: Verzehrsstudie 2005–2007 erhoben, Alkohol als eine kleine Studie, Kalorien-Frage mit Rechenbeispiel und 4,5 MET für Katalog-Workouts, Aufwärmsätze vorsichtiger formuliert. Quellen gegen Crossref, PubMed und Webseiten geprüft. Englische Fassung ergänzt.
+
 ## 2026-10-20 · FAQ: Kevins redaktionelle Fassung eingearbeitet (Fassung 2026-10-20-32)
 
 - Die geglättete Word-Fassung („Sportjournal“) ist die neue FAQ: 19 Fragen, Begriffserklärung je Frage („Begriffe kurz erklärt“), 14 Quellen mit Direktlinks (quellen.html: F1–F14). Quellen und zitierte Aussagen gegen Crossref/PubMed geprüft. Nur Formulierungen geändert, die für Nutzer nicht passen (Verweise auf „das Dokument“, „die App sollte …“). Einheitstest 52/52.
@@ -16,7 +20,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 
 - Training und Favoriten: Hell wieder mit dem ersten, kräftigen hellen Verlauf von unten; Dunkel und Nacht wieder wie am Anfang (Schwarz-Verlauf, keine Zusätze).
 
-## 2026-10-20 · Fotos scharf, Schleier nur von unten (Fassung 2026-10-20-35)
+## 2026-10-20 · Fotos scharf, Schleier nur von unten (Fassung 2026-10-20-36)
 
 - Training und Favoriten: oberes Drittel ohne jede Abdeckung, kein Weichzeichner mehr in irgendeinem Modus.
 
