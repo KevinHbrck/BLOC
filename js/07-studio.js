@@ -146,7 +146,15 @@ var STUDIO_ART_ICON = { geraet:CAT_ICON.weight, frei:EQUIP_ICON.kb, stange:EQUIP
    die früheren Chips „Kabel“ und „Langhantel“ stehen jetzt unter „Fitnessstudio“ */
 function studioFilterAlt(){
   var s = state.db.settings, umzug = { lh:"geraet", frei:"frei", stange:"stange", air:"koerper" }, gr = selArr(s.stGruppen), neu = [], arten = selArr(s.stArten), geaendert = false;
-  gr.forEach(function(id){ if(umzug[id]){ if(arten.indexOf(umzug[id]) < 0) arten.push(umzug[id]); geaendert = true; } else neu.push(id); });
+  var muskel = { brust:1, ruecken:1, schulter:1, arme:1, bauch:"rumpf", beine:1 }, zonen = selArr(s.stZonen);
+  gr.forEach(function(id){
+    if(umzug[id]){ if(arten.indexOf(umzug[id]) < 0) arten.push(umzug[id]); geaendert = true; }
+    else if(muskel[id]){   // Muskelgruppen sind jetzt Teil der Muskel-Auswahl (Chips + Figur): in Zonen umrechnen
+      var z = KK_GRUPPE_ZONEN[muskel[id] === 1 ? id : muskel[id]] || [];
+      z.forEach(function(x){ if(zonen.indexOf(x) < 0) zonen.push(x); });
+      s.stZonen = zonen; geaendert = true;
+    } else neu.push(id);
+  });
   var arten2 = [];
   arten.forEach(function(a){ var n = (a === "kabel" || a === "lh") ? "geraet" : a; if(n !== a) geaendert = true; if(arten2.indexOf(n) < 0) arten2.push(n); });
   if(geaendert){ s.stGruppen = neu; s.stArten = arten2; save(); }
@@ -177,18 +185,20 @@ function studioFilterHTML(gruppen, fGr, fArt, anzahl, zonen, opt){
   opt = opt || {};   // opt.art: "Wo" für die fertigen Workouts (Katalog), opt.extra: Schalter neben der Kopfzeile (A–Z)
   var namen = fGr.map(function(id){ var g = gruppen.filter(function(x){ return x.id === id; })[0]; return g ? g.name : id; })
     .concat(fArt.map(function(a){ return t("stArt_"+a); }), zonen.map(kkName));
+  /* Muskel (Chips + Figur, eine Auswahl); außer Muskeln gibt es nur noch Cardio & Ausdauer (orangenes Leuchten hinter der Figur) und Eigene Übungen */
+  var extra = gruppen.filter(function(g){ return g.ids.length && !g.air && (g.id === "cardio" || g.id === "eigene"); }).map(function(g){
+    return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join("");
   return filterKarteHTML({ offen:!!s.stFilterOpen, toggle:"data-sttoggle", reset:"data-streset", n:namen.length,
     summe:namen.length ? namen.join(", ") : t(opt.art === "Wo" ? "afAlleWo" : "afAlleEx"),
     zeigen:filterZeigenText(anzahl, opt.art || "Ex"), extra:opt.extra,
-    inhalt:filterChipsHTML(t("afGruppe"), "", gruppen.filter(function(g){ return g.ids.length && !g.air; }).map(function(g){
-        return filterChip("data-stgr", g.id, fGr.indexOf(g.id) > -1, svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), g.name); }).join(""))+
+    inhalt:kkMuskelHTML("data-stzone", "data-stgrp", zonen, { extra:extra, glow:fGr.indexOf("cardio") > -1 })+
       (katOrt() === "studio" ? "" : filterChipsHTML(t("equipHave"), "", STUDIO_ARTEN.filter(function(a){ return a !== "geraet"; }).map(function(a){
-        return filterChip("data-start", a, fArt.indexOf(a) > -1, STUDIO_ART_ICON[a] ? svgIcon(STUDIO_ART_ICON[a]) : "", t("stArt_"+a)); }).join("")))+
-      kkFilterHTML("data-stzone", zonen) });
+        return filterChip("data-start", a, fArt.indexOf(a) > -1, STUDIO_ART_ICON[a] ? svgIcon(STUDIO_ART_ICON[a]) : "", t("stArt_"+a)); }).join(""))) });
 }
 function studioFilterBinden(fGr, fArt, zonen, neuZeichnen){
   var s = state.db.settings;
   app.querySelectorAll("[data-stzone]").forEach(function(b){ b.addEventListener("click", function(){ s.stZonen = selToggle(zonen, b.getAttribute("data-stzone")); save(); neuZeichnen(); }); });
+  app.querySelectorAll("[data-stgrp]").forEach(function(b){ b.addEventListener("click", function(){ s.stZonen = kkGrpToggle(zonen, b.getAttribute("data-stgrp")); save(); neuZeichnen(); }); });
   app.querySelectorAll("[data-stgr]").forEach(function(b){ b.addEventListener("click", function(){ s.stGruppen = selToggle(fGr, b.getAttribute("data-stgr")); save(); neuZeichnen(); }); });
   app.querySelectorAll("[data-start]").forEach(function(b){ b.addEventListener("click", function(){ s.stArten = selToggle(fArt, b.getAttribute("data-start")); save(); neuZeichnen(); }); });
   // Auf/zu steht in den Einstellungen, damit die Karte beim Neuzeichnen (nach jedem Antippen) offen bleibt - Mehrfachauswahl ohne ständiges Aufklappen

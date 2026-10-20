@@ -233,7 +233,7 @@ function renderDraftPage(d, cfg){
     }
   }
   function ohne(l, x){ return l.filter(function(v){ return v !== x; }); }
-  var cat = ohne(selArr(s.buildCats || s.buildCat), "stretch"), sort = s.libSort === "az" ? "az" : "std";
+  var cat = selArr(s.buildCats || s.buildCat).filter(function(c){ return c === "cardio"; }), sort = s.libSort === "az" ? "az" : "std";
   var equip = selArr(s.buildEquips).filter(function(e){ return e !== "gym"; });   // „Fitnessstudio“ regelt der Ort-Schalter
   var zonen = kkNorm(s.buildZonen);
   var run = draftRun(d);
@@ -497,6 +497,7 @@ function renderDraftPage(d, cfg){
   if(!cfg.cover) bauArtBinden("timer", function(){ bauNachSaetzen(cfg.bau); });   // nach Sätzen: dieselben Übungen als Plan (Gewicht × Wiederholungen)
   on("[data-bfcat]", function(el){ s.buildCats = selToggle(cat, el.getAttribute("data-bfcat")); save(); neu(); });
   on("[data-bfequip]", function(el){ s.buildEquips = selToggle(equip, el.getAttribute("data-bfequip")); save(); neu(); });
+  on("[data-bfgrp]", function(el){ s.buildZonen = kkGrpToggle(zonen, el.getAttribute("data-bfgrp")); save(); neu(); });
   on("[data-bfzone]", function(el){ s.buildZonen = selToggle(zonen, el.getAttribute("data-bfzone")); save(); neu(); });
   on("[data-bfsort]", function(el){ s.libSort = el.getAttribute("data-bfsort"); save(); neu(); });
   on("[data-bfreset]", function(){ s.buildCats = []; s.buildEquips = []; s.buildZonen = []; save(); neu(); });
@@ -653,8 +654,9 @@ function spNormalize(p){
     p.mains = alt.indexOf("calis") > -1 ? ["stange"] : [];
     p.cats = alt.filter(function(c){ return c !== "calis" && c !== "stretch"; });
   }
-  p.mains = selArr(p.mains).filter(function(m){ return m !== "stretch"; });   // Stretch gibt es hier nicht mehr
-  p.cats = selArr(p.cats).filter(function(c){ return c !== "stretch"; });
+  p.mains = [];   // die Kategorie-Kacheln gibt es nicht mehr: gewählt wird nach Muskel (Zonen), Cardio und Ausrüstung
+  p.cats = selArr(p.cats).filter(function(c){ return c === "cardio"; });
+  p.zonen = selArr(p.zonen);
   if(!p.equips) p.equips = selArr(p.equip && p.equip!=="all" ? [p.equip] : ["none"]);
   return p;
 }
@@ -664,8 +666,9 @@ function spDuration(it){ return it.reps*it.work + Math.max(0, it.reps-1)*it.rest
 function buildSurprise(p){
   p = spNormalize(p);
   var tm = SP_TIMING[p.level] || SP_TIMING[2];
-  var mains = p.mains.length ? p.mains.slice() : ["kraft","ausdauer","rumpf"];
-  var fokus = p.cats.filter(function(c){ return c !== "stretch"; });
+  var mains = p.mains.length ? p.mains.slice() : ["kraft","ausdauer","rumpf","stange"];   // ohne Kategorie-Wahl: alles außer Dehnen (Stange nur mit passender Ausrüstung)
+  var fokus = p.cats.filter(function(c){ return c !== "stretch"; });   // nur noch Cardio
+  var zonen = kkNorm(p.zonen);   // gewählte Muskel-Zonen (Figur und Chips)
   var wantStretch = mains.indexOf("stretch") > -1 || p.cats.indexOf("stretch") > -1;
   var trainMains = mains.filter(function(m){ return m !== "stretch"; });
   // Ort: Fitnessstudio zieht nur Studio-Übungen, Freiluft nur alles andere (Ausrüstung ohne „Fitnessstudio“), beide Orte zusammen beides
@@ -695,15 +698,15 @@ function buildSurprise(p){
     var trainSec = Math.max(block, total - stretchBudget);
     var n = anzahl ? Math.max(1, anzahl - stretchAnzahl) : Math.max(2, Math.round((trainSec + tm.blockRest) / (block + tm.blockRest)));
     var pool = EXERCISES.filter(function(ex){
-      return !libHidden("ex:"+ex.id) && spErlaubt(ex, equips) && (!orte || orte.indexOf(exOrt(ex)) > -1) && trainMains.indexOf(ex.main) > -1 && catMatch(fokus, ex.cats) &&
+      return !libHidden("ex:"+ex.id) && spErlaubt(ex, equips) && (!orte || orte.indexOf(exOrt(ex)) > -1) && trainMains.indexOf(ex.main) > -1 && ((!zonen.length && !fokus.length) || (zonen.length && zonePasst(ex, zonen)) || (fokus.length && catMatch(fokus, ex.cats))) &&
         ((mitStudio && exOrt(ex) === "studio") || (equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains)));
     });
     if(!pool.length && !stretchPool.length) return null;
     var fresh = pool.filter(function(ex){ return !recent[ex.id]; }).length;
     var avoidRecent = fresh >= Math.min(n, pool.length);   // nur meiden, wenn genug andere da sind
     // reihum: bei mehreren Fokus-Bereichen über den Fokus, sonst über die Kategorien
-    var rotate = fokus.length > 1 ? fokus : trainMains.length > 1 ? trainMains : [];
-    function keys(ex){ return fokus.length > 1 ? ex.cats : [ex.main]; }
+    var rotate = zonen.length > 1 ? zonen : fokus.length > 1 ? fokus : trainMains.length > 1 ? trainMains : [];
+    function keys(ex){ return zonen.length > 1 ? Object.keys(kkTeile(ex).haupt) : fokus.length > 1 ? ex.cats : [ex.main]; }
     var push = 0, pull = 0, covered = {};
     // Sternchen-Übungen: immer etwa ein Drittel des Workouts (soweit genug passende markiert sind)
     var favZiel = Math.min(pool.filter(function(ex){ return isExFav(ex.id); }).length, Math.round(n/3)), favDrin = 0;
@@ -749,7 +752,7 @@ function buildSurprise(p){
     var st = state.db.settings;
     st.spZahl = (st.spZahl || 0) + 1; save();
     var istBurpee = function(ex){ return /burpee/.test(ex.id); };
-    if(st.spZahl % 2 === 0 && !picked.some(istBurpee)){
+    if(st.spZahl % 2 === 0 && !zonen.length && !picked.some(istBurpee)){
       var bur = EXERCISES.filter(function(ex){
         return istBurpee(ex) && spErlaubt(ex, equips) && !libHidden("ex:"+ex.id) && equipMatch(equips, ex) && gearOk(ex, fokus, equips, trainMains) &&
           (p.level !== 1 || (EX_INT[ex.id] || 2) < 3);   // locker: nur die sanften
@@ -832,8 +835,7 @@ function openSurprise(twId, modusStart){
   var root = document.getElementById("overlayRoot");
   var fokusCats = LIB_CATS.filter(function(c){ return c.id!=="stretch" && c.id!=="calis"; });
   function feinText(){   // Zusammenfassung der zugeklappten Feinauswahl
-    var f = fokusCats.filter(function(c){ return p.cats.indexOf(c.id) > -1; }).map(function(c){ return tplText(c); });
-    return t("int"+p.level)+" · "+(f.length ? f.join(", ") : t("spNoFocus"));
+    return t("int"+p.level)+(p.avoid === false ? "" : " · "+t("spAvoid"));
   }
   function schliessen(){
     root.innerHTML = "";
@@ -845,18 +847,14 @@ function openSurprise(twId, modusStart){
         return '<button type="button" class="fc-chip'+(p.anzahl===v?' on':'')+'" data-spanz="'+v+'">'+v+' '+t("spCountUnit")+'</button>'; }).join("")+'</div>'
           : '<label>'+t("spDur")+'</label><div class="sp-chips">'+[10,15,20,30,45,60].map(function(v){
         return '<button type="button" class="fc-chip'+(p.dur===v?' on':'')+'" data-spdur="'+v+'">'+v+' Min</button>'; }).join("")+'</div>')+
-      '<label>'+t("mainCat")+'</label>'+
-      mainTilesHTML(p.mains, null, "data-spmain", ["stretch"])+
-      '<div class="tm-hint" style="margin-top:-4px;">'+esc(t("spMainHint"))+'</div>'+
+      kkMuskelHTML("data-spzone", "data-spgrp", p.zonen, { glow:p.cats.indexOf("cardio") > -1,
+        extra:filterChip("data-spcat", "cardio", p.cats.indexOf("cardio") > -1, catIcon("cardio"), t("katCardio")) })+
       (katOrt() === "studio" ? '' : '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
         return '<button type="button" class="fc-chip'+(p.equips.indexOf(e.id)>-1?' on':'')+'" data-spequip="'+e.id+'">'+svgIcon(EQUIP_ICON[e.id])+esc(tplText(e))+'</button>'; }).join("")+'</div>')+
       // Fokus, Intensität und die Regeln sind selten nötig: zugeklappt, die Zusammenfassung zeigt die aktuelle Wahl
       '<button type="button" class="sp-more'+(spFeinOffen?' open':'')+'" data-spmore aria-expanded="'+spFeinOffen+'">'+
         '<span><b>'+t("spMore")+'</b><small>'+esc(feinText())+'</small></span>'+ICON_CHEV+'</button>'+
       (spFeinOffen ? '<div class="sp-more-body">'+
-        '<label>'+t("spAreas")+' <span class="lbl-hint">'+esc(t("spFocusHint"))+'</span></label><div class="sp-chips">'+
-          fokusCats.map(function(c){
-          return '<button type="button" class="fc-chip'+(p.cats.indexOf(c.id)>-1?' on':'')+'" data-spcat="'+c.id+'">'+catIcon(c.id)+esc(tplText(c))+'</button>'; }).join("")+'</div>'+
         '<label>'+t("spLevel")+'</label><div class="seg-row">'+[1,2,3].map(function(l){
           return '<button type="button" class="'+(p.level===l?'active':'')+'" data-splevel="'+l+'">'+esc(t("int"+l))+'</button>'; }).join("")+'</div>'+
         '<div class="sp-avoid">'+toggleRow("sp-avoid", t("spAvoid"), t("spAvoidDesc"), p.avoid !== false)+'</div>'+
@@ -890,11 +888,13 @@ function openSurprise(twId, modusStart){
     }
     function on(sel, fn){ root.querySelectorAll(sel).forEach(function(b){ b.addEventListener("click", function(){ fn(b); draw(); }); }); }
     bauOrtBinden(function(){ draw(); }, root);
+    root.querySelectorAll("[data-kkmodus]").forEach(function(b){ b.addEventListener("click", function(){ setTimeout(draw, 0); }); });   // Detailansicht: erst speichert der globale Handler, dann zeichnet das Fenster neu
     on("[data-spmodus]", function(b){ modus = b.getAttribute("data-spmodus"); });
     on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; spFeinZeigen = spFeinOffen; });
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
     on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
-    on("[data-spmain]", function(b){ p.mains = selToggle(p.mains, b.getAttribute("data-spmain")); });
+    on("[data-spgrp]", function(b){ p.zonen = kkGrpToggle(p.zonen, b.getAttribute("data-spgrp")); });
+    on("[data-spzone]", function(b){ p.zonen = selToggle(kkNorm(p.zonen), b.getAttribute("data-spzone")); });
     on("[data-spcat]", function(b){ p.cats = selToggle(p.cats, b.getAttribute("data-spcat")); });
     on("[data-splevel]", function(b){ p.level = parseInt(b.getAttribute("data-splevel")); });
     on("[data-spequip]", function(b){ p.equips = selToggle(p.equips, b.getAttribute("data-spequip")); });

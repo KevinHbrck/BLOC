@@ -217,11 +217,13 @@ function airFilterHTML(pre, offen, cat, equip, sort, sortOpts, n, uebung, zonen)
   return filterKarteHTML({ offen:offen, toggle:'data-'+pre+'toggle', reset:'data-'+pre+'freset', n:namen.length,
     summe:namen.length ? namen.join(", ") : t(uebung ? "afAlleEx" : "afAlleWo"),
     zeigen:filterZeigenText(n, uebung ? "Ex" : "Wo"),
-    inhalt:filterChipsHTML(t("afTraining"), "", LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
-        return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join(""))+
+    inhalt:(mitZonen ? kkMuskelHTML('data-'+pre+'fzone', 'data-'+pre+'fgrp', zonen, { glow:cat.indexOf("cardio") > -1,
+          extra:filterChip('data-'+pre+'fcat', "cardio", cat.indexOf("cardio") > -1, catIcon("cardio"), t("katCardio")) }) :
+        filterChipsHTML(t("afTraining"), "", LIB_CATS.filter(function(c){ return c.id !== "stretch"; }).map(function(c){
+        return filterChip('data-'+pre+'fcat', c.id, cat.indexOf(c.id) > -1, catIcon(c.id), tplText(c)); }).join("")))+
       filterChipsHTML(t("equipHave"), "", EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
         return filterChip('data-'+pre+'fequip', e.id, equip.indexOf(e.id) > -1, svgIcon(EQUIP_ICON[e.id]), tplText(e)); }).join(""))+
-      (mitZonen ? kkFilterHTML('data-'+pre+'fzone', zonen) : ''),
+      '',
     /* Sortierung: kein Block mehr in der Karte, nur ein Schalter „A–Z“ neben der Kopfzeile (aus = die Standardreihenfolge der Liste: Standard bzw. Dauer) */
     extra:'<button type="button" class="af-az'+(sort === "az" ? ' on' : '')+'" data-'+pre+'fsort="'+(sort === "az" ? sortOpts[0][0] : "az")+'" aria-pressed="'+(sort === "az")+
       '" title="'+esc(t("afSortAz"))+'" aria-label="'+esc(t("afSortAz"))+'">A&ndash;Z</button>' });

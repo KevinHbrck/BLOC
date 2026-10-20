@@ -2268,3 +2268,11 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .intro-sheet.kompakt .intro-ico .ico{ width:32px; height:32px; }
 .intro-sheet.kompakt .intro-seite{ padding-bottom:10px; }
 .intro-sheet.kompakt .intro-seite h2{ font-size:22px; margin-bottom:8px; }
+
+/* Muskel: Chips und Figur sind eine Auswahl; Cardio & Ausdauer lässt die Figur orange leuchten (Glow dahinter) */
+.kk-grp-chips{ margin:6px 0 4px; }
+.kk-filter{ position:relative; }
+.kk-filter .kk-paar{ position:relative; z-index:1; }
+.kk-filter.kk-glow::before{ content:""; position:absolute; left:50%; top:50%; width:78%; height:92%; transform:translate(-50%,-50%); border-radius:50%;
+  background:radial-gradient(closest-side, color-mix(in srgb, var(--accent) 70%, transparent), color-mix(in srgb, var(--accent) 22%, transparent) 62%, transparent 100%);
+  filter:blur(16px); opacity:.85; pointer-events:none; z-index:0; }

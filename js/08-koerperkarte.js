@@ -329,6 +329,32 @@ function kkFilterHTML(attr, sel){
     '<details class="kk-liste-box"'+(auf ? ' open' : '')+'><summary data-kklistetoggle>'+esc(t("kkListe"))+'<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
     '<div class="fc-chips kk-chips">'+kkReihe().map(function(z){ return filterChip(attr, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div></details>';
 }
+/* Muskel: Gruppen-Chips und Körperfigur sind eine Auswahl. Ein Chip (Brust, Rücken …) wählt alle Zonen seiner Gruppe, die Figur leuchtet entsprechend;
+   umgekehrt leuchtet ein Chip, sobald alle Zonen seiner Gruppe gewählt sind. Gespeichert werden nur Zonen (attrZone), die Chips (attrGrp) rechnen darauf um.
+   opt.extra: weitere Chips (Cardio, Eigene), opt.glow: orangenes Leuchten hinter der Figur (Cardio & Ausdauer, kein einzelner Muskel). */
+function kkGrpZonen(grp){ return kkNorm(KK_GRUPPE_ZONEN[grp] || []); }
+function kkGrpAn(sel, grp){ var z = kkGrpZonen(grp); return z.length > 0 && z.every(function(x){ return sel.indexOf(x) > -1; }); }
+function kkGrpToggle(sel, grp){
+  sel = kkNorm(sel);
+  var z = kkGrpZonen(grp);
+  return kkGrpAn(sel, grp) ? sel.filter(function(x){ return z.indexOf(x) < 0; }) : sel.concat(z.filter(function(x){ return sel.indexOf(x) < 0; }));
+}
+function kkMuskelHTML(attrZone, attrGrp, sel, opt){
+  opt = opt || {};
+  sel = kkNorm(sel);
+  var w = {};
+  sel.forEach(function(z){ w[z] = 1; });
+  var chips = MUSKEL_GRP.map(function(g){
+    return filterChip(attrGrp, g.id, kkGrpAn(sel, g.id), svgIcon(STUDIO_GRUPPEN_ICON[g.id] || CAT_ICON.weight), t(g.key));
+  }).join("")+(opt.extra || "");
+  var auf = !!state.db.settings.kkListeAuf;
+  return '<div class="af-lbl kk-lblzeile"><span>'+esc(t("kkMuskel"))+'</span>'+kkModusHTML()+'</div>'+
+    '<div class="fc-chips kk-grp-chips">'+chips+'</div>'+
+    '<div class="kk-filter'+(opt.glow ? ' kk-glow' : '')+'">'+koerperPaar(w, { sel:sel, attr:attrZone })+'</div>'+
+    '<div class="kk-hinweis'+(sel.length ? ' an' : '')+'">'+esc(sel.length ? sel.map(kkName).join(", ") : t("kkTippen"))+'</div>'+
+    (kkFeinAn() ? '<details class="kk-liste-box"'+(auf ? ' open' : '')+'><summary data-kklistetoggle>'+esc(t("kkListe"))+'<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+      '<div class="fc-chips kk-chips">'+kkReihe().map(function(z){ return filterChip(attrZone, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div></details>' : '');
+}
 /* Zonenliste im Filter auf/zu (der Zustand wird gemerkt, weil der Filter nach jedem Antippen neu gezeichnet wird) */
 document.addEventListener("click", function(e){
   var sm = e.target.closest && e.target.closest("[data-kklistetoggle]");
