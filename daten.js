@@ -3434,19 +3434,20 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   function liegeBank(arm, x){ return stLiegen(arm, x); }
 
   /* ---------- Brust ---------- */
-  function dec(arm, x){ return Q([13,72],[22,69],[50,59],[[66,64,68,85,75,89]],[arm], gLinie("M10 78L60 61M14 78V89M58 62V89")+x); }
+  function dec(arm, x){ return Q([13,72],[22,69],[50,59],[[67,63,70,84,74,86]],[arm], gLinie("M10 78L60 61M14 78V89M58 62V89")+'<circle class="ip" cx="69" cy="76" r="3"/>'+x); }
   P["decline-db-bench"] = [dec([27,55,28,43], gDB(28,41)), dec([20,77,27,66], gDB(27,64))];
   P["around-world-pullover"] = [liegeBank([28.6,55,28,43], gDB(28,41)), liegeBank([17,63,5,59], gDB(5,57))];
 
   var CF = gLinie("M10 0V89M90 0V89")+gRolle(14,25)+gRolle(86,25);
   P["cable-chest-fly"] = [fr([50,20],[50,52],FRONT,[[39,25,27,27],[61,25,73,27]], CF+gGriff(27,27)+gGriff(73,27)),
-                          fr([50,20],[50,52],FRONT,[[40,30,48,37],[60,30,52,37]], CF+gGriff(48,37)+gGriff(52,37))];
+                          fr([50,20],[50,52],FRONT,[[41,31,48,37],[59,31,52,37]], CF+gGriff(48,37)+gGriff(52,37))];
 
-  var TU_HOCH = gLinie("M86 0V89")+gRolle(82,5), TU_TIEF = gLinie("M86 20V89")+gRolle(82,84);
-  P["standing-cable-fly"] = [Q(null,[52,21],[50,50],STAND,[[62,19,73,12],[61,20,72,13]], TU_HOCH+gGriff(73,12)+gGriff(72,13)),
+  var TU_VORN = gLinie("M86 0V89")+gRolle(82,5);
+  var TU_HOCH = gLinie("M14 0V89")+gRolle(18,5), TU_TIEF = gLinie("M14 20V89")+gRolle(18,84);   // Zug kommt von hinten
+  P["standing-cable-fly"] = [Q(null,[52,21],[50,50],STAND,[[42,22,32,16],[43,23,33,17]], TU_HOCH+gGriff(32,16)+gGriff(33,17)),
                              Q(null,[52,21],[50,50],STAND,[[56,36,62,47],[54,37,60,48]], TU_HOCH+gGriff(62,47)+gGriff(60,48))];
   V2["standing-cable-fly"] = { typ:"front", p:[P["cable-crossover"][0], P["cable-crossover"][1]] };
-  P["low-to-high-cable-fly"] = [Q(null,[52,21],[50,50],STAND,[[56,36,62,47],[54,37,60,48]], TU_TIEF+gGriff(62,47)+gGriff(60,48)),
+  P["low-to-high-cable-fly"] = [Q(null,[52,21],[50,50],STAND,[[46,37,38,48],[45,38,37,49]], TU_TIEF+gGriff(38,48)+gGriff(37,49)),
                                 Q(null,[52,21],[50,50],STAND,[[62,29,74,32],[61,30,73,33]], TU_TIEF+gGriff(74,32)+gGriff(73,33))];
   var CT = gLinie("M10 20V89M90 20V89")+gRolle(14,84)+gRolle(86,84);
   V2["low-to-high-cable-fly"] = { typ:"front", p:[fr([50,20],[50,52],FRONT,[[41,34,36,46],[59,34,64,46]], CT+gGriff(36,46)+gGriff(64,46)),
@@ -3454,10 +3455,10 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
 
   var BANK_HOCH = gBench(62,90,72);
   P["incline-push-up"] = [Q(null,[74,42],[51,61],[[35,75,21,87,15,89]],[[72,58,73,71]], BANK_HOCH),
-                          Q(null,[73,50],[48,65],[[33,77,20,87,14,89]],[[63,63,73,71]], BANK_HOCH)];
+                          Q(null,[73,50],[48,66],[[33,78,20,87,14,89]],[[63,63,73,71]], BANK_HOCH)];
   var DEF_X = gLinie("M62 89V81H78V89");
   P["deficit-push-up"] = [Q(null,[71,56],[44,70],[[28,78,12,86,9,89]],[[68,69,70,81]], DEF_X),
-                          Q(null,[72,84],[44,80],[[28,84,12,87,9,89]],[[60,76,70,81]], DEF_X)];
+                          Q(null,[72,84],[44,83],[[28,86,12,88,9,89]],[[60,77,70,81]], DEF_X)];
   var RING_X = gLinie("M71 0V76")+'<circle class="ip" cx="70" cy="81" r="4.4"/>';
   P["ring-push-up"] = [qWith(P["deficit-push-up"][0], { x:RING_X }), qWith(P["deficit-push-up"][1], { x:RING_X })];
 
@@ -3465,26 +3466,26 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   var LATSITZ = gLinie("M36 66H64M50 66V89");
   function latbar(x, y, br){ return LATSITZ+gHand(x, y, '<path class="ip" d="M'+(x-br)+' '+y+'H'+(100-x+br)+' "/>'); }
   P["wide-grip-lat-pulldown"] = [fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[38,24,30,10],[62,24,70,10]], latbar(30,10,18)),
-                                 fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[38,38,31,27],[62,38,69,27]], latbar(31,27,18))];
+                                 fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[39,46,31,38],[61,46,69,38]], latbar(31,38,18))];
   P["reverse-grip-lat-pulldown"] = [fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[43,24,42,11],[57,24,58,11]], latbar(42,11,16)),
-                                    fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[42,45,43,34],[58,45,57,34]], latbar(43,34,16))];
+                                    fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[42,47,43,38],[58,47,57,38]], latbar(43,38,16))];
   P["rope-lat-pulldown"] = [fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[43,24,45,11],[57,24,55,11]], LATSITZ+gLinie("M50 0V9M50 9L45 11M50 9L55 11")),
-                            fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[39,44,34,33],[61,44,66,33]], LATSITZ+gLinie("M50 0V24M50 24L34 33M50 24L66 33"))];
+                            fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[39,47,34,38],[61,47,66,38]], LATSITZ+gLinie("M50 0V28M50 28L34 38M50 28L66 38"))];
 
   var CRX = gSitz(22,48,74)+gLinie("M77 58V78")+gRolle(82,52);
   function crow(n, arms, grips){ return Q(null, n, [36,72], [[55,64,72,70,73,62]], arms, CRX+grips); }
-  P["wide-grip-cable-row"] = [crow([42,45],[[53,49,64,50]], gGriff(64,50)), crow([40,44],[[30,43,40,51]], gGriff(40,51))];
+  P["wide-grip-cable-row"] = [crow([42,45],[[53,49,64,50]], gGriff(64,50)), crow([40,44],[[30,40,40,46]], gGriff(40,46))];
   P["underhand-cable-row"] = [crow([42,45],[[53,52,64,56]], gGriff(64,56)), crow([40,44],[[30,56,41,58]], gGriff(41,58))];
   P["one-arm-cable-row"] = [crow([42,45],[[53,50,64,53],[44,58,52,64]], gGriff(64,53)), crow([40,44],[[28,50,40,55],[44,58,52,64]], gGriff(40,55))];
   P["alternating-cable-row"] = [crow([42,45],[[53,50,64,53],[30,50,41,55]], gGriff(64,53)+gGriff(41,55)),
                                 crow([40,44],[[28,50,40,55],[53,51,63,54]], gGriff(40,55)+gGriff(63,54))];
-  P["one-arm-high-cable-row"] = [Q(null,[50,20],[50,50],STAND,[[62,17,73,10],[52,34,53,47]], TU_HOCH+gGriff(73,10)),
-                                 Q(null,[50,20],[50,50],STAND,[[46,37,54,47],[52,34,53,47]], TU_HOCH+gGriff(54,47))];
+  P["one-arm-high-cable-row"] = [Q(null,[50,20],[50,50],STAND,[[62,17,73,10],[52,34,53,47]], TU_VORN+gGriff(73,10)),
+                                 Q(null,[50,20],[50,50],STAND,[[46,37,54,47],[52,34,53,47]], TU_VORN+gGriff(54,47))];
 
   /* Auf der Schrägbank liegend (Bauch nach unten), Hanteln hängen vor der Bank */
   function prone(arm, x){ return Q(null,[64,48],[42,70],[[28,81,14,88,8,89]],[arm], gLinie("M38 80L66 52M44 74V89M62 56V89")+x); }
-  P["chest-supported-row"] = [prone([61,63,61,75], gDB(61,77)), prone([50,58,58,62], gDB(58,64))];
-  P["spider-curl"] = [prone([61,63,61,75], gDB(61,77)), prone([61,63,70,56], gDB(70,54))];
+  P["chest-supported-row"] = [prone([69,60,69,74], gDB(69,76)), prone([50,58,58,62], gDB(58,64))];
+  P["spider-curl"] = [prone([69,60,69,74], gDB(69,76)), prone([69,60,67,50], gDB(67,48))];
   P["cambered-bar-row"] = [qWith(P_HG,{ x:gScheibe(61,70,6) }), qWith(P_HG,{ a:[[50,36,56,48]], x:gScheibe(56,52,6) })];
 
   var NG_R = '<circle class="ip" cx="42" cy="6" r="3.8"/><circle class="ip" cx="58" cy="6" r="3.8"/>';
@@ -3494,7 +3495,7 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
 
   /* Meadows Row: Stange steckt in der Landmine, die Hand fasst das freie Ende */
   P["meadows-row"] = [Q(null,[64,40],[40,50],[[44,70,44,89,52,89]],[[62,54,61,66],[54,52,48,62]], gLinie("M104 88L61 66")+gScheibe(61,67,5)),
-                      Q(null,[64,40],[40,50],[[44,70,44,89,52,89]],[[50,36,56,48],[54,52,48,62]], gLinie("M104 80L56 48")+gScheibe(56,49,5))];
+                      Q(null,[64,40],[40,50],[[44,70,44,89,52,89]],[[53,48,62,58],[54,52,48,62]], gLinie("M104 88L62 58")+gScheibe(62,59,5))];
 
   /* ---------- Schultern ---------- */
   P["seated-db-shoulder-press"] = [Q(null,[42,34],[42,63],ST_BEINE,[[47,49,48,37]], ST_SITZ+gDB(48,35)),
@@ -3550,7 +3551,7 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
                              Q(null,[50,20],[50,50],STAND,[[52,32,60,23],[47,34,47,46]], CC_T+gGriff(60,23))];
   P["cross-body-hammer-curl"] = [fr([50,20],[50,52],FRONT,[[43,34,42,46],[57,34,58,46]], tick(42,46)),
                                  fr([50,20],[50,52],FRONT,[[43,34,54,29],[57,34,58,46]], tick(54,29))];
-  var PC_SITZ = gSitz(30,52,66)+gLinie("M47 45L61 54");
+  var PC_SITZ = gSitz(30,52,66)+gLinie("M47 41L61 50");
   P["preacher-curl"] = [Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,66,55]], PC_SITZ+gScheibe(66,56,3.6)),
                         Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,53,34]], PC_SITZ+gScheibe(53,35,3.6))];
   P["hammer-preacher-curl"] = [Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,66,55]], PC_SITZ+tick(66,55)),
@@ -3568,13 +3569,13 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
 
   /* ---------- Trizeps ---------- */
   var PD_T = gLinie("M72 0V89")+gRolle(68,4);
-  P["rope-triceps-pushdown"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,26]], PD_T+gLinie("M68 6L62 26")+knoten(62,26)),
+  P["rope-triceps-pushdown"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,31]], PD_T+gLinie("M68 6L62 31")+knoten(62,31)),
                                 Q(null,[50,20],[50,50],STAND,[[52,32,54,44]], PD_T+gLinie("M68 6L55 44")+knoten(54,44))];
-  P["one-arm-cable-triceps-extension"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,26],[47,34,46,46]], PD_T+gGriff(62,26)),
+  P["one-arm-cable-triceps-extension"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,31],[47,34,46,46]], PD_T+gGriff(62,31)),
                                           Q(null,[50,20],[50,50],STAND,[[52,32,54,44],[47,34,46,46]], PD_T+gGriff(54,44))];
   var KT = gLinie("M10 0V89")+gRolle(14,24);
-  P["kneeling-cable-triceps-extension"] = [Q(null,[54,32],[48,62],KNIE,[[58,25,47,24]], KT+gLinie("M14 24L47 24")+knoten(47,24)),
-                                           Q(null,[54,32],[48,62],KNIE,[[65,32,77,28]], KT+gLinie("M14 24L77 28")+knoten(77,28))];
+  P["kneeling-cable-triceps-extension"] = [Q(null,[54,32],[48,62],KNIE,[[56,25,46,30]], KT+gLinie("M14 24L46 30")+knoten(46,30)),
+                                           Q(null,[54,32],[48,62],KNIE,[[56,25,57,13]], KT+gLinie("M14 24L57 13")+knoten(57,13))];
   P["incline-cable-triceps-extension"] = [Q(null,[24,48],[46,70],[[60,66,64,86,71,88]],[[28,40,18,34]], ST_SCHRAEG+gLinie("M5 40V89")+gRolle(9,84)+knoten(18,34)),
                                           Q(null,[24,48],[46,70],[[60,66,64,86,71,88]],[[30,40,35,29]], ST_SCHRAEG+gLinie("M5 40V89")+gRolle(9,84)+knoten(35,29))];
   var LT = gLinie("M4 44V89")+gRolle(8,60);
@@ -3584,9 +3585,9 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   P["db-skull-crusher"] = [stLiegen([27,55,28,43], gDB(28,41)), stLiegen([27,55,19,61], gDB(19,59))];
   P["single-arm-skull-crusher"] = [qWith(stLiegen([27,55,28,43], gDB(28,41)), { a:[[27,55,28,43],[24,58,28,50]] }),
                                    qWith(stLiegen([27,55,19,61], gDB(19,59)), { a:[[27,55,19,61],[24,58,28,50]] })];
-  P["supinated-triceps-extension"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,26]], PD_T+gQuer(62,26,4)), Q(null,[50,20],[50,50],STAND,[[52,32,54,44]], PD_T+gQuer(54,44,4))];
+  P["supinated-triceps-extension"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,31]], PD_T+gQuer(62,31,4)), Q(null,[50,20],[50,50],STAND,[[52,32,54,44]], PD_T+gQuer(54,44,4))];
   P["ez-jm-press"] = [stLiegen([29,56,30,44], gScheibe(30,42,3)), stLiegen([38,60,28,57], gScheibe(28,56,3))];
-  P["tate-press"] = [stLiegen([27,55,28,43], gDB(28,41)), stLiegen([32,56,30,66], gDB(30,64))];
+  P["tate-press"] = [stLiegen([27,55,28,43], gDB(28,41)), stLiegen([27,55,30,66], gDB(30,64))];
   V2["tate-press"] = { typ:"top", p:[qWith(V_ARCH,{ a:[[54,38,52,42],[46,38,48,42]], x:V_BANK+gDB(52,42)+gDB(48,42) }),
                                      qWith(V_ARCH,{ a:[[62,38,54,45],[38,38,46,45]], x:V_BANK+gDB(54,45)+gDB(46,45) })] };
 
@@ -3600,7 +3601,7 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
 
   var SCT = gLinie("M90 0V89")+gRolle(86,6);
   P["standing-cable-crunch"] = [Q(null,[50,20],[50,50],STAND,[[61,28,58,17]], SCT+gGriff(58,17)),
-                                Q(null,[70,34],[47,51],[[51,71,50,89,58,89]],[[72,46,77,35]], SCT+gGriff(77,35))];
+                                Q(null,[67,38],[50,52],[[51,71,50,89,58,89]],[[70,50,74,40]], SCT+gGriff(74,40))];
   var LIFT = gLinie("M12 20V89")+gRolle(16,84);
   P["cable-lift"] = [fr([50,20],[50,52],FRONT,[[44,36,39,47],[46,38,41,48]], LIFT+gGriff(39,47)),
                      fr([50,20],[50,52],FRONT,[[60,16,68,8],[58,18,66,10]], LIFT+gGriff(68,8))];
@@ -3611,19 +3612,19 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   P["cable-reverse-crunch"] = [qWith(P["reverse-crunch"][0], { x:RC_T+gLinie("M10 70L68 66")+gPolster(68,66) }),
                                qWith(P["reverse-crunch"][1], { x:RC_T+gLinie("M10 70L56 56")+gPolster(56,56) })];
   P["judo-flip"] = [Q([14,83],[24,84],[50,84],[[50,63,50,44,46,44]],[[34,86,45,87]]),
-                    Q([13,84],[22,84],[36,58],[[30,38,10,36,6,34]],[[34,86,45,87]])];
+                    Q([13,84],[22,84],[36,58],[[21,47,6,37,2,35]],[[34,86,45,87]])];
 
   var KL = [[60,70,70,89,78,89]];
   var CR_A = Q([14,83],[24,84],[46,86],KL,[[23,73,14,78]]);
-  var CR_B = Q([27,63],[26,71],[46,86],KL,[[21,66,25,60]]);
+  var CR_B = Q([27,63],[26,71],[46,86],KL,[[20,66,22,61]]);
   P["crunch"] = [CR_A, CR_B];
   P["crunch-arms-straight"] = [qWith(CR_A,{ a:[[27,72,28,60]] }), qWith(CR_B,{ a:[[30,61,31,49]] })];
   P["crunch-hands-overhead"] = [qWith(CR_A,{ a:[[16,79,4,76]] }), qWith(CR_B,{ a:[[21,65,13,58]] })];
   P["cross-body-crunch"] = [Q([14,83],[24,84],[46,86],[[60,70,70,89,78,89],[62,72,72,89,80,89]],[[23,73,14,78]]),
                             Q([27,63],[26,71],[46,86],[[52,68,66,74,72,72],[60,70,70,89,78,89]],[[40,68,32,63]])];
   var WHEEL_X = function(x, y){ return gHand(x, y, '<circle class="ip" cx="'+x+'" cy="'+(y+3)+'" r="5"/>'); };
-  P["ab-wheel-rollout"] = [Q(null,[66,52],[40,64],[[42,87,24,88,18,89]],[[63,66,64,78]], WHEEL_X(64,78)),
-                           Q(null,[67,77],[38,70],[[40,87,22,88,16,89]],[[75,79,87,81]], WHEEL_X(87,81))];
+  P["ab-wheel-rollout"] = [Q(null,[66,52],[40,64],[[42,87,24,88,18,89]],[[63,68,64,81]], WHEEL_X(64,81)),
+                           Q(null,[72,77],[46,79],[[27,88,12,89,8,89]],[[80,79,90,81]], WHEEL_X(90,81))];
 
   var WS = gLinie("M26 67H60M43 67V89");
   var WL = [[62,62,60,84,67,88]];
@@ -3664,7 +3665,7 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
     return '<path class="ip" d="'+d+'"/>';
   }
   function ende(q, i){ var a = q.a[i]; return [a[a.length-2], a[a.length-1]]; }
-  function anker(ax, ay){ return gLinie("M"+ax+" "+(ay+8)+"V89")+'<circle class="ip" cx="'+ax+'" cy="'+ay+'" r="2.6"/>'; }
+  function anker(ax, ay){ return (ay+8 < 89 ? gLinie("M"+ax+" "+(ay+8)+"V89") : "")+'<circle class="ip" cx="'+ax+'" cy="'+ay+'" r="2.6"/>'; }
   /* amps: Wellenhöhe je Arm (Vorzeichen = erst nach oben/unten) */
   function brSeile(q, ax, ay, amps, cyc){
     var s = anker(ax, ay);
@@ -3678,15 +3679,15 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   var AW_A = br([46,28],[40,58],BR_L,[UP,DN]), AW_B = br([46,28],[40,58],BR_L,[DN,UP]);
   P["battle-rope-alternating-waves"] = [brSeile(AW_A,93,64,[-5,5]), brSeile(AW_B,93,64,[5,-5])];
   var UP2 = [55,37,66,38], DN2 = [51,48,58,59];
-  var DW_A = br([46,36],[36,64],BR_TL,[UP2,[55,38,66,40]]), DW_B = br([46,36],[36,64],BR_TL,[DN2,[52,49,59,60]]);
+  var DW_A = br([46,28],[40,58],BR_L,[UP,[55,31,66,35]]), DW_B = br([46,28],[40,58],BR_L,[DN,[52,44,59,55]]);
   P["battle-rope-double-waves"] = [brSeile(DW_A,93,66,[-5,-4]), brSeile(DW_B,93,66,[5,4])];
   var SL_A = br([50,26],[50,56],[[50,73,50,89,58,89]],[[53,19,55,7],[52,20,54,8]]);
   var SL_B = br([46,38],[36,64],BR_TL,[[53,51,60,62],[52,52,59,63]]);
   P["battle-rope-slams"] = [brSeile(SL_A,93,72,[8,6],1.5), brSeile(SL_B,93,72,[5,4],1.5)];
-  var SQ_A = br([46,36],[36,64],BR_TL,[UP2,DN2]), SQ_B = br([46,36],[36,64],BR_TL,[DN2,UP2]);
+  var SQ_A = br([46,28],[40,58],BR_L,[UP,DN]), SQ_B = br([46,36],[36,64],BR_TL,[DN2,UP2]);
   P["battle-rope-squat-waves"] = [brSeile(SQ_A,93,66,[-5,5]), brSeile(SQ_B,93,66,[5,-5])];
-  var SN_ARM = [[53,52,61,64],[52,53,60,65]];
-  var SN_Q = br([46,36],[36,64],BR_TL,SN_ARM);
+  var SN_ARM = [[52,45,59,56],[51,46,58,57]];
+  var SN_Q = br([46,28],[40,58],BR_L,SN_ARM);
   P["battle-rope-snakes"] = [brSeile(SN_Q,93,84,[4,-4],2), brSeile(SN_Q,93,84,[-4,4],2)];
 
   var FR_B = [[37,70,31,89,25,89],[63,70,69,89,75,89]];
@@ -3703,7 +3704,7 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
     var s = anker(93,64) + seil(f[0], f[1], 93, 64, 2.5, 1.5) + gLinie("M"+f[0]+" "+f[1]+"L"+r[0]+" "+r[1]) + gLinie("M"+r[0]+" "+r[1]+"L"+(r[0]-1)+" "+(r[1]+16));
     return qWith(q, { x:s });
   }
-  P["battle-rope-power-pull"] = [pull([56,44,67,50],[50,44,54,54],false), pull([56,44,67,50],[50,44,54,54],true)];
+  P["battle-rope-power-pull"] = [pull([55,41,67,47],[50,44,54,54],false), pull([55,41,67,47],[50,44,54,54],true)];
 
   /* Gerätelinien der neuen Studio-Übungen wie bei den übrigen: Farbe „Gerät“ */
   function gm(q){ if(q && q.x) q.x = q.x.replace(/class="(ip|ipf)( gp)?"/g, 'class="$1$2 gm"'); }

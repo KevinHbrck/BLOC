@@ -3,11 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-20 · Strichfiguren für alle 87 neuen Studio-Übungen (Fassung 2026-10-20-60)
+## 2026-10-20 · Strichfiguren für alle 87 neuen Studio-Übungen (Fassung 2026-10-20-61)
 
 - Alle am 2026-10-20 neu eingebauten Übungen haben jetzt eine eigene Figur (zwei Posen, Anfang/Ende): Brust, Rücken, Schultern, Bizeps, Trizeps, Beine, Core, Unterarme, zwei Dehnungen, Cross Jacks und die zehn Battle Ropes. Neuer Abschnitt „Figuren der Studio-Erweiterung“ am Ende von `daten.js` (vor `window.BLOC_DATEN`).
 - Kabelübungen mit Turm, Rolle und Griff wie bei den vorhandenen; Zweitansicht (von vorn/oben/seitlich) bei Standing Cable Fly, Low-to-High Fly, Neutral-Grip-Klimmzug, Schulterdrücken sitzend, Arnold Press, Kurzhantel-Curls und Tate Press. Cuban Press, Frontheben über Kopf und Hantel-Clean laufen als Ablauf mit Zwischenphase.
 - Battle Ropes zeigen das Seil als Welle von der Hand zum Anker; die Welle wechselt zwischen den Posen (Gegenphase). Frontal bei seitlichen Wellen, Kreisen, In-and-Out und Jumping Jacks, sonst von der Seite.
+- Fachprüfung (Sportwissenschaftler-Agent) eingearbeitet: Stangenhöhe bei den Latzug-Varianten, Kabel-Fly mit Zug von hinten, Landmine-Anker fest, Ab-Wheel ohne Knick, gestreckter Judo Flip, Battle-Rope-Hocken (Squat Waves wechselt zwischen Stand und tiefer Hocke), Decline-Fußrolle u. a. Frontale Battle Ropes mit breiterem Stand, Seile laufen zwischen den Beinen.
 - Einheitstest: neue Prüfung, dass jede Übung der Studio-Gruppen und der Hauptgruppen (Ausdauer, Rumpf, Stange, Dehnen) eine Figur hat (54/54).
 
 ## 2026-10-20 · FAQ: Word-Update eingearbeitet, 24 Fragen (Fassung 2026-10-20-37)
