@@ -619,3 +619,38 @@
 :root[data-layout="new"] .fav-foto.ohne .ff-ico{ position:absolute; left:12px; top:12px; width:46px; height:46px; display:grid; place-items:center; border-radius:14px;
   background:color-mix(in srgb, var(--nc, var(--accent)) 16%, transparent); color:var(--nc, var(--accent)); }
 :root[data-layout="new"] .fav-foto.ohne .ff-ico .ico, :root[data-layout="new"] .fav-foto.ohne .ff-ico svg{ width:26px; height:26px; }
+
+/* Run: Live-Karte als Glasfläche (Kulisse aus Straßen und Bäumen, leuchtende Strecke, pulsierender Standort) */
+:root[data-layout="new"] .run-weiss .run-karte{ margin:12px 0 10px; border-radius:26px; overflow:hidden; aspect-ratio:1 / 1; max-height:340px; width:100%;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); box-shadow:0 10px 30px rgba(0,0,0,.25); }
+.run-karte svg{ display:block; width:100%; height:100%; }
+.rk-kulisse path{ fill:none; stroke:rgba(255,255,255,.2); stroke-linecap:round; }
+.rk-kulisse .rk-str{ stroke-width:2.2; stroke:rgba(255,255,255,.26); }
+.rk-kulisse .rk-neben{ stroke-width:1.2; }
+.rk-baum circle{ fill:rgba(255,255,255,.07); stroke:rgba(255,255,255,.3); stroke-width:1.2; }
+.rk-baum path{ stroke:rgba(255,255,255,.3); stroke-width:1.4; fill:none; stroke-linecap:round; }
+.rk-glow{ fill:none; stroke:#fff; stroke-width:9; stroke-linecap:round; stroke-linejoin:round; opacity:.55; }
+.rk-weg{ fill:none; stroke:#fff; stroke-width:3.4; stroke-linecap:round; stroke-linejoin:round; }
+.rk-start{ fill:rgba(255,255,255,.35); stroke:#fff; stroke-width:1.4; }
+.rk-pos{ fill:#fff; stroke:var(--accent); stroke-width:3; }
+.rk-puls{ fill:rgba(255,255,255,.35); transform-box:fill-box; transform-origin:center; animation:rk-puls 1.8s ease-out infinite; }
+@keyframes rk-puls{ 0%{ transform:scale(.6); opacity:.9; } 100%{ transform:scale(3.2); opacity:0; } }
+@media (prefers-reduced-motion: reduce){ .rk-puls{ animation:none; opacity:.5; } }
+
+/* Run-Start: Strecke per Regler, gespeicherte Lauf-Workouts, lesbare Chips auf dem dunklen Glas */
+:root[data-layout="new"] .run-ziel-kopf{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+:root[data-layout="new"] .run-ziel-kopf b{ font-size:17px; color:var(--accent-ink, var(--accent)); }
+:root[data-layout="new"] .run-eigen input[type=range]{ width:100%; accent-color:var(--accent); margin:6px 0 2px; }
+:root[data-layout="new"] .run-ziel-marken{ display:flex; justify-content:space-between; font-size:11.5px; opacity:.7; }
+:root[data-layout="new"] .run-wo-sp{ width:100%; margin-top:14px; }
+:root[data-layout="new"] .run-wos{ display:flex; flex-direction:column; gap:8px; }
+:root[data-layout="new"] .run-wo{ display:flex; gap:8px; }
+:root[data-layout="new"] .run-wo-go{ flex:1; display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:16px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1); color:inherit; font:inherit; text-align:left; cursor:pointer; }
+:root[data-layout="new"] .run-wo-go svg{ width:16px; height:16px; color:var(--accent); flex:none; }
+:root[data-layout="new"] .run-wo-weg{ flex:none; width:44px; border-radius:16px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); color:inherit; font-size:20px; cursor:pointer; }
+:root[data-layout="new"] .run-bg ~ .run-ansage .theme-pick button{ background:rgba(255,255,255,.1); color:#f4f4f6; border:1px solid rgba(255,255,255,.22); }
+:root[data-layout="new"] .run-bg ~ .run-ansage .theme-pick button.active{ background:rgba(255,255,255,.92); color:#111; border-color:transparent; }
+:root[data-layout="new"] .run-bg ~ .run-ansage label{ color:rgba(255,255,255,.85); }
+:root[data-layout="new"] .run-bg ~ .run-ansage .btn-secondary{ background:rgba(255,255,255,.12); color:#f4f4f6; border:1px solid rgba(255,255,255,.22); }
+:root[data-layout="new"] .run-bg ~ .run-opt .toggle-row, :root[data-layout="new"] .run-bg ~ .run-opt label{ color:#f4f4f6; }
+:root[data-layout="new"] .run-bg ~ .run-eigen .btn-secondary{ background:rgba(255,255,255,.12); color:#f4f4f6; border:1px solid rgba(255,255,255,.22); }

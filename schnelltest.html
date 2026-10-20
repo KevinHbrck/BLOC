@@ -1050,9 +1050,8 @@
       var cbs = [], cb = function (p) { cbs.forEach(function (f) { f(p); }); };
       Object.defineProperty(W.navigator, "geolocation", { configurable: true, value: { watchPosition: function (f) { cbs.push(f); return cbs.length; }, clearWatch: function () {} } });
       klick($('.area-tile[data-nav="#run"]'));
-      var sl = await bis(function () { return $("#run-auto"); }, 3000, "Auto-Pause-Regler");
-      sl.value = "1"; sl.dispatchEvent(new W.Event("input", { bubbles: true }));
-      pruefe(daten().settings.runAuto === 5 && /5 s/.test($("#run-auto-wert").textContent), "Auto-Pause nicht auf 5 s: " + JSON.stringify(daten().settings.runAuto));
+      await bis(function () { return $("#run-iv-an"); }, 3000, "Run-Einstellungen");
+      pruefe(!$("#run-auto") && W.runAutoSek() === 5, "Auto-Pause ist fest auf 5 s und keine Einstellung mehr");
       klick($("#run-iv-an"));
       await bis(function () { return $("#run-iv-lauf"); }, 2000, "Intervall-Felder");
       pruefe(daten().settings.runIv && daten().settings.runIv.an === true, "Intervall nicht eingeschaltet");
