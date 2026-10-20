@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Fragen & Antworten: Frage 18 präzisiert (Fassung 2026-10-19-10)
+
+- Frage 18: „BLOC schlägt deshalb keine Programme nach Geschlecht vor“ (statt „trennt nicht nach Geschlecht“); nur die Kalorien-Schätzung nutzt das Geschlecht optional für den Ruheumsatz. Entwurf und `faq.js` angepasst (Deutsch und Englisch).
+
 ## 2026-10-20 · Fragen & Antworten: fünf neue Fragen, neue Gruppe „Trainingsplan & Unterschiede“ (Fassung 2026-10-19-9)
 
 - **Neu** (aus `docs/FAQ-ENTWURF.md`, Fassung 3 der Sportwissenschaft-Sitzung): Frage 14 Eiweiß, 15 wann mehr Eiweiß, 16 Pulver/Riegel (Gruppe Ernährung); neue Gruppe **Trainingsplan & Unterschiede** mit 17 Trainingsplan aufbauen (Blocklänge, Entlastungswoche, „Was folgt danach?“; Praxisaussagen sind als nicht belegt gekennzeichnet) und 18 geschlechtsspezifische Unterschiede. Quellen F29–F46 neu (F1–F28 unverändert), Liste in der App und in `quellen.html` (DE/EN).
