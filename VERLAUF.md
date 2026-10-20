@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ komplett überarbeitet: roter Faden, klare Zahlen (Fassung 2026-10-20-12)
+
+- Alle 35 Fragen neu geschrieben: Kurzantwort mit klarer Aussage, Begründung in kurzen Stichpunkten, „Studienlage“ ohne Widerspruch zur Kurzantwort. Jede Zahl hat einen Bezug (z. B. Eiweiß: 0,3 kg mehr magere Körpermasse, 2,5 kg mehr im schwersten Einzelversuch, z. B. 102,5 statt 100 kg).
+- Neue Reihenfolge: Einstieg (1–5), Was Training dir bringt (6–14), Muskeln und Technik (15–20), Ernährung (21–26), Sicherheit (27–30), Plan und Fortgeschrittene (31–35). Einheitstest 51/51.
+
 ## 2026-10-20 · FAQ: neue Frage zum Drücken und Ablassen (Fassung 2026-10-20-11)
 
 - Neue Frage 20 in „Muskeln & Technik“: Gewicht wegdrücken und wieder ablassen (Tempo, Senkphase, voller Weg, Atmen/Pressatmen, Sicherheit); Quellen F68–F70. Jetzt 35 Fragen. Einheitstest 51/51.
