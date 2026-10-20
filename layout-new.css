@@ -966,3 +966,20 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   :root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ display:block; position:absolute; top:22px; left:70px; transform:none; margin:0; font-size:18px; z-index:3; }
   :root[data-layout="new"] .bloc-quer{ display:block; position:fixed; top:24px; right:76px; z-index:5; pointer-events:none; font-family:var(--f-brand, "Helvetica Neue","Arial Black",Arial,sans-serif); font-size:20px; font-weight:900; letter-spacing:.22em; line-height:1; color:var(--accent); text-shadow:0 2px 14px rgba(0,0,0,.35); }
 }
+/* Training: leichter Schimmer auf den Fotokarten - feine helle Kante und ein weicher Lichtstreifen, der beim Öffnen einmal darüber gleitet */
+:root[data-layout="new"] .training-seite .area-tile.zeile{ box-shadow:inset 0 1px 0 rgba(255,255,255,.26), inset 0 0 0 1px rgba(255,255,255,.07); }
+:root[data-layout="new"] .training-seite .area-tile.zeile::after{
+  background:
+    linear-gradient(112deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.2) 50%, rgba(255,255,255,0) 62%),
+    linear-gradient(180deg, rgba(255,250,244,.30) 0%, rgba(255,250,244,.16) 28%, rgba(255,250,244,0) 54%);
+  background-size:260% 100%, 100% 100%; background-position:130% 0, 0 0; background-repeat:no-repeat;
+  animation:kachel-schimmer 2.4s ease-out .35s 1 both; }
+:root[data-layout="new"] .training-seite .area-tile.zeile:nth-child(2)::after{ animation-delay:.55s; }
+:root[data-layout="new"] .training-seite .area-tile.zeile:nth-child(3)::after{ animation-delay:.75s; }
+:root[data-layout="new"] .training-seite .area-tile.zeile:nth-child(4)::after{ animation-delay:.95s; }
+:root[data-layout="new"] .training-seite .area-tile.zeile:nth-child(5)::after{ animation-delay:1.15s; }
+:root[data-layout="new"] .training-seite .area-tile.zeile:nth-child(6)::after{ animation-delay:1.35s; }
+@keyframes kachel-schimmer{ from{ background-position:130% 0, 0 0; } to{ background-position:-30% 0, 0 0; } }
+@media (prefers-reduced-motion: reduce){ :root[data-layout="new"] .training-seite .area-tile.zeile::after{ animation:none; background-position:50% 0, 0 0; } }
+/* Run-Startseite: Hintergrundfoto weniger weichgezeichnet (Timer und Lauf behalten die stärkere Unschärfe) */
+:root[data-layout="new"]:has(.run-hero) .run-bg i{ filter:blur(11px) brightness(.66) saturate(1.25); }
