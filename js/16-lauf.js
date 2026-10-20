@@ -436,6 +436,24 @@ function runTempoJetzt(r){
   var a = v[0], b = v[v.length-1];
   return runTempo(r, (b.t - a.t)/1000, b.d - a.d);
 }
+/* Fahrtrichtung in Grad (0 = Norden, im Uhrzeigersinn): aus dem letzten Stück Strecke (mindestens 12 m zurück), gegen Zittern etwas geglättet; ohne Bewegung bleibt der letzte Wert */
+function runKarteKnopfHTML(){
+  var fahrt = state.db.settings.runKarte === "fahrt", txt = t(fahrt ? "runKarteFahrt" : "runKarteNord");
+  return '<button type="button" class="rk-modus" data-karte-modus aria-pressed="'+fahrt+'" aria-label="'+esc(txt)+'" title="'+esc(txt)+'">'+
+    svgIcon(fahrt ? '<path d="M12 3.5l6.5 16-6.5-4-6.5 4z"/>' : '<circle cx="12" cy="12" r="8.5"/><path d="M12 6.5l2.6 5.5H9.4z"/><path d="M12 12v5.5"/>')+'</button>';
+}
+function runKurs(r){
+  var p = r.pts || [], n = p.length;
+  if(n < 2) return r.kurs || 0;
+  var z = p[n-1];
+  for(var j = n - 2; j >= 0; j--){
+    if(runMeter(p[j], z) < 12) continue;
+    var neu = (Math.atan2((z[1] - p[j][1])*Math.cos(z[0]*Math.PI/180), z[0] - p[j][0])*180/Math.PI + 360) % 360;
+    if(r.kurs == null) r.kurs = neu; else r.kurs = (r.kurs + (((neu - r.kurs + 540) % 360) - 180)*0.5 + 360) % 360;
+    return r.kurs;
+  }
+  return r.kurs || 0;
+}
 /* Live-Karte (Aufzeichnung): selbstgezeichnete Straßenstruktur und Bäume als Kulisse (keine Kartendaten, kein Netz), darüber leuchtet die gelaufene Strecke weiß,
    der Standort pulsiert. Der Ausschnitt wächst mit der Strecke mit (mindestens 160 m breit, damit die ersten Schritte nicht riesig wirken). */
 function runLiveKarte(r){
@@ -457,7 +475,20 @@ function runLiveKarte(r){
   var svg = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'"><defs><filter id="rk-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>'+
     '<radialGradient id="rk-rand" cx="50%" cy="50%" r="60%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".55"/></radialGradient></defs>'+
     '<rect x="-200" y="-200" width="700" height="700" fill="#080b10" fill-opacity=".55"/><g class="rk-kulisse">'+kulisse+'</g><rect width="'+W+'" height="'+H+'" fill="url(#rk-rand)"/>';
+  var fahrt = state.db.settings.runKarte === "fahrt";   // Karte nach Fahrtrichtung ausgerichtet (sonst Norden oben)
   if(!pts.length) return svg+'<circle class="rk-puls" cx="150" cy="150" r="10"/><circle class="rk-pos" cx="150" cy="150" r="7"/></svg>';
+  if(fahrt){
+    /* Ausschnitt um den Standort (etwa 120 m Radius), gedreht, so dass die Fahrtrichtung nach oben zeigt; der Standort sitzt im unteren Drittel, damit man vorausschaut */
+    var kurs = runKurs(r), zp = pts[pts.length-1], rad = kurs*Math.PI/180, cs = Math.cos(rad), sn = Math.sin(rad), mx = 111320*Math.cos(zp[0]*Math.PI/180), my = 111320;
+    var sk2 = (W/2 - pad)/120, cy2 = H*0.64;
+    var fx = function(p){ var dx = (p[1] - zp[1])*mx, dy = (p[0] - zp[0])*my, x2 = dx*cs - dy*sn, y2 = dx*sn + dy*cs; return [W/2 + x2*sk2, cy2 - y2*sk2]; };
+    var plf = pts.map(function(p){ var q = fx(p); return q[0].toFixed(1)+","+q[1].toFixed(1); }).join(" "), a1 = fx(pts[0]);
+    var svgF = svg.replace('<g class="rk-kulisse">', '<g class="rk-kulisse" transform="rotate('+(-kurs).toFixed(1)+' '+(W/2)+' '+cy2.toFixed(1)+')">');
+    return svgF+(pts.length > 1 ? '<polyline class="rk-glow" points="'+plf+'" filter="url(#rk-glow)"/><polyline class="rk-weg" points="'+plf+'"/>' : '')+
+      '<circle class="rk-start" cx="'+a1[0].toFixed(1)+'" cy="'+a1[1].toFixed(1)+'" r="4.5"/>'+
+      '<circle class="rk-puls" cx="'+(W/2)+'" cy="'+cy2.toFixed(1)+'" r="10"/><path class="rk-pfeil" transform="translate('+(W/2)+' '+cy2.toFixed(1)+')" d="M0 -11L8.5 9 0 4.5-8.5 9z"/>'+
+      '<g class="rk-nord" transform="translate(30 34) rotate('+(-kurs).toFixed(1)+')"><path d="M0 -13L5 3 0 0-5 3z"/><text y="-16" text-anchor="middle">N</text></g></svg>';
+  }
   var minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
   pts.forEach(function(p){ minLa = Math.min(minLa, p[0]); maxLa = Math.max(maxLa, p[0]); minLo = Math.min(minLo, p[1]); maxLo = Math.max(maxLo, p[1]); });
   var mLa = (minLa + maxLa)/2, mLo = (minLo + maxLo)/2, kx = Math.cos(mLa*Math.PI/180);
@@ -706,7 +737,7 @@ function renderRunLive(){
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
       '<div><b id="run-pace">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t(runIstRad(r) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(r)+'</small></div>'+
       '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div>'+(layoutNeu() ? '<div><b id="run-kcal">–</b><small>kcal</small></div>' : '')+'</div>'+
-    '<div id="run-karte" class="run-karte" data-n="-1"></div>'+
+    '<div class="run-karte-wrap"><div id="run-karte" class="run-karte" data-n="-1"></div>'+runKarteKnopfHTML()+'</div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
       '<button type="button" class="btn btn-secondary run-dunkelbtn" data-rundark>'+svgIcon(ICON_MOON)+' '+esc(t("runDark"))+'</button>'+
       (!layoutNeu() && runAnsageEinst().every ? '<button type="button" class="btn btn-secondary run-stumm" data-runstumm aria-pressed="'+!!r.stumm+'">'+esc(t(r.stumm ? "runStummAus" : "runStummAn"))+'</button>' : '')+
@@ -724,6 +755,14 @@ function renderRunLive(){
   }); }
   bindCommon();   // erst nach dem Entfernen von data-back, sonst würde „Zurück“ zusätzlich die Seite verlassen
   runHalten(app.querySelector("[data-runpause]"), runPause);
+  var kw = app.querySelector(".run-karte-wrap");   // Karte: Norden oben oder Fahrtrichtung oben (antippen wechselt, bleibt gespeichert)
+  if(kw) kw.addEventListener("click", function(e){
+    var kn = e.target.closest && e.target.closest("[data-karte-modus]"); if(!kn) return;
+    var s2 = state.db.settings; s2.runKarte = s2.runKarte === "fahrt" ? "nord" : "fahrt"; save(); vibrate(10);
+    var k = document.getElementById("run-karte"); if(k) k.setAttribute("data-n", "-1");
+    kn.outerHTML = runKarteKnopfHTML();
+    runAnzeige();
+  });
   runHalten(app.querySelector("[data-rundark]"), runDunkel);
   var laut = app.querySelector("[data-runlaut]");
   if(laut) laut.addEventListener("click", function(){

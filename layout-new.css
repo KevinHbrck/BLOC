@@ -885,3 +885,10 @@ body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 @media (prefers-reduced-motion: reduce){ #app.kal-gleit-vor > *, #app.kal-gleit-zurueck > *{ animation:none; } }
 body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören dem Kalender, senkrecht scrollt die Seite */
 .kn-mitte{ flex-direction:column; gap:1px; } .kn-mitte small{ font-size:12.5px; opacity:.75; font-weight:500; }
+/* Run-Karte: Umschalter Norden oben / Fahrtrichtung oben */
+.run-karte-wrap{ position:relative; }
+.rk-modus{ position:absolute; top:16px; right:10px; z-index:2; width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.3); background:rgba(8,10,14,.6); color:#fff; display:grid; place-items:center; cursor:pointer; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+.rk-modus svg{ width:22px; height:22px; }
+.rk-pfeil{ fill:#fff; stroke:var(--accent); stroke-width:2.5; stroke-linejoin:round; }
+.rk-nord path{ fill:#ff8f6b; }
+.rk-nord text{ fill:#fff; font-size:11px; font-weight:800; }
