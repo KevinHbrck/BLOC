@@ -374,7 +374,7 @@ function runHeroRechtsHTML(runs, rad){
   var sum = runs.reduce(function(a, x){ return a + runKcal(x.dist, x.dur/1000, runIstRad(x)); }, 0);
   return '<div class="rh-sub rh-kcal"><b>≈ '+esc(sum.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"))+'</b><small>'+esc(t("runKcalGesamt"))+SEP+esc(t(rad ? "runFahrtenKurz" : "runLaeufeKurz", { n:runs.length }))+'</small></div>';
 }
-var runKlapp = { eigen:false, iv:false, ans:false };   // welche Karten auf der Run-Seite aufgeklappt sind
+var runKlapp = { eigen:false, iv:false, ans:false, verlauf:true };   // welche Karten auf der Run-Seite aufgeklappt sind
 function runOptionenHTML(){
   var iv = runIvEinst(), rad = runArt() === "rad";
   if(rad) return "";   // auf dem Rad gibt es nichts einzustellen (Laufen und Gehen im Wechsel gibt es nur zu Fuß)
@@ -471,19 +471,13 @@ function runLiveKarte(r){
   var kulisse = '', winkel = (zuf(1)*50 - 25)*Math.PI/180, c = Math.cos(winkel), s = Math.sin(winkel);
   function lin(x1, y1, x2, y2, kl){ return '<path class="'+kl+'" d="M'+x1.toFixed(1)+' '+y1.toFixed(1)+'L'+x2.toFixed(1)+' '+y2.toFixed(1)+'"/>'; }
   function dreh(x, y){ var dx = x - W/2, dy = y - H/2; return [W/2 + dx*c - dy*s, H/2 + dx*s + dy*c]; }
-  for(i = -3; i <= 3; i++){   // zwei Scharen Straßen, leicht gedreht, mit unregelmäßigen Abständen
-    var a = dreh(-200, H/2 + i*58 + (zuf(10 + i) - .5)*26), b = dreh(500, H/2 + i*58 + (zuf(10 + i) - .5)*26);
-    kulisse += lin(a[0], a[1], b[0], b[1], i % 2 ? "rk-neben" : "rk-str");
-    var a2 = dreh(W/2 + i*64 + (zuf(30 + i) - .5)*30, -200), b2 = dreh(W/2 + i*64 + (zuf(30 + i) - .5)*30, 500);
-    kulisse += lin(a2[0], a2[1], b2[0], b2[1], i % 2 ? "rk-str" : "rk-neben");
-  }
   for(i = 0; i < 6; i++){   // Bäume: kleine Kronen mit Stamm
     var tx = 24 + zuf(50 + i)*(W - 48), ty = 30 + zuf(70 + i)*(H - 60);
     kulisse += '<g class="rk-baum"><circle cx="'+tx.toFixed(1)+'" cy="'+(ty - 8).toFixed(1)+'" r="8"/><path d="M'+tx.toFixed(1)+' '+(ty).toFixed(1)+'v10"/></g>';
   }
   var svg = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'"><defs><filter id="rk-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>'+
     '<radialGradient id="rk-rand" cx="50%" cy="50%" r="60%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".55"/></radialGradient></defs>'+
-    '<rect x="-200" y="-200" width="700" height="700" fill="#080b10" fill-opacity=".55"/><g class="rk-kulisse">'+kulisse+'</g><rect width="'+W+'" height="'+H+'" fill="url(#rk-rand)"/>';
+    '<g class="rk-kulisse">'+kulisse+'</g>';   // ohne Raster, ohne dunklen Block: nur Bäume hinter der Strecke
   var fahrt = state.db.settings.runKarte === "fahrt";   // Karte nach Fahrtrichtung ausgerichtet (sonst Norden oben)
   if(!pts.length) return svg+'<circle class="rk-puls" cx="150" cy="150" r="10"/><circle class="rk-pos" cx="150" cy="150" r="7"/></svg>';
   if(fahrt){
@@ -659,13 +653,13 @@ function renderRun(){
         '<button type="button" data-runart="rad" class="'+(art === "rad" ? "active" : "")+'">'+esc(t("runArtRad"))+'</button></div>'+
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t(art === "rad" ? "runStartRad" : "runStart"))+'</button></div>'+
     (layoutNeu() ? runEigenerLaufHTML() : "")+runOptionenHTML()+runAnsageHTML()+
-    '<div class="section-title">'+esc(t("runVerlauf"))+'</div>'+   // der Verlauf steht unten, unter den Einstellungen
+    '<details class="run-klapp run-verlauf" data-k="verlauf"'+(runKlapp.verlauf ? ' open' : '')+'><summary class="section-title"><span>'+esc(t("runVerlauf"))+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+   // der Verlauf steht unten, einklappbar
     (runs.length ? runs.map(function(x){
       var d = new Date(x.at);
       return '<div class="list-item entry run-item" data-nav="#rundetail/'+x.id+'"><div class="meta"><div class="name">'+esc(runKm(x.dist))+' km'+(runIstRad(x) ? '<span class="run-name"> · '+esc(t("runArtRad"))+'</span>' : '')+(x.name ? '<span class="run-name"> · '+esc(x.name)+'</span>' : '')+'</div>'+
         '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+'</div></div>'+
         '<div class="card-aside"><div class="card-acts">'+trashBtn("run", x.id, runKm(x.dist)+" km")+'</div></div></div>';
-    }).join("") : '<div class="empty" style="padding:24px 20px;">'+esc(t("runNone"))+'</div>')+
+    }).join("") : '<div class="empty" style="padding:24px 20px;">'+esc(t("runNone"))+'</div>')+'</details>'+
     '<div class="page-hint">'+esc(t("runBetaHint"))+'</div>'+
     '<div style="height:40px"></div>';
   bindCommon();

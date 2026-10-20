@@ -208,9 +208,9 @@
     var zwei = W.kkGrpToggle(W.kkGrpToggle([], "brust"), "beine");
     gleich(W.kkGrpAn(zwei, "brust") && W.kkGrpAn(zwei, "beine"), true, "mehrere Gruppen zugleich");
   });
-  test("Timer: Zirkel × Runden × Übungen ergeben die Gesamtzeit", function () {
-    gleich(W.timerPlusSekunden({ zn: 1, zp: 60, rn: 3, rp: 30, en: 5, ew: 30, ep: 10 }), 3*(5*30 + 4*10) + 2*30, "ein Zirkel, drei Runden à fünf Übungen");
-    gleich(W.timerPlusSekunden({ zn: 2, zp: 60, rn: 1, rp: 0, en: 2, ew: 20, ep: 0 }), 2*40 + 60, "zwei Zirkel mit Pause dazwischen");
+  test("Timer: Sätze × Runden ergeben die Gesamtzeit", function () {
+    gleich(W.timerPlusSekunden({ rn: 3, rp: 30, en: 5, ew: 30, ep: 10 }), 3*(5*30 + 4*10) + 2*30, "drei Runden à fünf Sätze");
+    gleich(W.timerPlusSekunden({ rn: 1, rp: 0, en: 2, ew: 20, ep: 0 }), 40, "eine Runde, zwei Sätze ohne Pause");
   });
   test("Run: Pace-Vorgabe sagt nach jedem Kilometer, wie weit man vom Ziel liegt", function () {
     gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "lauf", splits: [342000] }, 1), "12 Sekunden zu langsam.", "zu langsam");

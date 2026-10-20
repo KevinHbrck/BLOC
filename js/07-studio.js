@@ -212,27 +212,22 @@ function renderStudio(){ return renderKatalog(); }
 /* ============ Timer ============
    Blöcke und Timer-Workouts haben eine eigene Seite (renderIntervall, Schnellwahl auf der Startseite); die Liste baut timerPanelHTML. */
 /* ============ Neuer Timer (das einzige Plus auf der Timer-Seite) ============
-   Drei Stufen wie bei einem Zirkeltraining: Zirkel (Anzahl, Pause danach) › Runden (Anzahl, Pause danach) › Übungen (Anzahl, Zeit, Pause dazwischen).
-   Daraus entsteht ein Timer-Workout aus einfachen Blöcken „Übung 1 … n“, das sich wie jedes andere abspielen und im Editor ändern lässt. */
+   Zwei Stufen: Sätze (Anzahl, Zeit, Pause dazwischen) in Runden (Anzahl, Pause danach); der Zirkel ist entfallen.
+   Daraus entsteht ein Timer-Workout aus einem Block mit den Sätzen, das sich wie jedes andere abspielen und im Editor ändern lässt. */
 function timerPlusWerte(){
   var p = state.db.settings.timerPlus || {};
   function z(v, std, min, max){ v = parseInt(v); return clamp(isNaN(v) ? std : v, min, max); }
-  return { zn:z(p.zn, 1, 1, 10), zp:z(p.zp, 60, 0, 600), rn:z(p.rn, 3, 1, 20), rp:z(p.rp, 30, 0, 600), en:z(p.en, 5, 1, 30), ew:z(p.ew, 30, 5, 600), ep:z(p.ep, 10, 0, 300) };
+  return { zn:1, zp:0, rn:z(p.rn, 3, 1, 20), rp:z(p.rp, 30, 0, 600), en:z(p.en, 6, 1, 30), ew:z(p.ew, 30, 5, 600), ep:z(p.ep, 10, 0, 300) };   // Zirkel gibt es nicht mehr: Sätze (en, ew, ep) und Runden (rn, rp)
 }
 function timerPlusSekunden(p){
-  var runde = p.en*p.ew + (p.en - 1)*p.ep, zirkel = p.rn*runde + (p.rn - 1)*p.rp;
-  return p.zn*zirkel + (p.zn - 1)*p.zp;
+  var runde = p.en*p.ew + (p.en - 1)*p.ep;   // ein Durchgang aller Sätze
+  return p.rn*runde + (p.rn - 1)*p.rp;
 }
 function timerPlusBauen(p){
-  var bl = [], items = [], e, r, c, now = Date.now();
-  for(e = 1; e <= p.en; e++){
-    var b = { id:uid(), name:t("timerUebung", { n:e }), reps:1, workSec:p.ew, restSec:0, updatedAt:now };
-    bl.push(b); state.db.blocks.push(b);
-  }
-  for(c = 1; c <= p.zn; c++) for(r = 1; r <= p.rn; r++) for(e = 1; e <= p.en; e++){
-    var danach = e < p.en ? p.ep : r < p.rn ? p.rp : c < p.zn ? p.zp : 0;   // Pause nach der Übung, nach der Runde, nach dem Zirkel
-    items.push({ blockId:bl[e-1].id, restAfterSec:danach });
-  }
+  var now = Date.now(), items = [], r;
+  var b = { id:uid(), name:t("timerSatzBlock", { s:p.ew }), reps:p.en, workSec:p.ew, restSec:p.ep, updatedAt:now };   // die Sätze: oben im Timer die Runden (Kreise), unten die Sätze (Kästchen)
+  state.db.blocks.push(b);
+  for(r = 1; r <= p.rn; r++) items.push({ blockId:b.id, restAfterSec:r < p.rn ? p.rp : 0 });
   var w = { id:uid(), name:t("timerAuto", { m:Math.max(1, Math.round(timerPlusSekunden(p)/60)) }), items:items, updatedAt:now };
   state.db.workouts.push(w); save();
   return w;
@@ -242,16 +237,15 @@ function openTimerPlus(){
   function zeile(label, id, v, min, max, schritt){ return '<div class="tp-zeile"><label for="'+id+'">'+esc(label)+'</label>'+stepperHTML(id, v, min, max, schritt)+'</div>'; }
   function gruppe(nr, titel, sub, zeilen){ return '<div class="tp-gruppe"><div class="tp-kopf"><i>'+nr+'</i><span><b>'+esc(titel)+'</b><small>'+esc(sub)+'</small></span></div>'+zeilen+'</div>'; }
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tp-sheet" role="dialog" aria-label="'+esc(t("fabTimer"))+'"><h3>'+esc(t("fabTimer"))+'</h3>'+
-    gruppe(1, t("timerZirkel"), t("timerZirkelSub"), zeile(t("timerAnzahl"), "tp-zn", p.zn, 1, 10, 1)+zeile(t("timerPauseS"), "tp-zp", p.zp, 0, 600, 5))+
+    gruppe(1, t("timerUebungen"), t("timerUebungenSub"), zeile(t("timerAnzahl"), "tp-en", p.en, 1, 30, 1)+zeile(t("timerZeitS"), "tp-ew", p.ew, 5, 600, 5)+zeile(t("timerPauseS"), "tp-ep", p.ep, 0, 300, 5))+
     gruppe(2, t("timerRunden"), t("timerRundenSub"), zeile(t("timerAnzahl"), "tp-rn", p.rn, 1, 20, 1)+zeile(t("timerPauseS"), "tp-rp", p.rp, 0, 600, 5))+
-    gruppe(3, t("timerUebungen"), t("timerUebungenSub"), zeile(t("timerAnzahl"), "tp-en", p.en, 1, 30, 1)+zeile(t("timerZeitS"), "tp-ew", p.ew, 5, 600, 5)+zeile(t("timerPauseS"), "tp-ep", p.ep, 0, 300, 5))+
     '<div class="tp-summe" id="tp-summe"></div>'+
     '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button><button class="btn btn-primary" data-tpok>'+esc(t("create"))+'</button></div></div></div>';
   function lesen(){
-    var q = {}; ["zn", "zp", "rn", "rp", "en", "ew", "ep"].forEach(function(k){ q[k] = root.querySelector("#tp-"+k).value; });
+    var q = {}; ["rn", "rp", "en", "ew", "ep"].forEach(function(k){ q[k] = root.querySelector("#tp-"+k).value; });
     state.db.settings.timerPlus = q; p = timerPlusWerte(); return p;
   }
-  function summe(){ var q = lesen(); root.querySelector("#tp-summe").textContent = t("timerGesamt", { d:fmtDuration(timerPlusSekunden(q)), n:q.zn*q.rn*q.en }); }
+  function summe(){ var q = lesen(); root.querySelector("#tp-summe").textContent = t("timerGesamt", { d:fmtDuration(timerPlusSekunden(q)), n:q.rn*q.en }); }
   bindSteppers(root, summe); root.querySelectorAll(".stepper input").forEach(function(i){ i.addEventListener("input", summe); });
   summe();
   function zu(){ root.innerHTML = ""; }

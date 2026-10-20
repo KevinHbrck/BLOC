@@ -23,6 +23,13 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · Fenster undurchsichtig, Timer mit Sätzen und Runden, Startseite ohne Scrollen, Karte ohne Raster (Fassung 2026-10-20-63)
+
+- Fenster und Menüs über den Glas-Seiten (Timer-Plus, Bestätigungen, Plus-Menü) sind wieder undurchsichtig.
+- Timer-Plus: „Sätze“ (Anzahl, Zeit, Pause) stehen oben, dann „Runden“; der Zirkel entfällt. Im Timer zeigen oben Kreise die Runden, unten Kästchen die Sätze.
+- Heute passt ohne Scrollen auf den Bildschirm (Hell und Dunkel): kleinerer Kopf, kleinere Favoriten-Karten, kürzerer Workout-Builder.
+- Run: Karte ohne Straßenraster und ohne dunklen Block, nur die Bäume bleiben; Verlauf einklappbar. Der Intervall-Lauf gilt bei „Lauf starten“ und „Eigener Lauf“ gleichermaßen (beide laufen über denselben Start).
+
 ## 2026-10-20 · Fachprüfung zweiter Teil eingearbeitet (Fassung 2026-10-20-59)
 
 - 87 neue Übungen (Drehcrunch mit Cross-Body-Crunch und Obergriff-Trizepsdrücken mit dem vorhandenen Pushdown zusammengelegt). Kabel-Positionen, Sicherheit (Judo Flip, Blick-nach-oben-Dehnung, Ab Wheel, Clean, JM Press, Battle Ropes), Pausen und Zeiten angepasst.
