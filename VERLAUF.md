@@ -49,6 +49,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Hell: Fotos auf Training und bei den Favoriten klarer (Fassung 2026-10-20-25)
+
+- Im hellen Design lag über den Fotos der Bereichskarten (Training) und der Favoriten ein sehr dichter heller Schleier, der sie verwaschen wirken ließ. Der Verlauf beginnt jetzt tiefer und ist schwächer (unten etwa 0,86 statt 0,94 Deckkraft); die dunkle Schrift bekommt einen hellen Hof, damit sie lesbar bleibt.
+
 ## 2026-10-20 · Run-Karte: Norden oben oder Fahrtrichtung oben (Fassung 2026-10-20-24)
 
 - Auf der Live-Karte schaltet der Knopf oben rechts zwischen **Norden oben** (ganze Strecke im Bild) und **Fahrtrichtung oben** (Ausschnitt um den Standort, etwa 120 m Radius, gedreht; Pfeil im unteren Drittel, kleiner Nordpfeil oben links). Die Richtung kommt aus den letzten gelaufenen Metern (`runKurs`, mindestens 12 m, geglättet); die Wahl bleibt gespeichert (`settings.runKarte`).

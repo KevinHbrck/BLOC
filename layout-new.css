@@ -387,8 +387,8 @@
 
 /* ---------- Hell (2026-10-16): Karten auf Training und Favoriten als helle Karte - Foto oben, unten warm-heller Verlauf, dunkle Schrift;
    dazu helle Fotos aus FOTO_POOL_HELL (js/03-router.js). Baukasten und Titelbilder bleiben unveraendert. "System" hat kein data-theme,
-   deshalb steht jede Regel zweimal (data-theme="light" und prefers-color-scheme). Dazu Lesbarkeit im Heute-Kopf. ---------- */:root[data-layout="new"][data-theme="light"] .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 18%, rgba(255,250,244,.80) 64%, rgba(255,250,244,.94) 100%); }
-:root[data-layout="new"][data-theme="light"] .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 16%, rgba(255,250,244,.88) 56%, rgba(255,250,244,.96) 100%); }
+   deshalb steht jede Regel zweimal (data-theme="light" und prefers-color-scheme). Dazu Lesbarkeit im Heute-Kopf. ---------- */:root[data-layout="new"][data-theme="light"] .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 30%, rgba(255,250,244,.62) 68%, rgba(255,250,244,.86) 100%); }
+:root[data-layout="new"][data-theme="light"] .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 30%, rgba(255,250,244,.6) 66%, rgba(255,250,244,.88) 100%); }
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-name, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-chev, :root[data-layout="new"][data-theme="light"] .ff-name{ color:var(--text); }
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-sub, :root[data-layout="new"][data-theme="light"] .ff-bereich, :root[data-layout="new"][data-theme="light"] .ff-sub{ color:var(--text-dim); }
 :root[data-layout="new"][data-theme="light"] .ff-stern{ color:#c98200; }
@@ -399,8 +399,8 @@
 :root[data-layout="new"][data-theme="light"] .kn-sym .iconbtn{ background:rgba(255,255,255,.66); color:var(--text); border-color:rgba(0,0,0,.1); }
 :root[data-layout="new"][data-theme="light"] .kn-gruss span, :root[data-layout="new"][data-theme="light"] .kn-gruss b{ text-shadow:0 0 10px rgba(255,255,255,.95), 0 0 3px rgba(255,255,255,.85); }
 @media (prefers-color-scheme: light){
-  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 18%, rgba(255,250,244,.80) 64%, rgba(255,250,244,.94) 100%); }
-  :root[data-layout="new"]:not([data-theme]) .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 16%, rgba(255,250,244,.88) 56%, rgba(255,250,244,.96) 100%); }
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 30%, rgba(255,250,244,.62) 68%, rgba(255,250,244,.86) 100%); }
+  :root[data-layout="new"]:not([data-theme]) .fav-foto::before{ background:linear-gradient(180deg, rgba(255,250,244,0) 30%, rgba(255,250,244,.6) 66%, rgba(255,250,244,.88) 100%); }
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-name, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-chev, :root[data-layout="new"]:not([data-theme]) .ff-name{ color:var(--text); }
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub, :root[data-layout="new"]:not([data-theme]) .ff-bereich, :root[data-layout="new"]:not([data-theme]) .ff-sub{ color:var(--text-dim); }
   :root[data-layout="new"]:not([data-theme]) .ff-stern{ color:#c98200; }
@@ -892,3 +892,10 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .rk-pfeil{ fill:#fff; stroke:var(--accent); stroke-width:2.5; stroke-linejoin:round; }
 .rk-nord path{ fill:#ff8f6b; }
 .rk-nord text{ fill:#fff; font-size:11px; font-weight:800; }
+/* Hell: dunkle Schrift auf den (jetzt klareren) Fotos bekommt einen hellen Hof, damit sie lesbar bleibt */
+:root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-name, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-sub,
+:root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-name, :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-sub, :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-bereich{ text-shadow:0 0 8px rgba(255,250,244,.95), 0 0 2px rgba(255,250,244,.9); }
+@media (prefers-color-scheme: light){
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-name, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub,
+  :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-name, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-sub, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-bereich{ text-shadow:0 0 8px rgba(255,250,244,.95), 0 0 2px rgba(255,250,244,.9); }
+}
