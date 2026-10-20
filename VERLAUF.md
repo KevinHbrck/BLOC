@@ -16,6 +16,15 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · Glas-Optik auf Run, Dauer-Regler, Schleier oben, Quer-Logo, Ukraine-Flagge in Kacheln (Fassung 2026-10-20-45)
+
+- Überrasch mich: Dauer als Schieberegler (10-60 Min, 5er-Schritte).
+- Training und Favoriten: leichter Schleier nur in der oberen Hälfte der Karten, die Schrift unten bleibt frei; Fotos bleiben scharf.
+- Hell: Kopf auf Heute testweise mit dem Sportplatz am Meer (pexels-14207194, neu-kopf-hell-meer.jpg).
+- Run: Karten, Kacheln und Knöpfe wieder als Glas (halbtransparent, Blur); in jedem Modus hell auf dunklem Glas.
+- Querformat: BLOC-Zeichen im Timer und auf den Run-Seiten (Countdown und Lauf) sichtbar.
+- Ukraine Twist: Flagge auch hinter der Figur in den Kacheln (Suche, Katalog); „Russian Twist“ findet ihn weiter.
+
 ## 2026-10-20 · Zwei Fotos mit Frauen (Fassung 2026-10-20-38)
 
 - Zwei Pexels-Fotos (Rückansicht am Kabelzug, Kniebeuge von hinten) in den Bildauswahlen für Workout, Beine und Rücken; Quellen in BilderBlocuellen\-Frauenbilder\.txt\.\

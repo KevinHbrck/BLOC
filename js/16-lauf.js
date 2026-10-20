@@ -568,7 +568,7 @@ function runDunkelWeg(){ var d = document.getElementById("run-dunkel"); if(d) d.
 function renderRunVor(){
   var v = runVor;
   app.innerHTML =
-    (layoutNeu() ? runHintergrundHTML() : '') +
+    (layoutNeu() ? runHintergrundHTML() + '<div class="bloc-quer" aria-hidden="true">BLOC</div>' : '') +
     topbar(t("runTitle"), { back:"#home" }) +
     (layoutNeu() ? '<div class="run-weiss">' : '') +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runVorTitel"))+'</div><div id="run-vor" class="rg-zeit rg-vor">'+Math.max(1, Math.ceil((v.ende - Date.now())/1000))+'</div></div>'+
@@ -741,7 +741,7 @@ function renderRun(){
 function renderRunLive(){
   var r = run;
   app.innerHTML =
-    (layoutNeu() ? runHintergrundHTML() : '') +
+    (layoutNeu() ? runHintergrundHTML() + '<div class="bloc-quer" aria-hidden="true">BLOC</div>' : '') +
     topbar(t("runTitle"), { back:"#home", right:(layoutNeu() && runAnsageEinst().every ? '<button type="button" class="iconbtn run-laut' + (r.stumm ? ' aus' : '') + '" data-runlaut aria-pressed="' + !!r.stumm + '" aria-label="' + esc(t(r.stumm ? "runStummAus" : "runStummAn")) + '">' + ICON_VOLUME + '</button>' : '') }) +
     (layoutNeu() ? '<div class="run-weiss">' : '') +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+(r.ziel && r.ziel.km > 0 ? '<div class="run-ziel">'+esc(t("runZielKm", { km:runKm(r.ziel.km*1000) }))+'</div>' : '')+'</div>'+

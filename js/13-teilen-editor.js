@@ -845,8 +845,7 @@ function openSurprise(twId, modusStart){
     return (tw ? '<div class="tm-hint" style="margin-top:0">'+esc(t("spFillHint", { n:tw.name || t("untitled") }))+'</div>'+
             '<label>'+t("spCount")+'</label><div class="sp-chips">'+[4,6,8,10,12,15].map(function(v){
         return '<button type="button" class="fc-chip'+(p.anzahl===v?' on':'')+'" data-spanz="'+v+'">'+v+' '+t("spCountUnit")+'</button>'; }).join("")+'</div>'
-          : '<label>'+t("spDur")+'</label><div class="sp-chips">'+[10,15,20,30,45,60].map(function(v){
-        return '<button type="button" class="fc-chip'+(p.dur===v?' on':'')+'" data-spdur="'+v+'">'+v+' Min</button>'; }).join("")+'</div>')+
+          : '<div class="sp-dur"><div class="sp-dur-kopf"><label>'+t("spDur")+'</label><b id="sp-dur-wert">'+p.dur+' Min</b></div><input type="range" id="sp-dur" min="10" max="60" step="5" value="'+p.dur+'" aria-label="'+esc(t("spDur"))+'"><div class="run-ziel-marken" aria-hidden="true"><span>10</span><span>30</span><span>60 Min</span></div></div>')+
       kkMuskelHTML("data-spzone", "data-spgrp", p.zonen, { glow:p.cats.indexOf("cardio") > -1,
         extra:filterChip("data-spcat", "cardio", p.cats.indexOf("cardio") > -1, catIcon("cardio"), t("katCardio")) })+
       (katOrt() === "studio" ? '' : '<label>'+t("equipHave")+'</label><div class="sp-chips">'+EQUIPS.filter(function(e){ return e.id !== "gym"; }).map(function(e){
@@ -892,6 +891,8 @@ function openSurprise(twId, modusStart){
     on("[data-spmodus]", function(b){ modus = b.getAttribute("data-spmodus"); });
     on("[data-spmore]", function(){ spFeinOffen = !spFeinOffen; spFeinZeigen = spFeinOffen; });
     on("[data-spdur]", function(b){ p.dur = parseInt(b.getAttribute("data-spdur")); });
+    var sd = root.querySelector("#sp-dur");   // Dauer als Schieberegler: nur die Zahl mitlaufen lassen, nichts neu zeichnen
+    if(sd) sd.addEventListener("input", function(){ p.dur = parseInt(sd.value); root.querySelector("#sp-dur-wert").textContent = p.dur + " Min"; });
     on("[data-spanz]", function(b){ p.anzahl = parseInt(b.getAttribute("data-spanz")); });
     on("[data-spgrp]", function(b){ p.zonen = kkGrpToggle(p.zonen, b.getAttribute("data-spgrp")); });
     on("[data-spzone]", function(b){ p.zonen = selToggle(kkNorm(p.zonen), b.getAttribute("data-spzone")); });

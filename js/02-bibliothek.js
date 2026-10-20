@@ -377,7 +377,7 @@ function suchPasst(text, q){
    o: { bild (Figur-ID), name, attr, q, cat, nr, innen (im Bild), unter (unter dem Namen), klasse } */
 function uebKachel(o){
   var gewaehlt = o.nr && o.nr.length;
-  return '<div class="fig-karte wb-kachel'+(gewaehlt ? ' gewaehlt' : '')+(o.klasse ? ' '+o.klasse : '')+'" role="button" tabindex="0" '+o.attr+
+  return '<div class="fig-karte wb-kachel'+(gewaehlt ? ' gewaehlt' : '')+(o.klasse ? ' '+o.klasse : '')+(o.bild === "russian-twists" ? ' ua-kachel' : '')+'" role="button" tabindex="0" '+o.attr+
       (o.q ? ' data-q="'+esc(o.q)+'"' : '')+' style="--cat:'+(o.cat || 'var(--accent)')+'"'+(o.nr ? ' aria-pressed="'+!!gewaehlt+'"' : '')+'>'+
     '<span class="fig-bild">'+(ILLU[o.bild] ? illuHTML(o.bild, "fig-illu") : '<span class="st-ohne">'+(o.ico || svgIcon(EQUIP_ICON.none))+'</span>')+
       (gewaehlt ? '<span class="wb-nr">'+o.nr.join("·")+'</span>' : '')+(o.innen || '')+'</span>'+

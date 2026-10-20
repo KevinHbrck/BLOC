@@ -366,7 +366,7 @@
 /* Heute, Kopf im hellen Modus (Hell oder System bei hellem Gerät): helles Foto statt des dunklen Studios, Schrift dunkel, Verlauf nach unten in die helle Fläche.
    Zwei gleiche Regelsätze, weil „System“ kein data-theme setzt und nur per prefers-color-scheme erkannt wird. */
 :root[data-layout="new"] .kn-hell{ display:none; }
-:root[data-layout="new"][data-theme="light"] .kn-hell{ display:block; object-position:50% 25%; }
+:root[data-layout="new"][data-theme="light"] .kn-hell{ display:block; object-position:50% 76%; }
 :root[data-layout="new"][data-theme="light"] .kn-bild:not(.kn-hell){ display:none; }
 :root[data-layout="new"][data-theme="light"] .kopf-neu{ color:var(--text); }
 :root[data-layout="new"][data-theme="light"] .kn-tint{ background:linear-gradient(to top left, rgba(255,90,54,.30) 0%, rgba(255,90,54,0) 52%); }
@@ -375,7 +375,7 @@
 :root[data-layout="new"][data-theme="light"] .marke-neu small,
 :root[data-layout="new"][data-theme="light"] .kn-gruss span{ color:var(--text); opacity:.78; }
 @media (prefers-color-scheme: light){
-  :root[data-layout="new"]:not([data-theme]) .kn-hell{ display:block; object-position:50% 25%; }
+  :root[data-layout="new"]:not([data-theme]) .kn-hell{ display:block; object-position:50% 76%; }
   :root[data-layout="new"]:not([data-theme]) .kn-bild:not(.kn-hell){ display:none; }
   :root[data-layout="new"]:not([data-theme]) .kopf-neu{ color:var(--text); }
   :root[data-layout="new"]:not([data-theme]) .kn-tint{ background:linear-gradient(to top left, rgba(255,90,54,.30) 0%, rgba(255,90,54,0) 52%); }
@@ -853,27 +853,27 @@ body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 
 /* Run während des Laufens: guter Kontrast auf jedem Foto und in jedem Design - dunkle Abdeckung, dunkles Glas, helle Schrift */
 :root[data-layout="new"]:has(.run-weiss) .run-bg::after{ background:linear-gradient(180deg, rgba(6,8,12,.62), rgba(6,8,12,.5) 50%, rgba(6,8,12,.72)) !important; }
-:root[data-layout="new"] .run-weiss .run-raster > div{ background:rgba(8,10,14,.5); border-color:rgba(255,255,255,.22); }
+:root[data-layout="new"] .run-weiss .run-raster > div{ background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.22); }
 :root[data-layout="new"] .run-weiss .run-raster small, :root[data-layout="new"] .run-weiss .rg-label{ color:rgba(255,255,255,.88); }
 :root[data-layout="new"] .run-weiss .run-ziel, :root[data-layout="new"] .run-weiss .run-gps{ color:#fff; text-shadow:0 1px 8px rgba(0,0,0,.6); }
 :root[data-layout="new"] .run-weiss .run-gps{ background:rgba(8,10,14,.55); border:1px solid rgba(255,255,255,.2); }
 :root[data-layout="new"] .run-weiss .run-iv{ background:rgba(8,10,14,.55); color:#fff; border:1px solid rgba(255,255,255,.28); }
 :root[data-layout="new"] .run-weiss .run-iv.lauf{ background:var(--accent); color:#fff; border-color:transparent; }
-:root[data-layout="new"] .run-weiss .run-karte{ background:rgba(8,10,14,.5); border-color:rgba(255,255,255,.22); }
-:root[data-layout="new"] .run-weiss .btn-secondary{ background:rgba(8,10,14,.5); color:#fff; border-color:rgba(255,255,255,.3); }
-:root[data-layout="new"] .run-weiss .btn-danger{ background:rgba(8,10,14,.5); color:#ffb4a8; border-color:rgba(255,160,145,.7); }
+:root[data-layout="new"] .run-weiss .run-karte{ background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.22); }
+:root[data-layout="new"] .run-weiss .btn-secondary{ background:rgba(255,255,255,.13); color:#fff; border-color:rgba(255,255,255,.3); }
+:root[data-layout="new"] .run-weiss .btn-danger{ background:rgba(255,255,255,.13); color:#ffb4a8; border-color:rgba(255,160,145,.7); }
 :root[data-layout="new"] .run-weiss .rg-zeit{ text-shadow:0 2px 22px rgba(0,0,0,.6); }
 .rk-kulisse .rk-str{ stroke:rgba(255,255,255,.4); }
 .rk-kulisse .rk-neben{ stroke:rgba(255,255,255,.28); }
 /* Run-Aufnahme im hellen Design: Titel und Zurück-Knopf in heller Schrift auf dem dunklen Foto */
 :root[data-layout="new"]:has(.run-weiss) .topbar h1, :root[data-layout="new"]:has(.run-weiss) .topbar .ttl{ color:#fff; text-shadow:0 1px 10px rgba(0,0,0,.5); }
-:root[data-layout="new"]:has(.run-weiss) .topbar .iconbtn{ background:rgba(8,10,14,.5); color:#fff; border:1px solid rgba(255,255,255,.28); }
+:root[data-layout="new"]:has(.run-weiss) .topbar .iconbtn{ background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.28); }
 /* Run: derselbe geblurrte, dunkle Hintergrund wie beim Timer - in jedem Design (auch Hell); Überschriften und Hinweise darauf hell */
 :root[data-layout="new"] .run-bg::after{ background:linear-gradient(180deg, rgba(8,10,14,.5), rgba(8,10,14,.34) 45%, rgba(8,10,14,.6)) !important; }
 :root[data-layout="new"] .run-bg ~ .section-title, :root[data-layout="new"] .run-bg ~ .page-hint, :root[data-layout="new"] .run-bg ~ .empty{ color:rgba(255,255,255,.9) !important; }
 :root[data-layout="new"] .run-bg ~ .kopf-bereich .kb-text h1, :root[data-layout="new"] .run-bg ~ .kopf-bereich .kb-kicker{ color:#fff !important; text-shadow:0 1px 10px rgba(0,0,0,.5); }
-:root[data-layout="new"] .run-bg ~ .kopf-bereich .kb-rund{ background:rgba(8,10,14,.5); color:#fff; border:1px solid rgba(255,255,255,.28); }
-:root[data-layout="new"] .run-bg ~ .run-hero .rh-km, :root[data-layout="new"] .run-bg ~ .run-hero .rh-sub, :root[data-layout="new"] .run-bg ~ .run-hero .run-art{ background:rgba(8,10,14,.5) !important; color:#fff !important; border:1px solid rgba(255,255,255,.25) !important; }
+:root[data-layout="new"] .run-bg ~ .kopf-bereich .kb-rund{ background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.28); }
+:root[data-layout="new"] .run-bg ~ .run-hero .rh-km, :root[data-layout="new"] .run-bg ~ .run-hero .rh-sub, :root[data-layout="new"] .run-bg ~ .run-hero .run-art{ background:rgba(255,255,255,.13) !important; color:#fff !important; border:1px solid rgba(255,255,255,.25) !important; }
 :root[data-layout="new"] .run-bg ~ .run-hero .rh-km small, :root[data-layout="new"] .run-bg ~ .run-hero .rh-sub{ color:rgba(255,255,255,.9) !important; }
 :root[data-layout="new"] .run-bg ~ .run-hero .run-art button{ color:#fff !important; }
 :root[data-layout="new"] .run-bg ~ .run-hero .run-art button.active{ background:#fff !important; color:#101214 !important; }
@@ -930,4 +930,39 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-name, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-name, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-sub, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-bereich{ text-shadow:0 1px 6px rgba(0,0,0,.55); }
   :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-stern{ color:#f0a020; }
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="intervall"] .at-ico, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="reps"] .at-ico, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(255,255,255,.16); color:#fff; }
+}
+/* Ukraine Twist: die wehende Flagge liegt auch hinter der Figur in den Kacheln (Suche, Katalog, Air); ein heller Hauch hält die Figur lesbar */
+.fig-karte.ua-kachel .fig-bild{ background:linear-gradient(rgba(255,255,255,.22), rgba(255,255,255,.22)), var(--ua-flag) center / cover no-repeat !important; border-radius:inherit; }
+.fig-karte.ua-kachel .fig-name{ font-weight:700; }
+/* Überrasch mich: Dauer als Schieberegler */
+.sp-dur{ margin:2px 0 6px; }
+.sp-dur-kopf{ display:flex; align-items:baseline; justify-content:space-between; }
+.sp-dur-kopf b{ color:var(--accent); font-size:15px; }
+.sp-dur input[type=range]{ width:100%; margin:6px 0 2px; accent-color:var(--accent); }
+.sp-dur .run-ziel-marken{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-dim); }
+/* Leichter Schleier nur in der oberen Hälfte der Fotokarten (Training, Favoriten): die Schrift unten bleibt unberührt, das Foto bleibt scharf */
+:root[data-layout="new"] .training-seite .area-tile.zeile::after, :root[data-layout="new"] .fav-foto:not(.ohne)::after{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(180deg, rgba(255,250,244,.30) 0%, rgba(255,250,244,.16) 28%, rgba(255,250,244,0) 54%); }
+/* Run: alle Karten der Startseite in Glas-Optik (halbtransparent, Blur, heller Rand) wie die Kacheln oben */
+:root[data-layout="new"] .run-bg ~ .run-eigen, :root[data-layout="new"] .run-bg ~ .run-opt, :root[data-layout="new"] .run-bg ~ .run-ansage,
+:root[data-layout="new"] .run-bg ~ .run-item.list-item.entry, :root[data-layout="new"] .run-bg ~ .run-geplant, :root[data-layout="new"] .run-bg ~ .run-live{
+  background:var(--glas); border:1px solid var(--glas-rand); box-shadow:0 8px 26px rgba(0,0,0,.18); color:var(--glas-text); }
+:root[data-layout="new"] .run-bg ~ .run-eigen .tm-hint, :root[data-layout="new"] .run-bg ~ .run-ansage .tm-hint, :root[data-layout="new"] .run-bg ~ .run-item .sub{ color:var(--glas-dim); }
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  :root[data-layout="new"] .run-bg ~ .run-eigen, :root[data-layout="new"] .run-bg ~ .run-opt, :root[data-layout="new"] .run-bg ~ .run-ansage,
+  :root[data-layout="new"] .run-bg ~ .run-item.list-item.entry, :root[data-layout="new"] .run-bg ~ .run-geplant, :root[data-layout="new"] .run-bg ~ .run-live{
+    -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
+}
+:root[data-layout="new"] .run-bg ~ .run-hero .rh-km, :root[data-layout="new"] .run-bg ~ .run-hero .rh-sub, :root[data-layout="new"] .run-bg ~ .run-hero .run-art,
+:root[data-layout="new"] .run-bg ~ .run-raster > div, :root[data-layout="new"] .rs-chip{ background:var(--glas); border:1px solid var(--glas-rand); box-shadow:0 8px 26px rgba(0,0,0,.18); }
+/* Run-Startseite: der Hintergrund ist in jedem Modus dunkel, also auch das Glas und die Schrift in jedem Modus gleich (hell auf dunklem Glas) */
+:root[data-layout="new"]:has(.run-bg){ --glas:rgba(255,255,255,.13); --glas-rand:rgba(255,255,255,.24); --glas-text:#fff; --glas-dim:rgba(255,255,255,.78); --text:#fff; --text-dim:rgba(255,255,255,.76); }
+:root[data-layout="new"]:has(.run-bg) .run-bg ~ .run-hero .run-art button.active{ background:rgba(255,255,255,.92); color:#1c1c1e; }
+:root[data-layout="new"]:has(.run-bg) .topbar .iconbtn{ background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.24); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+/* Querformat: das BLOC-Zeichen bleibt sichtbar - im Timer und beim Laufen (oben neben den runden Knöpfen) */
+.bloc-quer{ display:none; }
+@media (orientation: landscape) and (max-height: 560px){
+  :root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ display:block; position:absolute; top:22px; left:70px; transform:none; margin:0; font-size:18px; z-index:3; }
+  :root[data-layout="new"] .bloc-quer{ display:block; position:fixed; top:24px; right:76px; z-index:5; pointer-events:none; font-family:var(--f-brand, "Helvetica Neue","Arial Black",Arial,sans-serif); font-size:20px; font-weight:900; letter-spacing:.22em; line-height:1; color:var(--accent); text-shadow:0 2px 14px rgba(0,0,0,.35); }
 }
