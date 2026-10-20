@@ -877,3 +877,9 @@ body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 :root[data-layout="new"] .run-bg ~ .run-hero .rh-km small, :root[data-layout="new"] .run-bg ~ .run-hero .rh-sub{ color:rgba(255,255,255,.9) !important; }
 :root[data-layout="new"] .run-bg ~ .run-hero .run-art button{ color:#fff !important; }
 :root[data-layout="new"] .run-bg ~ .run-hero .run-art button.active{ background:#fff !important; color:#101214 !important; }
+/* Kalender: beim Wischen gleitet die neue Woche bzw. der neue Monat von der Seite herein */
+#app.kal-gleit-vor > *{ animation:kal-vor .28s ease-out; }
+#app.kal-gleit-zurueck > *{ animation:kal-zurueck .28s ease-out; }
+@keyframes kal-vor{ from{ opacity:.2; transform:translateX(34px); } to{ opacity:1; transform:none; } }
+@keyframes kal-zurueck{ from{ opacity:.2; transform:translateX(-34px); } to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce){ #app.kal-gleit-vor > *, #app.kal-gleit-zurueck > *{ animation:none; } }

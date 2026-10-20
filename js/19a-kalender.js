@@ -147,6 +147,35 @@ function kalHeuteSichtbar(){
   var r = h.getBoundingClientRect();
   if(r.bottom > window.innerHeight - 112) window.scrollTo(0, Math.max(0, window.scrollY + r.bottom - (window.innerHeight - 132)));
 }
+/* Eine Woche bzw. einen Monat vor (+1) oder zurück (-1); per Knopf oder Wischen. gleiten: die Seite schiebt sich kurz in die Richtung des Wischens ein */
+function kalBlaettern(r, gleiten){
+  if(!kalBasis) kalBasis = new Date();
+  kalBasis = kalAnsicht === "monat" ? new Date(kalBasis.getFullYear(), kalBasis.getMonth()+r, 1, 12) : kalPlus(kalBasis, 7*r);
+  renderKalender(); window.scrollTo(0, 0);
+  if(gleiten){
+    app.classList.remove("kal-gleit-vor", "kal-gleit-zurueck"); void app.offsetWidth;
+    app.classList.add(r > 0 ? "kal-gleit-vor" : "kal-gleit-zurueck");
+    vibrate(8);
+    setTimeout(function(){ app.classList.remove("kal-gleit-vor", "kal-gleit-zurueck"); }, 320);
+  }
+}
+/* Wischen im Kalender: nach links = nächste Woche bzw. nächster Monat, nach rechts = zurück. Nur waagerechte, deutliche Bewegungen (kein Auslösen beim Scrollen), nicht auf Reglern, Eingaben oder in offenen Fenstern */
+(function(){
+  var x0 = 0, y0 = 0, t0 = 0, gilt = false;
+  document.addEventListener("touchstart", function(e){
+    gilt = false;
+    if(!/^#kalender/.test(location.hash) || e.touches.length !== 1) return;
+    if(e.target.closest && e.target.closest("input, textarea, select, .confirm-overlay, #overlayRoot, .kal-leiste")) return;
+    var root = document.getElementById("overlayRoot"); if(root && root.innerHTML) return;
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); gilt = true;
+  }, { passive:true });
+  document.addEventListener("touchend", function(e){
+    if(!gilt) return; gilt = false;
+    var t1 = e.changedTouches[0], dx = t1.clientX - x0, dy = t1.clientY - y0;
+    if(Date.now() - t0 > 800 || Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx)*0.6) return;
+    kalBlaettern(dx < 0 ? 1 : -1, true);
+  }, { passive:true });
+})();
 function renderKalender(){
   var s = state.db.settings, lang = currentLang() === "en" ? "en-GB" : "de-DE";
   if(!kalBasis) kalBasis = new Date();
@@ -209,13 +238,7 @@ function renderKalender(){
   app.innerHTML = html;
   bindCommon();
   app.querySelectorAll("[data-kalansicht]").forEach(function(b){ b.addEventListener("click", function(){ kalAnsicht = b.getAttribute("data-kalansicht"); renderKalender(); window.scrollTo(0, 0); }); });
-  app.querySelectorAll("[data-kalnav]").forEach(function(b){
-    b.addEventListener("click", function(){
-      var r = +b.getAttribute("data-kalnav");
-      kalBasis = kalAnsicht === "monat" ? new Date(kalBasis.getFullYear(), kalBasis.getMonth()+r, 1, 12) : kalPlus(kalBasis, 7*r);
-      renderKalender(); window.scrollTo(0, 0);
-    });
-  });
+  app.querySelectorAll("[data-kalnav]").forEach(function(b){ b.addEventListener("click", function(){ kalBlaettern(+b.getAttribute("data-kalnav"), false); }); });
   app.querySelectorAll("[data-kalgoto]").forEach(function(el){   // Tag in der Wochenkarte: zu diesem Tag springen
     function los(){
       var z = app.querySelector('.kal-tag[data-kaltag="'+el.getAttribute("data-kalgoto")+'"]');
