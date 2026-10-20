@@ -883,3 +883,4 @@ body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 @keyframes kal-vor{ from{ opacity:.2; transform:translateX(34px); } to{ opacity:1; transform:none; } }
 @keyframes kal-zurueck{ from{ opacity:.2; transform:translateX(-34px); } to{ opacity:1; transform:none; } }
 @media (prefers-reduced-motion: reduce){ #app.kal-gleit-vor > *, #app.kal-gleit-zurueck > *{ animation:none; } }
+body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören dem Kalender, senkrecht scrollt die Seite */

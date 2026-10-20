@@ -172,7 +172,7 @@ function kalBlaettern(r, gleiten){
   document.addEventListener("touchend", function(e){
     if(!gilt) return; gilt = false;
     var t1 = e.changedTouches[0], dx = t1.clientX - x0, dy = t1.clientY - y0;
-    if(Date.now() - t0 > 800 || Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx)*0.6) return;
+    if(Date.now() - t0 > 800 || Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)*1.1) return;
     kalBlaettern(dx < 0 ? 1 : -1, true);
   }, { passive:true });
 })();
