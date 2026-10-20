@@ -49,6 +49,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Kalender: Kalenderwoche im Kopf (Fassung 2026-10-20-23)
+
+- Die Woche zeigt oben **KW 43** mit dem Datumsbereich darunter; Wischen nach links bringt KW 44, 45 …
+
 ## 2026-10-20 · Kalender: Wischen toleranter (Fassung 2026-10-20-22)
 
 - Wischen im Kalender löst schon ab 50 px aus und verträgt Bewegungen bis etwa 45° (vorher 70 px und fast waagerecht); die Seite lässt waagerechte Wischer dem Kalender (`touch-action: pan-y`). Monatsansicht: Oktober → November → Dezember → Januar …
