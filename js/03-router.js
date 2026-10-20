@@ -171,9 +171,9 @@ var FOTO_POOL = (function(){
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
     core:     ["img/neu-d-core.jpg", P("frau-kniebeuge"), P("liegestuetz-feld"), P("kraft-sw")],
     beine:    [P("frau-kniebeuge"), P("mobility-ausfall"), P("freiluft-meer"), P("studio-gewichtsblock")],
-    ruecken:  [P("frau-latzug"), P("freiluft-park"), "img/neu-freiluft.jpg", P("freiluft-sw")],
+    ruecken:  [P("frau-klimmzug"), P("frau-latzug"), P("freiluft-park"), "img/neu-freiluft.jpg", P("freiluft-sw")],
     brust:    [P("liegestuetz-strand"), P("liegestuetz-stadt"), P("liegestuetz-feld")],
-    arme:     [P("studio-hantelreihe"), P("kraft-sw"), P("studio-halle")],
+    arme:     [P("frau-klimmzug"), P("studio-hantelreihe"), P("kraft-sw"), P("studio-halle")],
     schulter: [P("frau-latzug"), P("kraft-sw"), P("studio-hantelreihe"), P("freiluft-park")],
     mobility: [P("mobility-sitz"), P("mobility-ausfall")],
     timer:    ["img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-feld")]
@@ -190,9 +190,9 @@ var FOTO_POOL_HELL = {
   run: FOTO_POOL.run,
   core:     ["img/neu-h-core-1.jpg", "img/neu-h-core-2.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"],
   beine:    ["img/neu-p-frau-kniebeuge.jpg", "img/neu-h-kreuzheben.jpg", "img/neu-h-band.jpg", "img/neu-h-halle.jpg"],
-  ruecken:  ["img/neu-p-frau-latzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],
+  ruecken:  ["img/neu-p-frau-klimmzug.jpg", "img/neu-p-frau-latzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],
   brust:    ["img/neu-h-brust-1.jpg", "img/neu-h-brust-2.jpg", "img/neu-h-rack.jpg"],
-  arme:     ["img/neu-h-kb-gelb.jpg", "img/neu-h-rack.jpg", "img/neu-h-kettlebell.jpg"],
+  arme:     ["img/neu-p-frau-klimmzug.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-rack.jpg", "img/neu-h-kettlebell.jpg"],
   schulter: ["img/neu-p-frau-latzug.jpg", "img/neu-h-rack.jpg", "img/neu-h-ringe.jpg", "img/neu-h-klimmzug.jpg"],
   mobility: FOTO_POOL.mobility,
   timer:    ["img/neu-h-halle.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"]
@@ -225,7 +225,7 @@ var FOTO_FOKUS = {
   "img/neu-p-liegestuetz-stadt.jpg":"50% 55%",
   "img/neu-p-liegestuetz-feld.jpg":"50% 55%",
   "img/neu-p-studio-halle.jpg":"50% 55%",
-  "img/neu-p-frau-latzug.jpg":"50% 38%", "img/neu-p-frau-kniebeuge.jpg":"50% 45%",
+  "img/neu-p-frau-latzug.jpg":"50% 38%", "img/neu-p-frau-klimmzug.jpg":"50% 40%", "img/neu-p-frau-kniebeuge.jpg":"50% 45%",
   "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-kreuzheben.jpg":"50% 70%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
   "img/neu-h-band.jpg":"50% 62%", "img/neu-h-kettlebell.jpg":"50% 32%", "img/neu-h-kb-gelb.jpg":"50% 70%", "img/neu-h-klimmzug.jpg":"50% 72%",
   "img/neu-h-klimmzug-rueck.jpg":"50% 28%", "img/neu-h-ringe.jpg":"50% 55%", "img/neu-d-kalender.jpg":"50% 45%", "img/neu-h-brust-1.jpg":"50% 50%", "img/neu-h-brust-2.jpg":"50% 66%", "img/neu-h-core-1.jpg":"50% 50%", "img/neu-h-core-2.jpg":"50% 62%", "img/neu-d-core.jpg":"50% 68%", "img/neu-d-katalog.jpg":"50% 42%"
