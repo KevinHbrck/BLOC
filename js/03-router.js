@@ -163,7 +163,7 @@ var FOTO_POOL = (function(){
   var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
   return {
     tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw")],
-    st:  ["img/neu-workout.jpg", P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), P("kraft-sw"), "img/neu-kopf.jpg"],
+    st:  [P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), "img/neu-workout.jpg", P("kraft-sw"), "img/neu-kopf.jpg"],   // Geräte zuerst (Wunsch: Workout-Karte ohne Person)
     ti:  ["img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
     ws:  [P("mobility-sitz"), P("mobility-ausfall")],   // ohne neu-mobility (Kopf im Profil, passte nicht zum Bereich)
     rep: ["img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
@@ -183,7 +183,7 @@ var FOTO_POOL = (function(){
    Run behält in beiden Modi das klassische Läuferbild. Karten auf Training und Favoriten sind im Hellen „helle Karten“ (layout-new.css). */
 var FOTO_POOL_HELL = {
   tp:  ["img/neu-h-klimmzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-ringe.jpg"],
-  st:  ["img/neu-h-halle.jpg", "img/neu-h-kreuzheben.jpg", "img/neu-h-rack.jpg"],
+  st:  ["img/neu-h-halle.jpg", "img/neu-h-rack.jpg", "img/neu-h-kreuzheben.jpg"],
   ti:  ["img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
   ws:  FOTO_POOL.ws,   // wie im Dunkel (Wunsch: Mobility & Stretch und Summit zeigen in beiden Modi dasselbe Bild)
   rep: FOTO_POOL.rep,   // wie im Dunkel

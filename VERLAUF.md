@@ -12,6 +12,13 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · Hell-Schleier wie am Anfang, Ansagen einklappbar, Rad-Kachel mit eigenen km und kcal (Fassung 2026-10-20-33)
+
+- Hell: Fotos auf Training und bei Favoriten (auch auf Heute) wieder unter hellem Dunst (30 %, unten bis 95 %) und leicht weichgezeichnet; Dunkel unverändert.
+- Run: Karte „Ansagen“ einklappbar wie Eigener Lauf und Intervall.
+- Run: Kachel oben zeigt je nach Auswahl nur Läufe oder nur Fahrten (km, kcal, Anzahl).
+- Workout-Karte auf Training: zuerst Gerätebilder (Hell: Fitnessraum, Dunkel: Hantelreihe) statt Foto mit Person (Fassung -33).
+
 ## 2026-10-20 · FAQ-Feinschliff nach Laien-Gegenlesen (Fassung 2026-10-20-17)
 
 - Verletzungs-Frage ohne Wirksamkeitsaussage („in dieser Zusammenfassung die größte Wirkung“, Risiko „lag bei“ statt „sank“). ACSM einmal als „amerikanische Sportmedizin-Gesellschaft“ erklärt. Frage „Wie viel Pause“ mit einer Kernaussage. Doppelungen gekürzt (Umfang in der Plan-Frage nur noch per Verweis, Nieren und Beschwerden in vorhandene Punkte). Einheitstest 51/51.

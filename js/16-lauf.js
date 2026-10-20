@@ -368,13 +368,13 @@ function runEigenerLaufHTML(){
   '</details>';
 }
 /* Kachel oben rechts auf der Run-Seite: die insgesamt verbrauchten Kalorien aller Läufe und Fahrten (geschätzt, nur mit Körperdaten; sonst ein Link zum Eintragen und die Zahl der Läufe) */
-function runHeroRechtsHTML(runs){
+function runHeroRechtsHTML(runs, rad){
   if(!koerperDaten()) return '<div class="rh-sub"><button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button></div>';
   if(!runs.length) return '<div class="rh-sub">'+esc(t("runTeaser"))+'</div>';
   var sum = runs.reduce(function(a, x){ return a + runKcal(x.dist, x.dur/1000, runIstRad(x)); }, 0);
-  return '<div class="rh-sub rh-kcal"><b>≈ '+esc(sum.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"))+'</b><small>'+esc(t("runKcalGesamt"))+SEP+esc(t("runLaeufeKurz", { n:runs.length }))+'</small></div>';
+  return '<div class="rh-sub rh-kcal"><b>≈ '+esc(sum.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"))+'</b><small>'+esc(t("runKcalGesamt"))+SEP+esc(t(rad ? "runFahrtenKurz" : "runLaeufeKurz", { n:runs.length }))+'</small></div>';
 }
-var runKlapp = { eigen:false, iv:false };   // welche Karten auf der Run-Seite aufgeklappt sind
+var runKlapp = { eigen:false, iv:false, ans:false };   // welche Karten auf der Run-Seite aufgeklappt sind
 function runOptionenHTML(){
   var iv = runIvEinst(), rad = runArt() === "rad";
   if(rad) return "";   // auf dem Rad gibt es nichts einzustellen (Laufen und Gehen im Wechsel gibt es nur zu Fuß)
@@ -387,13 +387,13 @@ function runOptionenHTML(){
 function runAnsageHTML(){
   var e = runAnsageEinst();
   function kn(attr, wert, aktiv, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'">'+esc(text)+'</button>'; }
-  return '<div class="card run-ansage"><div class="kp-titel run-ziel-kopf"><span>'+esc(t("runAnsagen"))+'</span><b id="run-every-wert">'+esc(e.every ? t("runAlleKm", { n:e.every }) : t("runAus"))+'</b></div>'+
+  return '<details class="card run-ansage run-klapp" data-k="ans'+(runKlapp.ans ? '" open' : '"')+'><summary class="kp-titel run-ziel-kopf"><span>'+esc(t("runAnsagen"))+'</span><b id="run-every-wert">'+esc(e.every ? t("runAlleKm", { n:e.every }) : t("runAus"))+'</b><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
       '<input type="range" id="run-every" min="0" max="10" step="1" value="'+e.every+'" aria-label="'+esc(t("runAnsagen"))+'">'+
       '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runAus"))+'</span><span>2</span><span>5</span><span>10 km</span></div>'+
     (e.every ? '<label style="margin-top:12px">'+esc(t("runInhalt"))+'</label><div class="theme-pick rep-pick">'+
       kn("runwas", "km", e.was === "km", t("runWasKm"))+kn("runwas", "pace", e.was === "pace", t("runWasPace"))+kn("runwas", "alles", e.was === "alles", t("runWasAlles"))+'</div>'+
       '<button type="button" class="btn btn-secondary" data-runtest>'+esc(t("runTest"))+'</button>' : '')+
-    '<div class="tm-hint">'+esc(t("runAnsageHint"))+'</div></div>';
+    '<div class="tm-hint">'+esc(t("runAnsageHint"))+'</div></details>';
 }
 /* Pace je Kilometer als Balken: je schneller, desto länger; der schnellste ist kräftig. Ein angefangener Rest-Kilometer (ab 100 m) steht zuletzt */
 function runKmZeilen(x){
@@ -641,8 +641,9 @@ function renderRun(){
   if(run) return renderRunLive();
   if(runVor) return renderRunVor();
   var runs = (s.runs || []).slice().sort(function(a, b){ return b.at - a.at; });
-  var km = runs.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
   var live = s.runLive, art = runArt();
+  var artRuns = runs.filter(function(x){ return runIstRad(x) === (art === "rad"); });   // Kachel oben: nur die gewählte Art (Laufen oder Rad)
+  var km = artRuns.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
   app.innerHTML =
     (layoutNeu() ? runHintergrundHTML() + bereichKopfNeuHTML("run", t("runTitle"), t("runKicker"), "", { klar:true }) : topbar(t("runTitle"), { back:"#home" }) + bereichBildHTML("run")) +
     (live ?'<div class="card run-live"><b>'+esc(t("runBroken"))+'</b><div class="sub">'+esc(t("runBrokenText", { km:runKm(live.dist) }))+'</div>'+
@@ -652,7 +653,7 @@ function renderRun(){
       (runGeplant.km > 0 ? '<div class="sub">'+esc(t("runZielKm", { km:runKm(runGeplant.km*1000) }))+'</div>' : '')+
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button>'+
       '<button type="button" class="ghost" data-rungeplantweg>'+esc(t("runGeplantWeg"))+'</button></div>' : '')+
-    '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div>'+runHeroRechtsHTML(runs)+
+    '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div>'+runHeroRechtsHTML(artRuns, art === "rad")+
       '<div class="theme-pick rep-pick seg-2 run-art" role="group" aria-label="'+esc(t("runArt"))+'">'+
         '<button type="button" data-runart="lauf" class="'+(art === "lauf" ? "active" : "")+'">'+esc(t("runArtLauf"))+'</button>'+
         '<button type="button" data-runart="rad" class="'+(art === "rad" ? "active" : "")+'">'+esc(t("runArtRad"))+'</button></div>'+
