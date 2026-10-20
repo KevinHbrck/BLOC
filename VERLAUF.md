@@ -9,6 +9,11 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Satz-Training mit mehr Rückmeldung, BLOC-Zeichen orange (Fassung 2026-10-20-7)
+
+- **BLOC-Zeichen** im Timer und im Satz-Training orange und größer.
+- **Satz-Training**: Satzpunkte je Übung (gefüllt = erledigt, Ring = nächster Satz, springen beim Eintragen auf), Knopf wird kurz orange „Satz N gespeichert“, Ton und Vibration, Vibration beim Einrasten der Karte und in den letzten 3 s der Pause, Punkte oben füllen sich je fertiger Übung. Sind alle Übungen geschafft, erscheint **Training geschafft** mit Zahlen und den Knöpfen Training speichern · Weiter trainieren · Beenden.
+
 ## 2026-10-20 · Fortschritt, Training nach Sätzen zum Wischen, Zeiten je Übung im Timer-BLOC, Summit im Glas (Fassung 2026-10-20-5)
 
 - **Reiter „Fortschritt“** (vorher „Körper“): Liniendiagramm-Symbol, Umschalter **Verlauf | Plan** (Verlauf zuerst).

@@ -3,6 +3,7 @@
    Ein BLOC (mit seinen weiteren BLOCs) als Reihe von Karten: nach links oder rechts wischen wechselt die Übung, oben zeigen Punkte, bei welcher man ist.
    Je Karte: Gewicht und Wiederholungen per Zähler, „Satz eintragen“ speichert wie die Übungskarte (studioSatzLog), danach läuft die Pause.
    Erklärungen stehen eingeklappt darunter. Route: #satz/<BLOC-ID>/<Nummer>. */
+var satzLetzterTick = 0;   // letzte Sekunde, zu der der Pause-Tick vibriert hat
 var satzUhr = 0;   // Zähler der Satzpause (nur eine zugleich)
 function satzListe(p){
   var l = stPlanIds(p).slice();
@@ -22,6 +23,7 @@ function satzKarteHTML(id, i, n){
       '<h2 class="satz-name">'+esc(tplText(ex.name))+(info ? ' <button type="button" class="info-btn" data-satzinfo="'+esc(id)+'" aria-label="'+esc(t("info"))+'">i</button>' : '')+'</h2>'+
       (kachelMuskel(ex) ? '<div class="satz-mus">'+kachelMuskel(ex)+'</div>' : '')+
       (ILLU[id] ? '<div class="satz-figur">'+illuHTML(id, "satz-illu")+'</div>' : '')+
+      '<div class="satz-saetze" role="img" aria-label="'+esc((h ? h.s.length : 0)+" / "+z.saetze)+'">'+(function(){ var o = "", n = Math.min(z.saetze, 12), fertigeAnzahl = h ? h.s.length : 0; for(var q = 0; q < n; q++) o += '<i class="'+(q < fertigeAnzahl ? 'an' : q === fertigeAnzahl ? 'jetzt' : '')+'"></i>'; return o; })()+'</div>'+
       '<div class="satz-ziel">'+esc(t("stGoal"))+' <b>'+satzName(z.saetze)+' × '+z.wdh+'</b>'+(e.kg != null && !koerper ? ' · <b>'+studioKg(e.kg)+' kg</b>' : '')+'</div>'+
       (letzte ? '<div class="satz-zeile"><span>'+esc(t("stLetztes"))+'</span>'+letzte.s.map(function(x){
         return '<button type="button" class="satz-chip" data-ukg="'+x[0]+'" data-uw="'+x[1]+'" aria-label="'+esc(t("stUebernehmen")+" "+studioKg(x[0])+" × "+x[1])+'">'+esc(satzText(x).replace("×", " × "))+'</button>'; }).join("")+'</div>' : '')+
@@ -52,15 +54,40 @@ function renderSatzTraining(planId, start){
         '<div class="satz-punkte" role="tablist" aria-label="'+esc(p.name)+'">'+ids.map(function(id, i){
           var ex = findExercise(id); return '<button type="button" class="satz-punkt" data-satzgo="'+i+'" role="tab" aria-label="'+esc((i+1)+". "+(ex ? tplText(ex.name) : ""))+'"></button>'; }).join("")+'</div>'+
         '<button type="button" class="exit" data-satzsave aria-label="'+esc(t("trSpeichern"))+'">'+ICON_SAVE+'</button></div>'+
-      '<div class="satz-logo" aria-hidden="true">BLOC · <span id="satz-nr"></span></div>'+
+      '<div class="satz-logo" aria-hidden="true"><b>BLOC</b><span id="satz-nr"></span></div>'+
       '<div class="satz-wisch" id="satzWisch">'+ids.map(function(id, i){ return satzKarteHTML(id, i, ids.length); }).join("")+'</div>'+
     '</div>';
   var root = document.getElementById("satzRoot"), wisch = document.getElementById("satzWisch"), aktuell = -1;
   function breite(){ return wisch.clientWidth || 1; }
   function nr(i){
-    if(i === aktuell) return; aktuell = i;
+    if(i === aktuell) return; if(aktuell >= 0) vibrate(10); aktuell = i;   // kleines Klicken beim Einrasten
     root.querySelectorAll(".satz-punkt").forEach(function(d, k){ d.classList.toggle("an", k === i); d.setAttribute("aria-selected", k === i); });
     var el = document.getElementById("satz-nr"); if(el) el.textContent = (i+1)+" / "+ids.length;
+  }
+  function punkteFertig(){
+    root.querySelectorAll(".satz-punkt").forEach(function(d, k){
+      var e = studioEintrag(ids[k]) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null, z = studioZiel(ids[k]);
+      d.classList.toggle("fertig", !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= z.saetze);
+    });
+  }
+  function alleFertig(){
+    return ids.every(function(id){ var e = studioEintrag(id) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null; return !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= studioZiel(id).saetze; });
+  }
+  var abschlussGezeigt = false;
+  function abschluss(){
+    abschlussGezeigt = true;
+    var d = trainingHeute(ids), box = document.createElement("div");
+    box.className = "satz-ende";
+    box.innerHTML = '<div class="satz-ende-glas" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-haken" aria-hidden="true">✓</div><h2>'+esc(t("satzGeschafft"))+'</h2>'+
+      '<p>'+esc(trLeisteText(d.saetze, d.ex.length)+(d.vol ? " · "+studioKg(d.vol)+" kg" : "")+(d.dauer >= 60 ? " · "+Math.round(d.dauer/60)+" min" : ""))+'</p>'+
+      '<button type="button" class="satz-los" data-endsave>'+esc(t("trSpeichern"))+'</button>'+
+      '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button>'+
+      '<button type="button" class="satz-undo" data-endraus>'+esc(t("satzBeenden"))+'</button></div>';
+    root.appendChild(box);
+    vibrate([60, 50, 60, 50, 140]); if(state.db.settings.sound) phaseBeep("done");
+    box.querySelector("[data-endsave]").addEventListener("click", function(){ box.remove(); openTrainingSpeichern({ plan:p, ids:ids }, function(){}); });
+    box.querySelector("[data-endmehr]").addEventListener("click", function(){ box.remove(); });
+    box.querySelector("[data-endraus]").addEventListener("click", raus);
   }
   function geheZu(i, weich){ i = clamp(i, 0, ids.length - 1); wisch.scrollTo({ left:i*breite(), behavior:weich ? "smooth" : "auto" }); nr(i); }
   wisch.addEventListener("scroll", function(){ nr(clamp(Math.round(wisch.scrollLeft/breite()), 0, ids.length - 1)); });
@@ -70,7 +97,9 @@ function renderSatzTraining(planId, start){
   root.querySelector("[data-satzsave]").addEventListener("click", function(){ openTrainingSpeichern({ plan:p, ids:ids }, function(){}); });
   function pauseZeigen(){
     var el = root.querySelector(".satz-pause:not([hidden])");
-    if(!studioPause){ if(el){ el.classList.add("vorbei"); el.querySelector("b").textContent = t("stPauseEnd"); } return; }
+    if(!studioPause){ if(el && !el.classList.contains("vorbei")){ el.classList.add("vorbei"); el.querySelector("b").textContent = t("stPauseEnd"); } return; }
+    if(studioPause.ende - Date.now() <= 0){ studioPauseZeigen(); if(el){ el.classList.add("vorbei"); el.querySelector("b").textContent = t("stPauseEnd"); } return; }   // Ende: Vibration und Anzeige übernimmt studioPauseZeigen
+    var rest3 = Math.ceil((studioPause.ende - Date.now())/1000); if(rest3 <= 3 && rest3 !== satzLetzterTick){ satzLetzterTick = rest3; vibrate(18); }
     var k = root.querySelector('.satz-karte[data-id="'+studioPause.id+'"] .satz-pause');
     if(!k) return;
     k.hidden = false; k.classList.remove("vorbei"); k.querySelector("b").textContent = fmtTime(Math.max(0, Math.ceil((studioPause.ende - Date.now())/1000)));
@@ -100,7 +129,12 @@ function renderSatzTraining(planId, start){
       satzFeedback(nSatz, satzText([kg, w]), false);
       var pause = e.pause || (koerper ? 60 : 90);
       studioPauseStart(id, pause);
-      karteNeu(i); pauseZeigen();
+      karteNeu(i); pauseZeigen(); punkteFertig();
+      var neuBtn = wisch.children[i].querySelector("[data-satzset]");
+      if(neuBtn){ var alt = neuBtn.textContent; neuBtn.classList.add("ok"); neuBtn.textContent = "✓ "+t("satzGespeichert", { n:nSatz }); setTimeout(function(){ neuBtn.classList.remove("ok"); neuBtn.textContent = alt; }, 900); }
+      var punkte = wisch.children[i].querySelectorAll(".satz-saetze i.an"); if(punkte.length) punkte[punkte.length - 1].classList.add("pop");
+      if(state.db.settings.sound) phaseBeep("tick");
+      if(!abschlussGezeigt && alleFertig()){ setTimeout(abschluss, 700); return; }
       if(nSatz >= z.saetze && i < ids.length - 1) setTimeout(function(){ if(aktuell === i) geheZu(i + 1, true); }, 900);   // Ziel erreicht: weiter zur nächsten Übung
     });
     if((a = k.querySelector("[data-satzundo]"))) a.addEventListener("click", function(){
@@ -117,6 +151,7 @@ function renderSatzTraining(planId, start){
   Array.prototype.forEach.call(wisch.children, bindKarte);
   if(satzUhr) clearInterval(satzUhr);
   satzUhr = setInterval(function(){ if(!document.getElementById("satzRoot")){ clearInterval(satzUhr); satzUhr = 0; return; } pauseZeigen(); }, 300);
+  punkteFertig();
   geheZu(start, false);
   requestAnimationFrame(function(){ geheZu(start, false); });   // nach dem ersten Layout nochmals, falls die Breite erst jetzt feststeht
 }

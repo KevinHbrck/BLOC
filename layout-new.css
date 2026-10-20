@@ -544,7 +544,7 @@
 :root[data-layout="new"] .player::before{ content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
   background:radial-gradient(120% 60% at 90% -5%, rgba(255,120,70,.20), transparent 62%), radial-gradient(100% 55% at 5% 105%, rgba(90,130,255,.14), transparent 60%); }
 :root[data-layout="new"] .player .progressbar{ display:none; }
-:root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ color:rgba(255,255,255,.92); margin-top:12px; font-size:13px; }
+:root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ color:var(--accent); margin-top:10px; font-size:24px; letter-spacing:.22em; text-shadow:0 2px 14px rgba(0,0,0,.35); }
 :root[data-layout="new"] .player-top .exit{ background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); color:#fff; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
 :root[data-layout="new"] .player .ctrl-btn{ background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); color:#fff; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
 :root[data-layout="new"] .player .ctrl-btn.main{ background:#fff; border-color:#fff; color:#111; }
@@ -793,3 +793,29 @@ body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 :root[data-layout="new"] .rep-glas .topbar{ background:transparent; border:0; box-shadow:none; color:#fff; -webkit-backdrop-filter:none; backdrop-filter:none; }
 :root[data-layout="new"] .rep-glas .topbar h1, :root[data-layout="new"] .rep-glas .topbar .ttl{ color:#fff; }
 :root[data-layout="new"] .rep-glas .topbar .iconbtn{ background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.25); }
+
+/* BLOC-Zeichen im Training: orange und größer (Timer und Satz-Training) */
+.satz-logo{ display:flex; align-items:baseline; justify-content:center; gap:12px; margin:2px 0 8px; }
+.satz-logo b{ font-family:var(--f-brand, "Helvetica Neue","Arial Black",Arial,sans-serif); font-size:24px; font-weight:900; letter-spacing:.22em; color:var(--accent); text-shadow:0 2px 14px rgba(0,0,0,.35); }
+.satz-logo span{ font-size:12px; font-weight:700; letter-spacing:.12em; opacity:.85; }
+/* mehr Rückmeldung beim Eintragen */
+.satz-saetze{ display:flex; justify-content:center; gap:7px; margin:8px 0 2px; }
+.satz-saetze i{ width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,255,255,.4); }
+.satz-saetze i.an{ background:var(--accent); border-color:var(--accent); }
+.satz-saetze i.jetzt{ border-color:#fff; box-shadow:0 0 0 3px rgba(255,255,255,.18); }
+.satz-saetze i.pop{ animation:satz-pop .5s cubic-bezier(.2,1.6,.4,1); }
+@keyframes satz-pop{ 0%{ transform:scale(.3); } 100%{ transform:scale(1); } }
+.satz-punkt.fertig{ background:var(--accent); }
+.satz-los{ transition:transform .12s, background .2s, color .2s; }
+.satz-los.ok{ background:var(--accent); color:#fff; animation:satz-ok .5s ease-out; }
+@keyframes satz-ok{ 0%{ transform:scale(.96); } 50%{ transform:scale(1.03); } 100%{ transform:scale(1); } }
+.satz-zaehler button:active{ transform:scale(.9); }
+.satz-ende{ position:absolute; inset:0; z-index:5; display:grid; place-items:center; padding:20px; background:rgba(5,8,12,.55); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); animation:satz-ein .3s ease-out; }
+@keyframes satz-ein{ from{ opacity:0; } to{ opacity:1; } }
+.satz-ende-glas{ width:min(100%, 380px); text-align:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); border-radius:30px; padding:26px 20px 20px; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+.satz-ende-glas h2{ margin:10px 0 4px; font-size:26px; }
+.satz-ende-glas p{ margin:0 0 16px; opacity:.85; }
+.satz-haken{ width:72px; height:72px; margin:0 auto; border-radius:50%; display:grid; place-items:center; font-size:38px; background:var(--accent); color:#fff; animation:satz-pop .6s cubic-bezier(.2,1.6,.4,1); }
+.satz-ende-glas .satz-weiter, .satz-ende-glas .satz-undo{ width:100%; margin-top:10px; }
+@media (prefers-reduced-motion: reduce){ .satz-saetze i.pop, .satz-los.ok, .satz-haken, .satz-ende{ animation:none; } }
+.satz-root > .satz-ende{ position:absolute; inset:0; z-index:5; }
