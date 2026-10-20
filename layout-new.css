@@ -654,3 +654,35 @@
 :root[data-layout="new"] .run-bg ~ .run-ansage .btn-secondary{ background:rgba(255,255,255,.12); color:#f4f4f6; border:1px solid rgba(255,255,255,.22); }
 :root[data-layout="new"] .run-bg ~ .run-opt .toggle-row, :root[data-layout="new"] .run-bg ~ .run-opt label{ color:#f4f4f6; }
 :root[data-layout="new"] .run-bg ~ .run-eigen .btn-secondary{ background:rgba(255,255,255,.12); color:#f4f4f6; border:1px solid rgba(255,255,255,.22); }
+
+/* Workout-Planer (BLOC-Seite): ein großes „Los geht’s“, Favorit · Kopie · Teilen, weitere BLOCs */
+:root[data-layout="new"] .plan-start{ width:100%; height:64px; border-radius:22px; font-size:19px; font-weight:800; letter-spacing:.04em; margin:6px 0 10px; display:flex; align-items:center; justify-content:center; gap:10px; }
+:root[data-layout="new"] .pz-akt{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:0 0 14px; }
+:root[data-layout="new"] .pz-akt button{ display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px; border-radius:16px; border:1px solid var(--nl-linie, var(--border)); background:color-mix(in srgb, var(--surface) 80%, transparent); color:inherit; font:inherit; font-size:12.5px; cursor:pointer; }
+:root[data-layout="new"] .pz-akt button svg{ width:20px; height:20px; }
+:root[data-layout="new"] .pz-akt button.on{ color:var(--accent); border-color:var(--accent); }
+:root[data-layout="new"] .pz-folge{ margin-top:16px; }
+:root[data-layout="new"] .pz-fl{ display:flex; flex-direction:column; gap:8px; margin:8px 0 10px; }
+:root[data-layout="new"] .pz-fz{ display:flex; gap:8px; }
+:root[data-layout="new"] .pz-fz-go{ flex:1; display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:16px; border:1px solid var(--nl-linie, var(--border)); background:color-mix(in srgb, var(--surface) 80%, transparent); color:inherit; font:inherit; text-align:left; cursor:pointer; }
+:root[data-layout="new"] .pz-fz-go i{ font-style:normal; width:26px; height:26px; border-radius:50%; display:grid; place-items:center; background:var(--accent); color:#fff; font-size:13px; font-weight:700; flex:none; }
+:root[data-layout="new"] .pz-fz-go span{ flex:1; min-width:0; display:flex; flex-direction:column; }
+:root[data-layout="new"] .pz-fz-go small{ opacity:.7; }
+:root[data-layout="new"] .pz-fz-weg{ flex:none; width:44px; border-radius:16px; border:1px solid var(--nl-linie, var(--border)); background:none; color:inherit; font-size:20px; cursor:pointer; }
+:root[data-layout="new"] .pz-folge-plus{ width:100%; }
+.bloc-sheet .bloc-opt{ display:flex; align-items:center; gap:12px; width:100%; padding:12px 14px; margin:6px 0; border-radius:16px; border:1px solid var(--border); background:var(--surface); color:inherit; font:inherit; text-align:left; cursor:pointer; }
+.bloc-sheet .bloc-opt span{ display:flex; flex-direction:column; }
+.bloc-sheet .bloc-opt small{ opacity:.7; }
+.bloc-sheet select{ width:100%; margin:6px 0 12px; }
+
+/* Workout-Listen (Meine, Workoutkatalog): kompakter - kleineres Foto, kleine Symbole, weniger Zeilen, der Name bekommt Platz */
+:root[data-layout="new"] .tpl-item.lib-card{ padding:8px 6px 8px 10px; align-items:center; }
+:root[data-layout="new"] .lib-card:has(.ort-thumb) > .playbtn{ display:none; }
+:root[data-layout="new"] .lib-card > .playbtn{ width:36px; height:36px; margin:0 10px 0 0; flex:none; }
+:root[data-layout="new"] .lib-card > .playbtn svg{ width:15px; height:15px; }
+:root[data-layout="new"] .lib-card .ort-thumb{ width:46px; height:46px; margin-right:10px; border-radius:11px; }
+:root[data-layout="new"] .lib-card .meta{ padding-top:0; min-width:0; flex:1; }
+:root[data-layout="new"] .lib-card .name{ font-size:15px; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+:root[data-layout="new"] .lib-card .sub{ font-size:12px; line-height:1.3; }
+:root[data-layout="new"] .lib-card .pl-gruppen{ display:none; }
+:root[data-layout="new"] .lib-card .card-acts .fav-btn, :root[data-layout="new"] .lib-card .card-acts .trash-btn{ width:32px; height:32px; font-size:16px; }

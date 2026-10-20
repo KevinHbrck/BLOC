@@ -321,7 +321,7 @@
       klick("[data-surprise]");
       await bis(function () { return $("[data-spgo]"); }, 3000, "Einstellungen");
       pruefe(!$('[data-spmain="stretch"]'), "Stretch-Kachel ist noch da");
-      pruefe($$("[data-spmain]").length === 4, "erwartet 4 Kategorie-Kacheln");
+      pruefe($$("[data-spgrp]").length === 6 && !$("[data-spmain]") && $('[data-spcat="cardio"]'), "erwartet 6 Muskel-Chips und Cardio statt Kategorie-Kacheln");
       klick("[data-spgo]");
       await bis(function () { return $$(".wb-ablauf").length >= 2; }, 3000, "Übungen im Deckblatt");
       var vorher = $$(".wb-ablauf .fig-name").map(function (x) { return x.textContent; }).join();
@@ -463,12 +463,12 @@
       await filterAuf();
       // derselbe Filter wie bei den Übungen: Gruppe, Ausrüstung („Fitnessstudio“ statt „Gerät“), Körperkarte
       pruefe(!$('[data-lfcat]') && !$('[data-lfequip]'), "Training-Chips stehen noch im Katalog");
-      pruefe($$("[data-stgr]").length === 7 && $$("[data-start]").length === 4 && $$("[data-stzone]").length >= 12, "Katalog: Filter ist nicht derselbe wie bei den Übungen");
+      pruefe($$("[data-stgrp]").length === 6 && $$("[data-start]").length === 4 && $$("[data-stzone]").length >= 12, "Katalog: Filter ist nicht derselbe wie bei den Übungen");
       pruefe(!$('[data-start="geraet"]') && /Fitnessstudio/.test($(".ort-fotos").textContent), "Fitnessstudio gehört zum Ort-Schalter und soll nicht noch einmal als Ausrüstungs-Chip stehen");
-      klick('[data-stgr="beine"]');
-      await bis(function () { return $('[data-stgr="beine"].on') && $(".af-body"); }, 2000, "Beine gewählt, Karte bleibt offen");
-      klick('[data-stgr="bauch"]');
-      await bis(function () { return $('[data-stgr="beine"].on') && $('[data-stgr="bauch"].on') && $(".af-body"); }, 2000, "zwei Gruppen gewählt, Karte bleibt offen");
+      klick('[data-stgrp="beine"]');
+      await bis(function () { return $('[data-stgrp="beine"].on') && $(".af-body"); }, 2000, "Beine gewählt, Karte bleibt offen");
+      klick('[data-stgrp="rumpf"]');
+      await bis(function () { return $('[data-stgrp="beine"].on') && $('[data-stgrp="rumpf"].on') && $(".af-body"); }, 2000, "zwei Gruppen gewählt, Karte bleibt offen");
       var knopf = $(".af-fuss .btn-primary").textContent;
       pruefe(/^\d+ Workouts anzeigen$/.test(knopf), "Knopf unten: " + knopf);
       var karten = $$(".lib-card").filter(function (c) { return !c.classList.contains("is-hidden"); }).length;
@@ -482,12 +482,12 @@
       await zuUebungskatalog();
       await bis(function () { return $$("[data-studio]:not([data-ortfremd])").length > 100; }, 3000, "Übungs-Kacheln");
       await filterAuf();
-      klick('[data-stgr="beine"]');
-      await bis(function () { return $('[data-stgr="beine"].on') && $(".af-body"); }, 2000, "Übungen: Beine, Karte bleibt offen");
-      klick('[data-stgr="brust"]');
-      await bis(function () { return $('[data-stgr="brust"].on') && $('[data-stgr="beine"].on') && $(".af-body"); }, 2000, "Übungen: Brust dazu, Karte bleibt offen");
+      klick('[data-stgrp="beine"]');
+      await bis(function () { return $('[data-stgrp="beine"].on') && $(".af-body"); }, 2000, "Übungen: Beine, Karte bleibt offen");
+      klick('[data-stgrp="brust"]');
+      await bis(function () { return $('[data-stgrp="brust"].on') && $('[data-stgrp="beine"].on') && $(".af-body"); }, 2000, "Übungen: Brust dazu, Karte bleibt offen");
       klick('[data-start="frei"]');
-      await bis(function () { return $('[data-start="frei"].on') && $('[data-stgr="brust"].on') && $(".af-body"); }, 2000, "Übungen: Ausrüstung dazu, Karte bleibt offen");
+      await bis(function () { return $('[data-start="frei"].on') && $('[data-stgrp="brust"].on') && $(".af-body"); }, 2000, "Übungen: Ausrüstung dazu, Karte bleibt offen");
       klick('[data-streset]');   // die Auswahl bleibt gespeichert - für die folgenden Tests zurücksetzen
       await bis(function () { return !$('[data-stgr].on') && !$('[data-start].on'); }, 2000, "Übungen: Zurücksetzen");
       // Körperkarte: Muskelzone antippen filtert die Übungen
@@ -501,7 +501,7 @@
       // Langhantel, Kurzhantel & Kettlebell, Stange, Widerstandsband und Körpergewicht gehören zur Ausrüstung, nicht zu den Gruppen
       pruefe(!$('[data-stgr="lh"]') && !$('[data-stgr="frei"]') && !$('[data-stgr="stange"]') && !$('[data-stgr="air"]') && !$('[data-stgr="band"]'), "Übungen: Ausrüstung steht noch bei den Gruppen");
       pruefe(!$('[data-start="geraet"]') && $('[data-start="frei"]') && $('[data-start="stange"]') && $('[data-start="band"]') && $('[data-start="koerper"]') && !$('[data-start="kabel"]') && !$('[data-start="lh"]'), "Übungen: Ausrüstungs-Chips sollen Kurzhantel & Kettlebell, Stange & Barren, Widerstandsband und Körpergewicht sein (Fitnessstudio regelt der Ort)");
-      pruefe($('[data-stgr="brust"]') && $('[data-stgr="cardio"]') && $$("[data-stgr]").length === 7, "Übungen: sieben Bereiche erwartet (mit Cardio), gefunden " + $$("[data-stgr]").length);
+      pruefe($('[data-stgrp="brust"]') && $('[data-stgr="cardio"]') && $$("[data-stgrp]").length === 6, "Übungen: sechs Muskel-Chips erwartet, gefunden " + $$("[data-stgrp]").length);
       // Air- und Studio-Übungen gemeinsam: ein Chip „Widerstandsband“ zeigt alle Band-Übungen, offen
       klick('[data-start="band"]');
       await bis(function () { return $('[data-start="band"].on') && $$("[data-studio]:not([data-ortfremd])").length >= 30; }, 2000, "Übungen: Chip „Widerstandsband“ zeigt die Band-Übungen offen");
@@ -765,7 +765,7 @@
       await bis(function () { return $(".air-filter") && $$("[data-planex] .st-mus").length > 20; }, 3000, "Filter und Angaben im Plan-Bau");
       var alle = $$("[data-planex]").length;
       await filterAuf();
-      klick('[data-stgr="beine"]');
+      klick('[data-stgrp="beine"]');
       await bis(function () { var n = $$("[data-planex]").length; return n > 0 && n < alle; }, 2000, "Filter Beine");
       await heim();
       klick('.tabbar [data-nav="#search"]');
@@ -800,7 +800,7 @@
       pruefe(!$('[data-cover="lib/leg-day"]'), "Freiluft-Workout im Fitnessstudio");
       // derselbe Filter wirkt auch hier
       await filterAuf();
-      klick('[data-stgr="beine"]');
+      klick('[data-stgrp="beine"]');
       await bis(function () { var n = $$(".lib-card").length; return n >= 3 && n < 15 && $('[data-cover="lib/gym-legday"]') && !$('[data-cover="lib/gym-arms"]'); }, 2000, "Gruppe Beine: Beinprogramme, nicht Arme");
       klick('[data-streset]');
       await bis(function () { return $$(".lib-card").length === 15; }, 2000, "Zurücksetzen");
@@ -883,11 +883,11 @@
       pruefe(rs.top >= 0 && rs.top < 160 && W.scrollY > 300, "Der Plan soll beim Scrollen oben stehen bleiben: Abstand " + Math.round(rs.top) + ", gescrollt " + Math.round(W.scrollY));
       W.scrollTo(0, 0);
       klick("[data-plandone]");
-      klick(await bis(function () { return $("[data-planwo]"); }, 3000, "Mit Timer starten"));
-      await bis(function () { return /^#cover\/my\//.test(W.location.hash); }, 3000, "Deckblatt des Workouts");
-      await bis(function () { return $$(".wb-ablauf").length >= 2; }, 3000, "zwei Übungen im Deckblatt");
+      klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s"));
+      await bis(function () { return /^#playmy\//.test(W.location.hash) && $("#pl-body"); }, 3000, "Training startet direkt");
       var mw = (JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || []).filter(function (m) { return m.fromPlan; })[0];
       pruefe(mw && mw.items.length === 2 && mw.items.some(function (i) { return i.ex === "leg-press" && i.work === 40; }), "Workout aus dem Plan: " + JSON.stringify(mw));
+      W.exitPlayer();
     }],
     ["Summit unter Meine ablegen; Mobility & Stretch: Meine, Körperregionen, Langdruck", async function () {
       function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }
@@ -1018,7 +1018,7 @@
       cb({ coords: { latitude: lat + 0.5, longitude: 11, accuracy: 8 }, timestamp: ts + 3000 });   // Sprung: wird ignoriert
       cb({ coords: { latitude: lat + 0.0001, longitude: 11, accuracy: 90 }, timestamp: ts + 6000 });   // zu ungenau: wird ignoriert
       await bis(function () { return /^1,3\d$/.test($("#run-km").textContent); }, 2000, "Strecke ≈ 1,3 km, war " + $("#run-km").textContent);
-      pruefe($$("#run-karte polyline").length === 1, "Routenlinie fehlt");
+      pruefe($$("#run-karte .rk-weg").length === 1, "Routenlinie fehlt");
       klick($("[data-rundark]"));
       var dk = await bis(function () { return $("#run-dunkel") || W.document.getElementById("run-dunkel"); }, 2000, "Abdunkeln");
       dk.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true })); dk.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true }));
@@ -1172,14 +1172,13 @@
       var subs = $$(".wb-ablauf .st-sub").map(function (e) { return e.textContent; });
       pruefe(subs.length === 0, "Ablauf soll ohne eigene Eingabe keine Voreinstellung zeigen: " + subs.join(" | "));
       klick($("[data-goplan]"));
-      await bis(function () { return $("[data-planwo]") && $$("[data-studio]:not([data-ortfremd])").length === 6; }, 3000, "Plan mit sechs Übungen");
+      await bis(function () { return $("[data-planlos]") && $$("[data-studio]:not([data-ortfremd])").length === 6; }, 3000, "Plan mit sechs Übungen");
       var pl = daten().settings.stPlaene;
       pruefe(pl.length === 1 && pl[0].ids.length === 6 && pl[0].fromWo === "lib:gym-chest", "Plan aus dem Deckblatt nicht angelegt: " + JSON.stringify(pl));
       var zr = $('.pz-zeile[data-pz="chest-press-machine"]');
       pruefe(zr && zr.querySelector('[data-feld="saetze"] input').value === "3" && zr.querySelector('[data-feld="wdh"] input').value === "12", "Plan-Zeile ohne Ziel 3 Sätze × 12: " + (zr && zr.textContent));
       // „Mit Timer starten“ aus dem Plan: im Timer steht Gewicht × Wiederholungen unter dem Namen
-      klick($("[data-planwo]"));
-      klick(await bis(function () { return $("[data-go]"); }, 3000, "Mit Timer starten auf dem Deckblatt"));
+      klick($("[data-planlos]"));
       await bis(function () { return $("#pl-body .pl-kg"); }, 3000, "Gewicht im Timer");
       pruefe(/\d+ Sätze × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Sätze × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
       // Satz direkt im Timer eintragen: Fenster mit Gewicht und Wiederholungen, danach steht das neue Gewicht unter dem Namen
@@ -1226,7 +1225,7 @@
       pruefe($$("[data-genfig] .kk .z.an").length < an0, "Körpermodell folgt den Reglern nicht");
       rb.value = 35; rb.dispatchEvent(new W.Event("input", { bubbles: true }));
       klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Plan anlegen"));
-      await bis(function () { return $("[data-planwo]") && $$("[data-studio]:not([data-ortfremd])").length > 2; }, 3000, "Plan nach Gewichtung (Fitnessstudio)");
+      await bis(function () { return $("[data-planlos]") && $$("[data-studio]:not([data-ortfremd])").length > 2; }, 3000, "Plan nach Gewichtung (Fitnessstudio)");
       var l1 = daten().settings.stPlaene, p1 = l1[l1.length - 1];
       pruefe(p1.ids.length > 2 && p1.ids.every(function (id) { return W.exIstStudio(W.findExercise(id)); }), "Plan nach Gewichtung (Fitnessstudio) enthält Übungen ohne Gerät");
       await heim();
@@ -1236,7 +1235,7 @@
       klick(await bis(function () { return $("[data-surprise]"); }, 3000, "Überrasch mich"));
       klick(await bis(function () { return $("#overlayRoot [data-spmodus=\"gewicht\"]"); }, 3000, "Nach Gewichtung"));
       klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Plan anlegen"));
-      await bis(function () { return $("[data-planwo]") && daten().settings.stPlaene.length === 3; }, 3000, "Plan nach Gewichtung (Freiluft)");
+      await bis(function () { return $("[data-planlos]") && daten().settings.stPlaene.length === 3; }, 3000, "Plan nach Gewichtung (Freiluft)");
       var l2 = daten().settings.stPlaene, p2 = l2[l2.length - 1];
       pruefe(p2.ids.length > 2 && p2.ids.every(function (id) { return !W.exIstStudio(W.findExercise(id)); }), "Plan nach Gewichtung (Freiluft) enthält Geräte");
       // beide Orte zugleich: Überrasch mich und Nach Gewichtung ziehen aus beiden Orten
@@ -1320,29 +1319,26 @@
       klick(await bis(function () { return $('[data-planex="leg-press"]'); }, 2000, "Beinpresse"));
       klick(await bis(function () { return $("[data-plandone]:not([disabled])"); }, 2000, "Speichern"));
       await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "Plan-Seite mit zwei Zeilen");
-      pruefe($$('.pz-zeile [data-pzmodus="timer"].active').length === 2, "Nach Zeit: beide Zeilen sollen mit Timer voreingestellt sein");
-      pruefe($('.pz-kopfkarte [data-pzalle="timer"].active') && $(".pz-kopfkarte [data-pzzeiten]"), "Karte „Alle Übungen“ mit Zeiten fehlt oben");
-      pruefe(($(".pz-kopfkarte").compareDocumentPosition($(".pz-liste")) & 4), "Die Karte „Alle Übungen“ soll vor den Zeilen stehen");
-      klick('.pz-kopfkarte [data-pzalle="saetze"]');
-      await bis(function () { return $$('.pz-zeile [data-pzmodus="saetze"].active').length === 2; }, 2000, "Alle Satz für Satz");
-      klick($('.pz-zeile[data-pz="air-squats"] [data-pzmodus="timer"]'));
-      await bis(function () { return $('.pz-zeile[data-pz="air-squats"] [data-pzmodus="timer"].active'); }, 2000, "eine Zeile mit Timer");
-      pruefe(!$(".pz-kopfkarte [data-pzalle].active") && $(".pz-kopfkarte [data-pzzeiten]"), "Gemischt: keine der beiden Stellungen oben aktiv, Zeiten sichtbar");
+      pruefe(!$("[data-pzmodus]") && !$("[data-pzalle]") && !$("[data-pzstart]"), "Satz-/Timer-Umschalter und Timer-Start je Übung gibt es nicht mehr");
+      pruefe($("[data-planlos]") && $(".pz-akt [data-planfav]") && $(".pz-akt [data-plankopie]") && $(".pz-akt [data-planteilen]"), "Ein Los geht’s mit Favorit, Kopie und Teilen fehlt oben");
+      pruefe(($("[data-planlos]").compareDocumentPosition($(".pz-liste")) & 4), "Los geht’s soll vor den Zeilen stehen");
       var pl2 = W.stPlaene().filter(function (x) { return x.id === W.stPlanAktiv; })[0];   // der Plan ist noch Entwurf, bis „Plan speichern“
-      pruefe(pl2.modus && pl2.modus["air-squats"] === "timer" && pl2.standard === "saetze", "Wahl je Zeile nicht im Plan: " + JSON.stringify([pl2.modus, pl2.standard]));
-      // Zeiten: Für alle gleich gilt sofort für die Timer-Übungen
-      klick('.pz-kopfkarte [data-pzalle="timer"]');
-      await bis(function () { return $$('.pz-zeile [data-pzmodus="timer"].active').length === 2; }, 2000, "Alle mit Timer");
-      klick(await bis(function () { return $('[data-pzart="alle"]'); }, 2000, "Für alle gleich"));
-      await bis(function () { return $("#pk-reps"); }, 2000, "Runden, Arbeit, Pause für alle");
-      klick('#pk-work ~ [data-inc], #pk-work + [data-inc]');
-      await bis(function () { return $$('.pz-zeile [data-feld="work"] input').every(function (i) { return i.value === $("#pk-work").value; }); }, 2000, "Arbeit gilt für alle Zeilen");
       var sel = $("#pk-br"); sel.value = "60"; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
       await bis(function () { return W.stPlaene().filter(function (x) { return x.id === pl2.id; })[0].blockRest === 60; }, 2000, "Pause zwischen den Übungen gespeichert");
-      klick($("[data-planwo]"));
-      await bis(function () { return /^#cover\/my\//.test(W.location.hash); }, 3000, "Deckblatt des Timer-Workouts");
+      // Workout-Planer: ein weiterer BLOC aus Meine, ein Los geht’s startet beide nacheinander mit der Frage dazwischen
+      var zweit = { id: "p-zwei", name: "BLOC 2", ids: ["leg-press"], updatedAt: Date.now() };
+      W.stPlaene().push(zweit); W.save();
+      W.renderKatalog();
+      klick(await bis(function () { return $("[data-blocplus]"); }, 2000, "BLOC hinzufügen"));
+      klick(await bis(function () { return $('#overlayRoot [data-bwmeine="p-zwei"]'); }, 2000, "BLOC aus Meine"));
+      await bis(function () { return $$(".pz-fz").length === 1; }, 2000, "weiterer BLOC steht unter dem Planer");
+      klick($("[data-planlos]"));
+      await bis(function () { return /^#playmy\//.test(W.location.hash) && $("#pl-body"); }, 3000, "Los geht’s startet direkt das Training");
       var mwN = (W.state.db.myWorkouts || []).filter(function (m) { return m.fromPlan === pl2.id; })[0];
-      pruefe(mwN && mwN.blockRest === 60, "Pause zwischen den Übungen kommt im Timer-Workout nicht an: " + JSON.stringify(mwN && mwN.blockRest));
+      pruefe(mwN && mwN.blockRest === 60, "Pause zwischen den Übungen kommt im Workout nicht an: " + JSON.stringify(mwN && mwN.blockRest));
+      pruefe(mwN.items.length === 3 && mwN.items[2].bloc === "BLOC 2", "Zweiter BLOC hängt nicht hinten dran: " + JSON.stringify(mwN.items.map(function (i) { return [i.ex, i.bloc]; })));
+      pruefe(W.playerState.steps.some(function (s) { return /Bereit für BLOC 2/.test(s.titel || ""); }), "Frage „Bereit für BLOC 2?“ fehlt zwischen den BLOCs");
+      W.exitPlayer();
     }],
     ["Plan als Programm: Sätze, Gewicht, Pause je Übung, Letztes Mal, Timer-Umschalter, Statistik", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
@@ -1383,20 +1379,8 @@
       pruefe(e1.pause === 105, "Pause nicht gespeichert: " + e1.pause);
       var summe = s0 + 1 + W.studioZiel("butterfly").saetze;
       pruefe(new RegExp(summe + " Sätze").test($("#plan-summe").textContent), "Summe oben: " + $("#plan-summe").textContent + " (erwartet " + summe + ")");
-      // Timer je Übung: Umschalter in der Plan-Zeile, Start nur dieser Übung (nicht der ganze Plan)
-      pruefe(!$('[data-pzstart="leg-press"]') && z1.querySelector('[data-feld="wdh"]'), "Satz-Modus: kein Start-Knopf, Wiederholungen sichtbar erwartet");
-      klick(z1.querySelector('[data-pzmodus="timer"]'));
-      await bis(function () { return $('.pz-zeile[data-pz="leg-press"] [data-feld="work"]'); }, 2000, "Zeile im Timer-Modus (Arbeit statt Wiederholungen)");
-      pruefe(!$('.pz-zeile[data-pz="leg-press"] [data-feld="wdh"]') && $('[data-pzstart="leg-press"]') && !$('[data-pzstart="butterfly"]'), "Timer gilt nur für die eine Übung");
-      var plM = daten().settings.stPlaene.filter(function (x) { return x.id === "p-prog"; })[0];   // die Wahl je Zeile gilt für diesen Plan
-      pruefe(plM.modus && plM.modus["leg-press"] === "timer" && !(plM.modus["butterfly"] === "timer"), "Modus je Übung nicht im Plan gespeichert: " + JSON.stringify(plM.modus));
-      klick($('[data-pzstart="leg-press"]'));
-      await bis(function () { return /^#playst\/leg-press/.test(W.location.hash) && $("[data-plkg]"); }, 3000, "Timer nur für diese Übung, mit Satz-Eintrag");
-      W.exitPlayer();
-      W.go("#studioplan/p-prog");
-      await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
-      klick($('.pz-zeile[data-pz="leg-press"] [data-pzmodus="saetze"]'));
-      await bis(function () { return $('.pz-zeile[data-pz="leg-press"] [data-feld="wdh"]'); }, 2000, "zurück im Satz-Modus");
+      // Es gibt nur noch ein Los geht’s: keine Satz-/Timer-Umschalter und kein Timer-Start je Übung auf der Plan-Seite
+      pruefe(!$("[data-pzmodus]") && !$("[data-pzstart]") && z1.querySelector('[data-feld="wdh"]'), "Plan-Zeile: Wiederholungen statt Umschalter erwartet");
       z1 = $('.pz-zeile[data-pz="leg-press"]');
       // Übungskarte: dieselben Werte, Letztes Mal zum Übernehmen, Umschalter Satz für Satz ↔ Timer
       klick(z1.querySelector(".pz-kopf"));
@@ -1448,10 +1432,9 @@
       await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
       // Plan als Timer-Workout: Runden = Sätze, im Timer Gewicht eintragen, letztes Mal im Fenster, landet in der Statistik
       W.go("#studioplan/p-prog");
-      klick(await bis(function () { return $("[data-planwo]"); }, 3000, "Mit Timer starten"));
+      klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s"));
       var mw = (daten().myWorkouts || []).filter(function (m) { return m.fromPlan === "p-prog"; })[0];
       pruefe(mw && mw.items[0].ex === "leg-press" && mw.items[0].reps === s0 + 2, "Timer-Workout aus dem Plan: " + JSON.stringify(mw && mw.items[0]));
-      W.go("#playmy/" + mw.id);
       klick(await bis(function () { return $("[data-plkg]"); }, 3000, "Satz eintragen im Timer"));
       await bis(function () { return $("#overlayRoot .pg-letzte .st-uebernehmen"); }, 2000, "Fenster zeigt das letzte Mal");
       klick($("#overlayRoot [data-ok]"));
@@ -1494,10 +1477,8 @@
       W.go("#studioplan/p-koerper");
       await bis(function () { return $('.pz-zeile[data-pz="push-ups"]'); }, 3000, "Plan mit Übung ohne Gewicht");
       var zk = $('.pz-zeile[data-pz="push-ups"]');
-      pruefe(zk.querySelector('[data-feld="work"]') && !zk.querySelector('[data-feld="kg"]') && zk.querySelector('[data-pzstart]'), "Ohne Gewicht: Timer-Modus mit Arbeit, ohne Gewichtsfeld erwartet");
-      klick(zk.querySelector('[data-pzmodus="saetze"]'));
-      await bis(function () { return $('.pz-zeile[data-pz="push-ups"] [data-feld="wdh"]'); }, 2000, "Zeile im Satz-Modus (Wiederholungen)");
-      pruefe(!$('.pz-zeile[data-pz="push-ups"] [data-feld="kg"]') && !$('.pz-zeile[data-pz="push-ups"] [data-feld="work"]'), "Satz-Modus ohne Gewicht: nur Sätze, Wiederholungen, Pause");
+      pruefe(zk.querySelector('[data-feld="work"]') && !zk.querySelector('[data-feld="kg"]') && !zk.querySelector('[data-pzstart]'), "Ohne Gewicht: Arbeit statt Wiederholungen, kein Gewichtsfeld, kein Timer-Start je Übung erwartet");
+      W.studioModusSetzen("push-ups", "saetze");   // die Übungskarte darf weiter Satz für Satz oder mit Timer laufen; hier Satz für Satz
       klick($('.pz-zeile[data-pz="push-ups"] .pz-kopf'));
       await bis(function () { return $("#st-w"); }, 3000, "Karte im Satz-Modus ohne Gewichtsfeld");
       pruefe(!$("#st-kg") && !$("[data-stschritt]") && !$("[data-stscheiben]"), "Ohne Gewicht: kein kg-Feld, kein Schritt");

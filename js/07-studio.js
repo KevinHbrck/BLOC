@@ -404,7 +404,7 @@ function planZeileHTML(id, nr, bl){   // bl: { art, k, n, bid } - die Übung ste
   var ex = findExercise(id);
   if(!ex) return "";
   var block = studioNurBlock(ex), z = studioZiel(id), tm = studioTimer(id), e = studioEintrag(id) || {}, l = studioLetzte(id, true);
-  var timerModus = studioModus(id) === "timer";   // je Übung: Satz für Satz eintragen oder diese Übung mit dem Timer laufen lassen
+  var timerModus = block;   // Übungen ohne Gewicht laufen mit Zeit (Arbeit), Übungen mit Gewicht mit Wiederholungen; es gibt nur noch ein „Los geht’s“
   // Sätze, dann Wiederholungen (Satz-Modus) bzw. Arbeitszeit (Timer), Gewicht (nur Übungen mit Gewicht) und Pause
   var felder = planFeldHTML("saetze", t(bl ? "blkRunden" : "planSaetze"), z.saetze, 1, 20, 1)+
     (timerModus ? planFeldHTML("work", t("planArbeit"), tm.work, 5, 600, 5) : planFeldHTML("wdh", t("stReps"), z.wdh, 1, 100, 1))+
@@ -418,11 +418,7 @@ function planZeileHTML(id, nr, bl){   // bl: { art, k, n, bid } - die Übung ste
         '<span class="pz-letzte'+(l ? ' an' : '')+'">'+(l ? esc(t("planZuletzt", { d:studioTagText(l.at), s:studioLetzteText(l) })) : esc(t("planNochNie")))+'</span>'+
         (e.notiz && e.notiz.trim() ? '<span class="pz-notiz">'+esc(e.notiz.trim())+'</span>' : '')+'</span>'+   // die Notiz der Übung erscheint beim nächsten Mal wieder
       '<span class="pz-pfeil" aria-hidden="true">'+ICON_CHEV+'</span></div>'+
-    '<div class="seg-row pz-modus" role="group" aria-label="'+esc(t("stModusTitel"))+'">'+
-      '<button type="button" data-pzmodus="saetze" class="'+(timerModus ? '' : 'active')+'" aria-pressed="'+!timerModus+'">'+esc(t("stModusSaetze"))+'</button>'+
-      '<button type="button" data-pzmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>'+
-    '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div>'+
-    (timerModus ? '<button type="button" class="btn btn-secondary pz-start" data-pzstart="'+id+'">'+ICON_PLAY+' '+esc(t("planTimerStart"))+'</button>' : '')+'</div>';
+    '<div class="st-eingabe pz-felder'+(block ? ' drei' : '')+'">'+felder+'</div></div>';
 }
 /* Die Zeilen des Plans: Einzelübungen und Blöcke (Supersatz, Zirkel) mit einem Knopf zwischen je zwei Übungen zum Verbinden bzw. Trennen */
 function planListeHTML(p){
@@ -448,83 +444,67 @@ function planListeHTML(p){
 /* Oben auf der Plan-Seite: „Für alle gleich“ - alle Übungen auf einmal Satz für Satz oder mit Timer stellen - und die Zeiten des Timers wie im
    Workout-Baukasten (Für alle gleich: Runden, Arbeit, Pause für alle Timer-Übungen; Je Übung: die Werte der Zeilen; Pause zwischen den Übungen).
    Die Voreinstellung je Übung kommt aus der Art, mit der der Plan angelegt wurde (p.standard); einzelne Zeilen lassen sich umstellen (p.modus). */
+/* Oben auf der Plan-Seite nur noch: Pause zwischen den Übungen (es gibt ein einziges „Los geht’s“, das alle Übungen im Training-Bereich laufen lässt) */
 function planKopfKarteHTML(p, ids){
-  var s = state.db.settings, modi = ids.map(studioModus);
-  var alleS = modi.every(function(m){ return m === "saetze"; }), alleT = modi.every(function(m){ return m === "timer"; }), hatTimer = modi.indexOf("timer") > -1;
-  var z = p.zeiten || {}, ersteT = ids.filter(function(id){ return studioModus(id) === "timer"; })[0];
-  var tm = ersteT ? studioTimer(ersteT) : { reps:3, work:40, rest:60 };
-  var art = z.art === "alle" ? "alle" : "je", offen = s.planZeitenOffen !== false;
   var rests = [0, 15, 30, 45, 60, 90, 120], br = p.blockRest != null ? p.blockRest : 45;
   if(rests.indexOf(br) < 0) rests.push(br);
-  function knopf(m, an, key){ return '<button type="button" data-pzalle="'+m+'" class="'+(an ? 'active' : '')+'" aria-pressed="'+an+'">'+(m === "timer" ? ICON_PLAY+' ' : '')+esc(t(key))+'</button>'; }
-  var zeiten = '';
-  if(hatTimer){
-    var sum = art === "alle" ? t("modeUniform")+" "+(z.saetze || tm.reps)+"×"+(z.work || tm.work)+" s · "+(z.pause != null ? z.pause : tm.rest)+" s" : t("modeIndividual");
-    zeiten = '<div class="pz-zeiten"><div class="opt-head" data-pzzeiten role="button" tabindex="0" aria-expanded="'+offen+'">'+
-        '<div><div class="opt-title">'+esc(t("timesLabel"))+'</div><div class="opt-sum">'+esc(sum)+SEP+esc(t("optRestShort", { n:br }))+'</div></div>'+
-        '<span class="tpl-chev'+(offen ? '' : ' zu')+'" aria-hidden="true">&#9662;</span></div>'+
-      (offen ? '<div class="opt-body"><div class="seg-row">'+
-          '<button type="button" data-pzart="alle" class="'+(art === "alle" ? 'active' : '')+'">'+esc(t("modeUniform"))+'</button>'+
-          '<button type="button" data-pzart="je" class="'+(art === "je" ? 'active' : '')+'">'+esc(t("modeIndividual"))+'</button></div>'+
-        (art === "alle"
-          ? '<div class="tm-grid" id="pk-zeiten"><div><label>'+esc(t("tmReps"))+'</label>'+stepperHTML("pk-reps", z.saetze || tm.reps, 1, 20, 1)+'</div>'+
-            '<div><label>'+esc(t("tmWork"))+'</label>'+stepperHTML("pk-work", z.work || tm.work, 5, 600, 5)+'</div>'+
-            '<div><label>'+esc(t("tmRest"))+'</label>'+stepperHTML("pk-rest", z.pause != null ? z.pause : tm.rest, 0, 300, 5)+'</div></div>'
-          : '<div class="tm-hint">'+esc(t("planJeHint"))+'</div>')+
-        '<label for="pk-br">'+esc(t("myRest"))+'</label>'+
-        '<select id="pk-br">'+rests.sort(function(a, b){ return a - b; }).map(function(v){
-          return '<option value="'+v+'"'+(v === br ? ' selected' : '')+'>'+v+' s</option>'; }).join("")+'</select></div>' : '')+'</div>';
-  }
-  return '<div class="card pz-kopfkarte"><label>'+esc(t("planAlleTitel"))+'</label>'+
-    '<div class="seg-row" role="group">'+knopf("saetze", alleS, "stModusSaetze")+knopf("timer", alleT, "stModusTimer")+'</div>'+zeiten+'</div>';
+  return '<div class="card pz-kopfkarte"><label for="pk-br">'+esc(t("myRest"))+'</label>'+
+    '<select id="pk-br">'+rests.sort(function(a, b){ return a - b; }).map(function(v){
+      return '<option value="'+v+'"'+(v === br ? ' selected' : '')+'>'+v+' s</option>'; }).join("")+'</select></div>';
 }
 function planKopfKarteBinden(p, ids, neu){
-  function modus(m){ p.standard = m; p.modus = {}; p.updatedAt = Date.now(); save(); neu(); }
-  app.querySelectorAll("[data-pzalle]").forEach(function(b){ b.addEventListener("click", function(){ modus(b.getAttribute("data-pzalle")); }); });
-  var s = state.db.settings;
-  var kt = app.querySelector("[data-pzzeiten]");
-  function zeitenUm(){ s.planZeitenOffen = s.planZeitenOffen === false; save(); neu(); }
-  if(kt){
-    kt.addEventListener("click", zeitenUm);
-    kt.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); zeitenUm(); } });
-  }
-  // Für alle gleich: Runden, Arbeit und Pause gelten sofort für alle Übungen, die mit dem Timer laufen
-  function fuerAlle(z){
-    p.zeiten = z;
-    ids.forEach(function(id){
-      if(studioModus(id) !== "timer") return;
-      var en = studioAlle()[id] || (studioAlle()[id] = { log:[] });
-      en.ziel = en.ziel || {}; en.ziel.saetze = z.saetze;
-      var alt = en.timer || {}; en.timer = { work:z.work };
-      if(alt.reps != null) en.timer.reps = z.saetze;
-      en.pause = z.pause;
-    });
-    // Blöcke (Supersatz, Zirkel) gehen für alle ihre Übungen gleich viele Runden - auch für Mitglieder, die gerade nicht mit dem Timer laufen
-    planBloecke(p).forEach(function(bl){
-      if(bl.ids.length < 2 || !bl.ids.some(function(id){ return studioModus(id) === "timer"; })) return;
-      bl.ids.forEach(function(id){ var en = studioAlle()[id] || (studioAlle()[id] = { log:[] }); en.ziel = en.ziel || {}; en.ziel.saetze = z.saetze; });
-    });
-    p.updatedAt = Date.now(); save(); neu();
-  }
-  app.querySelectorAll("[data-pzart]").forEach(function(b){
-    b.addEventListener("click", function(){
-      var a = b.getAttribute("data-pzart");
-      if((p.zeiten && p.zeiten.art || "je") === a) return;
-      if(a === "alle"){
-        var erste = ids.filter(function(id){ return studioModus(id) === "timer"; })[0], tm = erste ? studioTimer(erste) : { reps:3, work:40, rest:60 };
-        fuerAlle({ art:"alle", saetze:tm.reps, work:tm.work, pause:tm.rest });
-      } else { p.zeiten = { art:"je" }; p.updatedAt = Date.now(); save(); neu(); }
-    });
-  });
-  var zb = app.querySelector("#pk-zeiten");
-  if(zb) bindSteppers(zb, function(){
-    fuerAlle({ art:"alle",
-      saetze:clamp(parseInt(app.querySelector("#pk-reps").value) || 3, 1, 20),
-      work:clamp(parseInt(app.querySelector("#pk-work").value) || 40, 5, 600),
-      pause:clamp(parseInt(app.querySelector("#pk-rest").value) || 0, 0, 300) });
-  });
   var br = app.querySelector("#pk-br");
   if(br) br.addEventListener("change", function(){ p.blockRest = parseInt(br.value) || 0; p.updatedAt = Date.now(); save(); neu(); });
+}
+/* ---------- Workout-Planer: ein BLOC (die Übungen mit Sätzen, Gewicht, Pause) oder mehrere hintereinander, ein „Los geht’s“ ----------
+   p.folge = [BLOC-IDs]: weitere BLOCs, die nach diesem kommen. Zwischen zwei BLOCs fragt das Training „Bereit für …?“ (Pause mit Überspringen). */
+function planFolge(p){ return (Array.isArray(p.folge) ? p.folge : []).map(stPlanFind).filter(function(q){ return q && q !== p; }); }
+function planKetteIds(p){   // alle Übungen des BLOCs und der folgenden, jede nur einmal (für Training speichern)
+  var out = stPlanIds(p).slice();
+  planFolge(p).forEach(function(q){ stPlanIds(q).forEach(function(id){ if(out.indexOf(id) < 0) out.push(id); }); });
+  return out;
+}
+function planFolgeHTML(p){
+  var l = planFolge(p);
+  return '<div class="card pz-folge"><div class="kp-titel">'+esc(t("blocFolgeTitel"))+'</div>'+
+    (l.length ? '<div class="pz-fl">'+l.map(function(q, i){ var n = stPlanIds(q).length;
+      return '<div class="pz-fz"><button type="button" class="pz-fz-go" data-blocoffen="'+esc(q.id)+'"><i>'+(i+2)+'</i><span><b>'+esc(q.name)+'</b><small>'+esc(planAnzahl(n))+'</small></span>'+ICON_CHEV+'</button>'+
+        '<button type="button" class="pz-fz-weg" data-blocweg="'+esc(q.id)+'" aria-label="'+esc(t("del"))+'">&times;</button></div>'; }).join("")+'</div>' : '<div class="kp-leer">'+esc(t("blocFolgeLeer"))+'</div>')+
+    '<button type="button" class="btn btn-secondary pz-folge-plus" data-blocplus>'+ICON_PLUS+' '+esc(t("blocPlus"))+'</button></div>';
+}
+function planKopie(p){
+  var q = JSON.parse(JSON.stringify(p));
+  q.id = uid(); q.name = t("planKopieName", { n:p.name }); q.updatedAt = Date.now(); delete q.entwurf; delete q.fromWo; delete q.parent; q.folge = [];
+  stPlaene().push(q); save();
+  return q;
+}
+/* Sheet „BLOC hinzufügen“: neu bauen · aus Meine · aus dem Katalog */
+function openBlocWahl(p, neu){
+  var root = document.getElementById("overlayRoot"), eigene = stPlaene().filter(function(x){ return !x.entwurf && x.id !== p.id && (p.folge || []).indexOf(x.id) < 0 && stPlanIds(x).length; });
+  var kat = LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); });
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bloc-sheet" role="dialog" aria-label="'+esc(t("blocPlus"))+'"><h3>'+esc(t("blocPlus"))+'</h3>'+
+    '<button type="button" class="bloc-opt" data-bwneu>'+ICON_PLUS+'<span><b>'+esc(t("blocWahlNeu"))+'</b><small>'+esc(t("blocWahlNeuSub"))+'</small></span></button>'+
+    (eigene.length ? '<div class="af-lbl">'+esc(t("blocWahlMeine"))+'</div>'+eigene.map(function(q){
+      return '<button type="button" class="bloc-opt" data-bwmeine="'+esc(q.id)+'"><span><b>'+esc(q.name)+'</b><small>'+esc(planAnzahl(stPlanIds(q).length))+'</small></span></button>'; }).join("") : '')+
+    '<div class="af-lbl">'+esc(t("blocWahlKatalog"))+'</div>'+
+    '<select id="bw-kat"><option value="">'+esc(t("planWahlLeer"))+'</option>'+kat.map(function(lw){ return '<option value="'+esc(lw.id)+'">'+esc(tplText(lw.name))+'</option>'; }).join("")+'</select>'+
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button></div></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  function anhaengen(q){ p.folge = (p.folge || []).concat([q.id]); p.updatedAt = Date.now(); save(); zu(); neu(); }
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+  root.querySelector("[data-bwneu]").addEventListener("click", function(){   // neuer BLOC: gleich zur Übungsauswahl, danach zurück zu diesem BLOC
+    var q = { id:uid(), name:t("planDefault", { n:stPlaene().filter(function(x){ return !x.entwurf; }).length+1 }), ids:[], updatedAt:Date.now(), entwurf:true, parent:p.id, standard:p.standard || "saetze" };
+    stPlaene().push(q); p.folge = (p.folge || []).concat([q.id]); save(); zu();
+    stPlanAktiv = q.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);
+  });
+  root.querySelectorAll("[data-bwmeine]").forEach(function(b){ b.addEventListener("click", function(){ var q = stPlanFind(b.getAttribute("data-bwmeine")); if(q) anhaengen(q); }); });
+  root.querySelector("#bw-kat").addEventListener("change", function(e){   // Katalog-Workout wird zu einem eigenen BLOC mit denselben Übungen
+    var lw = findLibWorkout(e.target.value); if(!lw) return;
+    var ids = lw.exercises.filter(function(id){ var ex = findExercise(id); return ex && ex.main !== "stretch"; });
+    var q = { id:uid(), name:tplText(lw.name), ids:ids, updatedAt:Date.now(), fromWo:"lib:"+lw.id, standard:"saetze" };
+    stPlaene().push(q); save(); anhaengen(q);
+  });
 }
 function planSaetzeSumme(ids){
   return ids.reduce(function(a, id){ return findExercise(id) ? a + studioZiel(id).saetze : a; }, 0);
@@ -610,14 +590,28 @@ function planLoslegenFrage(p){
 }
 /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
    eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird. Öffnet das Deckblatt mit „Los geht’s“ (auch aus dem Kalender) */
-function planAlsWorkout(p){
-  var items = planTimerItems(p);   // Einzelübungen nacheinander, Supersätze und Zirkel abwechselnd
+/* Der BLOC (mit allen folgenden) als Workout für den Training-Bereich: Übungen nacheinander, je Satz Gewicht und Wiederholungen eintragen (mitGewicht);
+   eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird. direkt: gleich ins Training (ohne Deckblatt); sonst das Deckblatt (aus dem Kalender) */
+function planMitItems(p){
+  var items = planTimerItems(p);
+  planFolge(p).forEach(function(q){
+    var l = planTimerItems(q);
+    if(l.length){ l[0].bloc = q.name; items = items.concat(l); }
+  });
+  return items;
+}
+function planMw(p){
+  var items = planMitItems(p);
   var mw = (state.db.myWorkouts || []).filter(function(x){ return x.fromPlan === p.id; })[0];
-  var br = p.blockRest != null ? p.blockRest : 45;   // Pause zwischen den Übungen (Zeiten-Karte oben)
+  var br = p.blockRest != null ? p.blockRest : 45;   // Pause zwischen den Übungen
   if(mw){ mw.name = p.name; mw.items = items; mw.blockRest = br; mw.updatedAt = Date.now(); save(); }
   else { mw = createMyFromDraft({ name:p.name, mode:"individual", reps:6, work:30, rest:10, blockRest:br, items:items }); mw.fromPlan = p.id; save(); }
+  return mw;
+}
+function planAlsWorkout(p, direkt){
+  var mw = planMw(p);
   coverDraft = null;
-  go("#cover/my/"+mw.id);
+  go((direkt ? "#playmy/" : "#cover/my/")+mw.id);
 }
 function renderStudioPlan(){
   var p = stPlanAktiv && stPlanFind(stPlanAktiv);
@@ -686,10 +680,14 @@ function renderStudioPlan(){
     html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
       (p.entwurf && ids.length ? '<div class="page-hint plan-entwurf">'+esc(t("planEntwurfHinweis"))+'</div>' : '')+
       (ids.length ? hw.z(0, "page-hint") : '')+
-      (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planwo>'+ICON_PLAY+' '+esc(t("planAlleTimer"))+'</button>' : '')+
+      (ids.length ? '<button type="button" class="btn btn-primary plan-start" data-planlos>'+ICON_PLAY+' '+esc(t("letsGoBig"))+'</button>'+
+        '<div class="pz-akt"><button type="button" data-planfav aria-pressed="'+isFav("plan:"+p.id)+'" class="'+(isFav("plan:"+p.id) ? 'on' : '')+'">'+svgIcon(ICON_STAR)+'<span>'+esc(t("favorite"))+'</span></button>'+
+        '<button type="button" data-plankopie>'+svgIcon(ICON_COPY)+'<span>'+esc(t("actCopy"))+'</span></button>'+
+        '<button type="button" data-planteilen>'+ICON_SHARE+'<span>'+esc(t("share"))+'</span></button></div>' : '')+
       (ids.length ? planKopfKarteHTML(p, ids) : '')+
       (ids.length ? auswertungHTML(ids) : '')+   // erst die Übersicht über die Übungen im Ganzen, dann die Zeilen
       (ids.length ? '<div class="pz-liste">'+planListeHTML(p)+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
+      (ids.length ? planFolgeHTML(p) : '')+
       (ids.length ? (p.entwurf ? '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+esc(planAnzahl(ids.length))+'</b></span>'+
         '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plansave>'+ICON_SAVE+' '+esc(t("planSpeichern"))+'</button></span></div></div>'
         : trainingLeisteHTML({ plan:p, ids:ids })) : '')+
@@ -699,7 +697,7 @@ function renderStudioPlan(){
   // Zurück führt zur Liste unter „Meine“, nicht aus dem Katalog heraus
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
-    planVerlassen(p, function(){ stPlanAktiv = null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });   // ein neuer, nicht gespeicherter Plan fragt nach
+    planVerlassen(p, function(){ stPlanAktiv = p.parent && stPlanFind(p.parent) ? p.parent : null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });   // ein neuer, nicht gespeicherter Plan fragt nach; ein weiterer BLOC führt zurück zum Workout-Planer
   }); }
   bindCommon();
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
@@ -716,12 +714,19 @@ function renderStudioPlan(){
   });
   an("[data-plansave]", function(){   // erst jetzt steht der neue Plan unter Meine; danach die Frage, ob es losgehen soll
     if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); }
+    if(p.parent && stPlanFind(p.parent)){ stPlanAktiv = p.parent; stPlanBauen = false; renderKatalog(); window.scrollTo(0, 0); return; }   // ein weiterer BLOC: zurück zum Workout-Planer
     renderKatalog(); window.scrollTo(0, 0);
     planLoslegenFrage(p);
   });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */
-  an("[data-planwo]", function(){ planAlsWorkout(p); });
+  an("[data-planlos]", function(){ if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); } planAlsWorkout(p, true); });   // ein einziges „Los geht’s“: direkt in den Training-Bereich
+  an("[data-planfav]", function(){ toggleFav("plan:"+p.id); neu(); });
+  an("[data-plankopie]", function(){ var q = planKopie(p); showToast(t("planKopiert", { n:q.name })); });
+  an("[data-planteilen]", function(){ var mw = planMw(p); shareDraft(draftFromMy(mw)); });
+  an("[data-blocplus]", function(){ openBlocWahl(p, neu); });
+  app.querySelectorAll("[data-blocoffen]").forEach(function(b){ b.addEventListener("click", function(){ stPlanAktiv = b.getAttribute("data-blocoffen"); stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); }); });
+  app.querySelectorAll("[data-blocweg]").forEach(function(b){ b.addEventListener("click", function(){ p.folge = (p.folge || []).filter(function(x){ return x !== b.getAttribute("data-blocweg"); }); p.updatedAt = Date.now(); save(); neu(); }); });
   an("[data-plandel]", function(){
     confirmSheet(t("planDelQ"), "„"+p.name+"“ – "+t("cantUndo"), t("del"), function(){
       state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });

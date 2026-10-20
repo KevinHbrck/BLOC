@@ -21,9 +21,9 @@ function buildSteps(w){
                      side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || "", mitGew), exNr:exNr });
       }
     }
-    if(i < w.items.length-1 && it.restAfterSec>0){
+    if(i < w.items.length-1 && (it.restAfterSec>0 || it.nextBloc)){
       var nb = findBlock(w.items[i+1].blockId);
-      steps.push({ phase:"blockrest", label:"Blockpause", blockName: nb?nb.name:"", duration:it.restAfterSec, ex: nb && nb.ex || "", kg: gymSatzText(nb && nb.ex || "", mitGew), exNr:exNr+1 });
+      steps.push({ phase:"blockrest", label:"Blockpause", titel: it.nextBloc ? t("blocBereit", { name:it.nextBloc }) : "", blockName: nb?nb.name:"", duration:it.nextBloc ? Math.max(it.restAfterSec, 30) : it.restAfterSec, ex: nb && nb.ex || "", kg: gymSatzText(nb && nb.ex || "", mitGew), exNr:exNr+1 });
     }
   }
   steps.push({ phase:"done", label:"Fertig", duration:0, exNr:exNr+1 });
@@ -128,7 +128,7 @@ function phaseVars(phase){
 function playerTrainingKontext(){
   var src = playerState && playerState.source, p = null;
   if(src && src.type === "mine"){ var mw = findMy(src.id); if(mw && mw.fromPlan) p = stPlanFind(mw.fromPlan); }
-  if(p) return { plan:p, ids:stPlanIds(p) };
+  if(p) return { plan:p, ids:planKetteIds(p) };   // der BLOC und die folgenden BLOCs
   return trainingKontext(src && src.type === "studio" ? src.id : null);
 }
 function playerTrackt(){   // Workouts mit Gewicht (aus einem Plan oder eine einzelne Übung mit Gewicht) lassen sich im Timer speichern
@@ -213,7 +213,7 @@ function stepBodyHTML(step){
   var vorschau = (step.phase==="blockrest" || step.phase==="prep") && step.ex && ILLU[step.ex];
   var timeHTML = '<div class="ring-wrap'+(vorschau ? ' mit-figur' : '')+'" id="pl-ringwrap">'+ringHTML()+
         (vorschau ? illuHTML(step.ex, "pl-vorschau") : '')+'<div class="time" id="pl-time">'+esc(fmtTime(step.duration))+'</div></div>';
-  var phLabel = pv.label;
+  var phLabel = step.titel || pv.label;
   if(step.stretch){
     if(step.phase==="work") phLabel = t("phHold");
     else if(step.phase==="rest") phLabel = t(step.side ? "phSwitch" : "phRelax");

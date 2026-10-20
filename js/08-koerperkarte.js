@@ -352,8 +352,8 @@ function kkMuskelHTML(attrZone, attrGrp, sel, opt){
     '<div class="fc-chips kk-grp-chips">'+chips+'</div>'+
     '<div class="kk-filter'+(opt.glow ? ' kk-glow' : '')+'">'+koerperPaar(w, { sel:sel, attr:attrZone })+'</div>'+
     '<div class="kk-hinweis'+(sel.length ? ' an' : '')+'">'+esc(sel.length ? sel.map(kkName).join(", ") : t("kkTippen"))+'</div>'+
-    (kkFeinAn() ? '<details class="kk-liste-box"'+(auf ? ' open' : '')+'><summary data-kklistetoggle>'+esc(t("kkListe"))+'<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
-      '<div class="fc-chips kk-chips">'+kkReihe().map(function(z){ return filterChip(attrZone, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div></details>' : '');
+    ('<details class="kk-liste-box"'+(auf ? ' open' : '')+'><summary data-kklistetoggle>'+esc(t("kkListe"))+'<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+      '<div class="fc-chips kk-chips">'+kkReihe().map(function(z){ return filterChip(attrZone, z, sel.indexOf(z) > -1, "", kkName(z)); }).join("")+'</div></details>');
 }
 /* Zonenliste im Filter auf/zu (der Zustand wird gemerkt, weil der Filter nach jedem Antippen neu gezeichnet wird) */
 document.addEventListener("click", function(e){

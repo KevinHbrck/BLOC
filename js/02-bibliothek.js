@@ -34,7 +34,8 @@ function libQuickWorkout(blocks, rest, name, id){
   blocks.forEach(function(b){ libBlockCache[b.id] = b; });
   return { id:id, name:name, items: blocks.map(function(b, i){
     // b.after: eigene Pause nach dieser Übung (z. B. 10 s zwischen Dehnübungen), sonst die gemeinsame
-    return { blockId:b.id, restAfterSec: i < blocks.length-1 ? (b.after != null ? b.after : rest) : 0 };
+    var nb = blocks[i+1];   // beginnt mit der nächsten Übung ein neuer BLOC (Workout-Planer), steht in der Pause die Frage danach
+    return { blockId:b.id, restAfterSec: i < blocks.length-1 ? (b.after != null ? b.after : rest) : 0, nextBloc: nb && nb.bloc ? nb.bloc : "" };
   }) };
 }
 function libWorkoutRun(lw){
@@ -205,7 +206,7 @@ function draftBlocks(d){
     // zwischen zwei Dehnübungen reichen 10 s zum Umsetzen
     var after = it.after != null ? it.after : (next && exIsStretch(it.ex) && exIsStretch(next.ex) ? Math.min(10, d.blockRest||0) : null);
     return { id:"dr-"+i+"-"+ex.id, ex:ex.id, name:tplText(ex.name), reps:tm.reps, workSec:tm.work, restSec:tm.rest,
-             sides:ex.perSide, hint:tplText(ex.hint), after:after };
+             sides:ex.perSide, hint:tplText(ex.hint), after:after, bloc:it.bloc || "" };
   });
 }
 function draftRun(d){ return libQuickWorkout(draftBlocks(d), d.blockRest||0, d.name, "draft"); }
