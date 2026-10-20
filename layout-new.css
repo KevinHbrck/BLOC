@@ -686,3 +686,19 @@
 :root[data-layout="new"] .lib-card .sub{ font-size:12px; line-height:1.3; }
 :root[data-layout="new"] .lib-card .pl-gruppen{ display:none; }
 :root[data-layout="new"] .lib-card .card-acts .fav-btn, :root[data-layout="new"] .lib-card .card-acts .trash-btn{ width:32px; height:32px; font-size:16px; }
+
+/* Neuer Timer: drei Stufen (Zirkel › Runden › Übungen) mit je Anzahl, Zeit, Pause */
+.tp-sheet{ max-height:88vh; overflow-y:auto; }
+.tp-gruppe{ margin:10px 0; padding:12px; border-radius:18px; border:1px solid var(--border); background:color-mix(in srgb, var(--surface) 70%, transparent); }
+.tp-kopf{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.tp-kopf i{ font-style:normal; width:26px; height:26px; border-radius:50%; display:grid; place-items:center; background:var(--accent); color:#fff; font-size:13px; font-weight:700; flex:none; }
+.tp-kopf span{ display:flex; flex-direction:column; }
+.tp-kopf small{ opacity:.7; font-size:12px; }
+.tp-zeile{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:4px 0; }
+.tp-zeile label{ margin:0; font-size:14px; }
+.tp-zeile .stepper{ width:150px; flex:none; }
+.tp-summe{ text-align:center; font-weight:600; margin:10px 0 4px; }
+:root[data-layout="new"] .cover-info-klapp{ margin:8px 0; }
+:root[data-layout="new"] .cover-info-klapp > summary{ list-style:none; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-weight:600; font-size:14px; padding:6px 0; }
+:root[data-layout="new"] .cover-info-klapp > summary::-webkit-details-marker{ display:none; }
+:root[data-layout="new"] .cover-info-klapp[open] > summary .tpl-chev{ transform:rotate(180deg); }

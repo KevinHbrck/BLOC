@@ -185,6 +185,24 @@
     var lib = W.LIB_WORKOUTS.filter(function (l) { return !W.libIstWarmDehn(l); })[0];
     gleich(W.planEintraege({ wochen: 4, tage: [3], wahl: { 3: "lib:" + lib.id } })[0].ref, lib.id, "Katalog-Workout als Verweis");
   });
+  test("Plan: mehrere Workouts je Tag (auch das frühere Textformat), Reihenfolge bleibt", function () {
+    var e = W.planEintraege({ wochen: 2, tage: [0, 3], wahl: { 0: ["zufall", "run"], 3: "run" } });
+    gleich(e.length, 6, "2 Wochen × (2 + 1) Einträge");
+    gleich([e[0].art, e[1].art, e[2].art], ["zufall", "run", "run"], "erst Montag (zwei), dann Donnerstag");
+    gleich(e[0].tag === e[1].tag && e[1].tag !== e[2].tag, true, "zwei Einträge am selben Tag");
+  });
+  test("Muskel: Chip und Figur sind eine Auswahl (Gruppe wählt alle Zonen, nochmal antippen nimmt sie wieder raus)", function () {
+    var an = W.kkGrpToggle([], "brust");
+    gleich(an.length > 0 && W.kkGrpAn(an, "brust"), true, "Brust gewählt");
+    gleich(W.kkGrpAn(an, "beine"), false, "Beine nicht");
+    gleich(W.kkGrpToggle(an, "brust"), [], "zweites Antippen nimmt alles wieder raus");
+    var zwei = W.kkGrpToggle(W.kkGrpToggle([], "brust"), "beine");
+    gleich(W.kkGrpAn(zwei, "brust") && W.kkGrpAn(zwei, "beine"), true, "mehrere Gruppen zugleich");
+  });
+  test("Timer: Zirkel × Runden × Übungen ergeben die Gesamtzeit", function () {
+    gleich(W.timerPlusSekunden({ zn: 1, zp: 60, rn: 3, rp: 30, en: 5, ew: 30, ep: 10 }), 3*(5*30 + 4*10) + 2*30, "ein Zirkel, drei Runden à fünf Übungen");
+    gleich(W.timerPlusSekunden({ zn: 2, zp: 60, rn: 1, rp: 0, en: 2, ew: 20, ep: 0 }), 2*40 + 60, "zwei Zirkel mit Pause dazwischen");
+  });
   test("Run: Pace-Vorgabe sagt nach jedem Kilometer, wie weit man vom Ziel liegt", function () {
     gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "lauf", splits: [342000] }, 1), "12 Sekunden zu langsam.", "zu langsam");
     gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "lauf", splits: [342000, 660000] }, 2), "12 Sekunden schneller als geplant.", "schneller");
@@ -574,15 +592,16 @@
     wahr(/BLOC/.test(d.querySelector("svg").textContent) && /Trainingsplan/.test(d.querySelector("svg").textContent), "Schaubild nennt Trainingsplan und BLOC");
   });
   test("Sicherungs-Erinnerung: selten (60 Tage ohne Datei, Schnappschuss vorhanden, × ruht 30 Tage)", function () {
-    var s = W.state.db.settings, tag = 86400000, alt = { z: W.snapZeit, ex: s.lastExport, bis: s.backupTipBis, bl: W.state.db.blocks };
+    var s = W.state.db.settings, tag = 86400000, alt = { z: W.snapZeit, ex: s.lastExport, bis: s.backupTipBis, bl: W.state.db.blocks, it: W.installTipHTML };
     try {
+      W.installTipHTML = function () { return ""; };   // der Installationshinweis hat Vorrang und hängt vom Browser ab
       W.state.db.blocks = [{ id: "t" }]; W.snapZeit = Date.now(); s.backupTipBis = 0;
       s.lastExport = Date.now() - 20 * tag; gleich(W.backupTipHTML(), "", "vor 20 Tagen gesichert: keine Karte");
       s.lastExport = Date.now() - 70 * tag; wahr(/data-backup-now/.test(W.backupTipHTML()), "70 Tage ohne Datei: Karte");
       s.backupTipBis = Date.now() + 10 * tag; gleich(W.backupTipHTML(), "", "weggeklickt: ruht");
       s.backupTipBis = 0; W.snapZeit = 0; gleich(W.backupTipHTML(), "", "noch kein Schnappschuss: keine Karte");
       W.snapZeit = Date.now(); W.state.db.blocks = []; gleich(W.backupTipHTML(), "", "ohne eigene Inhalte: keine Karte");
-    } finally { W.snapZeit = alt.z; s.lastExport = alt.ex; s.backupTipBis = alt.bis; W.state.db.blocks = alt.bl; }
+    } finally { W.installTipHTML = alt.it; W.snapZeit = alt.z; s.lastExport = alt.ex; s.backupTipBis = alt.bis; W.state.db.blocks = alt.bl; }
   });
 
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }

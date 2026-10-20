@@ -3,6 +3,17 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Muskel-Auswahl, Workout-Planer mit BLOCs, Run mit Live-Karte, Plan mit mehreren Workouts, ein Plus beim Timer (Fassung 2026-10-20-1)
+
+Aufgabenliste von Kevin (Promt2 plus Nachrichten).
+
+- **Muskel** (Katalog-Filter, Selber bauen, Überrasch mich): „Gruppe“ und „Körper“ sind eine Auswahl. Chips (Brust, Rücken, Schultern, Arme, Bauch & Rumpf, Beine & Po) und Körperfigur sind gekoppelt (Chip wählt alle Zonen der Gruppe, die Figur leuchtet, und umgekehrt); „Cardio & Ausdauer“ lässt die Figur orange leuchten. `kkMuskelHTML`, `kkGrpToggle` in js/08-koerperkarte.js; gespeichert werden nur Zonen (alte Gruppen-Filter werden beim Start in Zonen umgerechnet). **Überrasch mich** hat dieselbe Auswahl (Muskel, Ausrüstung, Dauer) statt der Kategorie-Kacheln; `buildSurprise` filtert nach Zonen bzw. Cardio.
+- **Workout-Planer** (BLOC-Seite): ein großes **LOS GEHTS!** startet direkt den Training-Bereich (Glas-Look, Satz eintragen = Gewicht × Wiederholungen werden gespeichert); Satz-/Timer-Umschalter und Timer-Start je Übung entfallen; oben Favorit · Kopie · Teilen; unten **Weitere BLOCs** (neu bauen, aus Meine, aus dem Katalog). Zwischen zwei BLOCs fragt das Training „Bereit für BLOC 2?“ (Pause mit Überspringen; `it.bloc` → `nextBloc` → `step.titel`). `p.folge`, `planMw`, `planKetteIds`.
+- **Run**: Strecke per Regler von Frei bis Marathon (Halbmarathon bei 21), als **Lauf-Workout speicherbar** (`settings.runWorkouts`); Auto-Pause fest 5 s (keine Einstellung); Verlauf steht unten; neues Hintergrundfoto (Pexels 16949283, Läufer im Gegenlicht); Chips der Ansagen wieder lesbar; **Live-Karte** (`runLiveKarte`): selbstgezeichnete Straßen und Bäume als Kulisse, leuchtende Strecke, pulsierender Standort; keine Kartendaten, kein Netz.
+- **Plan** (Körper): je Tag mehrere Workouts, Überblick als Raster (Wochen × Tage), große Tipps einklappbar mit Verweis auf Fragen & Antworten. Dasselbe Einklappen bei der Workout-Beschreibung im Deckblatt.
+- **Timer**: ein einziges Plus „Neuer Timer“ (Zirkel › Runden › Übungen mit Anzahl, Zeit, Pause); Timer-Workout aus Blöcken und Einzelblöcke entfallen auf der Seite (vorhandene Daten bleiben).
+- **Sonstiges**: Überrasch mich auf Heute wieder orange; Favoriten ohne Foto tragen ein Symbol; Workout-Listen kompakter; Mobility-Foto getauscht (ohne Gesicht im Profil). Schnelltest an die neuen Wege angepasst (Kalender-Prüfung schlägt auch in der Vorgängerfassung im Testfenster fehl).
+
 ## 2026-10-20 · Fragen & Antworten: Frage 18 präzisiert (Fassung 2026-10-19-10)
 
 - Frage 18: „BLOC schlägt deshalb keine Programme nach Geschlecht vor“ (statt „trennt nicht nach Geschlecht“); nur die Kalorien-Schätzung nutzt das Geschlecht optional für den Ruheumsatz. Entwurf und `faq.js` angepasst (Deutsch und Englisch).

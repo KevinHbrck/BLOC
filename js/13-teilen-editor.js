@@ -367,7 +367,7 @@ function renderDraftPage(d, cfg){
         '<div class="cover-meta">'+t("exCount", { n:exs.length })+SEP+dauer+'</div>'+
         (exs.length ? '<div class="cat-tags">'+catTags(cats)+'</div>' : '')+
         (exs.length ? '<div class="cover-equip">'+esc(t("equipLabel"))+': '+esc(woEquipText(exs))+'</div>' : '')+
-        (d.src === "lib" && LIB_WORKOUT_INFO[d.key.slice(4)] ? '<p class="cover-info">'+esc(LIB_WORKOUT_INFO[d.key.slice(4)][currentLang() === "en" ? 1 : 0])+'</p>' : '')+
+        (d.src === "lib" && LIB_WORKOUT_INFO[d.key.slice(4)] ? '<details class="cover-info-klapp"><summary>'+esc(t("coverUeber"))+'<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary><p class="cover-info">'+esc(LIB_WORKOUT_INFO[d.key.slice(4)][currentLang() === "en" ? 1 : 0])+'</p></details>' : '')+
         (exs.length ? kkKopfHTML(d.items.map(function(it){ return it.ex; }), !!(warmDehn || d.ws)) : '')+
         (gymLastig
           ? '<button class="btn btn-primary" data-goplan'+(exs.length?'':' disabled')+'>'+svgIcon(CAT_ICON.weight)+' '+t("coverGewichte")+'</button>'+
