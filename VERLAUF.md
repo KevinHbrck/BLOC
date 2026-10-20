@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Strichfiguren für alle 87 neuen Studio-Übungen (Fassung 2026-10-20-60)
+
+- Alle am 2026-10-20 neu eingebauten Übungen haben jetzt eine eigene Figur (zwei Posen, Anfang/Ende): Brust, Rücken, Schultern, Bizeps, Trizeps, Beine, Core, Unterarme, zwei Dehnungen, Cross Jacks und die zehn Battle Ropes. Neuer Abschnitt „Figuren der Studio-Erweiterung“ am Ende von `daten.js` (vor `window.BLOC_DATEN`).
+- Kabelübungen mit Turm, Rolle und Griff wie bei den vorhandenen; Zweitansicht (von vorn/oben/seitlich) bei Standing Cable Fly, Low-to-High Fly, Neutral-Grip-Klimmzug, Schulterdrücken sitzend, Arnold Press, Kurzhantel-Curls und Tate Press. Cuban Press, Frontheben über Kopf und Hantel-Clean laufen als Ablauf mit Zwischenphase.
+- Battle Ropes zeigen das Seil als Welle von der Hand zum Anker; die Welle wechselt zwischen den Posen (Gegenphase). Frontal bei seitlichen Wellen, Kreisen, In-and-Out und Jumping Jacks, sonst von der Seite.
+- Einheitstest: neue Prüfung, dass jede Übung der Studio-Gruppen und der Hauptgruppen (Ausdauer, Rumpf, Stange, Dehnen) eine Figur hat (54/54).
+
 ## 2026-10-20 · FAQ: Word-Update eingearbeitet, 24 Fragen (Fassung 2026-10-20-37)
 
 - Kevins zweite Word-Fassung ist drin: 24 Fragen (neu: Muskelfasern, glykämischer Index, Periodisierung, Push/Pull, Frauen und Männer), 23 Quellen (quellen.html: F1–F23). Text und Begriffe inhaltlich belassen; kleine Anpassungen: Verzehrsstudie 2005–2007 erhoben, Alkohol als eine kleine Studie, Kalorien-Frage mit Rechenbeispiel und 4,5 MET für Katalog-Workouts, Aufwärmsätze vorsichtiger formuliert. Quellen gegen Crossref, PubMed und Webseiten geprüft. Englische Fassung ergänzt.

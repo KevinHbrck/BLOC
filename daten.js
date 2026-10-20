@@ -3418,6 +3418,302 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   ["battle-rope-alternating-waves","battle-rope-double-waves","battle-rope-slams","battle-rope-side-to-side","battle-rope-jumping-jacks","battle-rope-circles","battle-rope-snakes","battle-rope-squat-waves","battle-rope-in-out-waves","battle-rope-power-pull","plate-pinch-hold","wrist-roller"].forEach(function(id){ STUDIO_ZIEL[id] = [4, 30, 0]; });
 })();
 
+/* ---------- Figuren der Studio-Erweiterung (2026-10-20) ----------
+   Zwei Posen je Übung (Anfang/Ende), wo die Seitenansicht die Bewegung nicht zeigt eine zweite Ansicht (ILLU_VIEW2).
+   Kabelzüge: Turm (gLinie) mit Rolle, Griffe halten die Hände. Battle Ropes: das Seil ist eine Welle von der Hand zum Anker;
+   die Welle liegt in der festen Gerätelinie und wechselt zwischen den Posen (Gegenphase), die Hände wandern mit den Armen. */
+(function(){
+  var P = ILLU_POSES, V2 = ILLU_VIEW2;
+  var STAND = [[50,70,50,89,58,89]];
+  var FRONT = [[46,70,45,89,39,89],[54,70,55,89,61,89]];
+  var SEAT  = [[43,64,40,82,36,86],[57,64,60,82,64,86]];     // sitzend, von vorn
+  var KNIE  = [[50,87,30,88,24,89]];                           // kniend
+  function fr(n, p, l, a, x){ return Q(null, n, p, l, a, x || "", true); }
+  function knoten(x, y){ return gHand(x, y, '<circle class="ipf" cx="'+x+'" cy="'+y+'" r="2.6"/>'); }
+  function tick(x, y){ return gHand(x, y, '<path class="ip" d="M'+x+' '+(y-5)+'v10"/>'); }
+  function liegeBank(arm, x){ return stLiegen(arm, x); }
+
+  /* ---------- Brust ---------- */
+  function dec(arm, x){ return Q([13,72],[22,69],[50,59],[[66,64,68,85,75,89]],[arm], gLinie("M10 78L60 61M14 78V89M58 62V89")+x); }
+  P["decline-db-bench"] = [dec([27,55,28,43], gDB(28,41)), dec([20,77,27,66], gDB(27,64))];
+  P["around-world-pullover"] = [liegeBank([28.6,55,28,43], gDB(28,41)), liegeBank([17,63,5,59], gDB(5,57))];
+
+  var CF = gLinie("M10 0V89M90 0V89")+gRolle(14,25)+gRolle(86,25);
+  P["cable-chest-fly"] = [fr([50,20],[50,52],FRONT,[[39,25,27,27],[61,25,73,27]], CF+gGriff(27,27)+gGriff(73,27)),
+                          fr([50,20],[50,52],FRONT,[[40,30,48,37],[60,30,52,37]], CF+gGriff(48,37)+gGriff(52,37))];
+
+  var TU_HOCH = gLinie("M86 0V89")+gRolle(82,5), TU_TIEF = gLinie("M86 20V89")+gRolle(82,84);
+  P["standing-cable-fly"] = [Q(null,[52,21],[50,50],STAND,[[62,19,73,12],[61,20,72,13]], TU_HOCH+gGriff(73,12)+gGriff(72,13)),
+                             Q(null,[52,21],[50,50],STAND,[[56,36,62,47],[54,37,60,48]], TU_HOCH+gGriff(62,47)+gGriff(60,48))];
+  V2["standing-cable-fly"] = { typ:"front", p:[P["cable-crossover"][0], P["cable-crossover"][1]] };
+  P["low-to-high-cable-fly"] = [Q(null,[52,21],[50,50],STAND,[[56,36,62,47],[54,37,60,48]], TU_TIEF+gGriff(62,47)+gGriff(60,48)),
+                                Q(null,[52,21],[50,50],STAND,[[62,29,74,32],[61,30,73,33]], TU_TIEF+gGriff(74,32)+gGriff(73,33))];
+  var CT = gLinie("M10 20V89M90 20V89")+gRolle(14,84)+gRolle(86,84);
+  V2["low-to-high-cable-fly"] = { typ:"front", p:[fr([50,20],[50,52],FRONT,[[41,34,36,46],[59,34,64,46]], CT+gGriff(36,46)+gGriff(64,46)),
+                                                  fr([50,20],[50,52],FRONT,[[40,30,48,38],[60,30,52,38]], CT+gGriff(48,38)+gGriff(52,38))] };
+
+  var BANK_HOCH = gBench(62,90,72);
+  P["incline-push-up"] = [Q(null,[74,42],[51,61],[[35,75,21,87,15,89]],[[72,58,73,71]], BANK_HOCH),
+                          Q(null,[73,50],[48,65],[[33,77,20,87,14,89]],[[63,63,73,71]], BANK_HOCH)];
+  var DEF_X = gLinie("M62 89V81H78V89");
+  P["deficit-push-up"] = [Q(null,[71,56],[44,70],[[28,78,12,86,9,89]],[[68,69,70,81]], DEF_X),
+                          Q(null,[72,84],[44,80],[[28,84,12,87,9,89]],[[60,76,70,81]], DEF_X)];
+  var RING_X = gLinie("M71 0V76")+'<circle class="ip" cx="70" cy="81" r="4.4"/>';
+  P["ring-push-up"] = [qWith(P["deficit-push-up"][0], { x:RING_X }), qWith(P["deficit-push-up"][1], { x:RING_X })];
+
+  /* ---------- Rücken ---------- */
+  var LATSITZ = gLinie("M36 66H64M50 66V89");
+  function latbar(x, y, br){ return LATSITZ+gHand(x, y, '<path class="ip" d="M'+(x-br)+' '+y+'H'+(100-x+br)+' "/>'); }
+  P["wide-grip-lat-pulldown"] = [fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[38,24,30,10],[62,24,70,10]], latbar(30,10,18)),
+                                 fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[38,38,31,27],[62,38,69,27]], latbar(31,27,18))];
+  P["reverse-grip-lat-pulldown"] = [fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[43,24,42,11],[57,24,58,11]], latbar(42,11,16)),
+                                    fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[42,45,43,34],[58,45,57,34]], latbar(43,34,16))];
+  P["rope-lat-pulldown"] = [fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[43,24,45,11],[57,24,55,11]], LATSITZ+gLinie("M50 0V9M50 9L45 11M50 9L55 11")),
+                            fr([50,34],[50,62],[[44,68,44,86],[56,68,56,86]],[[39,44,34,33],[61,44,66,33]], LATSITZ+gLinie("M50 0V24M50 24L34 33M50 24L66 33"))];
+
+  var CRX = gSitz(22,48,74)+gLinie("M77 58V78")+gRolle(82,52);
+  function crow(n, arms, grips){ return Q(null, n, [36,72], [[55,64,72,70,73,62]], arms, CRX+grips); }
+  P["wide-grip-cable-row"] = [crow([42,45],[[53,49,64,50]], gGriff(64,50)), crow([40,44],[[30,43,40,51]], gGriff(40,51))];
+  P["underhand-cable-row"] = [crow([42,45],[[53,52,64,56]], gGriff(64,56)), crow([40,44],[[30,56,41,58]], gGriff(41,58))];
+  P["one-arm-cable-row"] = [crow([42,45],[[53,50,64,53],[44,58,52,64]], gGriff(64,53)), crow([40,44],[[28,50,40,55],[44,58,52,64]], gGriff(40,55))];
+  P["alternating-cable-row"] = [crow([42,45],[[53,50,64,53],[30,50,41,55]], gGriff(64,53)+gGriff(41,55)),
+                                crow([40,44],[[28,50,40,55],[53,51,63,54]], gGriff(40,55)+gGriff(63,54))];
+  P["one-arm-high-cable-row"] = [Q(null,[50,20],[50,50],STAND,[[62,17,73,10],[52,34,53,47]], TU_HOCH+gGriff(73,10)),
+                                 Q(null,[50,20],[50,50],STAND,[[46,37,54,47],[52,34,53,47]], TU_HOCH+gGriff(54,47))];
+
+  /* Auf der Schrägbank liegend (Bauch nach unten), Hanteln hängen vor der Bank */
+  function prone(arm, x){ return Q(null,[64,48],[42,70],[[28,81,14,88,8,89]],[arm], gLinie("M38 80L66 52M44 74V89M62 56V89")+x); }
+  P["chest-supported-row"] = [prone([61,63,61,75], gDB(61,77)), prone([50,58,58,62], gDB(58,64))];
+  P["spider-curl"] = [prone([61,63,61,75], gDB(61,77)), prone([61,63,70,56], gDB(70,54))];
+  P["cambered-bar-row"] = [qWith(P_HG,{ x:gScheibe(61,70,6) }), qWith(P_HG,{ a:[[50,36,56,48]], x:gScheibe(56,52,6) })];
+
+  var NG_R = '<circle class="ip" cx="42" cy="6" r="3.8"/><circle class="ip" cx="58" cy="6" r="3.8"/>';
+  P["neutral-grip-pull-up"] = [Q(null,[50,30],[50,58],[[48,72,48,84],[52,72,52,84]],[[44,21,42,6],[56,21,58,6]], gBar(6,24,76)+NG_R, true),
+                               Q([50,5],[50,14],[50,42],[[48,58,48,72],[52,58,52,72]],[[39,20,42,6],[61,20,58,6]], gBar(6,24,76)+NG_R, true)];
+  V2["neutral-grip-pull-up"] = { typ:"side", haupt:"front", p:[qWith(PS_HANG,{ x:PS_BAR+gLinie("M42 14H58") }), qWith(PS_TOP,{ x:PS_BAR+gLinie("M42 14H58") })] };
+
+  /* Meadows Row: Stange steckt in der Landmine, die Hand fasst das freie Ende */
+  P["meadows-row"] = [Q(null,[64,40],[40,50],[[44,70,44,89,52,89]],[[62,54,61,66],[54,52,48,62]], gLinie("M104 88L61 66")+gScheibe(61,67,5)),
+                      Q(null,[64,40],[40,50],[[44,70,44,89,52,89]],[[50,36,56,48],[54,52,48,62]], gLinie("M104 80L56 48")+gScheibe(56,49,5))];
+
+  /* ---------- Schultern ---------- */
+  P["seated-db-shoulder-press"] = [Q(null,[42,34],[42,63],ST_BEINE,[[47,49,48,37]], ST_SITZ+gDB(48,35)),
+                                   Q(null,[42,34],[42,63],ST_BEINE,[[47,26,48,14]], ST_SITZ+gDB(48,12))];
+  var SEATF = gLinie("M36 62H64M50 62V89");
+  V2["seated-db-shoulder-press"] = { typ:"front", p:[fr([50,30],[50,60],SEAT,[[37,36,37,24],[63,36,63,24]], SEATF+gDB(37,23)+gDB(63,23)),
+                                                     fr([50,30],[50,60],SEAT,[[41,26,42,14],[59,26,58,14]], SEATF+gDB(42,12)+gDB(58,12))] };
+  P["arnold-press"] = [Q(null,[50,28],[50,56],[[50,72,50,89,58,89]],[[57,43,56,32]], gDB(56,30)),
+                       Q(null,[50,28],[50,56],[[50,72,50,89,58,89]],[[53,21,53,9]], gDB(53,7))];
+  V2["arnold-press"] = { typ:"front", p:[fr([50,28],[50,58],FRONT,[[45,43,48,33],[55,43,52,33]], gDB(48,31)+gDB(52,31)),
+                                         fr([50,28],[50,58],FRONT,[[41,24,42,12],[59,24,58,12]], gDB(42,10)+gDB(58,10))] };
+  var CS_T = gLinie("M10 30V89M90 30V89")+gRolle(14,84)+gRolle(86,84);
+  P["cable-shoulder-press"] = [fr([50,28],[50,58],FRONT,[[38,36,38,24],[62,36,62,24]], CS_T+gGriff(38,24)+gGriff(62,24)),
+                               fr([50,28],[50,58],FRONT,[[41,25,42,13],[59,25,58,13]], CS_T+gGriff(42,13)+gGriff(58,13))];
+  var LEGS_LEAN = [[45,70,44,89,38,89],[53,70,54,89,60,89]];
+  P["lean-away-lateral-raise"] = [fr([56,22],[49,52],LEGS_LEAN,[[60,38,61,50],[45,32,34,31]], gLinie("M34 4V89")+gDB(61,52)),
+                                  fr([56,22],[49,52],LEGS_LEAN,[[67,28,79,26],[45,32,34,31]], gLinie("M34 4V89")+gDB(79,26))];
+  P["db-front-raise"] = [qWith(P_ST,{ x:gDB(53,49) }), qWith(P_STF,{ x:gDB(76,25) })];
+  P["front-raise-overhead"] = [qWith(P_ST,{ x:gDB(53,49) }), Q(null,[50,26],[50,56],[[50,73,50,89,58,89]],[[53,19,55,7]], gDB(55,5))];
+  ILLU_SEQ["front-raise-overhead"] = { k:[P["front-raise-overhead"][0], qWith(P_STF,{ x:gDB(76,25) }), P["front-raise-overhead"][1], qWith(P_STF,{ x:gDB(76,25) })],
+                                       t:[[.2,.45],[0,.32,"l"],[.2,.45],[0,.32,"l"]] };
+  var HINTEN = [[42,70,38,89,32,89],[58,70,62,89,68,89]];
+  P["db-rear-delt-fly"] = [fr([50,38],[50,52],HINTEN,[[46,51,45,63],[54,51,55,63]], gDB(45,65)+gDB(55,65)),
+                           fr([50,38],[50,52],HINTEN,[[38,40,26,40],[62,40,74,40]], gDB(26,40)+gDB(74,40))];
+  P["one-arm-rear-delt-fly"] = [fr([50,38],[50,52],HINTEN,[[54,51,55,63],[40,50,31,59]], gBench(10,38,62)+gDB(55,65)),
+                                fr([50,38],[50,52],HINTEN,[[62,40,74,40],[40,50,31,59]], gBench(10,38,62)+gDB(74,40))];
+  var SITZB = gLinie("M32 63H68M50 63V89");
+  var SITZLEGS = [[43,66,40,82,36,86],[57,66,60,82,64,86]];
+  P["seated-rear-delt-fly"] = [fr([50,44],[50,60],SITZLEGS,[[46,57,45,68],[54,57,55,68]], SITZB+gDB(45,70)+gDB(55,70)),
+                               fr([50,44],[50,60],SITZLEGS,[[38,46,26,46],[62,46,74,46]], SITZB+gDB(26,46)+gDB(74,46))];
+  P["upright-row"] = [Q(null,[50,20],[50,50],STAND,[[52,35,54,47]], gScheibe(55,48,5)), Q(null,[50,20],[50,50],STAND,[[60,19,56,30]], gScheibe(57,31,5))];
+  var CU_A = fr([50,28],[50,58],FRONT,[[38,32,40,44],[62,32,60,44]], gDB(40,45)+gDB(60,45));
+  var CU_M = fr([50,28],[50,58],FRONT,[[38,32,37,20],[62,32,63,20]], gDB(37,21)+gDB(63,21));
+  var CU_B = fr([50,28],[50,58],FRONT,[[41,24,43,12],[59,24,57,12]], gDB(43,10)+gDB(57,10));
+  P["cuban-press"] = [CU_A, CU_B];
+  ILLU_SEQ["cuban-press"] = { k:[CU_A, CU_M, CU_B, CU_M], t:[[.15,.4],[.05,.35],[.15,.4],[.05,.35]] };
+
+  /* ---------- Bizeps ---------- */
+  var DBC_A = Q(null,[50,20],[50,50],STAND,[[52,32,53,44],[47,34,47,46]], gDB(53,46)+gDB(47,48));
+  P["db-curl"] = [DBC_A, Q(null,[50,20],[50,50],STAND,[[52,32,60,23],[47,34,55,26]], gDB(61,21)+gDB(56,24))];
+  V2["db-curl"] = { typ:"front", p:[fr([50,20],[50,52],FRONT,[[43,34,42,46],[57,34,58,46]], gDB(42,48)+gDB(58,48)),
+                                    fr([50,20],[50,52],FRONT,[[43,34,42,23],[57,34,58,23]], gDB(42,21)+gDB(58,21))] };
+  P["alternating-db-curl"] = [Q(null,[50,20],[50,50],STAND,[[52,32,60,23],[47,34,47,46]], gDB(61,21)+gDB(47,48)),
+                              Q(null,[50,20],[50,50],STAND,[[52,32,53,44],[47,34,55,26]], gDB(53,46)+gDB(56,24))];
+  V2["alternating-db-curl"] = { typ:"front", p:[fr([50,20],[50,52],FRONT,[[43,34,42,23],[57,34,58,46]], gDB(42,21)+gDB(58,48)),
+                                                fr([50,20],[50,52],FRONT,[[43,34,42,46],[57,34,58,23]], gDB(42,48)+gDB(58,21))] };
+  P["close-grip-ez-curl"] = [Q(null,[50,20],[50,50],STAND,[[52,32,53,44]], gScheibe(54,45,4)), Q(null,[50,20],[50,50],STAND,[[52,32,60,23]], gScheibe(61,22,4))];
+  var HC_T = gLinie("M10 0V89M90 0V89")+gRolle(14,24)+gRolle(86,24);
+  P["high-cable-curl"] = [fr([50,20],[50,52],FRONT,[[38,25,26,25],[62,25,74,25]], HC_T+gGriff(26,25)+gGriff(74,25)),
+                          fr([50,20],[50,52],FRONT,[[38,25,40,13],[62,25,60,13]], HC_T+gGriff(40,13)+gGriff(60,13))];
+  var CC_T = gLinie("M74 40V89")+gRolle(70,84);
+  P["one-arm-cable-curl"] = [Q(null,[50,20],[50,50],STAND,[[52,32,54,44],[47,34,47,46]], CC_T+gGriff(54,44)),
+                             Q(null,[50,20],[50,50],STAND,[[52,32,60,23],[47,34,47,46]], CC_T+gGriff(60,23))];
+  P["cross-body-hammer-curl"] = [fr([50,20],[50,52],FRONT,[[43,34,42,46],[57,34,58,46]], tick(42,46)),
+                                 fr([50,20],[50,52],FRONT,[[43,34,54,29],[57,34,58,46]], tick(54,29))];
+  var PC_SITZ = gSitz(30,52,66)+gLinie("M47 45L61 54");
+  P["preacher-curl"] = [Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,66,55]], PC_SITZ+gScheibe(66,56,3.6)),
+                        Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,53,34]], PC_SITZ+gScheibe(53,35,3.6))];
+  P["hammer-preacher-curl"] = [Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,66,55]], PC_SITZ+tick(66,55)),
+                               Q(null,[46,37],[40,64],[[58,67,58,86,65,88]],[[56,46,53,34]], PC_SITZ+tick(53,34))];
+  P["incline-db-curl"] = [Q(null,[24,48],[46,70],[[60,66,64,86,71,88]],[[27,63,27,75]], ST_SCHRAEG+gDB(27,77)),
+                          Q(null,[24,48],[46,70],[[60,66,64,86,71,88]],[[28,63,35,54]], ST_SCHRAEG+gDB(36,52))];
+  var CK_SITZ = gLinie("M26 67H60M43 67V89"), CK_LEG = [[62,62,60,84,67,88]];
+  P["concentration-curl"] = [Q(null,[64,46],[42,64],CK_LEG,[[62,60,64,72],[52,56,58,62]], CK_SITZ+gDB(64,74)),
+                             Q(null,[64,46],[42,64],CK_LEG,[[62,60,67,50],[52,56,58,62]], CK_SITZ+gDB(68,48))];
+  P["standing-concentration-curl"] = [qWith(P_HG,{ a:[[62,54,61,66],[52,54,47,64]], x:gDB(61,68) }),
+                                      qWith(P_HG,{ a:[[62,54,67,43],[52,54,47,64]], x:gDB(68,41) })];
+  P["zottman-curl"] = [P["db-curl"][0], P["db-curl"][1]];
+  V2["zottman-curl"] = V2["db-curl"];
+  ILLU_SEQ["zottman-curl"] = { k:[P["db-curl"][0], P["db-curl"][1]], t:[[.2,.45],[.3,1.0]] };   // hoch zügig, langsam senken
+
+  /* ---------- Trizeps ---------- */
+  var PD_T = gLinie("M72 0V89")+gRolle(68,4);
+  P["rope-triceps-pushdown"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,26]], PD_T+gLinie("M68 6L62 26")+knoten(62,26)),
+                                Q(null,[50,20],[50,50],STAND,[[52,32,54,44]], PD_T+gLinie("M68 6L55 44")+knoten(54,44))];
+  P["one-arm-cable-triceps-extension"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,26],[47,34,46,46]], PD_T+gGriff(62,26)),
+                                          Q(null,[50,20],[50,50],STAND,[[52,32,54,44],[47,34,46,46]], PD_T+gGriff(54,44))];
+  var KT = gLinie("M10 0V89")+gRolle(14,24);
+  P["kneeling-cable-triceps-extension"] = [Q(null,[54,32],[48,62],KNIE,[[58,25,47,24]], KT+gLinie("M14 24L47 24")+knoten(47,24)),
+                                           Q(null,[54,32],[48,62],KNIE,[[65,32,77,28]], KT+gLinie("M14 24L77 28")+knoten(77,28))];
+  P["incline-cable-triceps-extension"] = [Q(null,[24,48],[46,70],[[60,66,64,86,71,88]],[[28,40,18,34]], ST_SCHRAEG+gLinie("M5 40V89")+gRolle(9,84)+knoten(18,34)),
+                                          Q(null,[24,48],[46,70],[[60,66,64,86,71,88]],[[30,40,35,29]], ST_SCHRAEG+gLinie("M5 40V89")+gRolle(9,84)+knoten(35,29))];
+  var LT = gLinie("M4 44V89")+gRolle(8,60);
+  P["lying-cable-triceps-extension"] = [stLiegen([27,55,28,43], LT+gLinie("M10 60L28 43")+gQuer(28,43,3)),
+                                        stLiegen([27,55,17,60], LT+gLinie("M10 60L17 60")+gQuer(17,60,3))];
+  P["close-grip-db-press"] = [stLiegen([29,56,30,44], gDB(30,42)), stLiegen([27,76,30,65], gDB(30,63))];
+  P["db-skull-crusher"] = [stLiegen([27,55,28,43], gDB(28,41)), stLiegen([27,55,19,61], gDB(19,59))];
+  P["single-arm-skull-crusher"] = [qWith(stLiegen([27,55,28,43], gDB(28,41)), { a:[[27,55,28,43],[24,58,28,50]] }),
+                                   qWith(stLiegen([27,55,19,61], gDB(19,59)), { a:[[27,55,19,61],[24,58,28,50]] })];
+  P["supinated-triceps-extension"] = [Q(null,[50,20],[50,50],STAND,[[52,32,62,26]], PD_T+gQuer(62,26,4)), Q(null,[50,20],[50,50],STAND,[[52,32,54,44]], PD_T+gQuer(54,44,4))];
+  P["ez-jm-press"] = [stLiegen([29,56,30,44], gScheibe(30,42,3)), stLiegen([38,60,28,57], gScheibe(28,56,3))];
+  P["tate-press"] = [stLiegen([27,55,28,43], gDB(28,41)), stLiegen([32,56,30,66], gDB(30,64))];
+  V2["tate-press"] = { typ:"top", p:[qWith(V_ARCH,{ a:[[54,38,52,42],[46,38,48,42]], x:V_BANK+gDB(52,42)+gDB(48,42) }),
+                                     qWith(V_ARCH,{ a:[[62,38,54,45],[38,38,46,45]], x:V_BANK+gDB(54,45)+gDB(46,45) })] };
+
+  /* ---------- Beine, Core, Unterarme ---------- */
+  var BS_B = gBench(24,46,67);
+  P["db-bench-squat"] = [qWith(P_ST,{ a:[[56,36,57,29]], x:gDB(57,28)+BS_B }), qWith(P_SQ,{ a:[[54,50,56,42]], x:gDB(56,40)+BS_B })];
+  var DC_MID = qWith(P_ST,{ x:gDB(53,49) });
+  P["db-clean"] = [P["db-deadlift"][0], qWith(P_ST,{ a:[[57,34,56,24]], x:gDB(56,22) })];
+  ILLU_SEQ["db-clean"] = { k:[P["db-clean"][0], DC_MID, P["db-clean"][1], DC_MID], t:[[.2,.4],[0,.2,"l"],[.2,.4],[0,.25,"l"]] };
+  P["stiff-leg-deadlift"] = [qWith(P_ST,{ x:gScheibe(53,50,7) }), Q(null,[66,46],[38,50],[[42,70,46,89,54,89]],[[66,58,66,70]], gScheibe(66,72,7))];
+
+  var SCT = gLinie("M90 0V89")+gRolle(86,6);
+  P["standing-cable-crunch"] = [Q(null,[50,20],[50,50],STAND,[[61,28,58,17]], SCT+gGriff(58,17)),
+                                Q(null,[70,34],[47,51],[[51,71,50,89,58,89]],[[72,46,77,35]], SCT+gGriff(77,35))];
+  var LIFT = gLinie("M12 20V89")+gRolle(16,84);
+  P["cable-lift"] = [fr([50,20],[50,52],FRONT,[[44,36,39,47],[46,38,41,48]], LIFT+gGriff(39,47)),
+                     fr([50,20],[50,52],FRONT,[[60,16,68,8],[58,18,66,10]], LIFT+gGriff(68,8))];
+  var TW = gLinie("M10 0V89")+gRolle(14,26);
+  P["cable-twist"] = [fr([50,20],[50,52],FRONT,[[40,26,29,26],[41,28,30,28]], TW+gGriff(29,27)),
+                      fr([50,20],[50,52],FRONT,[[60,26,71,26],[59,28,70,28]], TW+gGriff(71,27))];
+  var RC_T = gLinie("M5 52V89")+gRolle(8,70);
+  P["cable-reverse-crunch"] = [qWith(P["reverse-crunch"][0], { x:RC_T+gLinie("M10 70L68 66")+gPolster(68,66) }),
+                               qWith(P["reverse-crunch"][1], { x:RC_T+gLinie("M10 70L56 56")+gPolster(56,56) })];
+  P["judo-flip"] = [Q([14,83],[24,84],[50,84],[[50,63,50,44,46,44]],[[34,86,45,87]]),
+                    Q([13,84],[22,84],[36,58],[[30,38,10,36,6,34]],[[34,86,45,87]])];
+
+  var KL = [[60,70,70,89,78,89]];
+  var CR_A = Q([14,83],[24,84],[46,86],KL,[[23,73,14,78]]);
+  var CR_B = Q([27,63],[26,71],[46,86],KL,[[21,66,25,60]]);
+  P["crunch"] = [CR_A, CR_B];
+  P["crunch-arms-straight"] = [qWith(CR_A,{ a:[[27,72,28,60]] }), qWith(CR_B,{ a:[[30,61,31,49]] })];
+  P["crunch-hands-overhead"] = [qWith(CR_A,{ a:[[16,79,4,76]] }), qWith(CR_B,{ a:[[21,65,13,58]] })];
+  P["cross-body-crunch"] = [Q([14,83],[24,84],[46,86],[[60,70,70,89,78,89],[62,72,72,89,80,89]],[[23,73,14,78]]),
+                            Q([27,63],[26,71],[46,86],[[52,68,66,74,72,72],[60,70,70,89,78,89]],[[40,68,32,63]])];
+  var WHEEL_X = function(x, y){ return gHand(x, y, '<circle class="ip" cx="'+x+'" cy="'+(y+3)+'" r="5"/>'); };
+  P["ab-wheel-rollout"] = [Q(null,[66,52],[40,64],[[42,87,24,88,18,89]],[[63,66,64,78]], WHEEL_X(64,78)),
+                           Q(null,[67,77],[38,70],[[40,87,22,88,16,89]],[[75,79,87,81]], WHEEL_X(87,81))];
+
+  var WS = gLinie("M26 67H60M43 67V89");
+  var WL = [[62,62,60,84,67,88]];
+  P["wrist-curl"] = [Q(null,[58,44],[42,64],WL,[[54,58,66,62]], WS+gDB(66,64)), Q(null,[58,44],[42,64],WL,[[54,58,65,54]], WS+gDB(65,52))];
+  P["reverse-curl"] = [Q(null,[50,20],[50,50],STAND,[[52,32,53,44]], gScheibe(54,45,5)), Q(null,[50,20],[50,50],STAND,[[52,32,60,23]], gScheibe(61,22,5))];
+  function dbDreh(cx, cy, deg){
+    var r = deg*Math.PI/180, ux = Math.sin(r), uy = -Math.cos(r), vx = -uy, vy = ux;
+    function f(v){ return v.toFixed(1); }
+    var d = "M"+f(cx-ux*6)+" "+f(cy-uy*6)+"L"+f(cx+ux*6)+" "+f(cy+uy*6);
+    [-1, 1].forEach(function(s){
+      var ex = cx+ux*6*s, ey = cy+uy*6*s;
+      d += "M"+f(ex-vx*4)+" "+f(ey-vy*4)+"L"+f(ex+vx*4)+" "+f(ey+vy*4);
+    });
+    return '<path class="ip" d="'+d+'"/>';
+  }
+  var WR_ARM = [[54,58,66,60]];
+  P["wrist-pronation"] = [Q(null,[58,44],[42,64],WL,WR_ARM, WS+dbDreh(66,58,-55)), Q(null,[58,44],[42,64],WL,WR_ARM, WS+dbDreh(66,58,55))];
+  P["wrist-supination"] = [Q(null,[58,44],[42,64],WL,WR_ARM, WS+dbDreh(66,58,55)), Q(null,[58,44],[42,64],WL,WR_ARM, WS+dbDreh(66,58,-55))];
+  var WRR = '<circle class="ip" cx="78" cy="25" r="2.8"/>';
+  P["wrist-roller"] = [Q(null,[50,20],[50,50],STAND,[[63,25,76,25]], WRR+gLinie("M78 28V62")+'<circle class="ipf" cx="78" cy="66" r="4"/>'),
+                       Q(null,[50,20],[50,50],STAND,[[63,25,76,25]], WRR+gLinie("M78 28V42")+'<circle class="ipf" cx="78" cy="46" r="4"/>')];
+  P["plate-pinch-hold"] = [Q(null,[50,20],[50,50],STAND,[[52,34,53,47]], gHand(53,47,'<circle class="ip" cx="53" cy="54" r="6.5"/><circle class="ipf" cx="53" cy="54" r="1.8"/>')), null];
+
+  /* ---------- Dehnen / Cardio ---------- */
+  P["chin-to-chest-stretch"] = [Q([58,26],[50,20],[50,50],STAND,[[52,34,53,47]]), null];
+  P["ceiling-look-stretch"] = [Q([45,13],[50,20],[50,50],STAND,[[52,34,53,47]]), null];
+  var CJ_AUF = qScale(qWith(P_F, { l:[[42,70,33,89,27,89],[58,70,67,89,73,89]], a:[[40,16,33,5],[60,16,67,5]] }), .86);
+  var CJ_ZU  = qScale(fr([50,20],[50,52],[[48,70,52,89,58,89],[52,70,48,89,42,89]],[[43,33,54,41],[57,33,46,41]]), .86);
+  P["cross-jacks"] = [CJ_AUF, CJ_ZU];
+
+  /* ---------- Battle Ropes ---------- */
+  function seil(x0, y0, x1, y1, amp, cyc){
+    var dx = x1-x0, dy = y1-y0, L = Math.sqrt(dx*dx+dy*dy) || 1, nx = -dy/L, ny = dx/L, d = "M"+x0+" "+y0;
+    for(var i = 1; i <= 18; i++){
+      var t = i/18, o = amp*(1-.5*t)*Math.sin(2*Math.PI*cyc*t);
+      d += "L"+(x0+dx*t+nx*o).toFixed(1)+" "+(y0+dy*t+ny*o).toFixed(1);
+    }
+    return '<path class="ip" d="'+d+'"/>';
+  }
+  function ende(q, i){ var a = q.a[i]; return [a[a.length-2], a[a.length-1]]; }
+  function anker(ax, ay){ return gLinie("M"+ax+" "+(ay+8)+"V89")+'<circle class="ip" cx="'+ax+'" cy="'+ay+'" r="2.6"/>'; }
+  /* amps: Wellenhöhe je Arm (Vorzeichen = erst nach oben/unten) */
+  function brSeile(q, ax, ay, amps, cyc){
+    var s = anker(ax, ay);
+    amps.forEach(function(amp, i){ var h = ende(q, i); s += seil(h[0], h[1], ax, ay, amp, cyc || 1.5); });
+    return qWith(q, { x:s });
+  }
+  var BR_L  = [[54,70,50,89,58,89]];           // leichte Hocke
+  var BR_TL = [[57,62,52,89,60,89]];           // tiefe Hocke
+  var UP = [56,30,67,33], DN = [51,43,58,54];
+  function br(n, p, l, a){ return Q(null, n, p, l, a); }
+  var AW_A = br([46,28],[40,58],BR_L,[UP,DN]), AW_B = br([46,28],[40,58],BR_L,[DN,UP]);
+  P["battle-rope-alternating-waves"] = [brSeile(AW_A,93,64,[-5,5]), brSeile(AW_B,93,64,[5,-5])];
+  var UP2 = [55,37,66,38], DN2 = [51,48,58,59];
+  var DW_A = br([46,36],[36,64],BR_TL,[UP2,[55,38,66,40]]), DW_B = br([46,36],[36,64],BR_TL,[DN2,[52,49,59,60]]);
+  P["battle-rope-double-waves"] = [brSeile(DW_A,93,66,[-5,-4]), brSeile(DW_B,93,66,[5,4])];
+  var SL_A = br([50,26],[50,56],[[50,73,50,89,58,89]],[[53,19,55,7],[52,20,54,8]]);
+  var SL_B = br([46,38],[36,64],BR_TL,[[53,51,60,62],[52,52,59,63]]);
+  P["battle-rope-slams"] = [brSeile(SL_A,93,72,[8,6],1.5), brSeile(SL_B,93,72,[5,4],1.5)];
+  var SQ_A = br([46,36],[36,64],BR_TL,[UP2,DN2]), SQ_B = br([46,36],[36,64],BR_TL,[DN2,UP2]);
+  P["battle-rope-squat-waves"] = [brSeile(SQ_A,93,66,[-5,5]), brSeile(SQ_B,93,66,[5,-5])];
+  var SN_ARM = [[53,52,61,64],[52,53,60,65]];
+  var SN_Q = br([46,36],[36,64],BR_TL,SN_ARM);
+  P["battle-rope-snakes"] = [brSeile(SN_Q,93,84,[4,-4],2), brSeile(SN_Q,93,84,[-4,4],2)];
+
+  var FR_B = [[42,70,38,89,32,89],[58,70,62,89,68,89]];
+  function frb(a){ return fr([50,26],[50,56],FR_B,a); }
+  function brFront(q, amps){ return brSeile(q, 50, 86, amps, 1); }
+  P["battle-rope-side-to-side"] = [brFront(frb([[40,38,30,46],[42,40,32,48]]), [3,-3]), brFront(frb([[60,38,70,46],[58,40,68,48]]), [-3,3])];
+  P["battle-rope-circles"] = [brFront(frb([[38,26,27,22],[62,26,73,22]]), [3,-3]), brFront(frb([[44,42,48,53],[56,42,52,53]]), [-3,3])];
+  P["battle-rope-in-out-waves"] = [brFront(frb([[44,38,48,48],[56,38,52,48]]), [3,-3]), brFront(frb([[38,34,27,38],[62,34,73,38]]), [-3,3])];
+  P["battle-rope-jumping-jacks"] = [brFront(CJ_AUF, [3,-3]), brFront(qScale(fr([50,20],[50,52],FRONT,[[44,34,42,48],[56,34,58,48]]), .86), [-3,3])];
+
+  function pull(F, R, tausch){
+    var q = br([46,28],[40,58],BR_L,tausch ? [R, F] : [F, R]);
+    var f = tausch ? ende(q, 1) : ende(q, 0), r = tausch ? ende(q, 0) : ende(q, 1);
+    var s = anker(93,64) + seil(f[0], f[1], 93, 64, 2.5, 1.5) + gLinie("M"+f[0]+" "+f[1]+"L"+r[0]+" "+r[1]) + gLinie("M"+r[0]+" "+r[1]+"L"+(r[0]-1)+" "+(r[1]+16));
+    return qWith(q, { x:s });
+  }
+  P["battle-rope-power-pull"] = [pull([56,44,67,50],[50,44,54,54],false), pull([56,44,67,50],[50,44,54,54],true)];
+
+  /* Gerätelinien der neuen Studio-Übungen wie bei den übrigen: Farbe „Gerät“ */
+  function gm(q){ if(q && q.x) q.x = q.x.replace(/class="(ip|ipf)( gp)?"/g, 'class="$1$2 gm"'); }
+  STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){
+    (P[id] || []).forEach(gm);
+    var v = V2[id]; if(v){ (v.p || []).forEach(gm); if(v.seq) v.seq.k.forEach(gm); }
+    var s = ILLU_SEQ[id]; if(s) s.k.forEach(gm);
+  }); });
+})();
+
 window.BLOC_DATEN = {
   EX_ALIAS:EX_ALIAS,
   EX_GRIFF:EX_GRIFF,
