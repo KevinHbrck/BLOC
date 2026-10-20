@@ -24,6 +24,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
 - Einheitstest: FAQ-Prüfungen offen für 1–3 Absätze, optionale Felder, beliebig viele Quellen (keine feste Zahl, Nummer 13 darf belegt sein); neuer Test mit einem künstlichen Datensatz im neuen Format (ohne `k`/`s`, mit `b`); Anzeige-Test prüft Begriffe, Antwort je Frage und „kein undefined im Text“.
 
+## 2026-10-20 · Fassungsnummer nach den Figuren-Nachbesserungen erhöht (Fassung 2026-10-20-66)
+
+- Die nachgebesserten Figuren der Studio-Übungen (Fachprüfung) sind mit dieser Fassung auf allen Geräten wirksam.
+
 ## 2026-10-20 · BLOC-Zeichen beim Laufen immer, Hinweisfenster lesbar (Fassung 2026-10-20-65)
 
 - Run (Countdown und Lauf): BLOC-Zeichen oben in der Mitte, auch im Hochformat.
