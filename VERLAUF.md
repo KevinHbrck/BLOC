@@ -49,6 +49,10 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Neu:** Gruppe „Was Training mit dir macht“ (Kraft, Ausdauer/Laufen, Intervalle, Dehnen/Mobility, Herz und Herzrhythmus, Typ-2-Diabetes, Knochen und Stürze, Stimmung und Schlaf), Gruppe „Sicherheit“ (Warnzeichen, Aufwärmen, Steigerung) und Fragen für Fortgeschrittene (Umfang und Häufigkeit, Periodisierung und Deload, Erholung/Übertraining, Verletzungsvorbeugung, Eiweiß und Energie bei hohem Umfang). Zusammen 32 Fragen in 6 Gruppen.
 - **Quellen F47–F64** neu (faq.js und quellen.html DE/EN); alle per Crossref geprüft, Zahlen aus den Zusammenfassungen. `faq.js` wird weiter aus `docs/FAQ-ENTWURF.md` erzeugt (Quellen F1–F46 unverändert übernommen).
 - Einheitstest 51/51. Der Schnelltest-Eintrag „Kalender: … abhaken“ schlägt auch auf dem unveränderten Stand 78d8350 fehl (nicht durch diese Änderung).
+## 2026-10-20 · Hell: sichtbarer Schleier über den ganzen Fotos (Fassung 2026-10-20-29)
+
+- Training und Favoriten bekommen im hellen Design zusätzlich zum Verlauf unten einen gleichmäßigen leichten Schleier (20 %) über das ganze Foto – vorher war nur der untere Rand hell und die Fotos wirkten ohne Schleier.
+
 ## 2026-10-20 · Run: einklappbar, Kalorien oben; Hell: Schleier mittlerer (Fassung 2026-10-20-28)
 
 - **Eigener Lauf** und **Intervall-Lauf** auf der Run-Seite sind einklappbar (zu beim Öffnen; die Zeile zeigt die Wahl, z. B. „Halbmarathon · 21,1 km“ bzw. „1:00 / 1:00“; offen/zu bleibt bis zum Schließen der App).
