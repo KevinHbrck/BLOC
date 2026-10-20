@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · FAQ: Kevins redaktionelle Fassung eingearbeitet (Fassung 2026-10-20-32)
+
+- Die geglättete Word-Fassung („Sportjournal“) ist die neue FAQ: 19 Fragen, Begriffserklärung je Frage („Begriffe kurz erklärt“), 14 Quellen mit Direktlinks (quellen.html: F1–F14). Quellen und zitierte Aussagen gegen Crossref/PubMed geprüft. Nur Formulierungen geändert, die für Nutzer nicht passen (Verweise auf „das Dokument“, „die App sollte …“). Einheitstest 52/52.
+
 ## 2026-10-20 · FAQ-Anzeige für das neue Datenformat (Fassung 2026-10-20-31)
 
 - `faqHTML()` (js/05-suche.js) kommt mit dem neuen FAQ-Format der Word-Fassung zurecht und bleibt mit dem alten kompatibel: **`s`** („Wie sicher ist das?“) ist optional, **`k`** (Kurzantwort) ist optional – mit `k` stehen die Absätze `p` als Stichpunkte wie bisher, ohne `k` als Fließtext –, neues optionales Feld **`b`** = Liste `[Begriff, Erklärung]`, angezeigt unter der Antwort als „Begriffe kurz erklärt“ (`faqBegriffe` in texte.js, Stile am Ende von app.css, `<dl>`). Nichts mehr „undefined“, wenn Felder fehlen.
