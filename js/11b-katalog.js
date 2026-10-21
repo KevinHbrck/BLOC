@@ -374,15 +374,15 @@ function renderKatalogUebungen(){
   var gruppen = katalogGruppen(), vonId = katGruppeIds(gruppen), gueltig = {};
   gruppen.forEach(function(g){ gueltig[g.id] = true; });
   var fGr = selArr(s.stGruppen).filter(function(id){ return gueltig[id]; });
-  var fArt = studioArtenWahl();
+  var fArt = studioArtenWahl(), fGer = studioGeraetWahl();
   var zonen = kkNorm(s.stZonen);   // Körperkarte: gewählte Muskelzonen
   /* Gezeigt werden die Übungen des gewählten Ortes; die des anderen Ortes stehen unsichtbar mit im Seitentext (data-ortfremd) und erscheinen nur,
      solange etwas gesucht wird - die Suche soll nicht am Ort scheitern. */
-  function artOkOhneOrt(id){ var ex = findExercise(id); return !!ex && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && (!zonen.length || zonePasst(ex, zonen)); }
+  function artOkOhneOrt(id){ var ex = findExercise(id); return !!ex && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && studioGeraetOk(id, fGer) && (!zonen.length || zonePasst(ex, zonen)); }
   function artOk(id){ return artOkOhneOrt(id) && katOrtPasst(exOrt(findExercise(id))); }
   function passtOhneOrt(id){ return !!vonId[id] && (!fGr.length || fGr.indexOf(vonId[id]) > -1) && artOkOhneOrt(id); }
   function hier(id){ return katOrtPasst(exOrt(findExercise(id))); }
-  var filterAn = !!(fGr.length || fArt.length || zonen.length);
+  var filterAn = !!(fGr.length || fArt.length || fGer.length || zonen.length);
   var favs = (s.exFavs || []).filter(function(id){ return !!findExercise(id) && passtOhneOrt(id); });
   var zuletzt = Object.keys(alle).filter(function(id){ return alle[id].zuletzt && findExercise(id) && passtOhneOrt(id) && favs.indexOf(id) < 0; })
     .sort(function(a, b){ return alle[b].zuletzt - alle[a].zuletzt; }).slice(0, 6);
@@ -568,6 +568,8 @@ function katWoPasst(exs, fGr, fArt, zonen){
   if(fGr.length && exs.filter(function(ex){ return fGr.indexOf(katGruppeVon(ex)) > -1; }).length < drittel) return false;
   if(zonen.length && exs.filter(function(ex){ return zonePasst(ex, zonen); }).length < drittel) return false;
   if(fArt.length && !exs.every(function(ex){ var a = studioArt(ex.id); return a === "koerper" || fArt.indexOf(a) > -1; })) return false;
+  var fGer = studioGeraetWahl();
+  if(fGer.length && !exs.every(function(ex){ return !STUDIO_GERAET[ex.id] || fGer.indexOf(STUDIO_GERAET[ex.id]) > -1; })) return false;
   return true;
 }
 function renderKatalogWorkouts(){

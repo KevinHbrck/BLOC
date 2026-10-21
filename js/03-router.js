@@ -366,7 +366,7 @@ function render(){
     var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.repFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
     /* Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl; Summit) werden nicht aufbewahrt: jeder neue Besuch beginnt ohne Filter.
        Ort, Sortierung A–Z und die Art des Bauens bleiben als Einstellungen stehen. */
-    ["stGruppen", "stArten", "stZonen", "wsRegionen", "wsZonen", "buildCats", "buildCat", "buildEquips", "buildZonen"].forEach(function(k){ delete sz[k]; });
+    ["stGruppen", "stArten", "stGeraete", "stZonen", "wsRegionen", "wsZonen", "buildCats", "buildCat", "buildEquips", "buildZonen"].forEach(function(k){ delete sz[k]; });
     if(typeof repFilter === "object"){ repFilter.lvl = "all"; repFilter.bar = "all"; repFilter.stufe = "standard"; }
     hinweisBesucht = {};   // Erklärtexte: der nächste Besuch einer Seite zählt wieder
     katOffen = {};         // Katalog: beim nächsten Besuch stehen wieder nur die Überschriften

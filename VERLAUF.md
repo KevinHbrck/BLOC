@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-20 · Fitnessstudio: Geräte-Auswahl, 12 neue Übungen (Fassung 2026-10-20-67)
+
+- Im Fitnessstudio-Filter gibt es eine Zeile „Gerät“ mit den fünf gängigsten Universalgeräten: Multipresse (Smith), Kabelzug, Langhantel, Kurzhantel, Maschine. Sie gilt für Übungskatalog, Workoutkatalog und Plan-Bau (nur bei Ort Fitnessstudio) und wird wie die anderen Filter beim Verlassen zurückgesetzt. Zuordnung `STUDIO_GERAET` am Ende von `daten.js`; Übungen ohne Gerät (Seile, Rad, Körpergewicht) erscheinen bei aktivem Gerätefilter nicht.
+- Zwölf neue Übungen mit Figur: sieben an der Multipresse (Schulterdrücken, Schrägbankdrücken, vorgebeugtes Rudern, Ausfallschritt, Hip Thrust, Wadenheben, Schulterheben) und fünf mit der Langhantel (Frontkniebeuge, Kniebeuge mit Pause, Zercher-Kniebeuge, Good Morning, Push Press).
+- Muskelname bei „Blick sanft nach oben“ korrigiert („Halsmuskulatur vorn“ kannte die Körperkarte nicht).
+
 ## 2026-10-20 · Strichfiguren für alle 87 neuen Studio-Übungen (Fassung 2026-10-20-61)
 
 - Alle am 2026-10-20 neu eingebauten Übungen haben jetzt eine eigene Figur (zwei Posen, Anfang/Ende): Brust, Rücken, Schultern, Bizeps, Trizeps, Beine, Core, Unterarme, zwei Dehnungen, Cross Jacks und die zehn Battle Ropes. Neuer Abschnitt „Figuren der Studio-Erweiterung“ am Ende von `daten.js` (vor `window.BLOC_DATEN`).

@@ -3273,7 +3273,7 @@ G("chin-to-chest-stretch", "Nacken beugen (Kinn zur Brust)", "Chin-to-Chest Stre
   "air-stretch", null, "nacken kinn brust dehnen");
 G("ceiling-look-stretch", "Blick sanft nach oben (Nacken)", "Ceiling Look Stretch", "stretch", 1, 20, 0,
   "Kinn leicht zurückziehen, dann den Blick sanft schräg nach oben richten", "Draw your chin back slightly, then gently look diagonally upward", 5, 1, 1, "none",
-  ["Nacken (tiefe Halsbeuger)", "Halsmuskulatur vorn", "Deep neck flexors", "Front neck muscles"],
+  ["Nacken (tiefe Halsbeuger)", "Nacken, Schultern", "Deep neck flexors", "Neck, shoulders"],
   "Aufrecht sitzen oder stehen, Schultern locker nach unten.|Das Kinn erst leicht zurückziehen, dann den Kopf nur sanft nach hinten neigen, der Blick geht schräg nach oben, der Mund bleibt geschlossen.|Ruhig atmen, höchstens 20 Sekunden, dann langsam zurück. Bei Schwindel, Kribbeln oder Taubheit in Armen oder Händen sofort stoppen.",
   "Sit or stand tall with relaxed shoulders.|Draw your chin back slightly first, then tilt your head back only gently, eyes diagonally upward, mouth closed.|Breathe calmly for 20 seconds at most, then return slowly. Stop immediately with dizziness, tingling or numbness in your arms or hands.",
   "Schultern tief, Kiefer locker.|Kleine, sanfte Bewegung.", "Den Kopf ruckartig nach hinten werfen, drehen oder länger halten. Bei bekannten Nackenproblemen weglassen.",
@@ -3369,6 +3369,107 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   "Hüfte tief, Rücken gerade.|Zug aus dem Rücken.", "Mit rundem Rücken ziehen oder das Seil ruckartig reißen.",
   "Hips low, back straight.|Pull from your back.", "Pulling with a rounded back or yanking the rope.",
   "cardio", ["Seil im Obergriff, Hand über Hand", "Rope, overhand, hand over hand"], "heranziehen seil rope pull");
+
+/* ---------- Multipresse und Langhantel: Ergänzungen (2026-10-20) ---------- */
+var SMITH_NOTE = [" An der Multipresse die Sicherungshaken passend einstellen; im Notfall die Handgelenke drehen, die Stange hakt ein.", " On the Smith machine set the safety stops to suit you; in an emergency rotate your wrists and the bar hooks in."];
+G("smith-overhead-press", "Schulterdrücken an der Multipresse", "Smith Machine Overhead Press", "weight", 3, 40, 0,
+  "Stange auf Schulterhöhe, gerade nach oben drücken", "Bar at shoulder height, press straight up", 75, 2, 2, "gym",
+  ["Vordere Schulter", "Seitliche Schulter, Trizeps", "Front delts", "Side delts, triceps"],
+  "Eine Bank steil oder aufrecht unter die Stange stellen, die Stange etwas über Schulterbreite greifen und aus der Sicherung drehen.|Die Stange gerade nach oben drücken, bis die Arme fast gestreckt sind.|Kontrolliert zu den Schultern oder zum Kinn absenken.",
+  "Set a bench steep or upright under the bar, grip the bar a little wider than your shoulders and unhook it.|Press the bar straight up until your arms are almost straight.|Lower under control to your shoulders or chin.",
+  "Bauch und Gesäß fest, Handgelenke gerade." + SMITH_NOTE[0] + "|Rippen unten halten.", "Ins Hohlkreuz fallen oder den Kopf nach vorn schieben.",
+  "Core and glutes firm, wrists straight." + SMITH_NOTE[1] + "|Keep your ribs down.", "Arching your lower back or pushing your head forward.",
+  "schulter", ["Multipresse-Stange, Obergriff", "Smith bar, overhand"], "multipresse smith schulterdrücken überkopf");
+G("smith-incline-press", "Schrägbankdrücken an der Multipresse", "Smith Machine Incline Press", "weight", 3, 40, 0,
+  "Bank auf etwa 30°, Stange zur oberen Brust", "Bench at about 30°, bar to your upper chest", 75, 2, 2, "gym",
+  ["Obere Brust", "Vordere Schulter, Trizeps", "Upper chest", "Front delts, triceps"],
+  "Die Bank auf etwa 30° stellen, so legen, dass die Stange über der oberen Brust läuft, und die Stange aus der Sicherung drehen.|Die Stange zur oberen Brust senken.|Zügig nach oben drücken, bis die Arme fast gestreckt sind.",
+  "Set the bench to about 30°, lie so the bar runs over your upper chest and unhook it.|Lower the bar to your upper chest.|Press up at a steady pace until your arms are almost straight.",
+  "Schulterblätter zusammen, Füße fest." + SMITH_NOTE[0] + "|Unterarme senkrecht.", "Die Schultern nach vorn rollen oder das Gesäß abheben.",
+  "Shoulder blades together, feet planted." + SMITH_NOTE[1] + "|Forearms vertical.", "Rolling your shoulders forward or lifting your glutes.",
+  "brust", ["Multipresse-Stange, Obergriff", "Smith bar, overhand"], "multipresse smith schrägbank schrägbankdrücken");
+G("smith-bent-over-row", "Vorgebeugtes Rudern an der Multipresse", "Smith Machine Bent-Over Row", "weight back", 3, 40, 0,
+  "Vorgebeugt, Stange zum Bauch ziehen", "Bent over, pull the bar to your belly", 75, 2, 2, "gym",
+  ["Breiter Rückenmuskel", "Oberer Rücken, Bizeps, Rückenstrecker", "Lats", "Upper back, biceps, spinal erectors"],
+  "Die Stange auf Kniehöhe einstellen, aus der Hüfte vorbeugen und die Stange schulterbreit greifen.|Die Stange zum Bauch ziehen, die Ellbogen eng am Körper.|Kontrolliert wieder strecken.",
+  "Set the bar at knee height, hinge forward and grip the bar shoulder-width.|Pull the bar to your belly, elbows close to your body.|Extend again under control.",
+  "Rücken neutral, Blick nach unten." + SMITH_NOTE[0] + "|Knie leicht gebeugt.", "Mit rundem Rücken ziehen oder den Oberkörper hochreißen.",
+  "Neutral back, eyes down." + SMITH_NOTE[1] + "|Knees slightly bent.", "Pulling with a rounded back or jerking your torso up.",
+  "ruecken", ["Multipresse-Stange, Obergriff", "Smith bar, overhand"], "multipresse smith rudern vorgebeugt");
+G("smith-split-squat", "Ausfallschritt an der Multipresse", "Smith Machine Split Squat", "weight legs", 3, 40, 1,
+  "Ein Fuß vorn, den Körper senkrecht absenken", "One foot forward, lower your body straight down", 75, 2, 2, "gym",
+  ["Oberschenkel vorn", "Gesäß, Oberschenkel hinten", "Quads", "Glutes, hamstrings"],
+  "Unter die Stange treten, sie auf den oberen Rücken legen, einen großen Schritt nach vorn und die Stange aus der Sicherung drehen.|Das hintere Knie senkrecht Richtung Boden absenken.|Über den vorderen Fuß aufrichten, nach dem Satz die Seite wechseln.",
+  "Step under the bar, rest it on your upper back, take a long step forward and unhook it.|Lower the back knee straight towards the floor.|Drive up through the front foot, switch sides after the set.",
+  "Oberkörper aufrecht, vorderes Knie über dem Fuß." + SMITH_NOTE[0] + "|Gewicht auf dem vorderen Fuß.", "Das Knie nach innen fallen lassen oder zu weit nach hinten stehen.",
+  "Torso upright, front knee over your foot." + SMITH_NOTE[1] + "|Weight on the front foot.", "Letting your knee cave in or standing too far back.",
+  "beine", ["Multipresse-Stange auf dem oberen Rücken", "Smith bar on your upper back"], "multipresse smith split squat ausfallschritt");
+G("smith-hip-thrust", "Hip Thrust an der Multipresse", "Smith Machine Hip Thrust", "weight legs", 3, 40, 0,
+  "Oberer Rücken an der Bank, Hüfte nach oben drücken", "Upper back on the bench, drive your hips up", 75, 2, 2, "gym",
+  ["Gesäß", "Oberschenkel hinten, Rumpf", "Glutes", "Hamstrings, core"],
+  "Mit dem oberen Rücken an eine Bank lehnen, die Stange mit Polster in die Hüftbeugen legen und aus der Sicherung drehen.|Die Hüfte nach oben drücken, bis Knie, Hüfte und Schultern eine Linie bilden.|Oben das Gesäß anspannen, kontrolliert senken.",
+  "Rest your upper back on a bench, place the padded bar in your hip crease and unhook it.|Drive your hips up until knees, hips and shoulders form a line.|Squeeze your glutes at the top and lower under control.",
+  "Kinn leicht zur Brust, Rippen unten." + SMITH_NOTE[0] + "|Füße hüftbreit, Schienbeine oben senkrecht.", "Ins Hohlkreuz drücken oder die Stange mit den Zehen wegschieben.",
+  "Chin slightly tucked, ribs down." + SMITH_NOTE[1] + "|Feet hip-width, shins vertical at the top.", "Arching your lower back or pushing off your toes.",
+  "beine", ["Multipresse-Stange mit Polster", "Smith bar with pad"], "multipresse smith hip thrust hüftheben gesäß");
+G("smith-calf-raise", "Wadenheben an der Multipresse", "Smith Machine Calf Raise", "weight legs", 3, 40, 0,
+  "Fußballen auf einer Stufe, hoch auf die Zehen", "Balls of your feet on a step, rise onto your toes", 60, 1, 1, "gym",
+  ["Waden", "Fußmuskeln", "Calves", "Foot muscles"],
+  "Eine Stufe unter die Stange legen, die Stange auf die Schultern legen und die Fußballen auf die Stufe stellen.|Die Fersen langsam absenken, bis die Waden gedehnt sind.|Auf die Zehenspitzen hochdrücken und oben kurz halten.",
+  "Put a step under the bar, rest the bar on your shoulders and place the balls of your feet on the step.|Lower your heels slowly until your calves are stretched.|Rise onto your toes and hold briefly.",
+  "Knie fast gestreckt, aufrecht bleiben." + SMITH_NOTE[0] + "|Voller Bewegungsweg.", "Mit Schwung wippen oder die Knie beugen.",
+  "Knees almost straight, stay tall." + SMITH_NOTE[1] + "|Full range of motion.", "Bouncing or bending your knees.",
+  "beine", ["Multipresse-Stange auf den Schultern", "Smith bar on your shoulders"], "multipresse smith waden wadenheben");
+G("smith-shrug", "Schulterheben an der Multipresse", "Smith Machine Shrug", "weight", 3, 40, 0,
+  "Stange vor den Oberschenkeln, Schultern gerade nach oben", "Bar in front of your thighs, lift your shoulders straight up", 60, 1, 1, "gym",
+  ["Oberer Rücken", "Schultern, Unterarme (Griff)", "Upper back", "Shoulders, forearms (grip)"],
+  "Aufrecht vor der Stange stehen und sie mit gestreckten Armen schulterbreit greifen.|Die Schultern gerade Richtung Ohren ziehen.|Oben kurz halten und langsam senken.",
+  "Stand tall at the bar and grip it shoulder-width with straight arms.|Pull your shoulders straight up towards your ears.|Hold briefly at the top and lower slowly.",
+  "Arme gestreckt, Nacken lang." + SMITH_NOTE[0] + "|Nicht mit den Schultern kreisen.", "Mit den Armen ziehen oder den Kopf nach vorn schieben.",
+  "Arms straight, neck long." + SMITH_NOTE[1] + "|No shoulder circles.", "Pulling with your arms or pushing your head forward.",
+  "schulter", ["Multipresse-Stange, Obergriff", "Smith bar, overhand"], "multipresse smith shrugs schulterheben nacken");
+G("front-squat", "Frontkniebeuge", "Front Squat", "weight legs", 3, 40, 0,
+  "Stange vorn auf den Schultern, Oberkörper aufrecht", "Bar in front on your shoulders, torso upright", 90, 3, 3, "gym",
+  ["Oberschenkel vorn", "Gesäß, Rumpf, Oberer Rücken", "Quads", "Glutes, core, upper back"],
+  "Die Stange vorn auf die Schultern legen, die Ellbogen zeigen nach vorn oben, die Finger halten sie nur.|Aufrecht in die Hocke gehen, bis die Oberschenkel mindestens waagerecht sind.|Über die ganze Fußsohle aufstehen, die Ellbogen bleiben oben.",
+  "Rest the bar in front on your shoulders, elbows pointing forward and up, fingers only steady it.|Squat down upright until your thighs are at least horizontal.|Stand up through your whole foot, elbows stay high.",
+  "Ellbogen hoch, Brust offen.|Sicherheitsständer oder Spotter nutzen.", "Die Ellbogen sinken lassen oder den Oberkörper nach vorn kippen.",
+  "Elbows high, chest open.|Use safety stands or a spotter.", "Letting your elbows drop or tipping your torso forward.",
+  "beine", ["Langhantel vorn auf den Schultern", "Barbell in front on your shoulders"], "frontkniebeuge front squat langhantel");
+G("pause-squat", "Kniebeuge mit Pause", "Pause Squat", "weight legs", 3, 40, 0,
+  "Unten zwei bis drei Sekunden halten", "Hold two to three seconds at the bottom", 90, 3, 3, "gym",
+  ["Oberschenkel vorn", "Gesäß, Rumpf, Rückenstrecker", "Quads", "Glutes, core, spinal erectors"],
+  "Die Stange auf den oberen Rücken legen und in die Kniebeuge gehen.|Unten ruhig zwei bis drei Sekunden halten, die Spannung bleibt.|Ohne Schwung aus den Fersen aufstehen.",
+  "Rest the bar on your upper back and squat down.|Hold quietly for two to three seconds at the bottom, keeping tension.|Stand up from your heels without bouncing.",
+  "Rücken gerade, Knie folgen den Zehen.|Sicherheitsständer nutzen.", "Unten entspannen oder aus der Pause wippen.",
+  "Back straight, knees track your toes.|Use safety stands.", "Relaxing at the bottom or bouncing out of the pause.",
+  "beine", ["Langhantel auf dem oberen Rücken", "Barbell on your upper back"], "pause squat kniebeuge pause halten langhantel");
+G("zercher-squat", "Zercher-Kniebeuge", "Zercher Squat", "weight legs", 3, 40, 0,
+  "Stange in den Ellenbeugen vor dem Bauch", "Bar in the crooks of your elbows at your belly", 90, 3, 3, "gym",
+  ["Oberschenkel vorn", "Gesäß, Rumpf, Oberer Rücken", "Quads", "Glutes, core, upper back"],
+  "Die Stange etwa auf Bauchhöhe in die Ellenbeugen legen und eng am Körper halten.|Aufrecht in die Hocke gehen, die Ellbogen zeigen nach vorn.|Aus den Fersen aufstehen, der Oberkörper bleibt aufrecht.",
+  "Rest the bar in the crooks of your elbows at belly height and hold it close.|Squat down upright, elbows pointing forward.|Stand up from your heels, keeping your torso upright.",
+  "Bauch fest, Brust offen.|Eine Stangenpolsterung nutzen, die Ellenbeugen können drücken.", "Den Rücken runden oder die Stange wegrollen lassen.",
+  "Core firm, chest open.|Use a bar pad, the crooks of your elbows can get sore.", "Rounding your back or letting the bar roll away.",
+  "beine", ["Langhantel in den Ellenbeugen", "Barbell in the crooks of your elbows"], "zercher kniebeuge langhantel ellenbeuge");
+G("barbell-good-morning", "Good Morning mit Langhantel", "Barbell Good Morning", "weight back", 3, 40, 0,
+  "Stange auf dem Rücken, Hüfte nach hinten, Rücken gerade", "Bar on your back, hips back, back straight", 75, 3, 3, "gym",
+  ["Rückenstrecker", "Gesäß, Oberschenkel hinten", "Spinal erectors", "Glutes, hamstrings"],
+  "Die Stange wie bei der Kniebeuge auf den oberen Rücken legen, Knie leicht gebeugt.|Die Hüfte weit nach hinten schieben und den Oberkörper mit geradem Rücken nach vorn neigen.|Die Hüfte nach vorn schieben und aufrichten.",
+  "Rest the bar on your upper back as for a squat, knees slightly bent.|Push your hips far back and tip your torso forward with a straight back.|Drive your hips forward and stand up.",
+  "Rücken neutral, Blick nach unten.|Mit leichtem Gewicht beginnen.", "Den Rücken runden oder tiefer gehen, als der Rücken gerade bleibt.",
+  "Back neutral, eyes down.|Start light.", "Rounding your back or going lower than you can keep it straight.",
+  "ruecken", ["Langhantel auf dem oberen Rücken", "Barbell on your upper back"], "good morning langhantel rückenstrecker hüftbeuge");
+G("barbell-push-press", "Push Press mit Langhantel", "Barbell Push Press", "weight", 3, 30, 0,
+  "Aus der Beugung mit Beinimpuls nach oben drücken", "Dip and drive with your legs, press overhead", 90, 3, 3, "gym",
+  ["Vordere Schulter", "Seitliche Schulter, Trizeps, Gesäß", "Front delts", "Side delts, triceps, glutes"],
+  "Die Stange vorn auf den Schultern halten, Füße schulterbreit.|Kurz in die Knie gehen und kräftig strecken, die Stange mit dem Schwung nach oben drücken.|Oben fest stehen und die Stange kontrolliert zu den Schultern zurückführen.",
+  "Hold the bar in front on your shoulders, feet shoulder-width.|Dip slightly and drive up, pressing the bar overhead with that momentum.|Stand firm at the top and return the bar to your shoulders under control.",
+  "Bauch fest, Rippen unten.|Stange nah am Gesicht vorbei.", "Ins Hohlkreuz fallen oder die Beinarbeit weglassen.",
+  "Core firm, ribs down.|Bar close past your face.", "Arching your lower back or skipping the leg drive.",
+  "schulter", ["Langhantel vorn auf den Schultern", "Barbell in front on your shoulders"], "push press langhantel drücken beinimpuls");
+[["front-squat",8,5],["pause-squat",6,5],["zercher-squat",6,5],["barbell-good-morning",10,5],["barbell-push-press",6,2.5],["smith-overhead-press",10,2.5],["smith-incline-press",10,2.5],
+ ["smith-bent-over-row",10,2.5],["smith-split-squat",10,2.5],["smith-hip-thrust",10,5],["smith-calf-raise",15,5],["smith-shrug",12,2.5]].forEach(function(z){ STUDIO_ZIEL[z[0]] = [3, z[1], z[2]]; });
 
 /* Gruppen im Studio-Reiter und Bereichszuordnung: Studio-Übungen kommen in ihre Gruppe, „Cardio & Ausdauer“ ist neu (Battle Rope);
    Übungen ohne Gerät (air-…) laufen über die Hauptgruppen von Air. Battle Ropes und Haltegriffe zählen nach Zeit: Ziel in Sekunden statt Wiederholungen. */
@@ -3706,12 +3807,55 @@ G("battle-rope-power-pull", "Battle Rope: Seil heranziehen", "Battle Rope Power 
   }
   P["battle-rope-power-pull"] = [pull([55,41,67,47],[50,44,54,54],false), pull([55,41,67,47],[50,44,54,54],true)];
 
+  /* ---------- Multipresse und Langhantel (Ergänzungen) ---------- */
+  var SM_R = gLinie("M24 0V89M72 0V89");
+  P["smith-overhead-press"] = [Q(null,[50,28],[50,56],[[50,72,50,89,58,89]],[[58,40,57,30]], SM_R+gScheibe(57,28,6)),
+                               Q(null,[50,28],[50,56],[[50,72,50,89,58,89]],[[58,17,64,7]], SM_R+gScheibe(64,6,6))];
+  P["smith-incline-press"] = [qWith(P["incline-db-press"][0], { x:ST_SCHRAEG+gLinie("M37 4V66")+gScheibe(34,49,6) }),
+                              qWith(P["incline-db-press"][1], { x:ST_SCHRAEG+gLinie("M37 4V66")+gScheibe(40,26,6) })];
+  var SM_RR = gLinie("M72 30V89");
+  P["smith-bent-over-row"] = [qWith(P_HG,{ x:SM_RR+gScheibe(61,70,7) }), qWith(P_HG,{ a:[[50,36,56,48]], x:SM_RR+gScheibe(56,52,7) })];
+  P["smith-split-squat"] = [qWith(P_ST,{ a:[[44,30,48,21]], x:SM_R+gScheibe(47,20,7) }),
+                            qWith(P_L1,{ a:[[43,40,47,32]], x:SM_R+gScheibe(47,31,7) })];
+  P["smith-hip-thrust"] = [qWith(P["hip-thrust"][0], { x:gBench(6,32,66)+gLinie("M42 30V89")+gScheibe(46,74,6) }),
+                           qWith(P["hip-thrust"][1], { x:gBench(6,32,66)+gLinie("M42 30V89")+gScheibe(50,54,6) })];
+  var STUFE = gLinie("M44 89V84H66V89");
+  P["smith-calf-raise"] = [Q(null,[50,22],[50,50],[[50,68,50,84,58,84]],[[44,32,48,23]], SM_R+STUFE+gScheibe(47,22,7)),
+                           Q(null,[50,16],[50,44],[[50,62,50,77,57,84]],[[44,26,48,17]], SM_R+STUFE+gScheibe(47,16,7))];
+  P["smith-shrug"] = [Q(null,[50,20],[50,50],STAND,[[52,33,53,46]], SM_R+gScheibe(54,48,6)),
+                      Q(null,[50,16],[50,50],STAND,[[52,29,53,42]], SM_R+gScheibe(54,44,6))];
+  P["front-squat"] = [Q(null,[50,20],[50,50],STAND,[[61,26,53,23]], gScheibe(53,24,7)),
+                      Q(null,[46,36],[36,62],[[57,62,52,89,60,89]],[[56,40,50,36]], gScheibe(51,36,7))];
+  P["pause-squat"] = [P["barbell-squat"][0], P["barbell-squat"][1]];
+  ILLU_SEQ["pause-squat"] = { k:[P["barbell-squat"][0], P["barbell-squat"][1]], t:[[.2,.5],[1,.6]] };
+  P["zercher-squat"] = [Q(null,[50,20],[50,50],STAND,[[55,36,51,33]], gScheibe(55,37,7)),
+                        Q(null,[46,36],[36,62],[[57,62,52,89,60,89]],[[54,47,50,43]], gScheibe(54,48,7))];
+  P["barbell-good-morning"] = [P["barbell-squat"][0], Q(null,[66,40],[40,50],[[44,70,44,89,52,89]],[[55,44,60,38]], gScheibe(62,38,7))];
+  P["barbell-push-press"] = [Q(null,[50,32],[48,60],[[57,72,52,89,60,89]],[[58,44,57,34]], gScheibe(57,32,6)),
+                             qWith(P_STUP,{ x:gScheibe(65,6,6) })];
+
   /* Gerätelinien der neuen Studio-Übungen wie bei den übrigen: Farbe „Gerät“ */
   function gm(q){ if(q && q.x) q.x = q.x.replace(/class="(ip|ipf)( gp)?"/g, 'class="$1$2 gm"'); }
   STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){
     (P[id] || []).forEach(gm);
     var v = V2[id]; if(v){ (v.p || []).forEach(gm); if(v.seq) v.seq.k.forEach(gm); }
     var s = ILLU_SEQ[id]; if(s) s.k.forEach(gm);
+  }); });
+})();
+
+/* Gerät je Studio-Übung (Auswahl im Fitnessstudio): Smith, Kabelzug, Langhantel, Kurzhantel, Maschine. Was zu keinem passt (Seile, Rad, Körpergewicht) bleibt ohne Gerät. */
+var STUDIO_GERAETE = ["smith", "kabel", "lh", "kh", "maschine"];
+var STUDIO_GERAET = {};
+(function(){
+  var MASCHINE = " leg-press leg-press-45 leg-press-single hack-squat leg-extension leg-curl adductor-machine abductor-machine calf-machine seated-calf glute-machine calf-press lying-leg-curl chest-press-machine incline-chest-press butterfly reverse-butterfly assisted-dip assisted-pullup row-machine high-row-machine back-extension back-extension-machine shoulder-press-machine lateral-raise-machine biceps-machine triceps-machine triceps-extension-machine ab-crunch-machine rotary-torso ";
+  STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){
+    if(!id) return;
+    var eq = " " + (EX_EQUIP[id] || "") + " ";
+    if(/^smith-/.test(id)) STUDIO_GERAET[id] = "smith";
+    else if(/cable|pulldown|pushdown|face-pull|pallof|woodchop|straight-arm|pull-through|^rope-|supinated-triceps|lean-away/.test(id)) STUDIO_GERAET[id] = "kabel";
+    else if(/^barbell-|^front-squat|^pause-squat|^zercher|^bench-press$|t-bar-row|cambered|meadows|stiff-leg|^upright-row|close-grip-ez|^preacher-curl|ez-jm|^reverse-curl|^hip-thrust/.test(id)) STUDIO_GERAET[id] = "lh";
+    else if(MASCHINE.indexOf(" " + id + " ") > -1) STUDIO_GERAET[id] = "maschine";
+    else if(eq.indexOf(" db ") > -1) STUDIO_GERAET[id] = "kh";
   }); });
 })();
 
@@ -3811,6 +3955,8 @@ window.BLOC_DATEN = {
   EX_INT:EX_INT,
   STUDIO_GRUPPEN:STUDIO_GRUPPEN,
   STUDIO_ZIEL:STUDIO_ZIEL,
+  STUDIO_GERAET:STUDIO_GERAET,
+  STUDIO_GERAETE:STUDIO_GERAETE,
   LIB_FOKUS_TAUSCH:LIB_FOKUS_TAUSCH,
   LIB_WORKOUT_INFO:LIB_WORKOUT_INFO,
   BAND_ARTEN:BAND_ARTEN,
