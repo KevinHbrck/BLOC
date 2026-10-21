@@ -35,9 +35,11 @@ function uid(){ return Date.now().toString(36) + Math.random().toString(36).slic
 
 function defaultDB(){
   return {
+    v: DB_VERSION,
     blocks: [],
     workouts: [],
     myWorkouts: [],   // eigene Workouts aus Bibliotheksübungen - getrennt von den Timer-Workouts
+    plaene: [],       // PLÄNE (Baukasten): Wochentage mit Workouts
     customEx: [],     // selbst angelegte Übungen
     history: [],      // nur Übungen der letzten 14 Tage { at, ex:[ids] } - für „Überrasch mich“
     settings: { theme:"system", sound:true, soundStyle:"klangschale", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
@@ -136,41 +138,53 @@ function migrateSound(key){
   return REMOVED_SOUNDS[key] || "klangschale";
 }
 
+/* Speicherformat: db.v zählt die Fassung des Formats (1 = bis zum Baukasten-Umbau, 2 = mit Plänen in db.plaene).
+   Jede Änderung am Format bekommt eine Stufe in dbMigrieren; die läuft beim Laden, beim Import und beim Wiederherstellen des Schnappschusses gleich. */
+var DB_VERSION = 2;
+function dbMigrieren(db, vonV){
+  if(vonV < 2 && !Array.isArray(db.plaene)) db.plaene = [];
+  db.v = DB_VERSION;
+}
+/* Aus einem gelesenen Stand (localStorage, Sicherungsdatei, Schnappschuss) die Datenbank bauen */
+function dbAusRoh(parsed){
+  var db = defaultDB();
+  db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
+  db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
+  db.myWorkouts = Array.isArray(parsed.myWorkouts) ? parsed.myWorkouts : [];
+  db.plaene = Array.isArray(parsed.plaene) ? parsed.plaene : [];
+  db.customEx = Array.isArray(parsed.customEx) ? parsed.customEx : [];
+  db.history = Array.isArray(parsed.history) ? parsed.history : [];
+  if(parsed.settings) Object.assign(db.settings, parsed.settings);
+  pruneHistory(db);
+  if(db.settings.bereicheV !== 3){   // einmalig: der Timer ist wieder ein eigener Bereich - bei bestehender Reihenfolge direkt nach Studio einsortieren, sonst Standard
+    /* kein selArr: die Funktion steht erst in 02-bibliothek.js, beim Laden gibt es sie hier noch nicht */
+    var br0 = db.settings.bereicheV === 2 && Array.isArray(db.settings.bereiche) ? db.settings.bereiche.slice() : [];
+    if(!br0.length) br0 = ["lib", "timer", "intervall", "reps", "run", "warm"];
+    else if(br0.indexOf("intervall") < 0){ var nach = br0.indexOf("timer") > -1 ? br0.indexOf("timer") : br0.indexOf("lib"); br0.splice(nach + 1, 0, "intervall"); }
+    db.settings.bereiche = br0; db.settings.bereicheV = 3;
+  }
+  if(db.settings.bereicheV !== 4){   // einmalig: Mobility & Stretch ist eine Listenkachel wie die anderen (sortierbar); sie bleibt zunächst direkt unter Workout
+    /* kein selArr: die Funktion steht erst in 02-bibliothek.js, beim Laden gibt es sie hier noch nicht */
+    var br4 = (Array.isArray(db.settings.bereiche) ? db.settings.bereiche : []).filter(function(k){ return k !== "warm"; }), pos4 = -1;
+    br4.forEach(function(k, i){ if(k === "lib" || k === "timer" || k === "katalog") pos4 = i; });
+    br4.splice(pos4 + 1, 0, "warm");
+    db.settings.bereiche = br4; db.settings.bereicheV = 4;
+  }
+  db.settings.theme = migrateTheme(db.settings.theme);
+  db.settings.soundStyle = migrateSound(db.settings.soundStyle);
+  /* Sprachansagen halten auf den meisten Handys Musik anderer Apps (Spotify) an -
+     deshalb einmalig aus; wer sie will, schaltet sie bewusst wieder ein */
+  if(!db.settings.voiceMix){ db.settings.voice = false; db.settings.voiceMix = true; }
+  delete db.settings.lockScreen;   // „Anzeige auf dem Sperrbildschirm“ gibt es nicht mehr
+  migrateExIds(db);
+  dbMigrieren(db, +parsed.v || 1);
+  return db;
+}
 function loadDB(){
   try{
     var raw = localStorage.getItem(DB_KEY);
     if(!raw) return frischDB();
-    var parsed = JSON.parse(raw);
-    var db = defaultDB();
-    db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
-    db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
-    db.myWorkouts = Array.isArray(parsed.myWorkouts) ? parsed.myWorkouts : [];
-    db.customEx = Array.isArray(parsed.customEx) ? parsed.customEx : [];
-    db.history = Array.isArray(parsed.history) ? parsed.history : [];
-    if(parsed.settings) Object.assign(db.settings, parsed.settings);
-    pruneHistory(db);
-    if(db.settings.bereicheV !== 3){   // einmalig: der Timer ist wieder ein eigener Bereich - bei bestehender Reihenfolge direkt nach Studio einsortieren, sonst Standard
-      /* kein selArr: die Funktion steht erst in 02-bibliothek.js, beim Laden gibt es sie hier noch nicht */
-      var br0 = db.settings.bereicheV === 2 && Array.isArray(db.settings.bereiche) ? db.settings.bereiche.slice() : [];
-      if(!br0.length) br0 = ["lib", "timer", "intervall", "reps", "run", "warm"];
-      else if(br0.indexOf("intervall") < 0){ var nach = br0.indexOf("timer") > -1 ? br0.indexOf("timer") : br0.indexOf("lib"); br0.splice(nach + 1, 0, "intervall"); }
-      db.settings.bereiche = br0; db.settings.bereicheV = 3;
-    }
-    if(db.settings.bereicheV !== 4){   // einmalig: Mobility & Stretch ist eine Listenkachel wie die anderen (sortierbar); sie bleibt zunächst direkt unter Workout
-      /* kein selArr: die Funktion steht erst in 02-bibliothek.js, beim Laden gibt es sie hier noch nicht */
-      var br4 = (Array.isArray(db.settings.bereiche) ? db.settings.bereiche : []).filter(function(k){ return k !== "warm"; }), pos4 = -1;
-      br4.forEach(function(k, i){ if(k === "lib" || k === "timer" || k === "katalog") pos4 = i; });
-      br4.splice(pos4 + 1, 0, "warm");
-      db.settings.bereiche = br4; db.settings.bereicheV = 4;
-    }
-    db.settings.theme = migrateTheme(db.settings.theme);
-    db.settings.soundStyle = migrateSound(db.settings.soundStyle);
-    /* Sprachansagen halten auf den meisten Handys Musik anderer Apps (Spotify) an -
-       deshalb einmalig aus; wer sie will, schaltet sie bewusst wieder ein */
-    if(!db.settings.voiceMix){ db.settings.voice = false; db.settings.voiceMix = true; }
-    delete db.settings.lockScreen;   // „Anzeige auf dem Sperrbildschirm“ gibt es nicht mehr
-    migrateExIds(db);
-    return db;
+    return dbAusRoh(JSON.parse(raw));
   }catch(e){
     /* Nicht lesbar: den Rohtext beiseitelegen, bevor der nächste save() ihn überschreibt (nur die erste Rettung bleibt liegen) */
     try{
@@ -179,8 +193,7 @@ function loadDB(){
     }catch(e2){}
     return defaultDB();
   }
-}
-var DB_GERETTET = false;   // true: der gespeicherte Stand war nicht lesbar; der Rohtext liegt unter DB_KEY + "-defekt"
+}var DB_GERETTET = false;   // true: der gespeicherte Stand war nicht lesbar; der Rohtext liegt unter DB_KEY + "-defekt"
 
 /* Erster Start auf diesem Gerät = noch nichts gespeichert. Nur dann zeigt BLOC die Einführung von selbst;
    wer die App schon eingerichtet hat, findet sie in den Einstellungen. */

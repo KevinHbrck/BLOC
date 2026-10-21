@@ -956,17 +956,7 @@ function renderSettings(){
           (Array.isArray(parsed.blocks) || Array.isArray(parsed.workouts) || Array.isArray(parsed.myWorkouts) || (parsed.settings && typeof parsed.settings === "object"));
         if(!istBloc){ showToast(t("fileError")); return; }
         confirmSheet(t("importQ"), t("importText"), t("importBtn"), function(){
-          var db = defaultDB();
-          db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
-          db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
-          db.myWorkouts = Array.isArray(parsed.myWorkouts) ? parsed.myWorkouts : [];
-          db.customEx = Array.isArray(parsed.customEx) ? parsed.customEx : [];
-          db.history = Array.isArray(parsed.history) ? parsed.history : [];
-    pruneHistory(db);
-          if(parsed.settings) Object.assign(db.settings, parsed.settings);
-          db.settings.theme = migrateTheme(db.settings.theme);
-          db.settings.soundStyle = migrateSound(db.settings.soundStyle);
-          migrateExIds(db);
+          var db = dbAusRoh(parsed);
           state.db = db; save(); syncCustomEx(); applyTheme(); applyLang(); applySpace();
           go("#home");
         });
