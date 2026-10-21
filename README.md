@@ -29,7 +29,7 @@ stellt man unter **Einstellungen › Fokus** ein (ausgeblendete Bereiche bleiben
 | **Run** (intern `run`) | GPS-Lauf: Countdown, Zeit, Strecke, Pace, Kilometer-Zwischenzeiten, Route (ohne Karte, nur als Linie), Ansagen, **Intervall-Lauf** (Laufen/Gehen), **Auto-Pause** (Stehzeit wird herausgerechnet), Abdunkeln, Name und Notiz, GPX-Export. Im Lauf lösen alle Knöpfe erst nach 3 s Halten aus |
 | **Mobility & Stretch** (intern `warm`, `js/17-aufwaermen-einstellungen.js`) | Aufbau wie das Workout: Reiter **Katalog** (Abteilungen **Meine** · **Workoutkatalog** · **Übungskatalog**, dort „Eigene Übung anlegen“) und **Baukasten** (**Überrasch mich** nach Dauer und Körperregion, **Selber bauen**); darunter die Art Aufwärmen | Dehnen, Körperregionen als Filter |
 
-**Speicherformat:** `db.v` zählt die Fassung (3 = ohne Summit). Laden, Import und Schnappschuss laufen über `dbAusRoh` und `dbMigrieren` (`js/01-basis.js`); jede Formatänderung bekommt dort eine Stufe. Summit (Challenges) wurde in Stufe 3 entfernt: die eigenen Challenges, Einheiten und Bestzeiten liegen bis zum Sichern oder Verwerfen unter dem Schlüssel `sporttimer-summit-archiv` (Hinweis auf der Seite Training).
+**Speicherformat:** `db.v` zählt die Fassung (3 = ohne Summit). Laden, Import und Schnappschuss laufen über `dbAusRoh` und `dbMigrieren` (`js/01-basis.js`); jede Formatänderung bekommt dort eine Stufe. Summit (Challenges) wurde in Stufe 3 entfernt; alle Daten dazu werden beim Laden gelöscht.
 
 **Statistik** (alles lokal berechnet): Kopf mit Trainings der letzten 7 Tage und Serie, Verlauf als Balken (Zeit oder
 Anzahl, **Woche · Monat · Jahr**, nach links wischen für früher, so weit Daten da sind), Kalender der letzten 4 Wochen

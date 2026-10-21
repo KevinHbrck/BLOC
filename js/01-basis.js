@@ -138,24 +138,16 @@ function migrateSound(key){
 /* Speicherformat: db.v zählt die Fassung des Formats (1 = bis zur Entfernung von Summit, 3 = ohne Summit).
    Jede Änderung am Format bekommt eine Stufe in dbMigrieren; die läuft beim Laden, beim Import und beim Wiederherstellen des Schnappschusses gleich. */
 var DB_VERSION = 3;
-var SUMMIT_ARCHIV = "sporttimer-summit-archiv";   // Zwischenspeicher für die Daten des entfernten Bereichs Summit, bis man sie als Datei gesichert oder verworfen hat
+var SUMMIT_ARCHIV = "sporttimer-summit-archiv";   // früherer Zwischenspeicher für die Summit-Daten; wird beim Laden gelöscht, falls noch da
 function dbMigrieren(db, vonV){
   if(vonV < 3) summitEntfernen(db);
+  else { try{ localStorage.removeItem(SUMMIT_ARCHIV); }catch(e){} }   // Geräte, die den Zwischenspeicher schon angelegt hatten
   db.v = DB_VERSION;
-}/* Summit (Challenges) gibt es nicht mehr. Eigene Challenges, Einheiten und Bestzeiten wandern in den Zwischenspeicher SUMMIT_ARCHIV
-   (die Seite „Training“ bietet an, sie als Datei zu sichern); alles andere zu Summit wird gelöscht. */
+}
+/* Summit (Challenges) gibt es nicht mehr: alle Daten dazu werden gelöscht (der frühere Zwischenspeicher SUMMIT_ARCHIV ebenfalls). */
 function summitEntfernen(db){
-  var st = db.settings, neu = { myReps:st.myReps || [], myRepUnits:st.myRepUnits || [], repBest:st.repBest || {} };
-  if(neu.myReps.length || neu.myRepUnits.length || Object.keys(neu.repBest).length){
-    try{   // liegt schon ein Zwischenspeicher da (Sicherungsdatei einer älteren Fassung eingelesen), werden beide zusammengeführt
-      var alt = JSON.parse(localStorage.getItem(SUMMIT_ARCHIV) || "null");
-      if(alt){
-        var vereinen = function(a, b){ var ids = {}; return (a || []).concat(b || []).filter(function(x){ if(!x || ids[x.id]) return false; return ids[x.id] = true; }); };
-        neu.myReps = vereinen(alt.myReps, neu.myReps); neu.myRepUnits = vereinen(alt.myRepUnits, neu.myRepUnits); neu.repBest = Object.assign({}, neu.repBest, alt.repBest || {});
-      }
-      localStorage.setItem(SUMMIT_ARCHIV, JSON.stringify(neu));
-    }catch(e){}
-  }
+  var st = db.settings;
+  try{ localStorage.removeItem(SUMMIT_ARCHIV); }catch(e){}
   ["myReps", "myRepUnits", "repBest", "repFilterOpen"].forEach(function(k){ delete st[k]; });
   var summitSchluessel = function(k){ return /^rep:/.test(k); };
   if(Array.isArray(st.favs)) st.favs = st.favs.filter(function(k){ return !summitSchluessel(k); });

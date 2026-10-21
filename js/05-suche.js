@@ -307,10 +307,9 @@ function renderTraining(){
   app.innerHTML =
     topbar(t("tabTraining"), { back:"#home", right:kopfSymboleNeu("training") }) +
     '<button type="button" class="suchfeld-neu" data-nav="#search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'<span>'+esc(t("trainingSuche"))+'</span></button>'+
-    summitHinweisHTML()+'<div class="training-seite">'+bereicheHTML().replace(/<\/div><\/div>$/, areaTile("faq", "#faq", t("faqTitel"), t("faqKachelSub", { n:(window.BLOC_FAQ ? window.BLOC_FAQ.fragen.length : 0) }), "var(--accent)", "zeile")+'</div></div>')+'</div>'+
+    '<div class="training-seite">'+bereicheHTML().replace(/<\/div><\/div>$/, areaTile("faq", "#faq", t("faqTitel"), t("faqKachelSub", { n:(window.BLOC_FAQ ? window.BLOC_FAQ.fragen.length : 0) }), "var(--accent)", "zeile")+'</div></div>')+'</div>'+
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
   bindCommon();
-  bindSummitHinweis();
   /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd, kein Bild doppelt; dieselben Bilder tragen die Köpfe der Bereichsseiten */
   var fotos = bereichFotosNeu();
   app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){

@@ -210,31 +210,6 @@ function bindBackupTip(){
     render();
   });
 }
-/* Hinweis auf der Seite Training, solange Daten des entfernten Bereichs Summit im Zwischenspeicher liegen (siehe summitEntfernen in js/01-basis.js):
-   „Als Datei sichern“ lädt sie herunter und löscht sie vom Gerät, „Verwerfen“ löscht sie nach einer Rückfrage. Danach verschwindet der Hinweis. */
-function summitArchiv(){ try{ return JSON.parse(localStorage.getItem(SUMMIT_ARCHIV) || "null"); }catch(e){ return null; } }
-function summitHinweisHTML(){
-  var a = summitArchiv();
-  if(!a) return "";
-  var n = (a.myReps || []).length + (a.myRepUnits || []).length + Object.keys(a.repBest || {}).length;
-  return '<div class="installtip summit-hinweis"><div><b>'+esc(t("summitWegTitel"))+'</b><br>'+esc(t("summitWegText", { n:n }))+
-    '<div class="btn-row" style="margin-top:10px;"><button type="button" class="btn btn-primary" data-summitsichern>'+ICON_DOWNLOAD+' '+esc(t("summitSichern"))+'</button>'+
-    '<button type="button" class="btn btn-secondary" data-summitverwerfen>'+esc(t("summitVerwerfen"))+'</button></div></div></div>';
-}
-function bindSummitHinweis(){
-  var sichern = app.querySelector("[data-summitsichern]"), verwerfen = app.querySelector("[data-summitverwerfen]");
-  function weg(){ try{ localStorage.removeItem(SUMMIT_ARCHIV); }catch(e){} renderTraining(); }
-  if(sichern) sichern.addEventListener("click", function(){
-    var a = summitArchiv();
-    if(!a) return weg();
-    var blob = new Blob([JSON.stringify({ art:"bloc-summit-daten", exportiert:new Date().toISOString(), daten:a }, null, 2)], { type:"application/json" }), url = URL.createObjectURL(blob), l = document.createElement("a");
-    l.href = url; l.download = "bloc-summit-daten-"+new Date().toISOString().slice(0, 10)+".json";
-    document.body.appendChild(l); l.click(); document.body.removeChild(l);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-    showToast(t("summitGesichert")); weg();
-  });
-  if(verwerfen) verwerfen.addEventListener("click", function(){ confirmSheet(t("summitVerwerfenQ"), t("summitVerwerfenText"), t("del"), weg); });
-}
 /* Einmaliger Hinweis, wenn ein gespeichertes C60-Design auf Hell umgestellt wurde (siehe migrateTheme) */
 function c60HinweisHTML(){
   if(!c60Umgestellt) return "";

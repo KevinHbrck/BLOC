@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Summit-Daten werden vollständig gelöscht (Fassung 2026-10-21-14)
+
+- Heute: die Favoriten-Kacheln sind 20 % kleiner (Größe, Schrift, Stern).
+- Auf Wunsch gibt es keinen Zwischenspeicher und keinen Hinweis zum Sichern mehr: alle Summit-Daten (auch der frühere Zwischenspeicher `sporttimer-summit-archiv`) werden beim Laden gelöscht.
+
 ## 2026-10-21 · Summit entfernt, der Baukasten-Umbau ist zurückgenommen (Fassung 2026-10-21-13)
 
 - **Summit entfernt** (Oberfläche, Daten, Routen, Texte, Bilder, Styles, Tests). Eigene Challenges, Einheiten und Bestzeiten bleiben im Zwischenspeicher `sporttimer-summit-archiv`, bis man sie auf Training als Datei sichert oder verwirft.

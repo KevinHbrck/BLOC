@@ -1570,25 +1570,17 @@
       await warte(300);
       pruefe(daten().settings.kalender.e.length === n1, "Zweites Kopieren darf nichts doppelt anlegen");
     }],
-    ["Summit entfernt: Daten wandern ins Archiv, Hinweis auf Training sichert oder verwirft", async function () {
+    ["Summit entfernt: alle Daten dazu werden beim Laden gelöscht", async function () {
       await heim();
-      W.localStorage.removeItem(W.SUMMIT_ARCHIV);
+      W.localStorage.setItem(W.SUMMIT_ARCHIV, "{}");
       var alt = { v: 1, blocks: [], workouts: [], myWorkouts: [], customEx: [], history: [{ at: Date.now() - 1000, ex: [], dur: 60, b: "reps" }, { at: Date.now() - 2000, ex: ["burpees"], dur: 60 }],
         settings: { theme: "dark", myReps: [{ id: "c1", name: "Meine Challenge", runden: 2, zeilen: [] }], myRepUnits: [{ id: "u1" }], repBest: { x: { best: 1000, last: 1000, n: 1, log: [] } },
           favs: ["rep:c1", "lib:warmup-5"], bereiche: ["lib", "reps", "run"], kalender: { e: [{ id: "k1", tag: "2026-10-20", art: "summit", ref: "x" }, { id: "k2", tag: "2026-10-20", art: "run" }] } } };
-      try {
-        var db = W.dbAusRoh(alt), s = db.settings;
-        pruefe(db.v === W.DB_VERSION, "Format: db.v gesetzt");
-        pruefe(!s.myReps && !s.myRepUnits && !s.repBest && s.favs.join() === "lib:warmup-5" && s.bereiche.indexOf("reps") < 0 && s.kalender.e.length === 1 && s.kalender.e[0].art === "run" && db.history.length === 1, "Summit-Reste sind bereinigt");
-        var arch = JSON.parse(W.localStorage.getItem(W.SUMMIT_ARCHIV) || "null");
-        pruefe(arch && arch.myReps.length === 1 && arch.myRepUnits.length === 1 && arch.repBest.x, "Eigene Challenges, Einheiten und Bestzeiten liegen im Archiv");
-        W.state.db.settings.layout = "new"; W.applyTheme(); W.go("#training");
-        await bis(function () { return $("[data-summitsichern]"); }, 3000, "Hinweis zum Sichern der Summit-Daten");
-        pruefe(!$('[data-bereich="reps"]'), "Kein Summit-Bereich auf Training");
-        klick("[data-summitverwerfen]");
-        klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Verwerfen bestätigen"));
-        await bis(function () { return !$("[data-summitsichern]") && !W.localStorage.getItem(W.SUMMIT_ARCHIV); }, 2000, "Archiv gelöscht");
-      } finally { delete W.state.db.settings.layout; W.save(); W.applyTheme(); }
+      var db = W.dbAusRoh(alt), s = db.settings;
+      pruefe(db.v === W.DB_VERSION, "Format: db.v gesetzt");
+      pruefe(!s.myReps && !s.myRepUnits && !s.repBest && s.favs.join() === "lib:warmup-5" && s.bereiche.indexOf("reps") < 0 && s.kalender.e.length === 1 && s.kalender.e[0].art === "run" && db.history.length === 1, "Summit-Reste sind bereinigt");
+      pruefe(W.localStorage.getItem(W.SUMMIT_ARCHIV) === null, "Der frühere Zwischenspeicher ist gelöscht");
+      pruefe(!$("[data-summitsichern]"), "Kein Hinweis zu Summit mehr");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
