@@ -1091,3 +1091,5 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   color:var(--accent-ink, var(--accent)); stroke:currentColor; }
 :root[data-layout="new"] .air-gear{ background:color-mix(in srgb, var(--accent) 16%, var(--surface)); }
 :root[data-layout="new"] .fc-chip.on [data-spequip] svg, :root[data-layout="new"] [data-spequip].on svg, :root[data-layout="new"] [data-start].active svg, :root[data-layout="new"] [data-srart].active svg{ color:inherit; }
+/* Foto-Köpfe der Bereiche (Workout, Mobility & Stretch, Timer, Summit …): untere Kante gerade statt abgerundet */
+:root[data-layout="new"] .kopf-bereich{ border-radius:0; }

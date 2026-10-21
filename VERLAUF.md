@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Foto-Köpfe mit gerader Unterkante (Fassung 2026-10-21-6)
+
+- Workout, Mobility & Stretch und die anderen Bereichsköpfe: die untere Kante ist gerade, nicht mehr abgerundet.
+
 ## 2026-10-21 · Satz-Training springt nicht mehr von selbst weiter, Geräte-Symbole orange (Fassung 2026-10-21-5)
 
 - Satz-Training: nach einem eingetragenen Satz bleibt die Karte stehen; weiter geht es per Wischen oder mit dem „Nächste“-Knopf.
