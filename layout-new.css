@@ -1098,3 +1098,5 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .satz-std{ margin:10px 0 4px; padding:10px 12px; border-radius:16px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); display:flex; flex-direction:column; gap:4px; }
 .satz-std b{ color:#8fe3a8; font-size:14px; }
 .satz-std small{ color:rgba(255,255,255,.75); font-size:12px; margin-bottom:4px; }
+/* Lauf-Details: Strecke immer als weiße Linie auf dunklem Glas (auch bei heller Helligkeit) */
+:root[data-layout="new"][data-layout="new"][data-layout="new"] .run-strecke{ --linie:#fff; color:#fff; background:rgba(34,36,40,.72); }
