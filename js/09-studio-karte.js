@@ -289,7 +289,7 @@ function studioTimerBinden(id, eintrag, nachher){
                  work:clamp(parseInt(stt.querySelector("#stt-work").value)||40, 5, 600),
                  rest:clamp(parseInt(stt.querySelector("#stt-rest").value)||0, 0, 600) };
     // Runden = Sätze des Ziels: dieselbe Zahl wie im Plan und im Satz-Modus
-    en.ziel = en.ziel || {}; en.ziel.saetze = reps;
+    en.ziel = en.ziel || {}; en.ziel.saetze = reps; en.manuell = Date.now();
     // gehört die Übung im geöffneten Plan zu einem Supersatz oder Zirkel, gehen alle Übungen des Blocks dieselben Runden
     var pl = typeof studioModusPlan === "function" ? studioModusPlan(id) : null, bl = pl ? planBlockVon(pl, id) : null;
     if(bl) bl.ids.forEach(function(x){ var e2 = studioAlle()[x] || (studioAlle()[x] = { log:[] }); e2.ziel = e2.ziel || {}; e2.ziel.saetze = reps; });
@@ -685,6 +685,7 @@ function studioStandardPruefen(id, mitHeute){
   if(idx < 0) return null;
   var l = e.log[idx], a = arbeitsSaetze(l), n = a.length;
   if(e.stdBis === l.at && e.stdN === n) return null;   // diese Einheit ist schon ausgewertet
+  if(e.manuell && l.at <= e.manuell){ e.stdBis = l.at; e.stdN = n; save(); return null; }   // danach von Hand angepasst: die Handeinstellung gilt, diese Einheit ändert nichts mehr
   var z = studioZiel(id), neu = { saetze:z.saetze, wdh:z.wdh }, kgNeu = null, kgAlt = e.kg;
   if(n > z.saetze) neu.saetze = Math.min(n, 12);
   /* „generell“, nicht ein einzelner Satz: es zählen die besten Ziel-Sätze (so viele, wie das Ziel verlangt) - alle müssen die Marke schaffen */

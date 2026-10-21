@@ -602,7 +602,7 @@ function planZeilenBinden(root, fn, neuZeichnen, p){
     });
     function eintrag(){ var a = studioAlle(); return a[id] || (a[id] = { log:[] }); }
     function setzen(feld, v){
-      var en = eintrag();
+      var en = eintrag(); if(feld === "saetze" || feld === "wdh" || feld === "kg") en.manuell = Date.now();   // von Hand angepasst: gilt wieder, spätere Auto-Anhebung wertet nur neuere Einheiten aus
       if(feld === "saetze" || feld === "wdh"){ en.ziel = en.ziel || {}; en.ziel[feld] = v; }
       else if(feld === "kg") en.kg = v;
       else if(feld === "pause"){ en.pause = v; if(en.timer) delete en.timer.rest; }   // die Pause des Timers folgt der Pause der Übung
@@ -618,7 +618,7 @@ function planZeilenBinden(root, fn, neuZeichnen, p){
           var id2 = z2.getAttribute("data-pz");
           if(id2 === id) return;
           var e2 = studioAlle()[id2] || (studioAlle()[id2] = { log:[] });
-          e2.ziel = e2.ziel || {}; e2.ziel.saetze = v;
+          e2.ziel = e2.ziel || {}; e2.ziel.saetze = v; e2.manuell = Date.now();
           var inp = z2.querySelector('[data-feld="saetze"] input'); if(inp) inp.value = studioKg(v);
         });
       }

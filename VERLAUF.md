@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Handeinstellung gilt wieder (Fassung 2026-10-21-10)
+
+- Wer Sätze, Wiederholungen oder Gewicht eines Ziels von Hand ändert, behält diese Einstellung: frühere Einheiten heben sie nicht wieder automatisch an, erst eine neuere Einheit mit mehr als dem neuen Ziel.
+
 ## 2026-10-21 · Neuer Standard nur „generell“, nicht für einen einzelnen Satz (Fassung 2026-10-21-9)
 
 - Mehr Gewicht oder Wiederholungen zählen nur, wenn alle Ziel-Sätze (so viele, wie das Ziel verlangt) die 10-%-Marke schaffen; ein einzelner schwerer Satz ändert nichts. Eine zusätzliche Satzzahl (z. B. 4 statt 3) zählt weiter.
