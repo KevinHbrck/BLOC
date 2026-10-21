@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Studio-Karte clean: Sätze von heute in der Statistik (Fassung 2026-10-21-7)
+
+- Die Liste „Heute: 1. … 8. …“ steht nicht mehr auf der Studio-Karte, sondern in der Statistik unter „Letzte Einheiten“ als Zeile „Heute“.
+
 ## 2026-10-21 · Foto-Köpfe mit gerader Unterkante (Fassung 2026-10-21-6)
 
 - Workout, Mobility & Stretch und die anderen Bereichsköpfe: die untere Kante ist gerade, nicht mehr abgerundet.

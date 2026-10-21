@@ -233,7 +233,7 @@ function openStudioStats(id, sicht){
       seit:log.length ? new Date(log[0].at).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" }) : "",
       letzteTitel:t("stLastN"),
       letzte:log.map(function(l, i){
-        return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
+        return [studioTag(l.at) === studioTag(Date.now()) ? t("stToday") : new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
       }).slice(-30).reverse()
     });
   }
@@ -249,7 +249,7 @@ function openStudioStats(id, sicht){
     seit:log.length ? new Date(log[0].at).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" }) : "",
     letzteTitel:t("stLastN"),
     letzte:log.map(function(l, i){
-      return [new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
+      return [studioTag(l.at) === studioTag(Date.now()) ? t("stToday") : new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
     }).slice(-30).reverse()
   });
 }
