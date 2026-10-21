@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Kopf mit kürzerem Verlauf, ohne BLOC-Zeichen (Fassung 2026-10-21-2)
+
+- Workout und Mobility & Stretch: der Verlauf unten im Foto ist kürzer (mehr Foto, Titel besser lesbar), das BLOC-Zeichen im Kopf ist wieder entfernt (neben Zurück, Hilfe und Suche war es zu voll). Die Schrift bleibt theme-abhängig: Weiß im Dunkelmodus, dunkel im Hellmodus, weil das helle Foto sonst Weiß schluckt.
+
 ## 2026-10-21 · Neustart nach Speichern, Kopf mit Verlauf, Ausrüstung, Abschlusskarte, Satztypen (Fassung 2026-10-21-1)
 
 - **Satz-Training beginnt nach dem Speichern von vorn:** Wer ein Training speichert und es gleich noch einmal startet, sieht leere Karten statt des fertigen Standes. Heute zählen nur die Sätze seit dem letzten Speichern (`settings.satzBasis`); das Protokoll, die Statistik und das gespeicherte Training bleiben vollständig (der Tageseintrag zählt beide Runden zusammen).
