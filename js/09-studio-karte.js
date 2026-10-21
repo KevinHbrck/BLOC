@@ -669,8 +669,8 @@ function openGewichtSheet(id, nachher){
 
 /* Neuer Standard: Wer mehr geschafft hat als das Ziel, hat damit ein neues Ziel. Ausgewertet wird die jüngste Einheit (Arbeitssätze):
    - mehr Sätze als das Ziel (z. B. 4 statt 3) → das Ziel hat jetzt diese Satzzahl
-   - alle Sätze mit dem Spitzengewicht mindestens 10 % über dem Ziel-Wiederholungen → das Ziel hat diese Wiederholungen
-   - Spitzengewicht mindestens 10 % über dem bisherigen Bestgewicht → das ist das neue Arbeitsgewicht
+   - alle Ziel-Sätze (die besten, so viele wie das Ziel verlangt) mit mindestens 10 % mehr Wiederholungen → das Ziel hat diese Wiederholungen
+   - alle Ziel-Sätze mit mindestens 10 % mehr Gewicht als bisher → das ist das neue Arbeitsgewicht (ein einzelner Satz zählt nicht)
    Es wird nur angehoben, nie gesenkt; jede Einheit wird einmal ausgewertet (e.stdBis/e.stdN). mitHeute: auch die heutige Einheit auswerten (beim Abschluss).
    Gibt die Änderung zurück ({ id, alt, neu, kgAlt, kgNeu }) oder null. */
 function studioStandardPruefen(id, mitHeute){
@@ -686,13 +686,15 @@ function studioStandardPruefen(id, mitHeute){
   var l = e.log[idx], a = arbeitsSaetze(l), n = a.length;
   if(e.stdBis === l.at && e.stdN === n) return null;   // diese Einheit ist schon ausgewertet
   var z = studioZiel(id), neu = { saetze:z.saetze, wdh:z.wdh }, kgNeu = null, kgAlt = e.kg;
-  var kgTop = 0; a.forEach(function(s){ if(s[0] > kgTop) kgTop = s[0]; });
-  var oben = a.filter(function(s){ return s[0] === kgTop; });
   if(n > z.saetze) neu.saetze = Math.min(n, 12);
-  var minW = Math.min.apply(null, oben.map(function(s){ return s[1]; })), mehrW = Math.ceil(z.wdh*1.1);
-  if(oben.length >= Math.min(z.saetze, n) && n >= z.saetze && minW >= mehrW) neu.wdh = Math.min(minW, 100);
-  var basis = studioBestwerte(e.log.slice(0, idx)).kg;
-  if(kgTop > 0 && basis > 0 && kgTop >= basis*1.1 - 1e-9) kgNeu = kgTop;
+  /* „generell“, nicht ein einzelner Satz: es zählen die besten Ziel-Sätze (so viele, wie das Ziel verlangt) - alle müssen die Marke schaffen */
+  if(n >= z.saetze){
+    var beste = a.slice().sort(function(x, y){ return y[0] - x[0] || y[1] - x[1]; }).slice(0, z.saetze);
+    var kgMin = Math.min.apply(null, beste.map(function(x){ return x[0]; })), minW = Math.min.apply(null, beste.map(function(x){ return x[1]; }));
+    if(minW >= Math.ceil(z.wdh*1.1)) neu.wdh = Math.min(minW, 100);
+    var basis = studioBestwerte(e.log.slice(0, idx)).kg;
+    if(kgMin > 0 && basis > 0 && kgMin >= basis*1.1 - 1e-9) kgNeu = kgMin;
+  }
   e.stdBis = l.at; e.stdN = n;
   var geaendert = neu.saetze !== z.saetze || neu.wdh !== z.wdh || (kgNeu != null && kgNeu !== e.kg);
   if(neu.saetze !== z.saetze || neu.wdh !== z.wdh) e.ziel = { saetze:neu.saetze, wdh:neu.wdh };

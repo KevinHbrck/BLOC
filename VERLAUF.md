@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Neuer Standard nur „generell“, nicht für einen einzelnen Satz (Fassung 2026-10-21-9)
+
+- Mehr Gewicht oder Wiederholungen zählen nur, wenn alle Ziel-Sätze (so viele, wie das Ziel verlangt) die 10-%-Marke schaffen; ein einzelner schwerer Satz ändert nichts. Eine zusätzliche Satzzahl (z. B. 4 statt 3) zählt weiter.
+
 ## 2026-10-21 · Neuer Standard: mehr geschafft = neues Ziel (Fassung 2026-10-21-8)
 
 - Wer mehr Sätze als das Ziel gemacht hat (z. B. 4 statt 3), alle Sätze mit mindestens 10 % mehr Wiederholungen oder mit mindestens 10 % mehr Gewicht geschafft hat, dem gilt das ab der nächsten Einheit als Ziel; es wird nur angehoben, nie gesenkt.
