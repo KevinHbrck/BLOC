@@ -1075,28 +1075,6 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 /* Studio-Geräte unter der gewohnten Ausrüstung: leicht abgesetzt */
 .af-gym{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--line, rgba(128,128,128,.35)); }
 
-/* Foto-Kopf mit Verlauf (Workout, Mobility & Stretch): wie Heute - das Foto läuft unten weich in den Hintergrund, kleines BLOC-Zeichen oben links */
-:root[data-layout="new"] .kopf-bereich.verlauf{ min-height:176px; margin-bottom:0; padding-bottom:22px; border-radius:0; background:var(--bg); }
-:root[data-layout="new"] .kopf-bereich.verlauf::before{ content:""; position:absolute; inset:0; z-index:-1; background:radial-gradient(ellipse 80% 60% at 0% 0%, rgba(6,7,9,.66) 0%, rgba(6,7,9,.36) 42%, rgba(6,7,9,0) 78%); }
-:root[data-layout="new"] .kopf-bereich.verlauf::after{ background:linear-gradient(180deg, rgba(8,9,11,0) 66%, rgba(8,9,11,.55) 88%, var(--bg) 100%); }
-:root[data-layout="new"] .kb-links{ display:flex; align-items:center; gap:10px; }
-:root[data-layout="new"] .kb-logo{ font-family:"Helvetica Neue","Arial Black",Roboto,Arial,sans-serif; font-weight:900; font-size:21px; letter-spacing:.2em; color:var(--accent); text-shadow:0 2px 12px rgba(0,0,0,.4); }
-:root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf{ color:var(--text); }
-:root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf::before{ background:radial-gradient(ellipse 80% 60% at 0% 0%, rgba(255,255,255,.62) 0%, rgba(255,255,255,.3) 44%, rgba(255,255,255,0) 78%); }
-:root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf::after{ background:linear-gradient(180deg, rgba(245,245,242,0) 66%, rgba(245,245,242,.7) 88%, var(--bg) 100%); }
-:root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf .kb-kicker{ color:var(--text); opacity:.78; }
-:root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf .kb-rund, :root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf .kb-rechts .iconbtn, :root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf .kb-rechts .hint-btn{ background:rgba(255,255,255,.66); color:var(--text); }
-:root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf .kb-logo{ color:#df4a22; text-shadow:none; }
-:root[data-layout="new"][data-theme="light"] .kopf-bereich.verlauf .kb-text h1{ text-shadow:0 0 10px rgba(255,255,255,.95), 0 0 3px rgba(255,255,255,.85); }
-@media (prefers-color-scheme: light){
-  :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf{ color:var(--text); }
-  :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf::before{ background:radial-gradient(ellipse 80% 60% at 0% 0%, rgba(255,255,255,.62) 0%, rgba(255,255,255,.3) 44%, rgba(255,255,255,0) 78%); }
-  :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf::after{ background:linear-gradient(180deg, rgba(245,245,242,0) 66%, rgba(245,245,242,.7) 88%, var(--bg) 100%); }
-  :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf .kb-kicker{ color:var(--text); opacity:.78; }
-  :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf .kb-rund, :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf .kb-rechts .iconbtn, :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf .kb-rechts .hint-btn{ background:rgba(255,255,255,.66); color:var(--text); }
-  :root[data-layout="new"]:not([data-theme]) .kopf-bereich.verlauf .kb-logo{ color:#df4a22; text-shadow:none; }
-}
-
 /* Satztyp (Normal · Aufwärmen · Drop · Versagen) eingeklappt: eine Zeile mit der aktuellen Wahl */
 .st-typ-box{ margin:8px 0; }
 .st-typ-box > summary{ list-style:none; display:flex; align-items:center; gap:10px; cursor:pointer; padding:8px 4px; font-size:13px; }

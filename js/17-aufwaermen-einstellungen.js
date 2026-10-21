@@ -132,7 +132,7 @@ function renderWarmStretch(){
   }
   var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
-    (layoutNeu() ? bereichKopfNeuHTML("warm", t("warmTitle"), t("warmKicker"), hw.knopf, { verlauf:true }) : topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) })) +
+    (layoutNeu() ? bereichKopfNeuHTML("warm", t("warmTitle"), t("warmKicker"), hw.knopf) : topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) })) +
     wsKopfHTML("workouts", art) +
     (tab === "uebungen" ? '<button type="button" class="btn btn-secondary kat-eigene" data-wsnewex>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' : '')+
     hw.z(0, "rep-intro")+(tab === "workouts" ? tippZeileHTML("workout", "tippWorkout") : tab === "uebungen" ? tippZeileHTML("wsuebung", "tippWsUebung") : "")+

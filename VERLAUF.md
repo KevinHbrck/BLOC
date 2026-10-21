@@ -3,7 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-21 · Kopf mit kürzerem Verlauf, ohne BLOC-Zeichen (Fassung 2026-10-21-2)
+## 2026-10-21 · Foto-Kopf wieder wie vorher (Fassung 2026-10-21-3)
+
+- Workout und Mobility & Stretch haben wieder den früheren Foto-Kopf (abgerundet, ohne Verlauf, ohne BLOC-Zeichen); der Verlauf-Versuch ist samt Stil entfernt.
+
+## 2026-10-21 · Kopf mit kürzerem Verlauf, ohne BLOC-Zeichen (Fassung 2026-10-21-2, wieder zurückgenommen)
 
 - Workout und Mobility & Stretch: der Verlauf unten im Foto ist kürzer (mehr Foto, Titel besser lesbar), das BLOC-Zeichen im Kopf ist wieder entfernt (neben Zurück, Hilfe und Suche war es zu voll). Die Schrift bleibt theme-abhängig: Weiß im Dunkelmodus, dunkel im Hellmodus, weil das helle Foto sonst Weiß schluckt.
 
