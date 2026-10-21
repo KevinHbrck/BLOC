@@ -309,6 +309,7 @@ function studioInfoHTML(id, ex){
     '</div>' : '';
 }
 var studioPR = null;   // { id, art:"kg"|"rm", kg, w, vorher, rm, vorherRm } - zeigt nach einem Satz mit neuem Bestgewicht (oder neuem geschätzten 1RM) eine ruhige Zeile auf der Karte
+var studioTypenOffen = false;   // Satztypen auf der Karte ausgeklappt?
 var studioSatzTypWahl = "n";   // Typ des nächsten Satzes auf der Karte: n normal · w Aufwärmen · d Drop · f bis Versagen
 var studioRpeWahl = 0;   // RPE (6–10) des nächsten Satzes, 0 = keine Angabe (nur wenn RPE/RIR in den Einstellungen eingeschaltet ist)
 /* Langhantel-Übungen bekommen den Scheibenrechner */
@@ -401,8 +402,10 @@ function renderStudioKarte(id){
         '<button type="button" data-stmodus="timer" class="'+(timerModus ? 'active' : '')+'" aria-pressed="'+timerModus+'">'+ICON_PLAY+' '+esc(t("stModusTimer"))+'</button></div>'+
       (timerModus ? studioTimerKarte(id, "", t(koerper ? "stBlockHint" : "stTimerSatzHint")).replace('<div class="card st-timer">', '<div class="st-timer">') :
       // Satztyp des nächsten Satzes: Aufwärmsätze zählen nicht in Volumen, Bestwerte und Steigerung
+      '<details class="st-typ-box"'+(studioTypenOffen ? ' open' : '')+'><summary><span>'+esc(t("satzTypTitel"))+'</span><b data-sttypnow>'+esc(t("satzTypLang_"+studioSatzTypWahl))+'</b><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
       '<div class="st-typen" role="group" aria-label="'+esc(t("satzTypTitel"))+'">'+SATZ_TYPEN.map(function(ty){
         return '<button type="button" class="fc-chip'+(studioSatzTypWahl === ty ? ' on' : '')+'" data-sttyp="'+ty+'" aria-pressed="'+(studioSatzTypWahl === ty)+'">'+esc(t("satzTypLang_"+ty))+'</button>'; }).join("")+'</div>'+
+      '<button type="button" class="st-typ-faq" data-stfaq>'+esc(t("satzTypFaq"))+' ›</button></details>'+
       // Anstrengung des nächsten Satzes (RPE oder RIR, in den Einstellungen einschaltbar); nochmal antippen nimmt die Angabe zurück
       (anstrengungModus() ? '<div class="st-typen st-rpe" role="group" aria-label="'+esc(t("rpeTitel"))+'"><span>'+esc(anstrengungModus() === "rir" ? "RIR" : "RPE")+'</span>'+
         [6, 7, 8, 9, 10].map(function(r){
@@ -465,9 +468,14 @@ function renderStudioKarte(id){
     app.querySelectorAll("[data-sttyp]").forEach(function(b){
       b.addEventListener("click", function(){
         studioSatzTypWahl = b.getAttribute("data-sttyp");
+        var jetztEl = app.querySelector("[data-sttypnow]"); if(jetztEl) jetztEl.textContent = t("satzTypLang_"+studioSatzTypWahl);
         app.querySelectorAll("[data-sttyp]").forEach(function(c){ c.classList.toggle("on", c === b); c.setAttribute("aria-pressed", c === b); });
       });
     });
+    var typSum = app.querySelector(".st-typ-box > summary");
+    if(typSum) typSum.addEventListener("click", function(e){ e.preventDefault(); var d = typSum.parentNode; d.open = !d.open; studioTypenOffen = d.open; });
+    var typFaq = app.querySelector("[data-stfaq]");
+    if(typFaq) typFaq.addEventListener("click", function(){ go("#faq"); });
     app.querySelectorAll("[data-strpe]").forEach(function(b){
       b.addEventListener("click", function(){
         var r = +b.getAttribute("data-strpe");

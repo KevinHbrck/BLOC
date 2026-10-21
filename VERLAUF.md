@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Neustart nach Speichern, Kopf mit Verlauf, Ausrüstung, Abschlusskarte, Satztypen (Fassung 2026-10-21-1)
+
+- **Satz-Training beginnt nach dem Speichern von vorn:** Wer ein Training speichert und es gleich noch einmal startet, sieht leere Karten statt des fertigen Standes. Heute zählen nur die Sätze seit dem letzten Speichern (`settings.satzBasis`); das Protokoll, die Statistik und das gespeicherte Training bleiben vollständig (der Tageseintrag zählt beide Runden zusammen).
+- **Workout und Mobility & Stretch:** Foto-Kopf wie bei Heute – das Bild läuft unten weich in den Hintergrund, das BLOC-Zeichen steht klein oben links neben dem Zurück-Knopf (Hell und Dunkel).
+- **Ausrüstung:** Die gewohnten Chips (Kurzhantel & Kettlebell, Stange & Barren, Widerstandsband, Körpergewicht) gibt es wieder an allen Orten. Ist das Fitnessstudio mit dabei (auch „beide Orte“), stehen darunter abgesetzt die fünf Studio-Geräte (Multipresse, Kabelzug, Langhantel, Kurzhantel, Maschine). Wer beides wählt, bekommt Übungen, die zu einer der Wahlen passen; Studio-Übungen mit Hanteln zählen jetzt auch als Kurzhantel.
+- **„Training geschafft“:** ruhiger (Glas und Weiß statt Orange und Grün), BLOC-Zeichen oben, vier Zahlen dieser Runde und ein Balkenverlauf der letzten Trainings dieses Plans – schon beim ersten Eintrag mit einem Balken.
+- **Meine:** die Abschnitte Nach Zeit, Nach Sätzen und Gespeicherte Trainings sind zunächst eingeklappt.
+- **Satztypen** (Normal, Aufwärmen, Drop, Versagen) auf der Übungskarte ausklappbar (eine Zeile mit der aktuellen Wahl); neue FAQ-Frage „Was bedeuten Normal, Aufwärmen, Drop und Versagen?“ (25 Fragen), vom Satztyp-Bereich aus verlinkt.
+- Einheitstest 56/56 (neu: Neustart-Logik, Geräte-Zuordnung und Filter-Regel).
+
 ## 2026-10-20 · Fitnessstudio: Geräte-Auswahl, 12 neue Übungen (Fassung 2026-10-20-67)
 
 - Im Fitnessstudio-Filter gibt es eine Zeile „Gerät“ mit den fünf gängigsten Universalgeräten: Multipresse (Smith), Kabelzug, Langhantel, Kurzhantel, Maschine. Sie gilt für Übungskatalog, Workoutkatalog und Plan-Bau (nur bei Ort Fitnessstudio) und wird wie die anderen Filter beim Verlassen zurückgesetzt. Zuordnung `STUDIO_GERAET` am Ende von `daten.js`; Übungen ohne Gerät (Seile, Rad, Körpergewicht) erscheinen bei aktivem Gerätefilter nicht.

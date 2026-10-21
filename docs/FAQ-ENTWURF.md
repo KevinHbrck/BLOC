@@ -114,6 +114,23 @@ Stand: 2026-10-20, Fassung 9 (Kevins zweite redaktionelle Fassung „Sportjourna
 
 **Quellen:** [1], [8]
 
+### 6a. Was bedeuten Normal, Aufwärmen, Drop und Versagen? {#satzarten}
+
+**Antwort:** Diese vier Satztypen wählst du in BLOC, bevor du einen Satz einträgst. Sie sagen, was für ein Satz es war. [1]
+
+- Normal ist ein ganz gewöhnlicher Arbeitssatz mit dem Gewicht, das du dir für die Übung vorgenommen hast. Aufwärmen ist ein leichter Satz vor den fordernden Sätzen. BLOC zählt ihn nicht für Volumen, Bestwerte und Steigerungsvorschläge. Ob Aufwärmsätze die Leistung verbessern, ist uneinheitlich belegt. [23]
+- Drop bedeutet: Du beendest einen Satz, senkst sofort das Gewicht und machst direkt weiter. Versagen bedeutet: Du führst den Satz so weit, bis keine weitere saubere Wiederholung mehr möglich ist. Beides zählt in BLOC als Arbeitssatz. Beide sind kein Muss: Vollständiges Muskelversagen ist weder für Kraftzuwachs noch für Muskelaufbau zwingend erforderlich. [1], [8]
+- Bei freien Gewichten und Übungen, bei denen die Last auf dich fallen kann, gehört für Sätze bis zum Versagen eine Sicherung dazu, zum Beispiel ein Spotter oder Sicherungshaken. [1]
+
+**Begriffe kurz erklärt:**
+
+- **Arbeitssatz:** Der tatsächlich fordernde Trainingssatz nach dem Aufwärmen.
+- **Drop-Satz:** Ein Satz, bei dem du ohne Pause das Gewicht senkst und weitermachst.
+- **Muskelversagen:** Punkt, an dem keine weitere saubere Wiederholung mehr möglich ist.
+- **Spotter:** Person, die bei einem Satz aufpasst und im Notfall hilft.
+
+**Quellen:** [1], [8], [23]
+
 ### 7. Wie oft darf ich trainieren?
 
 **Antwort:** Entscheidend ist nicht die Zahl der Trainingstage allein, sondern wie das Wochenvolumen und die Ermüdung verteilt werden. [1]
@@ -427,6 +444,23 @@ Stand: 2026-10-20, Fassung 9 (Kevins zweite redaktionelle Fassung „Sportjourna
 - **Meta-regression:** A statistical method that tests whether differences between studies are related to a particular factor.
 
 **Sources:** [1], [8]
+
+### 6a. What do Normal, Warm-up, Drop and Failure mean? {#satzarten}
+
+**Answer:** You pick one of these four set types in BLOC before logging a set. They say what kind of set it was. [1]
+
+- Normal is an ordinary working set with the weight you planned for the exercise. Warm-up is a light set before the demanding sets. BLOC does not count it towards volume, personal bests or progression suggestions. Whether warm-up sets improve performance is not consistently shown. [23]
+- Drop means: you end a set, lower the weight right away and keep going. Failure means: you take the set until no further clean repetition is possible. In BLOC both count as working sets. Neither is a must: complete muscle failure is neither required for strength gains nor for muscle building. [1], [8]
+- With free weights and exercises where the load can fall on you, sets to failure need a safety measure, for example a spotter or safety stops. [1]
+
+**Terms explained briefly:**
+
+- **Working set:** The actual demanding training set after the warm-up.
+- **Drop set:** A set where you lower the weight without a break and keep going.
+- **Muscle failure:** The point at which no further clean repetition is possible.
+- **Spotter:** A person who watches over a set and helps in an emergency.
+
+**Sources:** [1], [8], [23]
 
 ### 7. How often may I train?
 

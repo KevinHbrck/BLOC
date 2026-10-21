@@ -5,6 +5,39 @@
    Erklärungen stehen eingeklappt darunter. Route: #satz/<BLOC-ID>/<Nummer>. */
 var satzLetzterTick = 0;   // letzte Sekunde, zu der der Pause-Tick vibriert hat
 var satzUhr = 0;   // Zähler der Satzpause (nur eine zugleich)
+/* Nach dem Speichern eines Trainings beginnt das Satz-Training von vorn: heute zählen nur die Sätze seit dem letzten Speichern (settings.satzBasis = Anzahl bei Beginn).
+   Die Einträge selbst bleiben im Protokoll; Statistik und Tageswerte sehen weiterhin alle Sätze des Tages. */
+function satzBasisN(id){ var b = (state.db.settings.satzBasis || {})[id]; return b && b.tag === studioTag(Date.now()) ? b.n : 0; }
+function satzBasisSetzen(ids){
+  var s = state.db.settings, o = s.satzBasis || (s.satzBasis = {}), tag = studioTag(Date.now());
+  ids.forEach(function(id){ var e = studioEintrag(id), l = e && e.log && e.log.length ? e.log[e.log.length-1] : null; o[id] = { tag:tag, n:(l && studioTag(l.at) === tag) ? l.s.length : 0 }; });
+  save();
+}
+function satzHeute(id){
+  var e = studioEintrag(id), l = e && e.log && e.log.length ? e.log[e.log.length-1] : null;
+  if(!l || studioTag(l.at) !== studioTag(Date.now())) return null;
+  var s = l.s.slice(satzBasisN(id));
+  return s.length ? { at:l.at, s:s } : null;
+}
+/* Verlauf auf der Abschlusskarte: Volumen (ohne Gewicht: Wiederholungen) der letzten gespeicherten Trainings dieses Plans und das von heute; schon ein Eintrag ergibt einen Balken */
+function satzStatHTML(p, ids, d){
+  // Zahlen: nur diese Runde (seit dem letzten Speichern); Balken: Tageswerte wie in den gespeicherten Trainings
+  var runde = { ex:0, saetze:0, vol:0, wdh:0 }, neuStart = false;
+  ids.forEach(function(id){
+    var h = satzHeute(id); if(satzBasisN(id) > 0) neuStart = true;
+    if(!h) return; runde.ex++; runde.saetze += arbeitsSaetze(h).length; runde.vol += studioVolumen(h); runde.wdh += studioWdhSumme(h);
+  });
+  runde.vol = Math.round(runde.vol);
+  var key = einheitTagKey(), mitKg = d.vol > 0, wert = function(x){ return mitKg ? (x.vol || 0) : (x.wdh || 0); };
+  var frueher = einheitenListe().filter(function(x){ return (x.plan || "") === p.id && x.tag !== key; }).sort(function(a, b){ return a.at - b.at; }).slice(-5).map(wert);
+  var reihe = frueher.concat([mitKg ? d.vol : d.wdh]), mx = Math.max.apply(null, reihe) || 1;
+  var zahlen = [[String(runde.ex), t("trUebungen")], [String(runde.saetze), t("stSetsAll")], [mitKg ? studioKg(runde.vol)+" kg" : String(runde.wdh), t(mitKg ? "stVolGesamt" : "stWdhGesamt")],
+    [d.dauer && !neuStart ? fmtDuration(d.dauer >= 60 ? Math.round(d.dauer/60)*60 : d.dauer) : "–", t("trDauer")]];
+  return '<div class="satz-stat"><div class="satz-stat-zahlen">'+zahlen.map(function(z){ return '<div><b>'+esc(z[0])+'</b><span>'+esc(z[1])+'</span></div>'; }).join("")+'</div>'+
+    '<div class="satz-stat-balken" role="img" aria-label="'+esc(t(mitKg ? "satzStatVol" : "satzStatWdh"))+'">'+reihe.map(function(v, i){
+      return '<i'+(i === reihe.length-1 ? ' class="jetzt"' : '')+' style="height:'+Math.max(8, Math.round(v/mx*100))+'%"></i>'; }).join("")+'</div>'+
+    '<small>'+esc(frueher.length ? t(mitKg ? "satzStatVol" : "satzStatWdh") : t("satzStatErster"))+'</small></div>';
+}
 /* Zusammenfassung: je Übung der beste Satz heute und der Vergleich mit der Einheit davor (Gewicht, sonst Wiederholungen) */
 function satzVergleichHTML(ids){
   var heute = studioTag(Date.now()), zeilen = [];
@@ -35,7 +68,7 @@ function satzKarteHTML(id, i, n){
   var ex = findExercise(id);
   if(!ex) return "";
   var koerper = studioNurBlock(ex), z = studioZiel(id), e = studioEintrag(id) || {}, log = e.log || [], heute = studioTag(Date.now());
-  var h = log.length && studioTag(log[log.length-1].at) === heute ? log[log.length-1] : null;
+  var h = satzHeute(id);
   var v = studioVorschlag(id), letzte = studioLetzte(id, false), fertig = h && h.s.length >= z.saetze, lang = currentLang() === "en" ? 1 : 0;
   if(e.kg != null && !h) v.kg = e.kg;
   var info = EX_INFO[id], post = EX_POSTURE[id];
@@ -95,30 +128,29 @@ function renderSatzTraining(planId, start){
   }
   function punkteFertig(){
     root.querySelectorAll(".satz-punkt").forEach(function(d, k){
-      var e = studioEintrag(ids[k]) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null, z = studioZiel(ids[k]);
-      d.classList.toggle("fertig", !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= z.saetze);
+      d.classList.toggle("fertig", fertig1(ids[k]));
     });
     fertigKnopf(false);
   }
-  function fertig1(id){ var e = studioEintrag(id) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null; return !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= studioZiel(id).saetze; }
+  function fertig1(id){ var h = satzHeute(id); return !!h && h.s.length >= studioZiel(id).saetze; }
   function letzteFertig(){ return fertig1(ids[ids.length-1]); }   // Fertig wird hell, sobald der letzte Satz der letzten Übung drin ist (oder alles geschafft)
   function alleFertig(){
-    return ids.every(function(id){ var e = studioEintrag(id) || {}, l = e.log && e.log.length ? e.log[e.log.length-1] : null; return !!l && studioTag(l.at) === studioTag(Date.now()) && l.s.length >= studioZiel(id).saetze; });
+    return ids.every(fertig1);
   }
   var abschlussGezeigt = false;
   function abschluss(){
     abschlussGezeigt = true;
     var d = trainingHeute(ids), box = document.createElement("div");
     box.className = "satz-ende";
-    box.innerHTML = '<div class="satz-ende-glas" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-haken" aria-hidden="true">✓</div><h2>'+esc(t("satzGeschafft"))+'</h2>'+
-      '<p class="satz-ende-sum">'+esc(trLeisteText(d.saetze, d.ex.length)+(d.vol ? " · "+studioKg(d.vol)+" kg" : "")+(d.dauer >= 60 ? " · "+Math.round(d.dauer/60)+" min" : ""))+'</p>'+
+    box.innerHTML = '<div class="satz-ende-glas" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-ende-logo" aria-hidden="true">BLOC</div><div class="satz-haken" aria-hidden="true">✓</div><h2>'+esc(t("satzGeschafft"))+'</h2>'+
+      satzStatHTML(p, ids, d)+
       satzVergleichHTML(ids)+
       '<button type="button" class="satz-los" data-endsave>'+esc(t("trSpeichern"))+'</button>'+
       '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button>'+
       '<button type="button" class="satz-undo" data-endraus>'+esc(t("satzBeenden"))+'</button></div>';
     root.appendChild(box);
     vibrate([60, 50, 60, 50, 140]); if(state.db.settings.sound) phaseBeep("done");
-    box.querySelector("[data-endsave]").addEventListener("click", function(){ box.remove(); openTrainingSpeichern({ plan:p, ids:ids }, function(){}); });
+    box.querySelector("[data-endsave]").addEventListener("click", function(){ box.remove(); openTrainingSpeichern({ plan:p, ids:ids }, function(){ renderSatzTraining(p.id, 0); }); });
     box.querySelector("[data-endmehr]").addEventListener("click", function(){ box.remove(); });
     box.querySelector("[data-endraus]").addEventListener("click", raus);
   }
@@ -172,12 +204,12 @@ function renderSatzTraining(planId, start){
     });
     if((a = k.querySelector("[data-satzundo]"))) a.addEventListener("click", function(){
       var en = studioEintrag(id), l = en && en.log && en.log[en.log.length-1];
-      if(l && studioTag(l.at) === studioTag(Date.now())){ l.s.pop(); if(!l.s.length) en.log.pop(); }
+      if(l && studioTag(l.at) === studioTag(Date.now()) && l.s.length > satzBasisN(id)){ l.s.pop(); if(!l.s.length) en.log.pop(); }
       studioPauseStop(); save(); trainingNachSatz(id); karteNeu(i);
     });
     if((a = k.querySelector("[data-satzskip]"))) a.addEventListener("click", function(){ studioPauseStop(); k.querySelector(".satz-pause").hidden = true; });
     if((a = k.querySelector("[data-satzweiter]"))) a.addEventListener("click", function(){
-      if(i < ids.length - 1) geheZu(i + 1, true); else openTrainingSpeichern({ plan:p, ids:ids }, function(){});
+      if(i < ids.length - 1) geheZu(i + 1, true); else openTrainingSpeichern({ plan:p, ids:ids }, function(){ renderSatzTraining(p.id, 0); });
     });
     if((a = k.querySelector("[data-satztipp]"))) a.addEventListener("click", function(){
       var tp = studioSteigerTipp(id), en = studioAlle()[id] || (studioAlle()[id] = { log:[] }); if(!tp) return;

@@ -646,6 +646,7 @@ function openTrainingSpeichern(k, nachher){
       '<button class="btn btn-primary" data-trok>✓ '+esc(t(vorh ? "trAktual" : "trSpeichern"))+'</button></div></div></div>';
     root.querySelector("[data-trok]").addEventListener("click", function(){
       trainingSpeichern(k, root.querySelector("#tr-notiz").value);
+      satzBasisSetzen(k.ids);   // das Satz-Training beginnt danach von vorn
       zu(); showToast(t("trGespeichert"));
       if(nachher) nachher();
     });

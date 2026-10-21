@@ -118,7 +118,7 @@ function katSuche(q, standard){
 /* ---------- Kopf: Titel, Reiter, Überrasch mich ---------- */
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
-  var kopf = (layoutNeu() ? bereichKopfNeuHTML("kat", t("katalog"), t("katKicker"), right || "", { foto:"img/neu-d-katalog.jpg", fotoHell:"img/neu-h-halle.jpg", zurueck:"#home", ohneSuche:(right || "").indexOf("lib-lupe") > -1 })
+  var kopf = (layoutNeu() ? bereichKopfNeuHTML("kat", t("katalog"), t("katKicker"), right || "", { foto:"img/neu-d-katalog.jpg", fotoHell:"img/neu-h-halle.jpg", zurueck:"#home", verlauf:true, ohneSuche:(right || "").indexOf("lib-lupe") > -1 })
       : topbar(t("katalog"), { back:"#home", right:right || "" })) +
     '<div class="rz kat-rz" style="--rz:var(--text)">'+b("baukasten", t("katTabBaukasten"))+b("workouts", t("katTabKatalog"))+'</div>';
   if(tab !== "workouts") return kopf;
@@ -378,7 +378,7 @@ function renderKatalogUebungen(){
   var zonen = kkNorm(s.stZonen);   // Körperkarte: gewählte Muskelzonen
   /* Gezeigt werden die Übungen des gewählten Ortes; die des anderen Ortes stehen unsichtbar mit im Seitentext (data-ortfremd) und erscheinen nur,
      solange etwas gesucht wird - die Suche soll nicht am Ort scheitern. */
-  function artOkOhneOrt(id){ var ex = findExercise(id); return !!ex && (!fArt.length || fArt.indexOf(studioArt(id)) > -1) && studioGeraetOk(id, fGer) && (!zonen.length || zonePasst(ex, zonen)); }
+  function artOkOhneOrt(id){ var ex = findExercise(id); return !!ex && studioAusrOk(id, fArt, fGer) && (!zonen.length || zonePasst(ex, zonen)); }
   function artOk(id){ return artOkOhneOrt(id) && katOrtPasst(exOrt(findExercise(id))); }
   function passtOhneOrt(id){ return !!vonId[id] && (!fGr.length || fGr.indexOf(vonId[id]) > -1) && artOkOhneOrt(id); }
   function hier(id){ return katOrtPasst(exOrt(findExercise(id))); }
@@ -486,7 +486,7 @@ function ortThumbHTML(ids){
 }
 /* farbe: Name der Akzentfarbe des Abschnitts (zeit | saetze | training) */
 function katSektionHTML(id, farbe, ikon, titel, sub, n, inhalt){
-  var offen = katOffenStd("sek-"+id, true);
+  var offen = katOffenStd("sek-"+id, false);
   return '<details class="kat-sek kat-sek-'+farbe+'" data-katsek="'+esc(id)+'"'+(offen ? ' open' : '')+'><summary>'+
     '<span class="ks-ico">'+svgIcon(ikon)+'</span><span class="ks-t"><b>'+esc(titel)+'</b><small>'+esc(sub)+'</small></span>'+
     '<span class="ks-n">'+n+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
@@ -567,9 +567,8 @@ function katWoPasst(exs, fGr, fArt, zonen){
   var drittel = Math.max(1, n/3);
   if(fGr.length && exs.filter(function(ex){ return fGr.indexOf(katGruppeVon(ex)) > -1; }).length < drittel) return false;
   if(zonen.length && exs.filter(function(ex){ return zonePasst(ex, zonen); }).length < drittel) return false;
-  if(fArt.length && !exs.every(function(ex){ var a = studioArt(ex.id); return a === "koerper" || fArt.indexOf(a) > -1; })) return false;
   var fGer = studioGeraetWahl();
-  if(fGer.length && !exs.every(function(ex){ return !STUDIO_GERAET[ex.id] || fGer.indexOf(STUDIO_GERAET[ex.id]) > -1; })) return false;
+  if((fArt.length || fGer.length) && !exs.every(function(ex){ return studioArt(ex.id) === "koerper" || studioAusrOk(ex.id, fArt, fGer); })) return false;
   return true;
 }
 function renderKatalogWorkouts(){

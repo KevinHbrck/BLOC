@@ -164,6 +164,16 @@
     wahr(Object.keys(ids).length > 200, "zu wenige Übungen gefunden: " + Object.keys(ids).length);
     wahr(!fehlt.length, "ohne Figur: " + fehlt.join(", "));
   });
+  test("Studio-Geräte: Smith, Kabelzug, Langhantel, Kurzhantel, Maschine; Wahl und Ausrüstung gelten zusammen (eins von beiden reicht)", function () {
+    gleich(W.STUDIO_GERAET["smith-squat"], "smith", "Smith");
+    gleich(W.STUDIO_GERAET["cable-row"], "kabel", "Kabel");
+    gleich(W.STUDIO_GERAET["front-squat"], "lh", "Langhantel");
+    gleich(W.STUDIO_GERAET["arnold-press"], "kh", "Kurzhantel");
+    gleich(W.STUDIO_GERAET["leg-press"], "maschine", "Maschine");
+    wahr(W.studioAusrOk("front-squat", [], ["lh"]) && !W.studioAusrOk("leg-press", [], ["lh"]), "Gerätewahl");
+    wahr(W.studioAusrOk("arnold-press", ["frei"], ["maschine"]) && W.studioAusrOk("leg-press", ["frei"], ["maschine"]) && !W.studioAusrOk("cable-row", ["frei"], ["maschine"]), "Ausrüstung oder Gerät");
+    wahr(W.studioAusrOk("cable-row", [], []), "ohne Wahl passt alles");
+  });
   test("Ausrüstungsart: Gerät, Stange, Band, Körpergewicht", function () {
     gleich(W.studioArt("leg-press"), "geraet", "Beinpresse");
     gleich(W.studioArt("pull-ups"), "stange", "Klimmzüge");
@@ -655,6 +665,16 @@
     var ids = W.EXERCISES.map(function (e) { return e.id; });
     gleich(ids.length, ids.filter(function (x, k) { return ids.indexOf(x) === k; }).length, "keine doppelte Übungs-ID");
     wahr(W.griffHTML("rope-triceps-pushdown").indexOf("Seilaufsatz") > -1 && W.griffHTML("plank") === "", "Griff wird gezeigt, wo es einen gibt");
+  });
+
+  /* zuletzt: dieser Test schreibt Sätze und einen Verlaufseintrag und würde die Wochen- und Sicherungs-Prüfungen verändern */
+  test("Satz-Training: nach dem Speichern beginnt es von vorn, es zählen nur die neuen Sätze", function () {
+    W.studioSatzLog("leg-press", 20, 10); W.studioSatzLog("leg-press", 20, 10);
+    gleich(W.satzHeute("leg-press").s.length, 2, "zwei Sätze heute");
+    W.satzBasisSetzen(["leg-press"]);
+    gleich(W.satzHeute("leg-press"), null, "nach dem Speichern leer");
+    W.studioSatzLog("leg-press", 25, 8);
+    gleich(W.satzHeute("leg-press").s.length, 1, "nur der neue Satz");
   });
 
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
