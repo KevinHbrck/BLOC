@@ -1084,3 +1084,10 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .st-typ-box > summary .tpl-chev{ margin-left:auto; transition:transform .2s; }
 .st-typ-box[open] > summary .tpl-chev{ transform:rotate(180deg); }
 .st-typ-faq{ display:block; margin:6px 0 2px; padding:4px 2px; background:none; border:0; color:inherit; opacity:.7; font-size:12.5px; text-decoration:underline; text-underline-offset:3px; cursor:pointer; text-align:left; }
+/* Trainingsgeräte-Symbole (Kurzhantel, Stange, Band, Gerät …) in Orange: auf den Kacheln, im Info-Fenster, in Filtern und beim Erstellen */
+:root[data-layout="new"] .air-gear, :root[data-layout="new"] .gchip .ico, :root[data-layout="new"] .sub-ico,
+:root[data-layout="new"] [data-spequip] svg, :root[data-layout="new"] [data-start] svg, :root[data-layout="new"] [data-srart] svg,
+:root[data-layout="new"] [data-xequip] svg, :root[data-layout="new"] [data-bfequip] svg, :root[data-layout="new"] [data-fequip] svg, :root[data-layout="new"] [data-ffequip] svg, :root[data-layout="new"] [data-sfequip] svg{
+  color:var(--accent-ink, var(--accent)); stroke:currentColor; }
+:root[data-layout="new"] .air-gear{ background:color-mix(in srgb, var(--accent) 16%, var(--surface)); }
+:root[data-layout="new"] .fc-chip.on [data-spequip] svg, :root[data-layout="new"] [data-spequip].on svg, :root[data-layout="new"] [data-start].active svg, :root[data-layout="new"] [data-srart].active svg{ color:inherit; }

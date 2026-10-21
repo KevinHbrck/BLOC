@@ -204,7 +204,6 @@ function renderSatzTraining(planId, start){
       var punkte = wisch.children[i].querySelectorAll(".satz-saetze i.an"); if(punkte.length) punkte[punkte.length - 1].classList.add("pop");
       if(state.db.settings.sound) phaseBeep("tick");
       fertigKnopf(true);   // nach dem letzten Satz wird „Fertig“ hell (vorher ausgegraut); das Antippen zeigt die Zusammenfassung
-      if(nSatz >= z.saetze && i < ids.length - 1) setTimeout(function(){ if(aktuell === i) geheZu(i + 1, true); }, 900);   // Ziel erreicht: weiter zur nächsten Übung
     });
     if((a = k.querySelector("[data-satzundo]"))) a.addEventListener("click", function(){
       var en = studioEintrag(id), l = en && en.log && en.log[en.log.length-1];

@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Satz-Training springt nicht mehr von selbst weiter, Geräte-Symbole orange (Fassung 2026-10-21-5)
+
+- Satz-Training: nach einem eingetragenen Satz bleibt die Karte stehen; weiter geht es per Wischen oder mit dem „Nächste“-Knopf.
+- Trainingsgeräte-Symbole (Kurzhantel, Stange, Band, Gerät …) sind orange: auf den Übungskacheln, im Info-Fenster und in den Geräte-Filtern.
+
 ## 2026-10-21 · Satz-Training: früher gespeichertes Training startet auch neu (Fassung 2026-10-21-4)
 
 - Ein heute schon gespeichertes Training (auch vor dem Neustart-Verhalten gespeichert) beginnt beim erneuten Öffnen des Satz-Trainings mit leeren Karten; Übungen ohne Rundenstart bekommen ihn beim Öffnen. Neue Sätze zählen danach normal weiter.
