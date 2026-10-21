@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Satz-Training: früher gespeichertes Training startet auch neu (Fassung 2026-10-21-4)
+
+- Ein heute schon gespeichertes Training (auch vor dem Neustart-Verhalten gespeichert) beginnt beim erneuten Öffnen des Satz-Trainings mit leeren Karten; Übungen ohne Rundenstart bekommen ihn beim Öffnen. Neue Sätze zählen danach normal weiter.
+
 ## 2026-10-21 · Foto-Kopf wieder wie vorher (Fassung 2026-10-21-3)
 
 - Workout und Mobility & Stretch haben wieder den früheren Foto-Kopf (abgerundet, ohne Verlauf, ohne BLOC-Zeichen); der Verlauf-Versuch ist samt Stil entfernt.

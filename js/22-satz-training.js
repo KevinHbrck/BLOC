@@ -103,6 +103,10 @@ function renderSatzTraining(planId, start){
   var p = stPlanFind(planId), ids = p ? satzListe(p) : [];
   if(!p || !ids.length){ go("#katalog"); return; }
   start = clamp(parseInt(start) || 0, 0, ids.length - 1);
+  /* Ist heute schon ein Training dieses Plans gespeichert und hat eine Übung noch keinen Rundenstart (früher gespeichert, vor dem Neustart-Verhalten),
+     beginnt das Satz-Training für sie von vorn - sonst stünde man wieder vor dem fertigen Stand. */
+  var ohneBasis = ids.filter(function(id){ var b = (state.db.settings.satzBasis || {})[id]; return !(b && b.tag === studioTag(Date.now())); });
+  if(ohneBasis.length && einheitHeute(p)) satzBasisSetzen(ohneBasis);
   var pt = stPlanAktiv && stPlanFind(stPlanAktiv) ? stPlanAktiv : (stPlanAktiv = p.id);
   app.innerHTML =
     '<div class="satz-root" id="satzRoot"><div class="satz-bg" aria-hidden="true"></div>'+
