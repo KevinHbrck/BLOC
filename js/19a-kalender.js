@@ -1,16 +1,16 @@
 "use strict";
 /* ============ Trainingskalender ============
    Wochen- oder Monatsansicht (Montag zuerst). Einträge: eigene Workouts (Nach Zeit), Pläne (Nach Sätzen), Workouts aus dem Katalog, Mobility & Stretch,
-   Workouts aus dem Baukasten (Abfolge von BLOCs), Run (frei oder mit Ziel in km) und ein Zufallstraining („Überrasch mich“ erst am Tag selbst).
+   Run (frei oder mit Ziel in km) und ein Zufallstraining („Überrasch mich“ erst am Tag selbst).
    Hinzufügen nur über „+ Hinzufügen“ am Tag (Workouts › Meine Workouts, Meine Pläne, Zufallstraining, Katalog, Mobility; Run). Im Monat
    wählt ein Tipp den Tag, seine Einträge stehen unter dem Raster. Einträge verschiebt man über ihr Menü
    („Auf einen anderen Tag“). Daten: settings.kalender = { e:[{ id, tag:"JJJJ-MM-TT", art, ref, name, km, erledigt, at }] }
-   - nur auf dem Gerät, wie alles andere. Art: wk | workout | plan | lib | run | zufall; bei run steht rad:true für eine Radfahrt.
+   - nur auf dem Gerät, wie alles andere. Art: workout | plan | lib | run | zufall; bei run steht rad:true für eine Radfahrt.
    „Woche kopieren“ legt alle Einträge der Woche auf die gleichen Wochentage der nächsten 1-12 Wochen. */
 var kalAnsicht = "woche";      // "woche" | "monat"
 var kalBasis = null;           // ein Tag der angezeigten Woche bzw. des Monats
 var kalAuswahl = null;         // im Monat gewählter Tag (Einträge stehen unter dem Raster)
-var KAL_FARBE = { wk:"var(--accent)", workout:"var(--tp-color)", plan:"var(--gym-color, var(--bl-color))", lib:"var(--tp-color)", run:"var(--run-color, #e5573f)", zufall:"var(--accent)" };
+var KAL_FARBE = { workout:"var(--tp-color)", plan:"var(--gym-color, var(--bl-color))", lib:"var(--tp-color)", run:"var(--run-color, #e5573f)", zufall:"var(--accent)" };
 
 /* ---------- Daten ---------- */
 function kalListe(){
@@ -101,9 +101,6 @@ function kalAufloesen(e){
       o.name = tplText(lw.name); o.sub = exAnz(le, workoutDuration(libWorkoutRun(lw)));
       if(libIstWarmDehn(lw)) o.farbe = "var(--ws-color)";
     }
-  } else if(e.art === "wk"){
-    var bw = bkWkFind(e.ref);
-    if(!bw) o.ok = false; else { o.name = bw.name; o.sub = bkAnzahlBlocs(bw.items.length)+" · "+fmtDauerKurz(bkWkDauer(bw)); }
   } else if(e.art === "run"){
     o.name = e.name || t(e.rad ? "kalRadName" : "kalRunName");
     o.sub = (e.km > 0 ? runKm(e.km*1000)+" km" : t("kalRunFrei"))+(e.rad ? " · "+t("runArtRad") : "");
@@ -117,7 +114,6 @@ function kalStarten(e){
   if(e.art === "workout"){ coverDraft = null; go("#cover/my/"+e.ref); }
   else if(e.art === "lib"){ coverDraft = null; go("#cover/lib/"+e.ref); }
   else if(e.art === "plan"){ var pl = stPlanFind(e.ref); if(pl && stPlanIds(pl).length) planAlsWorkout(pl); else go("#studioplan/"+e.ref); }
-  else if(e.art === "wk"){ var sw = bkWkFind(e.ref); if(sw) bkWkStart(sw); }
   else if(e.art === "run"){ state.db.settings.runArt = e.rad ? "rad" : "lauf"; save(); runGeplant ={ name:e.name || t(e.rad ? "kalRadName" : "kalRunName"), km:e.km || 0, rad:!!e.rad, t:Date.now() }; go("#run"); }
   else openSurprise();
 }
@@ -346,15 +342,11 @@ function kalRunSheet(tag){
     zu(); kalHinzu(tag, { art:"run", name:n, km:km, rad:rad }); kalNeu();
   });
 }
-/* „Hinzufügen“ an einem Tag: erst die Art - Workouts (dann Meine Workouts zuerst, Meine Pläne, Zufallstraining, Workoutkatalog, Mobility & Stretch), Run oder Summit */
+/* „Hinzufügen“ an einem Tag: erst die Art - Workouts (dann Meine Workouts zuerst, Meine Pläne, Zufallstraining, Workoutkatalog, Mobility & Stretch), Run */
 function kalHinzuMenue(tag){
   function fertig(art, ref){ kalHinzu(tag, { art:art, ref:ref }); kalNeu(); }
   function workoutsMenue(){
     openActionSheet(t("kalWorkouts")+" · "+kalTagText(tag), [
-      { ico:HOME_ICON.katalog, label:t("bkOptWk"), fn:function(){
-        var items = state.db.bkWorkouts.filter(function(w){ return !w.entwurf; }).sort(bkNeuerst).map(function(w){ return { id:w.id, name:w.name, sub:bkAnzahlBlocs(w.items.length)+" · "+fmtDauerKurz(bkWkDauer(w)) }; });
-        kalPicker(t("bkOptWk"), items, function(id){ fertig("wk", id); });
-      } },
       { ico:HOME_ICON.lib, label:t("kalMeineWo"), fn:function(){
         var items = (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return !mw.ws; }).map(function(mw){
           var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
@@ -443,13 +435,6 @@ function kalDauerOrt(e){
   } else if(e.art === "plan"){
     var p = stPlanFind(e.ref);
     if(p){ var ids = stPlanIds(p); r.ort = ortName(ids.map(findExercise).filter(Boolean)); r.sub = planAnzahl(ids.length)+" · "+r.ort; }
-  } else if(e.art === "wk"){   // Workout aus dem Baukasten: Dauer der Abfolge, Ort nach den Übungen seiner BLOCs
-    var wk = bkWkFind(e.ref);
-    if(wk){
-      var wex = [];
-      wk.items.forEach(function(it){ var b = it.typ === "run" ? null : bkBlocFind(it.typ, it.ref); if(b) b.ids.forEach(function(id){ var x = findExercise(id); if(x) wex.push(x); }); });
-      r.sek = bkWkDauer(wk); r.ort = wex.length ? ortName(wex) : "";
-    }
   }
   return r;
 }

@@ -63,7 +63,6 @@ function deleteTimerWorkoutNow(id){
 }
 function deleteMyNow(id){
   state.db.myWorkouts = (state.db.myWorkouts || []).filter(function(x){ return x.id!==id; });
-  bkRefWeg("my", id);
   unfav("my:"+id);
   save();
 }
@@ -102,13 +101,13 @@ function bindTrash(refresh){
         });
       } else if(kind === "plan"){   // Studio › Mein Plan
         var pl = stPlanFind(id); if(!pl) return;
-        confirmSheet(t("planDelQ"), "„"+pl.name+"“ – "+t("cantUndo")+bkLoeschText("plan", id), t("del"), function(){
+        confirmSheet(t("planDelQ"), "„"+pl.name+"“ – "+t("cantUndo"), t("del"), function(){
           state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== id; });
-          bkRefWeg("plan", id); save(); refresh(); showToast(t("deletedToast", { n:pl.name }));
+          save(); refresh(); showToast(t("deletedToast", { n:pl.name }));
         });
       } else if(kind === "my"){
         var mw = findMy(id); if(!mw) return;
-        confirmSheet(t("myDeleteQ"), "„"+mw.name+"“ – "+t("cantUndo")+bkLoeschText("my", id), t("del"), function(){ deleteMyNow(id); refresh(); showToast(t("deletedToast", { n:mw.name })); });
+        confirmSheet(t("myDeleteQ"), "„"+mw.name+"“ – "+t("cantUndo"), t("del"), function(){ deleteMyNow(id); refresh(); showToast(t("deletedToast", { n:mw.name })); });
       }
     });
   });

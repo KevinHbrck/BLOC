@@ -29,12 +29,7 @@ stellt man unter **Einstellungen › Fokus** ein (ausgeblendete Bereiche bleiben
 | **Run** (intern `run`) | GPS-Lauf: Countdown, Zeit, Strecke, Pace, Kilometer-Zwischenzeiten, Route (ohne Karte, nur als Linie), Ansagen, **Intervall-Lauf** (Laufen/Gehen), **Auto-Pause** (Stehzeit wird herausgerechnet), Abdunkeln, Name und Notiz, GPX-Export. Im Lauf lösen alle Knöpfe erst nach 3 s Halten aus |
 | **Mobility & Stretch** (intern `warm`, `js/17-aufwaermen-einstellungen.js`) | Aufbau wie das Workout: Reiter **Katalog** (Abteilungen **Meine** · **Workoutkatalog** · **Übungskatalog**, dort „Eigene Übung anlegen“) und **Baukasten** (**Überrasch mich** nach Dauer und Körperregion, **Selber bauen**); darunter die Art Aufwärmen | Dehnen, Körperregionen als Filter |
 
-**Baukasten** (Seite Training, `js/23-baukasten.js`): Übung → **BLOC** → **Workout** → **PLAN**. Oben ein Umschalter **BLOC | Workout | PLAN**, darunter der Bau-Knopf (`+ BLOC`, `+ Workout`, `+ PLAN`) und ein flaches Karussell mit den eigenen Elementen des Segments (zuletzt benutzt zuerst; ab drei Elementen endlos, `Alle anzeigen` mit Suche; Tippen öffnet Detail mit Start, Bearbeiten und Menü).
-- **BLOC** = ein Baustein aus Übungen: die Pläne unter Workout › Meine (`settings.stPlaene`, gebaut mit dem bestehenden BLOC-Builder „Selber bauen“) und die eigenen Workouts mit Timer (`myWorkouts`).
-- **Workout** (`db.bkWorkouts`) = Abfolge von BLOCs, Katalog-Workouts, Mobility & Stretch und Läufen, je Eintrag Runden und Pause danach. Eigene BLOCs stehen als **Verweis** darin (Änderung wirkt überall; wird ein BLOC in mehreren Workouts benutzt, fragt BLOC vor dem Bearbeiten nach „Als Kopie bearbeiten“, und Löschen nennt die betroffenen Workouts). Aus einem Katalog übernommene Inhalte werden eine **Kopie** unter Meine. Ein Lauf im Workout ist ein Zeitblock im Timer, ohne GPS.
-- **PLAN** (`db.plaene`) = Wochen, Trainingstage und je Tag Workouts, BLOCs, Katalog, Run; „Start“ trägt ihn in den Kalender ein (Kalenderart `wk`), dort erscheint er auf Heute. Gebaut und bearbeitet wird er nur im Baukasten.
-
-**Speicherformat:** `db.v` zählt die Fassung (1 = bis zum Baukasten, 2 = mit `bkWorkouts` und `plaene`, 3 = ohne Summit). Laden, Import und Schnappschuss laufen über `dbAusRoh` und `dbMigrieren` (`js/01-basis.js`); jede Formatänderung bekommt dort eine Stufe. Summit (Challenges) wurde in Stufe 3 entfernt: die eigenen Challenges, Einheiten und Bestzeiten liegen bis zum Sichern oder Verwerfen unter dem Schlüssel `sporttimer-summit-archiv` (Hinweis auf der Seite Training).
+**Speicherformat:** `db.v` zählt die Fassung (3 = ohne Summit). Laden, Import und Schnappschuss laufen über `dbAusRoh` und `dbMigrieren` (`js/01-basis.js`); jede Formatänderung bekommt dort eine Stufe. Summit (Challenges) wurde in Stufe 3 entfernt: die eigenen Challenges, Einheiten und Bestzeiten liegen bis zum Sichern oder Verwerfen unter dem Schlüssel `sporttimer-summit-archiv` (Hinweis auf der Seite Training).
 
 **Statistik** (alles lokal berechnet): Kopf mit Trainings der letzten 7 Tage und Serie, Verlauf als Balken (Zeit oder
 Anzahl, **Woche · Monat · Jahr**, nach links wischen für früher, so weit Daten da sind), Kalender der letzten 4 Wochen
@@ -59,7 +54,7 @@ die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist r
 `layout-new.css` (alles unter `:root[data-layout="new"]`, gesetzt in `applyTheme`): größere Rundungen mit kleiner Ecke oben links, ruhige
 Konturen, Wochenpunkte weiß / orange / Ring, die untere Leiste als schwebende Pille mit orangenem aktivem Reiter. Dazu ändert „New“ die
 Navigation (nur das, Funktionen bleiben): unten **Heute · Training · Kalender · Fortschritt**; Suche und Einstellungen sind Symbole oben auf
-Heute und Training (`kopfSymboleNeu`, `layoutNeu` in `js/03-router.js`); die Bereiche (Workout, Mobility & Stretch, Timer, Run) und der Baukasten stehen
+Heute und Training (`kopfSymboleNeu`, `layoutNeu` in `js/03-router.js`); die Bereiche (Workout, Mobility & Stretch, Timer, Run) stehen
 als Fotokarten auf der neuen Seite **Training** (`#training`, `renderTraining` in `js/05-suche.js`); auf Heute ersetzt der **Workout-Builder**
 (Überrasch mich · Selber bauen, `builderKarteHTML`) die Bereichsliste. Fotos für New: `img/neu-*.jpg` und `img/neu-builder.webp`. Das frühere
 Design C60 (Kassetten-Look mit Walzenzähler) gibt es nicht mehr; gespeicherte C60-Stände werden beim Laden zu Hell (`migrateTheme`), mit einem

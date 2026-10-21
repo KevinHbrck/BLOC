@@ -184,7 +184,7 @@ function exportBackup(){
 function hatEigenes(db){
   var st = (db && db.settings) || {};
   return !!(db && ((db.blocks||[]).length || (db.workouts||[]).length || (db.myWorkouts||[]).length || (db.customEx||[]).length ||
-    Object.keys(st.studio || {}).length || (db.bkWorkouts || []).length || (db.plaene || []).length));   // auch Gewichte im Freien Training, Workouts und PLÄNE des Baukastens
+    Object.keys(st.studio || {}).length));   // auch Gewichte im Freien Training
 }
 /* Erinnerung an die Sicherungsdatei - bewusst selten: BLOC kopiert den Stand ohnehin alle 7 Tage auf dem Gerät (Schnappschuss, siehe unten),
    die Datei schützt zusätzlich bei neuem Handy oder gelöschten Website-Daten. Sie erscheint nur, wenn es eigene Inhalte gibt, seit 60 Tagen (oder nie)

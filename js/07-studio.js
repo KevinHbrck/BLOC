@@ -817,9 +817,8 @@ function renderStudioPlan(){
   app.querySelectorAll("[data-blocoffen]").forEach(function(b){ b.addEventListener("click", function(){ stPlanAktiv = b.getAttribute("data-blocoffen"); stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); }); });
   app.querySelectorAll("[data-blocweg]").forEach(function(b){ b.addEventListener("click", function(){ p.folge = (p.folge || []).filter(function(x){ return x !== b.getAttribute("data-blocweg"); }); p.updatedAt = Date.now(); save(); neu(); }); });
   an("[data-plandel]", function(){
-    confirmSheet(t("planDelQ"), "„"+p.name+"“ – "+t("cantUndo")+bkLoeschText("plan", p.id), t("del"), function(){
+    confirmSheet(t("planDelQ"), "„"+p.name+"“ – "+t("cantUndo"), t("del"), function(){
       state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });
-      bkRefWeg("plan", p.id);
       stPlanAktiv = null; stPlanBauen = false; save(); renderKatalog(); window.scrollTo(0, 0);
       showToast(t("deletedToast", { n:p.name }));
     });

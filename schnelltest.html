@@ -1517,7 +1517,7 @@
       await bis(function () { return $$(".kal-tag").length === 7 && $(".kal-nav"); }, 3000, "Wochenansicht mit sieben Tagen");
       klick($(".kal-tag:not(.heute) [data-kaladd]"));   // nicht heute: an einem Tag mit schon erledigten Trainings gilt der Eintrag von selbst als erledigt, das Abhaken wäre dann ein Zurücknehmen (so rot an Montagen)
       klick(await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Menü „Hinzufügen“: Workouts"));
-      klick(await bis(function () { return $$("#overlayRoot [data-act]")[3]; }, 2000, "Workouts: Zufallstraining (Baukasten-Workouts, Meine Workouts und Pläne stehen davor)"));
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[2]; }, 2000, "Workouts: Zufallstraining (Meine Workouts stehen vorn)"));
       await bis(function () { return $$(".kal-eintrag").length === 1; }, 2000, "Eintrag steht im Kalender");
       var tag0 = daten().settings.kalender.e[0].tag;
       klick($("[data-kalok]"));
@@ -1570,122 +1570,24 @@
       await warte(300);
       pruefe(daten().settings.kalender.e.length === n1, "Zweites Kopieren darf nichts doppelt anlegen");
     }],
-    ["Baukasten (Training): BLOC · Workout · PLAN, Karussell, Workout-Builder, PLAN-Builder, Start", async function () {
-      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
-      await heim();
-      // Aussehen New einschalten (der Schnelltest läuft sonst in Klassik) und vier BLOCs unter Meine anlegen
-      var ex = W.EXERCISES.filter(function (e) { return e.main !== "stretch"; }).map(function (e) { return e.id; });
-      try {
-      W.state.db.settings.layout = "new";
-      ["Push", "Pull", "Beine", "Core"].forEach(function (n, i) { W.stPlaene().push({ id: "bt" + i, name: n, ids: ex.slice(i * 3, i * 3 + 3), updatedAt: Date.now() + 600000 - i * 1000, standard: "saetze" }); });   // jünger als alles andere: stehen vorn
-      W.save(); W.applyTheme(); W.go("#training");
-      await bis(function () { return $("[data-bk]"); }, 3000, "Baukasten auf der Seite Training");
-      pruefe(!$('[data-bereich="reps"]') && $$(".training-seite .area-tile[data-bereich]").length === 5, "Training: Workout, Mobility & Stretch, Timer, Run und Fragen (kein Summit) erwartet: " + $$(".training-seite .area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
-      pruefe($$("[data-bkseg]").length === 3 && $('[data-bkseg="bloc"].on') && /BLOC/.test($("[data-bkbau]").textContent), "Segmente BLOC | Workout | PLAN oder Bau-Knopf fehlen");
-      // Karussell: ab drei Elementen endlos (drei Kopien), erste Karte = zuletzt benutzt, Position „1 / n“
-      var nb = W.bkBloecke().length;
-      pruefe(nb >= 4 && $$(".bk-karte").length === 3 * nb && $(".bk-kar.endlos") && $("[data-bkpos]").textContent === "1 / " + nb, "Karussell: " + $$(".bk-karte").length + " Karten, Position " + $("[data-bkpos]").textContent);
-      pruefe(/Push/.test($(".bk-karte").textContent) && /3 Übungen/.test($(".bk-karte").textContent) && $(".bk-karte .bk-streifen"), "Karte: Name, Dauer, Anzahl und Farbstreifen");
-      // Leere Segmente zeigen eine Platzhalterkarte mit Knopf
-      klick('[data-bkseg="workout"]');
-      await bis(function () { return $(".bk-leer") && /\+ Workout/.test($("[data-bkbau]").textContent); }, 2000, "Segment Workout leer");
-      pruefe(/Noch kein Workout/.test($(".bk-leer").textContent), "Leertext Workout");
-      klick('[data-bkseg="plan"]');
-      await bis(function () { return $(".bk-leer") && /Noch kein PLAN – aus Workouts/.test($(".bk-leer").textContent); }, 2000, "Segment PLAN leer");
-      // Workout bauen: BLOCs, Katalog (Kopie), Mobility & Stretch, RUN
-      klick('[data-bkseg="workout"]');
-      klick("[data-bkbau]");
-      await bis(function () { return /^#wbau\//.test(W.location.hash) && $("[data-abfolge]"); }, 3000, "Workout-Builder");
-      pruefe($$("[data-quelle]").length === 4 && $$(".bk-q-zeile").length === W.bkBloecke().length, "Quellen: Meine BLOCs | Workout-Katalog | Mobility & Stretch | RUN");
-      klick($$(".bk-q-zeile")[0]); klick($$(".bk-q-zeile")[1]);
-      await bis(function () { return $$(".bk-ab").length === 2; }, 2000, "zwei BLOCs in der Abfolge");
-      klick($(".bk-ab [data-reg=\"runden\"] [data-plus]"));
-      klick($(".bk-ab [data-reg=\"pause\"] [data-plus]"));
-      await bis(function () { var it = daten().bkWorkouts[0].items[0]; return it.runden === 2 && it.pause === 35; }, 2000, "Runden und Pause gespeichert");
-      var dauer2 = $("[data-summe]").textContent;
-      klick('[data-quelle="katalog"]');
-      await bis(function () { return $$(".bk-q-zeile").length > 20; }, 2000, "Workout-Katalog als Quelle");
-      var plaene0 = daten().settings.stPlaene.length;
-      klick($$(".bk-q-zeile")[0]);
-      await bis(function () { return $$(".bk-ab").length === 3 && daten().settings.stPlaene.length === plaene0 + 1; }, 2000, "Katalog-Workout als Kopie unter Meine");
-      klick('[data-quelle="warm"]');
-      klick(await bis(function () { return $$(".bk-q-zeile")[0]; }, 2000, "Mobility & Stretch als Quelle"));
-      await bis(function () { return $$(".bk-ab").length === 4 && daten().myWorkouts.some(function (m) { return m.ws && m.fromLib; }); }, 2000, "Mobility-Workout als Kopie");
-      klick('[data-quelle="run"]');
-      klick(await bis(function () { return $$(".bk-q-zeile")[1]; }, 2000, "Lauf als Quelle"));
-      await bis(function () { return $$(".bk-ab").length === 5 && daten().bkWorkouts[0].items[4].typ === "run"; }, 2000, "Lauf in der Abfolge");
-      pruefe($("[data-summe]").textContent !== dauer2 && /5 BLOCs/.test($("[data-summe]").textContent), "Gesamtdauer live: " + $("[data-summe]").textContent);
-      // Suche über alle Quellen
-      eingeben($("#wb-q"), "Core");
-      await bis(function () { var z = $$(".bk-q-zeile"); return z.length >= 1 && z.some(function (e) { return /Core/.test(e.textContent); }); }, 2000, "Suche findet Core");
-      eingeben($("#wb-q"), "");
-      // Reihenfolge ändern (Pfeiltasten am Griff) und Entfernen
-      var erster = $$(".bk-ab b")[0].textContent;
-      $$(".bk-ab [data-griff]")[0].dispatchEvent(new W.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
-      await bis(function () { return $$(".bk-ab b")[1].textContent === erster; }, 2000, "Eintrag nach unten");
-      klick($$(".bk-ab [data-weg]")[4]);
-      await bis(function () { return $$(".bk-ab").length === 4; }, 2000, "Eintrag entfernt");
-      // Mobility & Stretch per Pfeiltaste ganz nach vorn: im Timer bleibt die Reihenfolge des Workouts (sonst rutscht Dehnen ans Ende)
-      for (var k = 3; k > 0; k--) $$(".bk-ab [data-griff]")[k].dispatchEvent(new W.KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }));
-      await bis(function () { var wk = daten().bkWorkouts[0]; return wk.items[0].typ === "my" && wk.items.length === 4; }, 2000, "Mobility steht vorn");
-      var wk0 = daten().bkWorkouts[0];
-      var st = W.bkWkDraft(wk0);
-      pruefe(st.items.length > 10 && st.fest && st.items[0].ex && W.exIsMobility(st.items[0].ex), "Reihenfolge des Workouts bleibt (Mobility zuerst)");
-      klick("[data-wbstart]");
-      await bis(function () { return $("#playerEl"); }, 3000, "Workout startet im Timer");
-      W.exitPlayer();
-      await warte(300);
-      if ($("[data-fertig]")) klick("[data-fertig]"); else W.go("#training");   // je nachdem, wohin der Timer zurückführt
-      await bis(function () { return $("[data-bk]"); }, 3000, "zurück auf Training");
-      klick('[data-bkseg="workout"]');
-      klick(await bis(function () { return $(".bk-karte"); }, 2000, "Workout-Karte"));
-      await bis(function () { return /^#bkd\/wk\//.test(W.location.hash) && $("[data-bkstart]") && $("[data-bkedit]"); }, 3000, "Detail mit Start und Bearbeiten");
-      klick("button.back");
-      // BLOC in zwei Workouts: Löschen warnt mit den Workout-Namen
-      var wk1 = { id: "bw2", name: "Zweites", items: [{ typ: "plan", ref: "bt0", runden: 1, pause: 30 }], updatedAt: Date.now() };
-      W.state.db.bkWorkouts.push(wk1); W.state.db.bkWorkouts[0].items.push({ typ: "plan", ref: "bt0", runden: 1, pause: 30 }); W.save();
-      pruefe(W.bkWorkoutsMit("plan", "bt0").length === 2 && /Zweites/.test(W.bkLoeschText("plan", "bt0")), "Löschwarnung nennt die Workouts");
-      // PLAN bauen: Workout auf Tage legen, Start trägt in den Kalender ein
-      W.go("#training");
-      klick(await bis(function () { return $('[data-bkseg="plan"]'); }, 2000, "Segment PLAN"));
-      klick("[data-bkbau]");
-      await bis(function () { return /^#pbau\//.test(W.location.hash) && $('[data-planwahl="0"]'); }, 3000, "PLAN-Builder");
-      var sel = $('[data-planwahl="0"]'); sel.value = "wk:" + wk0.id; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
-      await bis(function () { return $(".kp-wahl"); }, 2000, "Workout am Montag");
-      sel = $('[data-planwahl="2"]'); sel.value = "run"; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
-      await bis(function () { return $$(".kp-wahl").length === 2; }, 2000, "Lauf am Mittwoch");
-      pruefe(daten().plaene.length === 1 && !daten().plaene[0].entwurf, "PLAN gespeichert");
-      var k0 = (daten().settings.kalender || { e: [] }).e.length;
-      klick("[data-planok]");
-      await bis(function () { return W.location.hash === "#kalender"; }, 3000, "PLAN im Kalender");
-      var e = daten().settings.kalender.e;
-      pruefe(e.length === k0 + 12 && e.some(function (x) { return x.art === "wk"; }), "Kalender-Einträge aus dem PLAN: " + (e.length - k0));
-      var o = W.kalAufloesen(e.filter(function (x) { return x.art === "wk"; })[0]);
-      pruefe(o.ok && /Workout 1|Workout/.test(o.name) && /BLOCs/.test(o.sub), "Kalender zeigt das Workout: " + o.name + " / " + o.sub);
-      } finally { delete W.state.db.settings.layout; W.state.db.bkWorkouts = []; W.state.db.plaene = []; W.state.db.settings.stPlaene = []; W.state.db.settings.kalender = { e: [] }; W.save(); W.applyTheme(); }
-    }],
-    ["Umbau: Format versioniert, alter Plan wird PLAN, Summit-Daten wandern ins Archiv", async function () {
-      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+    ["Summit entfernt: Daten wandern ins Archiv, Hinweis auf Training sichert oder verwirft", async function () {
       await heim();
       W.localStorage.removeItem(W.SUMMIT_ARCHIV);
       var alt = { v: 1, blocks: [], workouts: [], myWorkouts: [], customEx: [], history: [{ at: Date.now() - 1000, ex: [], dur: 60, b: "reps" }, { at: Date.now() - 2000, ex: ["burpees"], dur: 60 }],
         settings: { theme: "dark", myReps: [{ id: "c1", name: "Meine Challenge", runden: 2, zeilen: [] }], myRepUnits: [{ id: "u1" }], repBest: { x: { best: 1000, last: 1000, n: 1, log: [] } },
-          favs: ["rep:c1", "lib:warmup-5"], bereiche: ["lib", "reps", "run"], kalender: { e: [{ id: "k1", tag: "2026-10-20", art: "summit", ref: "x" }, { id: "k2", tag: "2026-10-20", art: "run" }] },
-          planBau: { wochen: 4, tage: [1, 3], wahl: { 1: ["run"], 3: [] } } } };
+          favs: ["rep:c1", "lib:warmup-5"], bereiche: ["lib", "reps", "run"], kalender: { e: [{ id: "k1", tag: "2026-10-20", art: "summit", ref: "x" }, { id: "k2", tag: "2026-10-20", art: "run" }] } } };
       try {
-      var db = W.dbAusRoh(alt);
-      pruefe(db.v === W.DB_VERSION && Array.isArray(db.bkWorkouts) && Array.isArray(db.plaene), "Format: db.v und neue Listen");
-      pruefe(db.plaene.length === 1 && db.plaene[0].wochen === 4 && db.plaene[0].wahl[1][0] === "run" && !db.settings.planBau, "Der alte Plan wurde ein benannter PLAN");
-      var s = db.settings;
-      pruefe(!s.myReps && !s.myRepUnits && !s.repBest && s.favs.join() === "lib:warmup-5" && s.bereiche.indexOf("reps") < 0 && s.kalender.e.length === 1 && s.kalender.e[0].art === "run" && db.history.length === 1, "Summit-Reste sind bereinigt");
-      var arch = JSON.parse(W.localStorage.getItem(W.SUMMIT_ARCHIV) || "null");
-      pruefe(arch && arch.myReps.length === 1 && arch.myRepUnits.length === 1 && arch.repBest.x, "Eigene Challenges, Einheiten und Bestzeiten liegen im Archiv");
-      // der Hinweis auf Training bietet das Sichern an und räumt danach auf
-      W.state.db.settings.layout = "new"; W.applyTheme(); W.go("#training");
-      await bis(function () { return $("[data-summitsichern]"); }, 3000, "Hinweis zum Sichern der Summit-Daten");
-      klick("[data-summitverwerfen]");
-      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Verwerfen bestätigen"));
-      await bis(function () { return !$("[data-summitsichern]") && !W.localStorage.getItem(W.SUMMIT_ARCHIV); }, 2000, "Archiv gelöscht");
+        var db = W.dbAusRoh(alt), s = db.settings;
+        pruefe(db.v === W.DB_VERSION, "Format: db.v gesetzt");
+        pruefe(!s.myReps && !s.myRepUnits && !s.repBest && s.favs.join() === "lib:warmup-5" && s.bereiche.indexOf("reps") < 0 && s.kalender.e.length === 1 && s.kalender.e[0].art === "run" && db.history.length === 1, "Summit-Reste sind bereinigt");
+        var arch = JSON.parse(W.localStorage.getItem(W.SUMMIT_ARCHIV) || "null");
+        pruefe(arch && arch.myReps.length === 1 && arch.myRepUnits.length === 1 && arch.repBest.x, "Eigene Challenges, Einheiten und Bestzeiten liegen im Archiv");
+        W.state.db.settings.layout = "new"; W.applyTheme(); W.go("#training");
+        await bis(function () { return $("[data-summitsichern]"); }, 3000, "Hinweis zum Sichern der Summit-Daten");
+        pruefe(!$('[data-bereich="reps"]'), "Kein Summit-Bereich auf Training");
+        klick("[data-summitverwerfen]");
+        klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Verwerfen bestätigen"));
+        await bis(function () { return !$("[data-summitsichern]") && !W.localStorage.getItem(W.SUMMIT_ARCHIV); }, 2000, "Archiv gelöscht");
       } finally { delete W.state.db.settings.layout; W.save(); W.applyTheme(); }
     }],
     ["Keine Skriptfehler", async function () {
@@ -1704,7 +1606,7 @@
     localStorage.removeItem(KEY);   // frischer Stand, damit der Test immer gleich läuft
     var ok = 0, schlecht = 0;
     try {
-      var nur = /[?&]nur=([^&]*)/.exec(location.search);   // ?nur=Baukasten: nur Tests, deren Titel das Wort enthält
+      var nur = /[?&]nur=([^&]*)/.exec(location.search);   // ?nur=Umbau: nur Tests, deren Titel das Wort enthält
       for (var t = 0; t < TESTS.length; t++) {
         if (nur && TESTS[t][0].indexOf(decodeURIComponent(nur[1])) < 0) continue;
         var li = eintrag(TESTS[t][0]);

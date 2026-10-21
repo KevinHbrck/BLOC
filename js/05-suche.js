@@ -1,6 +1,6 @@
 "use strict";
 /* ============ Gesamtsuche ============
-   Lupe auf der Startseite (neben dem Zahnrad): durchsucht Übungen, Workouts (Air und eigene, auch aus dem Baukasten),
+   Lupe auf der Startseite (neben dem Zahnrad): durchsucht Übungen, Workouts (Air und eigene),
    Timer-Workouts, Blöcke, die Bereiche und Aktionen wie „Neuer Block“. Das Feld bleibt stehen, nur die Treffer werden neu gezeichnet. */
 var gesamtQuery = "";
 /* Kategorien der Suche: ordnet die Gruppen der Treffer sechs Kategorien zu (Chips unter dem Suchfeld) */
@@ -26,8 +26,6 @@ function gesamtEintraege(){
   add(neu, t("genNew"), t("katalog"), "plan gewichtung nach erstellen anlegen neu create weighting", function(){ go("#katalog"); katPlanGenNeu(); });
   add(neu, t("myNew"), t("katalog"), "workout timer bauen baukasten erstellen anlegen neu create build timer workout", function(){ go("#mybuild/new"); });
   add(neu, t("exNew"), t("libExercises"), "uebung übung erstellen anlegen neu create exercise", function(){ go("#exedit/new"); });
-  add(neu, t("bkBau_workout"), t("bkTitel"), "workout abfolge bloecke blöcke baukasten erstellen anlegen neu create build", function(){ go("#wbau/neu"); });
-  add(neu, t("bkBau_plan"), t("bkTitel"), "plan wochenplan trainingsplan baukasten erstellen anlegen neu create build", function(){ go("#pbau/neu"); });
   // Bereiche
   [["#katalog", t("katalog")], ["#intervall", t("tabTimer")], ["#run", t("runTitle")], ["#warmstretch", t("warmTitle")], ["#settings", t("settings")]].forEach(function(p){
     add(t("srAreas"), p[1], "", "", function(){ go(p[0]); });
@@ -56,9 +54,6 @@ function gesamtEintraege(){
     l[l.length-1].ex = ex.id;   // für den Körper-Filter der Suche
     l[l.length-1].ort = ex.main === "stretch" ? "" : exIstStudio(ex) ? "studio" : "frei";   // für den Ort-Filter
   });
-  // Workouts und PLÄNE aus dem Baukasten
-  state.db.bkWorkouts.filter(function(w){ return !w.entwurf; }).forEach(function(w){ add(t("mineMy"), w.name, bkAnzahlBlocs(w.items.length)+" · "+fmtDauerKurz(bkWkDauer(w)), "workout baukasten abfolge", function(){ go("#bkd/wk/"+w.id); }); });
-  state.db.plaene.filter(function(p){ return !p.entwurf; }).forEach(function(p){ add(t("mineMy"), p.name, t("bkPlanMeta", { d:(p.tage || []).length, w:p.wochen }), "plan wochenplan baukasten", function(){ go("#bkd/pl/"+p.id); }); });
   // Timer-Workouts und Blöcke
   state.db.workouts.forEach(function(w){ add(t("mineTimer"), w.name || t("untitled"), "", "", function(){ go("#workout/"+w.id); }); });
   state.db.blocks.forEach(function(b){ add(t("mineBlocks"), b.name, blockSpec(b), "", function(){ go("#block/"+b.id); }); });
@@ -307,18 +302,15 @@ function faqHTML(){
     '</ol></div></details></div></section>';
   return h;
 }
-/* Aussehen „New“: Seite „Training“ - darüber die Suche, dann der Baukasten (BLOC · Workout · PLAN), darunter alle Bereiche (Workout, Mobility & Stretch, Timer, Run) als Fotokarten */
+/* Aussehen „New“: Seite „Training“ - alle Bereiche (Workout, Mobility & Stretch, Timer, Run) als Fotokarten, darüber die Suche */
 function renderTraining(){
-  bkAufraeumen();
   app.innerHTML =
     topbar(t("tabTraining"), { back:"#home", right:kopfSymboleNeu("training") }) +
     '<button type="button" class="suchfeld-neu" data-nav="#search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'<span>'+esc(t("trainingSuche"))+'</span></button>'+
-    summitHinweisHTML()+bkHTML()+
-    '<div class="training-seite">'+bereicheHTML().replace(/<\/div><\/div>$/, areaTile("faq", "#faq", t("faqTitel"), t("faqKachelSub", { n:(window.BLOC_FAQ ? window.BLOC_FAQ.fragen.length : 0) }), "var(--accent)", "zeile")+'</div></div>')+'</div>'+
+    summitHinweisHTML()+'<div class="training-seite">'+bereicheHTML().replace(/<\/div><\/div>$/, areaTile("faq", "#faq", t("faqTitel"), t("faqKachelSub", { n:(window.BLOC_FAQ ? window.BLOC_FAQ.fragen.length : 0) }), "var(--accent)", "zeile")+'</div></div>')+'</div>'+
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
   bindCommon();
   bindSummitHinweis();
-  bkBinden();
   /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd, kein Bild doppelt; dieselben Bilder tragen die Köpfe der Bereichsseiten */
   var fotos = bereichFotosNeu();
   app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){

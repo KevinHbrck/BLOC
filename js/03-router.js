@@ -300,8 +300,6 @@ function hauptAktionNeu(route){
       m.push({ ico:HOME_ICON.katalog, label:t("builderZufall"), fn:function(){ builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog"); } });
       m.push({ ico:P_PLUS, label:t("builderSelber"), fn:function(){ builderAuto = "selber"; katTabSetzen("baukasten"); go("#katalog"); } });
     }
-    m.push({ ico:P_PLUS, label:t("bkBau_workout"), fn:function(){ go("#wbau/neu"); } });
-    m.push({ ico:P_PLUS, label:t("bkBau_plan"), fn:function(){ go("#pbau/neu"); } });
     if(!fokusAus("intervall")) m.push({ ico:HOME_ICON.intervall, label:t("tabTimer"), fn:function(){ go("#intervall"); } });
     if(!m.length) return go("#settings");
     openActionSheet(t("hauptBauen"), m);
@@ -374,10 +372,6 @@ function render(){
   if(route==="faq") return renderFaq();
   if(route==="satz") return renderSatzTraining(parts[1], parts[2]);
   if(route==="warmstretch") return renderWarmStretch();
-  if(route==="bkd") return renderBkDetail(parts[1], parts[2]);
-  if(route==="bkalle") return renderBkAlle(parts[1]);
-  if(route==="wbau") return renderWbau(parts[1]);
-  if(route==="pbau") return renderPbau(parts[1]);
   if(route==="kalender"){ renderKalender(); setTimeout(kalHeuteSichtbar, 80); return; }   // go() setzt danach nach oben: erst dann den heutigen Tag ins Bild holen
   if(route==="run") return renderRun();
   if(route==="rundetail") return renderRunDetail(parts[1]);
@@ -400,7 +394,8 @@ function render(){
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
   if(route==="search") return renderSearch();
-  if(route==="koerper" || route==="stats") return renderStats();
+  if(route==="koerper") return renderKoerper();
+  if(route==="stats"){ if(layoutNeu()){ state.db.settings.koerperTab = "fortschritt"; return renderKoerper(); } return renderStats(); }
   if(route==="studio") return renderStudioKarte(parts[1]);
   if(route==="install") return renderInstallGuide();
   if(route==="play") return startPlayer(parts[1]);

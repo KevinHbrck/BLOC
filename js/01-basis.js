@@ -37,8 +37,6 @@ function defaultDB(){
     blocks: [],
     workouts: [],
     myWorkouts: [],   // eigene Workouts aus Bibliotheksübungen - getrennt von den Timer-Workouts
-    bkWorkouts: [],   // Workouts (Baukasten): Abfolge von BLOCs, Läufen und Kataloginhalten
-    plaene: [],       // PLÄNE (Baukasten): Wochen mit Wochentagen und Workouts
     customEx: [],     // selbst angelegte Übungen
     history: [],      // nur Übungen der letzten 14 Tage { at, ex:[ids] } - für „Überrasch mich“
     settings: { theme:"system", sound:true, soundStyle:"klangschale", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
@@ -137,27 +135,14 @@ function migrateSound(key){
   return REMOVED_SOUNDS[key] || "klangschale";
 }
 
-/* Speicherformat: db.v zählt die Fassung des Formats (1 = bis zum Baukasten-Umbau, 2 = mit Workouts und Plänen im Baukasten, 3 = ohne Summit).
+/* Speicherformat: db.v zählt die Fassung des Formats (1 = bis zur Entfernung von Summit, 3 = ohne Summit).
    Jede Änderung am Format bekommt eine Stufe in dbMigrieren; die läuft beim Laden, beim Import und beim Wiederherstellen des Schnappschusses gleich. */
 var DB_VERSION = 3;
 var SUMMIT_ARCHIV = "sporttimer-summit-archiv";   // Zwischenspeicher für die Daten des entfernten Bereichs Summit, bis man sie als Datei gesichert oder verworfen hat
 function dbMigrieren(db, vonV){
-  if(vonV < 2){
-    /* Stufe 2: der eine Plan aus dem früheren Plan-Reiter (settings.planBau) wird ein benannter PLAN im Baukasten, falls er etwas enthält */
-    var pb = db.settings.planBau;
-    if(pb && pb.wahl && typeof pb.wahl === "object"){
-      var voll = Object.keys(pb.wahl).some(function(d){ return [].concat(pb.wahl[d] || []).filter(Boolean).length > 0; });
-      if(voll){
-        var en = db.settings.lang === "en" || (!db.settings.lang && !/^de/i.test(navigator.language || ""));
-        db.plaene.push({ id:uid(), name:en ? "My PLAN" : "Mein PLAN", wochen:pb.wochen > 0 ? pb.wochen : 6, tage:Array.isArray(pb.tage) ? pb.tage : [0, 2, 4], wahl:pb.wahl, updatedAt:Date.now() });
-      }
-    }
-    delete db.settings.planBau; delete db.settings.koerperTab;
-  }
   if(vonV < 3) summitEntfernen(db);
   db.v = DB_VERSION;
-}
-/* Stufe 3: Summit (Challenges) gibt es nicht mehr. Eigene Challenges, Einheiten und Bestzeiten wandern in den Zwischenspeicher SUMMIT_ARCHIV
+}/* Summit (Challenges) gibt es nicht mehr. Eigene Challenges, Einheiten und Bestzeiten wandern in den Zwischenspeicher SUMMIT_ARCHIV
    (die Seite „Training“ bietet an, sie als Datei zu sichern); alles andere zu Summit wird gelöscht. */
 function summitEntfernen(db){
   var st = db.settings, neu = { myReps:st.myReps || [], myRepUnits:st.myRepUnits || [], repBest:st.repBest || {} };
@@ -189,8 +174,6 @@ function dbAusRoh(parsed){
   db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
   db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
   db.myWorkouts = Array.isArray(parsed.myWorkouts) ? parsed.myWorkouts : [];
-  db.bkWorkouts = Array.isArray(parsed.bkWorkouts) ? parsed.bkWorkouts : [];
-  db.plaene = Array.isArray(parsed.plaene) ? parsed.plaene : [];
   db.customEx = Array.isArray(parsed.customEx) ? parsed.customEx : [];
   db.history = Array.isArray(parsed.history) ? parsed.history : [];
   if(parsed.settings) Object.assign(db.settings, parsed.settings);

@@ -202,11 +202,8 @@ function timingText(tm, sides){
   return tm.reps+'&times;'+tm.work+'s/'+tm.rest+'s';
 }
 function draftBlocks(d){
-  var gueltig = d.items.filter(function(it){ return it.lauf || findExercise(it.ex); });
-  var items = d.fest ? gueltig : stretchLast(gueltig, function(it){ return it.ex; });   // fest: die Reihenfolge des Workouts im Baukasten bleibt, auch Mobility zu Beginn
+  var items = stretchLast(d.items.filter(function(it){ return findExercise(it.ex); }), function(it){ return it.ex; });
   return items.map(function(it, i){
-    /* Lauf im Workout (Baukasten): ein Zeitblock ohne Übung */
-    if(it.lauf) return { id:"dr-"+i+"-lauf", ex:"", name:it.name, reps:1, workSec:it.work, restSec:0, sides:false, hint:"", after:it.after != null ? it.after : null, bloc:it.bloc || "" };
     var ex = findExercise(it.ex), tm = itemTiming(d, it), next = items[i+1];
     // zwischen zwei Dehnübungen reichen 10 s zum Umsetzen
     var after = it.after != null ? it.after : (next && exIsStretch(it.ex) && exIsStretch(next.ex) ? Math.min(10, d.blockRest||0) : null);
@@ -214,7 +211,7 @@ function draftBlocks(d){
              sides:ex.perSide, hint:tplText(ex.hint), after:after, bloc:it.bloc || "" };
   });
 }
-function draftRun(d){ var r = libQuickWorkout(draftBlocks(d), d.blockRest||0, d.name, "draft"); if(d.mitGewicht) r.mitGewicht = true; return r; }
+function draftRun(d){ return libQuickWorkout(draftBlocks(d), d.blockRest||0, d.name, "draft"); }
 function draftCopy(d){ return JSON.parse(JSON.stringify(d)); }
 function draftFromLib(lw){
   if(lw.tm) return { key:"lib:"+lw.id, src:"lib", name:tplText(lw.name), mode:"uniform", reps:lw.tm.reps, work:lw.tm.work, rest:lw.tm.rest,

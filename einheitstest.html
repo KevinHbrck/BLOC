@@ -235,6 +235,18 @@
   });
 
   /* ---------- Zeiten ---------- */
+  test("Speicherformat: Version, Summit wird entfernt und archiviert", function () {
+    var arch0 = W.localStorage.getItem(W.SUMMIT_ARCHIV);
+    try {
+      W.localStorage.removeItem(W.SUMMIT_ARCHIV);
+      var db = W.dbAusRoh({ v: 1, settings: { myReps: [{ id: "c1" }], repBest: { x: { best: 1 } }, favs: ["rep:c1", "lib:x"], kalender: { e: [{ id: "k", art: "summit" }, { id: "k2", art: "run" }] } }, history: [{ at: Date.now(), b: "reps" }] });
+      gleich(db.v, W.DB_VERSION, "Version gesetzt");
+      gleich(db.settings.favs.join(), "lib:x", "Summit-Favorit entfernt"); gleich(db.settings.kalender.e.length, 1, "Summit-Kalendereintrag entfernt"); gleich(db.history.length, 0, "Summit-Verlauf entfernt");
+      wahr(JSON.parse(W.localStorage.getItem(W.SUMMIT_ARCHIV)).myReps.length === 1, "eigene Challenge im Archiv");
+      var neu = W.dbAusRoh({ v: W.DB_VERSION, settings: { myReps: [{ id: "c2" }] } });
+      wahr(neu.settings.myReps, "Stand mit aktueller Version wird nicht noch einmal umgebaut");
+    } finally { if (arch0 == null) W.localStorage.removeItem(W.SUMMIT_ARCHIV); else W.localStorage.setItem(W.SUMMIT_ARCHIV, arch0); }
+  });
   test("Zeitformate: Stoppuhr, Dauer, Kurzdauer", function () {
     gleich(W.fmtUhr(0), "0:00", "null"); gleich(W.fmtUhr(65000), "1:05", "Minuten"); gleich(W.fmtUhr(3725000), "1:02:05", "Stunden");
     gleich(W.fmtUhr(-500), "0:00", "negativ");
@@ -388,50 +400,7 @@
       gleich(W.kalAufloesen({ art: "zufall" }).name, W.t("kalZufall"), "Zufallstraining");
       var fehlt = W.kalAufloesen({ art: "workout", ref: "gibt-es-nicht", name: "Alt" });
       gleich(fehlt.ok, false, "gelöschtes Workout erkannt");
-      var bk0 = W.state.db.bkWorkouts.slice();
-      try {
-        W.state.db.bkWorkouts.push({ id: "wk-test", name: "Test-Workout", items: [{ typ: "run", min: 20, runden: 1, pause: 0 }], updatedAt: 1 });
-        var wk = W.kalAufloesen({ art: "wk", ref: "wk-test" });
-        wahr(wk.ok && wk.name === "Test-Workout" && /1/.test(wk.sub), "Workout aus dem Baukasten im Kalender: " + wk.name + " / " + wk.sub);
-        gleich(W.kalAufloesen({ art: "wk", ref: "gibt-es-nicht" }).ok, false, "gelöschtes Workout erkannt");
-      } finally { W.state.db.bkWorkouts = bk0; }
     } finally { s.kalender = alt; }
-  });
-  test("Baukasten: Dauer eines Workouts stimmt mit dem Timer überein, Reihenfolge bleibt, Pausen und Läufe", function () {
-    var db = W.state.db, bloecke0 = W.stPlaene().slice(), my0 = (db.myWorkouts || []).slice(), wk0 = db.bkWorkouts.slice();
-    try {
-      var ex = W.EXERCISES.filter(function (e) { return e.main !== "stretch"; }).map(function (e) { return e.id; });
-      W.stPlaene().push({ id: "bk-a", name: "A", ids: ex.slice(0, 3), updatedAt: 1, standard: "saetze" });
-      W.stPlaene().push({ id: "bk-b", name: "B", ids: ex.slice(3, 6), updatedAt: 1, standard: "saetze" });
-      var wk = { id: "bk-w", name: "W", items: [{ typ: "plan", ref: "bk-a", runden: 2, pause: 40 }, { typ: "plan", ref: "bk-b", runden: 1, pause: 20 }, { typ: "run", min: 10, name: "Lauf", runden: 1, pause: 0 }], updatedAt: 1 };
-      var d = W.bkWkDraft(wk);
-      gleich(Math.round(W.workoutDuration(W.draftRun(d))), Math.round(W.bkWkDauer(wk)), "Dauer: Rechnung = Timer");
-      var lauf = d.items[d.items.length - 1];
-      wahr(lauf.lauf && lauf.work === 600, "Lauf als Zeitblock (10 min)");
-      var bloc = d.items.filter(function (it) { return it.bloc; });
-      wahr(bloc.length >= 1 && bloc[0].bloc === "A", "Ab 30 s Pause fragt der Timer „Bereit für A?“: " + bloc.map(function (b) { return b.bloc; }).join(","));
-      wahr(d.fest && d.mitGewicht, "feste Reihenfolge, Gewichte im Timer");
-      gleich(W.bkWorkoutsMit("plan", "bk-a").length, 0, "noch in keinem Workout gespeichert");
-      db.bkWorkouts.push(wk);
-      gleich(W.bkWorkoutsMit("plan", "bk-a").length, 1, "Verweis gefunden");
-      wahr(/„W“/.test(W.bkLoeschText("plan", "bk-a")), "Löschwarnung nennt das Workout");
-      W.bkRefWeg("plan", "bk-a");
-      gleich(wk.items.length, 2, "Verweis nach dem Löschen entfernt");
-    } finally { db.settings.stPlaene = bloecke0; db.myWorkouts = my0; db.bkWorkouts = wk0; }
-  });
-  test("Speicherformat: Version, alter Plan wird PLAN, Summit wird entfernt und archiviert", function () {
-    var arch0 = W.localStorage.getItem(W.SUMMIT_ARCHIV);
-    try {
-      W.localStorage.removeItem(W.SUMMIT_ARCHIV);
-      var db = W.dbAusRoh({ v: 1, settings: { myReps: [{ id: "c1" }], repBest: { x: { best: 1 } }, favs: ["rep:c1", "lib:x"], kalender: { e: [{ id: "k", art: "summit" }, { id: "k2", art: "run" }] },
-        planBau: { wochen: 6, tage: [0], wahl: { 0: ["run"] } } }, history: [{ at: Date.now(), b: "reps" }] });
-      gleich(db.v, W.DB_VERSION, "Version gesetzt");
-      gleich(db.plaene.length, 1, "alter Plan übernommen"); gleich(db.settings.planBau, undefined, "planBau entfernt");
-      gleich(db.settings.favs.join(), "lib:x", "Summit-Favorit entfernt"); gleich(db.settings.kalender.e.length, 1, "Summit-Kalendereintrag entfernt"); gleich(db.history.length, 0, "Summit-Verlauf entfernt");
-      wahr(JSON.parse(W.localStorage.getItem(W.SUMMIT_ARCHIV)).myReps.length === 1, "eigene Challenge im Archiv");
-      var neu = W.dbAusRoh({ v: W.DB_VERSION, settings: {} });
-      gleich(neu.plaene.length, 0, "Stand ohne Plan bleibt ohne Plan");
-    } finally { if (arch0 == null) W.localStorage.removeItem(W.SUMMIT_ARCHIV); else W.localStorage.setItem(W.SUMMIT_ARCHIV, arch0); }
   });
   test("Run: Strecke zwischen zwei Punkten (Haversine)", function () {
     nah(W.runMeter([48, 11], [48.009, 11]), 1001, 8, "0,009° Breite ≈ 1 km");
