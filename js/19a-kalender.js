@@ -1,16 +1,16 @@
 "use strict";
 /* ============ Trainingskalender ============
    Wochen- oder Monatsansicht (Montag zuerst). Einträge: eigene Workouts (Nach Zeit), Pläne (Nach Sätzen), Workouts aus dem Katalog, Mobility & Stretch,
-   Summit (Programm, Einheit, eigene), Run (frei oder mit Ziel in km) und ein Zufallstraining („Überrasch mich“ erst am Tag selbst).
-   Hinzufügen nur über „+ Hinzufügen“ am Tag (Workouts › Meine Workouts, Meine Pläne, Zufallstraining, Katalog, Mobility; Run; Summit). Im Monat
+   Workouts aus dem Baukasten (Abfolge von BLOCs), Run (frei oder mit Ziel in km) und ein Zufallstraining („Überrasch mich“ erst am Tag selbst).
+   Hinzufügen nur über „+ Hinzufügen“ am Tag (Workouts › Meine Workouts, Meine Pläne, Zufallstraining, Katalog, Mobility; Run). Im Monat
    wählt ein Tipp den Tag, seine Einträge stehen unter dem Raster. Einträge verschiebt man über ihr Menü
    („Auf einen anderen Tag“). Daten: settings.kalender = { e:[{ id, tag:"JJJJ-MM-TT", art, ref, name, km, erledigt, at }] }
-   - nur auf dem Gerät, wie alles andere. Art: workout | plan | lib | summit | run | zufall; bei run steht rad:true für eine Radfahrt.
+   - nur auf dem Gerät, wie alles andere. Art: wk | workout | plan | lib | run | zufall; bei run steht rad:true für eine Radfahrt.
    „Woche kopieren“ legt alle Einträge der Woche auf die gleichen Wochentage der nächsten 1-12 Wochen. */
 var kalAnsicht = "woche";      // "woche" | "monat"
 var kalBasis = null;           // ein Tag der angezeigten Woche bzw. des Monats
 var kalAuswahl = null;         // im Monat gewählter Tag (Einträge stehen unter dem Raster)
-var KAL_FARBE = { workout:"var(--tp-color)", plan:"var(--gym-color, var(--bl-color))", lib:"var(--tp-color)", summit:"var(--rep-color)", run:"var(--run-color, #e5573f)", zufall:"var(--accent)" };
+var KAL_FARBE = { wk:"var(--accent)", workout:"var(--tp-color)", plan:"var(--gym-color, var(--bl-color))", lib:"var(--tp-color)", run:"var(--run-color, #e5573f)", zufall:"var(--accent)" };
 
 /* ---------- Daten ---------- */
 function kalListe(){
@@ -42,25 +42,20 @@ function kalHinzu(tag, o){
   kalListe().push(e); save();
   return e;
 }
-/* Erledigt ergibt sich von allein: ist an dem Tag ein Training dieser Art gelaufen (Run, Summit-Ergebnis, sonst Workout/Plan/Timer), gilt der Eintrag
+/* Erledigt ergibt sich von allein: ist an dem Tag ein Training dieser Art gelaufen (Run, sonst Workout/Plan/Timer), gilt der Eintrag
    als abgehakt - der Reihe nach, je Training einer. e.erledigt === true bzw. false ist die eigene Entscheidung (abhaken bzw. zurücknehmen). */
 function kalAktivitaet(tag){
   var h = (state.db.history || []).filter(function(x){ return x && kalTagKey(x.at) === tag; });
-  var reps = h.filter(function(x){ return bereichVonEintrag(x) === "reps"; }).length;
-  var ids = [], best = state.db.settings.repBest || {};
-  Object.keys(best).forEach(function(id){ ((best[id] && best[id].log) || []).forEach(function(x){ if(kalTagKey(x[0]) === tag && ids.indexOf(id) < 0) ids.push(id); }); });
   return {
     run:h.filter(function(x){ return bereichVonEintrag(x) === "run"; }).length,
-    reps:Math.max(reps, ids.length), repIds:ids,
-    train:besuche(h.filter(function(x){ var b = bereichVonEintrag(x); return b !== "run" && b !== "reps"; })).length
+    train:besuche(h.filter(function(x){ return bereichVonEintrag(x) !== "run"; })).length
   };
 }
 function kalStatus(tag){   // { Eintrags-ID: erledigt? }
-  var a = kalAktivitaet(tag), tr = a.train, rn = a.run, rp = a.reps, res = {};
+  var a = kalAktivitaet(tag), tr = a.train, rn = a.run, res = {};
   kalAn(tag).forEach(function(e){
     var auto = false;
     if(e.art === "run"){ if(rn > 0){ rn--; auto = true; } }
-    else if(e.art === "summit"){ if(a.repIds.indexOf(e.ref) > -1 || rp > 0){ auto = true; if(rp > 0) rp--; } }
     else if(tr > 0){ tr--; auto = true; }
     res[e.id] = e.erledigt === true ? true : e.erledigt === false ? false : auto;
   });
@@ -106,13 +101,9 @@ function kalAufloesen(e){
       o.name = tplText(lw.name); o.sub = exAnz(le, workoutDuration(libWorkoutRun(lw)));
       if(libIstWarmDehn(lw)) o.farbe = "var(--ws-color)";
     }
-  } else if(e.art === "summit"){
-    var q = repQuelle(e.ref);
-    if(!q) o.ok = false;
-    else {
-      var R = repQRunden(q);
-      o.name = q.name; o.sub = (R === 1 ? t("repRound1") : t("repRoundsN", { n:R }))+" · "+t("repReps", { n:repQWdh(q) });
-    }
+  } else if(e.art === "wk"){
+    var bw = bkWkFind(e.ref);
+    if(!bw) o.ok = false; else { o.name = bw.name; o.sub = bkAnzahlBlocs(bw.items.length)+" · "+fmtDauerKurz(bkWkDauer(bw)); }
   } else if(e.art === "run"){
     o.name = e.name || t(e.rad ? "kalRadName" : "kalRunName");
     o.sub = (e.km > 0 ? runKm(e.km*1000)+" km" : t("kalRunFrei"))+(e.rad ? " · "+t("runArtRad") : "");
@@ -126,7 +117,7 @@ function kalStarten(e){
   if(e.art === "workout"){ coverDraft = null; go("#cover/my/"+e.ref); }
   else if(e.art === "lib"){ coverDraft = null; go("#cover/lib/"+e.ref); }
   else if(e.art === "plan"){ var pl = stPlanFind(e.ref); if(pl && stPlanIds(pl).length) planAlsWorkout(pl); else go("#studioplan/"+e.ref); }
-  else if(e.art === "summit") go("#rep/"+e.ref);
+  else if(e.art === "wk"){ var sw = bkWkFind(e.ref); if(sw) bkWkStart(sw); }
   else if(e.art === "run"){ state.db.settings.runArt = e.rad ? "rad" : "lauf"; save(); runGeplant ={ name:e.name || t(e.rad ? "kalRadName" : "kalRunName"), km:e.km || 0, rad:!!e.rad, t:Date.now() }; go("#run"); }
   else openSurprise();
 }
@@ -330,7 +321,7 @@ function kalRunSheet(tag){
   var root = document.getElementById("overlayRoot");
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet" role="dialog" aria-label="'+esc(t("kalRunTitel"))+'">'+
     '<h3>'+esc(t("kalRunTitel"))+'</h3>'+
-    '<label>'+esc(t("runArt"))+'</label><div class="theme-pick rep-pick seg-2" id="kr-art">'+
+    '<label>'+esc(t("runArt"))+'</label><div class="theme-pick wahl-pick seg-2" id="kr-art">'+
       '<button type="button" data-krart="lauf" class="active">'+esc(t("runArtLauf"))+'</button><button type="button" data-krart="rad">'+esc(t("runArtRad"))+'</button></div>'+
     '<label for="kr-n">'+esc(t("name"))+'</label><input type="text" id="kr-n" maxlength="40" value="'+esc(t("kalRunName"))+'">'+
     '<label for="kr-km">'+esc(t("kalRunZiel"))+'</label><input type="number" id="kr-km" inputmode="decimal" min="0" max="300" step="0.5" value="5">'+
@@ -360,6 +351,10 @@ function kalHinzuMenue(tag){
   function fertig(art, ref){ kalHinzu(tag, { art:art, ref:ref }); kalNeu(); }
   function workoutsMenue(){
     openActionSheet(t("kalWorkouts")+" · "+kalTagText(tag), [
+      { ico:HOME_ICON.katalog, label:t("bkOptWk"), fn:function(){
+        var items = state.db.bkWorkouts.filter(function(w){ return !w.entwurf; }).sort(bkNeuerst).map(function(w){ return { id:w.id, name:w.name, sub:bkAnzahlBlocs(w.items.length)+" · "+fmtDauerKurz(bkWkDauer(w)) }; });
+        kalPicker(t("bkOptWk"), items, function(id){ fertig("wk", id); });
+      } },
       { ico:HOME_ICON.lib, label:t("kalMeineWo"), fn:function(){
         var items = (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return !mw.ws; }).map(function(mw){
           var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
@@ -381,23 +376,15 @@ function kalHinzuMenue(tag){
       } },
       { ico:HOME_ICON.warm, label:t("kalMob"), fn:function(){
         var items = [];
-        (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return mw.ws; }).forEach(function(mw){ items.push({ id:"w:"+mw.id, name:mw.name, sub:t("repOwnTag") }); });
+        (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return mw.ws; }).forEach(function(mw){ items.push({ id:"w:"+mw.id, name:mw.name, sub:t("ownTag") }); });
         LIB_WORKOUTS.filter(function(lw){ return libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); }).forEach(function(lw){ items.push({ id:"l:"+lw.id, name:tplText(lw.name), sub:"" }); });
         kalPicker(t("kalMob"), items, function(id){ fertig(id.charAt(0) === "w" ? "workout" : "lib", id.slice(2)); });
       } }
     ]);
   }
-  function summitPicker(){
-    var items = [];
-    (state.db.settings.myRepUnits || []).forEach(function(u){ items.push({ id:u.id, name:u.name || t("reUnitDefault"), sub:t("repOwnTag") }); });
-    (state.db.settings.myReps || []).forEach(function(c){ items.push({ id:c.id, name:c.name || t("reDefaultName"), sub:t("repOwnTag") }); });
-    REP_WORKOUT_ROWS.forEach(function(r){ items.push({ id:r[0], name:repName(r), sub:t("lvl"+r[3]) }); });
-    kalPicker(t("kalSummit"), items, function(id){ fertig("summit", id); });
-  }
   openActionSheet(kalTagText(tag), [
     { ico:HOME_ICON.lib, label:t("kalWorkouts"), fn:workoutsMenue },
-    { ico:HOME_ICON.run, label:t("kalRun"), fn:function(){ kalRunSheet(tag); } },
-    { ico:HOME_ICON.reps, label:t("kalSummit"), fn:summitPicker }
+    { ico:HOME_ICON.run, label:t("kalRun"), fn:function(){ kalRunSheet(tag); } }
   ]);
 }
 
@@ -456,6 +443,13 @@ function kalDauerOrt(e){
   } else if(e.art === "plan"){
     var p = stPlanFind(e.ref);
     if(p){ var ids = stPlanIds(p); r.ort = ortName(ids.map(findExercise).filter(Boolean)); r.sub = planAnzahl(ids.length)+" · "+r.ort; }
+  } else if(e.art === "wk"){   // Workout aus dem Baukasten: Dauer der Abfolge, Ort nach den Übungen seiner BLOCs
+    var wk = bkWkFind(e.ref);
+    if(wk){
+      var wex = [];
+      wk.items.forEach(function(it){ var b = it.typ === "run" ? null : bkBlocFind(it.typ, it.ref); if(b) b.ids.forEach(function(id){ var x = findExercise(id); if(x) wex.push(x); }); });
+      r.sek = bkWkDauer(wk); r.ort = wex.length ? ortName(wex) : "";
+    }
   }
   return r;
 }

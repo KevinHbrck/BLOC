@@ -140,7 +140,7 @@ function studioPauseStop(){
 }
 var ICON_STATS = '<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>';
 /* Leiste oben in der Karte: „Statistik“, Kurzfassung, kleine Kurve - ein Tipp öffnet das Statistik-Fenster */
-/* Statistik-Kachel für Studio und Summit: immer sichtbar, eigene Zeile über dem Inhalt (so überdeckt sie keine Figur).
+/* Statistik-Kachel für Studio: immer sichtbar, eigene Zeile über dem Inhalt (so überdeckt sie keine Figur).
    Ohne Kurve steht eine gestrichelte Platzhalterlinie, ein Tipp öffnet in jedem Fall das Statistik-Fenster. */
 function statsLeisteHTML(attr, kurz, pts, farbe){
   var kurve = wochenKurve(pts, "ssl-kurve") ||
@@ -178,7 +178,7 @@ function wochenDiagramm(pts, einheit, fmt, schritt){
     (pts.length > 1 ? '<polyline class="wd-linie" points="'+pts.map(function(q){ return X(q).toFixed(1)+","+Y(q).toFixed(1); }).join(" ")+'"/>' : '')+
     pts.map(function(q){ return '<circle class="wd-punkt" cx="'+X(q).toFixed(1)+'" cy="'+Y(q).toFixed(1)+'" r="3.5"/>'; }).join("")+'</svg>';
 }
-/* Statistik-Fenster für Studio und Summit. o: { titel, farbe, zahlen:[[Wert, Beschriftung] …], wochen, fmt, schritt, einheit,
+/* Statistik-Fenster für Studio. o: { titel, farbe, zahlen:[[Wert, Beschriftung] …], wochen, fmt, schritt, einheit,
    suffix (hinter dem Verlauf, z. B. " kg"), seit, hatDaten, leerText, letzteTitel, letzte:[[links, rechts] …] }.
    Ohne Daten bleibt alles stehen (Zahlen als „–“, leeres Diagramm), dazu ein kurzer Hinweis. */
 function openStatistik(o){
@@ -251,21 +251,6 @@ function openStudioStats(id, sicht){
     letzte:log.map(function(l, i){
       return [studioTag(l.at) === studioTag(Date.now()) ? t("stToday") : new Date(l.at).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }), l.s.map(satzText).join(" · "), rekorde[i]];
     }).slice(-30).reverse()
-  });
-}
-/* Summit: dieselbe Statistik für ein Programm (Bestzeit, Läufe, Zeit je Woche) */
-function openRepStats(id, name){
-  var b = repBestOf(id), log = (b && b.log) || [];
-  openStatistik({
-    titel:name, farbe:"var(--rep-color)", hatDaten:!!b, leerText:t("repStatsEmpty"),
-    zahlen:[[b ? repUhr(b.best) : "", t("repBestZeit")], [b ? String(b.n) : "", t("repLaeufe")], [b ? repUhr(b.last) : "", t("repLetzte")]],
-    verlaufTitel:t("repWeekly"), wochen:repWochen(id), fmt:repUhr, schritt:1000, einheit:"min",
-    seit:log.length ? new Date(log[0][0]).toLocaleDateString(currentLang(), { day:"numeric", month:"numeric", year:"2-digit" }) : "",
-    letzteTitel:t("repLastRuns"),
-    letzte:log.slice(-8).reverse().map(function(x){
-      return [new Date(x[0]).toLocaleDateString(currentLang(), { weekday:"short", day:"numeric", month:"numeric" }),
-              repUhr(x[1])+(b && x[1] === b.best ? " ★" : "")];
-    })
   });
 }
 function studioTimerKarte(id, titel, hinweis){

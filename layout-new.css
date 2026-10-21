@@ -131,7 +131,6 @@
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="katalog"]{ background-image:url("img/neu-workout.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="warm"]{ background-image:url("img/neu-mobility.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="intervall"]{ background-image:url("img/neu-timer.jpg"); }
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="reps"]{ background-image:url("img/neu-summit.jpg"); }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ background-image:url("img/bereich-run.jpg"); background-position:50% 50%; }
 
 /* Workout-Builder */
@@ -222,7 +221,6 @@
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="katalog"]{ --nc:#ff5a36; }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="warm"]{ --nc:#1fa56f; }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="intervall"]{ --nc:#2a8fe0; }
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="reps"]{ --nc:#d99a12; }
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="run"]{ --nc:#8a6cf0; }
 :root[data-layout="new"] .training-seite .area-tile.zeile::before{
   background:
@@ -245,7 +243,6 @@
 }
 /* Symbolfelder: einfarbig, nur Workout (orange) und Mobility (grün) behalten ihre Farbe */
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="intervall"] .at-ico,
-:root[data-layout="new"] .training-seite .area-tile[data-bereich="reps"] .at-ico,
 :root[data-layout="new"] .training-seite .area-tile[data-bereich="run"] .at-ico{
   background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.26);
 }
@@ -317,7 +314,7 @@
 :root[data-layout="new"] .kb-rechts{ display:flex; gap:8px; }
 :root[data-layout="new"] .kb-rechts .iconbtn:not(.kb-rund), :root[data-layout="new"] .kb-rechts .hint-btn{ width:48px; height:48px; border-radius:50%; background:rgba(20,22,26,.55); color:#fff; border:0; box-shadow:none; }
 
-/* ---------- Reiter als Pille (Summit, Mobility, Workout) wie im Entwurf ---------- */
+/* ---------- Reiter als Pille (Mobility, Workout) wie im Entwurf ---------- */
 :root[data-layout="new"] .rz{ gap:2px; padding:4px; margin:12px 0 12px; border:1px solid var(--nl-linie); border-radius:999px;
   background:color-mix(in srgb, var(--text) 5%, transparent); }
 :root[data-layout="new"] .rz button{ border-radius:999px; padding:11px 6px; font-size:14.5px; }
@@ -393,7 +390,6 @@
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-sub, :root[data-layout="new"][data-theme="light"] .ff-bereich, :root[data-layout="new"][data-theme="light"] .ff-sub{ color:var(--text-dim); }
 :root[data-layout="new"][data-theme="light"] .ff-stern{ color:#c98200; }
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="intervall"] .at-ico,
-:root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="reps"] .at-ico,
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(28,28,30,.1); color:var(--text); }
 :root[data-layout="new"][data-theme="light"] .marke-neu b{ color:#df4a22; }
 :root[data-layout="new"][data-theme="light"] .kn-sym .iconbtn{ background:rgba(255,255,255,.66); color:var(--text); border-color:rgba(0,0,0,.1); }
@@ -405,7 +401,6 @@
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub, :root[data-layout="new"]:not([data-theme]) .ff-bereich, :root[data-layout="new"]:not([data-theme]) .ff-sub{ color:var(--text-dim); }
   :root[data-layout="new"]:not([data-theme]) .ff-stern{ color:#c98200; }
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="intervall"] .at-ico,
-  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="reps"] .at-ico,
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(28,28,30,.1); color:var(--text); }
   :root[data-layout="new"]:not([data-theme]) .marke-neu b{ color:#df4a22; }
   :root[data-layout="new"]:not([data-theme]) .kn-sym .iconbtn{ background:rgba(255,255,255,.66); color:var(--text); border-color:rgba(0,0,0,.1); }
@@ -778,21 +773,6 @@ button.satz-chip{ cursor:pointer; }
 body:has(.satz-root) .fab, body:has(.satz-root) #tabbar{ display:none; }
 .satz-mus, .satz-mus *{ color:rgba(255,255,255,.85) !important; }
 
-/* Summit-Player (Modern): dasselbe dunkle Glas auf geblurrtem Foto wie Timer, Satz-Training und Run */
-:root[data-layout="new"] .rep-glas{ position:relative; color:#f4f4f6; --text:#f4f4f6; --text-dim:rgba(255,255,255,.75); --surface:rgba(255,255,255,.12); --surface-2:rgba(255,255,255,.14); --border:rgba(255,255,255,.22); }
-:root[data-layout="new"] .rep-bg{ position:fixed; inset:-30px; z-index:0; pointer-events:none; background:url(img/neu-p-freiluft-meer.jpg) center/cover no-repeat; filter:blur(26px) brightness(.5) saturate(1.2); }
-:root[data-layout="new"] .rep-glas > *:not(.rep-bg){ position:relative; z-index:1; }
-:root[data-layout="new"] .rep-glas .rp-karte{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); box-shadow:0 14px 40px rgba(0,0,0,.28); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); color:#fff; }
-:root[data-layout="new"] .rep-glas .rp-karte .illu{ color:#fff; }
-:root[data-layout="new"] .rep-glas .rp-fort{ background:rgba(255,255,255,.2); }
-:root[data-layout="new"] .rep-glas .rp-fort i{ background:#fff; }
-:root[data-layout="new"] .rep-glas .rp-go{ background:#fff; color:#101214; border:0; border-radius:22px; }
-:root[data-layout="new"] .rep-glas .btn-secondary{ background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.25); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
-:root[data-layout="new"] .rep-glas .rp-best{ color:#ff8f6b; }
-:root[data-layout="new"] body:has(.rep-glas) #tabbar, body:has(.rep-glas) #tabbar{ display:none; }
-:root[data-layout="new"] .rep-glas .topbar{ background:transparent; border:0; box-shadow:none; color:#fff; -webkit-backdrop-filter:none; backdrop-filter:none; }
-:root[data-layout="new"] .rep-glas .topbar h1, :root[data-layout="new"] .rep-glas .topbar .ttl{ color:#fff; }
-:root[data-layout="new"] .rep-glas .topbar .iconbtn{ background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.25); }
 
 /* BLOC-Zeichen im Training: orange und größer (Timer und Satz-Training) */
 .satz-logo{ display:flex; align-items:baseline; justify-content:center; gap:12px; margin:2px 0 8px; }
@@ -921,7 +901,7 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-sub, :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-bereich, :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-sub{ color:rgba(255,255,255,.9); }
 :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-name, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile .at-sub, :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-name, :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-sub, :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-bereich{ text-shadow:0 1px 6px rgba(0,0,0,.55); }
 :root[data-layout="new"][data-theme="light"] .fav-foto:not(.ohne) .ff-stern{ color:#f0a020; }
-:root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="intervall"] .at-ico, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="reps"] .at-ico, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(255,255,255,.16); color:#fff; }
+:root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="intervall"] .at-ico, :root[data-layout="new"][data-theme="light"] .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(255,255,255,.16); color:#fff; }
 @media (prefers-color-scheme: light){
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile.zeile::before{ background:linear-gradient(180deg, rgba(8,9,11,.20) 0%, rgba(8,9,11,.50) 40%, rgba(8,9,11,.86) 100%); }
   :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne)::before{ background:linear-gradient(180deg, color-mix(in srgb, var(--nc, #444) 0%, transparent) 40%, color-mix(in srgb, var(--nc, #444) 22%, transparent) 100%), linear-gradient(180deg, rgba(8,9,11,.12) 0%, rgba(8,9,11,.45) 50%, rgba(8,9,11,.86) 100%); }
@@ -929,7 +909,7 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-bereich, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-sub{ color:rgba(255,255,255,.9); }
   :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-name, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile .at-sub, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-name, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-sub, :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-bereich{ text-shadow:0 1px 6px rgba(0,0,0,.55); }
   :root[data-layout="new"]:not([data-theme]) .fav-foto:not(.ohne) .ff-stern{ color:#f0a020; }
-  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="intervall"] .at-ico, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="reps"] .at-ico, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(255,255,255,.16); color:#fff; }
+  :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="intervall"] .at-ico, :root[data-layout="new"]:not([data-theme]) .training-seite .area-tile[data-bereich="run"] .at-ico{ background:rgba(255,255,255,.16); color:#fff; }
 }
 /* Ukraine Twist: die wehende Flagge liegt auch hinter der Figur in den Kacheln (Suche, Katalog, Air); ein heller Hauch hält die Figur lesbar */
 .fig-karte.ua-kachel .fig-bild{ background:linear-gradient(rgba(255,255,255,.22), rgba(255,255,255,.22)), var(--ua-flag) center / cover no-repeat !important; border-radius:inherit; }
@@ -983,7 +963,7 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 @media (prefers-reduced-motion: reduce){ :root[data-layout="new"] .training-seite .area-tile.zeile::after{ animation:none; background-position:50% 0, 0 0; } }
 /* Run-Startseite: Hintergrundfoto weniger weichgezeichnet (Timer und Lauf behalten die stärkere Unschärfe) */
 :root[data-layout="new"]:has(.run-hero) .run-bg i{ filter:blur(11px) brightness(.66) saturate(1.25); }
-/* Timer und Summit (Listen): derselbe Hintergrund und dieselbe Glas-Optik wie auf Run - Karten halbtransparent mit Blur, helle Schrift in jedem Modus */
+/* Timer (Liste): derselbe Hintergrund und dieselbe Glas-Optik wie auf Run - Karten halbtransparent mit Blur, helle Schrift in jedem Modus */
 :root[data-layout="new"]:has(.run-bg){ --surface:rgba(255,255,255,.12); --surface-2:rgba(255,255,255,.14); --border:rgba(255,255,255,.22); }
 :root[data-layout="new"]:has(.run-bg) #app .card, :root[data-layout="new"]:has(.run-bg) #app .list-item.entry, :root[data-layout="new"]:has(.run-bg) #app .tpl-item,
 :root[data-layout="new"]:has(.run-bg) #app .filter-karte, :root[data-layout="new"]:has(.run-bg) #app .fc-card{
@@ -991,8 +971,8 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
 :root[data-layout="new"]:has(.run-bg) #app .section-title, :root[data-layout="new"]:has(.run-bg) #app .page-hint{ color:rgba(255,255,255,.88); }
 :root[data-layout="new"]:has(.run-bg) .kopf-bereich.klar .kb-rund, :root[data-layout="new"]:has(.run-bg) .kopf-bereich.klar .kb-rechts .iconbtn{ background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.24); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
-/* Start-Knöpfe (Run, Timer, Summit) als helles Glas statt voll weiß: durchscheinend, weißes Symbol bzw. weiße Schrift */
-:root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn, :root[data-layout="new"]:has(.run-bg) #app .playbtn, :root[data-layout="new"] .rep-glas .rp-go{
+/* Start-Knöpfe (Run, Timer) als helles Glas statt voll weiß: durchscheinend, weißes Symbol bzw. weiße Schrift */
+:root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn, :root[data-layout="new"]:has(.run-bg) #app .playbtn{
   background:rgba(255,255,255,.2) !important; color:#fff !important; border:1px solid rgba(255,255,255,.4) !important; box-shadow:0 8px 26px rgba(0,0,0,.2);
   -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%); }
 :root[data-layout="new"] .run-bg ~ .run-hero .run-startbtn svg{ color:#ff8f6b; }
@@ -1002,7 +982,7 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .info-griff{ margin:8px 0 2px; padding:8px 12px; border-radius:12px; background:var(--surface-2, rgba(128,128,128,.12)); font-size:14px; line-height:1.35; }
 .info-griff b{ color:var(--accent); }
 .satz-glas .info-griff{ background:rgba(255,255,255,.12); color:#fff; margin:6px 0; font-size:13px; }
-/* Fenster, Menüs und Auswahlblätter über den Glas-Seiten (Run, Timer, Summit): undurchsichtig, damit die Karten dahinter nicht durchscheinen */
+/* Fenster, Menüs und Auswahlblätter über den Glas-Seiten (Run, Timer): undurchsichtig, damit die Karten dahinter nicht durchscheinen */
 :root[data-layout="new"]:has(.run-bg) #overlayRoot, :root[data-layout="new"]:has(.run-bg) .fab-menu, :root[data-layout="new"]:has(.run-bg) .vol-popover{
   --surface:#1d2025; --surface-2:#292d33; --border:rgba(255,255,255,.16); --text:#f4f4f6; --text-dim:rgba(255,255,255,.72); }
 :root[data-layout="new"]:has(.run-bg) .confirm-sheet{ background:#1d2025; color:#f4f4f6; -webkit-backdrop-filter:none; backdrop-filter:none; }
@@ -1091,7 +1071,7 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
   color:var(--accent-ink, var(--accent)); stroke:currentColor; }
 :root[data-layout="new"] .air-gear{ background:color-mix(in srgb, var(--accent) 16%, var(--surface)); }
 :root[data-layout="new"] .fc-chip.on [data-spequip] svg, :root[data-layout="new"] [data-spequip].on svg, :root[data-layout="new"] [data-start].active svg, :root[data-layout="new"] [data-srart].active svg{ color:inherit; }
-/* Foto-Köpfe der Bereiche (Workout, Mobility & Stretch, Timer, Summit …): untere Kante gerade statt abgerundet */
+/* Foto-Köpfe der Bereiche (Workout, Mobility & Stretch, Timer …): untere Kante gerade statt abgerundet */
 :root[data-layout="new"] .kopf-bereich{ border-radius:0; }
 /* Studio-Karte clean: die Sätze von heute stehen nicht mehr auf der Karte, sondern in der Statistik (Zeile „Heute“) */
 :root[data-layout="new"] .st-heute{ display:none; }
@@ -1100,3 +1080,86 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .satz-std small{ color:rgba(255,255,255,.75); font-size:12px; margin-bottom:4px; }
 /* Lauf-Details: Strecke immer als weiße Linie auf dunklem Glas (auch bei heller Helligkeit) */
 :root[data-layout="new"][data-layout="new"][data-layout="new"] .run-strecke{ --linie:#fff; color:#fff; background:rgba(34,36,40,.72); }
+
+/* ---------- Baukasten (Training): BLOC | Workout | PLAN, Karussell, Builder (js/23-baukasten.js) ---------- */
+.bk{ margin:0 0 20px; --kb:min(72vw, 290px); }
+.bk-kopf{
+  position:relative; isolation:isolate; overflow:hidden; display:flex; flex-direction:column; gap:12px; padding:18px; color:#fff;
+  border-radius:var(--radius); border-top-left-radius:var(--ecke); background:#202226 url("img/baukasten-dunkel.jpg") 50% 40%/cover;
+}
+.bk-kopf::before{ content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg, rgba(8,9,11,.35) 0%, rgba(8,9,11,.62) 100%); }
+:root[data-theme="light"] .bk-kopf{ background-image:url("img/baukasten-hell.jpg"); }
+@media (prefers-color-scheme: light){ :root:not([data-theme]) .bk-kopf{ background-image:url("img/baukasten-hell.jpg"); } }
+.bk-kicker{ font-size:12px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:rgba(255,255,255,.85); }
+.bk-seg{ display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; padding:4px; border-radius:999px; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.26); }
+.bk-seg button{ border:0; border-radius:999px; padding:10px 4px; font:inherit; font-size:14px; font-weight:700; color:#fff; background:transparent; cursor:pointer; }
+.bk-seg button.on{ background:#fff; color:#1c1c1e; }
+.bk-bau{ border:0; border-radius:999px; padding:13px 18px; font:inherit; font-size:16px; font-weight:800; color:#fff; background:var(--accent); cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.28); }
+.bk-kar{ position:relative; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:14px 0 6px; }
+.bk-kar::-webkit-scrollbar{ display:none; }
+.bk-spur{ display:flex; gap:12px; }
+.bk-spur::before, .bk-spur::after{ content:""; flex:0 0 calc(50% - var(--kb)/2 - 12px); }
+.bk-karte{
+  flex:0 0 var(--kb); scroll-snap-align:center; display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-height:150px; padding:16px; text-align:left; font:inherit; color:var(--text);
+  background:var(--surface); border:1px solid var(--nl-linie); border-radius:22px; border-top-left-radius:var(--ecke); box-shadow:var(--shadow); cursor:pointer;
+}
+.bk-k-typ{ font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-ink, var(--accent)); }
+.bk-k-name{ font-size:19px; line-height:1.2; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:break-word; }
+.bk-k-meta{ font-size:13px; color:var(--text-dim); }
+.bk-streifen{ display:flex; gap:3px; width:100%; height:8px; margin-top:auto; }
+.bk-streifen i{ border-radius:4px; min-width:4px; opacity:.92; }
+.bk-wtage{ display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; width:100%; margin-top:auto; }
+.bk-wtage i{ height:8px; border-radius:4px; background:var(--nl-linie); }
+.bk-wtage i.an{ background:var(--accent); }
+.bk-fuss{ display:flex; align-items:center; justify-content:space-between; padding:4px 6px 0; }
+.bk-pos{ font-size:13px; font-weight:700; color:var(--text-dim); font-variant-numeric:tabular-nums; }
+.bk-alle{ border:0; background:none; font:inherit; font-size:14px; font-weight:700; color:var(--accent-ink, var(--accent)); cursor:pointer; padding:6px 0 6px 12px; }
+.bk-leer{ margin-top:14px; padding:22px 18px; border-radius:22px; border-top-left-radius:var(--ecke); background:var(--surface); border:1px dashed var(--border); text-align:center; }
+.bk-leer p{ margin:0 0 14px; color:var(--text-dim); font-size:15px; }
+.bk-leer .btn{ width:auto; margin:0 auto; padding:11px 22px; }
+.bk-raster{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+.bk-karte.gitter{ flex:none; min-width:0; }
+.bk-suchzeile{ margin:4px 0 12px; }
+.bk-suchzeile input{ width:100%; box-sizing:border-box; padding:13px 16px; border-radius:999px; border:1px solid var(--nl-linie); background:var(--surface); color:var(--text); font:inherit; font-size:15px; }
+.bk-bau-unten{ margin-top:6px; }
+.bk-detail .bk-d-kopf{ display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:18px; border-radius:var(--radius); border-top-left-radius:var(--ecke); background:var(--surface); border:1px solid var(--nl-linie); box-shadow:var(--shadow); margin:6px 0 12px; }
+.bk-detail .bk-d-kopf b{ font-size:22px; line-height:1.2; word-break:break-word; }
+.bk-d-knoepfe{ display:grid; grid-template-columns:1.4fr 1fr; gap:10px; }
+.bk-d-knoepfe .btn{ margin:0; }
+.bk-d-info{ margin:10px 4px 0; font-size:13px; color:var(--text-dim); }
+.bk-d-liste{ display:grid; gap:8px; }
+.bk-d-zeile{ display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:16px; background:var(--surface); border:1px solid var(--nl-linie); }
+.bk-d-zeile i{ flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-style:normal; font-size:13px; font-weight:800; color:#fff; background:var(--c, var(--accent)); }
+.bk-d-zeile span{ display:flex; flex-direction:column; min-width:0; }
+.bk-d-zeile b{ font-size:15px; }
+.bk-d-zeile small{ font-size:12.5px; color:var(--text-dim); }
+/* Workout-Builder */
+.bk-wb-kopf label{ display:block; margin-bottom:6px; }
+.bk-summe{ margin-top:10px; font-size:14px; font-weight:700; color:var(--text-dim); }
+.bk-abfolge{ display:grid; gap:10px; }
+.bk-ab{ position:relative; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:4px 10px; padding:10px 10px 12px; border-radius:18px; border-top-left-radius:var(--ecke); background:var(--surface); border:1px solid var(--nl-linie); border-left:5px solid var(--c, var(--accent)); transition:opacity .16s, transform .16s; }
+.bk-ab.raus{ opacity:0; transform:translateX(-80%) !important; }
+.bk-ab.zieht{ z-index:5; box-shadow:0 12px 30px rgba(0,0,0,.28); transition:none; }
+.bk-ab.fehlt{ opacity:.6; }
+.bk-griff{ border:0; background:none; color:var(--text-dim); width:34px; height:40px; display:grid; place-items:center; cursor:grab; touch-action:none; }
+.bk-griff svg{ width:22px; height:22px; }
+.bk-ab-text{ display:flex; flex-direction:column; min-width:0; touch-action:pan-y; cursor:pointer; }
+.bk-ab-text b{ font-size:15.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bk-ab-text small{ font-size:12.5px; color:var(--text-dim); }
+.bk-weg{ border:0; background:none; font-size:26px; line-height:1; color:var(--text-dim); width:38px; height:38px; cursor:pointer; }
+.bk-ab-reg{ grid-column:1 / -1; display:grid; grid-template-columns:1fr 1fr; gap:8px; padding-left:44px; }
+.bk-mini{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:2px 4px; padding:6px 6px 6px 8px; border-radius:16px; background:var(--surface-2, var(--nl-linie)); }
+.bk-mini small{ grid-column:1 / -1; font-size:11.5px; color:var(--text-dim); }
+.bk-mini button{ width:32px; height:32px; border:0; border-radius:50%; background:var(--surface); color:var(--text); font-size:18px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); }
+.bk-mini output{ text-align:center; font-weight:800; font-size:15px; font-variant-numeric:tabular-nums; }
+.bk-hinweis{ margin:8px 4px 4px; font-size:12.5px; color:var(--text-dim); }
+.bk-quellen{ display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding:2px 0 8px; }
+.bk-quellen::-webkit-scrollbar{ display:none; }
+.bk-qchip{ flex:none; border:1px solid var(--nl-linie); border-radius:999px; padding:9px 14px; font:inherit; font-size:14px; font-weight:700; color:var(--text); background:var(--surface); cursor:pointer; }
+.bk-qchip.on{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.bk-quelle{ display:grid; gap:8px; }
+.bk-q-zeile{ display:flex; align-items:center; gap:12px; width:100%; padding:11px 14px; border-radius:16px; background:var(--surface); border:1px solid var(--nl-linie); font:inherit; color:var(--text); text-align:left; cursor:pointer; }
+.bk-q-text{ display:flex; flex-direction:column; flex:1; min-width:0; }
+.bk-q-text b{ font-size:15px; }
+.bk-q-text small{ font-size:12.5px; color:var(--text-dim); }
+.bk-neubloc{ margin-top:14px; }

@@ -55,7 +55,6 @@ function introSeiten(){
   var wsEx = {};
   AUFWAERM_UEBUNGEN.forEach(function(id){ if(findExercise(id)) wsEx[id] = true; });
   mitgeliefert.forEach(function(ex){ if(ex.main === "stretch") wsEx[ex.id] = true; });
-  var einheiten = Array.isArray(REP_EINHEITEN) ? REP_EINHEITEN.length : Object.keys(REP_EINHEITEN).length;
   return [
     { ico:ICON_BAUSTEINE, farbe:"var(--accent)", titel:t("in1T"), text:t("in1"), notiz:t("in1N"), extra:introSpracheHTML(), art:"sprache" },
     { ico:ICON_PERSON, farbe:"var(--accent)", titel:t("inProfilT"), text:t("inProfil"), notiz:t("inProfilN"), extra:introProfilHTML(), art:"profil" },
@@ -63,8 +62,7 @@ function introSeiten(){
     { ico:HOME_ICON.katalog, farbe:"var(--accent)", titel:t("katalog"),
       text:t("inKat", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length, e:mitgeliefert.filter(function(ex){ return ex.main !== "stretch"; }).length }) },
     { ico:HOME_ICON.warm, farbe:"var(--ws-color)", titel:t("warmTitle"),
-      text:t("in5", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length, d:Object.keys(wsEx).length }) },
-    { ico:HOME_ICON.reps, farbe:"var(--rep-color)", titel:t("repTitle"), text:t("in4", { c:REP_WORKOUT_ROWS.length, u:einheiten }) }
+      text:t("in5", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length, d:Object.keys(wsEx).length }) }
   ];
 }
 function openIntro(){
@@ -186,7 +184,7 @@ function exportBackup(){
 function hatEigenes(db){
   var st = (db && db.settings) || {};
   return !!(db && ((db.blocks||[]).length || (db.workouts||[]).length || (db.myWorkouts||[]).length || (db.customEx||[]).length ||
-    Object.keys(st.studio || {}).length || (st.myReps || []).length || (st.myRepUnits || []).length));   // auch Gewichte im Freien Training und eigene Challenges
+    Object.keys(st.studio || {}).length || (db.bkWorkouts || []).length || (db.plaene || []).length));   // auch Gewichte im Freien Training, Workouts und PLÄNE des Baukastens
 }
 /* Erinnerung an die Sicherungsdatei - bewusst selten: BLOC kopiert den Stand ohnehin alle 7 Tage auf dem Gerät (Schnappschuss, siehe unten),
    die Datei schützt zusätzlich bei neuem Handy oder gelöschten Website-Daten. Sie erscheint nur, wenn es eigene Inhalte gibt, seit 60 Tagen (oder nie)
@@ -211,6 +209,31 @@ function bindBackupTip(){
     state.db.settings.backupTipBis = Date.now() + BACKUP_RUHE_TAGE*86400000; save();
     render();
   });
+}
+/* Hinweis auf der Seite Training, solange Daten des entfernten Bereichs Summit im Zwischenspeicher liegen (siehe summitEntfernen in js/01-basis.js):
+   „Als Datei sichern“ lädt sie herunter und löscht sie vom Gerät, „Verwerfen“ löscht sie nach einer Rückfrage. Danach verschwindet der Hinweis. */
+function summitArchiv(){ try{ return JSON.parse(localStorage.getItem(SUMMIT_ARCHIV) || "null"); }catch(e){ return null; } }
+function summitHinweisHTML(){
+  var a = summitArchiv();
+  if(!a) return "";
+  var n = (a.myReps || []).length + (a.myRepUnits || []).length + Object.keys(a.repBest || {}).length;
+  return '<div class="installtip summit-hinweis"><div><b>'+esc(t("summitWegTitel"))+'</b><br>'+esc(t("summitWegText", { n:n }))+
+    '<div class="btn-row" style="margin-top:10px;"><button type="button" class="btn btn-primary" data-summitsichern>'+ICON_DOWNLOAD+' '+esc(t("summitSichern"))+'</button>'+
+    '<button type="button" class="btn btn-secondary" data-summitverwerfen>'+esc(t("summitVerwerfen"))+'</button></div></div></div>';
+}
+function bindSummitHinweis(){
+  var sichern = app.querySelector("[data-summitsichern]"), verwerfen = app.querySelector("[data-summitverwerfen]");
+  function weg(){ try{ localStorage.removeItem(SUMMIT_ARCHIV); }catch(e){} renderTraining(); }
+  if(sichern) sichern.addEventListener("click", function(){
+    var a = summitArchiv();
+    if(!a) return weg();
+    var blob = new Blob([JSON.stringify({ art:"bloc-summit-daten", exportiert:new Date().toISOString(), daten:a }, null, 2)], { type:"application/json" }), url = URL.createObjectURL(blob), l = document.createElement("a");
+    l.href = url; l.download = "bloc-summit-daten-"+new Date().toISOString().slice(0, 10)+".json";
+    document.body.appendChild(l); l.click(); document.body.removeChild(l);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    showToast(t("summitGesichert")); weg();
+  });
+  if(verwerfen) verwerfen.addEventListener("click", function(){ confirmSheet(t("summitVerwerfenQ"), t("summitVerwerfenText"), t("del"), weg); });
 }
 /* Einmaliger Hinweis, wenn ein gespeichertes C60-Design auf Hell umgestellt wurde (siehe migrateTheme) */
 function c60HinweisHTML(){

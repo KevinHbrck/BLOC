@@ -115,7 +115,7 @@ function runIvTick(){
   } else if(rest <= 3 && r.ivTick !== rest){ r.ivTick = rest; try{ phaseBeep("tick"); }catch(e){} }
   var el = document.getElementById("run-iv");
   if(el){
-    var txt = t(lauf ? "runIvLauf" : "runIvGeh")+" · "+repUhr(rest*1000)+" · "+t("runIvRunde", { n:runde });
+    var txt = t(lauf ? "runIvLauf" : "runIvGeh")+" · "+fmtUhr(rest*1000)+" · "+t("runIvRunde", { n:runde });
     if(el.textContent !== txt) el.textContent = txt;
     el.className = "run-iv "+(lauf ? "lauf" : "geh");
   }
@@ -310,7 +310,7 @@ function runHighlights(x){
   else {
     if(x.dist > Math.max.apply(null, others.map(function(o){ return o.dist; }))) out.push(t("runLaengster"));
     var bk = runBesterKm(x), ok = others.map(runBesterKm).filter(function(v){ return v !== null; });
-    if(bk !== null && (!ok.length || bk < Math.min.apply(null, ok))) out.push(t("runSchnellsterKm", { z:repUhr(bk) }));
+    if(bk !== null && (!ok.length || bk < Math.min.apply(null, ok))) out.push(t("runSchnellsterKm", { z:fmtUhr(bk) }));
     var lang = others.filter(function(o){ return o.dist >= 1000; });
     if(x.dist >= 1000 && lang.length && x.dur/x.dist < Math.min.apply(null, lang.map(function(o){ return o.dur/o.dist; }))) out.push(t("runSchnellstePace"));
   }
@@ -338,9 +338,9 @@ function runZielText(km, rad){
 /* Pace-Vorgabe per Regler: 0 = frei, sonst 3:00 bis 10:00 pro Kilometer in 5-Sekunden-Schritten (Regler 1 bis 85) */
 function runPaceVonRegler(v){ v = +v; return v > 0 ? 175 + 5*v : 0; }
 function runPaceRegler(p){ return p > 0 ? clamp(Math.round((p - 175)/5), 1, 85) : 0; }
-function runPaceText(p){ return p > 0 ? repUhr(p*1000)+" /km" : t("runZielFrei"); }
+function runPaceText(p){ return p > 0 ? fmtUhr(p*1000)+" /km" : t("runZielFrei"); }
 function runWorkouts(){ var s = state.db.settings; if(!Array.isArray(s.runWorkouts)) s.runWorkouts = []; return s.runWorkouts; }
-function runWoName(w){ return runZielText(w.km, !!w.rad)+(w.pace ? " · "+repUhr(w.pace*1000)+" /km" : "")+(w.rad ? " · "+t("runArtRad") : ""); }
+function runWoName(w){ return runZielText(w.km, !!w.rad)+(w.pace ? " · "+fmtUhr(w.pace*1000)+" /km" : "")+(w.rad ? " · "+t("runArtRad") : ""); }
 function runWoFind(id){ var l = runWorkouts(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
 function runWoSpeichern(){
   var z = runZielEinst(), rad = runArt() === "rad";
@@ -378,7 +378,7 @@ var runKlapp = { eigen:false, iv:false, ans:false, verlauf:true };   // welche K
 function runOptionenHTML(){
   var iv = runIvEinst(), rad = runArt() === "rad";
   if(rad) return "";   // auf dem Rad gibt es nichts einzustellen (Laufen und Gehen im Wechsel gibt es nur zu Fuß)
-  return '<details class="card run-opt run-klapp" data-k="iv"'+(runKlapp.iv ? ' open' : '')+'><summary class="kp-titel run-ziel-kopf"><span>'+esc(t("runIvAn"))+'</span><b>'+esc(iv.an ? repUhr(iv.lauf*1000)+" / "+repUhr(iv.geh*1000) : t("runAus"))+'</b><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
+  return '<details class="card run-opt run-klapp" data-k="iv"'+(runKlapp.iv ? ' open' : '')+'><summary class="kp-titel run-ziel-kopf"><span>'+esc(t("runIvAn"))+'</span><b>'+esc(iv.an ? fmtUhr(iv.lauf*1000)+" / "+fmtUhr(iv.geh*1000) : t("runAus"))+'</b><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
     toggleRow("run-iv-an", esc(t("runIvAktiv")), esc(t("runIvHint")), iv.an)+
     (!rad && iv.an ? '<div class="ru-felder"><div><label>'+esc(t("runIvLaufS"))+'</label>'+stepperHTML("run-iv-lauf", iv.lauf, 10, 900, 10)+'</div>'+
       '<div><label>'+esc(t("runIvGehS"))+'</label>'+stepperHTML("run-iv-geh", iv.geh, 10, 900, 10)+'</div></div>' : '')+
@@ -390,7 +390,7 @@ function runAnsageHTML(){
   return '<details class="card run-ansage run-klapp" data-k="ans'+(runKlapp.ans ? '" open' : '"')+'><summary class="kp-titel run-ziel-kopf"><span>'+esc(t("runAnsagen"))+'</span><b id="run-every-wert">'+esc(e.every ? t("runAlleKm", { n:e.every }) : t("runAus"))+'</b><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
       '<input type="range" id="run-every" min="0" max="10" step="1" value="'+e.every+'" aria-label="'+esc(t("runAnsagen"))+'">'+
       '<div class="run-ziel-marken" aria-hidden="true"><span>'+esc(t("runAus"))+'</span><span>2</span><span>5</span><span>10 km</span></div>'+
-    (e.every ? '<label style="margin-top:12px">'+esc(t("runInhalt"))+'</label><div class="theme-pick rep-pick">'+
+    (e.every ? '<label style="margin-top:12px">'+esc(t("runInhalt"))+'</label><div class="theme-pick wahl-pick">'+
       kn("runwas", "km", e.was === "km", t("runWasKm"))+kn("runwas", "pace", e.was === "pace", t("runWasPace"))+kn("runwas", "alles", e.was === "alles", t("runWasAlles"))+'</div>'+
       '<button type="button" class="btn btn-secondary" data-runtest>'+esc(t("runTest"))+'</button>' : '')+
     '<div class="tm-hint">'+esc(t("runAnsageHint"))+'</div></details>';
@@ -398,7 +398,7 @@ function runAnsageHTML(){
 /* Pace je Kilometer als Balken: je schneller, desto länger; der schnellste ist kräftig. Ein angefangener Rest-Kilometer (ab 100 m) steht zuletzt */
 function runKmZeilen(x){
   var sp = x.splits || [], zeilen = [], bk = runBesterKm(x);
-  sp.forEach(function(ms, i){ var dauer = ms - (i ? sp[i-1] : 0); zeilen.push({ n:String(i+1), dauer:dauer, text:repUhr(dauer), schnell:dauer === bk && sp.length > 1 }); });
+  sp.forEach(function(ms, i){ var dauer = ms - (i ? sp[i-1] : 0); zeilen.push({ n:String(i+1), dauer:dauer, text:fmtUhr(dauer), schnell:dauer === bk && sp.length > 1 }); });
   var rest = x.dist - sp.length*1000, rz = x.dur - (sp.length ? sp[sp.length-1] : 0);
   if(rest >= 100 && rz > 0) zeilen.push({ n:"+"+runKm(rest), dauer:rz/rest*1000, text:runPace(rz/1000, rest), rest:true });
   var best = Math.min.apply(null, zeilen.map(function(z){ return z.dauer; }));
@@ -509,7 +509,7 @@ function runAnzeige(){
   if(!r) return;
   var sek = runZeit(r)/1000;
   function setze(id, txt){ var el = document.getElementById(id); if(el && el.textContent !== txt) el.textContent = txt; }
-  var zeit = repUhr(runZeit(r)), tempo = runTempo(r, sek, r.dist);
+  var zeit = fmtUhr(runZeit(r)), tempo = runTempo(r, sek, r.dist);
   setze("run-kcal", runKcalText(r.dist, runZeit(r)/1000, runIstRad(r)));
   setze("run-zeit", zeit); setze("run-km", runKm(r.dist)); setze("run-pace", tempo); setze("run-jetzt", runTempoJetzt(r));
   setze("run-dz", zeit); setze("run-dk", runKm(r.dist)+" km"); setze("run-dp", tempo+" "+runTempoEinheit(r));   // abgedunkelt: Zeit, Kilometer und Tempo bleiben zu sehen
@@ -622,7 +622,7 @@ function runStreckeNeu(x){
   var schritt = Math.max(1, Math.ceil(marken.length/6)), punkte = "", chips = "";
   marken.forEach(function(m, j){
     punkte += '<circle cx="'+m.p[0].toFixed(1)+'" cy="'+m.p[1].toFixed(1)+'" r="4.5" class="rs-punkt"/>';
-    if(j % schritt === 0) chips += '<span class="rs-chip'+(m.p[0]/W > .62 ? ' links' : '')+'" style="left:'+(m.p[0]/W*100).toFixed(1)+'%;top:'+(m.p[1]/H*100).toFixed(1)+'%"><b>'+m.km+' km</b><small>'+esc(repUhr(m.dauer))+(runIstRad(x) ? '' : ' /km')+'</small></span>';
+    if(j % schritt === 0) chips += '<span class="rs-chip'+(m.p[0]/W > .62 ? ' links' : '')+'" style="left:'+(m.p[0]/W*100).toFixed(1)+'%;top:'+(m.p[1]/H*100).toFixed(1)+'%"><b>'+m.km+' km</b><small>'+esc(fmtUhr(m.dauer))+(runIstRad(x) ? '' : ' /km')+'</small></span>';
   });
   var a = xy(pts[0]), z = xy(pts[pts.length-1]);
   return '<div class="run-strecke"><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'">'+
@@ -648,7 +648,7 @@ function renderRun(){
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t("runStart"))+'</button>'+
       '<button type="button" class="ghost" data-rungeplantweg>'+esc(t("runGeplantWeg"))+'</button></div>' : '')+
     '<div class="card run-hero"><div class="rh-km">'+esc(runKm(km*1000))+'<small>km</small></div>'+runHeroRechtsHTML(artRuns, art === "rad")+
-      '<div class="theme-pick rep-pick seg-2 run-art" role="group" aria-label="'+esc(t("runArt"))+'">'+
+      '<div class="theme-pick wahl-pick seg-2 run-art" role="group" aria-label="'+esc(t("runArt"))+'">'+
         '<button type="button" data-runart="lauf" class="'+(art === "lauf" ? "active" : "")+'">'+esc(t("runArtLauf"))+'</button>'+
         '<button type="button" data-runart="rad" class="'+(art === "rad" ? "active" : "")+'">'+esc(t("runArtRad"))+'</button></div>'+
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t(art === "rad" ? "runStartRad" : "runStart"))+'</button></div>'+
@@ -657,7 +657,7 @@ function renderRun(){
     (runs.length ? runs.map(function(x){
       var d = new Date(x.at);
       return '<div class="list-item entry run-item" data-nav="#rundetail/'+x.id+'"><div class="meta"><div class="name">'+esc(runKm(x.dist))+' km'+(runIstRad(x) ? '<span class="run-name"> · '+esc(t("runArtRad"))+'</span>' : '')+(x.name ? '<span class="run-name"> · '+esc(x.name)+'</span>' : '')+'</div>'+
-        '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+'</div></div>'+
+        '<div class="sub">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"short", day:"numeric", month:"short" }))+SEP+esc(fmtUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+'</div></div>'+
         '<div class="card-aside"><div class="card-acts">'+trashBtn("run", x.id, runKm(x.dist)+" km")+'</div></div></div>';
     }).join("") : '<div class="empty" style="padding:24px 20px;">'+esc(t("runNone"))+'</div>')+'</details>'+
     '<div class="page-hint">'+esc(t("runBetaHint"))+'</div>'+
@@ -800,14 +800,14 @@ function renderRunDetail(id){
     topbar(t("runDetail"), { back:"#run" }) +
     // Abschlusskarte direkt nach dem Lauf: was geschafft wurde (der Lauf ist schon gespeichert)
     (neu ? '<div class="card run-fertig"><div class="rf-titel">'+esc(t("runGeschafft"))+'</div><div class="rf-km">'+esc(runKm(x.dist))+' <small>km</small></div>'+
-      '<div class="rf-zeile">'+esc(repUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+(runKcal(x.dist, x.dur/1000, runIstRad(x)) ? SEP+esc(runKcalText(x.dist, x.dur/1000, runIstRad(x)))+' kcal' : '')+'</div>'+
+      '<div class="rf-zeile">'+esc(fmtUhr(x.dur))+SEP+esc(runTempo(x, x.dur/1000, x.dist))+' '+runTempoEinheit(x)+(runKcal(x.dist, x.dur/1000, runIstRad(x)) ? SEP+esc(runKcalText(x.dist, x.dur/1000, runIstRad(x)))+' kcal' : '')+'</div>'+
       (hl.length ? '<ul class="rf-liste">'+hl.map(function(h){ return '<li>'+svgIcon(ICON_STAR)+'<span>'+esc(h)+'</span></li>'; }).join("")+'</ul>' : '')+
       '<div class="rf-gespeichert">'+esc(t("runGespeichert"))+'</div></div>' : '')+
-    '<div class="rep-meta">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long", day:"numeric", month:"long", year:"numeric" }))+
-      (x.iv ? SEP+esc(t("runIvMeta", { l:repUhr(x.iv.lauf*1000), g:repUhr(x.iv.geh*1000) })) : '')+(x.pause ? SEP+esc(t("runPausenMeta", { z:repUhr(x.pause) })) : '')+'</div>'+
+    '<div class="meta-zeile">'+esc(d.toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long", day:"numeric", month:"long", year:"numeric" }))+
+      (x.iv ? SEP+esc(t("runIvMeta", { l:fmtUhr(x.iv.lauf*1000), g:fmtUhr(x.iv.geh*1000) })) : '')+(x.pause ? SEP+esc(t("runPausenMeta", { z:fmtUhr(x.pause) })) : '')+'</div>'+
     '<div class="card run-notiz"><input type="text" id="run-name" maxlength="40" value="'+esc(x.name || "")+'" placeholder="'+esc(t("runNamePh"))+'" aria-label="'+esc(t("runNamePh"))+'">'+
       '<textarea id="run-note" rows="2" maxlength="400" placeholder="'+esc(t("runNotePh"))+'" aria-label="'+esc(t("runNotePh"))+'">'+esc(x.note || "")+'</textarea></div>'+
-    '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(repUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
+    '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(fmtUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
       '<div><b>'+esc(runTempo(x, x.dur/1000, x.dist))+'</b><small>'+esc(t(runIstRad(x) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(x)+'</small></div>'+(koerperDaten() ? '<div><b>'+esc(runKcalText(x.dist, x.dur/1000, runIstRad(x)))+'</b><small>kcal</small></div>' : '')+'</div>'+
     (koerperDaten() ? '<div class="sk-unter run-kcal-hinweis">'+esc(t("runKcalHint"))+'</div>' : '<button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button>')+
     '<div class="section-title">'+esc(t("runRoute"))+'</div>'+(layoutNeu() ? runStreckeNeu(x) : '<div class="run-karte">'+runSvg(x.pts)+'</div>')+

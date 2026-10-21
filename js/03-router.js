@@ -166,7 +166,6 @@ var FOTO_POOL = (function(){
     st:  [P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), "img/neu-workout.jpg", P("kraft-sw"), "img/neu-kopf.jpg"],   // Geräte zuerst (Wunsch: Workout-Karte ohne Person)
     ti:  [P("timer-box"), "img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
     ws:  [P("mobility-sitz"), P("mobility-ausfall")],   // ohne neu-mobility (Kopf im Profil, passte nicht zum Bereich)
-    rep: [P("summit-park"), "img/neu-summit.jpg", P("freiluft-sw")],   // nur Querformat: auf der flachen Summit-Karte werden Hochformate schlecht angeschnitten
     run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
     core:     ["img/neu-d-core.jpg", P("frau-kniebeuge"), P("liegestuetz-feld"), P("kraft-sw")],
@@ -185,8 +184,7 @@ var FOTO_POOL_HELL = {
   tp:  ["img/neu-h-klimmzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-ringe.jpg"],
   st:  ["img/neu-h-halle.jpg", "img/neu-h-rack.jpg", "img/neu-h-kreuzheben.jpg"],
   ti:  ["img/neu-p-timer-box.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
-  ws:  FOTO_POOL.ws,   // wie im Dunkel (Wunsch: Mobility & Stretch und Summit zeigen in beiden Modi dasselbe Bild)
-  rep: FOTO_POOL.rep,   // wie im Dunkel
+  ws:  FOTO_POOL.ws,   // wie im Dunkel
   run: FOTO_POOL.run,
   core:     ["img/neu-h-core-1.jpg", "img/neu-h-core-2.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"],
   beine:    ["img/neu-p-frau-kniebeuge.jpg", "img/neu-h-kreuzheben.jpg", "img/neu-h-band.jpg", "img/neu-h-halle.jpg"],
@@ -201,7 +199,6 @@ function fotoPool(){ return themeIstDunkel() ? FOTO_POOL : FOTO_POOL_HELL; }
 /* Bildausschnitt je Foto: breite, flache Karten zeigen nur einen Streifen; hier steht, welcher Teil des Bildes dabei
    sichtbar bleiben soll (Prozent für background-position bzw. object-position). Ohne Eintrag gilt der Wert aus layout-new.css. */
 var FOTO_FOKUS = {
-  "img/neu-summit.jpg":"50% 62%",            // Reck, Horizont und Radfahrer; oben nur Himmel
   "img/neu-p-freiluft-leiter.jpg":"50% 62%",
   "img/neu-p-freiluft-meer.jpg":"50% 76%",   // Sportplatz am Meer
   "img/neu-p-freiluft-park.jpg":"50% 50%",   // Stangen in der Mitte
@@ -225,7 +222,7 @@ var FOTO_FOKUS = {
   "img/neu-p-liegestuetz-stadt.jpg":"50% 55%",
   "img/neu-p-liegestuetz-feld.jpg":"50% 55%",
   "img/neu-p-studio-halle.jpg":"50% 55%",
-  "img/neu-p-timer-box.jpg":"50% 62%", "img/neu-p-summit-park.jpg":"50% 57%",
+  "img/neu-p-timer-box.jpg":"50% 62%",
   "img/neu-p-frau-latzug.jpg":"50% 38%", "img/neu-p-frau-klimmzug.jpg":"50% 40%", "img/neu-p-frau-kniebeuge.jpg":"50% 45%",
   "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-kreuzheben.jpg":"50% 70%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
   "img/neu-h-band.jpg":"50% 62%", "img/neu-h-kettlebell.jpg":"50% 32%", "img/neu-h-kb-gelb.jpg":"50% 70%", "img/neu-h-klimmzug.jpg":"50% 72%",
@@ -239,7 +236,7 @@ function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
   items.slice().sort(function(a, b){ return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; }).forEach(function(it){
     var pool = POOL[it.pool] || POOL.st, h = fotoHash(it.key), w = null, i, f;
     for(i = 0; i < pool.length && !w; i++){ f = pool[(h + i) % pool.length]; if(!belegt[f]) w = f; }
-    var VERWANDT = { st:["st"], tp:["tp", "rep"], ti:["ti", "st"], ws:["ws"], rep:["rep"], run:["run"] };   // erst Bilder aus verwandten Arten
+    var VERWANDT = { st:["st"], tp:["tp"], ti:["ti", "st"], ws:["ws"], run:["run"] };   // erst Bilder aus verwandten Arten
     (VERWANDT[it.pool] || ["st", "tp"]).forEach(function(a){
       var p2 = POOL[a] || [];
       for(i = 0; i < p2.length && !w; i++){ f = p2[(h + i) % p2.length]; if(!belegt[f]) w = f; }
@@ -250,9 +247,9 @@ function fotosZuteilen(items){   // items: [{ key, pool }] → { key: Pfad }
   });
   return out;
 }/* Foto je Bereich für heute: dieselbe Zuteilung für die Karten auf Training und die Köpfe der Bereichsseiten (kein Bild doppelt,
-   wechselt von Tag zu Tag). Schlüssel wie data-bereich: katalog, warm, intervall, reps, run. */
+   wechselt von Tag zu Tag). Schlüssel wie data-bereich: katalog, warm, intervall, run. */
 function bereichFotosNeu(){
-  var tag = Math.floor(Date.now()/86400000), ART = { katalog:"st", warm:"ws", intervall:"ti", reps:"rep", run:"run" }, out = {};
+  var tag = Math.floor(Date.now()/86400000), ART = { katalog:"st", warm:"ws", intervall:"ti", run:"run" }, out = {};
   var zu = fotosZuteilen(Object.keys(ART).map(function(k){ return { key:k + ":" + tag, pool:ART[k] }; }));
   Object.keys(ART).forEach(function(k){ out[k] = zu[k + ":" + tag]; });
   out.run = "img/bereich-run.jpg";   // Run behält das klassische Läuferbild (Karte und Kopf der Run-Seite)
@@ -303,8 +300,9 @@ function hauptAktionNeu(route){
       m.push({ ico:HOME_ICON.katalog, label:t("builderZufall"), fn:function(){ builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog"); } });
       m.push({ ico:P_PLUS, label:t("builderSelber"), fn:function(){ builderAuto = "selber"; katTabSetzen("baukasten"); go("#katalog"); } });
     }
+    m.push({ ico:P_PLUS, label:t("bkBau_workout"), fn:function(){ go("#wbau/neu"); } });
+    m.push({ ico:P_PLUS, label:t("bkBau_plan"), fn:function(){ go("#pbau/neu"); } });
     if(!fokusAus("intervall")) m.push({ ico:HOME_ICON.intervall, label:t("tabTimer"), fn:function(){ go("#intervall"); } });
-    if(!fokusAus("reps")) m.push({ ico:HOME_ICON.reps, label:t("repTitle"), fn:function(){ go("#reps"); } });
     if(!m.length) return go("#settings");
     openActionSheet(t("hauptBauen"), m);
   } };
@@ -363,26 +361,23 @@ function render(){
   tabLeiste(route);
   if(route==="home" || route==="training"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
     stPlanAktiv = null; stPlanBauen = false;   // ein zuletzt geöffneter Plan gilt nicht weiter (Satz-/Timer-Wahl und Training speichern folgen sonst einem alten Plan)
-    var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.repFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
-    /* Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl; Summit) werden nicht aufbewahrt: jeder neue Besuch beginnt ohne Filter.
+    var sz = state.db.settings; delete sz.libFilterOpen; delete sz.stFilterOpen; delete sz.wsFilterOpen; delete sz.buildFilterOpen; delete sz.stTimerAuf;
+    /* Gewählte Filter (Gruppe, Ausrüstung, Körperkarte; Mobility & Stretch; Übungsauswahl) werden nicht aufbewahrt: jeder neue Besuch beginnt ohne Filter.
        Ort, Sortierung A–Z und die Art des Bauens bleiben als Einstellungen stehen. */
     ["stGruppen", "stArten", "stGeraete", "stZonen", "wsRegionen", "wsZonen", "buildCats", "buildCat", "buildEquips", "buildZonen"].forEach(function(k){ delete sz[k]; });
-    if(typeof repFilter === "object"){ repFilter.lvl = "all"; repFilter.bar = "all"; repFilter.stufe = "standard"; }
     hinweisBesucht = {};   // Erklärtexte: der nächste Besuch einer Seite zählt wieder
     katOffen = {};         // Katalog: beim nächsten Besuch stehen wieder nur die Überschriften
   }
-  if(repRun && route !== "repplay") repStop();   // Rep-Workout verlassen: Stoppuhr aus
   if(studioPause && route !== "studio") studioPauseStop();
   if(route==="home") return renderHome();
   if(route==="training") return renderTraining();
   if(route==="faq") return renderFaq();
   if(route==="satz") return renderSatzTraining(parts[1], parts[2]);
-  if(route==="reps") return renderReps();
   if(route==="warmstretch") return renderWarmStretch();
-  if(route==="rep") return renderRepDetail(parts[1]);
-  if(route==="repplay") return renderRepPlayer(parts[1]);
-  if(route==="repedit") return renderRepEdit(parts[1]);
-  if(route==="repunitedit") return renderRepUnitEdit(parts[1]);
+  if(route==="bkd") return renderBkDetail(parts[1], parts[2]);
+  if(route==="bkalle") return renderBkAlle(parts[1]);
+  if(route==="wbau") return renderWbau(parts[1]);
+  if(route==="pbau") return renderPbau(parts[1]);
   if(route==="kalender"){ renderKalender(); setTimeout(kalHeuteSichtbar, 80); return; }   // go() setzt danach nach oben: erst dann den heutigen Tag ins Bild holen
   if(route==="run") return renderRun();
   if(route==="rundetail") return renderRunDetail(parts[1]);
@@ -405,8 +400,7 @@ function render(){
   if(route==="workout") return renderWorkoutEdit(parts[1]);
   if(route==="settings") return renderSettings();
   if(route==="search") return renderSearch();
-  if(route==="koerper") return renderKoerper();
-  if(route==="stats"){ if(layoutNeu()){ state.db.settings.koerperTab = "fortschritt"; return renderKoerper(); } return renderStats(); }
+  if(route==="koerper" || route==="stats") return renderStats();
   if(route==="studio") return renderStudioKarte(parts[1]);
   if(route==="install") return renderInstallGuide();
   if(route==="play") return startPlayer(parts[1]);

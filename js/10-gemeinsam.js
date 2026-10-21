@@ -369,9 +369,6 @@ function favEntries(){
     } else if(kind==="plan"){   // Studio › Mein Plan
       var pl = stPlanFind(id);
       if(pl) e = { name:pl.name, sub:planAnzahl(stPlanIds(pl).length), cls:"st", go:"#studioplan/"+id, ok:true };
-    } else if(kind==="rep"){    // Summit › eigenes Programm bzw. eigene Einheit
-      var rq = repQuelle(id);
-      if(rq){ var rr = repQRunden(rq); e = { name:rq.name, sub:(rr===1 ? t("repRound1") : t("repRoundsN", { n:rr }))+" · "+t("repReps", { n:repQWdh(rq) }), cls:"rep", go:"#rep/"+id, ok:true }; }
     }
     if(e){ e.key = k; e.used = used[k] || 0; e.order = order; out.push(e); }
   });
@@ -390,7 +387,6 @@ function favFotoPool(e){
 function favSymbol(e){
   if(e.cls === "ti") return HOME_ICON.intervall;
   if(e.cls === "ws") return HOME_ICON.warm;
-  if(e.cls === "rep") return HOME_ICON.reps;
   var th = { brust:"brust", ruecken:"ruecken", schulter:"schulter", arme:"arme", core:"bauch", beine:"beine" }[e.thema];
   return th ? katIcon(th) : (e.cls === "st" || e.ort === "studio" ? KAT_ICON_STUDIO : HOME_ICON.timer);
 }
@@ -400,7 +396,7 @@ function favItemsHTML(){
   var shown = favShowAll ? list : list.slice(0, FAV_LIMIT);
   if(typeof layoutNeu === "function" && layoutNeu()){   // Aussehen New: Fotokarten in einer Reihe zum Wischen (wie im Entwurf)
     var fotos = fotosZuteilen(list.map(function(e){ return { key:e.key || e.name, pool:favFotoPool(e) }; }));   // Fitnessstudio-Workouts bekommen Studio-Bilder, nicht die Calisthenics-Anlage   // kein Foto doppelt, solange es freie gibt
-    var BEREICH = { ti:t("tabTimer"), ws:t("warmTitle"), tp:t("katalog"), st:t("katalog"), rep:t("repTitle") };
+    var BEREICH = { ti:t("tabTimer"), ws:t("warmTitle"), tp:t("katalog"), st:t("katalog") };
     return '<div class="fav-fotos">'+shown.map(function(e){
       var mitFoto = /^lib\//.test(e.cover || "");   // Fotos nur für Workouts (BLOCs) aus dem Katalog; alles andere ist eine ruhige Glas-Kachel mit Name
       return '<div class="fav-foto'+(mitFoto ? '' : ' ohne')+'" data-art="'+e.cls+'" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+

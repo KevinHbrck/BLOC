@@ -1725,12 +1725,6 @@ var EX_MUSCLES = {
   "butterfly-stretch":["Adduktoren (Oberschenkel-Innenseite)","Hüfte","Adductors (inner thighs)","Hips"],
   "worlds-greatest":["Hüftbeuger, Oberschenkel hinten, oberer Rücken","Adduktoren, Brust","Hip flexors, hamstrings, upper back","Adductors, chest"]
 };
-/* ============ Rep-Workouts (ohne Intervalle, auf Zeit) ============
-   Alle Wiederholungen so schnell wie möglich, die Zeit läuft mit. Aufbau nach klassischen
-   Bodyweight-Programmen (Runden × Übungen), mit eigenen Namen (Berge).
-   [id, Name DE, Name EN, Stufe 1-3, [[Übung, [Menge je Runde ...]], ...]]
-   Menge: Zahl = Wiederholungen, "400m"/"1km" = Strecke, "30s" = Sekunden (Halten und Pause laufen
-   als Countdown), 0 = in dieser Runde nicht. Übung "lauf"/"sprint"/"pause" siehe REP_PSEUDO. */
 /* Kachel „Aufwärmen & Dehnen“: diese Programme stehen unter Aufwärmen, alle übrigen Dehnprogramme unter Dehnen */
 /* Fokus-Filter der Bibliothek: diese Workouts stehen unter „Bauch / Core“ statt unter „Arme“
    (sonst zählen die Liegestütz-Varianten sie automatisch zu den Armen) */
@@ -1743,99 +1737,6 @@ var AUFWAERM_IDS = ["warmup-5","warmup-ganz","warmup-kraft","warmup-hiit","stret
 /* Übungen im Reiter „Aufwärmen · Übungen“ (Dehnen · Übungen = alle Übungen der Hauptkategorie Stretch) */
 var AUFWAERM_UEBUNGEN = ["jumping-jacks","high-knees","fast-feet","air-squats","lateral-hops","skater-jumps","good-mornings","bird-dog",
   "reverse-lunges","glute-bridge","scapular-push-ups","plank-steps","arm-circles","cat-cow","worlds-greatest","downward-dog"];
-/* Challenges · Einheiten: 12 Trainingseinheiten nach einem klassischen 12-Einheiten-Plan, je Stufe
-   [Leicht, Standard, Fortgeschritten]. Pro Stufe eine oder mehrere Varianten („A oder B“ im Plan), jede Variante
-   = Programme, die nacheinander gemacht werden. Eintrag: Programm-ID, optional ":2-4" = nur diese Runden,
-   "*0.5" = halbe Wiederholungen/Strecken. */
-var REP_EINHEITEN = [
-  ["e1",  [["wasserkuppe-basis"],["wasserkuppe"]], [["wasserkuppe","kampenwand-basis"],["wasserkuppe","rigi"]], [["wasserkuppe","moench","jungfrau"]]],
-  ["e2",  [["tegelberg"]], [["tegelberg","kampenwand","herzogstand"],["tegelberg","kampenwand-basis","herzogstand"]], [["grossglockner-basis","herzogstand","tegelberg"]]],
-  ["e3",  [["zugspitze"],["belchen"],["eiger"],["nebelhorn"]], [["zugspitze","belchen"],["zugspitze","eiger"],["zugspitze","nebelhorn"]], [["belchen","eiger","zugspitze","nebelhorn"]]],
-  ["e4",  [["moench"]], [["moench","tegelberg"],["moench","jungfrau-sturm"]], [["piz-palue-kraft","rigi-sprung","jungfrau-sturm"]]],
-  ["e5",  [["saentis-basis"]], [["saentis","rigi:1-3"]], [["saentis","rigi"],["saentis","nebelhorn"],["matterhorn","rigi"],["matterhorn","nebelhorn"]]],
-  ["e6",  [["bernina:2-4"]], [["bernina"]], [["ortler","nebelhorn","rigi-sprung"]]],
-  ["e7",  [["pilatus-basis"]], [["pilatus"]], [["pilatus","herzogstand"],["pilatus","belchen"]]],
-  ["e8",  [["mont-blanc-basis:1-2","jungfrau-sturm:1-1"]], [["mont-blanc-basis"]], [["mont-blanc-basis","bernina:2-3"],["mont-blanc-basis","jungfrau-sturm"]]],
-  ["e9",  [["brocken-basis"]], [["brocken"]], [["brocken","kampenwand"],["brocken","rigi"]]],
-  ["e10", [["matterhorn*0.5"]], [["matterhorn"]], [["watzmann"]]],
-  ["e11", [["fichtelberg*0.5"]], [["fichtelberg"]], [["hochkoenig","fichtelberg:2-2"]]],
-  ["e12", [["watzmann-basis"]], [["watzmann"]], [["dachstein"]]]
-];
-/* Namen der Einheiten (Bergwander-Thema wie die Programme), beschreiben den Charakter:
-   Auf und ab = 8-18-18-8, Stufenweg = Treppen und Leitern, Durchs Tal = 25-18-10-18-25, Hochplateau = gleichbleibend, Abstieg = abnehmend */
-var REP_EINHEIT_NAMEN = {
-  e1:["Aufbruch","Setting Out"], e2:["Auf und ab","Up and Down"], e3:["Stufenweg","Stepped Trail"], e4:["Durchs Tal","Through the Valley"],
-  e5:["Hüttenlauf","Hut Run"], e6:["Steilwand","Steep Face"], e7:["Gratwanderung","Ridge Walk"], e8:["Hochplateau","High Plateau"],
-  e9:["Abstieg","Descent"], e10:["Langer Anstieg","Long Climb"], e11:["Höhenweg","High Trail"], e12:["Gipfeltag","Summit Day"]
-};
-/* Varianten einer Einheit = verschiedene Routen zum selben Ziel */
-var REP_ROUTEN = [["Nordroute","North Route"], ["Südroute","South Route"], ["Westroute","West Route"], ["Ostroute","East Route"]];
-var REP_PSEUDO = {
-  lauf:   { de:"Laufen", en:"Run",    illu:"sprint-in-place" },
-  sprint: { de:"Sprint", en:"Sprint", illu:"sprint-in-place" },
-  pause:  { de:"Pause",  en:"Rest",   illu:"" }
-};
-function mal(n, x){ var a = []; for(var i=0;i<n;i++) a.push(x); return a; }
-var REP_WORKOUT_ROWS = [
-  ["feldberg","Feldberg","Feldberg",1,[["air-squats",[15,20,25,30,35]],["sit-ups",[10,15,15,20,20]],["jumping-jacks",[25,30,35,40,45]],["plank-burpees",[4,5,6,7,8]],["push-ups",[4,5,6,7,8]]]],
-  ["brocken-basis","Brocken Basis","Brocken Basic",1,[["plank-burpees",[30,40,50]],["forward-lunges",[30,40,50]],["sit-ups",[20,25,30]]]],
-  ["brocken","Brocken","Brocken",3,[["burpees",[20,35,50,65]],["forward-lunges",[20,35,50,65]],["sit-ups",[20,35,50,65]]]],
-  ["brocken-kraft","Brocken Kraft","Brocken Strength",3,[["burpee-squat-jumps",[20,35,50,65]],["pistol-squats",[20,35,50,65]],["jackknives",[20,35,50,65]]]],
-  ["saentis","Säntis","Säntis",1,[["lauf",["500m","500m","500m","500m","500m"]],["burpees",[20,20,20,20,20]],["air-squats",[35,35,35,35,35]]]],
-  ["saentis-basis","Säntis Basis","Säntis Basic",1,[["plank-burpees",[20,20,20,20]],["high-knees",[80,80,80,80]],["air-squats",[25,25,25,25]]]],
-  ["eiger","Eiger","Eiger",2,[["pull-ups",[8,8,7,7,6,6]],["leg-raises",mal(6,10)],["sprint",mal(6,"50m")],["pause",mal(6,"45s")]]],
-  ["eiger-kraft","Eiger Kraft","Eiger Strength",3,[["muscle-ups",mal(7,6)],["toes-to-bar",mal(7,6)],["sprint",mal(7,"50m")],["pause",mal(7,"45s")]]],
-  ["grossglockner","Großglockner","Grossglockner",3,[["burpees",[25,25,25,25,25]],["pull-ups",[12,12,12,12,12]],["push-ups",[22,22,22,22,22]],["air-squats",[32,32,32,32,32]]]],
-  ["grossglockner-basis","Großglockner Basis","Grossglockner Basic",2,[["burpees",[12,12,12,12,12]],["pull-ups",[7,7,7,7,7]],["push-ups",[10,10,10,10,10]],["air-squats",[25,25,25,25,25]],["triceps-dips",[7,7,7,7,7]]]],
-  ["ortler","Ortler","Ortler",2,[["jumping-jacks",[110]],["burpees",[55]],["air-squats",[110]],["sit-ups",[40]],["forward-lunges",[55]],["leg-raises",[60]],["push-ups",[15]],["jackknives",[20]],["burpees",[55]],["jumping-jacks",[110]]]],
-  ["matterhorn","Matterhorn","Matterhorn",2,[["lauf",["1250m","1250m"]],["burpees",[30,30]],["air-squats",[30,30]],["mountain-climbers",[30,30]],["leg-raises",[30,30]],["tuck-jumps",[55,55]]]],
-  ["matterhorn-ausdauer","Matterhorn Ausdauer","Matterhorn Endurance",1,[["lauf",["800m","800m","800m","800m"]],["air-squats",[25,25,25,25]],["plank-burpees",[18,18,18,18]],["mountain-climbers",[20,20,20,20]],["leg-raises",[18,18,18,18]],["tuck-jumps",[10,10,10,5]]]],
-  ["zugspitze","Zugspitze","Zugspitze",1,[["air-squats",[20,30,40]],["plank-burpees",[8,12,16]],["sit-ups",[20,30,40]],["pause",["20s","20s",0]]]],
-  ["zugspitze-kraft","Zugspitze Kraft","Zugspitze Strength",3,[["pistol-squats",[20,30,40]],["burpee-squat-jumps",[10,15,20]],["jackknives",[20,30,40]],["pause",["20s","20s",0]]]],
-  ["wendelstein","Wendelstein","Wendelstein",1,[["air-squats",mal(3,20)],["mountain-climbers",mal(3,20)],["forward-lunges",mal(3,20)],["high-knees",mal(3,20)],
-    ["cossack-squats",mal(3,10)],["jumping-jacks",mal(3,30)]]],
-  ["watzmann","Watzmann","Watzmann",3,[["burpees",mal(4,20)],["sit-ups",mal(4,40)],["jumping-jacks",mal(4,80)],["leg-raises",mal(4,30)],["burpees",mal(4,20)],["tuck-jumps",mal(4,30)]]],
-  ["watzmann-basis","Watzmann Basis","Watzmann Basic",1,[["plank-burpees",mal(4,10)],["sit-ups",mal(4,20)],["jumping-jacks",mal(4,60)],["leg-raises",mal(4,15)],["plank-burpees",mal(4,10)],["high-knees",mal(4,40)]]],
-  ["watzmann-aufbau","Watzmann Aufbau","Watzmann Build",2,[["burpees",mal(4,15)],["sit-ups",mal(4,30)],["jumping-jacks",mal(4,60)],["leg-raises",mal(4,25)],["burpees",mal(4,15)],["tuck-jumps",mal(4,20)]]],
-  ["watzmann-ausdauer","Watzmann Ausdauer","Watzmann Endurance",3,[["burpees",mal(3,20)],["jumping-jacks",[60,70,80]],["lauf",mal(3,"400m")],["leg-raises",[45,40,40]],["sit-ups",[50,50,30]],["jumping-jacks",[60,80,90]],["burpees",[20,20,25]],["stand-up-jumps",mal(3,5)]]],
-  ["watzmann-extrem","Watzmann Extrem","Watzmann Extreme",3,[["burpee-squat-jumps",mal(4,20)],["toes-to-bar",mal(4,40)],["jumping-jacks",mal(4,80)],["jackknives",mal(4,40)],["burpee-squat-jumps",mal(4,20)],["tuck-jumps",mal(4,40)]]],
-  ["hochkoenig","Hochkönig","Hochkönig",2,[["stand-up-jumps",mal(9,8)],["burpees",mal(9,6)],["skater-jumps",mal(9,24)],["jumping-jacks",mal(9,48)]]],
-  ["dachstein","Dachstein","Dachstein",3,[["mountain-climbers",[130]],["burpees",[70]],["sit-ups",[125]],["air-squats",[150]],["sit-ups",[125]],["burpees",[70]],["mountain-climbers",[130]]]],
-  ["pilatus","Pilatus","Pilatus",3,[["sprint",mal(4,"60m")],["burpees",mal(4,20)],["hanging-leg-raise",mal(4,12)],["jackknives",mal(4,20)],["jump-forward-burpees",mal(4,20)]]],
-  ["pilatus-basis","Pilatus Basis","Pilatus Basic",2,[["sprint",mal(3,"40m")],["burpees",[25,20,15]],["hanging-leg-raise",mal(3,10)],["jackknives",mal(3,12)],["mountain-climbers",[25,15,10]]]],
-  ["herzogstand","Herzogstand","Herzogstand",1,[["tuck-jumps",mal(3,30)],["pause",mal(3,"30s")],["sprint",mal(3,"200m")],["forward-lunges",mal(3,20)],["pause",mal(3,"20s")]]],
-  ["arber-basis","Arber Basis","Arber Basic",1,[["burpees",mal(3,10)],["jumping-jacks",mal(3,30)],["hanging-leg-raise",mal(3,5)],["air-squats",mal(3,20)],["triceps-dips",mal(3,10)],
-    ["jumping-jacks",mal(3,30)],["pull-ups",mal(3,5)]]],
-  ["arber","Arber","Arber",2,[["burpees",mal(3,20)],["jumping-jacks",mal(3,40)],["hanging-leg-raise",mal(3,10)],["deep-squats",mal(3,25)],["triceps-dips",mal(3,15)],
-    ["jumping-jacks",mal(3,40)],["pull-ups",mal(3,10)]]],
-  ["fichtelberg","Fichtelberg","Fichtelberg",2,[["lauf",["800m",0,0,0,0,0,0,"800m"]],["jumping-jacks",[0,80,80,80,80,80,80,0]],["mountain-climbers",[0,60,60,60,60,60,60,0]],["burpees",[0,6,6,6,6,6,6,0]]]],
-  ["hochgern","Hochgern","Hochgern",2,[["push-ups",mal(4,10)],["pull-ups",mal(4,5)],["cossack-squats",mal(4,10)],["triceps-dips",mal(4,10)],["side-plank",mal(4,"30s")]]],
-  ["kampenwand","Kampenwand","Kampenwand",2,[["pull-ups",[8,18,18,8]],["burpees",[6,12,12,6]],["sit-ups",[8,18,18,8]]]],
-  ["kampenwand-basis","Kampenwand Basis","Kampenwand Basic",1,[["push-ups",[10,15,5]],["deep-squats",[10,15,5]],["plank-burpees",[5,8,3]]]],
-  ["tegelberg","Tegelberg","Tegelberg",2,[["burpees",[8,18,18,8]],["mountain-climbers",[8,18,18,8]],["skater-jumps",[8,18,18,8]]]],
-  ["belchen","Belchen","Belchen",1,[["push-ups",[4,6,8,10,12]],["reverse-lunges",[8,12,16,20,24]],["jumping-jacks",[20,25,30,35,40]]]],
-  ["rigi","Rigi","Rigi",2,[["burpees",[2,4,6,8,10,12]],["sit-ups",[48,40,32,24,16,8]]]],
-  ["rigi-sprung","Rigi Sprung","Rigi Jump",2,[["tuck-jumps",[7,14,21,28,35,42]],["mountain-climbers",[42,35,28,21,14,7]]]],
-  ["nebelhorn","Nebelhorn","Nebelhorn",1,[["sit-ups",[8,18,18,8]],["reverse-crunch",[8,18,18,8]],["stand-up-jumps",[8,18,18,8]]]],
-  ["nebelhorn-basis","Nebelhorn Basis","Nebelhorn Basic",1,[["reverse-lunges",[8,16,16,8]],["deep-squats",[8,16,16,8]],["stand-up-jumps",[8,16,16,8]]]],
-  ["wasserkuppe","Wasserkuppe","Wasserkuppe",2,[["side-lunges",[24,18,12,6]],["burpees",[24,18,12,6]],["leg-raises",[24,18,12,6]],["pause",["40s","30s","20s",0]]]],
-  ["wasserkuppe-basis","Wasserkuppe Basis","Wasserkuppe Basic",1,[["side-lunges",[20,15,10,5]],["plank-burpees",[20,15,10,5]],["leg-raises",[20,15,10,5]],["pause",["50s","40s","30s",0]]]],
-  ["jungfrau","Jungfrau","Jungfrau",2,[["pull-ups",[16,13,10,7,4]],["push-ups",[22,18,14,10,6]],["burpees",[6,5,4,3,2]]]],
-  ["jungfrau-sturm","Jungfrau Sturm","Jungfrau Storm",2,[["pull-ups",[7,5,3,2]],["frogs",[15,10,5,5]],["push-ups",[7,5,3,2]],["jackknives",[15,10,5,5]],["mountain-climbers",[15,25,40,80]]]],
-  ["moench","Mönch","Mönch",1,[["air-squats",[25,18,10,18,25]],["sit-ups",[25,18,10,18,25]],["push-ups",[8,6,4,6,8]],["mountain-climbers",[24,16,8,16,24]],["plank-burpees",mal(5,5)]]],
-  ["titlis","Titlis","Titlis",2,[["air-squats",mal(5,30)],["jumping-jacks",mal(5,30)],["leg-raises",mal(5,20)],["forward-lunges",mal(5,20)],["burpees",mal(5,8)],["plank-steps",mal(5,15)]]],
-  ["titlis-ausdauer","Titlis Ausdauer","Titlis Endurance",1,[["air-squats",mal(6,20)],["jumping-jacks",mal(6,20)],["leg-raises",[10,15,20,15,10,5]],["forward-lunges",[10,15,20,15,10,5]],
-    ["jumping-jacks",mal(6,20)],["plank-steps",[10,15,15,15,10,5]]]],
-  ["piz-palue","Piz Palü","Piz Palü",3,[["deep-squats",mal(5,24)],["push-ups",mal(5,40)],["jackknives",mal(5,16)]]],
-  ["piz-palue-kraft","Piz Palü Kraft","Piz Palü Strength",2,[["pike-push-ups",mal(4,5)],["jackknives",mal(4,15)],["deep-squats",mal(4,50)],["burpees",mal(4,6)],["plank",mal(4,"30s")]]],
-  ["bernina","Bernina","Bernina",3,[["pike-push-ups",[20,20,10,5]],["jackknives",[20,10,10,5]],["deep-squats",[30,20,10,5]],["burpees",mal(4,30)],["mountain-climbers",[30,30,30,80]]]],
-  ["hochvogel","Hochvogel","Hochvogel",2,[["burpees",mal(4,25)],["sit-ups",[30,20,20,10]],["leg-raises",[10,20,20,30]],["deep-squats",mal(4,30)]]],
-  ["hochvogel-power","Hochvogel Power","Hochvogel Power",2,[["burpees",mal(5,10)],["sit-ups",[20,20,20,15,10]],["leg-raises",[20,20,20,15,10]],["burpees",mal(5,10)],["deep-squats",[25,25,25,25,20]]]],
-  ["mont-blanc","Mont Blanc","Mont Blanc",3,[["pike-push-ups",mal(5,6)],["pull-ups",mal(5,14)],["push-ups",mal(5,22)],["burpees",mal(5,10)],["air-squats",mal(5,38)],["pause",["90s","90s","90s","90s",0]]]],
-  ["mont-blanc-basis","Mont Blanc Basis","Mont Blanc Basic",2,[["push-ups",mal(4,5)],["sit-ups",mal(4,35)],["air-squats",mal(4,40)],["tuck-jumps",[5,10,5,10]],["leg-raises",mal(4,25)],["burpees",mal(4,30)]]]
-];
-
-
 /* ---------- Widerstandsband (Air) ----------
    Gerät „band“ (Loop- oder Griffband). Die Figuren zeichnen das Band als dünne Linie (Klasse „gb“); Befestigung
    (Pfosten, Stange) als kleiner Ring. Die Posen werden aus Winkeln gebaut (0° = nach rechts, 90° = nach unten),
@@ -3947,11 +3848,8 @@ window.BLOC_DATEN = {
   EX_INFO:EX_INFO,
   EX_POSTURE:EX_POSTURE,
   EX_MUSCLES:EX_MUSCLES,
-  REP_PSEUDO:REP_PSEUDO,
   AUFWAERM_IDS:AUFWAERM_IDS,
   AUFWAERM_UEBUNGEN:AUFWAERM_UEBUNGEN,
-  REP_EINHEITEN:REP_EINHEITEN, REP_EINHEIT_NAMEN:REP_EINHEIT_NAMEN, REP_ROUTEN:REP_ROUTEN,
-  REP_WORKOUT_ROWS:REP_WORKOUT_ROWS,
   EX_INT:EX_INT,
   STUDIO_GRUPPEN:STUDIO_GRUPPEN,
   STUDIO_ZIEL:STUDIO_ZIEL,

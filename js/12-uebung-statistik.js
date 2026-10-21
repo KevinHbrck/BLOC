@@ -194,7 +194,7 @@ function statTage(n){ return n <= 0 ? t("statHeute") : n === 1 ? t("statGestern"
 function statGruppe(k){ return k === "lib" || k === "timer" ? "katalog" : k; }
 function statGruppen(keys){ var out = []; keys.forEach(function(k){ var g = statGruppe(k); if(out.indexOf(g) < 0) out.push(g); }); return out; }
 /* Ein „Besuch“ (= ein Training): alle Timer-Einträge, zwischen denen höchstens BESUCH_LUECKE liegt; die Zeit läuft vom ersten Start bis zum Ende des letzten.
-   Spanne eines Eintrags: Studio und Run speichern den Start (at), Air, Summit und Mobility das Ende. Läufe zählen immer einzeln. */
+   Spanne eines Eintrags: Studio und Run speichern den Start (at), Air und Mobility das Ende. Läufe zählen immer einzeln. */
 function besucheAlle(list){
   var lauf = list.filter(function(e){ return bereichVonEintrag(e) === "run"; }).map(function(e){ return besuche([e])[0]; });
   return besuche(list.filter(function(e){ return bereichVonEintrag(e) !== "run"; })).concat(lauf).sort(function(a, b){ return a.von - b.von; });
@@ -202,7 +202,7 @@ function besucheAlle(list){
 function statWochenReihe(n, aktiv){
   var mo = new Date(); mo.setHours(0, 0, 0, 0); mo.setDate(mo.getDate() - (mo.getDay() + 6) % 7);
   var sw = state.db.settings.statW || {}, out = [], idx = {};
-  var ohneRun = ["lib", "intervall", "timer", "reps", "warm"].every(function(k){ return aktiv.indexOf(k) > -1; });
+  var ohneRun = ["lib", "intervall", "timer", "warm"].every(function(k){ return aktiv.indexOf(k) > -1; });
   for(var i = n-1; i >= 0; i--){
     var d = new Date(mo); d.setDate(d.getDate() - 7*i); var key = wocheKey(d.getTime()), src = sw[key] || {}, ar = src.a || {}, w = { key:key, ab:d.getTime(), n:0, s:0, a:{} };
     Object.keys(ar).forEach(function(b){ if(aktiv.indexOf(b) > -1){ var g = statGruppe(b), x = w.a[g] || (w.a[g] = { n:0, s:0 }); x.n += ar[b].n || 0; x.s += ar[b].s || 0; } });
@@ -274,7 +274,7 @@ function statPaceSvg(runs){
 /* ---------- Kalorien-Schätzung (optional, nur mit Körperdaten; alles lokal) ----------
    Zusatzverbrauch über dem Ruheumsatz = (MET - 1) x Ruheumsatz je Stunde x Stunden. MET je Bereich grob nach dem Compendium of Physical Activities
    (Krafttraining/Calisthenics 3,5-8, Dehnen 2,3, Laufen 8-11); Ruheumsatz nach Mifflin-St Jeor, ohne Größe/Geschlecht 1 kcal je kg und Stunde. Eine grobe Schätzung. */
-var KCAL_MET = { katalog:4.5, intervall:6, reps:7, warm:2.8, run:9 };
+var KCAL_MET = { katalog:4.5, intervall:6, warm:2.8, run:9 };
 function koerperDaten(){
   var k = state.db.settings.koerper || {}, kg = +k.kg;
   if(!(kg >= 30 && kg <= 250)) return null;
@@ -392,7 +392,7 @@ function renderStats(){
       '<div class="sh-ziel"><span>'+esc(t("statZiel"))+'</span><button type="button" data-ziel="-1" aria-label="−">&minus;</button><b>'+ziel+'</b><button type="button" data-ziel="1" aria-label="+">&plus;</button></div></div>';
     // Bewegungsempfehlung (WHO 2020 und Nationale Empfehlungen 2016): Orientierung, keine Diagnose
     var woche = besA.filter(function(b){ return b.von >= montag && Object.keys(b.areas).some(function(k){ return k !== "warm"; }); }), kraftTage = {}, minWo = 0;
-    woche.forEach(function(b){ minWo += b.s/60; if(b.areas.lib || b.areas.timer || b.areas.reps){ var dd = new Date(b.von); kraftTage[dd.getFullYear()+"-"+dd.getMonth()+"-"+dd.getDate()] = 1; } });
+    woche.forEach(function(b){ minWo += b.s/60; if(b.areas.lib || b.areas.timer){ var dd = new Date(b.von); kraftTage[dd.getFullYear()+"-"+dd.getMonth()+"-"+dd.getDate()] = 1; } });
     var nKraft = Object.keys(kraftTage).length, nMin = Math.round(minWo);
     function whoZeile(label, wert, ziel, text){ var p = Math.min(100, Math.round(100*wert/ziel)); return '<div class="who-zeile'+(wert >= ziel ? ' ok' : '')+'"><span>'+esc(label)+'</span><b>'+esc(text)+(wert >= ziel ? ' ✓' : '')+'</b><i class="who-bar"><u style="width:'+p+'%"></u></i></div>'; }
     // zugeklappt: oben steht nur die Zusammenfassung („95 / 150 min · 1 / 2“), die Einzelheiten und die Quelle erst beim Aufklappen
@@ -455,7 +455,7 @@ function renderStats(){
   html += statTrainingsHTML();   // zuletzt gespeicherte Trainings (Training speichern auf Plan-Seite, Karte und im Timer)
   html += statFortschrittHTML(); // Fortschritt je Übung (Bestgewicht erste → jetzt)
   html += statEinblickeHTML(voll);   // Mehr Einblicke (zugeklappt): Volumen, Rekorde, Drücken : Ziehen
-  // Bereiche wie auf der Startseite: Workout, dann Mobility & Stretch, danach Timer und Summit (der in den letzten 4 Wochen am meisten genutzte zuerst), Run zuletzt
+  // Bereiche wie auf der Startseite: Workout, dann Mobility & Stretch, danach der Timer, Run zuletzt
   var folge = statGruppen(aktiv).map(function(k, i){ return { k:k, n:bes(k, 28).length, i:i }; }).sort(function(a, b){
     var fix = function(k){ return k === "katalog" ? 0 : k === "warm" ? 1 : k === "run" ? 3 : 2; };
     return fix(a.k) - fix(b.k) || b.n - a.n || a.i - b.i;
@@ -491,23 +491,11 @@ function renderStats(){
       var l1 = laeufe.reduce(function(m, x){ return !m || x.dist > m.dist ? x : m; }, null);
       if(l1) rek.push([t("statRekLang"), runKm(l1.dist)+" km", l1.at]);
       var bk = null; laeufe.forEach(function(x){ var b = runBesterKm(x); if(b !== null && (!bk || b < bk.v)) bk = { v:b, at:x.at }; });
-      if(bk) rek.push([t("statRekKm"), repUhr(bk.v)+" /km", bk.at]);
+      if(bk) rek.push([t("statRekKm"), fmtUhr(bk.v)+" /km", bk.at]);
       var bp = gut.reduce(function(m, x){ return !m || x.dur/x.dist < m.dur/m.dist ? x : m; }, null);
       if(bp) rek.push([t("statRekPace"), runPace(bp.dur/1000, bp.dist)+" /km", bp.at]);
       if(rek.length) html += '<div class="sk-unter titel">'+esc(t("statRekorde"))+'</div><div class="rekorde">'+rek.map(function(x){
         return '<div><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b><small>'+esc(new Date(x[2]).toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { day:"numeric", month:"short" }))+'</small></div>'; }).join("")+'</div>';
-    }
-    if(k === "reps"){
-      var bestAll = s.repBest || {}, vb = [];
-      Object.keys(bestAll).forEach(function(id){
-        var b = bestAll[id], lg = b && b.log || [];
-        if(lg.length < 2) return;
-        var erst = lg[0][1], q = repQuelle(id);
-        if(q && erst > b.best) vb.push({ name:q.name, erst:erst, best:b.best });
-      });
-      vb.sort(function(a, b){ return (b.erst - b.best) - (a.erst - a.best); });
-      if(vb.length) html += '<div class="sk-unter titel">'+esc(t("statVerb"))+'</div><div class="rekorde verb">'+vb.slice(0, 3).map(function(x){
-        return '<div><span>'+esc(x.name)+'</span><b>'+esc(repUhr(x.erst)+" → "+repUhr(x.best))+'</b><small>−'+esc(repUhr(x.erst - x.best))+'</small></div>'; }).join("")+'</div>';
     }
     if(k === "katalog"){
       var ids = []; eintraege(k, 7).forEach(function(e){ (e.ex || []).forEach(function(id){ ids.push(id); }); });

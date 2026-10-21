@@ -34,7 +34,6 @@
   --sel-border:color-mix(in srgb, var(--tint) 50%, var(--border));
   /* Die vier Bereiche der Startseite haben je eine Farbe - Favoriten, Start-Knöpfe und Übersicht tragen die Farbe ihres Bereichs:
      Fitnessstudio = --gym-color (Rot), Freiluft = --tp-color (blau), Workout = Akzent (BLOC-Orange); die übrigen Bereichsfarben sind am Ende dieser Datei auf Schwarz/Weiß gesetzt (ruhige Farbwelt) */
-  --rep-color:#c98a00;
   --ws-color:#1f9d6b;
   --ws-text:#ffffff;
   /* Kategorien der Bibliothek */
@@ -63,7 +62,6 @@
   --tp-color:#6f92ff;
   --ti-color:#58b6f4;
   --tp-text:#0b1330;
-  --rep-color:#f5b82e;
   --ws-color:#3fcf8e;
   --ws-text:#04231b;
   --radius:18px;
@@ -91,7 +89,6 @@
     --tp-color:#6f92ff;
   --ti-color:#58b6f4;
     --tp-text:#0b1330;
-    --rep-color:#f5b82e;
     --ws-color:#3fcf8e;
     --ws-text:#04231b;
     --radius:18px;
@@ -485,11 +482,8 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .st-kurve{ width:100%; height:44px; margin-bottom:6px; }
 .wo-kurve polyline{ fill:none; stroke:currentColor; stroke-width:2.5; vector-effect:non-scaling-stroke; stroke-linejoin:round; stroke-linecap:round; }
 .st-kurve{ color:var(--gym-color); }
-/* Fortschritt je Woche: kleine Kurve auf Studio-Kacheln und Summit-Karten, größere auf den Detailseiten */
+/* Fortschritt je Woche: kleine Kurve auf Studio-Kacheln, größere auf den Detailseiten */
 .st-spark{ display:block; width:100%; height:20px; margin-top:4px; color:var(--cat, var(--gym-color)); }
-.rep-spark{ width:56px; height:24px; flex:none; margin-right:8px; color:var(--rep-color); }
-.rep-kurve{ display:block; width:100%; height:48px; color:var(--rep-color); }
-.rep-verlauf{ margin-bottom:12px; }
 .wo-kopf{ display:flex; justify-content:space-between; gap:10px; align-items:baseline; font-size:13px; color:var(--text-dim); margin-bottom:6px; }
 .wo-kopf b{ color:var(--text); font-variant-numeric:tabular-nums; }
 .st-v-zeile{ display:flex; justify-content:space-between; gap:10px; font-size:13.5px; padding:6px 0; border-top:1px solid var(--border); }
@@ -644,7 +638,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .illu mask path{ stroke-width:calc(var(--illu-strich) + 3); }
 .illu circle{ fill:currentColor; stroke:none; }
 .illu .illu-floor{ stroke-width:var(--illu-boden); opacity:.4; }
-.info-illu .illu-floor, .pl-illu .illu-floor, .rp-karte .illu .illu-floor{ stroke-width:1.5; opacity:.5; stroke-dasharray:1 5; }   /* große Figuren: ruhiger gepunkteter Boden, kleine bleiben durchgezogen und dünn */
+.info-illu .illu-floor, .pl-illu .illu-floor{ stroke-width:1.5; opacity:.5; stroke-dasharray:1 5; }   /* große Figuren: ruhiger gepunkteter Boden, kleine bleiben durchgezogen und dünn */
 .illu .pose-b{ opacity:0; }
 .illu .lb{ opacity:.55; }
 .illu .tr{ stroke-width:var(--illu-rumpf); }
@@ -1047,59 +1041,12 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .at-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:4px; line-height:1.35; padding-right:18px; }
 .at-chev{ position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; font-size:18px; color:var(--text-dim); }
 .area-tile .at-chev{ top:41px; }
-/* Rep-Workouts */
-.rep-teile{ color:var(--text); font-weight:500; white-space:normal; }
-.rep-intro{ font-size:14px; color:var(--text-dim); margin:4px 4px 12px; line-height:1.45; }
-.rep-pick{ display:flex; flex-wrap:wrap; margin-bottom:8px; }
-.rep-pick.zwei{ margin-bottom:14px; }
-.rep-pick button{ flex:1 1 auto; padding:11px 10px; font-size:14px; }
-.rep-tab-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
-.rep-tab{ border-collapse:collapse; width:100%; font-size:14px; }
-.rep-tab th{ font-size:11px; color:var(--text-dim); font-weight:600; padding:0 6px 6px; text-align:center; }
-.rep-tab td{ padding:6px 4px; text-align:center; border-top:1px solid var(--border); font-variant-numeric:tabular-nums; white-space:nowrap; }
-.rep-tab td.rep-ex{ text-align:left; white-space:normal; min-width:118px; padding-left:0; }
-.rep-ex-in{ display:flex; align-items:center; gap:8px; }
-.rep-ex-in .illu{ width:34px; height:34px; flex-shrink:0; color:var(--rep-color); }
-.rep-ex-in .rep-leer{ width:34px; flex-shrink:0; }
-.rep-meta{ font-size:14px; color:var(--text-dim); margin:0 4px 4px; }
-/* Karten: was zu tun ist - Übung links, Menge über die Runden rechts */
-.rep-plan{ display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:3px 12px; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:13px; line-height:1.35; }
-.rpl-ex{ color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.rpl-m{ color:var(--text); font-weight:600; text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
-.rep-zeiten{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:12px; color:var(--text-dim); }
-.rep-zeiten .rz{ display:flex; flex-direction:column; gap:1px; }
-.rep-zeiten .rz b{ color:var(--text); font-size:14px; font-weight:600; font-variant-numeric:tabular-nums; }
-.rpl-mehr{ grid-column:1 / -1; color:var(--text-dim); font-size:12px; }
-/* Eigene Challenge bearbeiten */
-.re-kopf{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
-.re-kopf b{ font-size:15px; }
-.re-art{ margin-bottom:10px; }
-.re-felder{ display:grid; grid-template-columns:repeat(auto-fill, minmax(64px, 1fr)); gap:8px; }
-.re-feld{ display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text-dim); text-align:center; }
-.re-feld input{ width:100%; text-align:center; padding:10px 4px; font-size:16px; font-variant-numeric:tabular-nums; }
-.re-pick{ display:flex; flex-direction:column; max-height:86vh; overflow:hidden; }
-.re-pick-liste{ flex:1 1 auto; min-height:0; overflow-y:auto; margin:8px 0 10px; padding:4px; }
-.re-pick-opt{ display:flex; align-items:center; gap:12px; width:100%; min-height:54px; padding:6px 4px; background:none; border:0;
+.seiten-intro{ font-size:14px; color:var(--text-dim); margin:4px 4px 12px; line-height:1.45; }
+.wahl-pick{ display:flex; flex-wrap:wrap; margin-bottom:8px; }
+.wahl-pick.zwei{ margin-bottom:14px; }
+.wahl-pick button{ flex:1 1 auto; padding:11px 10px; font-size:14px; }
+.meta-zeile{ font-size:14px; color:var(--text-dim); margin:0 4px 4px; }
   border-bottom:1px solid var(--border); color:var(--text); font-size:15px; text-align:left; cursor:pointer; }
-.re-pick-opt .illu{ width:40px; height:40px; flex-shrink:0; color:var(--rep-color); }
-.re-pick-opt .rep-leer{ width:40px; flex-shrink:0; }
-.rp-uhr{ font-size:60px; font-weight:800; text-align:center; font-variant-numeric:tabular-nums; line-height:1.1; margin:4px 0 2px; letter-spacing:-.01em; }
-.rp-runde{ text-align:center; color:var(--text-dim); font-size:14px; font-weight:600; }
-.rp-fort{ height:6px; background:var(--surface-2); border-radius:6px; overflow:hidden; margin:10px 0 14px; }
-.rp-fort i{ display:block; height:100%; background:var(--accent); border-radius:6px; transition:width .3s ease; }
-.rp-karte{ background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px 16px 18px; text-align:center; }
-.rp-karte .illu{ display:block; width:130px; height:130px; margin:0 auto 2px; color:var(--rep-color); }
-.rp-karte .rp-leer{ height:24px; }
-.rp-menge{ font-size:46px; font-weight:800; line-height:1.1; font-variant-numeric:tabular-nums; }
-.rp-name{ font-size:20px; font-weight:700; margin-top:2px; }
-.rp-next{ color:var(--text-dim); font-size:14px; margin:12px 4px 0; text-align:center; }
-.rp-go{ min-height:78px; font-size:22px; }
-.rp-go:disabled{ opacity:.55; }
-.rp-leiste{ display:flex; gap:10px; }
-.rp-leiste .btn{ flex:1; margin-top:10px; padding:14px 8px; font-size:15px; }
-.rp-leiste .btn:disabled{ opacity:.45; }
-.rp-best{ text-align:center; color:var(--accent); font-weight:700; font-size:17px; margin-top:4px; }
-.rp-sub{ text-align:center; color:var(--text-dim); font-size:14px; margin-top:4px; }
 /* Schnappschuss in den Einstellungen */
 .snap-zeile{ font-size:14px; color:var(--text-dim); line-height:1.4; }
 .snap-zeile small{ display:block; font-size:12px; margin-top:4px; }
@@ -1295,7 +1242,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
   --gym-color:#e1251b; --gym-text:#ffffff;   /* Rot */
   --ti-color:#7fb4d6; --ti-text:#0d1a24;
   --tp-color:#8fa8d8; --tp-text:#0f1626;   /* Air: gedämpftes Blau */
-  --rep-color:#e8c05a;
   --ws-color:#a8c46a; --ws-text:#1a2208;   /* Mobility & Stretch: grün */
   --geraet:#e8b27a;
   --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.4);
@@ -1418,8 +1364,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 /* ohne Daten: gestrichelte Platzhalterlinie statt Kurve, leeres Diagramm-Gerüst im Fenster */
 .ssl-kurve.leer polyline{ stroke-dasharray:3 5; opacity:.5; }
 .wo-diagramm.leer{ opacity:.7; }
-/* Summit-Detailseite: Kachel steht in einer eigenen Zeile zwischen Kopfzeile und Tabellen (nichts liegt über Figuren) */
-.rep-meta + .st-stats-leiste{ margin-top:8px; margin-bottom:6px; }
 .st-stats h3{ margin-bottom:12px; }
 .st-stats-zahlen{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:14px; }
 .st-stats-zahlen div{ background:var(--surface-2); border-radius:14px; padding:10px 8px; text-align:center; display:flex; flex-direction:column; gap:2px; }
@@ -1451,15 +1395,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .gen-row label{ margin:0; font-size:.9rem; }
 .gen-row b{ text-align:right; font-variant-numeric:tabular-nums; }
 .gen-row input[type=range]{ width:100%; accent-color:var(--gym-color); }
-/* Summit-Karten: ⋯ oben rechts, damit die Mengen-Spalten nicht schmaler werden */
-.rep-karte{ position:relative; }
-.rep-karte > .more-btn{ position:absolute; top:6px; right:6px; }
-.rep-karte .name{ padding-right:34px; }
 .ru-felder{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
-.playbtn.rep{ background:var(--rep-color); color:#fff; }
-/* Summit › eigene Karten: ★ und Mülleimer oben rechts (wie in Air › Meine), ⋯ entfällt - das Menü liegt auf dem langen Drücken */
-.rep-karte.eigen > .card-aside{ position:absolute; top:2px; right:2px; }
-.rep-karte.eigen .name{ padding-right:84px; }
 /* Lauf-Tracker (Beta) */
 .run-svg{ width:100%; height:auto; display:block; }
 .run-leer{ color:var(--text-dim); font-size:13px; text-align:center; padding:50px 12px; }
@@ -1469,7 +1405,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .run-splits td{ padding:8px 10px; } .run-splits td:last-child{ text-align:right; font-variant-numeric:tabular-nums; }
 .run-dunkel{ position:fixed; inset:0; z-index:99999; background:#000; color:#8a8a8a; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }   /* schwarz, aber Zeit, Kilometer und Tempo gut lesbar */
 .rd-z{ font-size:56px; font-weight:600; font-variant-numeric:tabular-nums; } .rd-k{ font-size:30px; font-weight:500; font-variant-numeric:tabular-nums; } .rd-h{ font-size:13px; margin-top:40px; color:#4a4a4a; }
-.run-ansage{ margin:0 0 14px; } .run-ansage .rep-pick{ margin:6px 0 10px; } .run-ansage .btn{ margin-top:4px; }
+.run-ansage{ margin:0 0 14px; } .run-ansage .wahl-pick{ margin:6px 0 10px; } .run-ansage .btn{ margin-top:4px; }
 .run-fertig{ text-align:center; margin-bottom:14px; border:1px solid var(--run-color, #e5573f); }
 .rf-titel{ font-size:15px; font-weight:600; color:var(--run-color, #e5573f); text-transform:uppercase; letter-spacing:.06em; }
 .rf-km{ font-size:54px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1; margin:6px 0 2px; } .rf-km small{ font-size:20px; font-weight:500; color:var(--text-dim); }
@@ -1662,7 +1598,7 @@ body.mit-tabs #app{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
 .chips-stat span{ background:color-mix(in srgb, var(--c) 11%, var(--surface-2)); border-radius:14px; padding:10px 4px; text-align:center; }
 .chips-stat b{ display:block; font-size:16px; font-variant-numeric:tabular-nums; }
 .chips-stat small{ display:block; color:var(--text-dim); font-size:11px; margin-top:2px; }
-/* Favoriten tragen die Farbe ihres Bereichs: Air blau (tp), Studio hellgrün (st), Timer hellblau (ti), Summit gold (rep), Mobility grün (ws) */
+/* Favoriten tragen die Farbe ihres Bereichs: Air blau (tp), Studio hellgrün (st), Timer hellblau (ti), Mobility grün (ws) */
 .list-item .playbtn.st, .playbtn.st{ background:var(--gym-color); color:var(--gym-text, #fff); }
 .list-item .playbtn.ti, .playbtn.ti{ background:var(--ti-color); color:var(--ti-text, #fff); }
 /* Bewegungsempfehlung in der Statistik */
@@ -1834,7 +1770,6 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
    Freiluft = blau (--tp-color), Fitnessstudio = Rot (--gym-color). */
 :root:root{
   --ti-color:var(--text); --ti-text:var(--bg);
-  --rep-color:var(--text);
   --bl-color:var(--text); --bl-text:var(--bg);
   --run-color:var(--text);
 }
@@ -1971,7 +1906,7 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .ort-fotos.kompakt .of-t small{ font-size:11.5px; }
 .ort-fotos.kompakt .of-haken{ top:6px; right:6px; width:22px; height:22px; }
 .ort-fotos.kompakt .of-haken svg{ width:14px; height:14px; }
-/* Bereichsseiten (Mobility & Stretch, Summit, Run): schmales Foto unter der Kopfzeile */
+/* Bereichsseiten (Mobility & Stretch, Timer, Run): schmales Foto unter der Kopfzeile */
 .bereich-bild{ position:relative; overflow:hidden; height:116px; margin:0 0 12px; border-radius:var(--radius); background:#222; box-shadow:var(--shadow); }
 .bereich-bild img{ display:block; width:100%; height:100%; object-fit:cover; }
 .bereich-bild::after{ content:""; position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0) 55%, rgba(0,0,0,.28)); pointer-events:none; }
@@ -1994,7 +1929,6 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 :root:root .playbtn.tp, :root:root .playbtn.cat{ --pb:var(--tp-color); }
 :root:root .playbtn.cat{ --pb:var(--cat); }
 :root:root .playbtn.ws{ --pb:var(--ws-color); }
-:root:root .playbtn.rep{ --pb:var(--rep-color); }
 :root:root .playbtn.st{ --pb:var(--gym-color); }
 :root:root .playbtn.ti{ --pb:var(--ti-color); }
 :root:root .list-item .playbtn.wo, :root:root .list-item .playbtn.bl{ --pb:var(--tp-color); }

@@ -3,9 +3,7 @@
 /* Inhaltsdaten (Übungen, Workouts, Posen) stehen in daten.js - hier unter den gewohnten Namen */
 var BLOC_DATEN = window.BLOC_DATEN;
 var BAND_ARTEN = BLOC_DATEN.BAND_ARTEN, BAND_HOEHE = BLOC_DATEN.BAND_HOEHE, BAND_ANKER = BLOC_DATEN.BAND_ANKER, BAND_ANKER_EXTRA = BLOC_DATEN.BAND_ANKER_EXTRA;   // Befestigung des Widerstandsbands
-var REP_WORKOUT_ROWS = BLOC_DATEN.REP_WORKOUT_ROWS, REP_PSEUDO = BLOC_DATEN.REP_PSEUDO, AUFWAERM_IDS = BLOC_DATEN.AUFWAERM_IDS,
-    AUFWAERM_UEBUNGEN = BLOC_DATEN.AUFWAERM_UEBUNGEN, REP_EINHEITEN = BLOC_DATEN.REP_EINHEITEN,
-    REP_EINHEIT_NAMEN = BLOC_DATEN.REP_EINHEIT_NAMEN || {}, REP_ROUTEN = BLOC_DATEN.REP_ROUTEN || [], EX_INT = BLOC_DATEN.EX_INT || {},
+var AUFWAERM_IDS = BLOC_DATEN.AUFWAERM_IDS, AUFWAERM_UEBUNGEN = BLOC_DATEN.AUFWAERM_UEBUNGEN, EX_INT = BLOC_DATEN.EX_INT || {},
     LIB_FOKUS_TAUSCH = BLOC_DATEN.LIB_FOKUS_TAUSCH || {}, LIB_WORKOUT_INFO = BLOC_DATEN.LIB_WORKOUT_INFO || {},
     STUDIO_GRUPPEN = BLOC_DATEN.STUDIO_GRUPPEN || [], STUDIO_ZIEL = BLOC_DATEN.STUDIO_ZIEL || {},
     STUDIO_GERAET = BLOC_DATEN.STUDIO_GERAET || {}, STUDIO_GERAETE = BLOC_DATEN.STUDIO_GERAETE || [];
@@ -39,7 +37,8 @@ function defaultDB(){
     blocks: [],
     workouts: [],
     myWorkouts: [],   // eigene Workouts aus Bibliotheksübungen - getrennt von den Timer-Workouts
-    plaene: [],       // PLÄNE (Baukasten): Wochentage mit Workouts
+    bkWorkouts: [],   // Workouts (Baukasten): Abfolge von BLOCs, Läufen und Kataloginhalten
+    plaene: [],       // PLÄNE (Baukasten): Wochen mit Wochentagen und Workouts
     customEx: [],     // selbst angelegte Übungen
     history: [],      // nur Übungen der letzten 14 Tage { at, ex:[ids] } - für „Überrasch mich“
     settings: { theme:"system", sound:true, soundStyle:"klangschale", space:true, vibration:true, keepAwake:true, countIn:true, volume:0.6, voice:true, voiceMix:true }
@@ -138,12 +137,51 @@ function migrateSound(key){
   return REMOVED_SOUNDS[key] || "klangschale";
 }
 
-/* Speicherformat: db.v zählt die Fassung des Formats (1 = bis zum Baukasten-Umbau, 2 = mit Plänen in db.plaene).
+/* Speicherformat: db.v zählt die Fassung des Formats (1 = bis zum Baukasten-Umbau, 2 = mit Workouts und Plänen im Baukasten, 3 = ohne Summit).
    Jede Änderung am Format bekommt eine Stufe in dbMigrieren; die läuft beim Laden, beim Import und beim Wiederherstellen des Schnappschusses gleich. */
-var DB_VERSION = 2;
+var DB_VERSION = 3;
+var SUMMIT_ARCHIV = "sporttimer-summit-archiv";   // Zwischenspeicher für die Daten des entfernten Bereichs Summit, bis man sie als Datei gesichert oder verworfen hat
 function dbMigrieren(db, vonV){
-  if(vonV < 2 && !Array.isArray(db.plaene)) db.plaene = [];
+  if(vonV < 2){
+    /* Stufe 2: der eine Plan aus dem früheren Plan-Reiter (settings.planBau) wird ein benannter PLAN im Baukasten, falls er etwas enthält */
+    var pb = db.settings.planBau;
+    if(pb && pb.wahl && typeof pb.wahl === "object"){
+      var voll = Object.keys(pb.wahl).some(function(d){ return [].concat(pb.wahl[d] || []).filter(Boolean).length > 0; });
+      if(voll){
+        var en = db.settings.lang === "en" || (!db.settings.lang && !/^de/i.test(navigator.language || ""));
+        db.plaene.push({ id:uid(), name:en ? "My PLAN" : "Mein PLAN", wochen:pb.wochen > 0 ? pb.wochen : 6, tage:Array.isArray(pb.tage) ? pb.tage : [0, 2, 4], wahl:pb.wahl, updatedAt:Date.now() });
+      }
+    }
+    delete db.settings.planBau; delete db.settings.koerperTab;
+  }
+  if(vonV < 3) summitEntfernen(db);
   db.v = DB_VERSION;
+}
+/* Stufe 3: Summit (Challenges) gibt es nicht mehr. Eigene Challenges, Einheiten und Bestzeiten wandern in den Zwischenspeicher SUMMIT_ARCHIV
+   (die Seite „Training“ bietet an, sie als Datei zu sichern); alles andere zu Summit wird gelöscht. */
+function summitEntfernen(db){
+  var st = db.settings, neu = { myReps:st.myReps || [], myRepUnits:st.myRepUnits || [], repBest:st.repBest || {} };
+  if(neu.myReps.length || neu.myRepUnits.length || Object.keys(neu.repBest).length){
+    try{   // liegt schon ein Zwischenspeicher da (Sicherungsdatei einer älteren Fassung eingelesen), werden beide zusammengeführt
+      var alt = JSON.parse(localStorage.getItem(SUMMIT_ARCHIV) || "null");
+      if(alt){
+        var vereinen = function(a, b){ var ids = {}; return (a || []).concat(b || []).filter(function(x){ if(!x || ids[x.id]) return false; return ids[x.id] = true; }); };
+        neu.myReps = vereinen(alt.myReps, neu.myReps); neu.myRepUnits = vereinen(alt.myRepUnits, neu.myRepUnits); neu.repBest = Object.assign({}, neu.repBest, alt.repBest || {});
+      }
+      localStorage.setItem(SUMMIT_ARCHIV, JSON.stringify(neu));
+    }catch(e){}
+  }
+  ["myReps", "myRepUnits", "repBest", "repFilterOpen"].forEach(function(k){ delete st[k]; });
+  var summitSchluessel = function(k){ return /^rep:/.test(k); };
+  if(Array.isArray(st.favs)) st.favs = st.favs.filter(function(k){ return !summitSchluessel(k); });
+  if(st.favUsed) Object.keys(st.favUsed).forEach(function(k){ if(summitSchluessel(k)) delete st.favUsed[k]; });
+  if(Array.isArray(st.bereiche)) st.bereiche = st.bereiche.filter(function(k){ return k !== "reps"; });
+  if(Array.isArray(st.fokusAus)) st.fokusAus = st.fokusAus.filter(function(k){ return k !== "reps"; });
+  if(st.hinweise) delete st.hinweise.reps;
+  if(st.tippAus) delete st.tippAus.summit;
+  if(st.kalender && Array.isArray(st.kalender.e)) st.kalender.e = st.kalender.e.filter(function(e){ return e && e.art !== "summit"; });
+  db.history = (db.history || []).filter(function(e){ return e && e.b !== "reps"; });
+  if(st.statW) Object.keys(st.statW).forEach(function(w){ if(st.statW[w] && st.statW[w].a) delete st.statW[w].a.reps; });
 }
 /* Aus einem gelesenen Stand (localStorage, Sicherungsdatei, Schnappschuss) die Datenbank bauen */
 function dbAusRoh(parsed){
@@ -151,6 +189,7 @@ function dbAusRoh(parsed){
   db.blocks = Array.isArray(parsed.blocks) ? parsed.blocks : [];
   db.workouts = Array.isArray(parsed.workouts) ? parsed.workouts : [];
   db.myWorkouts = Array.isArray(parsed.myWorkouts) ? parsed.myWorkouts : [];
+  db.bkWorkouts = Array.isArray(parsed.bkWorkouts) ? parsed.bkWorkouts : [];
   db.plaene = Array.isArray(parsed.plaene) ? parsed.plaene : [];
   db.customEx = Array.isArray(parsed.customEx) ? parsed.customEx : [];
   db.history = Array.isArray(parsed.history) ? parsed.history : [];
@@ -159,7 +198,7 @@ function dbAusRoh(parsed){
   if(db.settings.bereicheV !== 3){   // einmalig: der Timer ist wieder ein eigener Bereich - bei bestehender Reihenfolge direkt nach Studio einsortieren, sonst Standard
     /* kein selArr: die Funktion steht erst in 02-bibliothek.js, beim Laden gibt es sie hier noch nicht */
     var br0 = db.settings.bereicheV === 2 && Array.isArray(db.settings.bereiche) ? db.settings.bereiche.slice() : [];
-    if(!br0.length) br0 = ["lib", "timer", "intervall", "reps", "run", "warm"];
+    if(!br0.length) br0 = ["lib", "timer", "intervall", "run", "warm"];
     else if(br0.indexOf("intervall") < 0){ var nach = br0.indexOf("timer") > -1 ? br0.indexOf("timer") : br0.indexOf("lib"); br0.splice(nach + 1, 0, "intervall"); }
     db.settings.bereiche = br0; db.settings.bereicheV = 3;
   }
@@ -256,6 +295,11 @@ function soundLabel(key){
 function applyLang(){ document.documentElement.lang = currentLang(); }
 
 /* ============ Helpers ============ */
+/* Millisekunden als Uhrzeit: „1:05“, ab einer Stunde „1:02:05“ (Lauf, Statistik) */
+function fmtUhr(ms){
+  var s = Math.max(0, Math.floor(ms/1000)), h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60;
+  return (h ? h+":"+(m<10?"0":"")+m : m)+":"+(x<10?"0":"")+x;
+}
 function fmtTime(totalSec){
   totalSec = Math.max(0, Math.round(totalSec));
   var m = Math.floor(totalSec/60), s = totalSec%60;
@@ -320,7 +364,7 @@ function esc(str){
 /* Achtung: pruneHistory läuft schon in loadDB, also bevor diese Zeile ausgeführt wird - deshalb eine Funktion
    statt einer Variablen (eine var wäre dann noch undefined, und der ganze Verlauf fiele beim Laden weg) */
 function histKeepDays(){ return 31; }   // für die Statistik der letzten Wochen; „Überrasch mich“ schaut nur auf wenige Tage zurück
-/* Bereich eines Eintrags: b = "lib" (Air) | "intervall" (Timer) | "timer" (Studio) | "reps" (Summit) | "warm" (Mobility & Stretch) | "run". Ältere Einträge ohne b werden geschätzt
+/* Bereich eines Eintrags: b = "lib" (Air) | "intervall" (Timer) | "timer" (Studio) | "warm" (Mobility & Stretch) | "run". Ältere Einträge ohne b werden geschätzt
    (Timer-Workouts und Blöcke, die vor 2026-10-07 gelaufen sind, stehen als Air). */
 function bereichVonEintrag(e){ return e.b || (e.studio ? "timer" : (e.ex && e.ex.length ? "lib" : "run")); }
 function wocheKey(ts){
@@ -336,7 +380,7 @@ function pruneHistory(db){
       var woche = function(ts){ var k = wocheKey(ts); return sw[k] || (sw[k] = { bn:0, bs:0, a:{} }); };
       // bn/bs: Besuche aller Bereiche außer Run zusammen; a[bereich]: Besuche je Bereich (Run: jeder Lauf einzeln)
       besuche(alt.filter(function(e){ return bereichVonEintrag(e) !== "run"; })).forEach(function(b){ var w = woche(b.von); w.bn = (w.bn || 0) + 1; w.bs = (w.bs || 0) + b.s; });
-      ["lib", "intervall", "timer", "reps", "warm", "run"].forEach(function(k){
+      ["lib", "intervall", "timer", "warm", "run"].forEach(function(k){
         var l = alt.filter(function(e){ return bereichVonEintrag(e) === k; });
         (k === "run" ? l.map(function(e){ return besuche([e])[0]; }) : besuche(l)).forEach(function(b){
           var w = woche(b.von), a = w.a[k] || (w.a[k] = { n:0, s:0 }); a.n++; a.s += b.s;

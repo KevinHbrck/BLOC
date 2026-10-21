@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Baukasten im Training-Tab, Summit entfernt (Fassung 2026-10-21-12)
+
+- **Neu auf Training:** der Baukasten mit Umschalter **BLOC | Workout | PLAN**, Bau-Knopf (`+ BLOC`, `+ Workout`, `+ PLAN`), flachem Karussell (zuletzt benutzt zuerst, ab drei Elementen endlos, „3 / 12“, „Alle anzeigen“ mit Suche, leere Segmente mit Platzhalterkarte), Detailseite (Start, Bearbeiten, Menü: Duplizieren, Löschen) und Fotos für Dunkel und Hell (Pexels, siehe `quellen.html`). Code in `js/23-baukasten.js`.
+- **Workout-Builder:** Abfolge oben (Ziehen am Griff, Wischen nach links oder × zum Entfernen, je Eintrag Runden und Pause danach), unten Quellen **Meine BLOCs · Workout-Katalog · Mobility & Stretch · RUN** mit Suche über alle, Gesamtdauer live, „+ neuen BLOC bauen“ (der neue BLOC wird danach angehängt). Katalog-Inhalte werden Kopien unter Meine, eigene BLOCs stehen als Verweis darin; wird ein BLOC in mehreren Workouts benutzt, fragt BLOC vor dem Bearbeiten („Als Kopie bearbeiten“), Löschen nennt die betroffenen Workouts und PLÄNE. Im Timer bleibt die Reihenfolge fest (Mobility zuerst), ab 30 s Pause fragt er „Bereit für …?“, ein Lauf ist ein Zeitblock.
+- **PLAN-Builder:** Wochen, Trainingstage, je Tag Workouts, BLOCs, Katalog, Run; „Start“ trägt ihn in den Kalender ein (neue Kalenderart `wk`), er erscheint wie bisher auf Heute. Der frühere Reiter „Plan“ unter Fortschritt ist weg; der alte Plan wird beim Update ein benannter PLAN („Mein PLAN“).
+- **Speicherformat versioniert:** `db.v` (jetzt 3), gemeinsames Laden für Start, Import und Schnappschuss (`dbAusRoh`, `dbMigrieren`).
+- **Summit entfernt** (Oberfläche, Daten, Routen, Texte, Bilder, Styles, Tests). Eigene Challenges, Einheiten und Bestzeiten bleiben im Zwischenspeicher `sporttimer-summit-archiv`, bis man sie auf Training als Datei sichert oder verwirft.
+- `repUhr` heißt jetzt `fmtUhr` (js/01-basis.js), Klassen `rep-intro`, `rep-pick`, `rep-meta` heißen `seiten-intro`, `wahl-pick`, `meta-zeile`.
+- Tests: Einheitstest 58 Prüfungen; Schnelltest um Baukasten und Umbau ergänzt, Summit-Tests entfernt.
+
 ## 2026-10-21 · Handeinstellung gilt wieder (Fassung 2026-10-21-10)
 
 - Wer Sätze, Wiederholungen oder Gewicht eines Ziels von Hand ändert, behält diese Einstellung: frühere Einheiten heben sie nicht wieder automatisch an, erst eine neuere Einheit mit mehr als dem neuen Ziel.

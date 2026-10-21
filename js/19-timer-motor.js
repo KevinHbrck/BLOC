@@ -135,7 +135,7 @@ function playerTrackt(){   // Workouts mit Gewicht (aus einem Plan oder eine ein
   var src = playerState && playerState.source;
   if(!src) return false;
   if(src.type === "mine"){ var mw = findMy(src.id); return !!(mw && mw.fromPlan); }
-  return src.type === "studio" && !!playerState.workout.mitGewicht;
+  return (src.type === "studio" || !!src.bk) && !!playerState.workout.mitGewicht;
 }
 function playerTemplate(){
   var vol = Math.round((state.db.settings.volume!=null?state.db.settings.volume:1)*100);

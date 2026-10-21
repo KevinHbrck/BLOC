@@ -5,7 +5,6 @@ var HOME_ICON = {
   intervall:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 3h5M18 7l1.5-1.5"/>',   /* Timer: Stoppuhr */
   lib:'<path d="M3 8.5h10a3 3 0 1 0-3-3"/><path d="M3 12.5h15a3 3 0 1 1-3 3"/><path d="M3 16.5h6"/>',   /* Air: Wind (Menüs beim langen Drücken) */
   katalog:'<path d="M4.5 19.5L19.5 4.5"/><path stroke-width="3.2" d="M4.6 13.4l6 6M13.4 4.6l6 6"/><path stroke-width="3.2" d="M3.2 16.2l4.6 4.6M16.2 3.2l4.6 4.6"/>',   /* Workout: schräge Kurzhantel mit je zwei Scheiben (Katalog und Baukasten) */
-  reps:'<path d="M2.5 20l6.5-11.5 3.8 6.3 2.7-4.3 6 9.5z"/><path d="M9 8.5V3.5l3.5 1.5L9 6.5"/>',   /* Summit: Gipfel mit Fahne */
   warm:'<circle cx="19" cy="5.6" r="2.6" fill="currentColor" stroke="none"/><path d="M3.5 18H10.2L16.2 9.2M16.2 9.5V18"/><path d="M3 21.5H21"/>',   /* Mobility & Stretch: Figur liegt auf dem Boden und drückt den Oberkörper nach oben (Kobra); klare Linien, Kopf gefüllt, damit es auch klein scharf bleibt */
   faq:'<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9M12 16.6v.1"/>',
   run:'<circle cx="14" cy="4.5" r="2"/><path d="M6 21l3-6 3 2v5M9 15l1-4 4-1 2 3 3 1M10 11L8 8"/>'   /* Lauf: Läufer */
@@ -23,14 +22,13 @@ function areaTile(key, href, titel, unter, farbe, art){
     '</div>';
 }
 /* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
-var BEREICH_KEYS = ["lib", "timer", "intervall", "reps", "run", "warm"];   // Bereiche im Verlauf (gespeichert bleibt Air = lib und Studio = timer); die Statistik zeigt beide gemeinsam als „Workout“
-var HOME_KEYS = ["katalog", "warm", "intervall", "reps", "run"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
+var BEREICH_KEYS = ["lib", "timer", "intervall", "run", "warm"];   // Bereiche im Verlauf (gespeichert bleibt Air = lib und Studio = timer); die Statistik zeigt beide gemeinsam als „Workout“
+var HOME_KEYS = ["katalog", "warm", "intervall", "run"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
 var HOME_GROSS = ["katalog"];   // steht fest vorn (nicht sortierbar): der Kopfblock (heroHTML) führt dorthin, und Workout hat zusätzlich die erste Kachel unter „Weitere Bereiche“
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--accent)"];
   if(k === "intervall"){ var tw = state.db.workouts.length, tb = state.db.blocks.length; return ["#intervall", t("tabTimer"), tw || tb ? t("tmQuick", { w:tw, b:tb }) : t("tmQuickLeer"), "var(--ti-color)"]; }
-  if(k === "reps") return ["#reps", t("repTitle"), t("htReps"), "var(--rep-color)"];
   if(k === "run") return ["#run", t("runTitle"), run ? t("runLaeuft", { km:runKm(run.dist) }) : t("runTeaser"), "var(--run-color, #e5573f)"];
   return ["#warmstretch", t("warmTitle"), t("htWarm", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length }), "var(--ws-color)"];
 }
@@ -49,7 +47,7 @@ function bereichReihe(){
 /* Seit 2026-10-19 gibt es die Einstellung „Bereiche unter Training“ nicht mehr: alle Bereiche sind immer sichtbar. Ein früher gespeichertes settings.fokusAus bleibt unberührt, wird aber nicht mehr beachtet. */
 function fokusAusRoh(k){ return false; }
 function fokusAus(k){ return k === "katalog" ? fokusAusRoh("lib") && fokusAusRoh("timer") : fokusAusRoh(k); }
-/* „Weitere Bereiche“: Workout (immer vorn, orange), Mobility & Stretch, Timer, Summit und Run als eine ruhige Liste in der gewählten Reihenfolge.
+/* „Weitere Bereiche“: Workout (immer vorn, orange), Mobility & Stretch, Timer und Run als eine ruhige Liste in der gewählten Reihenfolge.
    Die Hinweiskarte erscheint erst, wenn gar nichts mehr eingeblendet ist. */
 function bereicheHTML(){
   var r = bereichReihe().filter(function(k){ return !fokusAus(k); });
@@ -104,8 +102,8 @@ function openBereicheSheet(){
   zeichnen();
 }
 /* „Überrasch mich“: schmale Leiste (eine Zeile) direkt unter den Reitern vom Workout-Bereich - das Alleinstellungsmerkmal, aber ohne viel Höhe zu kosten */
-/* Bild-Kopf der Bereichsseiten (Mobility & Stretch, Summit, Run): ein schmales Foto direkt unter der Kopfzeile. Fotos: Pexels (siehe quellen.html) */
-var BEREICH_BILD = { suche:"img/bereich-suche.jpg", warm:"img/bereich-mobility.jpg", intervall:"img/bereich-timer.jpg", reps:"img/bereich-summit.jpg", run:"img/bereich-run.jpg" };
+/* Bild-Kopf der Bereichsseiten (Mobility & Stretch, Timer, Run): ein schmales Foto direkt unter der Kopfzeile. Fotos: Pexels (siehe quellen.html) */
+var BEREICH_BILD = { suche:"img/bereich-suche.jpg", warm:"img/bereich-mobility.jpg", intervall:"img/bereich-timer.jpg", run:"img/bereich-run.jpg" };
 function bereichBildHTML(key){
   return '<div class="bereich-bild"><img src="'+BEREICH_BILD[key]+'" alt="" draggable="false"></div>';
 }
@@ -139,5 +137,5 @@ function heroHTML(){
     '</button>'+
   '</section>';
 }
-/* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Workout, Mobility & Stretch, Summit) */
+/* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Workout, Mobility & Stretch) */
 function reiterZeileHTML(farbe, knoepfe){ return '<div class="rz" style="--rz:'+farbe+'">'+knoepfe+'</div>'; }

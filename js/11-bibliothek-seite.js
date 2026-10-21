@@ -179,7 +179,7 @@ function mainTilesHTML(sel, counts, attr, ohne){
   }).join("")+'</div>';
 }
 var ICON_RESET = '<path d="M4 4v5h5"/><path d="M4.6 14a8 8 0 1 0 1.9-7.9L4 9"/>';
-/* Gemeinsame Filterkarte (Air, Baukasten, Studio, Mobility & Stretch, Summit). Zu: eine Zeile mit Zusammenfassung, was gerade gilt.
+/* Gemeinsame Filterkarte (Air, Baukasten, Studio, Mobility & Stretch). Zu: eine Zeile mit Zusammenfassung, was gerade gilt.
    Auf: Gruppen von Chips (Training, Ausrüstung …) und unten „Zurücksetzen“ + „N … anzeigen“ (klappt zu). Auf/Zu merkt sich der Bereich selbst.
    o: { offen, toggle:"data-xtoggle", reset:"data-xfreset", n:Anzahl aktiver Filter, summe:Text der Kopfzeile, inhalt:HTML, zeigen:Text des Knopfes } */
 function filterKarteHTML(o){

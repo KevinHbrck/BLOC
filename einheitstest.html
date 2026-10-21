@@ -234,16 +234,10 @@
     gleich(W.layoutNeu(), W.LAYOUT_NUR_MODERN || W.state.db.settings.layout === "new", "layoutNeu");
   });
 
-  /* ---------- Summit: Mengen und Zeiten ---------- */
-  test("Mengen halbieren: Wiederholungen mindestens 1, Strecken in m/km, Zeiten unverändert", function () {
-    gleich(W.repMengeMal(10, 1), 10, "Faktor 1"); gleich(W.repMengeMal(10, 0.5), 5, "10 → 5"); gleich(W.repMengeMal(1, 0.5), 1, "mindestens 1");
-    gleich(W.repMengeMal(3, 0.5), 2, "3 → 2 (gerundet)");
-    gleich(W.repMengeMal("500m", 0.5), "250m", "Meter"); gleich(W.repMengeMal("2km", 0.5), "1km", "Kilometer");
-    gleich(W.repMengeMal("1km", 0.5), "500m", "unter 1 km in Metern"); gleich(W.repMengeMal("30s", 0.5), "30s", "Sekunden unverändert");
-  });
+  /* ---------- Zeiten ---------- */
   test("Zeitformate: Stoppuhr, Dauer, Kurzdauer", function () {
-    gleich(W.repUhr(0), "0:00", "null"); gleich(W.repUhr(65000), "1:05", "Minuten"); gleich(W.repUhr(3725000), "1:02:05", "Stunden");
-    gleich(W.repUhr(-500), "0:00", "negativ");
+    gleich(W.fmtUhr(0), "0:00", "null"); gleich(W.fmtUhr(65000), "1:05", "Minuten"); gleich(W.fmtUhr(3725000), "1:02:05", "Stunden");
+    gleich(W.fmtUhr(-500), "0:00", "negativ");
     var m = W.t("unitMin"), s = W.t("unitSec"), h = W.t("unitH");
     gleich(W.fmtDuration(59), "59 " + s, "Sekunden"); gleich(W.fmtDuration(125), "2 " + m + " 5 " + s, "Minuten und Sekunden");
     gleich(W.fmtDuration(120), "2 " + m, "volle Minuten"); gleich(W.fmtDuration(3600), "1 " + h + " 0 " + m, "Stunde"); gleich(W.fmtDuration(-5), "0 " + s, "negativ");
@@ -394,9 +388,50 @@
       gleich(W.kalAufloesen({ art: "zufall" }).name, W.t("kalZufall"), "Zufallstraining");
       var fehlt = W.kalAufloesen({ art: "workout", ref: "gibt-es-nicht", name: "Alt" });
       gleich(fehlt.ok, false, "gelöschtes Workout erkannt");
-      var plan = W.kalAufloesen({ art: "summit", ref: "saentis" });
-      wahr(plan.ok && plan.name.length > 0 && /Runden|Runde/.test(plan.sub), "Summit-Programm: " + plan.name + " / " + plan.sub);
+      var bk0 = W.state.db.bkWorkouts.slice();
+      try {
+        W.state.db.bkWorkouts.push({ id: "wk-test", name: "Test-Workout", items: [{ typ: "run", min: 20, runden: 1, pause: 0 }], updatedAt: 1 });
+        var wk = W.kalAufloesen({ art: "wk", ref: "wk-test" });
+        wahr(wk.ok && wk.name === "Test-Workout" && /1/.test(wk.sub), "Workout aus dem Baukasten im Kalender: " + wk.name + " / " + wk.sub);
+        gleich(W.kalAufloesen({ art: "wk", ref: "gibt-es-nicht" }).ok, false, "gelöschtes Workout erkannt");
+      } finally { W.state.db.bkWorkouts = bk0; }
     } finally { s.kalender = alt; }
+  });
+  test("Baukasten: Dauer eines Workouts stimmt mit dem Timer überein, Reihenfolge bleibt, Pausen und Läufe", function () {
+    var db = W.state.db, bloecke0 = W.stPlaene().slice(), my0 = (db.myWorkouts || []).slice(), wk0 = db.bkWorkouts.slice();
+    try {
+      var ex = W.EXERCISES.filter(function (e) { return e.main !== "stretch"; }).map(function (e) { return e.id; });
+      W.stPlaene().push({ id: "bk-a", name: "A", ids: ex.slice(0, 3), updatedAt: 1, standard: "saetze" });
+      W.stPlaene().push({ id: "bk-b", name: "B", ids: ex.slice(3, 6), updatedAt: 1, standard: "saetze" });
+      var wk = { id: "bk-w", name: "W", items: [{ typ: "plan", ref: "bk-a", runden: 2, pause: 40 }, { typ: "plan", ref: "bk-b", runden: 1, pause: 20 }, { typ: "run", min: 10, name: "Lauf", runden: 1, pause: 0 }], updatedAt: 1 };
+      var d = W.bkWkDraft(wk);
+      gleich(Math.round(W.workoutDuration(W.draftRun(d))), Math.round(W.bkWkDauer(wk)), "Dauer: Rechnung = Timer");
+      var lauf = d.items[d.items.length - 1];
+      wahr(lauf.lauf && lauf.work === 600, "Lauf als Zeitblock (10 min)");
+      var bloc = d.items.filter(function (it) { return it.bloc; });
+      wahr(bloc.length >= 1 && bloc[0].bloc === "A", "Ab 30 s Pause fragt der Timer „Bereit für A?“: " + bloc.map(function (b) { return b.bloc; }).join(","));
+      wahr(d.fest && d.mitGewicht, "feste Reihenfolge, Gewichte im Timer");
+      gleich(W.bkWorkoutsMit("plan", "bk-a").length, 0, "noch in keinem Workout gespeichert");
+      db.bkWorkouts.push(wk);
+      gleich(W.bkWorkoutsMit("plan", "bk-a").length, 1, "Verweis gefunden");
+      wahr(/„W“/.test(W.bkLoeschText("plan", "bk-a")), "Löschwarnung nennt das Workout");
+      W.bkRefWeg("plan", "bk-a");
+      gleich(wk.items.length, 2, "Verweis nach dem Löschen entfernt");
+    } finally { db.settings.stPlaene = bloecke0; db.myWorkouts = my0; db.bkWorkouts = wk0; }
+  });
+  test("Speicherformat: Version, alter Plan wird PLAN, Summit wird entfernt und archiviert", function () {
+    var arch0 = W.localStorage.getItem(W.SUMMIT_ARCHIV);
+    try {
+      W.localStorage.removeItem(W.SUMMIT_ARCHIV);
+      var db = W.dbAusRoh({ v: 1, settings: { myReps: [{ id: "c1" }], repBest: { x: { best: 1 } }, favs: ["rep:c1", "lib:x"], kalender: { e: [{ id: "k", art: "summit" }, { id: "k2", art: "run" }] },
+        planBau: { wochen: 6, tage: [0], wahl: { 0: ["run"] } } }, history: [{ at: Date.now(), b: "reps" }] });
+      gleich(db.v, W.DB_VERSION, "Version gesetzt");
+      gleich(db.plaene.length, 1, "alter Plan übernommen"); gleich(db.settings.planBau, undefined, "planBau entfernt");
+      gleich(db.settings.favs.join(), "lib:x", "Summit-Favorit entfernt"); gleich(db.settings.kalender.e.length, 1, "Summit-Kalendereintrag entfernt"); gleich(db.history.length, 0, "Summit-Verlauf entfernt");
+      wahr(JSON.parse(W.localStorage.getItem(W.SUMMIT_ARCHIV)).myReps.length === 1, "eigene Challenge im Archiv");
+      var neu = W.dbAusRoh({ v: W.DB_VERSION, settings: {} });
+      gleich(neu.plaene.length, 0, "Stand ohne Plan bleibt ohne Plan");
+    } finally { if (arch0 == null) W.localStorage.removeItem(W.SUMMIT_ARCHIV); else W.localStorage.setItem(W.SUMMIT_ARCHIV, arch0); }
   });
   test("Run: Strecke zwischen zwei Punkten (Haversine)", function () {
     nah(W.runMeter([48, 11], [48.009, 11]), 1001, 8, "0,009° Breite ≈ 1 km");
@@ -429,7 +464,7 @@
       s.runs = [a, x];
       var h = W.runHighlights(x);
       wahr(h.indexOf(W.t("runLaengster")) > -1, "längster Lauf");
-      wahr(h.indexOf(W.t("runSchnellsterKm", { z: W.repUhr(350000) })) > -1, "schnellster Kilometer: " + h.join(" | "));
+      wahr(h.indexOf(W.t("runSchnellsterKm", { z: W.fmtUhr(350000) })) > -1, "schnellster Kilometer: " + h.join(" | "));
       wahr(h.indexOf(W.t("runSchnellstePace")) > -1, "schnellste Pace");
       wahr(h.indexOf(W.t("runM5")) > -1, "Meilenstein 5 km");
       gleich(h.indexOf(W.t("runErster")), -1, "nicht mehr „erster Lauf“");

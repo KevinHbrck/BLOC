@@ -97,7 +97,7 @@ EXERCISES.forEach(function(ex){ ex.main = EX_MAIN[ex.id] || "kraft"; });
 function mainCat(id){ for(var i=0;i<MAIN_CATS.length;i++) if(MAIN_CATS[i].id===id) return MAIN_CATS[i]; return MAIN_CATS[0]; }
 function mainMatch(sel, main){ sel = selArr(sel); return !sel.length || sel.indexOf(main) > -1; }
 /* Dehn- und Mobility-Übungen stehen in gemischten Workouts immer am Ende (Reihenfolge sonst unverändert) */
-/* fuerWorkout: ohne Fitnessstudio-Übungen (für die Air-Gruppen und die Summit-Auswahl) und ohne Dehnen; Workouts mit Timer und Pläne nehmen alles außer Dehnen (fuerBau) */
+/* fuerWorkout: ohne Fitnessstudio-Übungen (für die Air-Gruppen) und ohne Dehnen; Workouts mit Timer und Pläne nehmen alles außer Dehnen (fuerBau) */
 var STUDIO_NUR = {};
 STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){ STUDIO_NUR[id] = true; }); });
 function fuerWorkout(ex){ return !STUDIO_NUR[ex.id] && ex.main !== "stretch"; }
@@ -202,8 +202,11 @@ function timingText(tm, sides){
   return tm.reps+'&times;'+tm.work+'s/'+tm.rest+'s';
 }
 function draftBlocks(d){
-  var items = stretchLast(d.items.filter(function(it){ return findExercise(it.ex); }), function(it){ return it.ex; });
+  var gueltig = d.items.filter(function(it){ return it.lauf || findExercise(it.ex); });
+  var items = d.fest ? gueltig : stretchLast(gueltig, function(it){ return it.ex; });   // fest: die Reihenfolge des Workouts im Baukasten bleibt, auch Mobility zu Beginn
   return items.map(function(it, i){
+    /* Lauf im Workout (Baukasten): ein Zeitblock ohne Übung */
+    if(it.lauf) return { id:"dr-"+i+"-lauf", ex:"", name:it.name, reps:1, workSec:it.work, restSec:0, sides:false, hint:"", after:it.after != null ? it.after : null, bloc:it.bloc || "" };
     var ex = findExercise(it.ex), tm = itemTiming(d, it), next = items[i+1];
     // zwischen zwei Dehnübungen reichen 10 s zum Umsetzen
     var after = it.after != null ? it.after : (next && exIsStretch(it.ex) && exIsStretch(next.ex) ? Math.min(10, d.blockRest||0) : null);
@@ -211,7 +214,7 @@ function draftBlocks(d){
              sides:ex.perSide, hint:tplText(ex.hint), after:after, bloc:it.bloc || "" };
   });
 }
-function draftRun(d){ return libQuickWorkout(draftBlocks(d), d.blockRest||0, d.name, "draft"); }
+function draftRun(d){ var r = libQuickWorkout(draftBlocks(d), d.blockRest||0, d.name, "draft"); if(d.mitGewicht) r.mitGewicht = true; return r; }
 function draftCopy(d){ return JSON.parse(JSON.stringify(d)); }
 function draftFromLib(lw){
   if(lw.tm) return { key:"lib:"+lw.id, src:"lib", name:tplText(lw.name), mode:"uniform", reps:lw.tm.reps, work:lw.tm.work, rest:lw.tm.rest,
@@ -804,7 +807,6 @@ var infoTimer = null;
 function bereichsFarbe(){
   var h = navTop(), m = h.match(/^#cover\/lib\/(.+)$/);
   if(/^#warmstretch/.test(h) || (m && libIstWarmDehn(findLibWorkout(m[1])))) return "var(--ws-color)";
-  if(/^#(reps|rep|repplay|repedit)(\/|$)/.test(h)) return "var(--rep-color)";
   return "";
 }
 /* Nachbarn in den Leichter/Schwerer-Ketten (Daten: LZ_KETTEN in daten.js) */

@@ -71,7 +71,7 @@
       iframe.src = "index.html?schnelltest=" + Date.now() + "&lang=de#home";   // Texte immer deutsch, egal welche Browsersprache
     });
   }
-  // Filterkarte (Air, Studio, Mobility & Stretch, Summit) aufklappen, falls sie zu ist
+  // Filterkarte (Air, Studio, Mobility & Stretch) aufklappen, falls sie zu ist
   async function filterAuf() {
     if (!$(".af-body")) klick(".af-kopf");
     await bis(function () { return $(".af-body"); }, 2000, "Filterkarte offen");
@@ -130,13 +130,13 @@
   }
 
   var TESTS = [
-    ["Einführung: nur beim ersten Start, sechs Seiten (Sprache, Über dich, Aufbau, drei Bereiche mit Zahlen), danach in den Einstellungen", async function () {
+    ["Einführung: nur beim ersten Start, fünf Seiten (Sprache, Über dich, Aufbau, zwei Bereiche mit Zahlen), danach in den Einstellungen", async function () {
       await heim();   // der Test startet ohne gespeicherte Daten - wie eine neue Installation
       await bis(function () { return $("#overlayRoot .intro-sheet"); }, 3000, "Einführung beim ersten Start");
       var titel = [];
-      for (var i = 0; i < 6; i++) {
+      for (var i = 0; i < 5; i++) {
         titel.push($(".intro-seite h2").textContent);
-        pruefe($$(".intro-punkte i").length === 6 && $$(".intro-punkte i")[i].classList.contains("an"), "Punkt " + (i + 1) + " nicht markiert");
+        pruefe($$(".intro-punkte i").length === 5 && $$(".intro-punkte i")[i].classList.contains("an"), "Punkt " + (i + 1) + " nicht markiert");
         pruefe(!/\{\w+\}/.test($(".intro-seite p").textContent), "Zahl fehlt: " + $(".intro-seite p").textContent);
         if (i > 2) pruefe(/\d/.test($(".intro-seite p").textContent), "keine Anzahl auf Seite " + (i + 1));
         if (i === 0) pruefe($$("[data-introlang]").length === 2 && $("[data-introlang].active"), "Sprachwahl fehlt");
@@ -144,7 +144,7 @@
         if (i === 2) pruefe($("svg.intro-schaubild"), "Schaubild fehlt");
         klick("[data-introweiter]");
       }
-      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Über dich | So ist BLOC aufgebaut | Workout | Mobility & Stretch | Summit", "Seiten: " + titel.join(" | "));
+      pruefe(titel.join(" | ") === "Willkommen bei BLOC | Über dich | So ist BLOC aufgebaut | Workout | Mobility & Stretch", "Seiten: " + titel.join(" | "));
       pruefe(!$("#overlayRoot .intro-sheet"), "„Los geht's“ schließt die Einführung nicht");
       await heim();
       await warte(500);
@@ -157,11 +157,11 @@
     }],
     ["Startseite: Kopfblock, Workout vorn in „Weitere Bereiche“, Meine Woche", async function () {
       await heim();
-      pruefe($$(".area-tile[data-bereich]").length === 5, "erwartet 5 Bereichs-Kacheln (mit Workout), gefunden " + $$(".area-tile[data-bereich]").length);
+      pruefe($$(".area-tile[data-bereich]").length === 4, "erwartet 4 Bereichs-Kacheln (mit Workout), gefunden " + $$(".area-tile[data-bereich]").length);
       pruefe($('.area-tile[data-bereich="intervall"][data-nav="#intervall"]'), "Timer fehlt als Bereich auf der Startseite");
       pruefe($(".home-hero [data-herostart]") && $('.area-tile[data-bereich="katalog"][data-nav="#katalog"]') && !$(".area-tile.gross"), "Kopfblock und eigene Workout-Kachel sollen beide da sein, keine großen Felder");
       pruefe($$(".sec-head .section-title").some(function (e) { return /^Weitere Bereiche/.test(e.textContent.trim()); }), "Überschrift „Weitere Bereiche“ fehlt");
-      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "katalog,warm,intervall,reps,run", "Workout, Mobility & Stretch, Timer, Summit und Run sollen gleichrangig in einer Liste stehen: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
+      pruefe($$(".area-gruppe .area-tile.zeile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",") === "katalog,warm,intervall,run", "Workout, Mobility & Stretch, Timer und Run sollen gleichrangig in einer Liste stehen: " + $$(".area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
       pruefe(/Meine Woche/.test($(".woche .wo-titel").textContent), "Wochenkarte heißt nicht „Meine Woche“: " + $(".woche .wo-titel").textContent);
       pruefe($('.area-tile[data-bereich="warm"] .at-ico') && W.getComputedStyle($('.area-tile[data-bereich="warm"] .at-ico')).color !== W.getComputedStyle(W.document.body).color, "Mobility & Stretch soll grün bleiben");
       pruefe(!$('[data-nav^="#timers/"]'), "eigene Timer-Zeile steht noch auf der Startseite");
@@ -365,44 +365,9 @@
       klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Beenden bestätigen"));
       await bis(function () { return !$("#playerEl"); }, 3000, "Timer schließt");
     }],
-    ["Summit (Challenges): Reiter, Mengen auf den Karten", async function () {
-      await heim();
-      klick('[data-nav="#reps"]');
-      await bis(function () { return $$("[data-repf^='tab:']").length === 3; }, 3000, "drei Reiter");
-      pruefe($(".bereich-bild img[src$='bereich-summit.jpg']"), "Summit: Bild-Kopf fehlt");
-      klick('[data-repf="tab:einheiten"]');
-      pruefe($$(".rep-karte .rep-plan").length >= 10, "Karten zeigen keine Mengen");
-    }],
-    ["Eigene Challenge: anlegen, Übung wählen, durchspielen, löschen", async function () {
-      klick('[data-repf="tab:meine"]');
-      klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus unter Meine"));
-      klick(await bis(function () { return $('[data-fabopt="prog"]'); }, 3000, "Neues Programm"));
-      klick(await bis(function () { return $("[data-readd]"); }, 3000, "Editor"));
-      await bis(function () { return $('[data-repick="burpees"]'); }, 3000, "Übungsauswahl");
-      pruefe(!$('[data-repick="leg-press"]') && !$('[data-repick="cobra-lift"]'), "Studio- oder Dehnübung in der Challenge-Auswahl");
-      klick($('[data-repick="burpees"]'));
-      var f0 = await bis(function () { return $('[data-rem="0:0"]'); }, 3000, "Mengenfelder");
-      f0.value = "5"; f0.dispatchEvent(new W.Event("change"));
-      pruefe($('[data-rem="0:2"]').value === "5", "Runde 1 überträgt sich nicht auf Runde 3");
-      klick("[data-refertig]");
-      await bis(function () { return $(".rep-tab"); }, 3000, "Übersicht mit Tabelle");
-      klick("[data-repstart]");
-      klick(await bis(function () { return $("[data-repgo]"); }, 3000, "Start"));
-      await bis(function () { var b = $("[data-repgo]"); return b && !b.disabled && /Geschafft|Überspringen/.test(b.textContent); }, 6000, "Stoppuhr läuft");
-      for (var i = 0; i < 10 && $("[data-repgo]"); i++) klick("[data-repgo]");
-      await bis(function () { return $("[data-repagain]"); }, 3000, "Ergebnis");
-      klick("[data-repend]");
-      klick(await bis(function () { return $('.topbar [data-nav^="#repedit"]'); }, 3000, "Bearbeiten"));
-      klick(await bis(function () { return $("[data-redel]"); }, 3000, "Löschen"));
-      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Löschen bestätigen"));
-      await bis(function () { return $("[data-fab]"); }, 3000, "zurück in der Liste");
-      pruefe(!$(".rep-karte"), "Challenge wurde nicht gelöscht");
-    }],
-    ["Wochenzeile zählt die Challenge (auch nach Neuladen)", async function () {
-      await heim();
-      pruefe($$(".woche .wo-tag.an").length >= 1, "kein Trainingstag markiert");
-      pruefe(/\d+ Training/.test($(".woche").textContent), "Anzahl fehlt: " + $(".woche").textContent);
-    }],
+
+
+
     ["Mobility & Stretch: Kobra unter Stretch", async function () {
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Reiter Dehnen"));
@@ -417,13 +382,14 @@
       pruefe($(".bereich-bild img[src$='bereich-timer.jpg']"), "Timer: Bild-Kopf fehlt");
       pruefe(!$('[data-fabopt="block"]') && !$('[data-fabopt="timerwo"]') && !$("[data-playblock]"), "Es gibt nur noch ein Plus: kein Timer-Workout aus Blöcken, keine Einzelblöcke");
       klick(await bis(function () { return $('[data-fabopt="timerplus"]'); }, 3000, "Plus: Neuer Timer"));
-      await bis(function () { return $("#overlayRoot #tp-zn") && $("#overlayRoot #tp-rn") && $("#overlayRoot #tp-en"); }, 3000, "Zirkel, Runden, Übungen");
-      eingeben($("#tp-zn"), "2"); eingeben($("#tp-rn"), "2"); eingeben($("#tp-en"), "3"); eingeben($("#tp-ew"), "20"); eingeben($("#tp-ep"), "10"); eingeben($("#tp-rp"), "30"); eingeben($("#tp-zp"), "60");
-      await bis(function () { return /12 Übungen/.test($("#tp-summe").textContent); }, 2000, "Summe: 2 × 2 × 3 = 12 Übungen");
+      await bis(function () { return $("#overlayRoot #tp-rn") && $("#overlayRoot #tp-en") && $("#overlayRoot #tp-ew"); }, 3000, "Sätze (Übungen) und Runden");
+      eingeben($("#tp-rn"), "2"); eingeben($("#tp-en"), "3"); eingeben($("#tp-ew"), "20"); eingeben($("#tp-ep"), "10"); eingeben($("#tp-rp"), "30");
+      await bis(function () { return /^6 Sätze/.test($("#tp-summe").textContent); }, 2000, "Summe: 2 Runden × 3 Sätze = 6 Sätze");
       klick("#overlayRoot [data-tpok]");
       await bis(function () { return $$("[data-play]").length === 1 && $(".timer-panel"); }, 3000, "Timer auf der Timer-Seite");
       var tw = JSON.parse(W.localStorage.getItem(KEY)).workouts[0];
-      pruefe(tw.items.length === 12 && tw.items[2].restAfterSec === 30 && tw.items[5].restAfterSec === 60 && tw.items[11].restAfterSec === 0 && tw.items[0].restAfterSec === 10, "Timer aus Zirkel/Runden/Übungen: Pausen stimmen nicht: " + JSON.stringify(tw.items.map(function (i) { return i.restAfterSec; })));
+      var tb = JSON.parse(W.localStorage.getItem(KEY)).blocks.filter(function (b) { return b.id === tw.items[0].blockId; })[0];
+      pruefe(tw.items.length === 2 && tw.items[0].restAfterSec === 30 && tw.items[1].restAfterSec === 0 && tb && tb.reps === 3 && tb.workSec === 20 && tb.restSec === 10, "Timer aus Sätzen und Runden: Pausen stimmen nicht: " + JSON.stringify(tw.items.map(function (i) { return i.restAfterSec; })));
       await heim();
       klick('[data-nav="#settings"]');
       await bis(function () { return $("[data-export]"); }, 3000, "Sicherung in den Einstellungen");
@@ -431,18 +397,18 @@
     ["Suche: Kategorien filtern, ohne Suchwort alle Einträge einer Kategorie", async function () {
       await heim();
       klick('.tabbar [data-nav="#search"]');
-      await bis(function () { return $$("[data-srkat]").length === 7; }, 3000, "sieben Kategorien");
+      await bis(function () { return $$("[data-srkat]").length === 6; }, 3000, "sechs Kategorien");
       pruefe($(".bereich-bild img[src$='bereich-suche.jpg']"), "Suche: Bild-Kopf fehlt");
       klick('[data-srkat="uebungen"]');
       await bis(function () { return $$("[data-sr]").length + $$(".air-kachel").length > 100; }, 3000, "Kategorie Übungen zeigt alle Übungen (Air als Kacheln, Studio als Zeilen)");
       eingeben($("#gs-q"), "burpee");
       var n = await bis(function () { var l = $$("[data-sr]").concat($$(".air-kachel")); return l.length && l.length < 10 && l; }, 3000, "Suche in der Kategorie Übungen");
-      pruefe(!$$(".section-title").some(function (e) { return /Bereiche|Challenges/.test(e.textContent); }), "Treffer anderer Kategorien in Übungen");
+      pruefe(!$$(".section-title").some(function (e) { return /Bereiche/.test(e.textContent); }), "Treffer anderer Kategorien in Übungen");
       klick('[data-srkat="alle"]');
       eingeben($("#gs-q"), "");
-      await bis(function () { return $(".rep-intro") && !$$("[data-sr]").length && !$$(".air-kachel").length; }, 3000, "Alle + leer = Hinweistext");
+      await bis(function () { return $(".seiten-intro") && !$$("[data-sr]").length && !$$(".air-kachel").length; }, 3000, "Alle + leer = Hinweistext");
     }],
-    ["Filterkarte: Workouts (Training, Ausrüstung) und Übungen (Gruppe, Ausrüstung, Körperkarte), bleibt beim Mehrfachwählen offen (auch Dehnen, Summit)", async function () {
+    ["Filterkarte: Workouts (Training, Ausrüstung) und Übungen (Gruppe, Ausrüstung, Körperkarte), bleibt beim Mehrfachwählen offen (auch Dehnen)", async function () {
       await heim();
       klick('[data-herostart]');
       await zuWorkoutKatalog();
@@ -520,18 +486,6 @@
       await bis(function () { return $('[data-wszone]') && !$('[data-wsreg]'); }, 2000, "Aufwärmen: Körperkarte ohne Regionen-Chips");
       klick('[data-wsart="dehn"]');
       await bis(function () { return $('[data-wsreg]'); }, 2000, "zurück auf Dehnen");
-      // Summit: Stufe sichtbar über der Karte (ohne Aufklappen), Ausrüstung in der Karte
-      await heim();
-      klick('[data-nav="#reps"]');
-      await bis(function () { return $('[data-repf="stufe:leicht"]'); }, 3000, "Summit: Stufen sichtbar");
-      pruefe(!$(".af-body") && $(".af-kopf"), "Summit: Karte ist nicht zu");
-      klick('[data-repf="stufe:leicht"]');
-      await bis(function () { return $('[data-repf="stufe:leicht"].active'); }, 2000, "Summit: Stufe gewählt");
-      await filterAuf();
-      klick('[data-repf="bar:none"]');
-      await bis(function () { return $('[data-repf="bar:none"].on') && $('[data-repf="stufe:leicht"].active') && $(".af-body"); }, 2000, "Summit: Ohne Stange, Karte bleibt offen, Stufe bleibt");
-      klick('[data-repfreset]');
-      await bis(function () { return $('[data-repf="bar:all"].on') && $('[data-repf="stufe:leicht"].active'); }, 2000, "Summit: Zurücksetzen betrifft nur die Ausrüstung");
     }],
     ["Erklärtexte: erste Besuche mit Text, danach „?“ in der Kopfzeile; leere Favoriten nur eine Zeile", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
@@ -560,11 +514,8 @@
       klick("#overlayRoot [data-ok]");
       await bis(function () { return !$("#overlayRoot .hw-zeile"); }, 2000, "Fenster schließt");
       await heim();
-      klick('[data-nav="#reps"]');
-      await bis(function () { return $("[data-hinweis]") && !$(".rep-intro"); }, 3000, "Summit: „?“ statt Text");
-      await heim();
       klick('[data-nav="#warmstretch"]');
-      await bis(function () { return $("[data-hinweis]") && !$(".rep-intro"); }, 3000, "Dehnen: „?“ statt Text");
+      await bis(function () { return $("[data-hinweis]") && !$(".seiten-intro"); }, 3000, "Dehnen: „?“ statt Text");
     }],
     ["Katalog › Übungen: Bereiche, Suche, Stern, Karte, Satz eintragen, Pause, Steigerung", async function () {
       await heim();
@@ -879,14 +830,9 @@
       pruefe(mw && mw.items.length === 2 && mw.items.some(function (i) { return i.ex === "leg-press" && i.work === 40; }), "Workout aus dem Plan: " + JSON.stringify(mw));
       W.exitPlayer();
     }],
-    ["Summit unter Meine ablegen; Mobility & Stretch: Meine, Körperregionen, Langdruck", async function () {
+    ["Mobility & Stretch: Meine, Körperregionen, Langdruck", async function () {
       function lang(el) { el.dispatchEvent(new W.PointerEvent("pointerdown", { bubbles: true, clientX: 5, clientY: 5 })); return warte(650).then(function () { el.dispatchEvent(new W.PointerEvent("pointerup", { bubbles: true })); return warte(800); }); }
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
-      await heim();
-      klick('[data-nav="#reps"]');
-      klick(await bis(function () { return $("[data-repmore]"); }, 3000, "⋯ auf der Summit-Karte"));
-      klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Menü „Meine“"));
-      await bis(function () { var m = daten().settings.myReps; return m && m.length === 1 && m[0].zeilen.length > 2; }, 2000, "Kopie unter Meine");
       await heim();
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
@@ -942,36 +888,9 @@
       var ohneWs = daten().myWorkouts.filter(function (m) { return !m.ws; }).length;
       pruefe($$(".my-item").length === ohneWs, "Katalog › Meine zeigt " + $$(".my-item").length + " statt " + ohneWs);
     }],
-    ["Summit: Plus in Programme und Meine, eigene Einheit; ★ und Mülleimer bei Meine und Mein Plan", async function () {
+    ["★ und Mülleimer beim Plan unter Meine", async function () {
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
       await heim();
-      klick('[data-nav="#reps"]');
-      klick(await bis(function () { return $('[data-repf="tab:meine"]'); }, 3000, "Reiter Meine"));
-      // Meine: Plus -> neue Einheit -> Programm hinzufügen
-      klick(await bis(function () { return $("[data-fab]"); }, 3000, "Plus unter Meine"));
-      klick(await bis(function () { return $('[data-fabopt="unit"]'); }, 3000, "Neue Einheit"));
-      klick(await bis(function () { return $("[data-ruadd]"); }, 3000, "Einheit bearbeiten"));
-      klick(await bis(function () { return $("#overlayRoot [data-rpick]"); }, 3000, "Programmauswahl"));
-      await bis(function () { var u = daten().settings.myRepUnits; return u && u.length === 1 && u[0].teile.length === 1; }, 2000, "Programm in der Einheit");
-      klick("[data-refertig]");
-      await bis(function () { return $(".rep-tab"); }, 3000, "Übersicht der Einheit");
-      klick("button.back");
-      klick(await bis(function () { return $('[data-repf="tab:einheiten"]'); }, 3000, "Reiter Einheiten"));
-      await bis(function () { return $(".rep-karte.eigen") && $(".fab[data-fabopt=\"unit\"]"); }, 3000, "eigene Einheit oben in Einheiten (mit Plus)");
-      // Programme: Plus
-      klick('[data-repf="tab:programme"]');
-      klick(await bis(function () { return $('[data-fabopt="prog"]'); }, 3000, "Plus in Programme"));
-      await bis(function () { return $("[data-readd]"); }, 3000, "Programm-Editor");
-      klick("button.back");
-      // Meine: Stern und Mülleimer
-      klick(await bis(function () { return $('[data-repf="tab:meine"]'); }, 3000, "Reiter Meine"));
-      await bis(function () { return $$(".rep-karte.eigen").length >= 2; }, 3000, "mindestens zwei eigene Karten");
-      var vorher = $$(".rep-karte.eigen").length;
-      klick($(".rep-karte.eigen [data-fav]"));
-      await bis(function () { return daten().settings.favs.some(function (k) { return /^rep:/.test(k); }); }, 2000, "Stern gesetzt");
-      klick($(".rep-karte.eigen [data-del]"));
-      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Löschen bestätigen"));
-      await bis(function () { return $$(".rep-karte.eigen").length === vorher - 1; }, 2000, "eine Karte weniger");
       // Katalog › Meine › Pläne
       await heim();
       klick('[data-herostart]');
@@ -1062,7 +981,7 @@
       await bis(function () { return /^#rundetail/.test(W.location.hash); }, 3000, "Lauf-Detail");
       var rr = daten().settings.runs.filter(function (r) { return r.iv; })[0];
       pruefe(rr && rr.iv.lauf === 60 && rr.pause > 3000, "Intervall/Pausenzeit nicht gespeichert: " + JSON.stringify(rr && { iv: rr.iv, p: rr.pause }));
-      pruefe(/Pausen/.test($(".rep-meta").textContent) && /Intervall/.test($(".rep-meta").textContent), "Detail ohne Intervall-/Pausenzeile");
+      pruefe(/Pausen/.test($(".meta-zeile").textContent) && /Intervall/.test($(".meta-zeile").textContent), "Detail ohne Intervall-/Pausenzeile");
     }],
     ["Lauf: Knöpfe im Lauf lösen erst nach 3 s Halten aus", async function () {
       await heim();
@@ -1090,7 +1009,7 @@
       pruefe($$(".tabbar .tab").length === 5 && !$(".topbar [data-nav=\"#settings\"]"), "Leiste mit fünf Einträgen fehlt oder Zahnrad noch oben");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent) && $(".tabbar .tab.active") && /Statistik/.test($(".tabbar .tab.active").textContent); }, 3000, "Statistik-Seite mit aktiver Leiste");
-      pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 5 && !$(".woche") && /Workout/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")) && !/Air|Studio/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")), "Statistik ohne Kopf, ohne fünf Bereiche (Air und Studio als Workout), oder mit Wochenzeile");
+      pruefe($(".stat-hero") && $$(".stat-bereichkarte").length === 4 && !$(".woche") && /Workout/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")) && !/Air|Studio/.test($$(".stat-bereichkarte .sb-name").map(function (e) { return e.textContent; }).join("|")), "Statistik ohne Kopf, ohne fünf Bereiche (Air und Studio als Workout), oder mit Wochenzeile");
       klick('.tabbar [data-nav="#settings"]');
       await bis(function () { return $(".section-title") && $("#f-volume"); }, 3000, "Einstellungen");
       /* 2026-10-19: Fokus („Bereiche unter Training“), Aussehen-Auswahl und die festen Schalter gibt es nicht mehr */
@@ -1099,11 +1018,11 @@
       pruefe($("#f-space") && $("#f-sound") && $("[data-opensounds]"), "Ton, Klang und Raumklang bleiben");
       klick('.tabbar [data-nav="#stats"]');
       await bis(function () { return /Statistik/.test($(".topbar").textContent); }, 3000, "Statistik");
-      pruefe($$(".stat-bereichkarte").length === 5, "Statistik zeigt immer alle fünf Bereiche: " + $$(".stat-bereichkarte").length);
+      pruefe($$(".stat-bereichkarte").length === 4, "Statistik zeigt immer alle vier Bereiche: " + $$(".stat-bereichkarte").length);
       klick('.tabbar [data-nav="#home"]');
       await bis(function () { return $(".area-tile") && $('.area-tile[data-nav="#run"]'); }, 3000, "Run steht auf der Startseite");
-      klick('.area-tile[data-nav="#reps"]');
-      await bis(function () { return /^#reps/.test(W.location.hash) && !$(".tabbar .tab"); }, 3000, "Leiste in Listen ausgeblendet");
+      klick('.area-tile[data-nav="#warmstretch"]');
+      await bis(function () { return /^#warmstretch/.test(W.location.hash) && !$(".tabbar .tab"); }, 3000, "Leiste in Listen ausgeblendet");
       klick("button.back");
       await bis(function () { return $(".woche"); }, 3000, "zurück auf der Startseite");
     }],
@@ -1123,7 +1042,7 @@
       var erwartet = new Date().getDay() === 1 ? "1" : "2";   // diese Woche (ab Montag): montags liegt der Vortag in der Vorwoche
       pruefe($(".sr-mitte b").textContent === erwartet, "drei Timer in 40 Minuten sind ein Training: " + $(".sr-mitte b").textContent);
       var wokarten = $$(".stat-bereichkarte").filter(function (e) { return /Workout/.test(e.querySelector(".sb-name").textContent); });
-      pruefe(wokarten.length === 1 && $$(".stat-bereichkarte").length === 5 && wokarten[0].querySelector(".chips-stat b").textContent === "2", "Air- und Studio-Einträge gehören auf eine Karte „Workout“ (zwei Trainings): " + wokarten.length + " Karten, " + (wokarten[0] && wokarten[0].querySelector(".chips-stat b").textContent));
+      pruefe(wokarten.length === 1 && $$(".stat-bereichkarte").length === 4 && wokarten[0].querySelector(".chips-stat b").textContent === "2", "Air- und Studio-Einträge gehören auf eine Karte „Workout“ (zwei Trainings): " + wokarten.length + " Karten, " + (wokarten[0] && wokarten[0].querySelector(".chips-stat b").textContent));
       pruefe(/^(40|60)$/.test($(".stat-karte .bchart .bc.jetzt .bw").textContent), "Zeit der laufenden Woche sollte 60 min sein (40 + 20), montags nur 40: " + $(".stat-karte .bchart .bc.jetzt .bw").textContent);
       klick('[data-statgran="monat"]');
       await bis(function () { return $(".stat-karte .bchart .bc small") && /\d\d$/.test($(".stat-karte .bchart .bc small").textContent); }, 2000, "Monatsansicht");
@@ -1275,7 +1194,7 @@
       function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
       await heim();
       klick(await bis(function () { return $("[data-wasistwas]"); }, 3000, "Link „Was ist was?“"));
-      await bis(function () { return $$("#overlayRoot .wi-zeile").length === 5; }, 2000, "fünf Zeilen Klartext");
+      await bis(function () { return $$("#overlayRoot .wi-zeile").length === 4; }, 2000, "vier Zeilen Klartext");
       klick($("#overlayRoot [data-ok]"));
       await bis(function () { return !$("#overlayRoot .wi-zeile"); }, 2000, "Hinweis schließt");
       // Bestleistung: vorheriges Bestgewicht vorgeben, dann einen Satz darüber eintragen
@@ -1532,7 +1451,7 @@
       klick(await bis(function () { return $('[data-pzlink="0"].an'); }, 3000, "Trennen-Knopf"));
       await bis(function () { return !$(".pz-block"); }, 3000, "Block getrennt");
     }],
-    ["Meine: Abschnitte, Orts-Fotos, gespeicherte Trainings; Plan speichern fragt nach dem Loslegen", async function () {
+    ["Meine: Abschnitte (zugeklappt), Orts-Fotos, gespeicherte Trainings; Plan speichern fragt nach dem Loslegen", async function () {
       await heim();
       klick('[data-herostart]');
       await zuBaukasten("timer");
@@ -1552,11 +1471,12 @@
       await bis(function () { return $$(".pz-zeile").length === 1; }, 3000, "Plan-Seite");
       // Meine: drei Abschnitte, Fotos, zuklappbar
       await zuMeine();
-      pruefe($$("details.kat-sek").length === 3 && $$("details.kat-sek[open]").length === 3, "Meine: drei aufgeklappte Abschnitte erwartet: " + $$("details.kat-sek").length);
+      pruefe($$("details.kat-sek").length === 3 && $$("details.kat-sek[open]").length === 0, "Meine: drei Abschnitte, zugeklappt: " + $$("details.kat-sek").length + " / offen " + $$("details.kat-sek[open]").length);
+      klick($('details[data-katsek="saetze"] > summary'));
+      pruefe($('details[data-katsek="saetze"]').open, "Abschnitt lässt sich aufklappen");
       pruefe($(".plan-item .ort-thumb img") && /freiluft/.test($(".plan-item .ort-thumb img").getAttribute("src")), "Plan mit Foto des Ortes (Freiluft) erwartet");
       klick($('details[data-katsek="saetze"] > summary'));
       pruefe(!$('details[data-katsek="saetze"]').open, "Abschnitt lässt sich zuklappen");
-      klick($('details[data-katsek="saetze"] > summary'));
       // Training speichern legt einen noch nicht gespeicherten Plan unter Meine ab und steht dort bei den gespeicherten Trainings
       var entw = { id: "p-entw", name: "Entwurf", ids: ["push-ups"], updatedAt: Date.now(), entwurf: true };
       W.stPlaene().push(entw); W.save();
@@ -1597,7 +1517,7 @@
       await bis(function () { return $$(".kal-tag").length === 7 && $(".kal-nav"); }, 3000, "Wochenansicht mit sieben Tagen");
       klick($(".kal-tag:not(.heute) [data-kaladd]"));   // nicht heute: an einem Tag mit schon erledigten Trainings gilt der Eintrag von selbst als erledigt, das Abhaken wäre dann ein Zurücknehmen (so rot an Montagen)
       klick(await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Menü „Hinzufügen“: Workouts"));
-      klick(await bis(function () { return $$("#overlayRoot [data-act]")[2]; }, 2000, "Workouts: Zufallstraining (Meine Workouts stehen vorn)"));
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[3]; }, 2000, "Workouts: Zufallstraining (Baukasten-Workouts, Meine Workouts und Pläne stehen davor)"));
       await bis(function () { return $$(".kal-eintrag").length === 1; }, 2000, "Eintrag steht im Kalender");
       var tag0 = daten().settings.kalender.e[0].tag;
       klick($("[data-kalok]"));
@@ -1650,6 +1570,124 @@
       await warte(300);
       pruefe(daten().settings.kalender.e.length === n1, "Zweites Kopieren darf nichts doppelt anlegen");
     }],
+    ["Baukasten (Training): BLOC · Workout · PLAN, Karussell, Workout-Builder, PLAN-Builder, Start", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      // Aussehen New einschalten (der Schnelltest läuft sonst in Klassik) und vier BLOCs unter Meine anlegen
+      var ex = W.EXERCISES.filter(function (e) { return e.main !== "stretch"; }).map(function (e) { return e.id; });
+      try {
+      W.state.db.settings.layout = "new";
+      ["Push", "Pull", "Beine", "Core"].forEach(function (n, i) { W.stPlaene().push({ id: "bt" + i, name: n, ids: ex.slice(i * 3, i * 3 + 3), updatedAt: Date.now() + 600000 - i * 1000, standard: "saetze" }); });   // jünger als alles andere: stehen vorn
+      W.save(); W.applyTheme(); W.go("#training");
+      await bis(function () { return $("[data-bk]"); }, 3000, "Baukasten auf der Seite Training");
+      pruefe(!$('[data-bereich="reps"]') && $$(".training-seite .area-tile[data-bereich]").length === 5, "Training: Workout, Mobility & Stretch, Timer, Run und Fragen (kein Summit) erwartet: " + $$(".training-seite .area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(","));
+      pruefe($$("[data-bkseg]").length === 3 && $('[data-bkseg="bloc"].on') && /BLOC/.test($("[data-bkbau]").textContent), "Segmente BLOC | Workout | PLAN oder Bau-Knopf fehlen");
+      // Karussell: ab drei Elementen endlos (drei Kopien), erste Karte = zuletzt benutzt, Position „1 / n“
+      var nb = W.bkBloecke().length;
+      pruefe(nb >= 4 && $$(".bk-karte").length === 3 * nb && $(".bk-kar.endlos") && $("[data-bkpos]").textContent === "1 / " + nb, "Karussell: " + $$(".bk-karte").length + " Karten, Position " + $("[data-bkpos]").textContent);
+      pruefe(/Push/.test($(".bk-karte").textContent) && /3 Übungen/.test($(".bk-karte").textContent) && $(".bk-karte .bk-streifen"), "Karte: Name, Dauer, Anzahl und Farbstreifen");
+      // Leere Segmente zeigen eine Platzhalterkarte mit Knopf
+      klick('[data-bkseg="workout"]');
+      await bis(function () { return $(".bk-leer") && /\+ Workout/.test($("[data-bkbau]").textContent); }, 2000, "Segment Workout leer");
+      pruefe(/Noch kein Workout/.test($(".bk-leer").textContent), "Leertext Workout");
+      klick('[data-bkseg="plan"]');
+      await bis(function () { return $(".bk-leer") && /Noch kein PLAN – aus Workouts/.test($(".bk-leer").textContent); }, 2000, "Segment PLAN leer");
+      // Workout bauen: BLOCs, Katalog (Kopie), Mobility & Stretch, RUN
+      klick('[data-bkseg="workout"]');
+      klick("[data-bkbau]");
+      await bis(function () { return /^#wbau\//.test(W.location.hash) && $("[data-abfolge]"); }, 3000, "Workout-Builder");
+      pruefe($$("[data-quelle]").length === 4 && $$(".bk-q-zeile").length === W.bkBloecke().length, "Quellen: Meine BLOCs | Workout-Katalog | Mobility & Stretch | RUN");
+      klick($$(".bk-q-zeile")[0]); klick($$(".bk-q-zeile")[1]);
+      await bis(function () { return $$(".bk-ab").length === 2; }, 2000, "zwei BLOCs in der Abfolge");
+      klick($(".bk-ab [data-reg=\"runden\"] [data-plus]"));
+      klick($(".bk-ab [data-reg=\"pause\"] [data-plus]"));
+      await bis(function () { var it = daten().bkWorkouts[0].items[0]; return it.runden === 2 && it.pause === 35; }, 2000, "Runden und Pause gespeichert");
+      var dauer2 = $("[data-summe]").textContent;
+      klick('[data-quelle="katalog"]');
+      await bis(function () { return $$(".bk-q-zeile").length > 20; }, 2000, "Workout-Katalog als Quelle");
+      var plaene0 = daten().settings.stPlaene.length;
+      klick($$(".bk-q-zeile")[0]);
+      await bis(function () { return $$(".bk-ab").length === 3 && daten().settings.stPlaene.length === plaene0 + 1; }, 2000, "Katalog-Workout als Kopie unter Meine");
+      klick('[data-quelle="warm"]');
+      klick(await bis(function () { return $$(".bk-q-zeile")[0]; }, 2000, "Mobility & Stretch als Quelle"));
+      await bis(function () { return $$(".bk-ab").length === 4 && daten().myWorkouts.some(function (m) { return m.ws && m.fromLib; }); }, 2000, "Mobility-Workout als Kopie");
+      klick('[data-quelle="run"]');
+      klick(await bis(function () { return $$(".bk-q-zeile")[1]; }, 2000, "Lauf als Quelle"));
+      await bis(function () { return $$(".bk-ab").length === 5 && daten().bkWorkouts[0].items[4].typ === "run"; }, 2000, "Lauf in der Abfolge");
+      pruefe($("[data-summe]").textContent !== dauer2 && /5 BLOCs/.test($("[data-summe]").textContent), "Gesamtdauer live: " + $("[data-summe]").textContent);
+      // Suche über alle Quellen
+      eingeben($("#wb-q"), "Core");
+      await bis(function () { var z = $$(".bk-q-zeile"); return z.length >= 1 && z.some(function (e) { return /Core/.test(e.textContent); }); }, 2000, "Suche findet Core");
+      eingeben($("#wb-q"), "");
+      // Reihenfolge ändern (Pfeiltasten am Griff) und Entfernen
+      var erster = $$(".bk-ab b")[0].textContent;
+      $$(".bk-ab [data-griff]")[0].dispatchEvent(new W.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+      await bis(function () { return $$(".bk-ab b")[1].textContent === erster; }, 2000, "Eintrag nach unten");
+      klick($$(".bk-ab [data-weg]")[4]);
+      await bis(function () { return $$(".bk-ab").length === 4; }, 2000, "Eintrag entfernt");
+      // Mobility & Stretch per Pfeiltaste ganz nach vorn: im Timer bleibt die Reihenfolge des Workouts (sonst rutscht Dehnen ans Ende)
+      for (var k = 3; k > 0; k--) $$(".bk-ab [data-griff]")[k].dispatchEvent(new W.KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }));
+      await bis(function () { var wk = daten().bkWorkouts[0]; return wk.items[0].typ === "my" && wk.items.length === 4; }, 2000, "Mobility steht vorn");
+      var wk0 = daten().bkWorkouts[0];
+      var st = W.bkWkDraft(wk0);
+      pruefe(st.items.length > 10 && st.fest && st.items[0].ex && W.exIsMobility(st.items[0].ex), "Reihenfolge des Workouts bleibt (Mobility zuerst)");
+      klick("[data-wbstart]");
+      await bis(function () { return $("#playerEl"); }, 3000, "Workout startet im Timer");
+      W.exitPlayer();
+      await warte(300);
+      if ($("[data-fertig]")) klick("[data-fertig]"); else W.go("#training");   // je nachdem, wohin der Timer zurückführt
+      await bis(function () { return $("[data-bk]"); }, 3000, "zurück auf Training");
+      klick('[data-bkseg="workout"]');
+      klick(await bis(function () { return $(".bk-karte"); }, 2000, "Workout-Karte"));
+      await bis(function () { return /^#bkd\/wk\//.test(W.location.hash) && $("[data-bkstart]") && $("[data-bkedit]"); }, 3000, "Detail mit Start und Bearbeiten");
+      klick("button.back");
+      // BLOC in zwei Workouts: Löschen warnt mit den Workout-Namen
+      var wk1 = { id: "bw2", name: "Zweites", items: [{ typ: "plan", ref: "bt0", runden: 1, pause: 30 }], updatedAt: Date.now() };
+      W.state.db.bkWorkouts.push(wk1); W.state.db.bkWorkouts[0].items.push({ typ: "plan", ref: "bt0", runden: 1, pause: 30 }); W.save();
+      pruefe(W.bkWorkoutsMit("plan", "bt0").length === 2 && /Zweites/.test(W.bkLoeschText("plan", "bt0")), "Löschwarnung nennt die Workouts");
+      // PLAN bauen: Workout auf Tage legen, Start trägt in den Kalender ein
+      W.go("#training");
+      klick(await bis(function () { return $('[data-bkseg="plan"]'); }, 2000, "Segment PLAN"));
+      klick("[data-bkbau]");
+      await bis(function () { return /^#pbau\//.test(W.location.hash) && $('[data-planwahl="0"]'); }, 3000, "PLAN-Builder");
+      var sel = $('[data-planwahl="0"]'); sel.value = "wk:" + wk0.id; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
+      await bis(function () { return $(".kp-wahl"); }, 2000, "Workout am Montag");
+      sel = $('[data-planwahl="2"]'); sel.value = "run"; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
+      await bis(function () { return $$(".kp-wahl").length === 2; }, 2000, "Lauf am Mittwoch");
+      pruefe(daten().plaene.length === 1 && !daten().plaene[0].entwurf, "PLAN gespeichert");
+      var k0 = (daten().settings.kalender || { e: [] }).e.length;
+      klick("[data-planok]");
+      await bis(function () { return W.location.hash === "#kalender"; }, 3000, "PLAN im Kalender");
+      var e = daten().settings.kalender.e;
+      pruefe(e.length === k0 + 12 && e.some(function (x) { return x.art === "wk"; }), "Kalender-Einträge aus dem PLAN: " + (e.length - k0));
+      var o = W.kalAufloesen(e.filter(function (x) { return x.art === "wk"; })[0]);
+      pruefe(o.ok && /Workout 1|Workout/.test(o.name) && /BLOCs/.test(o.sub), "Kalender zeigt das Workout: " + o.name + " / " + o.sub);
+      } finally { delete W.state.db.settings.layout; W.state.db.bkWorkouts = []; W.state.db.plaene = []; W.state.db.settings.stPlaene = []; W.state.db.settings.kalender = { e: [] }; W.save(); W.applyTheme(); }
+    }],
+    ["Umbau: Format versioniert, alter Plan wird PLAN, Summit-Daten wandern ins Archiv", async function () {
+      function daten() { return JSON.parse(W.localStorage.getItem(KEY)); }
+      await heim();
+      W.localStorage.removeItem(W.SUMMIT_ARCHIV);
+      var alt = { v: 1, blocks: [], workouts: [], myWorkouts: [], customEx: [], history: [{ at: Date.now() - 1000, ex: [], dur: 60, b: "reps" }, { at: Date.now() - 2000, ex: ["burpees"], dur: 60 }],
+        settings: { theme: "dark", myReps: [{ id: "c1", name: "Meine Challenge", runden: 2, zeilen: [] }], myRepUnits: [{ id: "u1" }], repBest: { x: { best: 1000, last: 1000, n: 1, log: [] } },
+          favs: ["rep:c1", "lib:warmup-5"], bereiche: ["lib", "reps", "run"], kalender: { e: [{ id: "k1", tag: "2026-10-20", art: "summit", ref: "x" }, { id: "k2", tag: "2026-10-20", art: "run" }] },
+          planBau: { wochen: 4, tage: [1, 3], wahl: { 1: ["run"], 3: [] } } } };
+      try {
+      var db = W.dbAusRoh(alt);
+      pruefe(db.v === W.DB_VERSION && Array.isArray(db.bkWorkouts) && Array.isArray(db.plaene), "Format: db.v und neue Listen");
+      pruefe(db.plaene.length === 1 && db.plaene[0].wochen === 4 && db.plaene[0].wahl[1][0] === "run" && !db.settings.planBau, "Der alte Plan wurde ein benannter PLAN");
+      var s = db.settings;
+      pruefe(!s.myReps && !s.myRepUnits && !s.repBest && s.favs.join() === "lib:warmup-5" && s.bereiche.indexOf("reps") < 0 && s.kalender.e.length === 1 && s.kalender.e[0].art === "run" && db.history.length === 1, "Summit-Reste sind bereinigt");
+      var arch = JSON.parse(W.localStorage.getItem(W.SUMMIT_ARCHIV) || "null");
+      pruefe(arch && arch.myReps.length === 1 && arch.myRepUnits.length === 1 && arch.repBest.x, "Eigene Challenges, Einheiten und Bestzeiten liegen im Archiv");
+      // der Hinweis auf Training bietet das Sichern an und räumt danach auf
+      W.state.db.settings.layout = "new"; W.applyTheme(); W.go("#training");
+      await bis(function () { return $("[data-summitsichern]"); }, 3000, "Hinweis zum Sichern der Summit-Daten");
+      klick("[data-summitverwerfen]");
+      klick(await bis(function () { return $("#overlayRoot [data-ok]"); }, 2000, "Verwerfen bestätigen"));
+      await bis(function () { return !$("[data-summitsichern]") && !W.localStorage.getItem(W.SUMMIT_ARCHIV); }, 2000, "Archiv gelöscht");
+      } finally { delete W.state.db.settings.layout; W.save(); W.applyTheme(); }
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]
@@ -1666,7 +1704,9 @@
     localStorage.removeItem(KEY);   // frischer Stand, damit der Test immer gleich läuft
     var ok = 0, schlecht = 0;
     try {
+      var nur = /[?&]nur=([^&]*)/.exec(location.search);   // ?nur=Baukasten: nur Tests, deren Titel das Wort enthält
       for (var t = 0; t < TESTS.length; t++) {
+        if (nur && TESTS[t][0].indexOf(decodeURIComponent(nur[1])) < 0) continue;
         var li = eintrag(TESTS[t][0]);
         try { await TESTS[t][1](); li.className = "ok"; li.textContent = "✓ " + TESTS[t][0]; ok++; }
         catch (e) {
