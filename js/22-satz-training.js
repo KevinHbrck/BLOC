@@ -103,6 +103,7 @@ function renderSatzTraining(planId, start){
   var p = stPlanFind(planId), ids = p ? satzListe(p) : [];
   if(!p || !ids.length){ go("#katalog"); return; }
   start = clamp(parseInt(start) || 0, 0, ids.length - 1);
+  ids.forEach(function(sid){ studioStandardPruefen(sid, false); });   // frühere Einheiten: neue Ziele übernehmen
   /* Ist heute schon ein Training dieses Plans gespeichert und hat eine Übung noch keinen Rundenstart (früher gespeichert, vor dem Neustart-Verhalten),
      beginnt das Satz-Training für sie von vorn - sonst stünde man wieder vor dem fertigen Stand. */
   var ohneBasis = ids.filter(function(id){ var b = (state.db.settings.satzBasis || {})[id]; return !(b && b.tag === studioTag(Date.now())); });
@@ -145,10 +146,11 @@ function renderSatzTraining(planId, start){
   function abschluss(){
     abschlussGezeigt = true;
     var d = trainingHeute(ids), box = document.createElement("div");
+    var stdNeu = ids.map(function(sid){ return studioStandardPruefen(sid, true); }).filter(Boolean);   // heute mehr geschafft: das ist ab jetzt das Ziel
     box.className = "satz-ende";
     box.innerHTML = '<div class="satz-ende-glas" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-ende-logo" aria-hidden="true">BLOC</div><div class="satz-haken" aria-hidden="true">✓</div><h2>'+esc(t("satzGeschafft"))+'</h2>'+
       satzStatHTML(p, ids, d)+
-      satzVergleichHTML(ids)+
+      satzVergleichHTML(ids)+satzStandardHTML(stdNeu)+
       '<button type="button" class="satz-los" data-endsave>'+esc(t("trSpeichern"))+'</button>'+
       '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button>'+
       '<button type="button" class="satz-undo" data-endraus>'+esc(t("satzBeenden"))+'</button></div>';
@@ -228,4 +230,10 @@ function renderSatzTraining(planId, start){
   punkteFertig();
   geheZu(start, false);
   requestAnimationFrame(function(){ geheZu(start, false); });   // nach dem ersten Layout nochmals, falls die Breite erst jetzt feststeht
+}
+/* Zusammenfassung: wo heute mehr geschafft wurde als das Ziel, steht hier das neue Ziel (siehe studioStandardPruefen) */
+function satzStandardHTML(liste){
+  if(!liste || !liste.length) return "";
+  return '<div class="satz-std"><b>'+esc(t("satzNeuStandard"))+'</b><small>'+esc(t("satzStdHint"))+'</small>'+
+    liste.map(function(c){ var ex = findExercise(c.id); return '<div class="satz-vgl"><span class="satz-vgl-n">'+esc(ex ? tplText(ex.name) : c.id)+'</span><span class="satz-vgl-b hoch">'+esc(studioStandardText(c))+'</span></div>'; }).join("")+'</div>';
 }

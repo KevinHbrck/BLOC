@@ -677,6 +677,22 @@
     gleich(W.satzHeute("leg-press").s.length, 1, "nur der neue Satz");
   });
 
+  test("Neuer Standard: 4 statt 3 Sätze, 10 % mehr Gewicht oder Wiederholungen werden das neue Ziel (nie gesenkt, einmal je Einheit)", function () {
+    var s = W.state.db.settings, alt = s.studio, tag = 86400000, n = Date.now(), id = "chest-press-machine";
+    try {
+      s.studio = {}; s.studio[id] = { kg:7.5, log:[{ at:n - 8*tag, s:[[7.5, 12], [7.5, 12], [7.5, 12]] }, { at:n - 1*tag, s:[[7.5, 12], [7.5, 12], [7.5, 12], [7.5, 12]] }] };
+      var c = W.studioStandardPruefen(id, false);
+      gleich(W.studioZiel(id).saetze, 4, "vier Sätze gemacht: Ziel 4 Sätze"); gleich(c.neu.saetze, 4, "Änderung gemeldet");
+      gleich(W.studioStandardPruefen(id, false), null, "dieselbe Einheit wird nicht noch einmal ausgewertet");
+      s.studio[id].log.push({ at:n, s:[[8.5, 14], [8.5, 14], [8.5, 14], [8.5, 14]] });
+      gleich(W.studioStandardPruefen(id, false), null, "heute zählt erst beim Abschluss");
+      var c2 = W.studioStandardPruefen(id, true);
+      gleich(W.studioZiel(id).wdh, 14, "mindestens 10 % mehr Wiederholungen (14 statt 12): Ziel 14"); gleich(c2.kgNeu, 8.5, "mindestens 10 % mehr Gewicht"); gleich(s.studio[id].kg, 8.5, "Arbeitsgewicht angehoben");
+      s.studio[id].log.push({ at:n + 1000, s:[[8.5, 14]] });
+      gleich(W.studioZiel(id).saetze, 4, "weniger Sätze senken das Ziel nicht");
+    } finally { s.studio = alt; }
+  });
+
   function eintrag(name) { var li = document.createElement("li"); li.textContent = name + " …"; liste.appendChild(li); return li; }
   document.getElementById("los").addEventListener("click", async function () {
     var knopf = this;

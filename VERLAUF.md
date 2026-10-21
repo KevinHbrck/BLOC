@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-21 · Neuer Standard: mehr geschafft = neues Ziel (Fassung 2026-10-21-8)
+
+- Wer mehr Sätze als das Ziel gemacht hat (z. B. 4 statt 3), alle Sätze mit mindestens 10 % mehr Wiederholungen oder mit mindestens 10 % mehr Gewicht geschafft hat, dem gilt das ab der nächsten Einheit als Ziel; es wird nur angehoben, nie gesenkt.
+- Satz-Training: Die Zusammenfassung nennt den neuen Standard; bei früheren Einheiten wird er beim Öffnen der Übung bzw. des Satz-Trainings übernommen. Einheitstest um eine Prüfung ergänzt (57).
+
 ## 2026-10-21 · Studio-Karte clean: Sätze von heute in der Statistik (Fassung 2026-10-21-7)
 
 - Die Liste „Heute: 1. … 8. …“ steht nicht mehr auf der Studio-Karte, sondern in der Statistik unter „Letzte Einheiten“ als Zeile „Heute“.

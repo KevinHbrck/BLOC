@@ -353,6 +353,7 @@ function openScheibenSheet(kgWert){
   draw();
 }
 function renderStudioKarte(id){
+  studioStandardPruefen(id, false);   // frühere Einheit mit mehr geschafft: neues Ziel übernehmen
   var ex = findExercise(id);
   if(!ex){ go("#timers"); return; }
   var koerper = studioNurBlock(ex);   // Übung ohne Gewicht (Air): Sätze × Wiederholungen oder Timer, kein Gewichtsfeld
@@ -664,4 +665,45 @@ function openGewichtSheet(id, nachher){
     showToast(studioKg(kg)+" kg × "+w);
     if(nachher) nachher();
   });
+}
+
+/* Neuer Standard: Wer mehr geschafft hat als das Ziel, hat damit ein neues Ziel. Ausgewertet wird die jüngste Einheit (Arbeitssätze):
+   - mehr Sätze als das Ziel (z. B. 4 statt 3) → das Ziel hat jetzt diese Satzzahl
+   - alle Sätze mit dem Spitzengewicht mindestens 10 % über dem Ziel-Wiederholungen → das Ziel hat diese Wiederholungen
+   - Spitzengewicht mindestens 10 % über dem bisherigen Bestgewicht → das ist das neue Arbeitsgewicht
+   Es wird nur angehoben, nie gesenkt; jede Einheit wird einmal ausgewertet (e.stdBis/e.stdN). mitHeute: auch die heutige Einheit auswerten (beim Abschluss).
+   Gibt die Änderung zurück ({ id, alt, neu, kgAlt, kgNeu }) oder null. */
+function studioStandardPruefen(id, mitHeute){
+  var e = studioEintrag(id);
+  if(!e || !e.log || !e.log.length) return null;
+  var heute = studioTag(Date.now()), idx = -1, i;
+  for(i = e.log.length - 1; i >= 0; i--){
+    if(!arbeitsSaetze(e.log[i]).length) continue;
+    if(!mitHeute && studioTag(e.log[i].at) === heute) continue;
+    idx = i; break;
+  }
+  if(idx < 0) return null;
+  var l = e.log[idx], a = arbeitsSaetze(l), n = a.length;
+  if(e.stdBis === l.at && e.stdN === n) return null;   // diese Einheit ist schon ausgewertet
+  var z = studioZiel(id), neu = { saetze:z.saetze, wdh:z.wdh }, kgNeu = null, kgAlt = e.kg;
+  var kgTop = 0; a.forEach(function(s){ if(s[0] > kgTop) kgTop = s[0]; });
+  var oben = a.filter(function(s){ return s[0] === kgTop; });
+  if(n > z.saetze) neu.saetze = Math.min(n, 12);
+  var minW = Math.min.apply(null, oben.map(function(s){ return s[1]; })), mehrW = Math.ceil(z.wdh*1.1);
+  if(oben.length >= Math.min(z.saetze, n) && n >= z.saetze && minW >= mehrW) neu.wdh = Math.min(minW, 100);
+  var basis = studioBestwerte(e.log.slice(0, idx)).kg;
+  if(kgTop > 0 && basis > 0 && kgTop >= basis*1.1 - 1e-9) kgNeu = kgTop;
+  e.stdBis = l.at; e.stdN = n;
+  var geaendert = neu.saetze !== z.saetze || neu.wdh !== z.wdh || (kgNeu != null && kgNeu !== e.kg);
+  if(neu.saetze !== z.saetze || neu.wdh !== z.wdh) e.ziel = { saetze:neu.saetze, wdh:neu.wdh };
+  if(kgNeu != null) e.kg = kgNeu;
+  save();
+  return geaendert ? { id:id, alt:z, neu:neu, kgAlt:kgAlt, kgNeu:kgNeu } : null;
+}
+function studioStandardText(c){
+  var teile = [];
+  if(c.neu.saetze !== c.alt.saetze) teile.push(t("satzStdSaetze", { n:c.neu.saetze }));
+  if(c.neu.wdh !== c.alt.wdh) teile.push(t("satzStdWdh", { n:c.neu.wdh }));
+  if(c.kgNeu != null && c.kgNeu !== c.kgAlt) teile.push(studioKg(c.kgNeu)+" kg");
+  return teile.join(" · ");
 }
