@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Train by sets im Trainingsplan (Fassung 2026-10-22-15)
+
+- Zurück vom BLOC (Train by sets) führt zum Deckblatt. Ein BLOC, der aus einem Workout des Trainingsplans entstanden ist, gehört weiter zu dessen Eintrag: Zeile „Name · 2/3“, „Weiter mit …“ am Ende, Beenden führt in die Arena.
+
 ## 2026-10-22 · Trainingsplan: Einträge öffnen sich in der Arena, Logo quer höher (Fassung 2026-10-22-13)
 
 - Antippen eines Eintrags im Trainingsplan öffnet den BLOC (Zeit oder Sätze, Wiederholungen, Gewicht, LOS GEHTS) bzw. das Deckblatt des Workouts; Änderungen gelten für den BLOC/das Workout selbst, Zurück führt in die Arena. Das kleine ▶ startet gleich.

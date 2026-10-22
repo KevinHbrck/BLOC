@@ -166,7 +166,7 @@ function renderSatzTraining(planId, start){
   function geheZu(i, weich){ i = clamp(i, 0, ids.length - 1); wisch.scrollTo({ left:i*breite(), behavior:weich ? "smooth" : "auto" }); nr(i); }
   wisch.addEventListener("scroll", function(){ nr(clamp(Math.round(wisch.scrollLeft/breite()), 0, ids.length - 1)); });
   root.querySelectorAll("[data-satzgo]").forEach(function(b){ b.addEventListener("click", function(){ geheZu(+b.getAttribute("data-satzgo"), true); }); });
-  function raus(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } goBack("#katalog"); }
+  function raus(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } if(programmKontextFuer("plan:"+p.id)) go("#koerper"); else goBack("#katalog"); }
   root.querySelector("[data-satzexit]").addEventListener("click", raus);
   progChipBinden(root, "plan:"+p.id, function(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } });
   root.querySelector("[data-satzsave]").addEventListener("click", function(){ if(!root.querySelector(".satz-ende")) abschluss(); });

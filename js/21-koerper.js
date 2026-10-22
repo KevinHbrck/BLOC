@@ -120,11 +120,17 @@ function progDirektStarten(o){
   else if(o.art === "lib"){ go("#playlib/"+o.ref); return; }
   kalStarten(o);
 }
+/* Gehört ref zum Eintrag? Gleich, oder ref ist ein BLOC (plan:), der aus diesem Workout entstanden ist (Train by sets auf dem Deckblatt) */
+function progRefPasst(eintrag, ref){
+  if(eintrag === ref) return true;
+  if(String(ref).indexOf('plan:') === 0){ var pl = stPlanFind(ref.slice(5)); return !!(pl && pl.fromWo && pl.fromWo === eintrag); }
+  return false;
+}
 /* Läuft gerade ein Eintrag eines Trainingsplans? Dann { p, i } (nur wenn ref zum gemerkten Eintrag passt) */
 function programmKontextFuer(ref){
   if(!progKontext || !ref) return null;
   var p = programmFinde(progKontext.pid);
-  return p && p.items[progKontext.i] === ref ? { p:p, i:progKontext.i } : null;
+  return p && progRefPasst(p.items[progKontext.i], ref) ? { p:p, i:progKontext.i } : null;
 }
 /* Kleine Zeile im Training: „Trainingsplan · Name · 2/3“; Antippen zeigt die Einträge zum Wechseln */
 function progChipHTML(ref){

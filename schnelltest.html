@@ -1574,6 +1574,12 @@
       await bis(function () { return $("[data-planlos]") && $(".pz-zeile"); }, 3000, "BLOC aus der Arena geöffnet");
       klick("button.back");
       await bis(function () { return W.location.hash === "#koerper" && $("[data-pgneu]"); }, 3000, "Zurück in der Arena");
+      // Train by sets aus dem Deckblatt eines Katalog-Workouts: der BLOC gehört weiter zum Eintrag des Trainingsplans
+      var pg2 = { id: "pg-bs", name: "Kat", items: ["lib:gym-chest", "zufall"], tage: [0], wochen: 4, pos: 0, updatedAt: Date.now() };
+      W.programmListe().push(pg2); W.stPlaene().push({ id: "p-bs", name: "Brust", ids: ["push-ups"], fromWo: "lib:gym-chest", updatedAt: Date.now() }); W.save();
+      W.progKontext = { pid: "pg-bs", i: 0 };
+      var wb = W.programmWeiter("plan:p-bs");
+      pruefe(wb && /Zufall/.test(wb.name), "Weiter mit … nach Train by sets fehlt");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
