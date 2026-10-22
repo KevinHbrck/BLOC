@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Figuren im „Hinzufügen“-Fenster (Fassung 2026-10-22-9)
+
+- Arena › Hinzufügen: unter jedem BLOC, Favoriten- und Katalog-Eintrag stehen bis zu sechs kleine bewegte Figuren der Übungen (+n für den Rest); sie werden erst beim Aufklappen eines Bereichs gebaut.
+
 ## 2026-10-22 · Einheitliche Leiste, Umbenennen per Langdruck (Fassung 2026-10-22-6)
 
 - Untere Leiste auf allen vier Seiten gleich: runder Knopf immer da, ▶ überall (startet Kalender-/Trainingsplan-Eintrag von heute, sonst „Keine Pläne im Kalender“), nur im Kalender ＋.

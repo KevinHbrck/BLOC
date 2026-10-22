@@ -277,12 +277,23 @@ function pgListen(rub){
   }
   return { favs:favs, blocs:blocs, katalog:katalog };
 }
+/* Übungen hinter einem Eintrag: höchstens sechs als kleine bewegte Figuren, der Rest als „+n“ */
+function pgUebungen(ref){
+  if(ref.indexOf("plan:") === 0){ var p = stPlanFind(ref.slice(5)); return p ? stPlanIds(p) : []; }
+  if(ref.indexOf("my:") === 0){ var mw = findMy(ref.slice(3)); return mw ? normMy(mw).items.map(function(it){ return it.ex; }) : []; }
+  if(ref.indexOf("lib:") === 0){ var lw = findLibWorkout(ref.slice(4)); return lw ? lw.exercises : []; }
+  return [];
+}
+function pgFiguren(ref){
+  var ids = pgUebungen(ref).filter(function(id){ return ILLU[id]; }), h = ids.slice(0, 6).map(function(id){ return illuHTML(id, "pg-fig"); }).join("");
+  return h + (ids.length > 6 ? '<i class="pg-mehr">+'+(ids.length - 6)+'</i>' : '');
+}
 function openProgrammWahl(p, neu){
   var root = document.getElementById("overlayRoot"), rub = "workout";
   function zu(){ root.innerHTML = ""; }
   function opt(ref){
     var o = kalAufloesen(progEintrag(ref));
-    return '<button type="button" class="bloc-opt" data-pgpick="'+esc(ref)+'"><span><b>'+esc(o.name)+'</b><small>'+esc(o.sub)+'</small></span></button>';
+    return '<button type="button" class="bloc-opt" data-pgpick="'+esc(ref)+'"><span><b>'+esc(o.name)+'</b><small>'+esc(o.sub)+'</small><span class="pg-figs" data-pgf="'+esc(ref)+'"></span></span></button>';
   }
   function abschnitt(titel, inhalt){ return inhalt ? '<div class="af-lbl">'+esc(titel)+'</div>'+inhalt : ''; }
   function draw(){
@@ -302,6 +313,10 @@ function openProgrammWahl(p, neu){
     var neuSc = root.querySelector(".bloc-sheet"); if(neuSc) neuSc.scrollTop = y;
     root.querySelector("[data-cancel]").addEventListener("click", zu);
     root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+    // kleine bewegte Figuren der Übungen: erst füllen, wenn die Zeile zu sehen ist (zugeklappte Bereiche beim Aufklappen)
+    function fuellen(box){ box.querySelectorAll(".pg-figs:not([data-fertig])").forEach(function(el){ if(el.closest("details:not([open])")) return; el.setAttribute("data-fertig", "1"); el.innerHTML = pgFiguren(el.getAttribute("data-pgf")); }); }
+    fuellen(root);
+    root.querySelectorAll("details.kat-gr").forEach(function(dt){ dt.addEventListener("toggle", function(){ if(dt.open) fuellen(dt); }); });
     root.querySelectorAll("[data-pgrub]").forEach(function(b){ b.addEventListener("click", function(){ rub = b.getAttribute("data-pgrub"); draw(); }); });
     root.querySelectorAll("[data-pgpick]").forEach(function(b){ b.addEventListener("click", function(){
       p.items.push(b.getAttribute("data-pgpick")); p.updatedAt = Date.now(); pgOffen[p.id] = true; save(); zu(); neu();
