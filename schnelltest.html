@@ -1564,8 +1564,8 @@
       pruefe(!$("[data-plkg]") && !$("[data-plsave]"), "Timer: kein Eintragen mehr");
       W.playerState.idx = W.playerState.steps.length - 1; W.enterStep(W.playerState.idx, {});
       await bis(function () { return $("[data-progweiter]"); }, 3000, "Weiter mit … am Ende");
-      pruefe(/Zufallstraining/.test($("[data-progweiter]").textContent), "Weiter-Knopf: " + $("[data-progweiter]").textContent);
       W.exitPlayer();
+      pruefe(W.location.hash === "#koerper", "Nach dem Training aus einem Trainingsplan geht es zurück in die Arena: " + W.location.hash);
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

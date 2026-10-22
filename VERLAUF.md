@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Kurzhantel im Gym, Trainingsplan-Start direkt (Fassung 2026-10-22-12)
+
+- Übungen mit Kurzhantel zählen zum Fitnessstudio (Ort, Farbe, Katalog-Aufteilung). „Gespeicherte Trainings“ stehen nicht mehr bei BLOCs, nur noch in der Statistik.
+- Ein Eintrag aus einem Trainingsplan (Arena, Kalender-Termin, Hauptknopf) startet gleich als Timer bzw. Satz-Training, ohne Deckblatt; Beenden führt zurück in die Arena statt zu Workout/Heute.
+
 ## 2026-10-22 · Trainingsplan: Los geht's, Weiter mit …, Zeile im Training (Fassung 2026-10-22-10)
 
 - Trainingsplan-Karte: Knopf „LOS GEHTS!“ (startet den nächsten Eintrag), ein Zurück-Knopf oben links in der Arena. „Hinzufügen“: Favoriten · BLOCs · Katalog zunächst zugeklappt, Einträge links in Fitnessstudio-Rot bzw. Freiluft-Blau.

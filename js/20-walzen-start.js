@@ -138,6 +138,7 @@ function bindPlayerControls(){
 }
 
 function exitPlayer(){
+  var ziel = (typeof programmKontextFuer === "function" && playerState && programmKontextFuer(programmRefAusQuelle(playerState.source))) ? "#koerper" : "#home";   // aus einem Trainingsplan zurück in die Arena
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
   schedCancel();
   stopBgTicker();
@@ -146,7 +147,7 @@ function exitPlayer(){
   playerState = null;
   releaseWakeLock();
   document.getElementById("playerRoot").innerHTML = "";
-  go("#home");
+  go(ziel);
 }
 
 /* ============ Service worker ============ */

@@ -111,7 +111,10 @@ function kalAufloesen(e){
   return o;
 }
 function kalStarten(e){
-  if(e.prog && typeof progKontext !== "undefined") progKontext = { pid:e.prog.id, i:e.prog.i };   // Termin eines Trainingsplans: das Training weiß, dass es dazugehört
+  if(e.prog && typeof programmFinde === "function"){   // Termin eines Trainingsplans: gleich los, das Training weiß, dass es dazugehört
+    var pp = programmFinde(e.prog.id);
+    if(pp && pp.items[e.prog.i]){ progKontext = { pid:pp.id, i:e.prog.i }; return progDirektStarten(progEintrag(pp.items[e.prog.i])); }
+  }
   if(e.art === "workout"){ coverDraft = null; go("#cover/my/"+e.ref); }
   else if(e.art === "lib"){ coverDraft = null; go("#cover/lib/"+e.ref); }
   else if(e.art === "plan"){ var pl = stPlanFind(e.ref); if(pl && stPlanIds(pl).length) planAlsWorkout(pl); else go("#studioplan/"+e.ref); }

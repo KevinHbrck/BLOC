@@ -94,6 +94,15 @@ function programmStarten(p, i){
   if(!kalAufloesen(o).ok) return;
   p.pos = i; save();
   progKontext = { pid:p.id, i:i };
+  progDirektStarten(o);
+}
+/* Ein Eintrag eines Trainingsplans startet gleich (ohne Deckblatt, ohne Umweg über Workout › BLOCs): BLOC als Timer oder Satz-Training, Workouts direkt, Run und Zufall wie im Kalender */
+function progDirektStarten(o){
+  if(o.art === "plan"){
+    var pl = stPlanFind(o.ref);
+    if(pl && stPlanIds(pl).length){ if(planStartArt(pl) === "timer") planAlsWorkout(pl, true); else go("#satz/"+pl.id+"/0"); return; }
+  } else if(o.art === "workout"){ go("#playmy/"+o.ref); return; }
+  else if(o.art === "lib"){ go("#playlib/"+o.ref); return; }
   kalStarten(o);
 }
 /* Läuft gerade ein Eintrag eines Trainingsplans? Dann { p, i } (nur wenn ref zum gemerkten Eintrag passt) */
