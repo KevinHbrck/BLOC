@@ -227,7 +227,7 @@ function renderProgramme(){
   app.querySelectorAll("[data-pgneu]").forEach(function(b){ b.addEventListener("click", function(){ programmNeu(); renderKoerper(); window.scrollTo(0, 0); }); });
   app.querySelectorAll("[data-pgfav]").forEach(function(b){ b.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); var p = programmFinde(b.getAttribute("data-pgfav")); if(!p) return; p.fav = !p.fav; save(); showToast(t(p.fav ? "favAdded" : "favRemoved")); neu(); }); });
   app.querySelectorAll("[data-pgplus]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pgplus")); if(p) openProgrammWahl(p, neu); }); });
-  app.querySelectorAll("[data-pggo]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pggo")); if(p) programmStarten(p, (p.pos || 0) % p.items.length); }); });
+  app.querySelectorAll("[data-pggo]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pggo")); if(p) programmOeffnen(p, (p.pos || 0) % p.items.length); }); });
   // Karten und Wochenpläne: Antippen klappt auf/zu (selbst umgeschaltet, damit der Zustand beim Neuzeichnen bleibt)
   app.querySelectorAll("details.pg-karte > summary").forEach(function(sm){
     sm.addEventListener("click", function(e){ e.preventDefault(); var d = sm.parentNode; d.open = !d.open; pgOffen[d.getAttribute("data-pg")] = d.open; });
@@ -236,9 +236,6 @@ function renderProgramme(){
     sm.addEventListener("click", function(e){ e.preventDefault(); var d = sm.parentNode; d.open = !d.open; pgOffen["w"+d.getAttribute("data-pgwoche")] = d.open; });
   });
   // Eintrag: Antippen startet ihn, langes Drücken: nach oben · nach unten · entfernen
-  app.querySelectorAll(".pg-los").forEach(function(el){   // das kleine '��: gleich starten
-    el.addEventListener("click", function(e){ e.stopPropagation(); var z = el.closest("[data-pgz]"); if(!z) return; var x = teile(z.getAttribute("data-pgz")); if(x.p) programmStarten(x.p, x.n); });
-  });
   app.querySelectorAll("[data-pgz]").forEach(function(el){
     var x = teile(el.getAttribute("data-pgz")); if(!x.p) return;
     el.addEventListener("click", function(){

@@ -731,7 +731,7 @@ function renderStudioPlan(){
   // Zurück führt zur Liste unter „Meine“, nicht aus dem Katalog heraus
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
-    planVerlassen(p, function(){ if(stPlanHerkunft && !stPlanBauen){ var h = stPlanHerkunft; stPlanHerkunft = null; stPlanAktiv = null; goBack(h); return; } stPlanAktiv = p.parent && stPlanFind(p.parent) ? p.parent : null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });   // ein neuer, nicht gespeicherter Plan fragt nach; ein weiterer BLOC führt zurück zum Workout-Planer
+    planVerlassen(p, function(){ var hk = stPlanHerkunft || (typeof programmKontextFuer === 'function' && programmKontextFuer('plan:'+p.id) ? '#koerper' : null); if(hk && !stPlanBauen){ stPlanHerkunft = null; stPlanAktiv = null; goBack(hk); return; } stPlanAktiv = p.parent && stPlanFind(p.parent) ? p.parent : null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });   // ein neuer, nicht gespeicherter Plan fragt nach; ein weiterer BLOC führt zurück zum Workout-Planer
   }); }
   bindCommon();
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }

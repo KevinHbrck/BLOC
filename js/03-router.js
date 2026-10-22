@@ -27,6 +27,7 @@ function syncGuard(){
 var HAUPTSEITEN = ["#training", "#kalender", "#koerper", "#stats"];
 function go(hash){
   var neueSeite = navTop() !== hash;
+  if(hash === '#home' || (HAUPTSEITEN.indexOf(hash) > -1 && hash !== '#koerper')) progKontext = null;   // ein Trainingsplan-Kontext endet mit dem Wechsel auf eine andere Hauptseite
   if(hash === "#home") navStack = ["#home"];
   else if(HAUPTSEITEN.indexOf(hash) > -1) navStack = ["#home", hash];
   else if(neueSeite) navStack.push(hash);

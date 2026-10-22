@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Arena: LOS GEHTS öffnet erst die Einstellungen (Fassung 2026-10-22-16)
+
+- LOS GEHTS! auf der Trainingsplan-Karte und das ▶ am Eintrag öffnen zuerst den BLOC (Zeit oder Sätze, Wiederholungen, Gewicht, Pause) bzw. das Deckblatt; gestartet wird dort. Zurück führt immer in die Arena (auch über „Bearbeiten“ und „Nach Sätzen trainieren“); der Trainingsplan-Kontext endet beim Wechsel auf eine andere Hauptseite.
+
 ## 2026-10-22 · Train by sets im Trainingsplan (Fassung 2026-10-22-15)
 
 - Zurück vom BLOC (Train by sets) führt zum Deckblatt. Ein BLOC, der aus einem Workout des Trainingsplans entstanden ist, gehört weiter zu dessen Eintrag: Zeile „Name · 2/3“, „Weiter mit …“ am Ende, Beenden führt in die Arena.

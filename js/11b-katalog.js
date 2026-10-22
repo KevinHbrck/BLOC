@@ -271,7 +271,8 @@ function katPlanVerlassen(){
   var p = stPlanAktiv ? stPlanFind(stPlanAktiv) : null;
   planVerlassen(p, function(){
     stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = "";
-    if(stPlanHerkunft){ var h = stPlanHerkunft; stPlanHerkunft = null; goBack(h); return; }   // aus der Arena geöffnet: zurück dorthin
+    var hk = stPlanHerkunft || (p && programmKontextFuer('plan:'+p.id) ? '#koerper' : null);   // aus der Arena geöffnet: zurück dorthin
+    if(hk){ stPlanHerkunft = null; goBack(hk); return; }
     renderKatalog(); window.scrollTo(0, 0);
   });
   return true;
