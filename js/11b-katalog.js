@@ -257,7 +257,7 @@ function renderKatalog(){
   if(stPlanAktiv && !stPlanFind(stPlanAktiv)){ stPlanAktiv = null; stPlanBauen = false; }
   tabLeiste("katalog");   // untere Leiste auf den Listen des Bereichs, nicht im Plan-Bau (Reiterwechsel rendern nicht über render())
   if(stPlanAktiv && stPlanFind(stPlanAktiv)) return renderStudioPlan();
-  stPlanAktiv = null; stPlanBauen = false;
+  stPlanAktiv = null; stPlanBauen = false; stPlanHerkunft = null;
   var tab = katTab();
   if(tab === "baukasten") return renderKatalogBaukasten();
   if(tab === "blocs") return renderLibrary();
@@ -271,6 +271,7 @@ function katPlanVerlassen(){
   var p = stPlanAktiv ? stPlanFind(stPlanAktiv) : null;
   planVerlassen(p, function(){
     stPlanAktiv = null; stPlanBauen = false; stPlanSel = -1; stPlanQuery = "";
+    if(stPlanHerkunft){ var h = stPlanHerkunft; stPlanHerkunft = null; goBack(h); return; }   // aus der Arena geöffnet: zurück dorthin
     renderKatalog(); window.scrollTo(0, 0);
   });
   return true;

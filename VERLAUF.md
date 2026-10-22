@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Trainingsplan: Einträge öffnen sich in der Arena, Logo quer höher (Fassung 2026-10-22-13)
+
+- Antippen eines Eintrags im Trainingsplan öffnet den BLOC (Zeit oder Sätze, Wiederholungen, Gewicht, LOS GEHTS) bzw. das Deckblatt des Workouts; Änderungen gelten für den BLOC/das Workout selbst, Zurück führt in die Arena. Das kleine ▶ startet gleich.
+- Timer quer: BLOC-Zeichen weiter oben.
+
 ## 2026-10-22 · Kurzhantel im Gym, Trainingsplan-Start direkt (Fassung 2026-10-22-12)
 
 - Übungen mit Kurzhantel zählen zum Fitnessstudio (Ort, Farbe, Katalog-Aufteilung). „Gespeicherte Trainings“ stehen nicht mehr bei BLOCs, nur noch in der Statistik.

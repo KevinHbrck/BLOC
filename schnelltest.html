@@ -1566,6 +1566,10 @@
       await bis(function () { return $("[data-progweiter]"); }, 3000, "Weiter mit … am Ende");
       W.exitPlayer();
       pruefe(W.location.hash === "#koerper", "Nach dem Training aus einem Trainingsplan geht es zurück in die Arena: " + W.location.hash);
+      W.programmOeffnen(pg, 0);   // Antippen öffnet den BLOC im Kontext der Arena (Einstellungen, LOS GEHTS), Zurück führt in die Arena
+      await bis(function () { return $("[data-planlos]") && $(".pz-zeile"); }, 3000, "BLOC aus der Arena geöffnet");
+      klick("button.back");
+      await bis(function () { return W.location.hash === "#koerper" && $("[data-pgneu]"); }, 3000, "Zurück in der Arena");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

@@ -96,6 +96,21 @@ function programmStarten(p, i){
   progKontext = { pid:p.id, i:i };
   progDirektStarten(o);
 }
+/* Antippen eines Eintrags: die Karte öffnet sich im Kontext der Arena (BLOC mit Sätzen, Wiederholungen, Zeit/Sätze-Wahl und LOS GEHTS; Workouts mit dem Deckblatt);
+   Änderungen dort gelten für den BLOC bzw. das Workout selbst. Zurück führt in die Arena. Das kleine '�� startet dagegen gleich. */
+function programmOeffnen(p, i){
+  if(!p || !p.items[i]) return;
+  var o = progEintrag(p.items[i]);
+  if(!kalAufloesen(o).ok) return;
+  p.pos = i; save();
+  progKontext = { pid:p.id, i:i };
+  if(o.art === "plan"){
+    var pl = stPlanFind(o.ref);
+    if(pl){ stPlanHerkunft = "#koerper"; stPlanAktiv = pl.id; stPlanBauen = false; stPlanQuery = ""; stPlanSel = -1; katZuMeine(); go("#katalog"); return; }
+  } else if(o.art === "workout"){ coverDraft = null; go("#cover/my/"+o.ref); return; }
+  else if(o.art === "lib"){ coverDraft = null; go("#cover/lib/"+o.ref); return; }
+  progDirektStarten(o);
+}
 /* Ein Eintrag eines Trainingsplans startet gleich (ohne Deckblatt, ohne Umweg über Workout › BLOCs): BLOC als Timer oder Satz-Training, Workouts direkt, Run und Zufall wie im Kalender */
 function progDirektStarten(o){
   if(o.art === "plan"){
@@ -215,11 +230,14 @@ function renderProgramme(){
     sm.addEventListener("click", function(e){ e.preventDefault(); var d = sm.parentNode; d.open = !d.open; pgOffen["w"+d.getAttribute("data-pgwoche")] = d.open; });
   });
   // Eintrag: Antippen startet ihn, langes Drücken: nach oben · nach unten · entfernen
+  app.querySelectorAll(".pg-los").forEach(function(el){   // das kleine '��: gleich starten
+    el.addEventListener("click", function(e){ e.stopPropagation(); var z = el.closest("[data-pgz]"); if(!z) return; var x = teile(z.getAttribute("data-pgz")); if(x.p) programmStarten(x.p, x.n); });
+  });
   app.querySelectorAll("[data-pgz]").forEach(function(el){
     var x = teile(el.getAttribute("data-pgz")); if(!x.p) return;
     el.addEventListener("click", function(){
       if(Date.now() < langDruckSperre) return;
-      programmStarten(x.p, x.n);
+      programmOeffnen(x.p, x.n);
     });
     langDruck(el, function(){
       var acts = [];

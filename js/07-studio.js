@@ -313,6 +313,7 @@ function renderIntervall(){
    Das Plus legt einen neuen Plan an; Übungen werden wie im Workout-Baukasten von Air durch Antippen gewählt (Nummer = Reihenfolge,
    nochmal antippen = raus). Ein Tipp auf eine Übung im fertigen Plan öffnet ihre Karte zum Eintragen. */
 var stPlanOrtFuer = null;   // der Plan, dessen Ort schon aus den Übungen übernommen wurde
+var stPlanHerkunft = null;   // '''#koerper''', wenn der BLOC aus einem Trainingsplan der Arena geöffnet wurde: Zurück führt dorthin
 var stPlanAktiv = null, stPlanBauen = false, stPlanQuery = "", stPlanSel = -1;   // stPlanSel: im Plan-Bau ausgewählte Übung des Plans (zum Verschieben)
 function stPlaene(){ var s = state.db.settings; if(!Array.isArray(s.stPlaene)) s.stPlaene = []; return s.stPlaene; }
 function stPlanFind(id){ var l = stPlaene(); for(var i=0;i<l.length;i++) if(l[i].id === id) return l[i]; return null; }
@@ -730,7 +731,7 @@ function renderStudioPlan(){
   // Zurück führt zur Liste unter „Meine“, nicht aus dem Katalog heraus
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
-    planVerlassen(p, function(){ stPlanAktiv = p.parent && stPlanFind(p.parent) ? p.parent : null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });   // ein neuer, nicht gespeicherter Plan fragt nach; ein weiterer BLOC führt zurück zum Workout-Planer
+    planVerlassen(p, function(){ if(stPlanHerkunft && !stPlanBauen){ var h = stPlanHerkunft; stPlanHerkunft = null; stPlanAktiv = null; goBack(h); return; } stPlanAktiv = p.parent && stPlanFind(p.parent) ? p.parent : null; stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); });   // ein neuer, nicht gespeicherter Plan fragt nach; ein weiterer BLOC führt zurück zum Workout-Planer
   }); }
   bindCommon();
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
