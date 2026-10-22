@@ -1581,6 +1581,18 @@
       var wb = W.programmWeiter("plan:p-bs");
       pruefe(wb && /Zufall/.test(wb.name), "Weiter mit … nach Train by sets fehlt");
     }],
+    ["Kalender: Trainingsplan hinzufügen und starten", async function () {
+      await heim();
+      var pg = { id: "pg-kal", name: "Plan Kal", items: ["zufall", "run"], tage: [0], wochen: 4, pos: 0, updatedAt: Date.now() };
+      W.programmListe().push(pg); W.save();
+      var tag = W.kalTagKey(Date.now());
+      W.kalHinzu(tag, { art: "programm", ref: "pg-kal" });
+      var o = W.kalAufloesen(W.kalAn(tag).filter(function (e) { return e.art === "programm"; })[0]);
+      pruefe(o.ok && o.name === "Plan Kal" && /2/.test(o.sub), "Kalender-Eintrag Trainingsplan: " + JSON.stringify(o));
+      W.kalHinzuMenue(tag);
+      await bis(function () { return /Trainingsplan/.test(($("#overlayRoot") || {}).textContent || ""); }, 2000, "Menü zeigt Trainingsplan");
+      klick("#overlayRoot [data-actclose]");
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

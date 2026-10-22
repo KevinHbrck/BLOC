@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Kalender: Trainingsplan hinzufügen (Fassung 2026-10-22-17)
+
+- „+ Hinzufügen“ im Kalender hat neben Workouts und Run jetzt **Trainingsplan**: der ganze Plan steht als ein Eintrag im Tag (Art `programm`); Antippen öffnet den nächsten Eintrag des Plans, danach „Weiter mit …“ durch alle Workouts.
+
 ## 2026-10-22 · Arena: LOS GEHTS öffnet erst die Einstellungen (Fassung 2026-10-22-16)
 
 - LOS GEHTS! auf der Trainingsplan-Karte und das ▶ am Eintrag öffnen zuerst den BLOC (Zeit oder Sätze, Wiederholungen, Gewicht, Pause) bzw. das Deckblatt; gestartet wird dort. Zurück führt immer in die Arena (auch über „Bearbeiten“ und „Nach Sätzen trainieren“); der Trainingsplan-Kontext endet beim Wechsel auf eine andere Hauptseite.

@@ -10,7 +10,7 @@
 var kalAnsicht = "woche";      // "woche" | "monat"
 var kalBasis = null;           // ein Tag der angezeigten Woche bzw. des Monats
 var kalAuswahl = null;         // im Monat gewählter Tag (Einträge stehen unter dem Raster)
-var KAL_FARBE = { workout:"var(--tp-color)", plan:"var(--gym-color, var(--bl-color))", lib:"var(--tp-color)", run:"var(--run-color, #e5573f)", zufall:"var(--accent)" };
+var KAL_FARBE = { workout:"var(--tp-color)", plan:"var(--gym-color, var(--bl-color))", lib:"var(--tp-color)", run:"var(--run-color, #e5573f)", zufall:"var(--accent)", programm:"var(--accent)" };
 
 /* ---------- Daten ---------- */
 function kalListe(){
@@ -101,6 +101,9 @@ function kalAufloesen(e){
       o.name = tplText(lw.name); o.sub = exAnz(le, workoutDuration(libWorkoutRun(lw)));
       if(libIstWarmDehn(lw)) o.farbe = "var(--ws-color)";
     }
+  } else if(e.art === "programm"){   // ganzer Trainingsplan aus der Arena
+    var pg = programmFinde(e.ref);
+    if(!pg) o.ok = false; else { o.name = pg.name; o.sub = pg.items.length === 1 ? t("progMeta1") : t("progMeta", { n:pg.items.length }); }
   } else if(e.art === "run"){
     o.name = e.name || t(e.rad ? "kalRadName" : "kalRunName");
     o.sub = (e.km > 0 ? runKm(e.km*1000)+" km" : t("kalRunFrei"))+(e.rad ? " · "+t("runArtRad") : "");
@@ -115,7 +118,8 @@ function kalStarten(e){
     var pp = programmFinde(e.prog.id);
     if(pp && pp.items[e.prog.i]){ progKontext = { pid:pp.id, i:e.prog.i }; return progDirektStarten(progEintrag(pp.items[e.prog.i])); }
   }
-  if(e.art === "workout"){ coverDraft = null; go("#cover/my/"+e.ref); }
+  if(e.art === "programm"){ var pgm = programmFinde(e.ref); if(pgm && pgm.items.length) programmOeffnen(pgm, (pgm.pos || 0) % pgm.items.length); }   // Trainingsplan: die Einträge laufen der Reihe nach (Weiter mit …)
+  else if(e.art === "workout"){ coverDraft = null; go("#cover/my/"+e.ref); }
   else if(e.art === "lib"){ coverDraft = null; go("#cover/lib/"+e.ref); }
   else if(e.art === "plan"){ var pl = stPlanFind(e.ref); if(pl && stPlanIds(pl).length) planAlsWorkout(pl); else go("#studioplan/"+e.ref); }
   else if(e.art === "run"){ state.db.settings.runArt = e.rad ? "rad" : "lauf"; save(); runGeplant ={ name:e.name || t(e.rad ? "kalRadName" : "kalRunName"), km:e.km || 0, rad:!!e.rad, t:Date.now() }; go("#run"); }
@@ -380,6 +384,10 @@ function kalHinzuMenue(tag){
   }
   openActionSheet(kalTagText(tag), [
     { ico:HOME_ICON.lib, label:t("kalWorkouts"), fn:workoutsMenue },
+    { ico:'<ellipse cx="12" cy="12" rx="9" ry="6.5"/><ellipse cx="12" cy="12" rx="4.2" ry="2.5"/>', label:t("kalPlan"), fn:function(){
+      var items = programmListe().filter(function(pg){ return pg.items.length; }).map(function(pg){ return { id:pg.id, name:pg.name, sub:pg.items.length === 1 ? t("progMeta1") : t("progMeta", { n:pg.items.length }) }; });
+      kalPicker(t("kalPlan"), items, function(id){ fertig("programm", id); });
+    } },
     { ico:HOME_ICON.run, label:t("kalRun"), fn:function(){ kalRunSheet(tag); } }
   ]);
 }
