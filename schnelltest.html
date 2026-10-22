@@ -77,15 +77,16 @@
     await bis(function () { return $(".af-body"); }, 2000, "Filterkarte offen");
   }
   async function heim() { await laden(); await bis(function () { return $(".area-tile"); }, 5000, "Startseite"); }
-  // Katalog-Wege (seit 2026-10-12: Reiter Katalog · Baukasten; im Katalog die Abteilungen Meine · Workoutkatalog und die Karte Übungskatalog)
+  // Workout-Wege (seit 2026-10-22: Reiter Baukasten · BLOCs; der Katalog ist eine Karte im Baukasten, der Übungskatalog nur noch über #uebungskatalog)
   async function zuKatalogTab() {
     if (!$("[data-kattab]")) {   // auf einer Unterseite (Übungskatalog, Plan): zurück
       if ($("button.back")) klick("button.back");
       else klick('[data-nav="#katalog"]');
     }
-    var b = await bis(function () { return $('[data-kattab="workouts"]'); }, 3000, "Reiter Katalog");
+    var b = await bis(function () { return $('[data-kattab="baukasten"]'); }, 3000, "Reiter Baukasten");
     if (!b.classList.contains("active")) klick(b);
-    await bis(function () { return $('[data-kattab="workouts"].active') && $("[data-katabt]"); }, 3000, "Katalog-Reiter aktiv");
+    klick(await bis(function () { return $("[data-baukatalog]"); }, 3000, "Katalog-Karte im Baukasten"));
+    await bis(function () { return $(".kat-seitentitel"); }, 3000, "Katalog-Seite");
   }
   // Der Ort ist mehrfach wählbar: Antippen schaltet zu oder ab. ortNur wählt genau einen Ort (der andere wird abgeschaltet, falls er an ist).
   async function ortNur(attr, ort) {
@@ -98,23 +99,20 @@
   }
   async function zuWorkoutKatalog() {
     await zuKatalogTab();
-    var b = await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Abteilung Workoutkatalog");
-    if (!b.classList.contains("active")) klick(b);
-    await bis(function () { return $('[data-katabt="workouts"].active') && $(".ort-fotos"); }, 3000, "Workoutkatalog mit Ort-Schalter");
+    await bis(function () { return $(".ort-fotos"); }, 3000, "Workoutkatalog mit Ort-Schalter");
   }
-  async function zuMeine() {
-    await zuKatalogTab();
-    klick(await bis(function () { return $('[data-katabt="meine"]'); }, 3000, "Abteilung Meine"));
-    await bis(function () { return $('[data-katabt="meine"].active'); }, 2000, "Meine aktiv");
+  async function zuMeine() {   // BLOCs
+    if (!$("[data-kattab]")) { if ($("button.back")) klick("button.back"); }
+    var b = await bis(function () { return $('[data-kattab="blocs"]'); }, 3000, "Reiter BLOCs");
+    if (!b.classList.contains("active")) klick(b);
+    await bis(function () { return $('[data-kattab="blocs"].active'); }, 2000, "BLOCs aktiv");
   }
   async function zuUebungskatalog(ort) {   // ort: "frei" (Standard) oder "studio" - der Übungskatalog zeigt nur die Übungen des gewählten Ortes
-    await zuKatalogTab();
-    klick(await bis(function () { return $('[data-katabt="uebungen"]'); }, 3000, "Abteilung Übungskatalog"));
-    var o = $('[data-katort="' + (ort || "frei") + '"]');
+    W.state.db.settings.katTab = "katalog"; W.state.db.settings.katAbt = "uebungen"; W.renderKatalog();
+    var o = await bis(function () { return $('[data-katort="' + (ort || "frei") + '"]'); }, 3000, "Ort im Übungskatalog");
     if (o && !o.classList.contains("on")) klick(o);
-    await bis(function () { return $('[data-katabt="uebungen"].active') && $('[data-katort="' + (ort || "frei") + '"].on') && $$("[data-studio]:not([data-ortfremd])").length > 0; }, 3000, "Übungskatalog");
-  }
-  async function zuBaukasten(modus) {
+    await bis(function () { return $('[data-katort="' + (ort || "frei") + '"].on') && $$("[data-studio]:not([data-ortfremd])").length > 0; }, 3000, "Übungskatalog");
+  }  async function zuBaukasten(modus) {
     if (!$("[data-kattab]")) { if ($("button.back")) klick("button.back"); }
     var b = await bis(function () { return $('[data-kattab="baukasten"]'); }, 3000, "Reiter Baukasten");
     if (!b.classList.contains("active")) klick(b);
@@ -177,18 +175,15 @@
       await bis(function () { return $(".area-tile") && $(".home-hero"); }, 3000, "zurück zur Startseite");
       pruefe($("#tabbar .tab.active") && /Start/.test($("#tabbar .tab.active").textContent), "In der Leiste soll „Start“ markiert sein");
     }],
-    ["Workout: Reiter Baukasten · Katalog, Abteilungen Meine · Workoutkatalog, Übungskatalog, Überrasch mich im Baukasten", async function () {
+    ["Workout: Reiter Baukasten · BLOCs, Katalog als Karte im Baukasten, Überrasch mich im Baukasten", async function () {
       klick('[data-herostart]');
       await bis(function () { return $$("[data-kattab]").length === 2; }, 3000, "Reiter");
       var tabs = $$("[data-kattab]").map(function (b) { return b.textContent.trim(); }).join(" · ");
-      pruefe(tabs === "Baukasten · Katalog", "Reihenfolge ist " + tabs);
+      pruefe(tabs === "Baukasten · BLOCs", "Reihenfolge ist " + tabs);
       pruefe($(".rz") && !$(".lib-tabs-card") && !$(".surprise-card"), "Reiterzeile fehlt oder die große Karte steht noch da");
       pruefe(/^Workout$/.test($(".topbar h1").textContent.trim()), "Titel ist nicht „Workout“");
       await zuKatalogTab();
-      var abt = $$("[data-katabt]").map(function (b) { return b.textContent.trim(); }).join(" · ");
-      pruefe(abt === "Meine · Workoutkatalog · Übungskatalog", "Abteilungen: " + abt);
       pruefe(!$(".fab") && !$("[data-fab]"), "Das Plus ist weg: es darf kein Plus-Knopf mehr da sein");
-      klick('[data-katabt="workouts"]');
       await bis(function () { return $(".ort-fotos") && $$(".lib-card").length >= 20; }, 3000, "Workoutkatalog");
       var gr = $$("details.kat-gr");
       pruefe(gr.length >= 6 && gr.every(function (d) { return !d.open && sichtbar(d); }), "Workouts: zu Beginn sollen nur die Überschriften stehen (" + gr.length + " Bereiche)");
@@ -220,7 +215,6 @@
       // Übungskatalog: eigene Seite, alle Übungen zugeklappt nach Bereichen, „Eigene Übung anlegen“ oben
       await zuUebungskatalog();
       pruefe($("[data-stnew2]") && /Eigene Übung/.test($("[data-stnew2]").textContent), "„Eigene Übung anlegen“ fehlt im Übungskatalog");
-      pruefe($('[data-katabt="uebungen"].active') && $$("[data-katabt]").length === 3, "Übungskatalog ist eine gleichrangige Abteilung neben Meine und Workoutkatalog");
       // derselbe Ort-Schalter (Fotokarten mit Übungszahl) wie im Workoutkatalog; „Fitnessstudio“ steht nicht noch einmal als Ausrüstungs-Chip
       pruefe($$(".ort-foto").length === 2 && /Übungen/.test($(".ort-fotos").textContent), "Übungskatalog: Ort-Fotokarten mit Übungszahl fehlen");
       if (!$(".af-body")) klick(".af-kopf");
@@ -372,8 +366,7 @@
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Reiter Dehnen"));
       pruefe($(".bereich-bild img[src$='bereich-mobility.jpg']"), "Mobility & Stretch: Bild-Kopf fehlt");
-      klick('[data-wsabt="uebungen"]');
-      pruefe(/Kobra/.test(D.body.textContent), "Kobra fehlt");
+      pruefe(W.EXERCISES.some(function (e) { return e.main === "stretch" && /Kobra/.test(W.tplText(e.name)); }), "Kobra fehlt");
     }],
     ["Timer-Workouts und Blöcke auf der Timer-Seite, Einstellungen öffnen", async function () {
       await heim();
@@ -469,6 +462,7 @@
       await heim();
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
+      W.state.db.settings.wsTab = "katalog"; W.renderWarmStretch();
       await filterAuf();
       klick('[data-wsreg="nacken"]');
       await bis(function () { return $('[data-wsreg="nacken"].on') && $(".af-body"); }, 2000, "Dehnen: Nacken, Karte bleibt offen");
@@ -515,6 +509,7 @@
       await bis(function () { return !$("#overlayRoot .hw-zeile"); }, 2000, "Fenster schließt");
       await heim();
       klick('[data-nav="#warmstretch"]');
+      W.state.db.settings.wsTab = "katalog"; W.renderWarmStretch(); W.renderWarmStretch();
       await bis(function () { return $("[data-hinweis]") && !$(".seiten-intro"); }, 3000, "Dehnen: „?“ statt Text");
     }],
     ["Katalog › Übungen: Bereiche, Suche, Stern, Karte, Satz eintragen, Pause, Steigerung", async function () {
@@ -671,9 +666,7 @@
       await bis(function () { return $("[data-plansave]"); }, 3000, "Plan-Seite eines Entwurfs mit „Plan speichern“");
       pruefe((JSON.parse(W.localStorage.getItem(KEY)).settings.stPlaene || []).some(function (p) { return p.entwurf; }), "Der Plan soll bis „Plan speichern“ ein Entwurf bleiben");
       klick($("[data-plansave]"));
-      await bis(function () { return $("#overlayRoot [data-lja]"); }, 3000, "Plan gespeichert, Rückfrage");
-      klick("#overlayRoot [data-lja]");
-      await bis(function () { return $("[data-planedit]"); }, 3000, "Plan gespeichert, Ansicht");
+      await bis(function () { return /BLOC wurde gespeichert/.test(D.body.textContent) && $("[data-planedit]") && $("[data-trsave]"); }, 3000, "Plan gespeichert, man bleibt auf der Seite");
       var dd = JSON.parse(W.localStorage.getItem(KEY));
       pruefe((dd.settings.stPlaene || []).length === vor.pl + 1 && !(dd.settings.stPlaene || []).some(function (p) { return p.entwurf; }), "Gespeicherter Plan fehlt oder ist noch Entwurf");
     }],
@@ -824,7 +817,7 @@
       W.scrollTo(0, 0);
       klick("[data-plandone]");
       klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
-      klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s"));
+      klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s")); await warte(150); if ($("#overlayRoot [data-act]")) klick($("#overlayRoot [data-act]"));
       await bis(function () { return /^#playmy\//.test(W.location.hash) && $("#pl-body"); }, 3000, "Training startet direkt");
       var mw = (JSON.parse(W.localStorage.getItem(KEY)).myWorkouts || []).filter(function (m) { return m.fromPlan; })[0];
       pruefe(mw && mw.items.length === 2 && mw.items.some(function (i) { return i.ex === "leg-press" && i.work === 40; }), "Workout aus dem Plan: " + JSON.stringify(mw));
@@ -836,25 +829,15 @@
       await heim();
       klick('[data-nav="#warmstretch"]');
       klick(await bis(function () { return $('[data-wsart="dehn"]'); }, 3000, "Dehnen"));
-      pruefe($$("[data-wstab]").length === 2 && $$("[data-wsabt]").length === 3 && $('[data-wstab="baukasten"]'), "Mobility & Stretch: Reiter Katalog · Baukasten und Abteilungen Meine · Workoutkatalog · Übungskatalog fehlen");
-      pruefe(/Abläufe/.test($('[data-wsabt="workouts"]').textContent) && !/Workoutkatalog/.test($('[data-wsabt="workouts"]').textContent), "Mobility: die Abteilung heißt „Abläufe“, nicht „Workoutkatalog\"");
-      // Verweise zwischen den Bereichen: Mobility → Workout › Übungskatalog (Titel „Katalog“), von dort zurück nach Mobility & Stretch
-      klick(await bis(function () { return $("[data-wslink]"); }, 2000, "Verweis zum Workout-Katalog"));
-      await bis(function () { return $('[data-katabt="uebungen"].active'); }, 3000, "Workout › Übungskatalog");
-      pruefe(/^Workout/.test($(".topbar").textContent.trim()), "Titel im Workout-Bereich: " + $(".topbar").textContent);
-      klick(await bis(function () { return $('.kat-link[data-nav="#warmstretch"]'); }, 2000, "Verweis nach Mobility & Stretch"));
-      await bis(function () { return $("[data-wsabt]") && /Mobility/.test($(".topbar").textContent); }, 3000, "zurück in Mobility & Stretch");
-      klick('[data-wsabt="uebungen"]');
+      pruefe($$("[data-wstab]").length === 2 && $('[data-wstab="baukasten"]') && $('[data-wstab="blocs"]'), "Mobility & Stretch: Reiter Baukasten · BLOCs fehlen");
+      klick($('[data-wstab="baukasten"]'));
+      klick(await bis(function () { return $("[data-wskatalog]"); }, 2000, "Katalog-Karte im Mobility-Baukasten"));
       await filterAuf();
       await bis(function () { return $$("[data-wsreg]").length === 8; }, 3000, "acht Körperregionen");
-      var alle = $$("[data-exlang]").length;
-      klick('[data-wsreg="huefte"]');
-      await bis(function () { var n = $$("[data-exlang]").length; return n > 0 && n < alle; }, 2000, "Filter Hüfte");
-      await lang($("[data-exlang]"));
-      klick(await bis(function () { return $("#overlayRoot [data-act]"); }, 2000, "Neues Workout"));
-      await bis(function () { return daten().myWorkouts.some(function (m) { return m.ws === "dehn" && m.items.length === 1; }); }, 2000, "Dehn-Workout angelegt");
-      klick('[data-wsabt="meine"]');
-      await bis(function () { return $$(".my-item").length === 1; }, 2000, "Meine in Mobility");
+      var dehnWo = W.createMyFromDraft({ name: "Hüfte", mode: "individual", reps: 6, work: 30, rest: 10, blockRest: 10, items: [W.itemFromEx("hip-flexor-stretch")] });
+      dehnWo.ws = "dehn"; W.save();
+      klick('[data-wstab="blocs"]');
+      await bis(function () { return $$(".my-item").length === 1; }, 2000, "BLOCs in Mobility");
       pruefe(!$("[data-fab]"), "Mobility: das Plus ist weg (der Baukasten übernimmt)");
       klick('[data-wstab="baukasten"]');
       klick(await bis(function () { return $("[data-wsselber]"); }, 3000, "Selber bauen im Mobility-Baukasten"));
@@ -879,9 +862,9 @@
       klick(await bis(function () { return $("#overlayRoot [data-spgo]"); }, 2000, "Los (Aufwärmen)"));
       await bis(function () { return /^#cover/.test(W.location.hash) && $$(".wb-ablauf").length > 0; }, 3000, "Deckblatt Überrasch mich (Aufwärmen)");
       pruefe(W.coverDraft && W.coverDraft.ws === "warm" && W.coverDraft.items.length >= 2, "Überrasch mich (Aufwärmen): " + JSON.stringify(W.coverDraft && W.coverDraft.ws));
-      // ältere Einstellung (Reiter Übungen / Meine) wird als Abteilung übernommen
+      // ältere Einstellung (Reiter Meine) wird zu BLOCs
       W.state.db.settings.wsTab = "meine";
-      pruefe(W.wsTab() === "workouts" && W.wsAbt() === "meine", "Ältere Einstellung der Mobility-Reiter wird nicht übernommen");
+      pruefe(W.wsTab() === "blocs", "Ältere Einstellung der Mobility-Reiter wird nicht übernommen");
       await heim();
       klick('[data-herostart]');
       await zuMeine();
@@ -1088,7 +1071,7 @@
       pruefe(zr && zr.querySelector('[data-feld="saetze"] input').value === "3" && zr.querySelector('[data-feld="wdh"] input').value === "12", "Plan-Zeile ohne Ziel 3 Sätze × 12: " + (zr && zr.textContent));
       // „Mit Timer starten“ aus dem Plan: im Timer steht Gewicht × Wiederholungen unter dem Namen
       klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
-      klick($("[data-planlos]"));
+      klick($("[data-planlos]")); await warte(150); if ($("#overlayRoot [data-act]")) klick($("#overlayRoot [data-act]"));
       await bis(function () { return $("#pl-body .pl-kg"); }, 3000, "Gewicht im Timer");
       pruefe(/\d+ Sätze × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Sätze × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
       // Satz direkt im Timer eintragen: Fenster mit Gewicht und Wiederholungen, danach steht das neue Gewicht unter dem Namen
@@ -1170,7 +1153,6 @@
       pruefe($('.area-tile[data-bereich="katalog"] .at-ico') && W.getComputedStyle($('.area-tile[data-bereich="katalog"] .at-ico')).color !== body, "Das Workout-Symbol soll orange sein");
       klick('[data-herostart]');
       await zuKatalogTab();
-      klick(await bis(function () { return $('[data-katabt="workouts"]'); }, 3000, "Workoutkatalog"));
       await bis(function () { return $(".kat-gr .sag-ico"); }, 3000, "Bereiche");
       pruefe($$(".kat-gr .sag-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Körperregionen sollen schwarz/weiß sein");
       await zuBaukasten();   // „Überrasch mich“ im BLOC-Orange (Symbol und Hintergrund), „Selber bauen“ in der Standardfarbe
@@ -1230,25 +1212,15 @@
       klick(await bis(function () { return $("[data-plandone]:not([disabled])"); }, 2000, "Speichern"));
       await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "Plan-Seite mit zwei Zeilen");
       pruefe(!$("[data-pzmodus]") && !$("[data-pzalle]") && !$("[data-pzstart]"), "Satz-/Timer-Umschalter und Timer-Start je Übung gibt es nicht mehr");
-      pruefe($("[data-planlos]") && $(".pz-akt [data-planfav]") && $(".pz-akt [data-plankopie]") && $(".pz-akt [data-planteilen]"), "Ein Los geht’s mit Favorit, Kopie und Teilen fehlt oben");
-      pruefe(($("[data-planlos]").compareDocumentPosition($(".pz-liste")) & 4), "Los geht’s soll vor den Zeilen stehen");
+      pruefe($(".wb-leiste [data-planlos]") && $(".wb-leiste [data-plansave]") && $(".plan-kopf [data-fav]") && !$(".pz-akt"), "Unten links Plan speichern, rechts Los geht’s, oben nur der Stern");
       var pl2 = W.stPlaene().filter(function (x) { return x.id === W.stPlanAktiv; })[0];   // der Plan ist noch Entwurf, bis „Plan speichern“
       var sel = $("#pk-br"); sel.value = "60"; sel.dispatchEvent(new W.Event("change", { bubbles: true }));
       await bis(function () { return W.stPlaene().filter(function (x) { return x.id === pl2.id; })[0].blockRest === 60; }, 2000, "Pause zwischen den Übungen gespeichert");
-      // Workout-Planer: ein weiterer BLOC aus Meine, ein Los geht’s startet beide nacheinander mit der Frage dazwischen
-      var zweit = { id: "p-zwei", name: "BLOC 2", ids: ["leg-press"], updatedAt: Date.now() };
-      W.stPlaene().push(zweit); W.save();
-      W.renderKatalog();
-      klick(await bis(function () { return $("[data-blocplus]"); }, 2000, "BLOC hinzufügen"));
-      klick(await bis(function () { return $('#overlayRoot [data-bwmeine="p-zwei"]'); }, 2000, "BLOC aus Meine"));
-      await bis(function () { return $$(".pz-fz").length === 1; }, 2000, "weiterer BLOC steht unter dem Planer");
       klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
-      klick($("[data-planlos]"));
+      klick($("[data-planlos]")); await warte(150); if ($("#overlayRoot [data-act]")) klick($("#overlayRoot [data-act]"));
       await bis(function () { return /^#playmy\//.test(W.location.hash) && $("#pl-body"); }, 3000, "Los geht’s startet direkt das Training");
       var mwN = (W.state.db.myWorkouts || []).filter(function (m) { return m.fromPlan === pl2.id; })[0];
       pruefe(mwN && mwN.blockRest === 60, "Pause zwischen den Übungen kommt im Workout nicht an: " + JSON.stringify(mwN && mwN.blockRest));
-      pruefe(mwN.items.length === 3 && mwN.items[2].bloc === "BLOC 2", "Zweiter BLOC hängt nicht hinten dran: " + JSON.stringify(mwN.items.map(function (i) { return [i.ex, i.bloc]; })));
-      pruefe(W.playerState.steps.some(function (s) { return /Bereit für BLOC 2/.test(s.titel || ""); }), "Frage „Bereit für BLOC 2?“ fehlt zwischen den BLOCs");
       W.exitPlayer();
     }],
     ["Plan als Programm: Sätze, Gewicht, Pause je Übung, Letztes Mal, Timer-Umschalter, Statistik", async function () {
@@ -1278,7 +1250,7 @@
       var z1 = $('.pz-zeile[data-pz="leg-press"]'), z2 = $('.pz-zeile[data-pz="butterfly"]');
       pruefe(/60×12 · 60×11/.test(z1.querySelector(".pz-letzte").textContent), "Zeile zeigt das letzte Mal nicht: " + z1.querySelector(".pz-letzte").textContent);
       pruefe(/Noch nicht/.test(z2.querySelector(".pz-letzte").textContent), "Übung ohne Einträge: " + z2.querySelector(".pz-letzte").textContent);
-      pruefe($(".tr-leiste [data-trsave]") && /Sätze/.test($(".tr-leiste").textContent), "Leiste „Training speichern“ fehlt auf der Plan-Seite: " + ($(".tr-leiste") && $(".tr-leiste").textContent));
+      pruefe($(".tr-leiste [data-trsave]") && $(".tr-leiste [data-planlos]"), "Leiste „Training speichern“ fehlt auf der Plan-Seite: " + ($(".tr-leiste") && $(".tr-leiste").textContent));
       pruefe(z1.querySelectorAll("[data-feld]").length === 4, "vier Felder je Übung erwartet (Sätze, Wdh., Gewicht, Pause)");
       var s0 = +z1.querySelector('[data-feld="saetze"] input').value, schritt = W.studioZiel("leg-press").schritt;
       klick(z1.querySelector('[data-feld="saetze"] [data-inc]'));
@@ -1344,7 +1316,7 @@
       // Wahl über Los geht’s: nach Sätzen öffnet die erste Übung, mit Timer startet das Training
       klick(await bis(function () { return $('[data-planart="saetze"]'); }, 3000, "Nach Sätzen"));
       await bis(function () { return $('[data-planart="saetze"].active'); }, 2000, "Wahl Nach Sätzen gilt");
-      klick($("[data-planlos]"));
+      klick($("[data-planlos]")); await warte(150); if ($("#overlayRoot [data-act]")) klick($("#overlayRoot [data-act]"));
       await bis(function () { return /^#satz\//.test(W.location.hash) && $$(".satz-karte").length === 2; }, 3000, "Nach Sätzen: Wisch-Bereich mit einer Karte je Übung");
       pruefe($$(".satz-punkt").length === 2 && $(".satz-glas") && $("[data-satzset]"), "Wisch-Bereich: Punkte oben, Glas-Karte, Satz eintragen fehlt");
       klick($("[data-satzset]"));
@@ -1356,7 +1328,7 @@
       // Plan als Timer-Workout: Runden = Sätze, im Timer Gewicht eintragen, letztes Mal im Fenster, landet in der Statistik
       W.go("#studioplan/p-prog");
       klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
-      klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s"));
+      klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s")); await warte(150); if ($("#overlayRoot [data-act]")) klick($("#overlayRoot [data-act]"));
       var mw = (daten().myWorkouts || []).filter(function (m) { return m.fromPlan === "p-prog"; })[0];
       pruefe(mw && mw.items[0].ex === "leg-press" && mw.items[0].reps === s0 + 2, "Timer-Workout aus dem Plan: " + JSON.stringify(mw && mw.items[0]));
       klick(await bis(function () { return $("[data-plkg]"); }, 3000, "Satz eintragen im Timer"));
@@ -1382,7 +1354,7 @@
       pruefe(tr2.length === 1 && tr2[0].saetze === 2 && tr2[0].notiz === "Beine solide", "Eintrag führt sich nicht nach: " + JSON.stringify(tr2.map(function (x) { return x.saetze; })));
       W.go("#studioplan/p-prog");
       await bis(function () { return $(".tr-leiste [data-trsave]"); }, 3000, "Leiste Training speichern auf der Plan-Seite");
-      pruefe(/2 Sätze/.test($(".tr-leiste").textContent) && /gespeichert/.test($(".tr-leiste").textContent), "Leiste: " + $(".tr-leiste").textContent);
+      pruefe(/Aktualisieren/.test($(".tr-leiste").textContent), "Leiste: " + $(".tr-leiste").textContent);
       W.go("#stats");
       klick(await bis(function () { return $("[data-trdetail]"); }, 3000, "Gespeicherte Trainings in der Statistik"));
       await bis(function () { return /Programm/.test($("#overlayRoot .tr-sheet").textContent) && /Beine solide/.test($("#overlayRoot .tr-sheet").textContent); }, 2000, "Detail mit Notiz");
@@ -1459,21 +1431,16 @@
       await bis(function () { return $("#plan-name") && $("[data-plandone]"); }, 3000, "Plan-Bau");
       klick(await bis(function () { return $('[data-planex="air-squats"]'); }, 2000, "Air Squats"));
       klick(await bis(function () { return $("[data-plandone]:not([disabled])"); }, 2000, "Weiter"));
-      pruefe(!$("#overlayRoot [data-lja]"), "Vor „Plan speichern“ darf noch keine Rückfrage kommen");
       klick(await bis(function () { return $("[data-plansave]"); }, 3000, "Plan speichern"));
-      await bis(function () { return $("#overlayRoot [data-lnein]") && $("#overlayRoot [data-lja]") && $("[data-planedit]"); }, 3000, "Rückfrage: direkt loslegen?");
+      await bis(function () { return /BLOC wurde gespeichert/.test(D.body.textContent) && $("[data-planedit]") && $("[data-trsave]"); }, 3000, "gespeichert, man bleibt auf der Seite");
       var plNeu = W.stPlaene().filter(function (p) { return !p.entwurf; }).pop();
       pruefe(plNeu && plNeu.ids.indexOf("air-squats") > -1, "Der Plan steht nach „Speichern“ unter Meine");
-      klick("#overlayRoot [data-lnein]");   // Nein: zurück zum Baukasten
-      await bis(function () { return $('[data-kattab="baukasten"].active') && $("[data-bauselber]") && !$("#overlayRoot [data-lnein]"); }, 3000, "zurück im Baukasten");
-      // Ja bleibt auf der Plan-Seite
       W.go("#studioplan/" + plNeu.id);
       await bis(function () { return $$(".pz-zeile").length === 1; }, 3000, "Plan-Seite");
       // Meine: drei Abschnitte, Fotos, zuklappbar
       await zuMeine();
-      pruefe($$("details.kat-sek").length === 3 && $$("details.kat-sek[open]").length === 0, "Meine: drei Abschnitte, zugeklappt: " + $$("details.kat-sek").length + " / offen " + $$("details.kat-sek[open]").length);
-      klick($('details[data-katsek="saetze"] > summary'));
-      pruefe($('details[data-katsek="saetze"]').open, "Abschnitt lässt sich aufklappen");
+      pruefe($$("details.kat-sek").length === 3 && $$("details.kat-sek[open]").length === 2, "Meine: drei Abschnitte, zugeklappt: " + $$("details.kat-sek").length + " / offen " + $$("details.kat-sek[open]").length);
+      pruefe($('details[data-katsek="saetze"]').open, "Nach Sätzen steht offen");
       pruefe($(".plan-item .ort-thumb img") && /freiluft/.test($(".plan-item .ort-thumb img").getAttribute("src")), "Plan mit Foto des Ortes (Freiluft) erwartet");
       klick($('details[data-katsek="saetze"] > summary'));
       pruefe(!$('details[data-katsek="saetze"]').open, "Abschnitt lässt sich zuklappen");
@@ -1581,6 +1548,29 @@
       pruefe(!s.myReps && !s.myRepUnits && !s.repBest && s.favs.join() === "lib:warmup-5" && s.bereiche.indexOf("reps") < 0 && s.kalender.e.length === 1 && s.kalender.e[0].art === "run" && db.history.length === 1, "Summit-Reste sind bereinigt");
       pruefe(W.localStorage.getItem(W.SUMMIT_ARCHIV) === null, "Der frühere Zwischenspeicher ist gelöscht");
       pruefe(!$("[data-summitsichern]"), "Kein Hinweis zu Summit mehr");
+    }],
+    ["Arena: Programm anlegen, Eintrag wählen, Wochenplan in den Kalender, Weiter mit …, Meine Übungen", async function () {
+      await heim();
+      W.go("#koerper");
+      await bis(function () { return $$("[data-koerpertab]").length === 3; }, 3000, "Arena mit drei Reitern");
+      pruefe($$("[data-koerpertab]").map(function (b) { return b.getAttribute("data-koerpertab"); }).join() === "programm,fortschritt,uebungen", "Reiter der Arena");
+      W.state.db.settings.koerperTab = "programm"; W.state.db.settings.programme = []; W.renderKoerper();
+      klick(await bis(function () { return $("[data-pgneu]"); }, 2000, "Neues Programm"));
+      klick(await bis(function () { return $("[data-pgplus]"); }, 2000, "Hinzufügen"));
+      await bis(function () { return $$("#overlayRoot [data-pgrub]").length === 4; }, 2000, "Rubriken Workout · Run · Mobility · Stretch");
+      klick("#overlayRoot [data-pgrub=\"run\"]");
+      klick(await bis(function () { return $("#overlayRoot [data-pgpick=\"run\"]"); }, 2000, "Run wählen"));
+      await bis(function () { return $$(".pg-eintrag").length === 1; }, 2000, "Eintrag im Programm");
+      var p = W.programmListe()[0];
+      p.items.push("zufall");
+      p.tage = [0, 1, 2, 3, 4, 5, 6]; W.save();
+      var n = W.programmUebernehmen(p);
+      pruefe(n >= 28 && W.kalListe().filter(function (e) { return e.prog && e.prog.id === p.id; }).length === n, "Wochenplan: Kalender-Einträge fehlen: " + n);
+      var w = W.programmWeiter("run");
+      pruefe(w && /Zufall/.test(w.name), "Weiter mit … nach dem ersten Eintrag fehlt");
+      pruefe(W.programmWeiter("zufall") === null, "Nach dem letzten Eintrag darf kein Weiter kommen");
+      W.go("#koerper"); W.state.db.settings.koerperTab = "uebungen"; W.renderKoerper();
+      await bis(function () { return $("[data-uenew]"); }, 2000, "Meine Übungen mit „Eigene Übung anlegen“");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

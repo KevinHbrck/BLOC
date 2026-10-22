@@ -1824,6 +1824,7 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .bau-karte .bk-ico .ico, .bau-karte .bk-ico svg{ width:28px; height:28px; }
 .bau-karte .bk-t{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
 .bau-karte .bk-t b{ font-size:20px; } .bau-karte .bk-t small{ font-size:13.5px; color:var(--text-dim); line-height:1.35; }
+.builder-katalog{ min-height:0; padding:8px 14px; margin:0 0 8px; } .builder-katalog .bk-ico{ width:38px; height:38px; } .builder-katalog .bk-t b{ font-size:17px; } .builder-katalog .bk-t small{ display:none; }
 .bau-karte .bk-pfeil{ color:var(--text-dim); display:flex; }
 .bau-karte.bau-sp{ border-color:color-mix(in srgb, var(--accent) 40%, transparent); background:color-mix(in srgb, var(--accent) 9%, var(--surface)); }
 .bau-karte.bau-sp .bk-ico{ background:color-mix(in srgb, var(--accent) 16%, transparent); color:var(--accent); }
@@ -2217,3 +2218,29 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .faq-begriffe dl{ margin:0; font-size:14px; line-height:1.5; }
 .faq-begriffe dt{ font-weight:700; margin-top:6px; }
 .faq-begriffe dd{ margin:0 0 0 0; color:var(--text-dim); }
+/* Arena: Programm-Karten */
+.pg-karte{ padding:14px; margin-bottom:12px; }
+.pg-kopf{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.pg-name{ flex:1; min-width:0; font-size:19px; font-weight:800; background:transparent; border:0; border-bottom:1px solid var(--border); color:var(--text); padding:4px 0; border-radius:0; }
+.pg-liste{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.pg-eintrag{ display:flex; align-items:stretch; gap:4px; border-left:4px solid var(--kc, var(--accent)); border-radius:10px; background:color-mix(in srgb, var(--text) 6%, transparent); }
+.pg-eintrag.fehlt{ opacity:.55; }
+.pg-start{ flex:1; min-width:0; display:flex; align-items:center; gap:10px; padding:10px; background:none; border:0; color:inherit; text-align:left; font:inherit; cursor:pointer; }
+.pg-nr{ font-style:normal; font-weight:800; width:24px; height:24px; border-radius:50%; background:var(--kc, var(--accent)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; flex:none; }
+.pg-text{ display:flex; flex-direction:column; min-width:0; } .pg-text b{ font-size:15px; } .pg-text small{ color:var(--text-dim); font-size:12.5px; }
+.pg-weg{ width:40px; background:none; border:0; color:var(--text-dim); font-size:20px; cursor:pointer; }
+.pg-leer{ color:var(--text-dim); font-size:13.5px; padding:6px 2px; }
+.pg-plus{ width:100%; margin-top:8px; padding:10px; display:flex; align-items:center; justify-content:center; gap:8px; border-radius:12px; border:1.5px dashed var(--border); background:none; color:var(--text); font:inherit; font-weight:700; cursor:pointer; }
+.pg-woche{ margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
+.pg-woche > summary{ display:flex; align-items:center; gap:8px; cursor:pointer; list-style:none; font-weight:700; }
+.pg-woche > summary::-webkit-details-marker{ display:none; }
+.pg-woche > summary small{ flex:1; text-align:right; color:var(--text-dim); font-weight:500; }
+.pg-neu{ width:100%; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px; }
+.pg-gr > summary{ display:flex; align-items:center; gap:8px; padding:10px 4px; cursor:pointer; list-style:none; }
+.pg-gr > summary b{ flex:1; }
+.pg-rub{ margin:6px 0 4px; }
+.ue-zeile{ width:100%; text-align:left; }
+.rz.koerper-rz button{ font-size:13.5px; padding-left:4px; padding-right:4px; white-space:nowrap; }
+.tp-name{ margin:4px 0 10px; } .tp-name input{ width:100%; }
+.plan-item .trash-btn, .my-item .trash-btn{ display:none; }
+.plan-kopf-re{ display:flex; align-items:center; gap:6px; }

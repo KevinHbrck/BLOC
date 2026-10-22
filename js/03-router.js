@@ -292,7 +292,9 @@ function hauptAktionNeu(route){
   if(route === "home") return { svg:P_PLAY, label:t("hauptStart"), fn:function(){
     var hk = app.querySelector("[data-herostart]");
     if(hk && hk.getAttribute("data-herostart") === "plan"){ hk.click(); return; }   // heute eingeplant: dieses Training starten
-    builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog");               // sonst gleich „Überrasch mich“
+    var ph = programmHeute();                                                        // sonst: ein Programm, das heute (Wochentag) dran ist
+    if(ph){ ph.p.pos = ph.i; save(); return kalStarten(progEintrag(ph.ref)); }
+    showToast(t("keinePlaene"));                                                    // nichts im Kalender und in keinem Programm
   } };
   if(route === "training") return { svg:P_PLUS, label:t("hauptBauen"), fn:function(){
     var m = [];
@@ -321,8 +323,8 @@ function tabLeiste(route){
   var eintraege = neu ? [
     ["#home", t("tabHeute"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#training", t("tabTraining"), '<path d="M6 7v10M3 10v4M18 7v10M21 10v4M6 12h12"/>'],
-    ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
-    ["#koerper", t("tabKoerper"), '<path d="M4 19V5"/><path d="M4 19h16"/><path d="M7.5 15l4-4.5 3 2.5 5-6"/>']
+    ["#koerper", t("tabArena"), '<ellipse cx="12" cy="12" rx="9" ry="6.5"/><ellipse cx="12" cy="12" rx="4.2" ry="2.5"/>'],
+    ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>']
   ] : [
     ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],

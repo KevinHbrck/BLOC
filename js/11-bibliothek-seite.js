@@ -269,6 +269,7 @@ function renderLibrary(){
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   bindTrash(neu);
   katPlaeneBinden();
+  blocMenueBinden(neu);
   katSektionBinden();
   statTrainingsBinden(neu);   // gespeicherte Trainings: Tipp zeigt Sätze und Notiz
   app.querySelectorAll("[data-fav]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neu(); }); });

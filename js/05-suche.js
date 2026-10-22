@@ -262,11 +262,15 @@ function builderKarteHTML(){
   return '<div class="sec-head"><div class="section-title">'+esc(t("builderTitel"))+'</div></div>'+
     '<section class="builder-neu"><div class="bn-text"><span class="bn-kicker">'+esc(t("builderKicker"))+'</span><b>'+esc(t("builderText"))+'</b><small>'+esc(t("builderSub"))+'</small></div>'+
     '<div class="bn-knoepfe"><button type="button" class="btn btn-primary" data-builder="zufall">'+esc(t("builderZufall"))+'</button>'+
-    '<button type="button" class="btn btn-secondary" data-builder="selber">'+esc(t("builderSelber"))+'</button></div></section>';
+    '<button type="button" class="btn btn-secondary" data-builder="selber">'+esc(t("builderSelber"))+'</button></div></section>'+
+    '<button type="button" class="bau-karte builder-katalog" data-builder="katalog"><span class="bk-ico">'+svgIcon(HOME_ICON.katalog)+'</span><span class="bk-t"><b>'+esc(t("bauKatalog"))+'</b><small>'+esc(t("bauKatalogSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>';
 }
 function bindBuilderKarte(){
   app.querySelectorAll("[data-builder]").forEach(function(b){
-    b.addEventListener("click", function(){ builderAuto = b.getAttribute("data-builder"); katTabSetzen("baukasten"); go("#katalog"); });
+    b.addEventListener("click", function(){
+      if(b.getAttribute("data-builder") === "katalog") return katKatalogOeffnen();   // fertige Workouts
+      builderAuto = b.getAttribute("data-builder"); katTabSetzen("baukasten"); go("#katalog");
+    });
   });
 }
 /* Fragen & Antworten am Ende der Seite „Training“ (Inhalt: faq.js, erzeugt aus docs/FAQ-ENTWURF.md). Reine Anzeige, nichts wird gespeichert oder geladen.

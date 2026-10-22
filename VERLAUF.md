@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Arena, Programme, BLOCs, Baukasten-Leiste (Fassung 2026-10-22-1)
+
+- Plan-Seite: unten links „Plan speichern“ (nur kurzes Rütteln und „BLOC wurde gespeichert“, man bleibt auf der Seite), unten rechts „LOS GEHTS!“ (ungespeichert: Rückfrage); „Weitere BLOCs“, Hinweistext und die Knopfreihe Favorit/Kopie/Teilen sind weg – sichtbar bleibt der Stern, Kopieren · Teilen · Löschen per langem Drücken (auch auf BLOCs und Programmen).
+- Workout und Mobility & Stretch: Reiter **Baukasten | BLOCs** (BLOCs = früher Meine); der Katalog ist eine Karte im Baukasten und auf Heute; der Übungskatalog ist nur noch über die Suche bzw. `#uebungskatalog` erreichbar.
+- Neuer Reiter **Arena** (statt Fortschritt) mit **Programm** (früher Plan; Einträge der Reihe nach, Wochentage + 4/6/8/12 Wochen in den Kalender, „Weiter mit …“ nach einem erledigten Eintrag), **Fortschritt** und **Meine Übungen**. Der runde Hauptknopf startet nur Kalender- bzw. Programm-Einträge von heute, sonst „Keine Pläne im Kalender“. Daten: `settings.programme`; der alte `planBau` wird einmal zum ersten Programm übernommen.
+- Timer: „Sätze à 30 s“ entfällt, BLOC-Zeichen doppelt so groß (quer mittig zwischen Kreis und Kästchen); Timer-Plus mit eigenem Namen.
+
 ## 2026-10-21 · Summit-Daten werden vollständig gelöscht (Fassung 2026-10-21-14)
 
 - Heute: die Favoriten-Kacheln sind 20 % kleiner (Größe, Schrift, Stern).

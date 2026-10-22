@@ -313,6 +313,13 @@ function enterStep(idx, opt){
     announceStep(idx);
     vibrate([60,80,60,80,120]);
     var doneBody = document.getElementById("pl-body");
+    if(playerState.progWeiter === undefined) playerState.progWeiter = programmWeiter(programmRefAusQuelle(playerState.source));
+    var pw = playerState.progWeiter, pwBtn = null;
+    if(pw){
+      doneBody.querySelector(".btn-row").insertAdjacentHTML("afterbegin", '<button class="btn btn-primary" data-progweiter style="width:100%">'+esc(t("progWeiter", { n:pw.name }))+' ›</button>');
+      pwBtn = doneBody.querySelector("[data-progweiter]");
+      pwBtn.addEventListener("click", function(){ exitPlayer(); pw.start(); });
+    }
     var finishBtn = doneBody.querySelector("[data-finish]");
     if(finishBtn) finishBtn.addEventListener("click", exitPlayer);
     var againBtn = doneBody.querySelector("[data-again]");

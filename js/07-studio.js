@@ -250,12 +250,12 @@ function timerPlusSekunden(p){
   var runde = p.en*p.ew + (p.en - 1)*p.ep;   // ein Durchgang aller Sätze
   return p.rn*runde + (p.rn - 1)*p.rp;
 }
-function timerPlusBauen(p){
+function timerPlusBauen(p, name){
   var now = Date.now(), items = [], r;
   var b = { id:uid(), name:t("timerSatzBlock", { s:p.ew }), reps:p.en, workSec:p.ew, restSec:p.ep, updatedAt:now };   // die Sätze: oben im Timer die Runden (Kreise), unten die Sätze (Kästchen)
   state.db.blocks.push(b);
   for(r = 1; r <= p.rn; r++) items.push({ blockId:b.id, restAfterSec:r < p.rn ? p.rp : 0 });
-  var w = { id:uid(), name:t("timerAuto", { m:Math.max(1, Math.round(timerPlusSekunden(p)/60)) }), items:items, updatedAt:now };
+  var w = { id:uid(), name:(name || "").trim() || t("timerAuto", { m:Math.max(1, Math.round(timerPlusSekunden(p)/60)) }), items:items, updatedAt:now };   // eigener Name, sonst „Timer · 12 Min“
   state.db.workouts.push(w); save();
   return w;
 }
@@ -264,6 +264,7 @@ function openTimerPlus(){
   function zeile(label, id, v, min, max, schritt){ return '<div class="tp-zeile"><label for="'+id+'">'+esc(label)+'</label>'+stepperHTML(id, v, min, max, schritt)+'</div>'; }
   function gruppe(nr, titel, sub, zeilen){ return '<div class="tp-gruppe"><div class="tp-kopf"><i>'+nr+'</i><span><b>'+esc(titel)+'</b><small>'+esc(sub)+'</small></span></div>'+zeilen+'</div>'; }
   root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tp-sheet" role="dialog" aria-label="'+esc(t("fabTimer"))+'"><h3>'+esc(t("fabTimer"))+'</h3>'+
+    '<div class="tp-name"><label for="tp-name">'+esc(t("name"))+'</label><input type="text" id="tp-name" maxlength="60" placeholder="'+esc(t("timerNamePh"))+'"></div>'+
     gruppe(1, t("timerUebungen"), t("timerUebungenSub"), zeile(t("timerAnzahl"), "tp-en", p.en, 1, 30, 1)+zeile(t("timerZeitS"), "tp-ew", p.ew, 5, 600, 5)+zeile(t("timerPauseS"), "tp-ep", p.ep, 0, 300, 5))+
     gruppe(2, t("timerRunden"), t("timerRundenSub"), zeile(t("timerAnzahl"), "tp-rn", p.rn, 1, 20, 1)+zeile(t("timerPauseS"), "tp-rp", p.rp, 0, 600, 5))+
     '<div class="tp-summe" id="tp-summe"></div>'+
@@ -278,7 +279,7 @@ function openTimerPlus(){
   function zu(){ root.innerHTML = ""; }
   root.querySelector("[data-cancel]").addEventListener("click", zu);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
-  root.querySelector("[data-tpok]").addEventListener("click", function(){ var q = lesen(); save(); zu(); timerPlusBauen(q); go("#intervall"); });
+  root.querySelector("[data-tpok]").addEventListener("click", function(){ var q = lesen(), nm = root.querySelector("#tp-name").value; save(); zu(); timerPlusBauen(q, nm); go("#intervall"); });
 }
 function timerPanelHTML(hw){
   var tws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
@@ -710,13 +711,11 @@ function renderStudioPlan(){
       '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plandone'+(p.entwurf && !ids.length ? ' disabled' : '')+'>'+(p.entwurf ? esc(t("planWeiter"))+' ›' : ICON_SAVE+' '+t("planDone"))+'</button></span></div></div>';
   } else {
     // Plan = Programm: je Übung Sätze, Wiederholungen, Gewicht und Pause gleich hier einstellen; das letzte Mal steht darunter
-    html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
+    html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><span class="plan-kopf-re">'+favBtn("plan:"+p.id)+'<button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></span></div>'+
       (ids.length ? hw.z(0, "page-hint") : '')+
       (ids.length ? '<div class="seg-row pz-art" role="group" aria-label="'+esc(t("planArtFrage"))+'">'+
           ['saetze', 'timer'].map(function(m){ var an = planStartArt(p) === m; return '<button type="button" data-planart="'+m+'" class="'+(an ? 'active' : '')+'" aria-pressed="'+an+'">'+(m === 'timer' ? ICON_PLAY+' ' : '')+esc(t(m === 'timer' ? 'stModusTimer' : 'stModusSaetze'))+'</button>'; }).join("")+'</div>'+
-        '<div class="pz-akt"><button type="button" data-planfav aria-pressed="'+isFav("plan:"+p.id)+'" class="'+(isFav("plan:"+p.id) ? 'on' : '')+'">'+svgIcon(ICON_STAR)+'<span>'+esc(t("favorite"))+'</span></button>'+
-        '<button type="button" data-plankopie>'+svgIcon(ICON_COPY)+'<span>'+esc(t("actCopy"))+'</span></button>'+
-        '<button type="button" data-planteilen>'+ICON_SHARE+'<span>'+esc(t("share"))+'</span></button></div>' : '')+
+        '' : '')+
       (ids.length ? planKopfKarteHTML(p, ids) : '')+
       (ids.length ? auswertungHTML(ids) : '')+   // erst die Übersicht über die Übungen im Ganzen, dann die Zeilen
       (ids.length ? '<div class="pz-liste">'+planListeHTML(p)+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
@@ -765,16 +764,23 @@ function renderStudioPlan(){
       { ico:P_PLAY, label:t("planLosOhne"), fn:planLos }
     ]);
   });
-  an("[data-planfav]", function(){ toggleFav("plan:"+p.id); neu(); });
-  an("[data-plankopie]", function(){ var q = planKopie(p); showToast(t("planKopiert", { n:q.name })); });
-  an("[data-planteilen]", function(){ var mw = planMw(p); shareDraft(draftFromMy(mw)); });
-  an("[data-plandel]", function(){
+  an(".plan-kopf [data-fav]", function(){ toggleFav("plan:"+p.id); neu(); });   // sichtbar nur der Stern; Kopieren, Teilen, Löschen per langem Drücken auf die Zeile
+  var pk = app.querySelector(".plan-kopf");
+  if(pk && !stPlanBauen) langDruck(pk, function(){
+    openActionSheet(p.name, [
+      { ico:ICON_COPY, label:t("actCopy"), fn:function(){ var q = planKopie(p); showToast(t("planKopiert", { n:q.name })); } },
+      { ico:P_SHARE, label:t("share"), fn:function(){ var mw = planMw(p); shareDraft(draftFromMy(mw)); } },
+      { ico:P_TRASH, label:t("del"), danger:true, fn:function(){ var d = app.querySelector("[data-plandel]"); if(d) d.click(); else planLoeschen(); } }
+    ]);
+  });
+  function planLoeschen(){
     confirmSheet(t("planDelQ"), "„"+p.name+"“ – "+t("cantUndo"), t("del"), function(){
       state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });
       stPlanAktiv = null; stPlanBauen = false; save(); renderKatalog(); window.scrollTo(0, 0);
       showToast(t("deletedToast", { n:p.name }));
     });
-  });
+  }
+  an("[data-plandel]", planLoeschen);
   var nm = app.querySelector("#plan-name");
   if(nm) nm.addEventListener("input", function(){ p.name = nm.value.trim() || t("planDefault", { n:stPlaene().indexOf(p)+1 }); p.updatedAt = Date.now(); save(); });
   kachelKlick(app, "[data-planex]", function(el){

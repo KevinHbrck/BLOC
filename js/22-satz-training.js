@@ -145,17 +145,20 @@ function renderSatzTraining(planId, start){
   var abschlussGezeigt = false;
   function abschluss(){
     abschlussGezeigt = true;
-    var d = trainingHeute(ids), box = document.createElement("div");
+    var d = trainingHeute(ids), box = document.createElement("div"), pw = programmWeiter("plan:"+p.id);
     var stdNeu = ids.map(function(sid){ return studioStandardPruefen(sid, true); }).filter(Boolean);   // heute mehr geschafft: das ist ab jetzt das Ziel
     box.className = "satz-ende";
     box.innerHTML = '<div class="satz-ende-glas" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-ende-logo" aria-hidden="true">BLOC</div><div class="satz-haken" aria-hidden="true">✓</div><h2>'+esc(t("satzGeschafft"))+'</h2>'+
       satzStatHTML(p, ids, d)+
       satzVergleichHTML(ids)+satzStandardHTML(stdNeu)+
+      (pw ? '<button type="button" class="satz-los" data-endweiter>'+esc(t("progWeiter", { n:pw.name }))+' ›</button>' : '')+
       '<button type="button" class="satz-los" data-endsave>'+esc(t("trSpeichern"))+'</button>'+
       '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button>'+
       '<button type="button" class="satz-undo" data-endraus>'+esc(t("satzBeenden"))+'</button></div>';
     root.appendChild(box);
     vibrate([60, 50, 60, 50, 140]); if(state.db.settings.sound) phaseBeep("done");
+    var wb = box.querySelector("[data-endweiter]");
+    if(wb) wb.addEventListener("click", function(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } pw.start(); });
     box.querySelector("[data-endsave]").addEventListener("click", function(){ box.remove(); openTrainingSpeichern({ plan:p, ids:ids }, function(){ renderSatzTraining(p.id, 0); }); });
     box.querySelector("[data-endmehr]").addEventListener("click", function(){ box.remove(); });
     box.querySelector("[data-endraus]").addEventListener("click", raus);
