@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Trainingspläne unter Favoriten (Fassung 2026-10-22-20)
+
+- Der Stern am Trainingsplan steht jetzt in den normalen Favoriten (Schlüssel `prog:ID`) und erscheint auf Heute; Antippen öffnet den Plan in der Arena. Ein früher gesetzter Stern wird übernommen.
+
 ## 2026-10-22 · Overview → Mit Timer starten bleibt im Trainingsplan (Fassung 2026-10-22-19)
 
 - Auch ein Workout, das über das Deckblatt (Overview) mit „Mit Timer starten“ läuft, gehört zum Trainingsplan: Zeile oben, „Weiter mit …“, Beenden führt in die Arena.

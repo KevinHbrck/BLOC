@@ -570,7 +570,12 @@ function studioVerlauf(id, jetzt){
 /* Play- und Stern-Knöpfe in Listen (Startseite, Timer-Seite) */
 function bindFavItems(refresh){
   app.querySelectorAll("[data-favstart]").forEach(function(el){
-    function los(){ if(el.getAttribute("aria-disabled")) return; go(el.getAttribute("data-favstart")); }
+    function los(){
+      if(el.getAttribute("aria-disabled")) return;
+      var g = el.getAttribute("data-favstart");
+      if(g.indexOf("prog:") === 0){ var pg = programmFinde(g.slice(5)); if(pg && pg.items.length){ go("#koerper"); programmOeffnen(pg, (pg.pos || 0) % pg.items.length); } return; }   // Trainingsplan: in der Arena öffnen
+      go(g);
+    }
     el.addEventListener("click", los);
     el.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); los(); } });
   });

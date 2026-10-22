@@ -367,6 +367,9 @@ function favEntries(){
       var mw = findMy(id);
       if(mw) e = { name:mw.name, sub:fmtDuration(workoutDuration(myRun(mw))), cls:mw.ws ? "ws" : "tp", cover:"my/"+id, ok:mw.items.length > 0,
         ort:katWoOrt((mw.items || []).map(function(x){ return findExercise(typeof x === "string" ? x : x && x.ex); }).filter(Boolean)), thema:workoutThema(mw.items, mw.name) };
+    } else if(kind==="prog"){   // Trainingsplan aus der Arena
+      var pg = typeof programmFinde === "function" ? programmFinde(id) : null;
+      if(pg) e = { name:pg.name, sub:pg.items.length === 1 ? t("progMeta1") : t("progMeta", { n:pg.items.length }), cls:"st", go:"prog:"+id, ok:pg.items.length > 0 };
     } else if(kind==="plan"){   // Studio › Mein Plan
       var pl = stPlanFind(id);
       if(pl) e = { name:pl.name, sub:planAnzahl(stPlanIds(pl).length), cls:"st", go:"#studioplan/"+id, ok:true };

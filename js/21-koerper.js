@@ -43,8 +43,13 @@ function programmAusAltPlan(){
 function programmListe(){
   var s = state.db.settings;
   if(!Array.isArray(s.programme)){ s.programme = programmAusAltPlan(); save(); }
+  s.programme.forEach(function(p){   // früherer Stern (p.fav) wandert in die Favoriten
+    if(p.fav){ delete p.fav; if(!isFav('prog:'+p.id)) s.favs = (s.favs || []).concat(['prog:'+p.id]); save(); }
+  });
   return s.programme;
 }
+/* Stern eines Trainingsplans: wie bei allen Favoriten in settings.favs (Schlüssel prog:ID), damit er auf Heute erscheint */
+function progFav(p){ return isFav('prog:'+p.id); }
 function programmFinde(id){ var l = programmListe(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
 function programmNeu(){
   var l = programmListe(), p = { id:uid(), name:t("progName", { n:l.length + 1 }), items:[], tage:[0, 2, 4], wochen:6, pos:0, updatedAt:Date.now() };
@@ -66,7 +71,7 @@ function progTagName(d){   // 0 = Montag
 }
 function progSortiert(){
   return programmListe().map(function(p, i){ return { p:p, i:i }; })
-    .sort(function(a, b){ return (b.p.fav ? 1 : 0) - (a.p.fav ? 1 : 0) || a.i - b.i; }).map(function(x){ return x.p; });
+    .sort(function(a, b){ return (progFav(b.p) ? 1 : 0) - (progFav(a.p) ? 1 : 0) || a.i - b.i; }).map(function(x){ return x.p; });
 }
 /* Wochenplan in den Kalender: ab heute, an den gewählten Wochentagen, der Reihe nach durch die Einträge (bei mehr Einträgen als Tagen geht es in der
    nächsten Woche weiter). Frühere, noch nicht erledigte Termine dieses Trainingsplans ab heute werden dabei ersetzt. */
@@ -202,7 +207,7 @@ function progKarteHTML(p){
   return '<details class="pg-karte" data-pg="'+esc(p.id)+'"'+(offen ? ' open' : '')+'><summary>'+
       '<span class="pg-farben" aria-hidden="true">'+(farben || '<i></i>')+'</span>'+
       '<span class="pg-kt"><b>'+esc(p.name)+'</b><small>'+esc((p.items.length === 1 ? t("progMeta1") : t("progMeta", { n:p.items.length }))+(tage.length ? " · "+tage.map(progTagName).join(" ") : ""))+'</small></span>'+
-      '<button type="button" class="fav-btn'+(p.fav ? ' on' : '')+'" data-pgfav="'+esc(p.id)+'" aria-pressed="'+(!!p.fav)+'" title="'+esc(t("favorite"))+'" aria-label="'+esc(t("favorite"))+'">'+(p.fav ? '★' : '☆')+'</button>'+
+      '<button type="button" class="fav-btn'+(progFav(p) ? ' on' : '')+'" data-pgfav="'+esc(p.id)+'" aria-pressed="'+progFav(p)+'" title="'+esc(t("favorite"))+'" aria-label="'+esc(t("favorite"))+'">'+(progFav(p) ? '★' : '☆')+'</button>'+
       '<span class="pg-pfeil" aria-hidden="true">'+svgIcon(PG_ICON_PFEIL)+'</span></summary>'+
     '<div class="pg-innen">'+
       (p.items.length ? '<button type="button" class="btn btn-primary pg-go" data-pggo="'+esc(p.id)+'">'+ICON_PLAY+' '+esc(t("letsGoBig"))+'</button>' : '')+
@@ -229,7 +234,7 @@ function renderProgramme(){
   function neu(){ var y = window.scrollY; renderKoerper(); window.scrollTo(0, y); }
   function teile(v){ var a = v.split(":"); return { p:programmFinde(a[0]), n:+a[1] }; }
   app.querySelectorAll("[data-pgneu]").forEach(function(b){ b.addEventListener("click", function(){ programmNeu(); renderKoerper(); window.scrollTo(0, 0); }); });
-  app.querySelectorAll("[data-pgfav]").forEach(function(b){ b.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); var p = programmFinde(b.getAttribute("data-pgfav")); if(!p) return; p.fav = !p.fav; save(); showToast(t(p.fav ? "favAdded" : "favRemoved")); neu(); }); });
+  app.querySelectorAll("[data-pgfav]").forEach(function(b){ b.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); var p = programmFinde(b.getAttribute("data-pgfav")); if(!p) return; toggleFav("prog:"+p.id); neu(); }); });
   app.querySelectorAll("[data-pgplus]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pgplus")); if(p) openProgrammWahl(p, neu); }); });
   app.querySelectorAll("[data-pggo]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pggo")); if(p) programmOeffnen(p, (p.pos || 0) % p.items.length); }); });
   // Karten und Wochenpläne: Antippen klappt auf/zu (selbst umgeschaltet, damit der Zustand beim Neuzeichnen bleibt)
@@ -301,12 +306,13 @@ function programmMenue(p, neu){
       else copyText(text, t("shareLinkCopied"));
     } },
     { ico:ICON_COPY, label:t("actCopy"), fn:function(){
-      var q = JSON.parse(JSON.stringify(p)); q.id = uid(); q.name = t("planKopieName", { n:p.name }); q.fav = false; q.updatedAt = Date.now();
+      var q = JSON.parse(JSON.stringify(p)); q.id = uid(); q.name = t("planKopieName", { n:p.name }); q.updatedAt = Date.now();
       programmListe().push(q); save(); showToast(t("planKopiert", { n:q.name })); neu();
     } },
     { ico:P_TRASH, label:t("del"), danger:true, fn:function(){
       confirmSheet(t("progDelQ"), "„"+p.name+"“ – "+t("cantUndo"), t("del"), function(){
-        state.db.settings.programme = programmListe().filter(function(x){ return x.id !== p.id; }); save(); neu();
+        state.db.settings.programme = programmListe().filter(function(x){ return x.id !== p.id; });
+        state.db.settings.favs = (state.db.settings.favs || []).filter(function(k){ return k !== 'prog:'+p.id; }); save(); neu();
         showToast(t("deletedToast", { n:p.name }));
       });
     } }

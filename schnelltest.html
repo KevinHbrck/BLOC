@@ -1636,6 +1636,15 @@
       W.exitPlayer();
       pruefe(W.location.hash === "#koerper", "Beenden führt in die Arena: " + W.location.hash);
     }],
+    ["Trainingsplan mit Stern erscheint unter Favoriten auf Heute", async function () {
+      await heim();
+      W.programmListe().push({ id: "pg-fv", name: "Plan Fav", items: ["zufall"], tage: [0], wochen: 4, pos: 0, fav: true, updatedAt: Date.now() }); W.save();
+      W.programmListe();   // alter Stern wandert in die Favoriten
+      pruefe(W.isFav("prog:pg-fv"), "Stern (alt) nicht in den Favoriten");
+      await heim();
+      pruefe(W.favEntries().some(function (e) { return e.name === "Plan Fav"; }), "Trainingsplan fehlt in den Favoriten");
+      pruefe(/Plan Fav/.test($("#app").textContent) || /Plan Fav/.test(D.body.textContent), "Trainingsplan steht nicht auf Heute");
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]
