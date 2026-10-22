@@ -375,7 +375,6 @@ function renderDraftPage(d, cfg){
           : '<button class="btn btn-primary" data-go'+(exs.length?'':' disabled')+'>'+ICON_PLAY+' '+t("letsGo")+'</button>')+
         (d.src==="surprise" ? '<button class="btn btn-secondary wb-mischen" data-reroll>'+ICON_MISCHEN+' '+t("wbMischen")+'</button>' : '')+
         coverActs+
-        '<div class="cover-note">'+t(d._dirty ? "coverDirty" : d.src==="my" ? "coverHintMy" : "coverHint")+'</div>'+
       '</div>'
     : '<div class="card"><label for="m-name">'+t("name")+'</label>'+
         '<input type="text" id="m-name" value="'+esc(d.name)+'" maxlength="40">'+
@@ -384,7 +383,6 @@ function renderDraftPage(d, cfg){
   var ablaufHTML = cfg.cover
     ? '<div class="section-title wb-kopf"><span>'+t("myInWorkout", { n:exs.length, d:dauer })+'</span>'+
         (exs.length > 2 ? '<button type="button" class="sec-link" data-wbordnen>'+esc(t("wbOrdnen"))+'</button>' : '')+'</div>'+
-      '<div class="page-hint">'+esc(t("wbAblaufHint"))+'</div>'+
       '<div class="fig-grid">'+d.items.map(ablaufKachel).join("")+'</div>'+
       (palOpen ? '' : '<button type="button" class="my-new" data-palopen>'+ICON_PLUS+' '+t("myAdd")+'</button>')
     : d.items.length
@@ -511,6 +509,14 @@ function renderDraftPage(d, cfg){
   }
   on("[data-palopen]", function(){ d._pal = true; neu(); });
   on("[data-share]", function(){ shareDraft(d); });
+  var hero = app.querySelector(".cover-hero");   // sichtbar bleibt nur der Stern; Speichern/Kopieren, Teilen, Ausblenden per langem Drücken auf die Karte
+  if(hero) langDruck(hero, function(){
+    var acts = [], sm = hero.querySelector("[data-savemy]"), sh = hero.querySelector(".cover-acts [data-share]"), hi = hero.querySelector("[data-coverhide]");
+    if(sm && !sm.classList.contains("on")) acts.push({ ico:ICON_COPY, label:sm.textContent.trim() || t("actSave"), fn:function(){ sm.click(); } });
+    if(sh) acts.push({ ico:ICON_SHARE, label:t("share"), fn:function(){ sh.click(); } });
+    if(hi) acts.push({ ico:ICON_EYE_OFF, label:t("hideShort"), fn:function(){ hi.click(); } });
+    if(acts.length) openActionSheet(d.name, acts);
+  });
   on("[data-wbsave]", sichern);
   on("[data-tocover]", function(){
     if(!d.items.length) return;

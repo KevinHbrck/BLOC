@@ -2257,3 +2257,5 @@ details[open] > summary > .pg-pfeil{ transform:rotate(180deg); }
 .pg-rub button.active{ background:var(--surface); box-shadow:0 1px 3px rgba(0,0,0,.18); color:var(--accent); }
 .bloc-sheet .kat-gr{ margin:0 0 6px; }
 .bloc-sheet .kat-inhalt{ padding:4px 0 2px; }
+.cover-acts [data-savemy], .cover-acts [data-share], .cover-acts [data-coverhide]{ display:none; }
+.lib-card [data-womore]{ display:none; }

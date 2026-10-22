@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Deckblatt und Katalog-Kacheln: nur der Stern (Fassung 2026-10-22-3)
+
+- Deckblatt eines Workouts: Speichern/Kopieren, Teilen und Ausblenden sowie die Zeilen „Änderungen gelten nur …“ und „Tippe auf eine Übung …“ entfallen; langes Drücken auf die Karte öffnet das Menü. Katalog-Kacheln zeigen nur Stern (⋯ weg, Langdruck wie bisher).
+
 ## 2026-10-22 · Arena aufgeräumt, Trainingspläne, weniger Text (Fassung 2026-10-22-2)
 
 - Arena: nur noch **Trainingspläne** (früher „Programm“) und **Fortschritt**; „Meine Übungen“ entfällt. Karten stehen zugeklappt (Name, Anzahl, Wochentage, Stern); aufgeklappt zeigen sie ihre Workouts, „Hinzufügen“ und den Wochenplan (selbst zugeklappt). Eintrag antippen = starten, langes Drücken = nach oben/unten/entfernen; langes Drücken auf die Karte = Teilen · Kopieren · Löschen.
