@@ -539,7 +539,7 @@
 :root[data-layout="new"] .player::before{ content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
   background:radial-gradient(120% 60% at 90% -5%, rgba(255,120,70,.20), transparent 62%), radial-gradient(100% 55% at 5% 105%, rgba(90,130,255,.14), transparent 60%); }
 :root[data-layout="new"] .player .progressbar{ display:none; }
-:root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ color:var(--accent); margin-top:10px; font-size:24px; letter-spacing:.22em; text-shadow:0 2px 14px rgba(0,0,0,.35); }
+:root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ color:var(--accent); margin-top:10px; font-size:48px; letter-spacing:.22em; text-indent:.22em; text-shadow:0 2px 14px rgba(0,0,0,.35); }
 :root[data-layout="new"] .player-top .exit{ background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); color:#fff; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
 :root[data-layout="new"] .player .ctrl-btn{ background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16); color:#fff; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
 :root[data-layout="new"] .player .ctrl-btn.main{ background:#fff; border-color:#fff; color:#111; }
@@ -943,7 +943,8 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 /* Querformat: das BLOC-Zeichen bleibt sichtbar - im Timer und beim Laufen (oben neben den runden Knöpfen) */
 .bloc-quer{ display:none; }
 @media (orientation: landscape) and (max-height: 560px){
-  :root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ display:block; position:absolute; top:22px; left:70px; transform:none; margin:0; font-size:18px; z-index:3; }
+  /* Querformat: das Zeichen (doppelt so groß) steht mittig zwischen dem Kreis und den Kästchen, auf Höhe der Kästchen */
+  :root[data-layout="new"] .player .pl-logo, :root[data-layout="new"] .player[data-phase] .pl-logo{ display:block; position:absolute; top:50%; left:calc(24px + min(58vh, 240px) + (100vw - 48px - min(58vh, 240px))*.2); transform:translate(-50%, -50%); margin:0; font-size:36px; z-index:3; }
   :root[data-layout="new"] .bloc-quer{ display:block; position:fixed; top:24px; right:76px; z-index:5; pointer-events:none; font-family:var(--f-brand, "Helvetica Neue","Arial Black",Arial,sans-serif); font-size:20px; font-weight:900; letter-spacing:.22em; line-height:1; color:var(--accent); text-shadow:0 2px 14px rgba(0,0,0,.35); }
 }
 /* Training: leichter Schimmer auf den Fotokarten - feine helle Kante und ein weicher Lichtstreifen, der beim Öffnen einmal darüber gleitet */

@@ -8,22 +8,23 @@
      ohne Zwischenfenster gleich in die Übungsauswahl (Ort und Art stehen im Baukasten schon).
    Die Seiten selbst liegen in renderKatalogWorkouts, renderLibrary (Meine), renderKatalogUebungen und renderKatalogBaukasten; die Plan-Seite
    (renderStudioPlan) öffnet sich aus „Meine“. Hier stehen Kopf, Reiter, aufklappbare Bereiche und die Zuordnung. */
-var KAT_TABS = ["workouts", "baukasten"];
+var KAT_TABS = ["baukasten", "blocs", "katalog"];
 var katOffen = {};   // Bereiche: true = aufgeklappt, false = zugeklappt, fehlt = Standard (offen bei Filter oder Suche, sonst zu); nur für diesen Besuch
 
 /* Letzter Reiter; Nutzer der früheren Seiten Air und Studio landen dort, wo sie zuletzt waren */
 function katTab(){
   var s = state.db.settings;
-  // frühere Reiter: „Meine“ ist jetzt eine Abteilung des Katalogs, „Übungen“ heißt Baukasten
-  if(s.katTab === "meine"){ s.katTab = "workouts"; s.katAbt = "meine"; }
+  // frühere Reiter: „Meine“ heißt jetzt BLOCs, der Katalog ist eine Seite hinter dem Baukasten, „Übungen“ heißt Baukasten
+  if(s.katTab === "meine" || (s.katTab === "workouts" && s.katAbt === "meine")) s.katTab = "blocs";
+  else if(s.katTab === "workouts") s.katTab = s.katAbt === "uebungen" ? "baukasten" : "katalog";
   else if(s.katTab === "uebungen") s.katTab = "baukasten";
   if(KAT_TABS.indexOf(s.katTab) > -1) return s.katTab;
-  if(s.libTab === "mine"){ s.katAbt = "meine"; return "workouts"; }
-  return s.libTab === "exercises" ? "baukasten" : "workouts";
+  if(s.libTab === "mine") return "blocs";
+  return "baukasten";
 }
 /* Abteilung im Katalog: „workouts“ (Workoutkatalog) oder „meine“ (eigene Workouts und Pläne) */
-function katAbt(){ var a = state.db.settings.katAbt; return a === "meine" || a === "uebungen" ? a : "workouts"; }   // „meine“ | „workouts“ (Workoutkatalog) | „uebungen“ (Übungskatalog)
-function katZuMeine(){ var s = state.db.settings; s.katTab = "workouts"; s.katAbt = "meine"; }
+function katAbt(){ return state.db.settings.katAbt === "uebungen" ? "uebungen" : "workouts"; }   // „workouts“ (Workoutkatalog) | „uebungen“ (Übungskatalog, nur über #uebungskatalog)
+function katZuMeine(){ state.db.settings.katTab = "blocs"; }   // BLOCs: die gespeicherten BLOCs und Workouts
 function katTabSetzen(tab){
   var s = state.db.settings;
   s.katTab = tab; stPlanAktiv = null; stPlanBauen = false; stPlanQuery = "";
@@ -120,14 +121,11 @@ function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
   var kopf = (layoutNeu() ? bereichKopfNeuHTML("kat", t("katalog"), t("katKicker"), right || "", { foto:"img/neu-d-katalog.jpg", fotoHell:"img/neu-h-halle.jpg", zurueck:"#home", ohneSuche:(right || "").indexOf("lib-lupe") > -1 })
       : topbar(t("katalog"), { back:"#home", right:right || "" })) +
-    '<div class="rz kat-rz" style="--rz:var(--text)">'+b("baukasten", t("katTabBaukasten"))+b("workouts", t("katTabKatalog"))+'</div>';
-  if(tab !== "workouts") return kopf;
-  // Katalog: drei gleichrangige Abteilungen Meine · Workoutkatalog · Übungskatalog, im Workoutkatalog ganz vorn der Ort
+    '<div class="rz kat-rz" style="--rz:var(--text)">'+b("baukasten", t("katTabBaukasten"))+b("blocs", t("katTabBlocs"))+'</div>';
+  if(tab !== "katalog") return kopf;
+  // Katalog (Seite hinter dem Baukasten): ganz vorn der Ort (Fitnessstudio · Freiluft), mit der Zahl der Workouts bzw. Übungen
   var abt = katAbt();
-  function a(k, label){ return '<button type="button" data-katabt="'+k+'" class="'+(abt === k ? 'active' : '')+'" aria-pressed="'+(abt === k)+'">'+esc(label)+'</button>'; }
-  return kopf +
-    '<div class="seg-row kat-abt" role="group">'+a("meine", t("tabMine"))+a("workouts", t("katAbtWorkouts"))+a("uebungen", t("katUebKatalog"))+'</div>' +
-    // Workoutkatalog und Übungskatalog: derselbe Ort (Fitnessstudio · Freiluft) ganz vorn, mit der Zahl der Workouts bzw. Übungen
+  return kopf + '<div class="kat-seitentitel">'+esc(t("katTabKatalog"))+'</div>' +
     (abt === "workouts" ? ortFotosHTML("data-katort", katOrtZahlenWo(), "katOrtAnz", "kompakt") :
      abt === "uebungen" ? ortFotosHTML("data-katort", bauOrtZahlen(), "katOrtUebAnz", "kompakt") : '');
 }
@@ -262,8 +260,8 @@ function renderKatalog(){
   stPlanAktiv = null; stPlanBauen = false;
   var tab = katTab();
   if(tab === "baukasten") return renderKatalogBaukasten();
-  var abt = katAbt();
-  return abt === "meine" ? renderLibrary() : abt === "uebungen" ? renderKatalogUebungen() : renderKatalogWorkouts();
+  if(tab === "blocs") return renderLibrary();
+  return katAbt() === "uebungen" ? renderKatalogUebungen() : renderKatalogWorkouts();   // Katalog (Übungskatalog nur noch über #uebungskatalog)
 }
 
 /* System-Zurück (Geste, Taste) im Plan-Bau, im geöffneten Plan oder in der Gewichtung: erst zurück zur Liste, genau wie der Pfeil oben */
@@ -329,7 +327,13 @@ function bauNachSaetzen(b){
 }
 /* Sätze → Zeit: der Plan wird zum Workout mit Timer (Satz- und Pausenwerte der Übungen), zunächst als ungespeicherter Entwurf im Baukasten.
    Ein noch nicht gespeicherter Plan wandert dabei, ein gespeicherter bleibt; ein schon verknüpftes Workout wird aktualisiert und geöffnet. */
-/* ---------- Baukasten: Überrasch mich oder selber bauen ---------- */
+/* Katalog (fertige Workouts) öffnen: Seite hinter dem Baukasten */
+function katKatalogOeffnen(){
+  var s = state.db.settings;
+  s.katTab = "katalog"; s.katAbt = "workouts"; stPlanAktiv = null; stPlanBauen = false; katOffen = {}; save();
+  go("#katalog"); renderKatalog(); window.scrollTo(0, 0);
+}
+/* ---------- Baukasten: Überrasch mich, selber bauen oder aus dem Katalog ---------- */
 function renderKatalogBaukasten(){
   var modus = bauModus();
   var hw = hinweise("bau2", ["katBauHint"]);
@@ -347,9 +351,11 @@ function renderKatalogBaukasten(){
       '<span class="bk-wuerfel" aria-hidden="true"><svg viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="20"/><circle cx="30" cy="30" r="7"/><circle cx="70" cy="30" r="7"/><circle cx="50" cy="50" r="7"/><circle cx="30" cy="70" r="7"/><circle cx="70" cy="70" r="7"/></svg></span>'+
       '<span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte" data-bauselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<button type="button" class="bau-karte" data-baukatalog><span class="bk-ico">'+svgIcon(HOME_ICON.katalog)+'</span><span class="bk-t"><b>'+esc(t("bauKatalog"))+'</b><small>'+esc(t("bauKatalogSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();
+  app.querySelector("[data-baukatalog]").addEventListener("click", function(){ katKatalogOeffnen(); });
   bauArtBinden(modus, function(){ renderKatalog(); });
   bauOrtBinden(function(){ renderKatalog(); });
   app.querySelector("[data-surprise]").addEventListener("click", function(){ openSurprise(); });
@@ -409,7 +415,7 @@ function renderKatalogUebungen(){
   // früher (in Air) ausgeblendete Übungen: unten gesammelt, mit „Einblenden“
   var verborgen = EXERCISES.filter(function(ex){ return ex.main !== "stretch" && libHidden("ex:"+ex.id); });
   app.innerHTML =
-    katKopfHTML("workouts", hw.knopf+lupeHTML("st", studioQuery)) +
+    katKopfHTML("katalog", hw.knopf+lupeHTML("st", studioQuery)) +
     '<button type="button" class="btn btn-secondary kat-eigene" data-stnew2>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' +
     tippZeileHTML("uebung", "tippUebung") + hw.z(0, "page-hint") +
     suchFeldHTML(studioQuery, "st", t("stSearch")) +
@@ -607,7 +613,7 @@ function renderKatalogWorkouts(){
     '" title="'+esc(t("afSortAz"))+'" aria-label="'+esc(t("afSortAz"))+'">A&ndash;Z</button>';
 
   app.innerHTML =
-    katKopfHTML("workouts", hw.knopf + lupeHTML("l", libQuery)) +
+    katKopfHTML("katalog", hw.knopf + lupeHTML("l", libQuery)) +
     suchFeldHTML(libQuery, "l", t("searchWoPh")) +
     tippZeileHTML("workout", "tippWorkout") + hw.z(0, "page-hint") +
     studioFilterHTML(gruppen, fGr, fArt, sichtbar.length, zonen, { art:"Wo", extra:az }) +

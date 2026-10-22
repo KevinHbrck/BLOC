@@ -5,28 +5,25 @@
    Im Baukasten: Überrasch mich (nach Zeit und Körperregion) oder Selber bauen.
    Meine = eigene Workouts dieses Bereichs (mw.ws = „warm“ / „dehn“); Übungen lassen sich per langem Drücken oder ⋯ dort einbauen. */
 var wsQuery = "";
-/* settings.wsTab: „workouts“ (Katalog) oder „baukasten“; settings.wsAbt: „meine“ · „workouts“ · „uebungen“.
+/* settings.wsTab: „baukasten“ · „blocs“ · „katalog“ (Seite hinter dem Baukasten).
    Ältere Fassungen hatten die Reiter Workouts · Übungen · Meine in wsTab - die werden hier übernommen. */
-function wsTab(){
+function wsTab(){   // „baukasten“ · „blocs“ (früher Meine) · „katalog“ (Seite hinter dem Baukasten)
   var s = state.db.settings;
-  if(s.wsTab === "meine" || s.wsTab === "uebungen"){ s.wsAbt = s.wsTab; s.wsTab = "workouts"; save(); }
-  return s.wsTab === "baukasten" ? "baukasten" : "workouts";
+  if(s.wsTab === "meine" || s.wsTab === "uebungen"){ s.wsAbt = s.wsTab; s.wsTab = "workouts"; }
+  if(s.wsTab === "workouts") s.wsTab = s.wsAbt === "meine" ? "blocs" : s.wsAbt === "uebungen" ? "baukasten" : "katalog";
+  return s.wsTab === "blocs" || s.wsTab === "katalog" ? s.wsTab : "baukasten";
 }
-function wsAbt(){ var a = state.db.settings.wsAbt; return a === "meine" || a === "uebungen" ? a : "workouts"; }
 function wsKnopf(attr, wert, aktiv, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'" aria-pressed="'+(!!aktiv)+'">'+esc(text)+'</button>'; }
 /* Kopf unter der Titelleiste: Reiter, im Katalog die Abteilungen, darunter die Art (Aufwärmen | Dehnen) */
 function wsKopfHTML(tab, art){
-  var abt = wsAbt();
-  return bereichBildHTML("warm")+'<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+wsKnopf("wstab", "workouts", tab === "workouts", t("katTabKatalog"))+'</div>'+   // derselbe Reiter wie im Workout
-    (tab === "workouts" ? '<div class="seg-row kat-abt ws-abt" role="group">'+wsKnopf("wsabt", "meine", abt === "meine", t("tabMine"))+
-      wsKnopf("wsabt", "workouts", abt === "workouts", t("wsAbtWorkouts"))+wsKnopf("wsabt", "uebungen", abt === "uebungen", t("katUebKatalog"))+'</div>' : '')+
+  return bereichBildHTML("warm")+'<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+wsKnopf("wstab", "blocs", tab === "blocs", t("katTabBlocs"))+'</div>'+
+    (tab === "katalog" ? '<div class="kat-seitentitel">'+esc(t("katTabKatalog"))+'</div>' : '')+
     '<div class="theme-pick lib-tabs seg-2 ws-art">'+wsKnopf("wsart", "warm", art === "warm", t("wsWarm"))+wsKnopf("wsart", "dehn", art === "dehn", t("wsDehn"))+'</div>';
 }
 function wsKopfBinden(){
   var s = state.db.settings;
   function neuZeichnen(){ renderWarmStretch(); window.scrollTo(0, 0); }
   app.querySelectorAll("[data-wstab]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); s.wsTab = el.getAttribute("data-wstab"); save(); neuZeichnen(); }); });
-  app.querySelectorAll("[data-wsabt]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); s.wsAbt = el.getAttribute("data-wsabt"); save(); neuZeichnen(); }); });
   app.querySelectorAll("[data-wsart]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); s.wsArt = el.getAttribute("data-wsart"); save(); neuZeichnen(); }); });
 }
 /* Baukasten: Überrasch mich oder Selber bauen (wie im Workout) */
@@ -40,12 +37,15 @@ function renderWsBaukasten(art){
     '<button type="button" class="bau-karte bau-sp ws-bau" data-wssurprise><span class="bk-ico">'+svgIcon(ICON_UEBERRASCH)+'</span><span class="bk-t"><b>'+esc(t("surprise"))+'</b><small>'+
       esc(t(art === "dehn" ? "wsBauUeberraschDehn" : "wsBauUeberraschWarm"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte ws-bau" data-wsselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+
-      esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button></div>'+
+      esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<button type="button" class="bau-karte ws-bau" data-wskatalog><span class="bk-ico">'+svgIcon(HOME_ICON.katalog)+'</span><span class="bk-t"><b>'+esc(t("bauKatalog"))+'</b><small>'+
+      esc(t("bauKatalogSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button></div>'+
     '<div style="height:40px"></div>';
   bindCommon();
   wsKopfBinden();
   app.querySelector("[data-wssurprise]").addEventListener("click", function(){ openWsSurprise(art); });
   app.querySelector("[data-wsselber]").addEventListener("click", function(){ bauNeuWs = art; go("#mybuild/new"); });
+  app.querySelector("[data-wskatalog]").addEventListener("click", function(){ var s = state.db.settings; s.wsTab = "katalog"; s.wsAbt = "workouts"; save(); renderWarmStretch(); window.scrollTo(0, 0); });
 }
 /* Überrasch mich für Mobility & Stretch: Dauer (und bei Dehnen die Körperregionen) wählen, daraus entsteht ein Ablauf zum Prüfen und Starten */
 var WS_SP_DAUER = [5, 10, 15, 20, 30];
@@ -104,7 +104,7 @@ function renderWarmStretch(){
   var s = state.db.settings;
   var art = s.wsArt === "dehn" ? "dehn" : "warm", wtab = wsTab();
   if(wtab === "baukasten") return renderWsBaukasten(art);
-  var tab = wsAbt();   // „workouts“ (Workoutkatalog) · „uebungen“ (Übungskatalog) · „meine“
+  var tab = wtab === "blocs" ? "meine" : "workouts";   // „workouts“ (Workoutkatalog) · „meine“ (BLOCs)
   var regSel = art === "dehn" && tab !== "meine" ? selArr(s.wsRegionen).filter(function(r){ return WS_REGIONEN.indexOf(r) > -1; }) : [];
   var zonSel = tab !== "meine" ? kkNorm(s.wsZonen) : [];   // Körperkarte
   var liste = "", anzahl = 0;   // anzahl: sichtbare Karten (für „N … anzeigen“)
@@ -133,7 +133,7 @@ function renderWarmStretch(){
   var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
     (layoutNeu() ? bereichKopfNeuHTML("warm", t("warmTitle"), t("warmKicker"), hw.knopf) : topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) })) +
-    wsKopfHTML("workouts", art) +
+    wsKopfHTML(wtab, art) +
     (tab === "uebungen" ? '<button type="button" class="btn btn-secondary kat-eigene" data-wsnewex>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' : '')+
     hw.z(0, "seiten-intro")+(tab === "workouts" ? tippZeileHTML("workout", "tippWorkout") : tab === "uebungen" ? tippZeileHTML("wsuebung", "tippWsUebung") : "")+
     suchFeldHTML(wsQuery, "ws", t("wsSearchPh"))+
@@ -142,14 +142,11 @@ function renderWarmStretch(){
     // Start-Knöpfe und Figuren in der Farbe des Bereichs (wie die Kachel auf der Startseite)
     '<div style="--bereich:var(--ws-color)">'+(liste || '<div class="empty">'+t("libEmpty")+'</div>')+'</div>'+
     '<div class="empty" data-noresult style="display:none;padding:30px 20px;">'+t("noResult")+'</div>'+
-    (tab !== "meine" ? '<button type="button" class="btn btn-secondary kat-link" data-wslink>'+svgIcon(HOME_ICON.katalog)+' '+esc(t("wsLinkWorkout"))+'</button>' : '')+
     '<div style="height:40px"></div>';
   bindCommon();
   function neu(){ var y = window.scrollY; renderWarmStretch(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   wsKopfBinden();
-  var wl = app.querySelector("[data-wslink]");
-  if(wl) wl.addEventListener("click", function(){ go("#uebungskatalog"); });
   wsRegionBinden(neu);
   var wq = app.querySelector("#ws-q");
   if(wq){

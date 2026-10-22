@@ -385,7 +385,7 @@ function render(){
   }
   if(route==="studioplan"){   // Favorit auf der Startseite: Katalog › Meine › Plan direkt geöffnet
     var sp0 = state.db.settings;
-    if(stPlanFind(parts[1])){ sp0.katTab = "workouts"; sp0.katAbt = "meine"; stPlanAktiv = parts[1]; stPlanBauen = false; stPlanQuery = ""; }
+    if(stPlanFind(parts[1])){ sp0.katTab = "blocs"; stPlanAktiv = parts[1]; stPlanBauen = false; stPlanQuery = ""; }
     navStack[navStack.length-1] = "#katalog"; setUrl("#katalog");
     return renderKatalog();
   }
@@ -401,7 +401,7 @@ function render(){
   if(route==="play") return startPlayer(parts[1]);
   if(route==="playblock") return startBlockPlayer(parts[1]);
   if(route==="katalog" || route==="library") return renderKatalog();   // „#library“ (Air) und „#timers“ (Studio) sind jetzt der Katalog
-  if(route==="uebungskatalog"){ state.db.settings.katTab = "workouts"; state.db.settings.katAbt = "uebungen"; return renderKatalog(); }
+  if(route==="uebungskatalog"){ state.db.settings.katTab = "katalog"; state.db.settings.katAbt = "uebungen"; return renderKatalog(); }
   if(route==="exedit") return renderExEdit(parts[1]);
   if(route==="import") return renderImport(parts[1]);
   if(route==="mybuild") return renderMyBuild(parts[1]);

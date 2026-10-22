@@ -240,7 +240,8 @@ function libWoSort(list, sort){
    renderKatalogUebungen (js/11b-katalog.js). */
 function renderLibrary(){
   var s = state.db.settings;
-  if(katTab() !== "workouts" || katAbt() !== "meine") return renderKatalog();
+  if(katTab() !== "blocs") return renderKatalog();
+  ["zeit", "saetze"].forEach(function(k){ if(katOffen["sek-"+k] === undefined) katOffen["sek-"+k] = true; });   // BLOCs: Nach Zeit und Nach Sätzen stehen offen, nur das Tagebuch ist zu
   var hw = hinweise("", []);
   var eigene = "";
   (state.db.myWorkouts || []).map(normMy).forEach(function(mw){
@@ -261,7 +262,7 @@ function renderLibrary(){
   var list = katSektionHTML("zeit", "zeit", HOME_ICON.intervall, t("katSekZeit"), t("katSekZeitSub"), nZeit, eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+
     katPlaeneHTML()+katTrainingsSektionHTML();
   app.innerHTML =
-    katKopfHTML("workouts", hw.knopf) +
+    katKopfHTML("blocs", hw.knopf) +
     list + '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();

@@ -137,6 +137,8 @@ function playerTrackt(){   // Workouts mit Gewicht (aus einem Plan oder eine ein
   if(src.type === "mine"){ var mw = findMy(src.id); return !!(mw && mw.fromPlan); }
   return src.type === "studio" && !!playerState.workout.mitGewicht;
 }
+/* Der vom Timer erzeugte Block „Sätze à 30 s“ zeigt seinen Namen im Training nicht (er steht schon in der Liste) */
+function blockNameAnzeige(n){ return /^(Sätze à|Sets of) \d+ s$/.test(n || "") ? "" : (n || ""); }
 function playerTemplate(){
   var vol = Math.round((state.db.settings.volume!=null?state.db.settings.volume:1)*100);
   return '<div class="player" id="playerEl">'+
@@ -221,7 +223,7 @@ function stepBodyHTML(step){
   /* pl-a / pl-b sind im Hochformat unsichtbar (display:contents) - im Querformat
      steht die Uhr links, Beschriftung und Tasten rechts daneben */
   return '<div class="pl-a"><div class="phase-label">'+phLabel+'</div>'+
-    '<div class="block-label">'+esc(step.blockName||"")+
+    '<div class="block-label">'+esc(blockNameAnzeige(step.blockName))+
       (step.ex && EX_INFO[step.ex] ? ' <button type="button" class="info-btn" data-plinfo="'+step.ex+'" title="'+t("info")+'" aria-label="'+t("info")+'">i</button>' : '')+(step.kg ? '<small class="pl-kg">'+esc(step.kg)+'</small>' : '')+'</div>'+
     (step.kg && step.ex && step.phase !== "done" ? '<button type="button" class="pl-kg-btn" data-plkg="'+step.ex+'">'+esc(t("stSetDone"))+'</button>' : '')+
     (step.phase==="work" && step.ex && ILLU[step.ex] ? illuHTML(step.ex, "pl-illu") : "")+

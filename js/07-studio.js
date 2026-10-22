@@ -538,47 +538,16 @@ function planKetteIds(p){   // alle Übungen des BLOCs und der folgenden, jede n
   planFolge(p).forEach(function(q){ stPlanIds(q).forEach(function(id){ if(out.indexOf(id) < 0) out.push(id); }); });
   return out;
 }
-function planFolgeHTML(p){
-  var l = planFolge(p);
-  return '<div class="card pz-folge"><div class="kp-titel">'+esc(t("blocFolgeTitel"))+'</div>'+
-    (l.length ? '<div class="pz-fl">'+l.map(function(q, i){ var n = stPlanIds(q).length;
-      return '<div class="pz-fz"><button type="button" class="pz-fz-go" data-blocoffen="'+esc(q.id)+'"><i>'+(i+2)+'</i><span><b>'+esc(q.name)+'</b><small>'+esc(planAnzahl(n))+'</small></span>'+ICON_CHEV+'</button>'+
-        '<button type="button" class="pz-fz-weg" data-blocweg="'+esc(q.id)+'" aria-label="'+esc(t("del"))+'">&times;</button></div>'; }).join("")+'</div>' : '<div class="kp-leer">'+esc(t("blocFolgeLeer"))+'</div>')+
-    '<button type="button" class="btn btn-secondary pz-folge-plus" data-blocplus>'+ICON_PLUS+' '+esc(t("blocPlus"))+'</button></div>';
+/* Entwurf zum festen BLOC machen (erscheint dann unter BLOCs) */
+function planSpeichernStill(p){
+  if(!p.entwurf) return;
+  delete p.entwurf; p.updatedAt = Date.now(); save();
 }
 function planKopie(p){
   var q = JSON.parse(JSON.stringify(p));
   q.id = uid(); q.name = t("planKopieName", { n:p.name }); q.updatedAt = Date.now(); delete q.entwurf; delete q.fromWo; delete q.parent; q.folge = [];
   stPlaene().push(q); save();
   return q;
-}
-/* Sheet „BLOC hinzufügen“: neu bauen · aus Meine · aus dem Katalog */
-function openBlocWahl(p, neu){
-  var root = document.getElementById("overlayRoot"), eigene = stPlaene().filter(function(x){ return !x.entwurf && x.id !== p.id && (p.folge || []).indexOf(x.id) < 0 && stPlanIds(x).length; });
-  var kat = LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); });
-  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bloc-sheet" role="dialog" aria-label="'+esc(t("blocPlus"))+'"><h3>'+esc(t("blocPlus"))+'</h3>'+
-    '<button type="button" class="bloc-opt" data-bwneu>'+ICON_PLUS+'<span><b>'+esc(t("blocWahlNeu"))+'</b><small>'+esc(t("blocWahlNeuSub"))+'</small></span></button>'+
-    (eigene.length ? '<div class="af-lbl">'+esc(t("blocWahlMeine"))+'</div>'+eigene.map(function(q){
-      return '<button type="button" class="bloc-opt" data-bwmeine="'+esc(q.id)+'"><span><b>'+esc(q.name)+'</b><small>'+esc(planAnzahl(stPlanIds(q).length))+'</small></span></button>'; }).join("") : '')+
-    '<div class="af-lbl">'+esc(t("blocWahlKatalog"))+'</div>'+
-    '<select id="bw-kat"><option value="">'+esc(t("planWahlLeer"))+'</option>'+kat.map(function(lw){ return '<option value="'+esc(lw.id)+'">'+esc(tplText(lw.name))+'</option>'; }).join("")+'</select>'+
-    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button></div></div></div>';
-  function zu(){ root.innerHTML = ""; }
-  function anhaengen(q){ p.folge = (p.folge || []).concat([q.id]); p.updatedAt = Date.now(); save(); zu(); neu(); }
-  root.querySelector("[data-cancel]").addEventListener("click", zu);
-  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
-  root.querySelector("[data-bwneu]").addEventListener("click", function(){   // neuer BLOC: gleich zur Übungsauswahl, danach zurück zu diesem BLOC
-    var q = { id:uid(), name:t("planDefault", { n:stPlaene().filter(function(x){ return !x.entwurf; }).length+1 }), ids:[], updatedAt:Date.now(), entwurf:true, parent:p.id, standard:p.standard || "saetze" };
-    stPlaene().push(q); p.folge = (p.folge || []).concat([q.id]); save(); zu();
-    stPlanAktiv = q.id; stPlanBauen = true; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);
-  });
-  root.querySelectorAll("[data-bwmeine]").forEach(function(b){ b.addEventListener("click", function(){ var q = stPlanFind(b.getAttribute("data-bwmeine")); if(q) anhaengen(q); }); });
-  root.querySelector("#bw-kat").addEventListener("change", function(e){   // Katalog-Workout wird zu einem eigenen BLOC mit denselben Übungen
-    var lw = findLibWorkout(e.target.value); if(!lw) return;
-    var ids = lw.exercises.filter(function(id){ var ex = findExercise(id); return ex && ex.main !== "stretch"; });
-    var q = { id:uid(), name:tplText(lw.name), ids:ids, updatedAt:Date.now(), fromWo:"lib:"+lw.id, standard:"saetze" };
-    stPlaene().push(q); save(); anhaengen(q);
-  });
 }
 function planSaetzeSumme(ids){
   return ids.reduce(function(a, id){ return findExercise(id) ? a + studioZiel(id).saetze : a; }, 0);
@@ -650,24 +619,6 @@ function planZeilenBinden(root, fn, neuZeichnen, p){
       input.addEventListener("focus", function(){ input.select(); });
     });
   });
-}
-/* Nach dem ersten Speichern eines neuen Plans: „Willst du direkt loslegen?“ - Ja zeigt die Plan-Seite (Start, Sätze, Timer), Nein führt zurück zum
-   Baukasten; der Plan liegt in beiden Fällen unter Meine. Die Plan-Seite steht schon dahinter. */
-function planLoslegenFrage(p){
-  var root = document.getElementById("overlayRoot");
-  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet" role="dialog" aria-label="'+esc(t("loslegenTitel"))+'">'+
-    '<h3>'+esc(t("loslegenTitel"))+SEP+esc(p.name)+'</h3><p>'+esc(t("loslegenText"))+'</p>'+
-    '<div class="btn-row"><button class="btn btn-secondary" data-lnein>'+esc(t("loslegenNein"))+'</button>'+
-    '<button class="btn btn-primary" data-lja>'+ICON_PLAY+' '+esc(t("loslegenJa"))+'</button></div></div></div>';
-  function zu(){ root.innerHTML = ""; }
-  function nein(){
-    zu();
-    katTabSetzen("baukasten");   // setzt auch den geöffneten Plan zurück
-    renderKatalog(); window.scrollTo(0, 0);
-  }
-  root.querySelector("[data-lja]").addEventListener("click", zu);
-  root.querySelector("[data-lnein]").addEventListener("click", nein);
-  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
 }
 /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
    eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird. Öffnet das Deckblatt mit „Los geht’s“ (auch aus dem Kalender) */
@@ -760,21 +711,20 @@ function renderStudioPlan(){
   } else {
     // Plan = Programm: je Übung Sätze, Wiederholungen, Gewicht und Pause gleich hier einstellen; das letzte Mal steht darunter
     html += '<div class="plan-kopf"><b id="plan-summe">'+esc(planSummeText(ids))+'</b><button type="button" class="ghost plan-edit" data-planedit>'+svgIcon(ICON_EDIT)+' '+t("planEdit")+'</button></div>'+
-      (p.entwurf && ids.length ? '<div class="page-hint plan-entwurf">'+esc(t("planEntwurfHinweis"))+'</div>' : '')+
       (ids.length ? hw.z(0, "page-hint") : '')+
       (ids.length ? '<div class="seg-row pz-art" role="group" aria-label="'+esc(t("planArtFrage"))+'">'+
           ['saetze', 'timer'].map(function(m){ var an = planStartArt(p) === m; return '<button type="button" data-planart="'+m+'" class="'+(an ? 'active' : '')+'" aria-pressed="'+an+'">'+(m === 'timer' ? ICON_PLAY+' ' : '')+esc(t(m === 'timer' ? 'stModusTimer' : 'stModusSaetze'))+'</button>'; }).join("")+'</div>'+
-        '<button type="button" class="btn btn-primary plan-start" data-planlos>'+ICON_PLAY+' '+esc(t("letsGoBig"))+'</button>'+
         '<div class="pz-akt"><button type="button" data-planfav aria-pressed="'+isFav("plan:"+p.id)+'" class="'+(isFav("plan:"+p.id) ? 'on' : '')+'">'+svgIcon(ICON_STAR)+'<span>'+esc(t("favorite"))+'</span></button>'+
         '<button type="button" data-plankopie>'+svgIcon(ICON_COPY)+'<span>'+esc(t("actCopy"))+'</span></button>'+
         '<button type="button" data-planteilen>'+ICON_SHARE+'<span>'+esc(t("share"))+'</span></button></div>' : '')+
       (ids.length ? planKopfKarteHTML(p, ids) : '')+
       (ids.length ? auswertungHTML(ids) : '')+   // erst die Übersicht über die Übungen im Ganzen, dann die Zeilen
       (ids.length ? '<div class="pz-liste">'+planListeHTML(p)+'</div>' : '<div class="fav-empty">'+esc(t("planEmpty"))+'</div>')+
-      (ids.length ? planFolgeHTML(p) : '')+
-      (ids.length ? (p.entwurf ? '<div class="wb-leiste"><div class="wb-leiste-in"><span><b>'+esc(planAnzahl(ids.length))+'</b></span>'+
-        '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-plansave>'+ICON_SAVE+' '+esc(t("planSpeichern"))+'</button></span></div></div>'
-        : trainingLeisteHTML({ plan:p, ids:ids })) : '')+
+      // dynamische Leiste: links „Plan speichern“ (beim gespeicherten BLOC „Training speichern“), rechts immer „LOS GEHTS!“
+      (ids.length ? '<div class="wb-leiste tr-leiste"><div class="wb-leiste-in">'+
+        (p.entwurf ? '<button type="button" class="btn btn-secondary" data-plansave>'+ICON_SAVE+' '+esc(t("planSpeichern"))+'</button>'
+          : '<button type="button" class="btn btn-secondary" data-trsave>✓ '+esc(t(einheitHeute(p) ? "trAktual" : "trSpeichern"))+'</button>')+
+        '<span class="wb-knoepfe"><button type="button" class="btn btn-primary" data-planlos>'+ICON_PLAY+' '+esc(t("letsGoBig"))+'</button></span></div></div>' : '')+
       '<div style="height:'+(ids.length ? 96 : 40)+'px"></div>';
   }
   app.innerHTML = html;
@@ -796,26 +746,28 @@ function renderStudioPlan(){
   an("[data-plandone]", function(){   // Auswahl fertig: zur Plan-Seite (bei einem neuen Plan noch Entwurf - dort Sätze, Gewichte, Zeiten, dann „Plan speichern“)
     stPlanBauen = false; stPlanSel = -1; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0);
   });
-  an("[data-plansave]", function(){   // erst jetzt steht der neue Plan unter Meine; danach die Frage, ob es losgehen soll
-    if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); }
-    if(p.parent && stPlanFind(p.parent)){ stPlanAktiv = p.parent; stPlanBauen = false; renderKatalog(); window.scrollTo(0, 0); return; }   // ein weiterer BLOC: zurück zum Workout-Planer
-    renderKatalog(); window.scrollTo(0, 0);
-    planLoslegenFrage(p);
+  an("[data-plansave]", function(){   // erst jetzt steht der neue BLOC unter BLOCs; nur kurzes Rütteln und ein Hinweis, man bleibt auf der Seite
+    planSpeichernStill(p);
+    vibrate(30); showToast(t("blocGespeichert"));
+    neu();
   });
   /* Plan als Workout mit Timer: Air- und Studio-Übungen laufen hintereinander (Studio-Übungen mit ihren Satz- und Pausenwerten);
      eine Kopie unter Meine, die beim erneuten Starten aktualisiert wird */
   app.querySelectorAll("[data-planart]").forEach(function(b){ b.addEventListener("click", function(){ p.startArt = b.getAttribute("data-planart"); p.updatedAt = Date.now(); save(); neu(); }); });
-  an("[data-planlos]", function(){   // erst die Wahl darüber (nach Sätzen oder mit Timer), dann ein einziges Los geht’s in den passenden Bereich
-    if(p.entwurf){ delete p.entwurf; p.updatedAt = Date.now(); save(); }
+  function planLos(){   // erst die Wahl darüber (nach Sätzen oder mit Timer), dann ein einziges Los geht’s in den passenden Bereich
     if(planStartArt(p) === "timer") planAlsWorkout(p, true);
     else go("#satz/"+p.id+"/0");   // nach Sätzen: Glas-Bereich zum Wischen, je Satz Gewicht × Wiederholungen eintragen
+  }
+  an("[data-planlos]", function(){
+    if(!p.entwurf) return planLos();
+    openActionSheet(t("planLosFrage"), [   // noch nicht gespeichert: nachfragen
+      { ico:P_CHECK, label:t("planLosSpeichern"), fn:function(){ planSpeichernStill(p); vibrate(30); planLos(); } },
+      { ico:P_PLAY, label:t("planLosOhne"), fn:planLos }
+    ]);
   });
   an("[data-planfav]", function(){ toggleFav("plan:"+p.id); neu(); });
   an("[data-plankopie]", function(){ var q = planKopie(p); showToast(t("planKopiert", { n:q.name })); });
   an("[data-planteilen]", function(){ var mw = planMw(p); shareDraft(draftFromMy(mw)); });
-  an("[data-blocplus]", function(){ openBlocWahl(p, neu); });
-  app.querySelectorAll("[data-blocoffen]").forEach(function(b){ b.addEventListener("click", function(){ stPlanAktiv = b.getAttribute("data-blocoffen"); stPlanBauen = false; stPlanQuery = ""; renderKatalog(); window.scrollTo(0, 0); }); });
-  app.querySelectorAll("[data-blocweg]").forEach(function(b){ b.addEventListener("click", function(){ p.folge = (p.folge || []).filter(function(x){ return x !== b.getAttribute("data-blocweg"); }); p.updatedAt = Date.now(); save(); neu(); }); });
   an("[data-plandel]", function(){
     confirmSheet(t("planDelQ"), "„"+p.name+"“ – "+t("cantUndo"), t("del"), function(){
       state.db.settings.stPlaene = stPlaene().filter(function(x){ return x.id !== p.id; });
