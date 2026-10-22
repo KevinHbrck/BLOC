@@ -82,6 +82,10 @@ function launchFromSource(source){
 
 function launchPlayer(w, source){
   var steps = buildSteps(w);
+  if(document.getElementById("satzRoot")){   // kommt der Timer aus dem Satz-Training (Weiter mit …): dessen Seite räumen, sie läge sonst über dem Timer
+    studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; }
+    app.innerHTML = "";
+  }
   playerState = {
     workout: w, steps: steps, idx: 0,
     running: true, paused: false,

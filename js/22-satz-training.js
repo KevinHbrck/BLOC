@@ -180,15 +180,21 @@ function renderSatzTraining(planId, start){
     box.innerHTML = '<div class="satz-ende-glas satz-fertigkarte" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-ende-logo" aria-hidden="true">BLOC</div><div class="satz-haken" aria-hidden="true">✓</div>'+
       '<h2>'+esc(p.name)+'</h2><p class="satz-kurz">'+esc(planAnzahl(d.ex.length)+" · "+t("planSaetzeGesamt", { n:d.saetze }))+'</p>'+
       '<button type="button" class="satz-los" data-endhaupt>'+esc(haupt)+(pw ? ' ›' : '')+'</button>'+
-      '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button></div>';
+      '</div>';
     root.appendChild(box);
     vibrate([60, 50, 60, 50, 140]); if(state.db.settings.sound) phaseBeep("done");
     box.querySelector("[data-endhaupt]").addEventListener("click", function(){
-      var e = stilleSpeicherung(); progBericht.push(e);
-      if(pw){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } pw.start(true); return; }
-      auswertungZeigen(imPlan ? progBericht.slice() : [e]);
+      var e = null;
+      try{ e = stilleSpeicherung(); }catch(err){ e = null; }   // auch wenn das Speichern hakt: nicht auf der Karte hängen bleiben
+      if(e) progBericht.push(e);
+      if(pw){
+        studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; }
+        box.remove();
+        try{ pw.start(true); }catch(err){ showToast(t("progStartFehler")); }
+        return;
+      }
+      auswertungZeigen(imPlan && progBericht.length ? progBericht.slice() : (e ? [e] : [berichtEintrag()]));
     });
-    box.querySelector("[data-endmehr]").addEventListener("click", function(){ box.remove(); });
   }
   function geheZu(i, weich){ i = clamp(i, 0, ids.length - 1); wisch.scrollTo({ left:i*breite(), behavior:weich ? "smooth" : "auto" }); nr(i); }
   wisch.addEventListener("scroll", function(){ nr(clamp(Math.round(wisch.scrollLeft/breite()), 0, ids.length - 1)); });

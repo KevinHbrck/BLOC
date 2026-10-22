@@ -121,6 +121,7 @@ function programmOeffnen(p, i){
 }
 /* Ein Eintrag eines Trainingsplans startet gleich (ohne Deckblatt, ohne Umweg über Workout › BLOCs): BLOC als Timer oder Satz-Training, Workouts direkt, Run und Zufall wie im Kalender */
 function progDirektStarten(o){
+  if(!playerState){ var pr = document.getElementById("playerRoot"); if(pr && pr.innerHTML) pr.innerHTML = ""; }   // liegengebliebener Timer-Rest würde sonst die Seite nicht wechseln lassen
   if(o.art === "plan"){
     var pl = stPlanFind(o.ref);
     if(pl && stPlanIds(pl).length){ if(planStartArt(pl) === "timer") planAlsWorkout(pl, true); else go("#satz/"+pl.id+"/0"); return; }

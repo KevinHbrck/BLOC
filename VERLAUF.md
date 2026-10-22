@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Satz-Training → Timer im Trainingsplan, kein „Weiter trainieren“ (Fassung 2026-10-22-21)
+
+- Fehler behoben: „Speichern & weiter mit …“ startete einen Timer-BLOC hinter der Satz-Seite (sichtbar blieb die Ende-Karte). Der Timer räumt die Satz-Seite jetzt ab und liegt oben.
+- Die Ende-Karte hat nur noch die eine Hauptaktion (kein „Weiter trainieren“); hakt das Speichern, geht es trotzdem weiter.
+
 ## 2026-10-22 · Trainingspläne unter Favoriten (Fassung 2026-10-22-20)
 
 - Der Stern am Trainingsplan steht jetzt in den normalen Favoriten (Schlüssel `prog:ID`) und erscheint auf Heute; Antippen öffnet den Plan in der Arena. Ein früher gesetzter Stern wird übernommen.
