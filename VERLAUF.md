@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Arena aufgeräumt, Trainingspläne, weniger Text (Fassung 2026-10-22-2)
+
+- Arena: nur noch **Trainingspläne** (früher „Programm“) und **Fortschritt**; „Meine Übungen“ entfällt. Karten stehen zugeklappt (Name, Anzahl, Wochentage, Stern); aufgeklappt zeigen sie ihre Workouts, „Hinzufügen“ und den Wochenplan (selbst zugeklappt). Eintrag antippen = starten, langes Drücken = nach oben/unten/entfernen; langes Drücken auf die Karte = Teilen · Kopieren · Löschen.
+- „Hinzufügen“ wählt nur aus Vorhandenem (Favoriten, BLOCs, Katalog mit denselben Bereichs-Karten); oben die Rubrik in der Reihenfolge Mobility · Workout · Run · Stretch.
+- Katalog-Karte auf Heute entfernt (bleibt im Baukasten). Lange Erklärtexte stehen nirgends mehr auf den Seiten: nur noch das „?“; Tipp-Zeilen und die Zeilen unter Ort/Art im Baukasten entfallen.
+
 ## 2026-10-22 · Arena, Programme, BLOCs, Baukasten-Leiste (Fassung 2026-10-22-1)
 
 - Plan-Seite: unten links „Plan speichern“ (nur kurzes Rütteln und „BLOC wurde gespeichert“, man bleibt auf der Seite), unten rechts „LOS GEHTS!“ (ungespeichert: Rückfrage); „Weitere BLOCs“, Hinweistext und die Knopfreihe Favorit/Kopie/Teilen sind weg – sichtbar bleibt der Stern, Kopieren · Teilen · Löschen per langem Drücken (auch auf BLOCs und Programmen).

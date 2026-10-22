@@ -440,7 +440,7 @@ function hinweise(key, keys){
   if(!keys.length) return { knopf:"", z:function(){ return ""; } };
   var h = state.db.settings.hinweise || (state.db.settings.hinweise = {});
   if(!hinweisBesucht[key]){ hinweisBesucht[key] = true; h[key] = (h[key] || 0) + 1; save(); }
-  var offen = h[key] <= HINWEIS_BESUCHE;
+  var offen = false;   // lange Erklärtexte stehen nie mehr auf der Seite, nur noch hinter dem „?“
   return {
     knopf: offen ? "" : '<button type="button" class="iconbtn" data-hinweis title="'+esc(t("hwKnopf"))+'" aria-label="'+esc(t("hwKnopf"))+'">'+svgIcon(ICON_HILFE)+'</button>',
     z: function(i, klasse){ return offen ? '<div class="'+klasse+'">'+esc(texte[i])+'</div>' : ''; }

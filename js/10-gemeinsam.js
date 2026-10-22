@@ -28,6 +28,7 @@ function maybeShowInstallTip(){}
 /* Dauerhafte Einzeiler für Bedienung, die man nicht sieht (langes Drücken): mit Finger-Symbol, per × dauerhaft ausblendbar (settings.tippAus) */
 var ICON_TIPP = '<path d="M9 11V5a2 2 0 0 1 4 0v5M13 10V8a2 2 0 0 1 4 0v4M17 12v-1a2 2 0 0 1 4 0v4a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-3l-3-5a2 2 0 0 1 3-2l2 2"/>';
 function tippZeileHTML(key, textKey){
+  return "";   // Tipp-Zeilen entfallen: weniger Text auf den Seiten
   var aus = state.db.settings.tippAus || {};
   if(aus[key]) return "";
   return '<div class="tipp-zeile" data-tipp="'+esc(key)+'">'+svgIcon(ICON_TIPP, "ico tipp-ico")+'<span>'+esc(t(textKey))+'</span>'+

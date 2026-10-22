@@ -286,7 +286,7 @@ function bauModus(){
 function bauArtHTML(modus, mitHinweis){
   function b(k, key){ return '<button type="button" data-bauart="'+k+'" class="'+(modus === k ? 'active' : '')+'" aria-pressed="'+(modus === k)+'">'+esc(t(key))+'</button>'; }
   return '<div class="seg-row bau-modus" role="group" aria-label="'+esc(t("bauArtTitel"))+'">'+b("timer", "bauArtZeit")+b("gewicht", "bauArtSaetze")+'</div>'+
-    (mitHinweis ? '<div class="bau-hinweis">'+esc(t(modus === "timer" ? "bauModusTimerSub" : "bauModusGewichtSub"))+'</div>' : '');
+    "";
 }
 /* fn(neueArt) läuft nur, wenn die andere Art gewählt wurde; die Wahl wird für den Ort gemerkt */
 function bauArtBinden(modus, fn){
@@ -342,7 +342,6 @@ function renderKatalogBaukasten(){
     hw.z(0, "page-hint") +
     '<div class="bau-schritt"><span>1</span>'+esc(t("bauSchritt1"))+'</div>'+
     bauOrtKartenHTML() +
-    '<div class="bau-ort-hinweis">'+esc(t("bauOrtMehr"))+'</div>'+
     '<div class="bau-schritt"><span>2</span>'+esc(t("bauArtTitel"))+'</div>'+
     bauArtHTML(modus, true) +
     '<div class="bau-schritt"><span>3</span>'+esc(t("bauSchritt3"))+'</div>'+

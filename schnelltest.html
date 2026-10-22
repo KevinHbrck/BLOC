@@ -399,7 +399,7 @@
       pruefe(!$$(".section-title").some(function (e) { return /Bereiche/.test(e.textContent); }), "Treffer anderer Kategorien in Übungen");
       klick('[data-srkat="alle"]');
       eingeben($("#gs-q"), "");
-      await bis(function () { return $(".seiten-intro") && !$$("[data-sr]").length && !$$(".air-kachel").length; }, 3000, "Alle + leer = Hinweistext");
+      await bis(function () { return !$$("[data-sr]").length && !$$(".air-kachel").length; }, 3000, "Alle + leer = Hinweistext");
     }],
     ["Filterkarte: Workouts (Training, Ausrüstung) und Übungen (Gruppe, Ausrüstung, Körperkarte), bleibt beim Mehrfachwählen offen (auch Dehnen)", async function () {
       await heim();
@@ -491,7 +491,7 @@
       klick('[data-herostart]');
       await zuUebungskatalog();
       await bis(function () { return $$("[data-studio]:not([data-ortfremd])").length > 100; }, 3000, "Katalog › Übungen");
-      pruefe($(".page-hint") && /antippen/.test($(".page-hint").textContent) && !$("[data-hinweis]"), "Katalog: erster Besuch zeigt den Text");
+      pruefe(!$(".page-hint") && $("[data-hinweis]"), "Katalog: nur das ?, kein langer Text");
       await bis(function () { var h = daten().settings.hinweise; return h && h.katueb === 1; }, 2000, "Besuch gezählt");
       await filterAuf();
       pruefe(daten().settings.hinweise.katueb === 1, "Filter öffnen zählt als neuer Besuch");
@@ -765,9 +765,9 @@
       await ortNur("bauort", "studio");
       await bis(function () { return $('[data-bauort="studio"].on') && $('[data-bauart="gewicht"].active'); }, 2000, "Fitnessstudio: nach Sätzen ist der Standard");
       await ortNur("bauort", "frei");
-      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-bauart="timer"].active') && /Timer/.test($(".bau-hinweis").textContent); }, 2000, "Freiluft: nach Zeit ist der Standard");
+      await bis(function () { return $('[data-bauort="frei"].on') && $('[data-bauart="timer"].active'); }, 2000, "Freiluft: nach Zeit ist der Standard");
       klick('[data-bauart="gewicht"]');
-      await bis(function () { return $('[data-bauart="gewicht"].active') && /Gewicht/.test($(".bau-hinweis").textContent) && $('[data-bauort="frei"].on'); }, 2000, "Freiluft nach Sätzen umgestellt");
+      await bis(function () { return $('[data-bauart="gewicht"].active') && $('[data-bauort="frei"].on'); }, 2000, "Freiluft nach Sätzen umgestellt");
       await ortNur("bauort", "studio");
       await ortNur("bauort", "frei");
       await bis(function () { return $('[data-bauort="frei"].on') && $('[data-bauart="timer"].active'); }, 2000, "nach dem Ortswechsel wieder der Standard");
@@ -1549,11 +1549,11 @@
       pruefe(W.localStorage.getItem(W.SUMMIT_ARCHIV) === null, "Der frühere Zwischenspeicher ist gelöscht");
       pruefe(!$("[data-summitsichern]"), "Kein Hinweis zu Summit mehr");
     }],
-    ["Arena: Programm anlegen, Eintrag wählen, Wochenplan in den Kalender, Weiter mit …, Meine Übungen", async function () {
+    ["Arena: Trainingsplan anlegen, Eintrag wählen, Wochenplan in den Kalender, Weiter mit …", async function () {
       await heim();
       W.go("#koerper");
-      await bis(function () { return $$("[data-koerpertab]").length === 3; }, 3000, "Arena mit drei Reitern");
-      pruefe($$("[data-koerpertab]").map(function (b) { return b.getAttribute("data-koerpertab"); }).join() === "programm,fortschritt,uebungen", "Reiter der Arena");
+      await bis(function () { return $$("[data-koerpertab]").length === 2; }, 3000, "Arena mit zwei Reitern");
+      pruefe($$("[data-koerpertab]").map(function (b) { return b.getAttribute("data-koerpertab"); }).join() === "programm,fortschritt", "Reiter der Arena");
       W.state.db.settings.koerperTab = "programm"; W.state.db.settings.programme = []; W.renderKoerper();
       klick(await bis(function () { return $("[data-pgneu]"); }, 2000, "Neues Programm"));
       klick(await bis(function () { return $("[data-pgplus]"); }, 2000, "Hinzufügen"));
@@ -1569,8 +1569,6 @@
       var w = W.programmWeiter("run");
       pruefe(w && /Zufall/.test(w.name), "Weiter mit … nach dem ersten Eintrag fehlt");
       pruefe(W.programmWeiter("zufall") === null, "Nach dem letzten Eintrag darf kein Weiter kommen");
-      W.go("#koerper"); W.state.db.settings.koerperTab = "uebungen"; W.renderKoerper();
-      await bis(function () { return $("[data-uenew]"); }, 2000, "Meine Übungen mit „Eigene Übung anlegen“");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
