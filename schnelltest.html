@@ -1320,8 +1320,8 @@
       pruefe($$(".satz-punkt").length === 2 && $(".satz-glas") && $("[data-satzset]"), "Wisch-Bereich: Punkte oben, Glas-Karte, Satz eintragen fehlt");
       klick($("[data-satzset]"));
       await bis(function () { var e = W.studioEintrag("leg-press"); return e && e.log && e.log.length && e.log[e.log.length - 1].s.length >= 1; }, 3000, "Satz im Wisch-Bereich gespeichert");
-      klick(await bis(function () { return $("[data-satzundo]"); }, 2000, "Letzten Satz löschen"));   // die späteren Prüfungen gehen von einem leeren Heute aus
-      await bis(function () { var e = W.studioEintrag("leg-press"); return !(e && e.log && e.log.length && W.studioTag(e.log[e.log.length - 1].at) === W.studioTag(Date.now())); }, 2000, "Satz wieder gelöscht");
+      pruefe(!$("[data-satzundo]"), "„Letzten Satz löschen“ gibt es nicht mehr");
+      var enL = W.studioEintrag("leg-press"); enL.log.pop(); W.save();   // die späteren Prüfungen gehen von einem leeren Heute aus
       W.go("#studioplan/p-prog");
       await bis(function () { return $$(".pz-zeile").length === 2; }, 3000, "zurück im Plan");
       // Plan als Timer-Workout: Runden = Sätze, im Timer Gewicht eintragen, letztes Mal im Fenster, landet in der Statistik
@@ -1592,6 +1592,38 @@
       W.kalHinzuMenue(tag);
       await bis(function () { return /Trainingsplan/.test(($("#overlayRoot") || {}).textContent || ""); }, 2000, "Menü zeigt Trainingsplan");
       klick("#overlayRoot [data-actclose]");
+    }],
+    ["Satz-Training: Ende-Karte (Workout: Speichern & fertig; Trainingsplan: Speichern & weiter, am Schluss Auswertung zum Wischen)", async function () {
+      await heim();
+      W.stPlaene().push({ id: "p-e1", name: "BLOC E1", ids: ["push-ups"], updatedAt: Date.now() }, { id: "p-e2", name: "BLOC E2", ids: ["air-squats"], standard: "timer", startArt: "timer", updatedAt: Date.now() });
+      W.programmListe().push({ id: "pg-e", name: "Plan E", items: ["plan:p-e1", "plan:p-e2"], tage: [0], wochen: 4, pos: 0, updatedAt: Date.now() }); W.save();
+      function satzFertigMachen(pid) { var p = W.stPlanFind(pid); W.stPlanIds(p).forEach(function (id) { for (var k = 0; k < W.studioZiel(id).saetze; k++) W.studioSatzLog(id, 0, 10); }); W.renderSatzTraining(pid, 0); }
+      // 1) im Workout (ohne Trainingsplan)
+      W.progKontext = null;
+      W.go("#satz/p-e1/0");
+      await bis(function () { return $$(".satz-karte").length === 1; }, 3000, "Satz-Training BLOC E1");
+      satzFertigMachen("p-e1");
+      await bis(function () { return $("[data-satzfertig]") && !$("[data-satzfertig]").disabled; }, 3000, "Fertig bereit");
+      klick($("[data-satzfertig]"));
+      var h = await bis(function () { return $("[data-endhaupt]"); }, 3000, "Ende-Karte");
+      pruefe(/Speichern & fertig/.test(h.textContent) && !$(".satz-vgls") && !$(".satz-stat"), "Workout: Hauptknopf „Speichern & fertig“, noch keine Auswertung: " + h.textContent);
+      klick(h);
+      await bis(function () { return $(".satz-aw") && $(".satz-stat"); }, 3000, "Auswertung nach dem Speichern");
+      pruefe((W.einheitenListe() || []).length >= 1, "Training wurde gespeichert");
+      // 2) im Trainingsplan: erst weiter, am Ende gesammelte Auswertung
+      W.progKontext = { pid: "pg-e", i: 0 };
+      W.progBericht = [];
+      W.go("#satz/p-e1/0");
+      await bis(function () { return $(".pl-prog") && $$(".satz-karte").length === 1; }, 3000, "Trainingsplan-Zeile");
+      satzFertigMachen("p-e1");
+      klick(await bis(function () { return $("[data-satzfertig]") && !$("[data-satzfertig]").disabled && $("[data-satzfertig]"); }, 3000, "Fertig"));
+      h = await bis(function () { return $("[data-endhaupt]"); }, 3000, "Ende-Karte im Trainingsplan");
+      pruefe(/Speichern & weiter mit BLOC E2/.test(h.textContent) && !$(".satz-stat"), "Trainingsplan: Speichern & weiter mit …, keine Auswertung: " + h.textContent);
+      klick(h);
+      await bis(function () { return W.progKontext && W.progKontext.i === 1 && (W.progBericht || []).length === 1 && $("#playerRoot .player"); }, 4000, "BLOC E2 (Timer) startet nach Speichern & weiter");
+      pruefe(!$("[data-plkg]"), "Timer ohne Eintragen");
+      W.exitPlayer();
+      pruefe(W.location.hash === "#koerper", "zurück in der Arena");
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

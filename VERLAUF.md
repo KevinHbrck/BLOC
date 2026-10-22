@@ -3,6 +3,10 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Ende-Karte aufgeräumt, Auswertung am Schluss (Fassung 2026-10-22-18)
+
+- Satz-Training, Ende eines BLOCs: eine Hauptaktion. Im Trainingsplan „Speichern & weiter mit …“ (ohne Auswertung), beim letzten Eintrag „Speichern & Auswertung“ (alle BLOCs des Durchgangs zum Wischen); im Workout „Speichern & fertig“, danach die Auswertung. „Letzten Satz löschen“, Notizfenster und Standard-Block vor dem Speichern entfallen.
+
 ## 2026-10-22 · Kalender: Trainingsplan hinzufügen (Fassung 2026-10-22-17)
 
 - „+ Hinzufügen“ im Kalender hat neben Workouts und Run jetzt **Trainingsplan**: der ganze Plan steht als ein Eintrag im Tag (Art `programm`); Antippen öffnet den nächsten Eintrag des Plans, danach „Weiter mit …“ durch alle Workouts.

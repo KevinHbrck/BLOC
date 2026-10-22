@@ -316,7 +316,7 @@ function enterStep(idx, opt){
     if(pw){
       doneBody.querySelector(".btn-row").insertAdjacentHTML("afterbegin", '<button class="btn btn-primary" data-progweiter style="width:100%">'+esc(t("progWeiter", { n:pw.name }))+' ›</button>');
       pwBtn = doneBody.querySelector("[data-progweiter]");
-      pwBtn.addEventListener("click", function(){ exitPlayer(); pw.start(); });
+      pwBtn.addEventListener("click", function(){ exitPlayer(); pw.start(true); });
     }
     var finishBtn = doneBody.querySelector("[data-finish]");
     if(finishBtn) finishBtn.addEventListener("click", exitPlayer);

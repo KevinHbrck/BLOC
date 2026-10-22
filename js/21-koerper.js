@@ -87,9 +87,11 @@ function programmUebernehmen(p){
   return anzahl;
 }
 /* „Weiter mit …“ nach einem erledigten Eintrag: der Trainingsplan, in dem er vorkommt (heutiger Termin zuerst, dann Favoriten), und der nächste Eintrag darin */
+var progBericht = [];   // Auswertungen der BLOCs, die in diesem Durchgang des Trainingsplans fertig wurden (kommen am Schluss gesammelt, zum Wischen)
 var progKontext = null;   // { pid, i }: der Trainingsplan, aus dem das laufende Training gestartet wurde (Karte, „Weiter mit …“, Kalender-Termin, Hauptknopf)
-function programmStarten(p, i){
+function programmStarten(p, i, behalten){
   if(!p || !p.items[i]) return;
+  if(!behalten) progBericht = [];   // neuer Durchgang
   var o = progEintrag(p.items[i]);
   if(!kalAufloesen(o).ok) return;
   p.pos = i; save();
@@ -100,6 +102,7 @@ function programmStarten(p, i){
    Änderungen dort gelten für den BLOC bzw. das Workout selbst. Zurück führt in die Arena. Das kleine '�� startet dagegen gleich. */
 function programmOeffnen(p, i){
   if(!p || !p.items[i]) return;
+  progBericht = [];
   var o = progEintrag(p.items[i]);
   if(!kalAufloesen(o).ok) return;
   p.pos = i; save();
@@ -143,7 +146,7 @@ function progChipBinden(box, ref, vorher){
   if(!b || !k) return;
   b.addEventListener("click", function(){
     openActionSheet(k.p.name, k.p.items.map(function(r, j){
-      return { ico:j === k.i ? P_CHECK : P_PLAY, label:(j + 1)+". "+kalAufloesen(progEintrag(r)).name, fn:function(){ if(j === k.i) return; if(vorher) vorher(); programmStarten(k.p, j); } };
+      return { ico:j === k.i ? P_CHECK : P_PLAY, label:(j + 1)+". "+kalAufloesen(progEintrag(r)).name, fn:function(){ if(j === k.i) return; if(vorher) vorher(); programmStarten(k.p, j, true); } };
     }));
   });
 }
@@ -166,7 +169,7 @@ function programmWeiter(ref){
   if(bi + 1 >= best.items.length) return null;
   var next = best.items[bi + 1], o = kalAufloesen(progEintrag(next));
   var bp = best, bn = bi + 1;
-  return o.ok ? { name:o.name, ref:next, start:function(){ programmStarten(bp, bn); } } : null;
+  return o.ok ? { name:o.name, ref:next, start:function(behalten){ programmStarten(bp, bn, behalten !== false); } } : null;
 }
 /* Quelle eines gerade beendeten Trainings als Eintrag: BLOC („plan:“), eigenes Workout („my:“) oder Katalog („lib:“) */
 function programmRefAusQuelle(src){

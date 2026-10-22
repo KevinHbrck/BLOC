@@ -92,8 +92,7 @@ function satzKarteHTML(id, i, n){
       '</div>'+
       '<button type="button" class="satz-los" data-satzset>✓ '+esc(t("stSetDone"))+' '+((h ? h.s.length : 0)+1)+'</button>'+
       '<div class="satz-pause" hidden><span>'+esc(t("stPause"))+'</span><b></b><button type="button" data-satzskip>'+esc(t("stSkip"))+'</button></div>'+
-      (h && h.s.length ? '<button type="button" class="satz-undo" data-satzundo>'+esc(t("stUndo"))+'</button>' : '')+
-      (fertig ? '<button type="button" class="satz-weiter" data-satzweiter>'+esc(i < n-1 ? t("satzNaechste") : t("trSpeichern"))+' ›</button>' : '')+
+      (fertig ? '<button type="button" class="satz-weiter" data-satzweiter>'+esc(i < n-1 ? t("satzNaechste") : t("satzFertig"))+' ›</button>' : '')+
       (info ? '<details class="satz-info"><summary>'+esc(t("stInfo"))+'<span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+
         '<ol>'+info[lang].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ol>'+
         (post ? '<ul>'+post[lang*2].split("|").map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul><p><b>'+esc(t("avoid"))+':</b> '+esc(post[lang*2+1])+'</p>' : '')+'</details>' : '')+
@@ -143,25 +142,53 @@ function renderSatzTraining(planId, start){
     return ids.every(fertig1);
   }
   var abschlussGezeigt = false;
+  /* Ende eines BLOCs, ruhig und mit einer klaren Hauptaktion:
+     - im Trainingsplan mit weiterem Eintrag: „Speichern & weiter mit …“ (ohne Auswertung; die Auswertungen kommen gesammelt ganz am Schluss)
+     - im Trainingsplan beim letzten Eintrag: „Speichern & Auswertung“ (wischen zwischen den Workouts)
+     - sonst (Workout): „Speichern & fertig“, danach die Auswertung */
+  function berichtEintrag(){
+    var d = trainingHeute(ids), stdNeu = ids.map(function(sid){ return studioStandardPruefen(sid, true); }).filter(Boolean);   // heute mehr geschafft: das ist ab jetzt das Ziel
+    return { name:p.name, html:satzStatHTML(p, ids, d)+satzVergleichHTML(ids)+satzStandardHTML(stdNeu) };
+  }
+  function stilleSpeicherung(){
+    var e = berichtEintrag();
+    trainingSpeichern({ plan:p, ids:ids }, null);
+    satzBasisSetzen(ids);
+    return e;
+  }
+  function auswertungZeigen(liste){
+    var box = root.querySelector(".satz-ende") || document.createElement("div");
+    box.className = "satz-ende";
+    box.innerHTML = '<div class="satz-ende-glas satz-aw" role="dialog" aria-label="'+esc(t("satzAwTitel"))+'"><div class="satz-ende-logo" aria-hidden="true">BLOC</div><h2>'+esc(t("satzAwTitel"))+'</h2>'+
+      '<div class="satz-aw-wisch">'+liste.map(function(x){ return '<section class="satz-aw-karte"><h3>'+esc(x.name)+'</h3>'+x.html+'</section>'; }).join("")+'</div>'+
+      (liste.length > 1 ? '<div class="satz-aw-punkte" aria-hidden="true">'+liste.map(function(x, i){ return '<i'+(i === 0 ? ' class="an"' : '')+'></i>'; }).join("")+'</div>' : '')+
+      '<button type="button" class="satz-los" data-awfertig>'+esc(t("satzFertig"))+'</button></div>';
+    if(!box.parentNode) root.appendChild(box);
+    var wi = box.querySelector(".satz-aw-wisch");
+    wi.addEventListener("scroll", function(){
+      var k = Math.round(wi.scrollLeft/(wi.clientWidth || 1));
+      box.querySelectorAll(".satz-aw-punkte i").forEach(function(d, j){ d.classList.toggle("an", j === k); });
+    });
+    box.querySelector("[data-awfertig]").addEventListener("click", function(){ progBericht = []; raus(); });
+    vibrate([60, 50, 60, 50, 140]); if(state.db.settings.sound) phaseBeep("done");
+  }
   function abschluss(){
     abschlussGezeigt = true;
-    var d = trainingHeute(ids), box = document.createElement("div"), pw = programmWeiter("plan:"+p.id);
-    var stdNeu = ids.map(function(sid){ return studioStandardPruefen(sid, true); }).filter(Boolean);   // heute mehr geschafft: das ist ab jetzt das Ziel
+    var imPlan = !!programmKontextFuer("plan:"+p.id), pw = imPlan ? programmWeiter("plan:"+p.id) : null, d = trainingHeute(ids), box = document.createElement("div");
+    var haupt = pw ? t("satzSpeichernWeiter", { n:pw.name }) : imPlan ? t("satzSpeichernAuswertung") : t("satzSpeichernFertig");
     box.className = "satz-ende";
-    box.innerHTML = '<div class="satz-ende-glas" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-ende-logo" aria-hidden="true">BLOC</div><div class="satz-haken" aria-hidden="true">✓</div><h2>'+esc(t("satzGeschafft"))+'</h2>'+
-      satzStatHTML(p, ids, d)+
-      satzVergleichHTML(ids)+satzStandardHTML(stdNeu)+
-      (pw ? '<button type="button" class="satz-los" data-endweiter>'+esc(t("progWeiter", { n:pw.name }))+' ›</button>' : '')+
-      '<button type="button" class="satz-los" data-endsave>'+esc(t("trSpeichern"))+'</button>'+
-      '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button>'+
-      '<button type="button" class="satz-undo" data-endraus>'+esc(t("satzBeenden"))+'</button></div>';
+    box.innerHTML = '<div class="satz-ende-glas satz-fertigkarte" role="dialog" aria-label="'+esc(t("satzGeschafft"))+'"><div class="satz-ende-logo" aria-hidden="true">BLOC</div><div class="satz-haken" aria-hidden="true">✓</div>'+
+      '<h2>'+esc(p.name)+'</h2><p class="satz-kurz">'+esc(planAnzahl(d.ex.length)+" · "+t("planSaetzeGesamt", { n:d.saetze }))+'</p>'+
+      '<button type="button" class="satz-los" data-endhaupt>'+esc(haupt)+(pw ? ' ›' : '')+'</button>'+
+      '<button type="button" class="satz-weiter" data-endmehr>'+esc(t("satzWeiterTrainieren"))+'</button></div>';
     root.appendChild(box);
     vibrate([60, 50, 60, 50, 140]); if(state.db.settings.sound) phaseBeep("done");
-    var wb = box.querySelector("[data-endweiter]");
-    if(wb) wb.addEventListener("click", function(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } pw.start(); });
-    box.querySelector("[data-endsave]").addEventListener("click", function(){ box.remove(); openTrainingSpeichern({ plan:p, ids:ids }, function(){ renderSatzTraining(p.id, 0); }); });
+    box.querySelector("[data-endhaupt]").addEventListener("click", function(){
+      var e = stilleSpeicherung(); progBericht.push(e);
+      if(pw){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } pw.start(true); return; }
+      auswertungZeigen(imPlan ? progBericht.slice() : [e]);
+    });
     box.querySelector("[data-endmehr]").addEventListener("click", function(){ box.remove(); });
-    box.querySelector("[data-endraus]").addEventListener("click", raus);
   }
   function geheZu(i, weich){ i = clamp(i, 0, ids.length - 1); wisch.scrollTo({ left:i*breite(), behavior:weich ? "smooth" : "auto" }); nr(i); }
   wisch.addEventListener("scroll", function(){ nr(clamp(Math.round(wisch.scrollLeft/breite()), 0, ids.length - 1)); });
@@ -211,14 +238,9 @@ function renderSatzTraining(planId, start){
       if(state.db.settings.sound) phaseBeep("tick");
       fertigKnopf(true);   // nach dem letzten Satz wird „Fertig“ hell (vorher ausgegraut); das Antippen zeigt die Zusammenfassung
     });
-    if((a = k.querySelector("[data-satzundo]"))) a.addEventListener("click", function(){
-      var en = studioEintrag(id), l = en && en.log && en.log[en.log.length-1];
-      if(l && studioTag(l.at) === studioTag(Date.now()) && l.s.length > satzBasisN(id)){ l.s.pop(); if(!l.s.length) en.log.pop(); }
-      studioPauseStop(); save(); trainingNachSatz(id); karteNeu(i);
-    });
     if((a = k.querySelector("[data-satzskip]"))) a.addEventListener("click", function(){ studioPauseStop(); k.querySelector(".satz-pause").hidden = true; });
     if((a = k.querySelector("[data-satzweiter]"))) a.addEventListener("click", function(){
-      if(i < ids.length - 1) geheZu(i + 1, true); else openTrainingSpeichern({ plan:p, ids:ids }, function(){ renderSatzTraining(p.id, 0); });
+      if(i < ids.length - 1) geheZu(i + 1, true); else if(!root.querySelector(".satz-ende")) abschluss();
     });
     if((a = k.querySelector("[data-satztipp]"))) a.addEventListener("click", function(){
       var tp = studioSteigerTipp(id), en = studioAlle()[id] || (studioAlle()[id] = { log:[] }); if(!tp) return;
