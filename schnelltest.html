@@ -1065,6 +1065,10 @@
       pruefe(subs.length === 0, "Ablauf soll ohne eigene Eingabe keine Voreinstellung zeigen: " + subs.join(" | "));
       klick($("[data-goplan]"));
       await bis(function () { return $("[data-planlos]") && $$("[data-studio]:not([data-ortfremd])").length === 6; }, 3000, "Plan mit sechs Übungen");
+      klick("button.back");   // Zurück vom BLOC führt zum Deckblatt (Overview), nicht in den Workout-Bereich
+      await bis(function () { return /^#cover\//.test(W.location.hash) && $("[data-goplan]"); }, 3000, "Zurück zum Deckblatt");
+      klick($("[data-goplan]"));
+      await bis(function () { return $("[data-planlos]") && $$("[data-studio]:not([data-ortfremd])").length === 6; }, 3000, "Plan wieder offen");
       var pl = daten().settings.stPlaene;
       pruefe(pl.length === 1 && pl[0].ids.length === 6 && pl[0].fromWo === "lib:gym-chest", "Plan aus dem Deckblatt nicht angelegt: " + JSON.stringify(pl));
       var zr = $('.pz-zeile[data-pz="chest-press-machine"]');

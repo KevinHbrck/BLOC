@@ -544,6 +544,7 @@ function katPlanAusDraft(d){
   save();
   katZuMeine();
   stPlanAktiv = p.id; stPlanBauen = false; stPlanQuery = "";
+  stPlanHerkunft = /^#cover[/]/.test(navTop()) ? navTop() : null;   // vom Deckblatt (Overview) geöffnet: Zurück führt dorthin
   go("#katalog");
 }
 /* Plan nach Gewichtung: öffnet das Zusammenstell-Fenster (js/13-teilen-editor.js) bei „Nach Gewichtung“ mit den Reglern; der Ort (Fitnessstudio
