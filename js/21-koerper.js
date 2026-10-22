@@ -21,7 +21,7 @@ function koerperSegHTML(){
 function renderKoerper(){
   if(koerperTab() === "fortschritt") renderStats(); else renderProgramme();
   var tb = app.querySelector(".topbar");
-  if(tb) tb.insertAdjacentHTML("afterend", koerperSegHTML());
+  if(tb){ tb.insertAdjacentHTML("afterend", koerperSegHTML()); var bk = tb.querySelector(".back"); if(bk) bk.classList.add("zeigen"); }   // Zurück-Knopf auch in der Arena (wie Training und Kalender)
   app.querySelectorAll("[data-koerpertab]").forEach(function(b){
     b.addEventListener("click", function(){ state.db.settings.koerperTab = b.getAttribute("data-koerpertab"); save(); tabLeiste("koerper"); renderKoerper(); window.scrollTo(0, 0); });
   });
@@ -87,9 +87,41 @@ function programmUebernehmen(p){
   return anzahl;
 }
 /* „Weiter mit …“ nach einem erledigten Eintrag: der Trainingsplan, in dem er vorkommt (heutiger Termin zuerst, dann Favoriten), und der nächste Eintrag darin */
+var progKontext = null;   // { pid, i }: der Trainingsplan, aus dem das laufende Training gestartet wurde (Karte, „Weiter mit …“, Kalender-Termin, Hauptknopf)
+function programmStarten(p, i){
+  if(!p || !p.items[i]) return;
+  var o = progEintrag(p.items[i]);
+  if(!kalAufloesen(o).ok) return;
+  p.pos = i; save();
+  progKontext = { pid:p.id, i:i };
+  kalStarten(o);
+}
+/* Läuft gerade ein Eintrag eines Trainingsplans? Dann { p, i } (nur wenn ref zum gemerkten Eintrag passt) */
+function programmKontextFuer(ref){
+  if(!progKontext || !ref) return null;
+  var p = programmFinde(progKontext.pid);
+  return p && p.items[progKontext.i] === ref ? { p:p, i:progKontext.i } : null;
+}
+/* Kleine Zeile im Training: „Trainingsplan · Name · 2/3“; Antippen zeigt die Einträge zum Wechseln */
+function progChipHTML(ref){
+  var k = programmKontextFuer(ref);
+  if(!k) return "";
+  return '<button type="button" class="pl-prog" data-plprog>'+svgIcon('<ellipse cx="12" cy="12" rx="9" ry="6.5"/><ellipse cx="12" cy="12" rx="4.2" ry="2.5"/>')+'<span>'+esc(k.p.name)+' · '+(k.i + 1)+'/'+k.p.items.length+'</span></button>';
+}
+function progChipBinden(box, ref, vorher){
+  var b = box.querySelector("[data-plprog]"), k = programmKontextFuer(ref);
+  if(!b || !k) return;
+  b.addEventListener("click", function(){
+    openActionSheet(k.p.name, k.p.items.map(function(r, j){
+      return { ico:j === k.i ? P_CHECK : P_PLAY, label:(j + 1)+". "+kalAufloesen(progEintrag(r)).name, fn:function(){ if(j === k.i) return; if(vorher) vorher(); programmStarten(k.p, j); } };
+    }));
+  });
+}
 function programmWeiter(ref){
   var heute = kalTagKey(Date.now()), best = null, bi = -1;
-  kalAn(heute).forEach(function(e){
+  var kx = programmKontextFuer(ref);
+  if(kx){ best = kx.p; bi = kx.i; }
+  if(!best) kalAn(heute).forEach(function(e){
     if(best || !e.prog) return;
     var p = programmFinde(e.prog.id);
     if(p && p.items[e.prog.i] === ref){ best = p; bi = e.prog.i; }
@@ -103,7 +135,8 @@ function programmWeiter(ref){
   best.pos = (bi + 1) % best.items.length; save();
   if(bi + 1 >= best.items.length) return null;
   var next = best.items[bi + 1], o = kalAufloesen(progEintrag(next));
-  return o.ok ? { name:o.name, ref:next, start:function(){ kalStarten(progEintrag(next)); } } : null;
+  var bp = best, bn = bi + 1;
+  return o.ok ? { name:o.name, ref:next, start:function(){ programmStarten(bp, bn); } } : null;
 }
 /* Quelle eines gerade beendeten Trainings als Eintrag: BLOC („plan:“), eigenes Workout („my:“) oder Katalog („lib:“) */
 function programmRefAusQuelle(src){
@@ -138,6 +171,7 @@ function progKarteHTML(p){
       '<button type="button" class="fav-btn'+(p.fav ? ' on' : '')+'" data-pgfav="'+esc(p.id)+'" aria-pressed="'+(!!p.fav)+'" title="'+esc(t("favorite"))+'" aria-label="'+esc(t("favorite"))+'">'+(p.fav ? '★' : '☆')+'</button>'+
       '<span class="pg-pfeil" aria-hidden="true">'+svgIcon(PG_ICON_PFEIL)+'</span></summary>'+
     '<div class="pg-innen">'+
+      (p.items.length ? '<button type="button" class="btn btn-primary pg-go" data-pggo="'+esc(p.id)+'">'+ICON_PLAY+' '+esc(t("letsGoBig"))+'</button>' : '')+
       (p.items.length ? '<ol class="pg-liste">'+p.items.map(function(r, i){ return progZeileHTML(p, r, i); }).join("")+'</ol>' : '')+
       '<button type="button" class="pg-plus" data-pgplus="'+esc(p.id)+'">'+ICON_PLUS+'<span>'+esc(t("progPlus"))+'</span></button>'+
       '<details class="pg-woche" data-pgwoche="'+esc(p.id)+'"'+(pgOffen["w"+p.id] ? ' open' : '')+'><summary><span>'+esc(t("progWochenplan"))+'</span><small>'+
@@ -163,6 +197,7 @@ function renderProgramme(){
   app.querySelectorAll("[data-pgneu]").forEach(function(b){ b.addEventListener("click", function(){ programmNeu(); renderKoerper(); window.scrollTo(0, 0); }); });
   app.querySelectorAll("[data-pgfav]").forEach(function(b){ b.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); var p = programmFinde(b.getAttribute("data-pgfav")); if(!p) return; p.fav = !p.fav; save(); showToast(t(p.fav ? "favAdded" : "favRemoved")); neu(); }); });
   app.querySelectorAll("[data-pgplus]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pgplus")); if(p) openProgrammWahl(p, neu); }); });
+  app.querySelectorAll("[data-pggo]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pggo")); if(p) programmStarten(p, (p.pos || 0) % p.items.length); }); });
   // Karten und Wochenpläne: Antippen klappt auf/zu (selbst umgeschaltet, damit der Zustand beim Neuzeichnen bleibt)
   app.querySelectorAll("details.pg-karte > summary").forEach(function(sm){
     sm.addEventListener("click", function(e){ e.preventDefault(); var d = sm.parentNode; d.open = !d.open; pgOffen[d.getAttribute("data-pg")] = d.open; });
@@ -175,8 +210,7 @@ function renderProgramme(){
     var x = teile(el.getAttribute("data-pgz")); if(!x.p) return;
     el.addEventListener("click", function(){
       if(Date.now() < langDruckSperre) return;
-      var o = progEintrag(x.p.items[x.n]); if(!kalAufloesen(o).ok) return;
-      x.p.pos = x.n; save(); kalStarten(o);
+      programmStarten(x.p, x.n);
     });
     langDruck(el, function(){
       var acts = [];
@@ -291,20 +325,30 @@ function pgFiguren(ref){
 function openProgrammWahl(p, neu){
   var root = document.getElementById("overlayRoot"), rub = "workout";
   function zu(){ root.innerHTML = ""; }
-  function opt(ref){
-    var o = kalAufloesen(progEintrag(ref));
-    return '<button type="button" class="bloc-opt" data-pgpick="'+esc(ref)+'"><span><b>'+esc(o.name)+'</b><small>'+esc(o.sub)+'</small><span class="pg-figs" data-pgf="'+esc(ref)+'"></span></span></button>';
+  var offenSek = {};   // Favoriten · BLOCs · Katalog stehen zunächst zugeklappt
+  function ortFarbe(ref){   // Fitnessstudio rot, Freiluft blau (wie im Katalog)
+    var ids = pgUebungen(ref);
+    if(!ids.length) return "";
+    var s = ids.map(findExercise).filter(Boolean).filter(exIstStudio).length;
+    return s*2 >= ids.length ? "var(--gym-color)" : "var(--tp-color)";
   }
-  function abschnitt(titel, inhalt){ return inhalt ? '<div class="af-lbl">'+esc(titel)+'</div>'+inhalt : ''; }
+  function opt(ref){
+    var o = kalAufloesen(progEintrag(ref)), oc = ortFarbe(ref);
+    return '<button type="button" class="bloc-opt" data-pgpick="'+esc(ref)+'"'+(oc ? ' style="--oc:'+oc+'"' : '')+'><span><b>'+esc(o.name)+'</b><small>'+esc(o.sub)+'</small><span class="pg-figs" data-pgf="'+esc(ref)+'"></span></span></button>';
+  }
+  function abschnitt(key, titel, n, inhalt){
+    return n ? '<details class="pg-sek" data-pgsek="'+key+'"'+(offenSek[key] ? ' open' : '')+'><summary><b>'+esc(titel)+'</b><span class="lbl-hint">'+n+'</span><span class="pg-pfeil" aria-hidden="true">'+svgIcon(PG_ICON_PFEIL)+'</span></summary>'+inhalt+'</details>' : '';
+  }
   function draw(){
     var sc = root.querySelector(".bloc-sheet"), y = sc ? sc.scrollTop : 0, l = pgListen(rub), html = "";
     if(rub === "run") html = opt("run");
     else {
-      html += abschnitt(t("pgFav"), l.favs.map(opt).join(""));
-      html += abschnitt(t("pgBlocs"), l.blocs.map(opt).join(""));
-      html += abschnitt(t("bauKatalog"), l.katalog.map(function(g){
-        return katZeileHTML("pgk-"+rub+"-"+g.name, g.ico, g.name, g.refs.length, '<div class="kat-inhalt">'+g.refs.map(opt).join("")+'</div>', false); }).join(""));
-      if(rub === "workout") html += abschnitt(t("surprise"), opt("zufall"));
+      html += abschnitt("fav", t("pgFav"), l.favs.length, l.favs.map(opt).join(""));
+      html += abschnitt("bloc", t("pgBlocs"), l.blocs.length, l.blocs.map(opt).join(""));
+      html += abschnitt("kat", t("bauKatalog"), l.katalog.length, l.katalog.map(function(g){
+        var gym = g.refs.length > 0 && g.refs.every(function(r){ return ortFarbe(r) === "var(--gym-color)"; });   // nur Fitnessstudio: farbiges Symbol wie im Katalog
+        return katZeileHTML("pgk-"+rub+"-"+g.name, g.ico, g.name, g.refs.length, '<div class="kat-inhalt">'+g.refs.map(opt).join("")+'</div>', false, "", gym); }).join(""));
+      if(rub === "workout") html += opt("zufall");
       if(!l.favs.length && !l.blocs.length && !l.katalog.length) html = '<div class="pg-leer">'+esc(t("pgNichts"))+'</div>';
     }
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bloc-sheet" role="dialog" aria-label="'+esc(t("progPlus"))+'"><h3>'+esc(t("progPlus"))+'</h3>'+
@@ -316,7 +360,7 @@ function openProgrammWahl(p, neu){
     // kleine bewegte Figuren der Übungen: erst füllen, wenn die Zeile zu sehen ist (zugeklappte Bereiche beim Aufklappen)
     function fuellen(box){ box.querySelectorAll(".pg-figs:not([data-fertig])").forEach(function(el){ if(el.closest("details:not([open])")) return; el.setAttribute("data-fertig", "1"); el.innerHTML = pgFiguren(el.getAttribute("data-pgf")); }); }
     fuellen(root);
-    root.querySelectorAll("details.kat-gr").forEach(function(dt){ dt.addEventListener("toggle", function(){ if(dt.open) fuellen(dt); }); });
+    root.querySelectorAll("details").forEach(function(dt){ dt.addEventListener("toggle", function(){ if(dt.hasAttribute("data-pgsek")) offenSek[dt.getAttribute("data-pgsek")] = dt.open; if(dt.open) fuellen(dt); }); });
     root.querySelectorAll("[data-pgrub]").forEach(function(b){ b.addEventListener("click", function(){ rub = b.getAttribute("data-pgrub"); draw(); }); });
     root.querySelectorAll("[data-pgpick]").forEach(function(b){ b.addEventListener("click", function(){
       p.items.push(b.getAttribute("data-pgpick")); p.updatedAt = Date.now(); pgOffen[p.id] = true; save(); zu(); neu();

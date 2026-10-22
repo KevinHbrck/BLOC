@@ -5,7 +5,7 @@ function buildSteps(w){
   var mitGew = !!w.mitGewicht;   // Plan-Workout: Gewicht auch bei Freiluft-Übungen eintragen
   w = { id:w.id, name:w.name, items:workoutItems(w) };   // Blöcke mit Wiederholungen (times) hintereinander ausgeschrieben
   var b0 = findBlock(w.items[0] ? w.items[0].blockId : null);
-  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", kg: gymSatzText(b0 && b0.ex || "", mitGew), exNr:1 });
+  steps.push({ phase:"prep", label:"Bereit machen", duration:5, blockName: b0 ? b0.name : "", ex: b0 && b0.ex || "", kg: "", exNr:1 });
   var exNr = 0;   // die wievielte Übung (Block) im Workout - nur für die Anzeige oben
   for(var i=0;i<w.items.length;i++){
     var it = w.items[i];
@@ -15,15 +15,15 @@ function buildSteps(w){
     for(var r=0;r<b.reps;r++){
       var bn = b.sides ? b.name+" · "+(r%2===0 ? t("left") : t("right")) : b.name;
       steps.push({ phase:"work", label:b.name, blockName:bn, duration:b.workSec, rep:r+1, totalReps:b.reps,
-                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || "", mitGew), exNr:exNr });
+                   hint:b.hint||"", ex:b.ex||"", side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: "", exNr:exNr });
       if(r < b.reps-1){
         steps.push({ phase:"rest", label:b.name, blockName:b.name, duration:b.restSec, rep:r+1, totalReps:b.reps, ex:b.ex||"",
-                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: gymSatzText(b.ex || "", mitGew), exNr:exNr });
+                     side: b.sides ? (r%2===0 ? "left" : "right") : "", stretch: exIsStretch(b.ex), kg: "", exNr:exNr });
       }
     }
     if(i < w.items.length-1 && (it.restAfterSec>0 || it.nextBloc)){
       var nb = findBlock(w.items[i+1].blockId);
-      steps.push({ phase:"blockrest", label:"Blockpause", titel: it.nextBloc ? t("blocBereit", { name:it.nextBloc }) : "", blockName: nb?nb.name:"", duration:it.nextBloc ? Math.max(it.restAfterSec, 30) : it.restAfterSec, ex: nb && nb.ex || "", kg: gymSatzText(nb && nb.ex || "", mitGew), exNr:exNr+1 });
+      steps.push({ phase:"blockrest", label:"Blockpause", titel: it.nextBloc ? t("blocBereit", { name:it.nextBloc }) : "", blockName: nb?nb.name:"", duration:it.nextBloc ? Math.max(it.restAfterSec, 30) : it.restAfterSec, ex: nb && nb.ex || "", kg: "", exNr:exNr+1 });
     }
   }
   steps.push({ phase:"done", label:"Fertig", duration:0, exNr:exNr+1 });
@@ -90,6 +90,7 @@ function launchPlayer(w, source){
   };
   document.getElementById("playerRoot").innerHTML = playerTemplate();
   bindPlayerControls();
+  progChipBinden(document.getElementById("playerRoot"), programmRefAusQuelle(source), exitPlayer);
   var ctx = audioCtx();   // noch im Tipp freischalten (iOS)
   if(ctx && ctx.state==="suspended") try{ ctx.resume(); }catch(e){}
   schedCancel();
@@ -131,11 +132,8 @@ function playerTrainingKontext(){
   if(p) return { plan:p, ids:planKetteIds(p) };   // der BLOC und die folgenden BLOCs
   return trainingKontext(src && src.type === "studio" ? src.id : null);
 }
-function playerTrackt(){   // Workouts mit Gewicht (aus einem Plan oder eine einzelne Übung mit Gewicht) lassen sich im Timer speichern
-  var src = playerState && playerState.source;
-  if(!src) return false;
-  if(src.type === "mine"){ var mw = findMy(src.id); return !!(mw && mw.fromPlan); }
-  return src.type === "studio" && !!playerState.workout.mitGewicht;
+function playerTrackt(){   // im Timer gibt es kein Eintragen von Sätzen mehr (Timer = nur Zeit); gespeichert wird beim Satz-Training
+  return false;
 }
 /* Der vom Timer erzeugte Block „Sätze à 30 s“ zeigt seinen Namen im Training nicht (er steht schon in der Liste) */
 function blockNameAnzeige(n){ return /^(Sätze à|Sets of) \d+ s$/.test(n || "") ? "" : (n || ""); }
@@ -154,7 +152,7 @@ function playerTemplate(){
       '<span id="pl-vol-val">'+vol+'%</span>'+
     '</div>'+
     '<div class="progressbar"><div class="progressbar-fill" id="pl-progress" style="width:0%"></div></div>'+
-    '<div class="pl-logo" aria-hidden="true">BLOC</div>'+
+    '<div class="pl-logo" aria-hidden="true">BLOC</div>'+progChipHTML(programmRefAusQuelle(playerState && playerState.source))+
     '<div id="pl-body" class="player-mid"></div>'+
     '</div>';
 }

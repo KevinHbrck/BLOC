@@ -1072,13 +1072,8 @@
       // „Mit Timer starten“ aus dem Plan: im Timer steht Gewicht × Wiederholungen unter dem Namen
       klick(await bis(function () { return $('[data-planart="timer"]'); }, 3000, "Mit Timer")); await warte(150);
       klick($("[data-planlos]")); await warte(150); if ($("#overlayRoot [data-act]")) klick($("#overlayRoot [data-act]"));
-      await bis(function () { return $("#pl-body .pl-kg"); }, 3000, "Gewicht im Timer");
-      pruefe(/\d+ Sätze × \d/.test($("#pl-body .pl-kg").textContent), "Timer ohne Zeile Sätze × Wiederholungen: " + $("#pl-body .pl-kg").textContent);
-      // Satz direkt im Timer eintragen: Fenster mit Gewicht und Wiederholungen, danach steht das neue Gewicht unter dem Namen
-      klick(await bis(function () { return $("#pl-body [data-plkg]"); }, 3000, "Satz eintragen im Timer"));
-      eingeben(await bis(function () { return $("#overlayRoot #pg-kg"); }, 2000, "Fenster für das Gewicht"), "47,5");
-      klick("#overlayRoot [data-ok]");
-      await bis(function () { return /47,5 kg/.test($("#pl-body .pl-kg").textContent); }, 2000, "Gewicht im Timer aktualisiert: " + ($("#pl-body .pl-kg") ? $("#pl-body .pl-kg").textContent : ""));
+      await bis(function () { return $("#pl-body"); }, 3000, "Timer läuft");
+      pruefe(!$("#pl-body .pl-kg") && !$("#pl-body [data-plkg]"), "Timer: keine Angabe Sätze × Wiederholungen und kein Eintragen");
       // Überrasch mich: Chip Fitnessstudio, danach nur Fitnessstudio-Übungen
       await heim();
       klick('[data-herostart]');
@@ -1331,19 +1326,9 @@
       klick(await bis(function () { return $("[data-planlos]"); }, 3000, "Los geht’s")); await warte(150); if ($("#overlayRoot [data-act]")) klick($("#overlayRoot [data-act]"));
       var mw = (daten().myWorkouts || []).filter(function (m) { return m.fromPlan === "p-prog"; })[0];
       pruefe(mw && mw.items[0].ex === "leg-press" && mw.items[0].reps === s0 + 2, "Timer-Workout aus dem Plan: " + JSON.stringify(mw && mw.items[0]));
-      klick(await bis(function () { return $("[data-plkg]"); }, 3000, "Satz eintragen im Timer"));
-      await bis(function () { return $("#overlayRoot .pg-letzte .st-uebernehmen"); }, 2000, "Fenster zeigt das letzte Mal");
-      klick($("#overlayRoot [data-ok]"));
-      await bis(function () { return !$("#overlayRoot .pg-sheet"); }, 2000, "Fenster schließt");
-      var heute = daten().settings.studio["leg-press"].log.filter(function (l) { return W.studioTag(l.at) === W.studioTag(Date.now()); })[0];
-      pruefe(heute && heute.s.length === 1, "Satz aus dem Timer landet nicht im Protokoll");
-      pruefe((daten().history || []).some(function (h) { return h.studio && h.ex.indexOf("leg-press") > -1; }), "Satz aus dem Timer fließt nicht in die Wochenzeile");
-      // Training speichern mitten im Workout: Knopf im Timer, Zusammenfassung mit Notiz, Eintrag je Plan und Tag, führt sich nach
-      pruefe($("[data-plsave]"), "Speichern-Knopf im Timer fehlt");
-      klick($("[data-plsave]"));
-      await bis(function () { return $("#overlayRoot [data-trok]"); }, 2000, "Fenster Training speichern (im Timer)");
-      eingeben($("#tr-notiz"), "Beine solide");
-      klick("#overlayRoot [data-trok]");
+      W.studioSatzLog("leg-press", 60, 12);   // Eintragen geschieht beim Satz-Training, nicht mehr im Timer
+      pruefe(!$("[data-plkg]") && !$("[data-plsave]"), "Timer: kein Eintragen und kein Speichern-Knopf");
+      W.trainingSpeichern({ plan: W.stPlanFind("p-prog"), ids: W.stPlanIds(W.stPlanFind("p-prog")) }, "Beine solide");
       await bis(function () { return (daten().settings.einheiten || []).length === 1; }, 2000, "Training gespeichert");
       var tr = daten().settings.einheiten[0];
       pruefe(tr.plan === "p-prog" && tr.saetze === 1 && tr.ex.some(function (x) { return x.id === "leg-press" && x.s.length === 1; }) && tr.notiz === "Beine solide" && tr.tag === W.einheitTagKey(),
@@ -1569,6 +1554,22 @@
       var w = W.programmWeiter("run");
       pruefe(w && /Zufall/.test(w.name), "Weiter mit … nach dem ersten Eintrag fehlt");
       pruefe(W.programmWeiter("zufall") === null, "Nach dem letzten Eintrag darf kein Weiter kommen");
+    }],
+    ["Arena: Training im Trainingsplan zeigt die Zeile, am Ende „Weiter mit …“; Timer ohne Eintragen", async function () {
+      await heim();
+      var pl = { id: "p-ap", name: "BLOC A", ids: ["air-squats"], updatedAt: Date.now() };
+      W.stPlaene().push(pl);
+      var pg = { id: "pg-ap", name: "Woche", items: ["plan:p-ap", "zufall"], tage: [0], wochen: 4, pos: 0, updatedAt: Date.now() };
+      W.programmListe().push(pg); W.save();
+      W.progKontext = { pid: "pg-ap", i: 0 };
+      W.planAlsWorkout(pl, true);
+      await bis(function () { return $("#pl-body") && $(".pl-prog"); }, 3000, "Zeile Trainingsplan im Timer");
+      pruefe(/Woche · 1\/2/.test($(".pl-prog").textContent), "Zeile: " + $(".pl-prog").textContent);
+      pruefe(!$("[data-plkg]") && !$("[data-plsave]"), "Timer: kein Eintragen mehr");
+      W.playerState.idx = W.playerState.steps.length - 1; W.enterStep(W.playerState.idx, {});
+      await bis(function () { return $("[data-progweiter]"); }, 3000, "Weiter mit … am Ende");
+      pruefe(/Zufallstraining/.test($("[data-progweiter]").textContent), "Weiter-Knopf: " + $("[data-progweiter]").textContent);
+      W.exitPlayer();
     }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));

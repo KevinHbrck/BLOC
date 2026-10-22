@@ -3,6 +3,12 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Trainingsplan: Los geht's, Weiter mit …, Zeile im Training (Fassung 2026-10-22-10)
+
+- Trainingsplan-Karte: Knopf „LOS GEHTS!“ (startet den nächsten Eintrag), ein Zurück-Knopf oben links in der Arena. „Hinzufügen“: Favoriten · BLOCs · Katalog zunächst zugeklappt, Einträge links in Fitnessstudio-Rot bzw. Freiluft-Blau.
+- Läuft ein Eintrag aus einem Trainingsplan (Karte, Kalender-Termin, Hauptknopf, „Weiter mit …“), steht oben die Zeile „Name · 2/3“; Antippen zeigt die Einträge zum Wechseln. Am Ende kommt „Weiter mit …“ (Timer und Satz-Training).
+- Timer: kein „Satz eintragen“, keine Angabe „3 Sätze × 12“, kein Speichern-Knopf mehr; Eintragen nur noch im Satz-Training.
+
 ## 2026-10-22 · Figuren im „Hinzufügen“-Fenster (Fassung 2026-10-22-9)
 
 - Arena › Hinzufügen: unter jedem BLOC, Favoriten- und Katalog-Eintrag stehen bis zu sechs kleine bewegte Figuren der Übungen (+n für den Rest); sie werden erst beim Aufklappen eines Bereichs gebaut.

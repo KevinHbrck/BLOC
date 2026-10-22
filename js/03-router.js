@@ -293,7 +293,7 @@ function hauptAktionNeu(route){
     var hk = app.querySelector("[data-herostart]");
     if(hk && hk.getAttribute("data-herostart") === "plan"){ hk.click(); return; }   // heute eingeplant: dieses Training starten
     var ph = programmHeute();                                                        // sonst: ein Programm, das heute (Wochentag) dran ist
-    if(ph){ ph.p.pos = ph.i; save(); return kalStarten(progEintrag(ph.ref)); }
+    if(ph) return programmStarten(ph.p, ph.i);
     showToast(t("keinePlaene"));                                                    // nichts im Kalender und in keinem Programm
   } };
   if(route === "kalender") return { svg:P_PLUS, label:t("kalAdd"), fn:function(){ kalHinzuMenue(kalAnsicht === "monat" && kalAuswahl ? kalAuswahl : kalTagKey(Date.now())); } };

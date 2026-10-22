@@ -115,7 +115,7 @@ function renderSatzTraining(planId, start){
         '<div class="satz-punkte" role="tablist" aria-label="'+esc(p.name)+'">'+ids.map(function(id, i){
           var ex = findExercise(id); return '<button type="button" class="satz-punkt" data-satzgo="'+i+'" role="tab" aria-label="'+esc((i+1)+". "+(ex ? tplText(ex.name) : ""))+'"></button>'; }).join("")+'</div>'+
         '<button type="button" class="exit" data-satzsave aria-label="'+esc(t("trSpeichern"))+'">'+ICON_SAVE+'</button></div>'+
-      '<div class="satz-logo" aria-hidden="true"><b>BLOC</b><span id="satz-nr"></span></div>'+
+      '<div class="satz-logo" aria-hidden="true"><b>BLOC</b><span id="satz-nr"></span></div>'+progChipHTML("plan:"+p.id)+
       '<div class="satz-wisch" id="satzWisch">'+ids.map(function(id, i){ return satzKarteHTML(id, i, ids.length); }).join("")+'</div>'+
       '<div class="satz-fuss"><button type="button" class="satz-fertig" data-satzfertig disabled>'+esc(t("satzFertig"))+'</button></div>'+
     '</div>';
@@ -168,6 +168,7 @@ function renderSatzTraining(planId, start){
   root.querySelectorAll("[data-satzgo]").forEach(function(b){ b.addEventListener("click", function(){ geheZu(+b.getAttribute("data-satzgo"), true); }); });
   function raus(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } goBack("#katalog"); }
   root.querySelector("[data-satzexit]").addEventListener("click", raus);
+  progChipBinden(root, "plan:"+p.id, function(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } });
   root.querySelector("[data-satzsave]").addEventListener("click", function(){ if(!root.querySelector(".satz-ende")) abschluss(); });
   function pauseZeigen(){
     var el = root.querySelector(".satz-pause:not([hidden])");
