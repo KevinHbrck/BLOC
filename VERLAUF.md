@@ -3,6 +3,11 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-22 · Einheitliche Leiste, Umbenennen per Langdruck (Fassung 2026-10-22-6)
+
+- Untere Leiste auf allen vier Seiten gleich: runder Knopf immer da, ▶ überall (startet Kalender-/Trainingsplan-Eintrag von heute, sonst „Keine Pläne im Kalender“), nur im Kalender ＋.
+- Umbenennen von Trainingsplänen, BLOCs und eigenen Workouts per langem Drücken (Menü „Umbenennen“); das Namensfeld entfällt.
+
 ## 2026-10-22 · Deckblatt und Katalog-Kacheln: nur der Stern (Fassung 2026-10-22-3)
 
 - Deckblatt eines Workouts: Speichern/Kopieren, Teilen und Ausblenden sowie die Zeilen „Änderungen gelten nur …“ und „Tippe auf eine Übung …“ entfallen; langes Drücken auf die Karte öffnet das Menü. Katalog-Kacheln zeigen nur Stern (⋯ weg, Langdruck wie bisher).

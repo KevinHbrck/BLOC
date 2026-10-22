@@ -296,18 +296,8 @@ function hauptAktionNeu(route){
     if(ph){ ph.p.pos = ph.i; save(); return kalStarten(progEintrag(ph.ref)); }
     showToast(t("keinePlaene"));                                                    // nichts im Kalender und in keinem Programm
   } };
-  if(route === "training") return { svg:P_PLUS, label:t("hauptBauen"), fn:function(){
-    var m = [];
-    if(!fokusAus("katalog")){
-      m.push({ ico:HOME_ICON.katalog, label:t("builderZufall"), fn:function(){ builderAuto = "zufall"; katTabSetzen("baukasten"); go("#katalog"); } });
-      m.push({ ico:P_PLUS, label:t("builderSelber"), fn:function(){ builderAuto = "selber"; katTabSetzen("baukasten"); go("#katalog"); } });
-    }
-    if(!fokusAus("intervall")) m.push({ ico:HOME_ICON.intervall, label:t("tabTimer"), fn:function(){ go("#intervall"); } });
-    if(!m.length) return go("#settings");
-    openActionSheet(t("hauptBauen"), m);
-  } };
   if(route === "kalender") return { svg:P_PLUS, label:t("kalAdd"), fn:function(){ kalHinzuMenue(kalAnsicht === "monat" && kalAuswahl ? kalAuswahl : kalTagKey(Date.now())); } };
-  return null;
+  return route === "home" ? null : hauptAktionNeu("home");   // der runde Knopf steht auf allen Hauptseiten (Arena › Fortschritt, Fragen: wie auf Heute)
 }
 var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", koerper:"#koerper", stats:"#koerper", faq:"#training" };
 /* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */

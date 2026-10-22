@@ -671,7 +671,7 @@ function renderStudioPlan(){
     // beim Bauen immer nach Ort getrennt (Fitnessstudio oder Freiluft, derselbe Schalter wie im Baukasten)
     function artOk(id){ var ex = findExercise(id); return !!ex && katOrtPasst(exOrt(ex)) && studioAusrOk(id, fArt, fGer) && (!zonen.length || zonePasst(ex, zonen)); }
     var rest = ids.filter(function(id){ return !da[id]; });   // Übungen im Plan, die in keinem Bereich stehen (z. B. ausgeblendete)
-    html += '<div class="card"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="60"></div>'+
+    html += '<div class="card nm-weg"><label for="plan-name">'+t("name")+'</label><input type="text" id="plan-name" value="'+esc(p.name)+'" maxlength="60"></div>'+
       (ids.length ? kkKopfHTML(ids) : '')+
       // Der Plan selbst: die gewählten Übungen in ihrer Reihenfolge. Bleibt beim Scrollen oben stehen; antippen wählt eine Übung aus,
       // dann verschieben ◀ ▶ sie und ✕ nimmt sie heraus.
@@ -768,6 +768,7 @@ function renderStudioPlan(){
   var pk = app.querySelector(".plan-kopf");
   if(pk && !stPlanBauen) langDruck(pk, function(){
     openActionSheet(p.name, [
+      { ico:ICON_EDIT, label:t("umbenennen"), fn:function(){ umbenennenSheet(p.name, function(v){ p.name = v; p.updatedAt = Date.now(); save(); neu(); }); } },
       { ico:ICON_COPY, label:t("actCopy"), fn:function(){ var q = planKopie(p); showToast(t("planKopiert", { n:q.name })); } },
       { ico:P_SHARE, label:t("share"), fn:function(){ var mw = planMw(p); shareDraft(draftFromMy(mw)); } },
       { ico:P_TRASH, label:t("del"), danger:true, fn:function(){ var d = app.querySelector("[data-plandel]"); if(d) d.click(); else planLoeschen(); } }

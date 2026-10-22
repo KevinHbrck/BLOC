@@ -23,7 +23,7 @@ function renderKoerper(){
   var tb = app.querySelector(".topbar");
   if(tb) tb.insertAdjacentHTML("afterend", koerperSegHTML());
   app.querySelectorAll("[data-koerpertab]").forEach(function(b){
-    b.addEventListener("click", function(){ state.db.settings.koerperTab = b.getAttribute("data-koerpertab"); save(); renderKoerper(); window.scrollTo(0, 0); });
+    b.addEventListener("click", function(){ state.db.settings.koerperTab = b.getAttribute("data-koerpertab"); save(); tabLeiste("koerper"); renderKoerper(); window.scrollTo(0, 0); });
   });
 }
 
@@ -138,7 +138,6 @@ function progKarteHTML(p){
       '<button type="button" class="fav-btn'+(p.fav ? ' on' : '')+'" data-pgfav="'+esc(p.id)+'" aria-pressed="'+(!!p.fav)+'" title="'+esc(t("favorite"))+'" aria-label="'+esc(t("favorite"))+'">'+(p.fav ? '★' : '☆')+'</button>'+
       '<span class="pg-pfeil" aria-hidden="true">'+svgIcon(PG_ICON_PFEIL)+'</span></summary>'+
     '<div class="pg-innen">'+
-      '<input type="text" class="pg-name" data-pgname="'+esc(p.id)+'" value="'+esc(p.name)+'" maxlength="40" aria-label="'+esc(t("name"))+'">'+
       (p.items.length ? '<ol class="pg-liste">'+p.items.map(function(r, i){ return progZeileHTML(p, r, i); }).join("")+'</ol>' : '')+
       '<button type="button" class="pg-plus" data-pgplus="'+esc(p.id)+'">'+ICON_PLUS+'<span>'+esc(t("progPlus"))+'</span></button>'+
       '<details class="pg-woche" data-pgwoche="'+esc(p.id)+'"'+(pgOffen["w"+p.id] ? ' open' : '')+'><summary><span>'+esc(t("progWochenplan"))+'</span><small>'+
@@ -162,9 +161,6 @@ function renderProgramme(){
   function neu(){ var y = window.scrollY; renderKoerper(); window.scrollTo(0, y); }
   function teile(v){ var a = v.split(":"); return { p:programmFinde(a[0]), n:+a[1] }; }
   app.querySelectorAll("[data-pgneu]").forEach(function(b){ b.addEventListener("click", function(){ programmNeu(); renderKoerper(); window.scrollTo(0, 0); }); });
-  app.querySelectorAll("[data-pgname]").forEach(function(inp){
-    inp.addEventListener("change", function(){ var p = programmFinde(inp.getAttribute("data-pgname")); if(!p) return; p.name = inp.value.trim() || t("progName", { n:programmListe().indexOf(p) + 1 }); p.updatedAt = Date.now(); save(); neu(); });
-  });
   app.querySelectorAll("[data-pgfav]").forEach(function(b){ b.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); var p = programmFinde(b.getAttribute("data-pgfav")); if(!p) return; p.fav = !p.fav; save(); showToast(t(p.fav ? "favAdded" : "favRemoved")); neu(); }); });
   app.querySelectorAll("[data-pgplus]").forEach(function(b){ b.addEventListener("click", function(){ var p = programmFinde(b.getAttribute("data-pgplus")); if(p) openProgrammWahl(p, neu); }); });
   // Karten und Wochenpläne: Antippen klappt auf/zu (selbst umgeschaltet, damit der Zustand beim Neuzeichnen bleibt)
@@ -212,11 +208,25 @@ function renderProgramme(){
     if(p) langDruck(sm, function(){ programmMenue(p, neu); });
   });
 }
-function programmText(p){
+/* Umbenennen per langem Drücken (Trainingsplan, BLOC, eigenes Workout): kleines Fenster mit Namensfeld */
+function umbenennenSheet(alt, fn){
+  var root = document.getElementById("overlayRoot");
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet" role="dialog" aria-label="' + esc(t("umbenennen")) + '"><h3>' + esc(t("umbenennen")) + '</h3>' +
+    '<input type="text" id="umb-name" maxlength="60" value="' + esc(alt) + '"><div class="btn-row"><button class="btn btn-secondary" data-cancel>' + esc(t("cancel")) + '</button>' +
+    '<button class="btn btn-primary" data-ok>' + esc(t("save")) + '</button></div></div></div>';
+  function zu(){ root.innerHTML = ""; }
+  var inp = root.querySelector("#umb-name"); inp.focus(); inp.select();
+  function ok(){ var v = inp.value.trim(); zu(); if(v && v !== alt) fn(v); }
+  root.querySelector("[data-cancel]").addEventListener("click", zu);
+  root.querySelector("[data-ok]").addEventListener("click", ok);
+  inp.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); ok(); } });
+  root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
+}function programmText(p){
   return p.name+"\n"+p.items.map(function(r, i){ var o = kalAufloesen(progEintrag(r)); return (i + 1)+". "+o.name; }).join("\n");
 }
 function programmMenue(p, neu){
   openActionSheet(p.name, [
+    { ico:ICON_EDIT, label:t("umbenennen"), fn:function(){ umbenennenSheet(p.name, function(v){ p.name = v; p.updatedAt = Date.now(); save(); neu(); }); } },
     { ico:P_SHARE, label:t("share"), fn:function(){
       var text = programmText(p);
       if(navigator.share) navigator.share({ title:p.name, text:text }).catch(function(err){ if(!err || err.name !== "AbortError") copyText(text, t("shareLinkCopied")); });
@@ -308,8 +318,9 @@ function myKopie(mw){
   return q;
 }
 function blocMenueBinden(neu){
-  function menue(titel, kopie, teilen, el){
+  function menue(titel, kopie, teilen, el, umb){
     openActionSheet(titel, [
+      { ico:ICON_EDIT, label:t("umbenennen"), fn:function(){ umbenennenSheet(titel, function(v){ umb(v); save(); neu(); }); } },
       { ico:ICON_COPY, label:t("actCopy"), fn:function(){ var q = kopie(); showToast(t("planKopiert", { n:q.name })); neu(); } },
       { ico:P_SHARE, label:t("share"), fn:teilen },
       { ico:P_TRASH, label:t("del"), danger:true, fn:function(){ var d = el.querySelector("[data-del]"); if(d) d.click(); } }
@@ -317,10 +328,10 @@ function blocMenueBinden(neu){
   }
   app.querySelectorAll(".plan-item[data-plan]").forEach(function(el){
     var p = stPlanFind(el.getAttribute("data-plan"));
-    if(p) langDruck(el, function(){ menue(p.name, function(){ return planKopie(p); }, function(){ shareDraft(draftFromMy(planMw(p))); }, el); });
+    if(p) langDruck(el, function(){ menue(p.name, function(){ return planKopie(p); }, function(){ shareDraft(draftFromMy(planMw(p))); }, el, function(v){ p.name = v; p.updatedAt = Date.now(); }); });
   });
   app.querySelectorAll(".my-item[data-cover]").forEach(function(el){
     var mw = findMy(el.getAttribute("data-cover").replace(/^my\//, ""));
-    if(mw) langDruck(el, function(){ menue(mw.name, function(){ return myKopie(mw); }, function(){ shareDraft(draftFromMy(normMy(mw))); }, el); });
+    if(mw) langDruck(el, function(){ menue(mw.name, function(){ return myKopie(mw); }, function(){ shareDraft(draftFromMy(normMy(mw))); }, el, function(v){ mw.name = v; mw.updatedAt = Date.now(); }); });
   });
 }
