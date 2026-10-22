@@ -1625,6 +1625,17 @@
       W.exitPlayer();
       pruefe(W.location.hash === "#koerper", "zurück in der Arena");
     }],
+    ["Arena: Deckblatt → Mit Timer starten bleibt im Trainingsplan (Zeile oben, Beenden in die Arena)", async function () {
+      await heim();
+      W.programmListe().push({ id: "pg-dk", name: "Plan DK", items: ["lib:gym-fullbody", "zufall"], tage: [0], wochen: 4, pos: 0, updatedAt: Date.now() }); W.save();
+      W.progKontext = { pid: "pg-dk", i: 0 };
+      W.go("#koerper"); W.go("#cover/lib/gym-fullbody");
+      klick(await bis(function () { return $("[data-go]"); }, 3000, "Mit Timer starten"));
+      await bis(function () { return $("#playerRoot .player") && $(".pl-prog"); }, 3000, "Timer mit Trainingsplan-Zeile");
+      pruefe(/Plan DK · 1\/2/.test($(".pl-prog").textContent), "Zeile: " + $(".pl-prog").textContent);
+      W.exitPlayer();
+      pruefe(W.location.hash === "#koerper", "Beenden führt in die Arena: " + W.location.hash);
+    }],
     ["Keine Skriptfehler", async function () {
       pruefe(!fehler.length, fehler.slice(0, 3).join(" | "));
     }]

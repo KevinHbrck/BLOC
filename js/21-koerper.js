@@ -176,6 +176,7 @@ function programmRefAusQuelle(src){
   if(!src) return "";
   if(src.type === "mine"){ var mw = findMy(src.id); return mw ? (mw.fromPlan ? "plan:"+mw.fromPlan : "my:"+src.id) : ""; }
   if(src.type === "libworkout") return "lib:"+src.id;
+  if(src.type === "draft" && coverDraft && /^(lib|my):/.test(coverDraft.key || "")) return coverDraft.key;   // Deckblatt (Overview) → „Mit Timer starten“
   return "";
 }
 /* Der runde Hauptknopf auf Heute: ein Eintrag aus einem Trainingsplan, dessen Wochentage auf heute fallen (ohne Kalender-Termin) */
