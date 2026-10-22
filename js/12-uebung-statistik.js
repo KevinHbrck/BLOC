@@ -674,12 +674,6 @@ function statTrainingsHTML(){
   return '<div class="card stat-karte stat-trainings"><div class="sk-kopf"><b>'+esc(t("trStatTitel"))+'</b><span class="sk-sub">'+esc(t("trStatSub", { n:alle.length }))+'</span></div>'+
     trainingsZeilenHTML(alle.slice(0, trAnzahl.stat))+trMehrHTML("stat", alle.length)+'</div>';
 }
-/* Workout › Meine: die gespeicherten Trainings als dritter Abschnitt (mit Foto des Ortes, Tipp = Sätze und Notiz) */
-function katTrainingsSektionHTML(){
-  var alle = einheitenListe().slice().sort(function(a, b){ return b.at - a.at; });
-  var inhalt = alle.length ? trainingsZeilenHTML(alle.slice(0, trAnzahl.meine))+trMehrHTML("meine", alle.length) : '<div class="fav-empty">'+esc(t("trMeineLeer"))+'</div>';
-  return katSektionHTML("trainings", "training", KAT_ICON_TRAININGS, t("katSekTrainings"), t("katSekTrainingsSub"), alle.length, inhalt);
-}
 function statTrainingsBinden(neu){
   app.querySelectorAll("[data-trmehr]").forEach(function(b){
     b.addEventListener("click", function(e){ e.stopPropagation(); var k = b.getAttribute("data-trmehr"); trAnzahl[k] += 20; neu(); });

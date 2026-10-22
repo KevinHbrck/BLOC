@@ -148,7 +148,7 @@ function katOrtUmschalten(o){
   delete s.bauModusOrt; save();
   return true;
 }
-function katWoOrt(exs){ return exs.some(function(ex){ return ex.equip.indexOf("gym") > -1; }) ? "studio" : "frei"; }
+function katWoOrt(exs){ return exs.some(exIstStudio) ? "studio" : "frei"; }
 /* Ort einer Übung: Fitnessstudio (Geräte, Kabel, Langhantel, alles mit Ausrüstung „Fitnessstudio“) oder Freiluft (alles andere) */
 function exOrt(ex){ return exIstStudio(ex) ? "studio" : "frei"; }
 /* Schalter Fitnessstudio · Freiluft. Ohne Angaben: der Ort des Katalogs mit der Zahl der Workouts je Ort; für „Plan nach Gewichtung“ mit

@@ -524,7 +524,7 @@
       var brust = $('details[data-katgr="brust"]');
       pruefe(brust.querySelector('[data-studio="push-ups"]:not([data-ortfremd])') && !brust.querySelector('[data-studio="chest-press-machine"]:not([data-ortfremd])'), "Brust (Freiluft) enthält nicht die Freiluft-Übungen");
       klick(brust.querySelector("summary"));
-      pruefe(brust.open && sichtbar(brust.querySelector("[data-studio]")), "Katalog: Antippen klappt den Bereich nicht auf");
+      pruefe(brust.open && sichtbar(brust.querySelector("[data-studio]:not([data-ortfremd])")), "Katalog: Antippen klappt den Bereich nicht auf");
       klick(brust.querySelector("summary"));
       pruefe(!brust.open, "Katalog: zweites Antippen klappt den Bereich nicht zu");
       eingeben($("#st-q"), "liegestütz");
@@ -729,14 +729,14 @@
       pruefe($('[data-katort="frei"].on'), "Der letzte gewählte Ort darf nicht abgeschaltet werden");
       await ortNur("katort", "studio");
       ["gym-fullbody", "gym-fullbody-b", "gym-upper", "gym-lower", "gym-legday", "gym-chest", "gym-back", "gym-shoulders", "gym-arms", "gym-glutes", "gym-core", "gym-posture", "gym-deepcore", "gym-db-upper", "gym-db-fullbody"].forEach(function (id) { pruefe($('[data-cover="lib/' + id + '"]'), "Programm fehlt: " + id); });
-      pruefe($$(".lib-card").length === 15, "Fitnessstudio: erwartet 15 Programme, gefunden " + $$(".lib-card").length);
+      pruefe($$(".lib-card").length === W.katOrtZahlenWo().studio, "Fitnessstudio: erwartet alle Studio-Programme, gefunden " + $$(".lib-card").length);
       pruefe(!$('[data-cover="lib/leg-day"]'), "Freiluft-Workout im Fitnessstudio");
       // derselbe Filter wirkt auch hier
       await filterAuf();
       klick('[data-stgrp="beine"]');
       await bis(function () { var n = $$(".lib-card").length; return n >= 3 && n < 15 && $('[data-cover="lib/gym-legday"]') && !$('[data-cover="lib/gym-arms"]'); }, 2000, "Gruppe Beine: Beinprogramme, nicht Arme");
       klick('[data-streset]');
-      await bis(function () { return $$(".lib-card").length === 15; }, 2000, "Zurücksetzen");
+      await bis(function () { return $$(".lib-card").length === W.katOrtZahlenWo().studio; }, 2000, "Zurücksetzen");
       // Programm öffnen: Übungen aus dem Fitnessstudio laufen als Workout
       klick($('[data-cover="lib/gym-fullbody"]'));
       await bis(function () { return $$(".wb-ablauf").length >= 6; }, 3000, "Deckblatt mit sechs Übungen");
@@ -1424,7 +1424,7 @@
       await bis(function () { return $$(".pz-zeile").length === 1; }, 3000, "Plan-Seite");
       // Meine: drei Abschnitte, Fotos, zuklappbar
       await zuMeine();
-      pruefe($$("details.kat-sek").length === 3 && $$("details.kat-sek[open]").length === 2, "Meine: drei Abschnitte, zugeklappt: " + $$("details.kat-sek").length + " / offen " + $$("details.kat-sek[open]").length);
+      pruefe($$("details.kat-sek").length === 2 && $$("details.kat-sek[open]").length === 2, "Meine: drei Abschnitte, zugeklappt: " + $$("details.kat-sek").length + " / offen " + $$("details.kat-sek[open]").length);
       pruefe($('details[data-katsek="saetze"]').open, "Nach Sätzen steht offen");
       pruefe($(".plan-item .ort-thumb img") && /freiluft/.test($(".plan-item .ort-thumb img").getAttribute("src")), "Plan mit Foto des Ortes (Freiluft) erwartet");
       klick($('details[data-katsek="saetze"] > summary'));
@@ -1436,11 +1436,7 @@
       var e0 = W.trainingSpeichern({ plan: entw, ids: ["push-ups"] }, "Test");
       pruefe(e0 && !W.stPlanFind("p-entw").entwurf, "Training speichern soll den Plan aus dem Entwurf lösen");
       W.renderKatalog();
-      await bis(function () { return $('details[data-katsek="trainings"] .tr-zeile'); }, 3000, "Gespeichertes Training bei Meine");
-      pruefe($('details[data-katsek="trainings"] .tr-zeile .ort-thumb'), "Training mit Foto des Ortes");
-      klick($('details[data-katsek="trainings"] .tr-zeile'));
-      await bis(function () { return /Entwurf/.test(($("#overlayRoot .tr-sheet") || {}).textContent || ""); }, 2000, "Detail des Trainings");
-      klick("#overlayRoot [data-cancel]");
+      pruefe(!$('details[data-katsek="trainings"]'), "Gespeicherte Trainings stehen nicht mehr bei BLOCs (nur in der Statistik)");
     }],
     ["Figuren: Haltübungen statisch, Band-Karte „Band befestigen“", async function () {
       await heim();

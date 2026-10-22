@@ -104,7 +104,7 @@ function fuerWorkout(ex){ return !STUDIO_NUR[ex.id] && ex.main !== "stretch"; }
 /* Freiluft-Übungen (ohne Ausrüstung „Fitnessstudio“) */
 function fuerAir(ex){ return fuerWorkout(ex) && ex.equip.indexOf("gym") < 0; }
 /* Fitnessstudio-Übungen (Geräte, Kabel, Langhantel, alles mit Ausrüstung „Fitnessstudio“): hier stehen Gewicht × Wiederholungen vorn, ein Timer ist optional */
-function exIstStudio(ex){ return !!ex && (!!STUDIO_NUR[ex.id] || (ex.equip || []).indexOf("gym") > -1); }
+function exIstStudio(ex){ return !!ex && (!!STUDIO_NUR[ex.id] || (ex.equip || []).indexOf("gym") > -1 || (ex.equip || []).indexOf("db") > -1); }   // Kurzhantel-Training gehört zum Fitnessstudio (Gym)
 /* Was in Workouts mit Timer, Plänen und Überrasch mich vorkommen darf: alle Übungen außer Dehnen (die haben ihren eigenen Bereich) */
 function fuerBau(ex){ return ex.main !== "stretch"; }
 /* Farbe der Kachel: Fitnessstudio hellgrün, sonst Air blau (bzw. die Farbe des Bereichs, z. B. Mobility & Stretch) */

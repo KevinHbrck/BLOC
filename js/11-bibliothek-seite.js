@@ -260,7 +260,7 @@ function renderLibrary(){
   });
   var nZeit = (state.db.myWorkouts || []).filter(function(mw){ return !mw.ws; }).length + nFav;
   var list = katSektionHTML("zeit", "zeit", HOME_ICON.intervall, t("katSekZeit"), t("katSekZeitSub"), nZeit, eigene || '<div class="fav-empty">'+esc(t("myEmpty"))+'</div>')+
-    katPlaeneHTML()+katTrainingsSektionHTML();
+    katPlaeneHTML();
   app.innerHTML =
     katKopfHTML("blocs", hw.knopf) +
     list + '<div style="height:40px"></div>';
@@ -271,7 +271,6 @@ function renderLibrary(){
   katPlaeneBinden();
   blocMenueBinden(neu);
   katSektionBinden();
-  statTrainingsBinden(neu);   // gespeicherte Trainings: Tipp zeigt Sätze und Notiz
   app.querySelectorAll("[data-fav]").forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(el.getAttribute("data-fav")); neu(); }); });
   app.querySelectorAll("[data-womore]").forEach(function(b){ b.addEventListener("click", function(e){
     e.stopPropagation(); var lw = findLibWorkout(b.getAttribute("data-womore")); if(lw) woMenue(lw, neu);
