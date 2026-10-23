@@ -1283,3 +1283,6 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 :root[data-layout="new"] .bau-karte.bau-eigen .bk-ico{ background:transparent; border:1.5px dashed var(--text-dim); color:var(--text); }
 :root[data-layout="new"][data-glas] .bau-karte.bau-eigen{ background:rgba(18,20,24,.38); border:1.5px dashed rgba(255,255,255,.4); }
 :root[data-layout="new"][data-glas] .bau-karte.bau-eigen .bk-ico{ border:1.5px dashed rgba(255,255,255,.5); color:#fff; }
+
+/* Kopfzeilen-Streifen im Dunkel ganz entfernt (kein Verlauf, kein Blur, keine Maske hinter Zurück-Knopf und Titel) */
+:root[data-layout="new"][data-glas] .topbar{ background:none; -webkit-backdrop-filter:none; backdrop-filter:none; -webkit-mask-image:none; mask-image:none; box-shadow:none; border:0; }
