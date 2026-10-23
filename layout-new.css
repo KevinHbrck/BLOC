@@ -1250,3 +1250,8 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 
 /* Kopfzeilen-Streifen über die ganze Breite des Bildschirms (bis an die Ränder, auch auf breiten Geräten wie Klapphandys und Tablets), Inhalt bleibt in der Spalte */
 :root[data-layout="new"] .topbar{ margin-inline:calc(50% - 50vw); padding-inline:calc(50vw - 50%); }
+
+/* Timer-Seite: Workout-Zeilen als runde Glas-Karten wie auf Training (statt eckiger Zeilen mit Trennlinie) */
+:root[data-layout="new"]:has(.run-bg) #app .timer-panel .list-item.entry{
+  border:1px solid var(--glas-rand); border-radius:var(--radius); border-top-left-radius:var(--ecke); margin:0 0 10px; padding:12px 8px 12px 16px; gap:8px; }
+:root[data-layout="new"]:has(.run-bg) #app .timer-panel .list-item.entry:last-of-type{ border-bottom:1px solid var(--glas-rand); }
