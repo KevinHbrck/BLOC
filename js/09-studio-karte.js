@@ -579,6 +579,12 @@ function bindFavItems(refresh){
     el.addEventListener("click", los);
     el.addEventListener("keydown", function(e){ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); los(); } });
   });
+  // Langes Drücken auf eine Favoriten-Kachel: nach Rückfrage aus den Favoriten entfernen (wie auf Training/Heute mit langDruck)
+  app.querySelectorAll(".fav-foto[data-favkey]").forEach(function(el){
+    langDruck(el, function(){
+      confirmSheet(t("favEntfernenTitel"), t("favEntfernenText", { n:el.getAttribute("data-favname") }), t("favEntfernenOk"), function(){ toggleFav(el.getAttribute("data-favkey")); refresh(); });
+    });
+  });
   var more = app.querySelector("[data-favall]");
   if(more) more.addEventListener("click", function(){ favShowAll = !favShowAll; var y = window.scrollY; refresh(); window.scrollTo(0, y); });
   app.querySelectorAll("[data-favgo]").forEach(function(el){

@@ -404,7 +404,7 @@ function favItemsHTML(){
     var BEREICH = { ti:t("tabTimer"), ws:t("warmTitle"), tp:t("katalog"), st:t("katalog") };
     return '<div class="fav-fotos">'+shown.map(function(e){
       var mitFoto = /^lib\//.test(e.cover || "");   // Fotos nur für Workouts (BLOCs) aus dem Katalog; alles andere ist eine ruhige Glas-Kachel mit Name
-      return '<div class="fav-foto'+(mitFoto ? '' : ' ohne')+'" data-art="'+e.cls+'" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+
+      return '<div class="fav-foto'+(mitFoto ? '' : ' ohne')+'" data-art="'+e.cls+'" data-favkey="'+esc(e.key)+'" data-favname="'+esc(e.name)+'" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+
           (e.ok ? '' : ' aria-disabled="true"')+(mitFoto ? ' style="background-image:url('+fotos[e.key || e.name]+')'+(fotoFokus(fotos[e.key || e.name]) ? ';background-position:'+fotoFokus(fotos[e.key || e.name]) : '')+'"' : '')+'>'+
         '<span class="ff-stern" aria-hidden="true">'+svgIcon(ICON_STAR)+'</span>'+
         (mitFoto ? '' : '<span class="ff-ico" aria-hidden="true">'+svgIcon(favSymbol(e))+'</span>')+

@@ -197,7 +197,7 @@
 :root[data-layout="new"] .gn-text span{ font-size:13px; color:var(--text-dim); }
 :root[data-layout="new"] .gn-chev{ flex:none; color:var(--text-dim); display:flex; }
 
-:root[data-layout="new"] .fav-fotos{ display:flex; gap:12px; overflow-x:auto; margin:0 -16px 8px; padding:0 16px 4px; scrollbar-width:none; scroll-snap-type:x proximity; }
+:root[data-layout="new"] .fav-fotos{ display:flex; gap:12px; overflow-x:auto; margin:0 -16px 8px; padding:0 16px 4px; scrollbar-width:none; scroll-snap-type:x proximity; scroll-padding-left:16px; }
 :root[data-layout="new"] .fav-fotos::-webkit-scrollbar{ display:none; }
 :root[data-layout="new"] .fav-foto{
   position:relative; isolation:isolate; overflow:hidden; flex:none; width:156px; height:196px; padding:12px; scroll-snap-align:start;
@@ -609,7 +609,7 @@
 .kv-legende span{ display:inline-flex; align-items:center; gap:5px; }
 
 /* Favoriten ohne Foto: großes ruhiges Symbol statt leerer Fläche (Farbe der Art) */
-:root[data-layout="new"] .fav-foto.ohne .ff-ico{ position:absolute; left:10px; top:10px; width:37px; height:37px; display:grid; place-items:center; border-radius:14px;
+:root[data-layout="new"] .fav-foto.ohne .ff-ico{ position:absolute; left:16px; top:14px; width:37px; height:37px; display:grid; place-items:center; border-radius:14px;
   background:color-mix(in srgb, var(--nc, var(--accent)) 16%, transparent); color:var(--nc, var(--accent)); }
 :root[data-layout="new"] .fav-foto.ohne .ff-ico .ico, :root[data-layout="new"] .fav-foto.ohne .ff-ico svg{ width:21px; height:21px; }
 
@@ -1123,8 +1123,9 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 :root[data-layout="new"][data-glas] body{ background:transparent; }
 :root[data-layout="new"][data-glas] .glas-bg{ display:block; position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
 :root[data-layout="new"][data-glas] body:has(#app .run-bg) .glas-bg{ display:none; }   /* die Run-Seite bringt ihren eigenen Hintergrund mit */
-:root[data-layout="new"][data-glas] .glas-bg i{ position:absolute; inset:-40px; background:url("img/neu-p-freiluft-meer.jpg") 50% 45%/cover no-repeat; filter:blur(26px) brightness(.66) saturate(1.25); }
-:root[data-layout="new"][data-glas] .glas-bg::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,10,12,.62), rgba(10,10,12,.42) 45%, rgba(10,10,12,.68)); }
+:root[data-layout="new"][data-glas] .glas-bg{ background:#0b0d10; }
+:root[data-layout="new"][data-glas] .glas-bg i{ position:absolute; inset:-30px; background:url("img/neu-p-freiluft-meer.jpg") center/cover no-repeat; filter:blur(11px) brightness(.66) saturate(1.25); opacity:.95; }   /* genau wie die Run-Seite (.run-bg mit .run-hero) */
+:root[data-layout="new"][data-glas] .glas-bg::after{ content:""; position:absolute; inset:0; background:rgba(8,10,14,.1); }
 /* Kopfzeilen ohne dunklen Schleier (auch auf Training, dort mit Zurück-Knopf) */
 :root[data-layout="new"][data-glas] .topbar{ background:linear-gradient(rgba(12,14,18,.86) 62%, rgba(12,14,18,0)); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); -webkit-mask-image:linear-gradient(#000 82%, transparent); mask-image:linear-gradient(#000 82%, transparent); box-shadow:none; border:0; }   /* weich und leicht verwischt: beim Scrollen scheint kein Text durch, ohne harte Kante */
 /* Wochenkarte fast deckend, damit die Kante des Foto-Kopfs darunter nicht durchscheint */
@@ -1246,3 +1247,6 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 /* Runder Hauptknopf: Symbol im Dunkel weiß (wie im Hellen) statt dunkel auf Orange */
 :root[data-layout="new"][data-glas] .tabbar .hauptknopf, :root[data-layout="new"][data-glas] .fab{ color:#fff; }
 :root[data-layout="new"][data-glas] .tabbar .hauptknopf svg{ color:#fff; stroke:#fff; }
+
+/* Kopfzeilen-Streifen über die ganze Breite des Bildschirms (bis an die Ränder, auch auf breiten Geräten wie Klapphandys und Tablets), Inhalt bleibt in der Spalte */
+:root[data-layout="new"] .topbar{ margin-inline:calc(50% - 50vw); padding-inline:calc(50vw - 50%); }

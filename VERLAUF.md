@@ -3,6 +3,13 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-23 (abends) · Favoriten entfernen per Langdruck, breiterer Kopfstreifen (Fassung 2026-10-23-4)
+
+- **Favoriten auf Heute**: langes Drücken (0,5 s) auf eine Kachel fragt „Aus Favoriten entfernen?“ und entfernt sie nach Bestätigung (`langDruck` + `confirmSheet` in `bindFavItems`, js/09-studio-karte.js; Texte `favEntfernen*`). Das Workout selbst bleibt erhalten.
+- **Abstand links**: die Favoriten-Reihe rastet nicht mehr am Rand ein (`scroll-padding-left`), das Symbol der Glas-Kachel sitzt etwas weiter innen.
+- **Kopfstreifen** (Verlauf hinter der Kopfzeile) läuft jetzt über die ganze Bildschirmbreite statt nur über die Spalte, auch auf breiten Geräten wie Klapphandys und Tablets; der Inhalt bleibt in der Spalte (`.topbar` in layout-new.css).
+- **Hintergrund** (Glas-Design) genau wie auf der Run-Seite: Blur 11 px statt 26 px und nur noch 10 % Abdunklung statt 42–68 %, dadurch heller und schärfer (`.glas-bg` in layout-new.css).
+
 ## 2026-10-23 · Glas-Design, Path mit Deep Dive, Katalog-Ergänzungen, Nacht entfällt (Fassung 2026-10-23-1)
 
 - **Glas-Design** im Dunkel (Modern): Run-Hintergrund hinter allen Seiten, Glas-Karten, weiße Figuren und Symbole; Kopfzeilen ohne dunklen Schleier, Foto-Kopf von Heute läuft unten weich aus, Training ohne Kopfzeile. Hell unverändert. Umsetzung in `layout-new.css` (Abschnitt „Glas-Design“), `data-glas` in `applyTheme`.
