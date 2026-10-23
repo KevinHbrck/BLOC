@@ -2333,6 +2333,26 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
     ["band-legs-glutes","Beine & Po mit Band","Legs & Glutes with Band","legs","band-squat band-single-leg-deadlift band-lunge-squat band-glute-bridge band-leg-abduction band-clamshell",20,"3/40/20"],
     ["band-core","Rumpf mit Band","Core with Band","core","band-russian-twist band-kneeling-twist band-side-bend band-crunch plank",20,"3/40/20"]
   );
+  /* Mehr Abwechslung (2026-10-23): zusammengestellte Workouts für Muskelgruppen, die im Katalog nur ein oder zwei (oder gar kein) Workout hatten.
+     Regel: je Gruppe und Ort höchstens 25 % gleiche Übungen wie in den bestehenden Workouts der Gruppe (hier 0 %, nur bei den Battle Ropes 20 % untereinander,
+     weil es dort nur zehn Übungen gibt). */
+  LIB_WORKOUT_ROWS.push(
+    ["bw-chest-band","Brust mit Band","Chest with Band","mix","knee-push-ups band-push-ups band-chest-fly band-chest-fly-up band-chest-cross",20,"3/40/20"],
+    ["gym-chest-db","Brust mit Kurzhanteln (Fitnessstudio)","Chest with Dumbbells (Gym)","weight","incline-db-press db-bench-press decline-db-bench db-fly around-world-pullover",60],
+    ["gym-chest-cable","Brust Kabel & Smith (Fitnessstudio)","Chest Cable & Smith (Gym)","weight","smith-incline-press smith-bench-press assisted-dip cable-chest-fly standing-cable-fly low-to-high-cable-fly",60],
+    ["gym-shoulders-db","Schultern mit Kurzhanteln (Fitnessstudio)","Shoulders with Dumbbells (Gym)","weight","seated-db-shoulder-press arnold-press lean-away-lateral-raise db-front-raise db-rear-delt-fly cuban-press",60],
+    ["gym-shoulders-cable","Schultern Kabel & Langhantel (Fitnessstudio)","Shoulders Cable & Barbell (Gym)","weight","barbell-overhead-press cable-shoulder-press cable-lateral-raise seated-rear-delt-fly smith-shrug",60],
+    ["bw-shoulders","Schultern ohne Geräte","Shoulders without Equipment","bw","pike-push-ups scapular-push-ups bear-crawl skin-the-cat",30],
+    ["band-shoulders","Schultern mit Band","Shoulders with Band","mix","band-shoulder-press band-lateral-raise band-front-raise band-upright-row band-reverse-fly band-one-arm-press",20,"3/40/20"],
+    ["gym-ropes-intervals","Battle Rope Intervalle (Fitnessstudio)","Battle Rope Intervals (Gym)","cardio","battle-rope-alternating-waves battle-rope-double-waves battle-rope-slams battle-rope-side-to-side battle-rope-jumping-jacks battle-rope-circles",45],
+    ["gym-ropes-power","Battle Rope Power (Fitnessstudio)","Battle Rope Power (Gym)","cardio","battle-rope-snakes battle-rope-squat-waves battle-rope-in-out-waves battle-rope-power-pull battle-rope-slams",45],
+    ["gym-back-cable","Rücken am Kabel (Fitnessstudio)","Back with Cables (Gym)","back","rope-lat-pulldown wide-grip-cable-row underhand-cable-row one-arm-cable-row straight-arm-pulldown",60],
+    ["gym-back-free-weights","Rücken mit Langhantel & Kurzhantel (Fitnessstudio)","Back with Barbell & Dumbbell (Gym)","back","barbell-row t-bar-row chest-supported-row meadows-row one-arm-row",60],
+    ["gym-biceps","Bizeps (Fitnessstudio)","Biceps (Gym)","arms","db-curl incline-db-curl preacher-curl concentration-curl spider-curl zottman-curl",60],
+    ["gym-triceps","Trizeps (Fitnessstudio)","Triceps (Gym)","arms","close-grip-db-press db-skull-crusher rope-triceps-pushdown one-arm-cable-triceps-extension lying-cable-triceps-extension tate-press",60],
+    ["gym-core-cable","Rumpf am Kabel (Fitnessstudio)","Core with Cables (Gym)","core","pallof-press standing-cable-crunch cable-lift cable-twist cable-reverse-crunch ab-wheel-rollout",60],
+    ["gym-core-crunch","Bauch: Crunch-Varianten (Fitnessstudio)","Core: Crunch Variations (Gym)","core","crunch crunch-arms-straight crunch-hands-overhead cross-body-crunch judo-flip",45]
+  );
   /* Programme fürs Fitnessstudio (2026-10-10), nach Empfehlungen aus der Trainingswissenschaft (siehe quellen.html):
      - Einsteiger: Ganzkörper 2-3 Mal pro Woche, 3 Sätze mit 8-12 Wiederholungen (ACSM), zu Beginn gern 3 × 12; vier Tage: Ober-/Unterkörper
      - Reihenfolge: große vor kleinen Muskeln, mehrgelenkige vor eingelenkigen Übungen, Drücken und Ziehen im Wechsel
@@ -2389,6 +2409,37 @@ EQUIPS.splice(3, 0, { id:"band", de:"Widerstandsband", en:"Resistance band" });
       "For long desk days: more pulling than pushing, rear shoulders and back extensors. Light, controlled, 3 × 12–15."],
     "gym-deepcore": ["Die tiefen Bauch- und Rückenmuskeln stabilisieren die Wirbelsäule. Langsam und kontrolliert, bei der Anstrengung ausatmen. Vier Runden à 40 Sekunden. Ergänzt das Krafttraining, ersetzt es nicht.",
       "The deep abdominal and back muscles stabilise the spine. Slow and controlled, breathe out on the effort. Four rounds of 40 seconds. Complements strength training, does not replace it."],
+    /* Ergänzungen 2026-10-23 (Mehr Abwechslung): Hinweise ohne Studienversprechen, nur Praxisregeln */
+    "bw-chest-band": ["Brust mit dem Band für zu Hause oder unterwegs: Liegestütze auf den Knien, mit Band und die Fliegende in drei Winkeln. Rhythmus: 3 Sätze à 40 Sekunden, 20 Sekunden Pause. Steigern (Praxisregel, keine Studie): dickeres Band oder kürzer greifen.",
+      "Chest with a band for home or on the go: knee push-ups, band push-ups and the fly from three angles. Rhythm: 3 sets of 40 seconds, 20 seconds rest. To progress (practical rule, not a study): a thicker band or a shorter grip."],
+    "gym-chest-db": ["Mit Kurzhanteln ist die Bewegung freier als an der Maschine: die Drückübungen schräg, flach und geneigt zuerst, danach Fliegende und zum Schluss der Pullover. 3 × 10–12, ein bis zwei Mal pro Woche. Das Gewicht so wählen, dass der letzte Satz anstrengend, aber sauber geht.",
+      "Dumbbells allow a freer movement than a machine: the presses first (incline, flat, decline), then the fly and the pullover to finish. 3 × 10–12, once or twice a week. Pick a weight that makes the last set hard but clean."],
+    "gym-chest-cable": ["Brust an der Smith-Maschine und am Kabel: erst die geführten Drückübungen und der Dip mit Unterstützung, danach drei Fliegende aus verschiedenen Winkeln. Große Muskeln und mehrgelenkige Übungen zuerst. 3 × 10–12.",
+      "Chest on the Smith machine and cables: guided presses and the assisted dip first, then three flies from different angles. Large muscles and multi-joint exercises first. 3 × 10–12."],
+    "gym-shoulders-db": ["Schultern mit Kurzhanteln: Drücken im Sitzen und mit Drehung (Arnold), dann seitlich, vorn und hinten, zum Schluss der Cuban Press. Leichte Gewichte, saubere Bewegung, 3 × 12–15.",
+      "Shoulders with dumbbells: seated press and the rotating Arnold press, then sideways, front and rear, Cuban press to finish. Light weights, clean movement, 3 × 12–15."],
+    "gym-shoulders-cable": ["Schultern mit Langhantel und Kabel: erst das Drücken im Stehen, dann die kontrollierten Kabelübungen, hintere Schulter und zum Schluss die Shrugs (Nacken). 3 × 10–12, nach dem schweren Drücken eine längere Pause.",
+      "Shoulders with barbell and cable: standing press first, then controlled cable work, rear shoulders and shrugs (neck) to finish. 3 × 10–12, a longer rest after the heavy press."],
+    "bw-shoulders": ["Schultern ohne Geräte: Pike-Liegestütze, Schulterblatt-Liegestütze, Bärengang und der Hang an der Stange (Skin the Cat – nur, wenn die Schultern das gut mitmachen). Langsam und kontrolliert.",
+      "Shoulders without equipment: pike push-ups, scapular push-ups, bear crawl and the hang on a bar (skin the cat – only if your shoulders handle it well). Slow and controlled."],
+    "band-shoulders": ["Schultern mit Band: Drücken, seitlich, vorn, aufrechtes Rudern, hintere Schulter und einarmig drücken. Rhythmus: 3 Sätze à 40 Sekunden, 20 Sekunden Pause. Steigern (Praxisregel, keine Studie): dickeres Band oder kürzer greifen.",
+      "Shoulders with a band: press, sideways, front, upright row, rear shoulders and one-arm press. Rhythm: 3 sets of 40 seconds, 20 seconds rest. To progress (practical rule, not a study): a thicker band or a shorter grip."],
+    "gym-ropes-intervals": ["Battle Ropes im Intervall: Wellen, Slams, seitwärts, Jumping Jacks und Kreise. Kurze, harte Einheiten mit Pause dazwischen. Mit leichten Wellen beginnen; die Bewegung kommt aus Hüfte und Schultern, nicht nur aus den Armen.",
+      "Battle ropes in intervals: waves, slams, side to side, jumping jacks and circles. Short, hard efforts with rest in between. Start with light waves; the movement comes from hips and shoulders, not just the arms."],
+    "gym-ropes-power": ["Battle Ropes für mehr Wucht: Schlangen, Squat-Wellen, In-and-out-Wellen, Power Pull und Slams. Ergänzt das Intervall-Workout; zwischen den Runden genug Pause, damit die Technik sauber bleibt.",
+      "Battle ropes for more power: snakes, squat waves, in-and-out waves, power pull and slams. Complements the interval workout; rest enough between rounds so the technique stays clean."],
+    "gym-back-cable": ["Rücken am Kabel: erst der senkrechte Zug (Seil-Latzug), dann waagerecht rudern (breit, eng, einarmig) und zum Schluss der gerade Armzug. Mit den Ellbogen ziehen. 3 × 10–12.",
+      "Back on cables: vertical pull first (rope pulldown), then horizontal rows (wide, close, one-arm) and the straight-arm pulldown to finish. Pull with your elbows. 3 × 10–12."],
+    "gym-back-free-weights": ["Rücken mit freien Gewichten: Langhantelrudern, T-Bar, Rudern mit Brustauflage, Meadows-Row und einarmiges Kurzhantelrudern. Rücken gerade halten, nicht mit Schwung arbeiten. 3 × 8–12.",
+      "Back with free weights: barbell row, T-bar, chest-supported row, Meadows row and one-arm dumbbell row. Keep your back straight and avoid swinging. 3 × 8–12."],
+    "gym-biceps": ["Nur Bizeps: sechs Curl-Varianten mit Kurzhanteln, vom Schrägbank-Curl bis zum Zottman-Curl. 3 × 10–12, mit einem Oberkörpertag oder allein, nicht an zwei Tagen hintereinander.",
+      "Biceps only: six curl variations with dumbbells, from the incline curl to the Zottman curl. 3 × 10–12, together with an upper-body day or on its own, not on two days in a row."],
+    "gym-triceps": ["Nur Trizeps: Drücken mit engem Griff, Skull Crusher mit Kurzhanteln, Seil-Pushdown und drei Varianten am Kabel. 3 × 10–12, die Ellbogen nah am Körper halten.",
+      "Triceps only: close-grip press, dumbbell skull crusher, rope pushdown and three cable variations. 3 × 10–12, keep your elbows close to your body."],
+    "gym-core-cable": ["Rumpf am Kabel: Pallof Press gegen die Drehung, Crunch im Stehen, Heben, Drehen und Beinheben, zum Schluss das Bauchrad. 3 × 12–15, zwei bis drei Mal pro Woche. Das Bauchrad nur so weit ausrollen, wie der Rücken stabil bleibt.",
+      "Core on cables: Pallof press against rotation, standing crunch, lift, twist and reverse crunch, ab wheel to finish. 3 × 12–15, two to three times a week. Roll the wheel out only as far as your back stays stable."],
+    "gym-core-crunch": ["Bauch mit Crunch-Varianten: gerader Crunch, mit gestreckten Armen, Händen über dem Kopf und über Kreuz, zum Schluss der Judo-Flip. Langsam, mit dem Ausatmen hochkommen. 3 × 12–15.",
+      "Abs with crunch variations: straight crunch, arms straight, hands overhead and cross-body, judo flip to finish. Slow, come up as you breathe out. 3 × 12–15."],
     /* Widerstandsband: Rhythmus ehrlich benannt; Studienlage zu Pausen betrifft überwiegend Trainierte mit Gewichten (quellen.html [5]) */
     "band-full-body": ["Ganzkörper für den Einstieg: Beine, Zug, Druck, Schulter, Arme und Rumpf im Wechsel. Liegestütze mit Band sind fordernd – auf den Knien zu beginnen ist völlig in Ordnung. Rhythmus: 3 Sätze à 40 Sekunden, 20 Sekunden Pause, 20 Sekunden bis zur nächsten Übung. Längere Pausen bringen nach Studien mehr Kraft, die Studien betreffen aber überwiegend Trainierte mit Gewichten; für Einsteiger mit Band gibt es dazu keine belastbare Studienlage. Steigern (Praxisregel, keine Studie): gehen alle Sätze sauber und bleibt Luft, dann dickeres Band, kürzer greifen oder langsamer zurückgehen.",
       "Full body to get started: legs, pulling, pushing, shoulders, arms and trunk in turn. Band push-ups are demanding – starting on your knees is perfectly fine. Rhythm: 3 sets of 40 seconds, 20 seconds rest, 20 seconds until the next exercise. Longer rests bring more strength according to studies, but those mostly involve trained people with weights; for beginners with a band there is no solid evidence. To progress (practical rule, not a study): if all sets are clean and you have something left, use a thicker band, grip shorter or return more slowly."],

@@ -47,18 +47,17 @@ function defaultDB(){
 function frischDB(){
   var d = defaultDB();
   if(/[?&]schnelltest\b/.test(location.search)) return d;   // der Schnelltest klickt die klassischen Wege durch
-  d.settings.layout = "new"; d.settings.theme = "dark";
+  d.settings.theme = "dark";
   return d;
 }
-/* Frühere Designs landen beim nächsten Verwandten: System, Hell, Dunkel, Nacht.
-   2026-10-15: C60 (intern "kodak", auch die alten Retro-Namen) entfällt und wird zu Hell;
-   c60Umgestellt merkt sich das für den einmaligen Hinweis auf der Startseite. */
+/* Frühere Designs landen beim nächsten Verwandten: System, Hell, Dunkel (Nacht entfällt seit 2026-10-23: gespeicherte Stände wechseln zu Dunkel).
+   2026-10-15: C60 (intern "kodak", auch die alten Retro-Namen) entfällt und wird zu Hell. Der einmalige Hinweis darauf ist seit 2026-10-23 entfernt;
+   migrateTheme bleibt, damit gespeicherte Stände und Sicherungen mit alten Werten weiter geladen werden. */
 /* Weicher Verlauf für die Figuren-Übergänge (js/02-bibliothek.js); stand früher im Walzenzähler-Teil */
 function easeInOutCubic(x){ return x<.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; }
-var c60Umgestellt = false;
 function migrateTheme(t){
-  if(t==="kodak" || t==="retro" || t==="retro-light" || t==="retro-dark"){ c60Umgestellt = true; return "light"; }
-  if(t==="tapedeck") return "nacht";
+  if(t==="kodak" || t==="retro" || t==="retro-light" || t==="retro-dark") return "light";
+  if(t==="tapedeck" || t==="nacht") return "dark";
   if(t==="klar") return "system";
   return t;
 }

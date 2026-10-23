@@ -175,23 +175,16 @@ function renderSearch(){
 function renderHome(){
   var favHTML = favItemsHTML();
   var nFav = favEntries().length;
-  var neu = layoutNeu();
-  var bereicheListe = neu ? "" : bereicheHTML();   // New: die Bereiche stehen unter „Training“, hier der Workout-Builder
   app.innerHTML =
-    (neu ? kopfNeuHTML() : topbar("BLOC", { home:true, sub:"Modular Training Builder" })) +
-    (neu ? '<div class="woche-neu">'+wocheHTML()+'</div>'+heroNeuHTML()+c60HinweisHTML()+installTipHTML()+backupTipHTML()   // New wie im Entwurf: Kopf mit Foto, Woche darüber gelegt, heute geplant
-         : c60HinweisHTML() + installTipHTML() + backupTipHTML() + wocheHTML() + heroHTML()) +   // die Woche steht oben, darunter der Kopfblock
+    kopfNeuHTML() +
+    '<div class="woche-neu">'+wocheHTML()+'</div>'+heroNeuHTML()+installTipHTML()+backupTipHTML() +   // Kopf mit Foto, Woche darüber gelegt, heute geplant (die Bereiche stehen unter „Training“)
     '<div class="sec-head" data-favsek><div class="section-title">'+t("favorites")+(favHTML ? '' : ' <span class="lbl-hint bs-hinweis">'+esc(t("favEmptyKurz"))+'</span>')+'</div>'+
       (nFav > FAV_LIMIT ? '<button type="button" class="sec-link" data-favall>'+(favShowAll ? t("favLess") : t("favAllShort"))+
         '<span class="sec-link-chev'+(favShowAll?' up':'')+'">'+ICON_CHEV+'</span></button>' : '')+
     '</div>'+
     favHTML +
-    /* Weitere Bereiche: Workout, Mobility & Stretch, Timer und Run als ruhige Liste */
-    (bereicheListe ? '<div class="sec-head"><div class="section-title">'+t("areasMore")+'</div>'+
-      '<button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>'+bereicheListe : '') +
-    (neu ? builderKarteHTML() : '');
+    builderKarteHTML();
   bindCommon();
-  bindC60Hinweis();
   bindBuilderKarte();
   bindThemeToggle();
   app.querySelectorAll("[data-bereich]:not([data-bereich=\"faq\"])").forEach(function(el){ langDruck(el, openBereicheSheet); });
@@ -311,6 +304,7 @@ function renderTraining(){
     '<button type="button" class="suchfeld-neu" data-nav="#search">'+svgIcon('<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>')+'<span>'+esc(t("trainingSuche"))+'</span></button>'+
     '<div class="training-seite">'+bereicheHTML().replace(/<\/div><\/div>$/, areaTile("faq", "#faq", t("faqTitel"), t("faqKachelSub", { n:(window.BLOC_FAQ ? window.BLOC_FAQ.fragen.length : 0) }), "var(--accent)", "zeile")+'</div></div>')+'</div>'+
     '<div class="sec-head"><div class="section-title"></div><button type="button" class="sec-link" data-wasistwas>'+esc(t("wiLink"))+'</button></div>';
+  var bkT = app.querySelector(".topbar .back"); if(bkT) bkT.classList.add("zeigen");   // Zurück-Knopf auch auf Training (wie in Path und Kalender)
   bindCommon();
   /* Abwechslung: je Bereich ein Bild aus dem Pool, von Tag zu Tag wechselnd, kein Bild doppelt; dieselben Bilder tragen die Köpfe der Bereichsseiten */
   var fotos = bereichFotosNeu();

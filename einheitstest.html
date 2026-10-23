@@ -101,10 +101,22 @@
     wahr(W.studioIstRekord(jetzt, vor), "60 kg × 12 nach 60 kg × 10 ist ein Rekord, obwohl das 1RM gleich bleibt");
     wahr(!W.studioIstRekord(vor, vor), "Gleichstand ist kein Rekord");
   });
-  test("Frühere Designs: C60 und Retro werden zu Hell, Tapedeck zu Nacht, Klar zu System", function () {
+  test("Frühere Designs: C60 und Retro werden zu Hell, Tapedeck und Nacht zu Dunkel, Klar zu System", function () {
     gleich(W.migrateTheme("kodak"), "light", "kodak"); gleich(W.migrateTheme("retro"), "light", "retro");
-    gleich(W.migrateTheme("tapedeck"), "nacht", "tapedeck"); gleich(W.migrateTheme("klar"), "system", "klar");
+    gleich(W.migrateTheme("tapedeck"), "dark", "tapedeck"); gleich(W.migrateTheme("nacht"), "dark", "nacht"); gleich(W.migrateTheme("klar"), "system", "klar");
     gleich(W.migrateTheme("dark"), "dark", "Dunkel bleibt");
+  });
+  test("Kalorien: Radfahrten rechnen mit Rad-Werten nach Tempo (Compendium), nicht wie Läufe", function () {
+    var alt = W.state.db.settings.koerper; W.state.db.settings.koerper = { kg: 80 };
+    try {
+      gleich(W.runKcal(10000, 3600, true), 320, "10 km/h Freizeit: MET 4,0");
+      gleich(W.runKcal(17000, 3600, true), 544, "17 km/h: MET 6,8");
+      gleich(W.runKcal(20000, 3600, true), 640, "20 km/h: MET 8,0");
+      gleich(W.runKcal(24000, 3600, true), 800, "24 km/h: MET 10,0");
+      gleich(W.runKcal(30000, 3600, true), 960, "30 km/h: MET 12,0");
+      wahr(W.runKcal(20000, 3600, false) !== W.runKcal(20000, 3600, true), "Fahrt und Lauf werden verschieden gerechnet");
+      gleich(W.runKcal(20000, 3600, true), 640, "dieselbe Fahrt gibt immer dasselbe");
+    } finally { W.state.db.settings.koerper = alt; }
   });
   test("Wochenwerte: je Kalenderwoche (Montag) der beste Wert, der niedrigste bei Zeiten, die Summe beim Volumen", function () {
     var mo = new Date(2026, 9, 5, 10).getTime(), mi = new Date(2026, 9, 7, 18).getTime(), naechste = new Date(2026, 9, 12, 9).getTime();

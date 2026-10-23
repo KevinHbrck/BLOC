@@ -79,6 +79,11 @@ function kalSumme(tage){
   return { n:n, km:km, ok:ok };
 }
 /* Name, Zeile darunter und Farbe eines Eintrags; ok:false, wenn das Ziel gelöscht wurde */
+/* Farbe eines Eintrags nach dem Ort seiner Übungen, wie im Katalog: Fitnessstudio rot, Freiluft blau; Mobility & Stretch grün (nur Dehnübungen) */
+function kalOrtFarbe(exs){
+  if(exs.length && exs.every(function(ex){ return ex.main === "stretch"; })) return "var(--ws-color)";
+  return exs.length && katWoOrt(exs) === "studio" ? "var(--gym-color)" : "var(--tp-color)";
+}
 function kalAufloesen(e){
   var o = { name:e.name || "", sub:"", ok:true, farbe:KAL_FARBE[e.art] || "var(--accent)" };
   function exAnz(exs, dauer){ return t("exCount", { n:exs.length })+(dauer ? " · "+fmtDauerKurz(dauer) : ""); }
@@ -88,18 +93,18 @@ function kalAufloesen(e){
     else {
       var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
       o.name = mw.name; o.sub = exAnz(exs, workoutDuration(myRun(mw)));
-      if(mw.ws) o.farbe = "var(--ws-color)";
+      o.farbe = mw.ws ? "var(--ws-color)" : kalOrtFarbe(exs);
     }
   } else if(e.art === "plan"){
     var p = stPlanFind(e.ref);
-    if(!p) o.ok = false; else { o.name = p.name; o.sub = planAnzahl(stPlanIds(p).length); }
+    if(!p) o.ok = false; else { o.name = p.name; o.sub = planAnzahl(stPlanIds(p).length); o.farbe = kalOrtFarbe(stPlanIds(p).map(findExercise).filter(Boolean)); }
   } else if(e.art === "lib"){
     var lw = findLibWorkout(e.ref);
     if(!lw) o.ok = false;
     else {
       var le = lw.exercises.map(findExercise).filter(Boolean);
       o.name = tplText(lw.name); o.sub = exAnz(le, workoutDuration(libWorkoutRun(lw)));
-      if(libIstWarmDehn(lw)) o.farbe = "var(--ws-color)";
+      o.farbe = libIstWarmDehn(lw) ? "var(--ws-color)" : kalOrtFarbe(le);
     }
   } else if(e.art === "programm"){   // ganzer Trainingsplan aus der Arena
     var pg = programmFinde(e.ref);
@@ -193,8 +198,7 @@ function renderKalender(){
   var sichtbar = tage.filter(function(d){ return !monat || d.getMonth() === kalBasis.getMonth(); }).map(kalTagKey);
   var sum = kalSumme(sichtbar);
   var heuteKnopf = '<button type="button" class="kal-heutebtn" data-kalheute aria-label="'+esc(t("kalHeuteSpringen"))+'">'+svgIcon('<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>')+'<span>'+esc(t("kalHeute"))+'</span></button>';
-  html = (layoutNeu() ? bereichKopfNeuHTML("kal", t("tabKalender"), t("kalKicker"), heuteKnopf, { foto:"img/neu-d-kalender.jpg", fotoHell:"img/neu-h-kettlebell.jpg", zurueck:"#home", ohneSuche:true })
-      : topbar(t("kalTitel"), { back:"#home", right:heuteKnopf })) +
+  html = bereichKopfNeuHTML("kal", t("tabKalender"), t("kalKicker"), heuteKnopf, { klar:true, foto:"img/neu-d-kalender.jpg", fotoHell:"img/neu-h-kettlebell.jpg", zurueck:"#home", ohneSuche:true }) +
     '<div class="card lib-tabs-card"><div class="theme-pick lib-tabs seg-2">'+
       '<button type="button" data-kalansicht="woche" class="'+(!monat ? 'active' : '')+'">'+esc(t("kalWoche"))+'</button>'+
       '<button type="button" data-kalansicht="monat" class="'+(monat ? 'active' : '')+'">'+esc(t("kalMonat"))+'</button></div></div>'+
@@ -384,7 +388,7 @@ function kalHinzuMenue(tag){
   }
   openActionSheet(kalTagText(tag), [
     { ico:HOME_ICON.lib, label:t("kalWorkouts"), fn:workoutsMenue },
-    { ico:'<ellipse cx="12" cy="12" rx="9" ry="6.5"/><ellipse cx="12" cy="12" rx="4.2" ry="2.5"/>', label:t("kalPlan"), fn:function(){
+    { ico:'<circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8.2 19h8.3a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h8.3"/>', label:t("kalPlan"), fn:function(){
       var items = programmListe().filter(function(pg){ return pg.items.length; }).map(function(pg){ return { id:pg.id, name:pg.name, sub:pg.items.length === 1 ? t("progMeta1") : t("progMeta", { n:pg.items.length }) }; });
       kalPicker(t("kalPlan"), items, function(id){ fertig("programm", id); });
     } },

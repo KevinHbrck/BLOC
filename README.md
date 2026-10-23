@@ -17,7 +17,7 @@ Dieses Dokument beschreibt den **aktuellen Stand**. Die Geschichte der Änderung
 
 ## Aufbau der App
 
-**Unten eine Leiste** (nur auf den Hauptseiten): **Start · Suche · Kalender · Statistik · Einstellungen** (im Aussehen New: **Heute · Training · Kalender · Fortschritt** mit rundem Hauptknopf, siehe Designs).
+**Unten eine Leiste** (nur auf den Hauptseiten): **Start · Suche · Kalender · Statistik · Einstellungen** (im Aussehen New: **Heute · Training · Path · Kalender** mit rundem Hauptknopf, siehe Designs).
 
 **Startseite:** Wochenzeile (Trainings dieser Woche), Favoriten (☆, höchstens vier sichtbar) und die Bereiche in der
 Reihenfolge **Workout, Timer, Run, Mobility & Stretch** (langes Drücken zum Sortieren). Welche Bereiche sichtbar sind,
@@ -30,6 +30,12 @@ stellt man unter **Einstellungen › Fokus** ein (ausgeblendete Bereiche bleiben
 | **Mobility & Stretch** (intern `warm`, `js/17-aufwaermen-einstellungen.js`) | Aufbau wie das Workout: Reiter **Katalog** (Abteilungen **Meine** · **Workoutkatalog** · **Übungskatalog**, dort „Eigene Übung anlegen“) und **Baukasten** (**Überrasch mich** nach Dauer und Körperregion, **Selber bauen**); darunter die Art Aufwärmen | Dehnen, Körperregionen als Filter |
 
 **Speicherformat:** `db.v` zählt die Fassung (3 = ohne Summit). Laden, Import und Schnappschuss laufen über `dbAusRoh` und `dbMigrieren` (`js/01-basis.js`); jede Formatänderung bekommt dort eine Stufe. Summit (Challenges) wurde in Stufe 3 entfernt; alle Daten dazu werden beim Laden gelöscht.
+
+**Path** (früher Arena, dritter Reiter der unteren Leiste im Aussehen New; `js/21-koerper.js`): drei Reiter. **Trainingspläne** (Einträge der Reihe nach, Wochenplan, Kalender) · **Deep Dive** (die Muskelgruppen auf der Körperfigur, pro Woche und pro Workout mit den Kennzahlen Trainings, Zeit und Übungen, der Verteilung auf sechs Gruppen mit Unterschied zur Vorwoche und einem Vorschlag aus dem Katalog für die Gruppe, die zu kurz kam; Wochen mit den Pfeilen wechseln, Daten aus dem Trainingsverlauf) · **Fortschritt** (die Statistik, siehe unten).
+
+**Katalog (2026-10-23):** Workout-Karten zeigen eine kleine Körperfigur mit den trainierten Muskelgruppen (`kkMiniHTML`). Die Ortskarten und Übungskacheln tragen die Farbe des Ortes: Fitnessstudio rot, Freiluft blau, Mobility & Stretch grün (auch in der Auswahl der Trainingspläne). Für Gruppen mit nur ein oder zwei Workouts gibt es 15 zusätzliche zusammengestellte Workouts (`daten.js`, Block „Mehr Abwechslung“), je Gruppe und Ort mit höchstens 25 % gleichen Übungen wie in den vorhandenen.
+
+**Aufgabenteilung Fortschritt und Deep Dive** (2026-10-23): **Fortschritt** zeigt Menge und Verlauf über Wochen (Zeit, Serie, Läufe, Volumen, Rekorde, die trainierten **BLOCs im Verlauf** und die gespeicherten Trainings); **Deep Dive** zeigt die Verteilung einer Woche (Häufigkeit pro Muskelgruppe, Muskel-Kalender mit Plan-Vorschau, Balance, Anteil). Beide verweisen aufeinander. Die Kalorien für Radfahrten rechnen mit Rad-Werten nach Tempo, nicht wie Läufe (`runKcal`).
 
 **Statistik** (alles lokal berechnet): Kopf mit Trainings der letzten 7 Tage und Serie, Verlauf als Balken (Zeit oder
 Anzahl, **Woche · Monat · Jahr**, nach links wischen für früher, so weit Daten da sind), Kalender der letzten 4 Wochen
@@ -47,18 +53,19 @@ Musik anderer Apps läuft weiter.
 
 ## Designs
 
-**Helligkeit: System · Hell · Dunkel · Nacht.** Farben nach 60-30-10: ruhige Flächen, Bereichsfarben je Bereich, Akzentfarbe nur für
+**Helligkeit: System · Hell · Dunkel** (Nacht entfällt seit 2026-10-23; gespeicherte Stände wechseln zu Dunkel). Farben nach 60-30-10: ruhige Flächen, Bereichsfarben je Bereich, Akzentfarbe nur für
 die Hauptaktion, das Logo und die Arbeitsphase im Timer. „Ausgewählt“ ist ruhig (`--sel-bg`/`--sel-text`).
 
-**Aussehen: Classic · Modern** (heißt seit 2026-10-16 so, früher Klassik · New; Einstellungen › Darstellung, `settings.layout` mit den Werten `classic` und `new` unverändert; Standard bei einem frischen Start: Modern in Dunkel, bestehende Stände bleiben Classic). Der Look von „New“ steht in
+**Aussehen: nur Modern** (das frühere „Classic“ ist seit 2026-10-23 aus dem Code entfernt; es gibt keine Auswahl mehr, `data-layout="new"` wird in `applyTheme` immer gesetzt; Standard bei einem frischen Start: Dunkel). Der Look steht in
 `layout-new.css` (alles unter `:root[data-layout="new"]`, gesetzt in `applyTheme`): größere Rundungen mit kleiner Ecke oben links, ruhige
 Konturen, Wochenpunkte weiß / orange / Ring, die untere Leiste als schwebende Pille mit orangenem aktivem Reiter. Dazu ändert „New“ die
-Navigation (nur das, Funktionen bleiben): unten **Heute · Training · Kalender · Fortschritt**; Suche und Einstellungen sind Symbole oben auf
-Heute und Training (`kopfSymboleNeu`, `layoutNeu` in `js/03-router.js`); die Bereiche (Workout, Mobility & Stretch, Timer, Run) stehen
+Navigation: unten **Heute · Training · Path · Kalender**; Suche und Einstellungen sind Symbole oben auf
+Heute und Training (`kopfSymboleNeu` in `js/03-router.js`); die Bereiche (Workout, Mobility & Stretch, Timer, Run) stehen
 als Fotokarten auf der neuen Seite **Training** (`#training`, `renderTraining` in `js/05-suche.js`); auf Heute ersetzt der **Workout-Builder**
 (Überrasch mich · Selber bauen, `builderKarteHTML`) die Bereichsliste. Fotos für New: `img/neu-*.jpg` und `img/neu-builder.webp`. Das frühere
-Design C60 (Kassetten-Look mit Walzenzähler) gibt es nicht mehr; gespeicherte C60-Stände werden beim Laden zu Hell (`migrateTheme`), mit einem
-einmaligen Hinweis auf der Startseite.
+Design C60 (Kassetten-Look mit Walzenzähler) gibt es nicht mehr; gespeicherte Stände und Sicherungen mit den alten Designs (C60, Retro, Tapedeck, Nacht) werden beim Laden still zugeordnet (`migrateTheme`: Hell bzw. Dunkel); der frühere einmalige Hinweis auf der Startseite ist entfernt.
+
+**Glas-Design** (2026-10-23, nur Modern in Dunkel; `data-glas` am Wurzelelement, gesetzt in `applyTheme`, auch bei „System“ auf einem dunklen Gerät): Das Foto der Run-Seite liegt geblurrt und abgedunkelt hinter allen Seiten (`div.glas-bg` in `index.html`, Werte wie `.run-bg`), Karten sind halbtransparentes Glas (`--surface`), Figuren und Symbole sind weiß, Orange bleibt der Hauptaktion. Hell bleibt unverändert. Timer, Satz-Training und Run behalten ihr eigenes dunkles Aussehen; solange sie offen sind, ist auch die Statusleiste des Handys dunkel (`leistenFarbeAbgleichen`, Meta-Feld `theme-color`). Die Figur im Timer ist seit 2026-10-23 um 30 % kleiner, damit sie auf kleinen Handys passt.
 
 ## Daten und Sicherheit
 

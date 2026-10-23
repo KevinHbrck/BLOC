@@ -24,7 +24,7 @@ function areaTile(key, href, titel, unter, farbe, art){
 /* Bereiche der Startseite: Reihenfolge per langem Drücken änderbar (settings.bereiche), der oberste steht groß vorn */
 var BEREICH_KEYS = ["lib", "timer", "intervall", "run", "warm"];   // Bereiche im Verlauf (gespeichert bleibt Air = lib und Studio = timer); die Statistik zeigt beide gemeinsam als „Workout“
 var HOME_KEYS = ["katalog", "warm", "intervall", "run"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
-var HOME_GROSS = ["katalog"];   // steht fest vorn (nicht sortierbar): der Kopfblock (heroHTML) führt dorthin, und Workout hat zusätzlich die erste Kachel unter „Weitere Bereiche“
+var HOME_GROSS = ["katalog"];   // steht fest vorn (nicht sortierbar): der Kopfblock (heroNeuHTML) führt dorthin, und Workout hat zusätzlich die erste Kachel unter „Weitere Bereiche“
 function bereichDaten(k){
   if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--accent)"];
@@ -77,7 +77,7 @@ function openBereicheSheet(){
   var root = document.getElementById("overlayRoot"), r = bereichReihe().filter(function(k){ return HOME_GROSS.indexOf(k) < 0; });
   function zeichnen(){
     root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet bereiche-sheet">'+
-      '<h3>'+esc(t("areasSort"))+'</h3><p>'+esc(t(layoutNeu() ? "areasSortHintNeu" : "areasSortHint"))+'</p>'+
+      '<h3>'+esc(t("areasSort"))+'</h3><p>'+esc(t("areasSortHintNeu"))+'</p>'+
       '<div class="bs-liste">'+r.map(function(k, i){
         var d = bereichDaten(k);
         return '<div class="bs-zeile" data-bereich="'+k+'" style="--c:'+d[3]+'"><span class="at-ico">'+svgIcon(HOME_ICON[k])+'</span><b>'+esc(d[1])+'</b>'+
@@ -102,8 +102,8 @@ function openBereicheSheet(){
   zeichnen();
 }
 /* „Überrasch mich“: schmale Leiste (eine Zeile) direkt unter den Reitern vom Workout-Bereich - das Alleinstellungsmerkmal, aber ohne viel Höhe zu kosten */
-/* Bild-Kopf der Bereichsseiten (Mobility & Stretch, Timer, Run): ein schmales Foto direkt unter der Kopfzeile. Fotos: Pexels (siehe quellen.html) */
-var BEREICH_BILD = { suche:"img/bereich-suche.jpg", warm:"img/bereich-mobility.jpg", intervall:"img/bereich-timer.jpg", run:"img/bereich-run.jpg" };
+/* Bild-Kopf der Suche: ein schmales Foto direkt unter der Kopfzeile (die übrigen Seiten haben keinen Bild-Kopf mehr). Foto: Pexels (siehe quellen.html) */
+var BEREICH_BILD = { suche:"img/bereich-suche.jpg" };
 function bereichBildHTML(key){
   return '<div class="bereich-bild"><img src="'+BEREICH_BILD[key]+'" alt="" draggable="false"></div>';
 }
@@ -113,29 +113,3 @@ function heroHeutige(){
   var heute = kalTagKey(Date.now()), st = kalStatus(heute);
   return kalAn(heute).filter(function(e){ return !st[e.id] && kalAufloesen(e).ok; });
 }
-/* Kopfblock der Startseite, in dieser Rangfolge:
-   A) heute ist etwas eingeplant: unten Name(n) des Trainings, darüber Dauer und Ort; ein Tipp startet es (bei mehreren erscheint eine Auswahl)
-   B) nichts eingeplant, aber Favoriten da: „Bereit für dein Training?“, ein Tipp springt zu den Favoriten
-   C) auch keine Favoriten: ein Tipp führt direkt in den Baukasten (Workout › Baukasten). Foto: Pexels (siehe quellen.html) */
-function heroHTML(){
-  if(fokusAus("katalog")) return "";   // Workout in den Einstellungen ausgeblendet: dann auch kein Kopfblock
-  var tag = new Date().toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { weekday:"long" });
-  var heute = heroHeutige(), modus = "baukasten", los = t("heroLos"), sub = "";
-  if(heute.length){   // der Titel bleibt „Bereit für dein Training?“, unten steht das Training mit Namen (darüber Dauer und Ort)
-    var info = kalHeroInfo(heute);
-    modus = "plan"; los = info.titel; sub = info.sub;
-  } else if(favEntries().length){
-    modus = "fav"; los = t("heroFav");
-  }
-  return '<section class="home-hero">'+
-    '<img class="hh-bild" src="img/start-halle.jpg" alt="" draggable="false">'+
-    '<button type="button" class="hh-main" data-herostart="'+modus+'">'+
-      '<span class="hh-label">'+esc(t("heroHeute", { d:tag }))+'</span>'+
-      '<b class="hh-titel">'+esc(t("heroTitel"))+'</b>'+
-      (sub ? '<span class="hh-sub">'+esc(sub)+'</span>' : '')+
-      '<span class="hh-los">'+ICON_PLAY+'<span>'+esc(los)+'</span></span>'+
-    '</button>'+
-  '</section>';
-}
-/* Reiterzeile: schlanke Reiter mit Unterstrich in der Farbe des Bereichs (Workout, Mobility & Stretch) */
-function reiterZeileHTML(farbe, knoepfe){ return '<div class="rz" style="--rz:'+farbe+'">'+knoepfe+'</div>'; }

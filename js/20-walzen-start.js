@@ -147,6 +147,7 @@ function exitPlayer(){
   playerState = null;
   releaseWakeLock();
   document.getElementById("playerRoot").innerHTML = "";
+  leistenFarbeAbgleichen();   // Statusleiste wieder passend zum gewählten Design
   go(ziel);
 }
 

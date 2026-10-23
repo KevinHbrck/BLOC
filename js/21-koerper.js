@@ -12,14 +12,210 @@ var PG_RUBRIKEN = ["mobility", "workout", "run", "stretch"];
 var pgOffen = {};   // aufgeklappte Karten und Wochenpläne (nur für diesen Besuch)
 
 function koerperTab(){
-  return state.db.settings.koerperTab === "fortschritt" ? "fortschritt" : "programm";   // früher „plan“ und „uebungen“ führen zu den Trainingsplänen
+  var k = state.db.settings.koerperTab;
+  return k === "fortschritt" ? "fortschritt" : k === "deepdive" ? "deepdive" : "programm";   // früher „plan“ und „uebungen“ führen zu den Trainingsplänen
 }
 function koerperSegHTML(){
   function b(k, label){ return '<button type="button" data-koerpertab="'+k+'" class="'+(koerperTab() === k ? 'active' : '')+'" aria-pressed="'+(koerperTab() === k)+'">'+esc(label)+'</button>'; }
-  return '<div class="rz koerper-rz" role="group">'+b("programm", t("arenaProgramm"))+b("fortschritt", t("arenaFortschritt"))+'</div>';
+  return '<div class="rz koerper-rz drei" role="group">'+b("programm", t("arenaProgramm"))+b("deepdive", t("arenaDeepDive"))+b("fortschritt", t("arenaFortschritt"))+'</div>';
+}
+/* Deep Dive: die Muskelgruppen auf der Körperfigur, pro Woche (alle Übungen der Woche) und pro Workout (jedes Training der Woche mit Übungen).
+   Die Figur und die Zeilen (viel · am Rande · Lücken) sind die der Körperkarte (kkKopfHTML); die Daten kommen aus dem Trainingsverlauf (history[].ex). */
+var ddWoche = 0;   // 0 = diese Woche, -1 = die vorherige … (nur für diesen Besuch)
+var ddModus = null;   // "ist" (nur Trainiertes) | "plan" (dazu die Termine aus dem Kalender); null = automatisch
+function ddWochenStart(){
+  var d = new Date(); d.setHours(0, 0, 0, 0);
+  return d.getTime() - ((d.getDay() + 6) % 7)*86400000 + ddWoche*7*86400000;   // Montag 0:00 der gewählten Woche
+}
+/* Übungen eines Kalender-Eintrags (Workout, Katalog, BLOC); Run und Zufall haben keine feste Übungsliste */
+function ddGeplantIds(e){
+  var pre = e.art === "workout" ? "my:" : e.art === "lib" ? "lib:" : e.art === "plan" ? "plan:" : "";
+  return pre ? pgUebungen(pre+e.ref) : [];
+}
+/* Die sieben Tage der Woche: ist = Übungen aus dem Trainingsverlauf, plan = Übungen der Kalender-Termine */
+function ddWochenDaten(von){
+  var tag = 86400000, tage = [];
+  for(var i = 0; i < 7; i++) tage.push({ ist:[], plan:[] });
+  function index(ms){ var d = new Date(ms); d.setHours(0, 0, 0, 0); return Math.round((d.getTime() - von)/tag); }
+  (state.db.history || []).forEach(function(e){
+    if(!e || !e.ex || !e.ex.length) return;
+    var i = index(e.at);
+    if(i >= 0 && i < 7) tage[i].ist = tage[i].ist.concat(e.ex);
+  });
+  kalListe().forEach(function(e){
+    var i = index(kalTagDatum(e.tag).getTime());
+    if(i >= 0 && i < 7) tage[i].plan = tage[i].plan.concat(ddGeplantIds(e));
+  });
+  return tage;
+}
+/* Muskelgruppen (die sechs groben), die an einem Tag mit mindestens etwa einer ganzen Übung dabei sind; reine Hilfsmuskeln (0,35) zählen nicht */
+function ddGruppenTag(ids){
+  var sum = {}, out = {};
+  ids.forEach(function(id){
+    var ex = findExercise(id);
+    if(!ex || ex.main === "stretch") return;
+    var v = mgVerteilung(ex);
+    Object.keys(v).forEach(function(g){ sum[g] = (sum[g] || 0) + v[g]; });
+  });
+  Object.keys(sum).forEach(function(g){ if(sum[g] >= .45) out[g] = 1; });
+  return out;
+}
+/* Drücken und Ziehen, Oberkörper und Unterkörper aus den feinen Zonen (Haupt- und Hilfsmuskeln wie in der Körperkarte); schulter_s und Rumpf zählen nirgends */
+var DD_PUSH = ["brust_o", "brust", "schulter_v", "trizeps"], DD_PULL = ["lat", "rauten", "trapez_o", "bizeps", "schulter_h"];
+var DD_OBEN = DD_PUSH.concat(DD_PULL, ["schulter_s", "unterarm"]), DD_UNTEN = ["quad", "hamstring", "gesaess", "waden", "abduktor", "adduktor"];
+function ddBalance(ids){
+  var s = {};
+  ids.forEach(function(id){
+    var ex = findExercise(id);
+    if(!ex || ex.main === "stretch") return;
+    var f = kkFein(ex);
+    Object.keys(f.haupt).forEach(function(z){ s[z] = (s[z] || 0) + f.haupt[z]; });
+    Object.keys(f.hilfe).forEach(function(z){ s[z] = (s[z] || 0) + f.hilfe[z]; });
+  });
+  function summe(zonen){ return zonen.reduce(function(a, z){ return a + (s[z] || 0); }, 0); }
+  var push = summe(DD_PUSH), pull = summe(DD_PULL), oben = summe(DD_OBEN), unten = summe(DD_UNTEN);
+  return { push:push, pull:pull, oben:oben, unten:unten };
+}
+function ddBalken(links, rechts, a, b){
+  var gesamt = a + b, pa = gesamt ? Math.round(a*100/gesamt) : 0;
+  return '<div class="dd-bal"><div class="dd-bal-k"><span>'+esc(links)+'</span><span>'+esc(rechts)+'</span></div>'+
+    '<div class="dd-split'+(gesamt ? '' : ' leer')+'"><i style="width:'+(gesamt ? pa : 50)+'%"></i></div>'+
+    '<div class="dd-bal-z"><b>'+(gesamt ? pa : "–")+(gesamt ? ' %' : '')+'</b><b>'+(gesamt ? (100 - pa) : "–")+(gesamt ? ' %' : '')+'</b></div></div>';
+}
+/* Idee für die nächste Einheit: Tag wählen (heute und die nächsten sechs) und das Workout als Termin in den Kalender legen */
+function ddKalenderWahl(id){
+  var lw = findLibWorkout(id); if(!lw) return;
+  var heute = new Date(); heute.setHours(12, 0, 0, 0);
+  var acts = [];
+  for(var i = 0; i < 7; i++){
+    (function(i){
+      var key = kalTagKey(kalPlus(heute, i)), vor = i === 0 ? t("ddHeute")+" · " : i === 1 ? t("ddMorgen")+" · " : "";
+      acts.push({ ico:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>', label:vor+kalTagText(key), fn:function(){ kalHinzu(key, { art:"lib", ref:id }); showToast(t("ddKalOk", { d:kalTagText(key) })); } });
+    })(i);
+  }
+  openActionSheet(tplText(lw.name)+" · "+t("ddKalWann"), acts);
+}
+function renderDeepDive(){
+  var tag = 86400000, von = ddWochenStart(), bis = von + 7*tag, lang = currentLang() === "en" ? "en-GB" : "de-DE";
+  function woche(a, b){ return (state.db.history || []).filter(function(e){ return e && e.at >= a && e.at < b && e.ex && e.ex.length; }).sort(function(x, y){ return y.at - x.at; }); }
+  function alleIds(l){ var ids = []; l.forEach(function(e){ e.ex.forEach(function(id){ ids.push(id); }); }); return ids; }
+  function datum(ms, opt){ return new Date(ms).toLocaleDateString(lang, opt); }
+  var eintraege = woche(von, bis), vorher = woche(von - 7*tag, von);
+  var tage = ddWochenDaten(von);
+  var gibtPlan = tage.some(function(x){ return x.plan.length > 0; }), gibtIst = tage.some(function(x){ return x.ist.length > 0; });
+  var modus = !gibtPlan ? "ist" : (ddModus || (gibtIst ? "ist" : "plan"));
+  var tageIds = tage.map(function(x){ return x.ist.length ? x.ist : (modus === "plan" ? x.plan : []); });
+  var ids = [].concat.apply([], tageIds), hatDaten = ids.length > 0;
+  var kopf = ddWoche === 0 ? t("ddDiese") : datum(von, { day:"numeric", month:"short" })+" – "+datum(bis - tag, { day:"numeric", month:"short" });
+
+  // Kennzahlen der Woche (nur Trainiertes): Trainings, Zeit, verschiedene Übungen
+  var istIds = alleIds(eintraege), verschieden = {}; istIds.forEach(function(id){ verschieden[id] = 1; });
+  var sek = eintraege.reduce(function(a, e){ return a + (e.dur || 0); }, 0);
+  var chips = !eintraege.length ? '' : '<div class="chips-stat dd-chips"><span><b>'+eintraege.length+'</b><small>'+esc(t("ddChipTrainings"))+'</small></span>'+
+    '<span><b>'+esc(sek >= 60 ? fmtDuration(Math.round(sek/60)*60) : "–")+'</b><small>'+esc(t("ddChipZeit"))+'</small></span>'+
+    '<span><b>'+Object.keys(verschieden).length+'</b><small>'+esc(t("ddChipUebungen"))+'</small></span></div>';
+
+  // Umschalter Trainiert · Mit Plan (nur, wenn es Termine im Kalender gibt)
+  var umschalter = !gibtPlan ? '' : '<div class="rz dd-modus" role="group"><button type="button" data-ddmodus="ist" class="'+(modus === "ist" ? 'active' : '')+'" aria-pressed="'+(modus === "ist")+'">'+esc(t("ddIst"))+'</button>'+
+    '<button type="button" data-ddmodus="plan" class="'+(modus === "plan" ? 'active' : '')+'" aria-pressed="'+(modus === "plan")+'">'+esc(t("ddPlan"))+'</button></div>';
+
+  // Wie oft pro Muskelgruppe: Körperfigur nach Tagen (hell = 1 Tag, kräftig = 2 oder mehr), darunter die Zonen in drei Zeilen
+  var zTage = {};
+  tageIds.forEach(function(d){
+    if(!d.length) return;
+    var sm = kkSumme(d);
+    Object.keys(sm).forEach(function(z){ if(sm[z] >= .9) zTage[z] = (zTage[z] || 0) + 1; });
+  });
+  var w = {}, z2 = [], z1 = [], z0 = [];
+  kkReihe().forEach(function(z){
+    var n = zTage[z] || 0;
+    w[z] = n >= 2 ? 1 : n === 1 ? .38 : 0;
+    if(n >= 2) z2.push(z); else if(n === 1) z1.push(z); else if(kkWichtig(z)) z0.push(z);
+  });
+  function zeile(kl, key, zonen){ return zonen.length ? '<div class="kk-zeile '+kl+'"><b>'+esc(t(key))+'</b> '+esc(zonen.map(kkName).join(", "))+'</div>' : ''; }
+  var wochentage = [];
+  for(var i = 0; i < 7; i++) wochentage.push(new Date(von + i*tag + 12*3600000).toLocaleDateString(lang, { weekday:"narrow" }));
+  var gruppenTag = tageIds.map(ddGruppenTag), gruppenN = {};
+  MUSKEL_GRP.forEach(function(g){ gruppenN[g.id] = gruppenTag.filter(function(x){ return x[g.id]; }).length; });
+  var abgedeckt = MUSKEL_GRP.filter(function(g){ return gruppenN[g.id] >= 2; }).length;   // Gruppen mit mindestens zwei Tagen (WHO: alle großen Gruppen an mindestens 2 Tagen)
+
+  var freqKarte = '<section class="card dd-karte dd-freq"><div class="dd-titel">'+esc(t("ddFreqTitel"))+'</div>'+
+    '<div class="kk-kopf">'+koerperPaar(w)+'<div class="kk-kopf-txt">'+
+      zeile("viel", "ddFreq2", z2)+zeile("rand", "ddFreq1", z1)+zeile("luecke", "ddFreq0", z0)+'</div></div>'+
+    '<div class="dd-who"><span class="dd-who-m'+(abgedeckt === MUSKEL_GRP.length ? ' ok' : '')+'">'+abgedeckt+'/'+MUSKEL_GRP.length+'</span><span>'+esc(t("ddWho", { n:abgedeckt }))+'</span></div></section>';
+
+  // Woche im Überblick: sechs Gruppen × sieben Tage (voller Punkt = trainiert, hohler Punkt = geplant), rechts die Zahl der Tage
+  var kalZeilen = MUSKEL_GRP.map(function(g){
+    var n = 0, punkte = tage.map(function(x, i){
+      if(!gruppenTag[i][g.id]) return '<i class="dd-punkt"></i>';
+      n++;
+      return '<i class="dd-punkt '+(x.ist.length ? 'an' : 'plan')+'"></i>';
+    }).join("");
+    return '<div class="dd-kal-zeile"><span class="dd-kal-n">'+esc(t(g.key))+'</span>'+punkte+'<b class="dd-haeufig f'+Math.min(n, 2)+'">'+n+'×</b></div>';
+  }).join("");
+  var kalKarte = '<section class="card dd-karte"><div class="dd-titel">'+esc(t("ddKalTitel"))+'</div>'+
+    '<div class="dd-kal"><div class="dd-kal-zeile dd-kal-kopf"><span></span>'+wochentage.map(function(x){ return '<small>'+esc(x)+'</small>'; }).join("")+'<span></span></div>'+kalZeilen+'</div>'+
+    (hatDaten ? '<div class="dd-legende">'+esc(t("ddKalLegende"))+'</div>' : '<p class="dd-leer">'+esc(t("ddLeerKal"))+'</p><button type="button" class="btn btn-secondary dd-plan-btn" data-nav="#kalender">'+esc(t("ddPlanenBtn"))+'</button>')+'</section>';
+
+  // Balance: Drücken ↔ Ziehen, Oberkörper ↔ Unterkörper
+  var bal = ddBalance(ids);
+  var balKarte = !hatDaten ? '' : '<section class="card dd-karte"><div class="dd-titel">'+esc(t("ddBalTitel"))+'</div>'+
+    ddBalken(t("ddPush"), t("ddPull"), bal.push, bal.pull)+ddBalken(t("ddOben"), t("ddUnten"), bal.oben, bal.unten)+
+    '<div class="dd-fussnote">'+esc(t("ddBalHinweis"))+'</div></section>';
+
+  // Anteil der sechs Muskelgruppen, daneben der Unterschied zur Vorwoche (nur Trainiertes; mit Plan: die Auswahl oben)
+  var r = mgProzent(ids), rv = mgProzent(alleIds(vorher)), verteilung = '';
+  if(!r.leer){
+    verteilung = '<section class="card dd-karte"><div class="dd-titel">'+esc(t("ddAnteil"))+'</div><div class="dd-verteilung">'+r.rows.map(function(x, i){
+      var d = rv.leer ? 0 : x.pct - rv.rows[i].pct;
+      return '<div class="ausw-row'+(x.pct ? '' : ' null')+'"><span class="ausw-n">'+esc(t(x.key))+'</span><span class="ausw-bar"><i style="width:'+x.pct+'%"></i></span><b>'+x.pct+'%</b>'+
+        '<small class="dd-delta'+(d > 0 ? ' plus' : d < 0 ? ' minus' : '')+'">'+(Math.abs(d) >= 3 ? (d > 0 ? '+' : '−')+Math.abs(d) : '')+'</small></div>';
+    }).join("")+'<div class="dd-fussnote">'+esc(t("ddHinweis"))+'</div></div></section>';
+  }
+  // Idee für die nächste Einheit: ein Workout aus dem Katalog für die Gruppe mit dem geringsten Anteil (wechselt von Woche zu Woche)
+  var vorschlag = '';
+  if(!r.leer){
+    var luecke = r.rows.slice().sort(function(a, b){ return a.pct - b.pct; })[0], bereich = luecke.g === "rumpf" ? "bauch" : luecke.g;
+    var treffer = LIB_WORKOUTS.filter(function(lw){
+      if(libIstWarmDehn(lw) || libHidden("wo:"+lw.id)) return false;
+      var exs = lw.exercises.map(findExercise).filter(Boolean);
+      return exs.length && katWoBereich(lw, exs) === bereich;
+    });
+    if(treffer.length){
+      var lw = treffer[Math.abs(Math.floor(von/(7*tag))) % treffer.length], exs = lw.exercises.map(findExercise).filter(Boolean);
+      vorschlag = '<div class="card dd-vorschlag"><span class="dd-vs-kicker">'+esc(t("ddNaechstes"))+' · '+esc(t("ddZuKurz", { g:t(luecke.key) }))+'</span>'+
+        '<button type="button" class="dd-vs-name" data-ddgo="'+esc(lw.id)+'"><b>'+esc(tplText(lw.name))+'</b><small>'+esc(exAnzText(exs.length))+SEP+esc(fmtDauerKurz(workoutDuration(libWorkoutRun(lw))))+'</small></button>'+
+        '<div class="dd-vs-akt"><button type="button" class="btn btn-secondary dd-vs-kal" data-ddkal="'+esc(lw.id)+'">'+ICON_PLUS+' '+esc(t("ddKalBtn"))+'</button>'+favBtn("lib:"+lw.id)+
+        '<button type="button" class="dd-vs-play" data-ddgo="'+esc(lw.id)+'" aria-label="'+esc(t("ddAnsehen"))+'">'+ICON_PLAY+'</button></div></div>';
+    }
+  }
+  app.innerHTML =
+    topbar(t("tabKoerper"), { back:"#home", right:kopfSymboleNeu("stats") }) +
+    '<div class="dd-nav"><button type="button" class="iconbtn" data-ddwoche="-1" aria-label="'+esc(t("ddVor"))+'">&#8249;</button><b>'+esc(kopf)+'</b>'+
+      '<button type="button" class="iconbtn" data-ddwoche="1" aria-label="'+esc(t("ddNach"))+'"'+(ddWoche >= 0 ? ' disabled' : '')+'>&#8250;</button></div>' +
+    chips + umschalter + kkModusHTML() +
+    (hatDaten ? freqKarte : '') + kalKarte + balKarte + verteilung + vorschlag +
+    (eintraege.length ? '<div class="section-title"><span>'+esc(t("ddWorkout"))+'</span></div>'+eintraege.map(function(e){
+      var dauer = e.dur > 0 ? " · "+fmtDuration(Math.max(60, Math.round(e.dur/60)*60)) : "";
+      return '<section class="card dd-karte"><div class="dd-titel">'+esc(datum(e.at, { weekday:"long", day:"numeric", month:"short" }))+'</div>'+
+        '<div class="dd-sub">'+esc(exAnzText(e.ex.length)+dauer)+'</div>'+kkKopfHTML(e.ex, false, { ohneModus:true })+'</section>';
+    }).join("") : '') +
+    '<button type="button" class="dd-link" data-zumfortschritt><span>'+esc(t("ddZuFortschritt"))+'</span><span aria-hidden="true">&#8250;</span></button>' +
+    '<div style="height:90px"></div>';
+  bindCommon();
+  app.querySelectorAll("[data-zumfortschritt]").forEach(function(b){ b.addEventListener("click", function(){ state.db.settings.koerperTab = "fortschritt"; save(); tabLeiste("koerper"); renderKoerper(); window.scrollTo(0, 0); }); });
+  app.querySelectorAll("[data-ddwoche]").forEach(function(b){
+    b.addEventListener("click", function(){ ddWoche = Math.min(0, ddWoche + (+b.getAttribute("data-ddwoche"))); renderKoerper(); window.scrollTo(0, 0); });
+  });
+  app.querySelectorAll("[data-ddmodus]").forEach(function(b){
+    b.addEventListener("click", function(){ ddModus = b.getAttribute("data-ddmodus"); var y = window.scrollY; renderKoerper(); window.scrollTo(0, y); });
+  });
+  app.querySelectorAll("[data-ddkal]").forEach(function(b){ b.addEventListener("click", function(){ ddKalenderWahl(b.getAttribute("data-ddkal")); }); });
+  app.querySelectorAll(".dd-vorschlag [data-fav]").forEach(function(b){ b.addEventListener("click", function(){ toggleFav(b.getAttribute("data-fav")); var y = window.scrollY; renderKoerper(); window.scrollTo(0, y); }); });
+  app.querySelectorAll("[data-ddgo]").forEach(function(b){ b.addEventListener("click", function(){ coverDraft = null; go("#cover/lib/"+b.getAttribute("data-ddgo")); }); });
 }
 function renderKoerper(){
-  if(koerperTab() === "fortschritt") renderStats(); else renderProgramme();
+  if(koerperTab() === "fortschritt") renderStats(); else if(koerperTab() === "deepdive") renderDeepDive(); else renderProgramme();
   var tb = app.querySelector(".topbar");
   if(tb){ tb.insertAdjacentHTML("afterend", koerperSegHTML()); var bk = tb.querySelector(".back"); if(bk) bk.classList.add("zeigen"); }   // Zurück-Knopf auch in der Arena (wie Training und Kalender)
   app.querySelectorAll("[data-koerpertab]").forEach(function(b){
@@ -145,7 +341,7 @@ function programmKontextFuer(ref){
 function progChipHTML(ref){
   var k = programmKontextFuer(ref);
   if(!k) return "";
-  return '<button type="button" class="pl-prog" data-plprog>'+svgIcon('<ellipse cx="12" cy="12" rx="9" ry="6.5"/><ellipse cx="12" cy="12" rx="4.2" ry="2.5"/>')+'<span>'+esc(k.p.name)+' · '+(k.i + 1)+'/'+k.p.items.length+'</span></button>';
+  return '<button type="button" class="pl-prog" data-plprog>'+svgIcon('<circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8.2 19h8.3a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h8.3"/>')+'<span>'+esc(k.p.name)+' · '+(k.i + 1)+'/'+k.p.items.length+'</span></button>';
 }
 function progChipBinden(box, ref, vorher){
   var b = box.querySelector("[data-plprog]"), k = programmKontextFuer(ref);
@@ -228,7 +424,7 @@ function renderProgramme(){
   var liste = progSortiert();
   app.innerHTML =
     topbar(t("tabKoerper"), { back:"#home", right:kopfSymboleNeu("stats") }) +
-    (liste.length ? '<div class="pg-liste-karten">'+liste.map(progKarteHTML).join("")+'</div>' : '<div class="pg-leerseite">'+svgIcon('<ellipse cx="12" cy="12" rx="9" ry="6.5"/><ellipse cx="12" cy="12" rx="4.2" ry="2.5"/>')+'<p>'+esc(t("progLeer"))+'</p></div>')+
+    (liste.length ? '<div class="pg-liste-karten">'+liste.map(progKarteHTML).join("")+'</div>' : '<div class="pg-leerseite">'+svgIcon('<circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8.2 19h8.3a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h8.3"/>')+'<p>'+esc(t("progLeer"))+'</p></div>')+
     '<button type="button" class="btn btn-primary pg-neu" data-pgneu>'+ICON_PLUS+' '+esc(t("progNeu"))+'</button>'+
     '<div style="height:90px"></div>';
   bindCommon();
@@ -363,11 +559,20 @@ function pgFiguren(ref){
   var ids = pgUebungen(ref).filter(function(id){ return ILLU[id]; }), h = ids.slice(0, 6).map(function(id){ return illuHTML(id, "pg-fig"); }).join("");
   return h + (ids.length > 6 ? '<i class="pg-mehr">+'+(ids.length - 6)+'</i>' : '');
 }
+/* Kleine Übungsfiguren (.pg-figs) füllen, sobald sie zu sehen sind: nicht in zugeklappten Bereichen (Katalog, Auswahl bei Path); beim Aufklappen kommt der Rest dazu */
+function pgFigurenFuellen(box){
+  box.querySelectorAll(".pg-figs:not([data-fertig])").forEach(function(el){
+    if(el.closest("details:not([open])")) return;
+    el.setAttribute("data-fertig", "1"); el.innerHTML = pgFiguren(el.getAttribute("data-pgf"));
+  });
+}
+document.addEventListener("toggle", function(e){ var d = e.target; if(d && d.tagName === "DETAILS" && d.open) pgFigurenFuellen(d); }, true);
 function openProgrammWahl(p, neu){
   var root = document.getElementById("overlayRoot"), rub = "workout";
   function zu(){ root.innerHTML = ""; }
   var offenSek = {};   // Favoriten · BLOCs · Katalog stehen zunächst zugeklappt
-  function ortFarbe(ref){   // Fitnessstudio rot, Freiluft blau (wie im Katalog)
+  function ortFarbe(ref){   // Fitnessstudio rot, Freiluft blau (wie im Katalog), Mobility & Stretch grün
+    if(rub === "mobility" || rub === "stretch") return "var(--ws-color)";
     var ids = pgUebungen(ref);
     if(!ids.length) return "";
     var s = ids.map(findExercise).filter(Boolean).filter(exIstStudio).length;

@@ -41,7 +41,7 @@
   --radius:18px;
   --shadow:0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
 }
-:root[data-theme="dark"], :root[data-theme="nacht"]{
+:root[data-theme="dark"]{
   color-scheme: dark;
   --bg:#121214;
   --surface:#1c1c1f;
@@ -204,7 +204,7 @@ h1, h2, h3{ margin:0 0 4px; }
 .info-tip{ font-size:14px; background:var(--surface-2); border-radius:10px; padding:10px 12px; margin-bottom:14px; }
 .info-risk{ font-size:12.5px; color:var(--text-dim); line-height:1.4; margin:0 2px 12px; }
 .info-risk a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
-:root[data-theme="dark"], :root[data-theme="nacht"]{
+:root[data-theme="dark"]{
   --c-cardio:var(--tp-color); --c-weight:var(--tp-color); --c-bw:var(--tp-color); --c-back:var(--tp-color); --c-legs:var(--tp-color); --c-core:var(--tp-color); --c-arms:var(--tp-color); --c-calis:var(--tp-color); --c-stretch:var(--tp-color);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme]){
@@ -398,13 +398,8 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 /* Startseite */
 /* Favoriten-Kacheln: zwei nebeneinander, die ganze Kachel startet (Stern entfernen: in der
    Übersicht bzw. auf der Timer-Seite - so tippt man hier nicht aus Versehen daneben) */
-.fav-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-bottom:8px; }
-:root .list-item.fav-tile{ display:flex; align-items:center; gap:8px !important; margin:0; padding:10px !important; min-height:66px; }   /* !important: die Designs setzen eigene Abstände für .list-item */
-.fav-tile[aria-disabled]{ opacity:.45; }
-:root .list-item.fav-tile .ft-play{ width:34px; height:34px; font-size:13px; }   /* Vorrang vor den Design-eigenen Knopfgrößen */
-.ft-text{ flex:1; min-width:0; }
-.ft-name{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:15px; font-weight:600; line-height:1.25; overflow-wrap:break-word; -webkit-hyphens:auto; hyphens:auto; }
-.ft-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:3px; }
+/* !important: die Designs setzen eigene Abstände für .list-item */
+/* Vorrang vor den Design-eigenen Knopfgrößen */
 
 
 .empty-btn{ width:auto; display:inline-flex; margin:16px auto 0; padding:13px 20px; font-size:15px; }
@@ -656,7 +651,7 @@ body.dz-mode{ user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .illu circle.ipf.gm, .illu .ipf.gm{ fill:var(--geraet); stroke:none; }
 .illu .gp{ stroke-width:7; }
 :root{ --geraet:#5b6472; }
-:root[data-theme="dark"], :root[data-theme="nacht"]{ --geraet:#aab2bf; }
+:root[data-theme="dark"]{ --geraet:#aab2bf; }
 @media (prefers-color-scheme: dark){ :root:not([data-theme]){ --geraet:#aab2bf; } }
 /* im Timer liegt die Figur auf farbiger Fläche: Geräte dort in der Schriftfarbe, etwas zurückgenommen */
 .player .illu .gm{ stroke:currentColor; opacity:.7; }
@@ -802,7 +797,7 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .lang-pick button{ grid-column:span 3; }
 .theme-pick button.halb{ grid-column:span 3; }
 .theme-pick button.active{ background:var(--sel-bg); color:var(--sel-text); border-color:var(--sel-bg); }
-.theme-pick.vier{ grid-template-columns:repeat(4,1fr); }
+.theme-pick.vier{ grid-template-columns:repeat(3,1fr); }   /* System · Hell · Dunkel (Nacht entfällt seit 2026-10-23) */
 .theme-pick.vier button{ grid-column:span 1; font-size:14px; padding-left:2px; padding-right:2px; }
 
 .installtip{
@@ -981,9 +976,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .sec-link-chev{ display:inline-flex; font-size:13px; transition:transform .2s ease; }
 .sec-link-chev.up{ transform:rotate(-90deg); }
 /* Favoriten-Kacheln mit Stern oben rechts */
-:root .list-item.fav-tile{ position:relative; padding-right:26px !important; }
-.ft-star{ position:absolute; top:9px; right:9px; width:15px; height:15px; color:#f0a020; display:flex; }
-.ft-star .ico{ width:15px; height:15px; }
 /* „Überrasch mich“-Karte */
 .surprise-card{
   width:100%; display:flex; align-items:center; gap:14px; margin:14px 0 4px; padding:16px 14px 16px 16px;
@@ -1230,22 +1222,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .sp-top .ico{ width:16px; height:16px; color:var(--accent); }
 
 
-/* Nacht: warme Töne mit möglichst wenig Blau - fürs Abendtraining, schont die Augen.
-   Übernimmt alle Regeln von Dunkel (Selektoren oben doppelt), hier nur die Farben. */
-:root[data-theme="nacht"]{
-  color-scheme: dark;
-  --bg:#16110d; --surface:#201913; --surface-2:#2a2119; --border:#3a2f25;
-  --text:#efe2cf; --text-dim:#b09e87;
-  --accent:#ff8f3f; --accent-text:#1d1006;
-  --rest:#a8c46a; --rest-text:#1a2208; --blockrest:#d99ac6; --danger:#ff7a6b;
-  --bl-color:#d99ac6; --bl-text:#241018;
-  --gym-color:#e1251b; --gym-text:#ffffff;   /* Rot */
-  --ti-color:#7fb4d6; --ti-text:#0d1a24;
-  --tp-color:#8fa8d8; --tp-text:#0f1626;   /* Air: gedämpftes Blau */
-  --ws-color:#a8c46a; --ws-text:#1a2208;   /* Mobility & Stretch: grün */
-  --geraet:#e8b27a;
-  --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.4);
-}
 /* Einstellungen: „Wichtig“ offen, „Mehr“ als zugeklappte Gruppen (2026-09-29) */
 .opt-label{ font-size:13px; font-weight:700; color:var(--text-dim); margin:0 0 10px; }
 .opt-mehr{ background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:10px; overflow:hidden; }
@@ -1397,7 +1373,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .gen-row input[type=range]{ width:100%; accent-color:var(--gym-color); }
 .ru-felder{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
 /* Lauf-Tracker (Beta) */
-.run-svg{ width:100%; height:auto; display:block; }
 .run-leer{ color:var(--text-dim); font-size:13px; text-align:center; padding:50px 12px; }
 .run-knoepfe{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .run-knoepfe .btn-danger{ grid-column:1 / -1; }
@@ -1415,7 +1390,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .rf-liste .ico{ width:18px; height:18px; color:var(--text-dim); flex:none; }
 .rf-gespeichert{ color:var(--text-dim); font-size:12px; margin-top:10px; }
 .run-splits tr.schnell td{ font-weight:700; }
-.run-knoepfe .run-stumm{ grid-column:auto; }
 .rg-vor{ font-size:96px; }
 .run-dunkel{ touch-action:none; user-select:none; -webkit-user-select:none; }
 .rd-balken{ width:160px; height:4px; background:#1a1a1a; border-radius:2px; overflow:hidden; } .rd-balken i{ display:block; height:100%; width:0; background:#666; }
@@ -1444,10 +1418,6 @@ input[type="range"]{ width:100%; height:32px; accent-color:var(--accent); cursor
 .run-gps.suche::before{ animation:runPuls 1.2s ease-in-out infinite; }
 @keyframes runPuls{ 50%{ opacity:.25; } }
 .run-karte{ background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:8px; margin-bottom:16px; }
-.run-svg{ color:var(--text); }
-.run-svg .run-start{ fill:var(--surface); stroke:currentColor; stroke-width:2.5; }
-.run-svg .run-ziel{ fill:currentColor; }
-.run-svg .run-ring{ fill:currentColor; opacity:.15; }
 #run-karte .run-ring{ animation:runPuls 1.6s ease-in-out infinite; }
 .run-knoepfe{ gap:12px; }
 .run-knoepfe .btn{ min-height:56px; border-radius:16px; font-weight:600; }
@@ -1798,7 +1768,7 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
   background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent); }
 /* Kontrast: kleine Schrift in der Akzentfarbe nimmt --accent-ink (Koralle auf Weiß hat nur 3,1:1; so 4,6:1) */
 :root{ --accent-ink:#d93a14; --link-ink:#b9330f; }   /* link-ink: Links auf grauer Zweitfläche (Hinweiskarte) mit ≥ 4,5:1 */
-:root[data-theme="dark"], :root[data-theme="nacht"]{ --accent-ink:var(--accent); --link-ink:var(--accent); }
+:root[data-theme="dark"]{ --accent-ink:var(--accent); --link-ink:var(--accent); }
 @media (prefers-color-scheme: dark){ :root:not([data-theme]){ --accent-ink:var(--accent); --link-ink:var(--accent); } }
 
 /* Mobility & Stretch: der Schalter Mobility · Stretch ist grün getönt wie der Rest des Bereichs */
@@ -1861,22 +1831,12 @@ body.mit-tabs .fab-menu{ bottom:calc(166px + env(safe-area-inset-bottom)); }
 .tabbar .tab.active{ color:var(--accent-ink, var(--accent)); background:none; }
 .tabbar .tab.active > span:last-child{ font-weight:700; }
 /* Startseite: Kopfblock mit Foto und orangem Verlauf */
-.home-hero{ position:relative; isolation:isolate; overflow:hidden; margin:0 0 14px; min-height:168px; border-radius:var(--radius); background:#2a1a12; color:#fff; box-shadow:var(--shadow); }
-.home-hero .hh-bild{ position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:50% 60%; }
-.home-hero::after{ content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(115deg, rgba(255,90,54,.86) 0%, rgba(255,90,54,.55) 50%, rgba(28,12,6,.55) 100%); }
-.home-hero .hh-main{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; width:100%; min-height:168px; padding:16px 16px 14px; border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
-.hh-label{ font-size:13px; font-weight:600; letter-spacing:.02em; opacity:.95; }
-.hh-titel{ display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; max-width:13em; font-size:27px; line-height:1.14; font-weight:800; text-wrap:balance; text-shadow:0 1px 8px rgba(0,0,0,.25); }
-.hh-sub{ font-size:14px; font-weight:600; opacity:.95; }
-.hh-los{ margin-top:auto; display:inline-flex; align-items:center; gap:8px; max-width:100%; padding:9px 14px; border-radius:999px; background:rgba(255,255,255,.94); color:#1c1c1e; font-size:14px; font-weight:700; }
-.hh-los svg{ width:13px; height:13px; flex:none; color:var(--accent); }
-.hh-los > span{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 /* Baukasten: Schritte mit orangem Kreis, der Ort als Fotokarten, Auswahl orange, „Überrasch mich“ als große orange Karte */
 .bau-schritt{ margin:18px 2px 10px; font-size:12.5px; color:var(--text); }
 .bau-schritt span{ width:22px; height:22px; background:var(--accent); color:var(--accent-text, #fff); font-size:12px; font-weight:800; }
 .ort-fotos{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 6px; }
 .ort-foto{ position:relative; isolation:isolate; overflow:hidden; min-height:108px; padding:0; border:2.5px solid transparent; border-radius:18px; background:#1a1a1c; color:#fff; font:inherit; text-align:left; cursor:pointer; --of:var(--tp-color); }
-.ort-foto[data-bauort="studio"]{ --of:var(--gym-color); }
+.ort-foto[data-bauort="studio"], .ort-foto[data-katort="studio"], .ort-foto[data-genort="studio"]{ --of:var(--gym-color); }
 .ort-foto .of-bild{ position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; filter:saturate(.85) brightness(.92); }
 .ort-foto::after{ content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.18) 62%, rgba(0,0,0,.22) 100%); }
 .ort-foto .of-t{ position:absolute; left:12px; right:10px; bottom:9px; display:flex; flex-direction:column; line-height:1.2; text-shadow:0 1px 4px rgba(0,0,0,.55); }
@@ -2271,4 +2231,4 @@ details[open] > summary > .pg-pfeil{ transform:rotate(180deg); }
 :root[data-layout="new"] body.mit-tabs .topbar .back.zeigen{ display:flex; }
 .pg-sek{ margin:0 0 6px; } .pg-sek > summary{ display:flex; align-items:center; gap:8px; padding:10px 4px; cursor:pointer; list-style:none; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); }
 .pg-sek > summary::-webkit-details-marker{ display:none; } .pg-sek > summary b{ flex:1; font-weight:800; }
-.bloc-sheet .bloc-opt[style*="--oc"]{ border-left:4px solid var(--oc); }
+.bloc-sheet .bloc-opt[style*="--oc"]{ border:2px solid var(--oc); }   /* Umrandung in der Farbe des Ortes: Fitnessstudio rot, Freiluft blau, Mobility & Stretch grün (direkte Unterscheidung wie bei den Übungskarten) */

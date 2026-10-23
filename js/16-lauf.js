@@ -409,33 +409,19 @@ function runKmZeilen(x){
 }
 function runById(id){ var l = state.db.settings.runs || []; for(var i=0;i<l.length;i++) if(l[i].id === id) return l[i]; return null; }
 
-/* Routenlinie als SVG (ohne Karte): Länge und Breite im richtigen Verhältnis */
-function runSvg(pts){
-  if(!pts || pts.length < 2) return '<div class="run-leer">'+esc(t("runRoutePh"))+'</div>';
-  var minLa = 90, maxLa = -90, minLo = 180, maxLo = -180;
-  pts.forEach(function(p){ minLa = Math.min(minLa, p[0]); maxLa = Math.max(maxLa, p[0]); minLo = Math.min(minLo, p[1]); maxLo = Math.max(maxLo, p[1]); });
-  var kx = Math.cos((minLa + maxLa)/2*Math.PI/180), W = 300, H = 200, pad = 14;
-  var bw = Math.max((maxLo - minLo)*kx, 1e-6), bh = Math.max(maxLa - minLa, 1e-6);
-  var sk = Math.min((W - 2*pad)/bw, (H - 2*pad)/bh), ox = (W - bw*sk)/2, oy = (H - bh*sk)/2;
-  function xy(p){ return [(ox + (p[1] - minLo)*kx*sk).toFixed(1), (oy + (maxLa - p[0])*sk).toFixed(1)]; }
-  var a = xy(pts[0]), z = xy(pts[pts.length-1]), pl = pts.map(function(p){ return xy(p).join(","); }).join(" ");
-  return '<svg class="run-svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t("runRoute"))+'">'+
-    '<polyline points="'+pl+'" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
-    '<circle cx="'+a[0]+'" cy="'+a[1]+'" r="5" class="run-start"/>'+
-    '<circle cx="'+z[0]+'" cy="'+z[1]+'" r="9" class="run-ring"/><circle cx="'+z[0]+'" cy="'+z[1]+'" r="5" class="run-ziel"/></svg>';
-}
 function runGpxText(r){
   var pts = (r.pts || []).map(function(p){ return '<trkpt lat="'+p[0]+'" lon="'+p[1]+'"/>'; }).join("");
   return '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="BLOC" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>BLOC '+new Date(r.at).toISOString().slice(0, 10)+
     '</name><trkseg>'+pts+'</trkseg></trk></gpx>';
 }
 /* Kalorien-Schätzung für einen Lauf oder eine Radfahrt (nur mit Körperdaten, alles lokal): Laufen = Ruheumsatz in der Zeit + 1,036 kcal je kg und km (Laufkosten nach Margaria),
-   Rad = MET nach Tempo (Compendium of Physical Activities) × Gewicht × Stunden. Eine grobe Schätzung; 0 ohne Körperdaten oder ohne Strecke. */
+   Rad = MET nach Tempo (Compendium of Physical Activities 2011: unter 10 mph / 16 km/h Freizeit 4,0 · 10–12 mph 6,8 · 12–14 mph 8,0 · 14–16 mph 10,0 · ab 16 mph / 25,7 km/h 12,0)
+   × Gewicht × Stunden (Fahrten werden also nicht wie Läufe gerechnet). Eine grobe Schätzung; 0 ohne Körperdaten oder ohne Strecke. */
 function runKcal(dist, sek, rad){
   var kd = koerperDaten();
   if(!kd || !(dist > 50) || !(sek > 10)) return 0;
   var km = dist/1000, h = sek/3600, v = km/h;
-  if(rad){ var met = v < 16 ? 6.8 : v < 19 ? 8 : v < 22 ? 10 : 12; return Math.round(met*kd.kg*h); }
+  if(rad){ var met = v < 16.1 ? 4 : v < 19.3 ? 6.8 : v < 22.5 ? 8 : v < 25.7 ? 10 : 12; return Math.round(met*kd.kg*h); }
   return Math.round(1.036*kd.kg*km + kcalProStunde(kd)*h);
 }
 function runKcalText(dist, sek, rad){ var k = runKcal(dist, sek, rad); return k > 0 ? "≈ "+k.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE") : "–"; }
@@ -562,16 +548,16 @@ function runDunkelWeg(){ var d = document.getElementById("run-dunkel"); if(d) d.
 function renderRunVor(){
   var v = runVor;
   app.innerHTML =
-    (layoutNeu() ? runHintergrundHTML() + '<div class="bloc-quer" aria-hidden="true">BLOC</div>' : '') +
+    runHintergrundHTML() + '<div class="bloc-quer" aria-hidden="true">BLOC</div>' +
     topbar(t("runTitle"), { back:"#home" }) +
-    (layoutNeu() ? '<div class="run-weiss">' : '') +
+    '<div class="run-weiss">' +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runVorTitel"))+'</div><div id="run-vor" class="rg-zeit rg-vor">'+Math.max(1, Math.ceil((v.ende - Date.now())/1000))+'</div></div>'+
     '<div class="run-gps" id="run-vor-gps">'+esc(runVorText())+'</div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary run-dunkelbtn" data-rundark>'+svgIcon(ICON_MOON)+' '+esc(t("runDark"))+'</button>'+
       '<button type="button" class="btn btn-secondary" data-runplus>'+esc(t("runPlus10"))+'</button>'+
       '<button type="button" class="btn btn-primary" data-runjetzt>'+esc(t("runJetzt"))+'</button>'+
       '<button type="button" class="btn btn-danger" data-runabbr>'+esc(t("runAbbrechen"))+'</button></div>'+
-    (layoutNeu() ? '</div>' : '') +
+    '</div>' +
     '<div style="height:40px"></div>';
   var zur = app.querySelector("[data-back]");
   function weg(){ runVorStop(); runDunkelWeg(); runWachen(false); renderRun(); }
@@ -600,6 +586,9 @@ function runHoehenlinien(){
   for(k = 0; k < 6; k++) s += blob(330, 650, 28 + k*24, 1.7 + k*.15);
   return '<svg class="run-hoehen" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" fill="none" stroke-width="1.2">' + s + '</svg>';
 }
+/* Run (vor dem Start) und Timer-Seite: im Dunkel mit dem Foto-Hintergrund, im Hellen wie Workout und Mobility & Stretch (heller Grund, Felder wie sie sind).
+   Das laufende Training (Lauf, Timer, Satz-Training) behält in beiden Modi seinen dunklen Hintergrund. */
+function runSeitenHintergrundHTML(){ return themeIstDunkel() ? runHintergrundHTML() : ""; }
 function runHintergrundHTML(){
   return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+"img/neu-p-freiluft-meer.jpg"+')"></i>'+'</div>';
 }
@@ -639,7 +628,7 @@ function renderRun(){
   var artRuns = runs.filter(function(x){ return runIstRad(x) === (art === "rad"); });   // Kachel oben: nur die gewählte Art (Laufen oder Rad)
   var km = artRuns.reduce(function(a, x){ return a + x.dist; }, 0)/1000;
   app.innerHTML =
-    (layoutNeu() ? runHintergrundHTML() + bereichKopfNeuHTML("run", t("runTitle"), t("runKicker"), "", { klar:true }) : topbar(t("runTitle"), { back:"#home" }) + bereichBildHTML("run")) +
+    runSeitenHintergrundHTML() + bereichKopfNeuHTML("run", t("runTitle"), t("runKicker"), "", { klar:true }) +
     (live ?'<div class="card run-live"><b>'+esc(t("runBroken"))+'</b><div class="sub">'+esc(t("runBrokenText", { km:runKm(live.dist) }))+'</div>'+
       '<div class="btn-row"><button type="button" class="btn btn-secondary" data-runlivedel>'+esc(t("runDiscard"))+'</button>'+
       '<button type="button" class="btn btn-primary" data-runlivesave>'+esc(t("runRecover"))+'</button></div></div>' : '')+
@@ -652,7 +641,7 @@ function renderRun(){
         '<button type="button" data-runart="lauf" class="'+(art === "lauf" ? "active" : "")+'">'+esc(t("runArtLauf"))+'</button>'+
         '<button type="button" data-runart="rad" class="'+(art === "rad" ? "active" : "")+'">'+esc(t("runArtRad"))+'</button></div>'+
       '<button type="button" class="btn btn-primary run-startbtn" data-runstart>'+ICON_PLAY+' '+esc(t(art === "rad" ? "runStartRad" : "runStart"))+'</button></div>'+
-    (layoutNeu() ? runEigenerLaufHTML() : "")+runOptionenHTML()+runAnsageHTML()+
+    runEigenerLaufHTML()+runOptionenHTML()+runAnsageHTML()+
     '<details class="run-klapp run-verlauf" data-k="verlauf"'+(runKlapp.verlauf ? ' open' : '')+'><summary class="section-title"><span>'+esc(t("runVerlauf"))+'</span><span class="tpl-chev" aria-hidden="true">&#9662;</span></summary>'+   // der Verlauf steht unten, einklappbar
     (runs.length ? runs.map(function(x){
       var d = new Date(x.at);
@@ -680,7 +669,7 @@ function renderRun(){
   });
   app.querySelectorAll("[data-runstart]").forEach(function(b){ b.addEventListener("click", function(){
     var z = runZielEinst();
-    if(layoutNeu() && z.km > 0 && !runGeplant) runGeplant = { name:"", km:z.km, pace:z.pace || 0, rad:runArt() === "rad", t:Date.now() };   // eigener Lauf mit Ziel
+    if(z.km > 0 && !runGeplant) runGeplant = { name:"", km:z.km, pace:z.pace || 0, rad:runArt() === "rad", t:Date.now() };   // eigener Lauf mit Ziel
     runStart();
   }); });
   var zr = app.querySelector("#run-ziel");   // Strecke: beim Ziehen nur die Anzeige, beim Loslassen speichern und neu zeichnen (Pace-Wahl und Speichern-Knopf hängen am Ziel)
@@ -735,21 +724,20 @@ function renderRun(){
 function renderRunLive(){
   var r = run;
   app.innerHTML =
-    (layoutNeu() ? runHintergrundHTML() + '<div class="bloc-quer" aria-hidden="true">BLOC</div>' : '') +
-    topbar(t("runTitle"), { back:"#home", right:(layoutNeu() && runAnsageEinst().every ? '<button type="button" class="iconbtn run-laut' + (r.stumm ? ' aus' : '') + '" data-runlaut aria-pressed="' + !!r.stumm + '" aria-label="' + esc(t(r.stumm ? "runStummAus" : "runStummAn")) + '">' + ICON_VOLUME + '</button>' : '') }) +
-    (layoutNeu() ? '<div class="run-weiss">' : '') +
+    runHintergrundHTML() + '<div class="bloc-quer" aria-hidden="true">BLOC</div>' +
+    topbar(t("runTitle"), { back:"#home", right:(runAnsageEinst().every ? '<button type="button" class="iconbtn run-laut' + (r.stumm ? ' aus' : '') + '" data-runlaut aria-pressed="' + !!r.stumm + '" aria-label="' + esc(t(r.stumm ? "runStummAus" : "runStummAn")) + '">' + ICON_VOLUME + '</button>' : '') }) +
+    '<div class="run-weiss">' +
     '<div class="run-gross"><div class="rg-label">'+esc(t("runTime"))+'</div><div id="run-zeit" class="rg-zeit">0:00</div><div class="run-gps" id="run-gps"></div>'+(r.iv ? '<div class="run-iv" id="run-iv"></div>' : '')+(r.ziel && r.ziel.km > 0 ? '<div class="run-ziel">'+esc(t("runZielKm", { km:runKm(r.ziel.km*1000) }))+'</div>' : '')+'</div>'+
     '<div class="run-raster">'+
       '<div><b id="run-km">0,00</b><small>'+esc(t("runDist"))+' (km)</small></div>'+
       '<div><b id="run-pace">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t(runIstRad(r) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(r)+'</small></div>'+
-      '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div>'+(layoutNeu() ? '<div><b id="run-kcal">–</b><small>kcal</small></div>' : '')+'</div>'+
+      '<div><b id="run-jetzt">'+(runIstRad(r) ? '–,–' : '–:––')+'</b><small>'+esc(t("runPaceNow"))+' '+runTempoEinheit(r)+'</small></div>'+'<div><b id="run-kcal">–</b><small>kcal</small></div></div>'+
     '<div class="run-karte-wrap"><div id="run-karte" class="run-karte" data-n="-1"></div>'+runKarteKnopfHTML()+'</div>'+
     '<div class="run-knoepfe"><button type="button" class="btn btn-secondary" data-runpause>'+esc(t(r.pauseAb ? "runResume" : "runPause"))+'</button>'+
       '<button type="button" class="btn btn-secondary run-dunkelbtn" data-rundark>'+svgIcon(ICON_MOON)+' '+esc(t("runDark"))+'</button>'+
-      (!layoutNeu() && runAnsageEinst().every ? '<button type="button" class="btn btn-secondary run-stumm" data-runstumm aria-pressed="'+!!r.stumm+'">'+esc(t(r.stumm ? "runStummAus" : "runStummAn"))+'</button>' : '')+
       '<button type="button" class="btn btn-danger run-ende" data-runend>'+esc(t("runEnd"))+'</button></div>'+
     '<div class="tm-hint run-haltehint">'+esc(t("runHaltenHint"))+'</div>'+
-    (layoutNeu() ? '</div>' : '') +
+    '</div>' +
     '<div style="height:40px"></div>';
   var zur = app.querySelector("[data-back]");
   if(zur){ zur.removeAttribute("data-back"); zur.addEventListener("click", function(){
@@ -796,7 +784,7 @@ function renderRunDetail(id){
   runNeu = null;
   var hl = neu ? runHighlights(x) : [];
   app.innerHTML =
-    (layoutNeu() ? runHintergrundHTML() : '') +
+    runHintergrundHTML() +
     topbar(t("runDetail"), { back:"#run" }) +
     // Abschlusskarte direkt nach dem Lauf: was geschafft wurde (der Lauf ist schon gespeichert)
     (neu ? '<div class="card run-fertig"><div class="rf-titel">'+esc(t("runGeschafft"))+'</div><div class="rf-km">'+esc(runKm(x.dist))+' <small>km</small></div>'+
@@ -810,7 +798,7 @@ function renderRunDetail(id){
     '<div class="run-raster"><div><b>'+esc(runKm(x.dist))+'</b><small>'+esc(t("runDist"))+' (km)</small></div><div><b>'+esc(fmtUhr(x.dur))+'</b><small>'+esc(t("runTime"))+'</small></div>'+
       '<div><b>'+esc(runTempo(x, x.dur/1000, x.dist))+'</b><small>'+esc(t(runIstRad(x) ? "runSpeedAvg" : "runPaceAvg"))+' '+runTempoEinheit(x)+'</small></div>'+(koerperDaten() ? '<div><b>'+esc(runKcalText(x.dist, x.dur/1000, runIstRad(x)))+'</b><small>kcal</small></div>' : '')+'</div>'+
     (koerperDaten() ? '<div class="sk-unter run-kcal-hinweis">'+esc(t("runKcalHint"))+'</div>' : '<button type="button" class="kh-mehr" data-koerper>'+esc(t("statKcalLink"))+' &#8250;</button>')+
-    '<div class="section-title">'+esc(t("runRoute"))+'</div>'+(layoutNeu() ? runStreckeNeu(x) : '<div class="run-karte">'+runSvg(x.pts)+'</div>')+
+    '<div class="section-title">'+esc(t("runRoute"))+'</div>'+runStreckeNeu(x)+
     (sp.length ? '<div class="section-title">'+esc(t("runSplits"))+'</div><div class="card run-kms">'+runKmZeilen(x)+'</div>' : '')+
     '<button type="button" class="btn btn-secondary" data-rungpx style="margin-top:14px;">'+esc(t("runGpx"))+'</button>'+
     '<div style="height:40px"></div>';

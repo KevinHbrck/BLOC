@@ -210,16 +210,6 @@ function bindBackupTip(){
     render();
   });
 }
-/* Einmaliger Hinweis, wenn ein gespeichertes C60-Design auf Hell umgestellt wurde (siehe migrateTheme) */
-function c60HinweisHTML(){
-  if(!c60Umgestellt) return "";
-  return '<div class="installtip"><div><b>'+esc(t("c60WegTitel"))+'</b><br>'+esc(t("c60WegText"))+'</div>'+
-    '<button data-hidec60 aria-label="'+esc(t("close"))+'">&times;</button></div>';
-}
-function bindC60Hinweis(){
-  var weg = app.querySelector("[data-hidec60]");
-  if(weg) weg.addEventListener("click", function(){ c60Umgestellt = false; save(); render(); });   // save: die umgestellte Darstellung bleibt, der Hinweis kommt nicht wieder
-}
 
 /* Schnappschuss: alle 7 Tage eine vollständige Kopie von state.db in IndexedDB (nicht in localStorage -
    der Platz dort gehört den eigentlichen Daten). Es gibt immer nur einen, der alte wird überschrieben.

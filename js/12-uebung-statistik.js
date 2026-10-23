@@ -271,10 +271,9 @@ function statPaceSvg(runs){
     pts.map(function(q, i){ return '<circle cx="'+q[0]+'" cy="'+q[1]+'" r="'+(i === pts.length-1 ? 5 : 3)+'" class="'+(i === pts.length-1 ? 'sl-jetzt' : 'sl-punkt')+'"/>'; }).join("")+
     '<text x="'+Math.min(+last[0], W-px)+'" y="'+Math.max(10, +last[1]-9)+'" text-anchor="end" class="sl-text">'+esc(statPz(p[p.length-1]))+'</text></svg></div>';
 }
-/* ---------- Kalorien-Schätzung (optional, nur mit Körperdaten; alles lokal) ----------
-   Zusatzverbrauch über dem Ruheumsatz = (MET - 1) x Ruheumsatz je Stunde x Stunden. MET je Bereich grob nach dem Compendium of Physical Activities
-   (Krafttraining/Calisthenics 3,5-8, Dehnen 2,3, Laufen 8-11); Ruheumsatz nach Mifflin-St Jeor, ohne Größe/Geschlecht 1 kcal je kg und Stunde. Eine grobe Schätzung. */
-var KCAL_MET = { katalog:4.5, intervall:6, warm:2.8, run:9 };
+/* ---------- Körperdaten und Ruheumsatz (optional; alles lokal) ----------
+   Der Ruheumsatz je Stunde (Mifflin-St Jeor, ohne Größe und Geschlecht 1 kcal je kg und Stunde) dient der Kalorien-Schätzung für Läufe und Radfahrten (runKcal in js/16-lauf.js).
+   Eine grobe Schätzung; Krafttraining und Co. werden nicht geschätzt (zu ungenau). */
 function koerperDaten(){
   var k = state.db.settings.koerper || {}, kg = +k.kg;
   if(!(kg >= 30 && kg <= 250)) return null;
@@ -286,11 +285,6 @@ function kcalProStunde(kd){
     if(bmr > 600) return bmr/24;
   }
   return kd.kg;
-}
-function kcalSchaetzung(sekJeGruppe, kd){
-  var h = kcalProStunde(kd), sum = 0;
-  Object.keys(sekJeGruppe).forEach(function(g){ sum += Math.max(0, (KCAL_MET[g] || 4.5) - 1) * h * (sekJeGruppe[g]/3600); });
-  return Math.round(sum);
 }
 /* ---------- „Mehr Einblicke“: eine zugeklappte Karte mit Volumen, letzten Rekorden, Drücken : Ziehen und Anstrengung (nur wenn Daten da sind) ---------- */
 function statEinblickeHTML(voll){
@@ -371,7 +365,7 @@ function renderStats(){
   while(si >= 0 && voll[si].n){ serie++; si--; }
   var einheit = t(statGran === "woche" ? "statUWoche" : statGran === "monat" ? "statUMonat" : "statUJahr");
   var labels = reihe.map(function(b){ return b.label; });
-  var html = topbar(layoutNeu() ? t("tabKoerper") : t("tabStats"), { back:"#home", right:kopfSymboleNeu("stats")+'<button type="button" class="iconbtn" data-koerper title="'+esc(t("koerperTitel"))+'" aria-label="'+esc(t("koerperTitel"))+'">'+svgIcon('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>')+'</button>' });
+  var html = topbar(t("tabKoerper"), { back:"#home", right:kopfSymboleNeu("stats")+'<button type="button" class="iconbtn" data-koerper title="'+esc(t("koerperTitel"))+'" aria-label="'+esc(t("koerperTitel"))+'">'+svgIcon('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>')+'</button>' });
   if(!aktiv.length){
     app.innerHTML = html + '<div class="card fokus-leer"><div>'+esc(t("statAlleAus"))+'</div><button type="button" class="btn btn-secondary" data-nav="#settings">'+esc(t("fokusAendern"))+'</button></div>';
     return bindCommon();
@@ -427,7 +421,8 @@ function renderStats(){
       var kd = koerperDaten(), kcalR = 0;
       if(kd){
         var a4 = {}; w4.forEach(function(w){ Object.keys(w.a).forEach(function(g){ a4[g] = (a4[g] || 0) + (w.a[g].s || 0); }); });
-        kcalR = kcalSchaetzung({ run:a4.run || 0 }, kd);   // Krafttraining & Co. werden nicht mehr geschätzt (zu ungenau); nur Laufen
+        // Krafttraining & Co. werden nicht mehr geschätzt (zu ungenau); nur Läufe und Radfahrten, jede Einheit für sich (Rad mit der Rad-Rechnung, siehe runKcal)
+        kcalR = runs.filter(function(x){ return x.at >= jetzt - 28*tag; }).reduce(function(a, x){ return a + runKcal(x.dist, x.dur/1000, runIstRad(x)); }, 0);
         if(kcalR > 0) chipsR.push(["≈ "+kcalR.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"), t("statRueckKcal")]);
       }
       if(rekR) chipsR.push([rekR+" ★", t("statRueckRek")]);
@@ -452,6 +447,7 @@ function renderStats(){
       '<div class="heat"><div class="heat-tage">'+namen.map(function(x){ return '<small>'+esc(x)+'</small>'; }).join("")+'</div><div class="heat-raster">'+zellen+'</div>'+
       '<div class="heat-legende"><small>'+esc(t("statWeniger2"))+'</small><i class="hz l0"></i><i class="hz l1"></i><i class="hz l2"></i><i class="hz l3"></i><small>'+esc(t("statMehr2"))+'</small></div></div></details>';
   }
+  html += statBlocsHTML();   // die trainierten BLOCs im Verlauf (Anzahl, zuletzt, Volumen)
   html += statTrainingsHTML();   // zuletzt gespeicherte Trainings (Training speichern auf Plan-Seite, Karte und im Timer)
   html += statFortschrittHTML(); // Fortschritt je Übung (Bestgewicht erste → jetzt)
   html += statEinblickeHTML(voll);   // Mehr Einblicke (zugeklappt): Volumen, Rekorde, Drücken : Ziehen
@@ -498,13 +494,14 @@ function renderStats(){
         return '<div><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b><small>'+esc(new Date(x[2]).toLocaleDateString(currentLang() === "en" ? "en-GB" : "de-DE", { day:"numeric", month:"short" }))+'</small></div>'; }).join("")+'</div>';
     }
     if(k === "katalog"){
-      var ids = []; eintraege(k, 7).forEach(function(e){ (e.ex || []).forEach(function(id){ ids.push(id); }); });
-      if(ids.length) html += auswertungHTML(ids, { woche:true, titel:t("ausWoche"), sub:t("ausWocheSum") });
+      // Verteilung, Häufigkeit und Balance der Muskelgruppen stehen in Path › Deep Dive; Fortschritt zeigt Menge und Verlauf
+      html += '<button type="button" class="dd-link" data-zumdeepdive><span>'+esc(t("statZuDeepDive"))+'</span><span aria-hidden="true">&#8250;</span></button>';
     }
     html += '</details>';
   });
   app.innerHTML = html + '<div style="height:40px"></div>';
   bindCommon();
+  app.querySelectorAll("[data-zumdeepdive]").forEach(function(b){ b.addEventListener("click", function(){ state.db.settings.koerperTab = "deepdive"; save(); tabLeiste("koerper"); renderKoerper(); window.scrollTo(0, 0); }); });
   app.querySelectorAll("[data-statfalt]").forEach(function(d){
     d.addEventListener("toggle", function(){ statOffen[d.getAttribute("data-statfalt").replace(/^b-/, "b-")] = d.open; });
   });
@@ -668,11 +665,60 @@ function trMehrHTML(key, gesamt){
   var rest = gesamt - trAnzahl[key];
   return rest > 0 ? '<button type="button" class="btn btn-secondary tr-mehr" data-trmehr="'+key+'">'+esc(t("trMehr", { n:rest }))+'</button>' : "";
 }
+/* BLOCs im Verlauf (Fortschritt): je BLOC, den du mit Sätzen trainiert und gespeichert hast, wie oft, wann zuletzt und wie sich das Volumen (Gewicht × Wiederholungen der Arbeitssätze)
+   zwischen dem ersten und dem letzten der letzten fünf Trainings verändert hat. Nur Beschreibung, keine Bewertung; die Verteilung auf Muskelgruppen steht im Deep Dive. */
+function statBlocsHTML(){
+  var by = {}, lang = currentLang() === "en" ? "en-GB" : "de-DE";
+  einheitenListe().forEach(function(x){ if(x && x.plan) (by[x.plan] = by[x.plan] || []).push(x); });
+  var ids = Object.keys(by).map(function(id){ by[id].sort(function(a, b){ return a.at - b.at; }); return id; })
+    .sort(function(a, b){ return by[b][by[b].length - 1].at - by[a][by[a].length - 1].at; }).slice(0, 6);
+  if(!ids.length) return "";
+  var zeilen = ids.map(function(id){
+    var l = by[id], letzte = l[l.length - 1], p = stPlanFind(id), name = p ? p.name : (letzte.name || t("trFrei"));
+    var fuenf = l.slice(-5).filter(function(x){ return +x.vol > 0; }), pct = null;
+    if(fuenf.length >= 2) pct = Math.round((fuenf[fuenf.length - 1].vol - fuenf[0].vol)*100/fuenf[0].vol);
+    var trend = pct === null ? '<span class="bf-trend">–</span>' : '<span class="bf-trend '+(pct > 0 ? 'plus' : pct < 0 ? 'minus' : '')+'">'+(pct > 0 ? '+' : pct < 0 ? '−' : '')+Math.abs(pct)+' %</span>';
+    return '<div class="bloc-fz"><span class="bf-name"><b>'+esc(name)+'</b><small>'+esc(t("statBlocN", { n:l.length })+" · "+t("statBlocZuletzt", { d:new Date(letzte.at).toLocaleDateString(lang, { day:"numeric", month:"short" }) }))+'</small></span>'+trend+'</div>';
+  }).join("");
+  return '<div class="card stat-karte"><div class="sk-kopf"><b>'+esc(t("statBlocsTitel"))+'</b><span class="sk-sub">'+esc(t("statBlocsSub"))+'</span></div>'+zeilen+'<div class="sk-unter">'+esc(t("statBlocsHinweis"))+'</div></div>';
+}
+/* Gespeicherte Trainings (Fortschritt): eingeklappt, innen nach Muskelgruppe und Übung geordnet (nicht nach Workout oder BLOC): je Übung wie oft trainiert, wann zuletzt und der
+   schwerste Arbeitssatz (★ = Rekord dabei); Antippen öffnet den Verlauf der Übung. Die Muskelgruppe ist die mit dem größten Anteil der Übung (mgVerteilung). Wer ein einzelnes Training
+   ansehen, ergänzen oder löschen will, findet es unten unter „Einzelne Trainings nach Datum“. */
+function exAnzText(n){ return n === 1 ? t("exCount1") : t("exCount", { n:n }); }   // „1 Übung“ statt „1 Übungen“
 function statTrainingsHTML(){
   var alle = einheitenListe().slice().sort(function(a, b){ return b.at - a.at; });
   if(!alle.length) return "";
-  return '<div class="card stat-karte stat-trainings"><div class="sk-kopf"><b>'+esc(t("trStatTitel"))+'</b><span class="sk-sub">'+esc(t("trStatSub", { n:alle.length }))+'</span></div>'+
-    trainingsZeilenHTML(alle.slice(0, trAnzahl.stat))+trMehrHTML("stat", alle.length)+'</div>';
+  var lang = currentLang() === "en" ? "en-GB" : "de-DE", jeEx = {};
+  alle.forEach(function(x){
+    (x.ex || []).forEach(function(e){
+      if(!e || !findExercise(e.id)) return;
+      var j = jeEx[e.id] = jeEx[e.id] || { id:e.id, n:0, letzte:0, best:null, rek:false };
+      j.n++; if(x.at > j.letzte) j.letzte = x.at;
+      arbeitsSaetze(e).forEach(function(s){ if(!j.best || s[0] > j.best[0] || (s[0] === j.best[0] && s[1] > j.best[1])) j.best = s; });
+      if(e.rekord) j.rek = true;
+    });
+  });
+  var gr = {};
+  Object.keys(jeEx).forEach(function(id){
+    var v = mgVerteilung(findExercise(id)), best = "", bw = 0;
+    MUSKEL_GRP.forEach(function(g){ if((v[g.id] || 0) > bw){ bw = v[g.id]; best = g.id; } });
+    if(!best) best = "beine";
+    (gr[best] = gr[best] || []).push(jeEx[id]);
+  });
+  var gruppen = MUSKEL_GRP.filter(function(g){ return gr[g.id]; }).map(function(g){
+    var l = gr[g.id].sort(function(a, b){ return b.n - a.n || b.letzte - a.letzte; });
+    return '<details class="tr-gr" data-statfalt="trg-'+g.id+'"'+(statOffen["trg-"+g.id] ? ' open' : '')+'><summary><b>'+esc(t(g.key))+'</b><span class="sk-sub">'+esc(exAnzText(l.length))+'</span><span class="sk-chev">'+ICON_CHEV+'</span></summary>'+
+      l.map(function(j){
+        var ex = findExercise(j.id);
+        return '<button type="button" class="tr-ex" data-sfuebung="'+esc(j.id)+'"><span class="te-name"><b>'+esc(tplText(ex.name))+'</b><small>'+esc(t("statBlocN", { n:j.n })+" · "+t("statBlocZuletzt", { d:new Date(j.letzte).toLocaleDateString(lang, { day:"numeric", month:"short" }) }))+'</small></span>'+
+          '<span class="te-best">'+(j.best ? esc(satzText([j.best[0], j.best[1]]))+(j.rek ? ' ★' : '') : '–')+'</span></button>';
+      }).join("")+'</details>';
+  }).join("");
+  return '<details class="card stat-karte stat-kal stat-falt stat-trainings" data-statfalt="trainings"'+(statOffen.trainings ? ' open' : '')+'><summary><b>'+esc(t("trStatTitel"))+'</b><span class="sk-sub">'+esc(t("trStatSub", { n:alle.length }))+'</span><span class="sk-chev">'+ICON_CHEV+'</span></summary>'+
+    gruppen+
+    '<details class="tr-gr" data-statfalt="trg-datum"'+(statOffen["trg-datum"] ? ' open' : '')+'><summary><b>'+esc(t("statTrDatum"))+'</b><span class="sk-sub">'+alle.length+'</span><span class="sk-chev">'+ICON_CHEV+'</span></summary>'+
+    trainingsZeilenHTML(alle.slice(0, trAnzahl.stat))+trMehrHTML("stat", alle.length)+'</details></details>';
 }
 function statTrainingsBinden(neu){
   app.querySelectorAll("[data-trmehr]").forEach(function(b){

@@ -16,7 +16,7 @@ function wsTab(){   // „baukasten“ · „blocs“ (früher Meine) · „kata
 function wsKnopf(attr, wert, aktiv, text){ return '<button type="button" data-'+attr+'="'+wert+'" class="'+(aktiv ? "active" : "")+'" aria-pressed="'+(!!aktiv)+'">'+esc(text)+'</button>'; }
 /* Kopf unter der Titelleiste: Reiter, im Katalog die Abteilungen, darunter die Art (Aufwärmen | Dehnen) */
 function wsKopfHTML(tab, art){
-  return bereichBildHTML("warm")+'<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+wsKnopf("wstab", "blocs", tab === "blocs", t("katTabBlocs"))+'</div>'+
+  return '<div class="rz kat-rz" style="--rz:var(--ws-color)">'+wsKnopf("wstab", "baukasten", tab === "baukasten", t("katTabBaukasten"))+wsKnopf("wstab", "blocs", tab === "blocs", t("katTabBlocs"))+'</div>'+
     (tab === "katalog" ? '<div class="kat-seitentitel">'+esc(t("katTabKatalog"))+'</div>' : '')+
     '<div class="theme-pick lib-tabs seg-2 ws-art">'+wsKnopf("wsart", "warm", art === "warm", t("wsWarm"))+wsKnopf("wsart", "dehn", art === "dehn", t("wsDehn"))+'</div>';
 }
@@ -132,7 +132,7 @@ function renderWarmStretch(){
   }
   var hw = hinweise("ws", [tab === "meine" ? "wsMineIntro" : art === "warm" ? "wsIntroWarm" : "wsIntroDehn"].concat(tab === "uebungen" ? ["zpHintWs"] : []));
   app.innerHTML =
-    (layoutNeu() ? bereichKopfNeuHTML("warm", t("warmTitle"), t("warmKicker"), hw.knopf) : topbar(t("warmTitle"), { back:"#home", right:hw.knopf+lupeHTML("ws", wsQuery) })) +
+    bereichKopfNeuHTML("warm", t("warmTitle"), t("warmKicker"), hw.knopf, { klar:true }) +
     wsKopfHTML(wtab, art) +
     (tab === "uebungen" ? '<button type="button" class="btn btn-secondary kat-eigene" data-wsnewex>'+ICON_PLUS+' '+esc(t("exNew"))+'</button>' : '')+
     hw.z(0, "seiten-intro")+(tab === "workouts" ? tippZeileHTML("workout", "tippWorkout") : tab === "uebungen" ? tippZeileHTML("wsuebung", "tippWsUebung") : "")+
@@ -298,7 +298,7 @@ function renderSettings(){
     '<div class="section-title">'+t("optWichtig")+'</div>'+
     '<div class="card">'+einstKopf(EINST_ICON.darstellung, t("appearance"))+
     '<div class="theme-pick vier">'+
-      themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+themeBtn("nacht",t("thNacht"))+
+      themeBtn("system",t("thSystem"))+themeBtn("light",t("thLight"))+themeBtn("dark",t("thDark"))+
     '</div>'+
     '</div>'+
     '<div class="card">'+einstKopf(EINST_ICON.training, t("optTraining"))+

@@ -116,12 +116,13 @@ function libWoCard(lw, exs, hidden, dur, mains){
   return '<div class="list-item entry tpl-item lib-card'+(hidden?' is-hidden':'')+'" style="--cat:'+woFarbe(exs)+'" data-cover="lib/'+lw.id+'" data-q="'+esc(woSearchText(lw.name.de+" "+lw.name.en, exs))+'">'+
     '<button class="playbtn cat" data-cover="lib/'+lw.id+'" title="'+t("startTemplate")+'" aria-label="'+t("startTemplate")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(tplText(lw.name))+'</div>'+
-    '<div class="sub">'+mainTagsHTML(mains)+t("exCount", { n:exs.length })+SEP+fmtDauerKurz(dur)+'</div>'+
-    '</div>'+
+    '<div class="sub">'+mainTagsHTML(mains)+exAnzText(exs.length)+SEP+fmtDauerKurz(dur)+'</div>'+
+    '</div>'+kkMiniHTML(exs)+   // kleine Körperfigur: welche Muskelgruppen das Workout trainiert (wie in Path › Deep Dive)
     '<div class="card-aside"><div class="card-acts">'+
       (hidden ? '<button type="button" class="tpl-adopt" data-unhideone="wo:'+lw.id+'">'+svgIcon(ICON_EYE)+' '+t("unhide")+'</button>'
               : favBtn("lib:"+lw.id)+moreBtn("data-womore", lw.id))+
-    '</div></div></div>';
+    '</div></div>'+
+    '<span class="pg-figs" data-pgf="lib:'+lw.id+'"></span></div>';   // die Übungen als kleine Figuren in einer eigenen Zeile (wie in der Auswahl bei Path), erst gezeichnet, wenn die Gruppe offen ist
 }
 /* Quadratische Übungskachel wie im Studio (Air › Übungen, Mobility & Stretch › Übungen): Figur, Name, darunter die Hauptmuskeln in Kurzform.
    Tippen = Übungsinfo (eigene Übung: bearbeiten), ▶ unten links = starten, ☆ = merken, lange drücken = in Workout oder Plan legen;

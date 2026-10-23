@@ -294,8 +294,7 @@ function timerFabHTML(){
    angelegt werden sie über das Plus. */
 function renderIntervall(){
   var hw = hinweise("timer", ["timerHint"]);
-  var neuK = layoutNeu();   // New: Foto-Kopf wie im Entwurf, Zurück führt zu Training
-  app.innerHTML = (neuK ? runHintergrundHTML() + bereichKopfNeuHTML("intervall", t("tabTimer"), t("timerKicker"), hw.knopf, { klar:true }) : topbar(t("tabTimer"), { back:"#home", right:hw.knopf }) + bereichBildHTML("intervall")) +
+  app.innerHTML = runSeitenHintergrundHTML() + bereichKopfNeuHTML("intervall", t("tabTimer"), t("timerKicker"), hw.knopf, { klar:true }) +   // Zurück führt zu Training
     timerPanelHTML(hw) + '<div style="height:90px"></div>' + timerFabHTML();
   bindCommon();
   function neu(){ var y = window.scrollY; renderIntervall(); window.scrollTo(0, y); }

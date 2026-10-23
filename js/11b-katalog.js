@@ -119,8 +119,7 @@ function katSuche(q, standard){
 /* ---------- Kopf: Titel, Reiter, Überrasch mich ---------- */
 function katKopfHTML(tab, right){
   function b(k, label){ return '<button type="button" data-kattab="'+k+'" class="'+(tab === k ? 'active' : '')+'">'+esc(label)+'</button>'; }
-  var kopf = (layoutNeu() ? bereichKopfNeuHTML("kat", t("katalog"), t("katKicker"), right || "", { foto:"img/neu-d-katalog.jpg", fotoHell:"img/neu-h-halle.jpg", zurueck:"#home", ohneSuche:(right || "").indexOf("lib-lupe") > -1 })
-      : topbar(t("katalog"), { back:"#home", right:right || "" })) +
+  var kopf = bereichKopfNeuHTML("kat", t("katalog"), t("katKicker"), right || "", { klar:true, foto:"img/neu-d-katalog.jpg", fotoHell:"img/neu-h-halle.jpg", zurueck:"#home", ohneSuche:(right || "").indexOf("lib-lupe") > -1 }) +
     '<div class="rz kat-rz" style="--rz:var(--text)">'+b("baukasten", t("katTabBaukasten"))+b("blocs", t("katTabBlocs"))+'</div>';
   if(tab !== "katalog") return kopf;
   // Katalog (Seite hinter dem Baukasten): ganz vorn der Ort (Fitnessstudio · Freiluft), mit der Zahl der Workouts bzw. Übungen

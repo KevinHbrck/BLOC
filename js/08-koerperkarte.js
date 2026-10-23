@@ -235,6 +235,18 @@ function kkTeile(ex){
   Object.keys(l).forEach(function(z){ if(l[z] > 0 && !haupt[z]) hilfe[z] = 1; });
   return { haupt:haupt, hilfe:hilfe };
 }
+/* Übungsinfo: wie oft diese Übung in den letzten 30 Tagen im Training vorkam und wann zuletzt (nur Anzeige; der Verlauf hält 31 Tage einzeln) */
+function exHistorieHTML(id){
+  var jetzt = Date.now(), tag = 86400000, n = 0, letzte = 0;
+  (state.db.history || []).forEach(function(e){
+    if(e && e.ex && e.ex.indexOf(id) > -1 && e.at >= jetzt - 30*tag){ n++; if(e.at > letzte) letzte = e.at; }
+  });
+  if(!n) return "";
+  var d0 = new Date(jetzt); d0.setHours(0, 0, 0, 0);
+  var d1 = new Date(letzte); d1.setHours(0, 0, 0, 0);
+  var vor = Math.round((d0.getTime() - d1.getTime())/tag);
+  return '<div class="info-historie">'+esc(t("exHistorie", { n:n, z:vor === 0 ? t("exHeute") : vor === 1 ? t("exGestern") : t("exVor", { n:vor }) }))+'</div>';
+}
 /* Übungsinfo: kleine Silhouetten; antippen vergrößert sie und nennt die Zonen beim Namen (kkInfoBinden) */
 function kkInfoHTML(ex){
   var tl = kkTeile(ex), w = {}, dehn = !!(ex.cats && ex.cats.indexOf("stretch") > -1);   // Dehnübungen: „Dehnt“ / „Dehnt auch“ statt „Trainiert“ / „Unterstützend“
@@ -244,7 +256,7 @@ function kkInfoHTML(ex){
   return '<button type="button" class="info-kk-knopf'+(kkFeinAn() ? ' fein' : '')+'" data-kkgross aria-expanded="false" aria-label="'+esc(t("kkGross"))+'">'+koerperPaar(w)+'</button>'+
     '<div class="info-kk-liste" hidden><div><span class="kk-punkt haupt"></span><b>'+esc(t(dehn ? "musStretched" : "kkTrainiert"))+':</b> '+esc(namen(tl.haupt))+'</div>'+
     (Object.keys(tl.hilfe).length ? '<div><span class="kk-punkt hilfe"></span><b>'+esc(t(dehn ? "musAlsoStretched" : "musAssist"))+':</b> '+esc(namen(tl.hilfe))+'</div>' : '')+'</div>'+
-    kkModusHTML(ex);
+    kkModusHTML(ex)+exHistorieHTML(ex.id);
 }
 /* Ein Tipp auf die kleinen Silhouetten vergrößert sie und zeigt die Zonen mit Namen (gilt für alle Übungsinfos, auch im Studio) */
 document.addEventListener("click", function(e){
@@ -265,7 +277,7 @@ document.addEventListener("click", function(e){
   var box = b.closest(".info-mus"), id = b.parentNode.getAttribute("data-kkex"), ex = id && findExercise(id);
   if(box && ex){
     var gross = box.classList.contains("gross");
-    ["info-kk-knopf", "info-kk-liste", "kk-modus"].forEach(function(c){ var el = box.querySelector("."+c); if(el) el.parentNode.removeChild(el); });
+    ["info-kk-knopf", "info-kk-liste", "kk-modus", "info-historie"].forEach(function(c){ var el = box.querySelector("."+c); if(el) el.parentNode.removeChild(el); });
     box.insertAdjacentHTML("beforeend", kkInfoHTML(ex));
     if(gross){ box.querySelector(".info-kk-knopf").setAttribute("aria-expanded", "true"); box.querySelector(".info-kk-liste").hidden = false; }
     return;
@@ -291,8 +303,14 @@ function kkSummeHTML(ids){
   kkReihe().forEach(function(z){ w[z] = kkStufe(sum[z]); if(kkWichtig(z) && (sum[z] || 0) < .3) leer.push(kkName(z)); });
   return '<div class="kk-summe">'+kkModusHTML()+koerperPaar(w)+'<p class="kk-note">'+esc(leer.length ? t("kkLuecken", { n:leer.join(", ") }) : t("kkAlle"))+'</p></div>';
 }
+/* Ganz kleine Körperfigur (vorn und hinten) für Workout-Karten im Katalog: nur die Silhouetten mit den trainierten Zonen, ohne Text. exs = Übungen (Objekte) */
+function kkMiniHTML(exs){
+  var ids = (exs || []).map(function(ex){ return ex && ex.id; }).filter(Boolean), sum = kkSumme(ids, true), w = {}, an = false;
+  kkReihe().forEach(function(z){ w[z] = kkStufe(sum[z]); if(sum[z]) an = true; });
+  return an ? '<span class="kk-mini" aria-hidden="true">'+koerperPaar(w)+'</span>' : '';
+}
 /* Kompakte Körperkarte für den Kopf eines Workouts (Deckblatt, Baukasten): Silhouetten plus drei Zeilen - viel trainiert, nur am Rande, Lücken */
-function kkKopfHTML(ids, auchDehnen){
+function kkKopfHTML(ids, auchDehnen, opt){   // opt.ohneModus: ohne Schalter „Detailansicht“ (mehrere Karten untereinander, der Schalter steht dann einmal oben)
   var sum = kkSumme(ids, auchDehnen), w = {}, viel = [], rand = [], leer = [], max = 0, reihe = kkReihe();
   reihe.forEach(function(z){ max = Math.max(max, sum[z] || 0); });
   if(!max) return "";
@@ -306,7 +324,7 @@ function kkKopfHTML(ids, auchDehnen){
   return '<div class="kk-kopf">'+koerperPaar(w)+'<div class="kk-kopf-txt">'+
     zeile("viel", "kkViel", viel)+zeile("rand", "kkRand", rand)+
     (leer.length ? zeile("luecke", "kkLueckeKurz", leer) : '<div class="kk-zeile ok">'+esc(t("kkKeineLuecke"))+'</div>')+
-    kkModusHTML()+'</div></div>';
+    (opt && opt.ohneModus ? '' : kkModusHTML())+'</div></div>';
 }
 /* Filter: Zonen antippen (mehrere möglich) */
 function zonePasst(ex, zonen){

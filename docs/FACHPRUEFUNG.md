@@ -19,6 +19,15 @@ Stand: 2026-10-06 · Fassung 2026-10-02-46
 | Figuren | Strichfiguren je Übung | `daten.js` (`ILLU_POSES`, `ILLU_SEQ`) | Zeigen sie die Ausführung im Wesentlichen richtig? (Prüfansicht: `index.html?dev` und in der Konsole `BLOC_DEV`) |
 | Bewegungsempfehlung in der Statistik | Statistik-Karte | `js/*.js` (`statWho…`) | Ist die Darstellung (150 min, 2 Krafttage) richtig und nicht irreführend? |
 
+## Neu seit 2026-10-23 (noch nicht fachlich geprüft)
+
+| Bereich | Umfang | Wo im Code | Fragen an die Fachperson |
+|---|---|---|---|
+| Zusätzliche Katalog-Workouts für dünn besetzte Gruppen | 15 Workouts (Brust, Schultern, Rücken, Arme, Bauch, Cardio mit Battle Ropes; Fitnessstudio und Freiluft) mit Hinweistexten | `daten.js` (Block „Mehr Abwechslung“, `LIB_WORKOUT_INFO`) | Sind Auswahl und Reihenfolge sinnvoll (große vor kleinen Muskeln, mehrgelenkig vor eingelenkig)? Stimmen die Wiederholungsbereiche in den Hinweisen? Sind die Battle-Rope-Workouts für Einsteiger vertretbar beschrieben, Skin the Cat in „Schultern ohne Geräte“ nur mit Vorbehalt? |
+| Path › Deep Dive | Verteilung der Muskelgruppen pro Woche/Workout, Vergleich zur Vorwoche, Idee für die nächste Einheit | `js/21-koerper.js` (`renderDeepDive`), `js/08-koerperkarte.js` (`mgProzent`) | Ist die Darstellung ohne Sollwerte und ohne Bewertung vertretbar? Ist die Idee „Gruppe mit dem geringsten Anteil“ nicht irreführend (Ziele sind verschieden)? |
+
+Die Grenze „höchstens 25 % gleiche Übungen je Gruppe und Ort“ ist eine Vorgabe der Entwicklung für mehr Abwechslung und im Schnelltest geprüft, keine Studienempfehlung.
+
 ## Wie Rückmeldungen festgehalten werden
 
 1. Pro Befund: Übung bzw. Programm (Id), Problem, Vorschlag, ggf. Quelle.

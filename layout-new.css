@@ -1,6 +1,6 @@
 /* BLOC - Aussehen „New“ (seit 2026-10-15), zusätzlich zu „Klassik“.
    Alles steht unter :root[data-layout="new"]; ohne das Attribut ändert sich nichts. Farben kommen weiter aus den Designs
-   (System, Hell, Dunkel, Nacht), hier ändern sich nur Formen, Flächen und die untere Leiste.
+   (System, Hell, Dunkel), hier ändern sich nur Formen, Flächen und die untere Leiste.
    Grundsätze: ruhige Flächen, große Rundungen mit einer kleinen Ecke oben links, Milchglas nur auf der unteren Leiste (mit deckendem
    Rückfall), dazu die Navigation „Heute · Training · Kalender · Fortschritt“ mit Hauptknopf (js/03-router.js). Funktionen bleiben. */
 
@@ -19,7 +19,6 @@
   border:1px solid var(--nl-linie);
   border-top-left-radius:var(--ecke);
 }
-:root[data-layout="new"] .home-hero{ border-top-left-radius:var(--ecke); border:1px solid var(--nl-linie); }
 :root[data-layout="new"] .list-item{ padding:16px 18px; }
 
 /* ---------- Knöpfe ---------- */
@@ -154,7 +153,6 @@
 :root[data-layout="new"] .bn-knoepfe .btn-secondary{ background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.3); }
 
 /* Kopfblock auf Heute: oben links dunkler, damit das Logo ruhig steht; Farbverlauf kommt von rechts unten */
-:root[data-layout="new"] .home-hero::after{ background:linear-gradient(to top left, rgba(255,92,50,.78) 0%, rgba(255,140,60,.38) 45%, rgba(20,10,6,.4) 100%); }
 
 /* ---------- Heute wie im Entwurf: Foto-Kopf, Woche darüber, „Heute geplant“, Favoriten als Fotokarten ---------- */
 :root[data-layout="new"] .kopf-neu{
@@ -433,7 +431,7 @@
   :root[data-layout="new"]:not([data-theme]) .kopf-bereich.klar .kb-rund, :root[data-layout="new"]:not([data-theme]) .kopf-bereich.klar .kb-rechts .iconbtn{ background:rgba(255,255,255,.7); color:var(--text); }
   :root[data-layout="new"]:not([data-theme]) .run-bg ~ .section-title, :root[data-layout="new"]:not([data-theme]) .run-bg ~ .page-hint{ color:var(--text); }
 }
-/* Während des Laufens im dunklen Modus bleibt die Karte weiß (minimalistisch, gut lesbar im Hellen unterwegs); „Nacht“ bleibt dunkel */
+/* Während des Laufens im dunklen Modus bleibt die Karte weiß (minimalistisch, gut lesbar im Hellen unterwegs) */
 :root[data-layout="new"][data-theme="dark"] .run-weiss{ --text:#1c1c1e; --text-dim:#6c6c70; --surface:#fff; --surface-2:#ececea; --border:#e2e1dd; background:#fff; color:#1c1c1e; }
 @media (prefers-color-scheme: dark){
   :root[data-layout="new"]:not([data-theme]) .run-weiss{ --text:#1c1c1e; --text-dim:#6c6c70; --surface:#fff; --surface-2:#ececea; --border:#e2e1dd; background:#fff; color:#1c1c1e; }
@@ -549,7 +547,7 @@
 :root[data-layout="new"] .player .block-label{ font-size:27px; font-weight:700; opacity:1; margin-bottom:14px; line-height:1.15; }
 :root[data-layout="new"] .player .next-up{ opacity:.6; font-size:16px; }
 :root[data-layout="new"] .player .player-mid .pl-illu{ width:min(54vw,220px); height:min(54vw,220px); margin:0 0 2px; opacity:1; }
-:root[data-layout="new"] .player .player-mid .pl-illu{ width:min(44vw,172px); height:min(44vw,172px); }
+:root[data-layout="new"] .player .player-mid .pl-illu{ width:min(31vw,120px); height:min(31vw,120px); }   /* 30 % kleiner (2026-10-23), damit Figur, Ring und Knöpfe auf dem Handy passen */
 :root[data-layout="new"] .player[data-phase="work"] .ring-wrap{ width:min(54vw,214px); height:min(54vw,214px); }
 :root[data-layout="new"] .player[data-phase="work"] .block-label{ margin-bottom:6px; }
 :root[data-layout="new"] .player .rep-dots{ margin-top:16px; }
@@ -1096,3 +1094,155 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .satz-aw-punkte{ display:flex; justify-content:center; gap:6px; margin:4px 0 12px; }
 .satz-aw-punkte i{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.3); }
 .satz-aw-punkte i.an{ background:#fff; }
+
+/* ---------- Path › Deep Dive (2026-10-23): Muskelgruppen auf der Körperfigur, pro Woche und pro Workout ---------- */
+:root[data-layout="new"] .koerper-rz.drei button{ font-size:12.5px; padding:11px 2px; }
+:root[data-layout="new"] .dd-nav{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin:2px 0 10px; }
+:root[data-layout="new"] .dd-nav b{ font-size:15px; font-weight:700; text-align:center; flex:1; }
+:root[data-layout="new"] .dd-nav .iconbtn{ width:40px; height:40px; font-size:22px; line-height:1; }
+:root[data-layout="new"] .dd-nav .iconbtn:disabled{ opacity:.35; }
+:root[data-layout="new"] .dd-karte{ margin:0 0 12px; padding:14px 14px 12px; }
+:root[data-layout="new"] .dd-karte .kk-kopf{ margin:8px 0 0; padding:0; background:none; }
+:root[data-layout="new"] .dd-titel{ font-size:16px; font-weight:700; }
+:root[data-layout="new"] .dd-sub{ font-size:13px; color:var(--text-dim); margin-top:2px; }
+:root[data-layout="new"] .dd-leer{ margin:8px 0 0; color:var(--text-dim); font-size:14px; }
+
+/* ---------- Katalog: kleine Körperfigur auf den Workout-Karten ---------- */
+:root[data-layout="new"] .kk-mini{ flex:none; display:flex; align-items:center; margin:0 8px 0 4px; }
+:root[data-layout="new"] .kk-mini .kk-paar{ gap:3px; margin:0; }
+:root[data-layout="new"] .kk-mini .kk{ width:22px; height:44px; }
+:root[data-layout="new"] .kk-mini figcaption{ display:none; }
+
+/* ---------- Glas-Design (Modern, Dunkel; 2026-10-23) ----------
+   Gilt, wenn applyTheme das Attribut data-glas setzt (Dunkel, oder System bei dunklem Gerät). Hell bleibt unverändert.
+   Das Foto der Run-Seite liegt geblurrt und abgedunkelt hinter allen Seiten (div.glas-bg in index.html, dieselben Werte wie .run-bg), die Karten sind
+   Glas (--surface halbtransparent). Timer, Satz-Training und Run behalten ihr eigenes dunkles Aussehen. Farben nach Ort: Fitnessstudio rot, Freiluft blau,
+   Mobility & Stretch grün; Figuren und Symbole sind weiß, Orange bleibt der Hauptaktion. */
+.glas-bg{ display:none; }
+:root[data-layout="new"][data-glas]{ --surface:rgba(255,255,255,.14); --surface-2:rgba(255,255,255,.12); --border:rgba(255,255,255,.2); --text:#fff; --text-dim:rgba(255,255,255,.75); background:#0a0a0c; }
+:root[data-layout="new"][data-glas] body{ background:transparent; }
+:root[data-layout="new"][data-glas] .glas-bg{ display:block; position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+:root[data-layout="new"][data-glas] body:has(#app .run-bg) .glas-bg{ display:none; }   /* die Run-Seite bringt ihren eigenen Hintergrund mit */
+:root[data-layout="new"][data-glas] .glas-bg i{ position:absolute; inset:-40px; background:url("img/neu-p-freiluft-meer.jpg") 50% 45%/cover no-repeat; filter:blur(26px) brightness(.66) saturate(1.25); }
+:root[data-layout="new"][data-glas] .glas-bg::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,10,12,.62), rgba(10,10,12,.42) 45%, rgba(10,10,12,.68)); }
+/* Kopfzeilen ohne dunklen Schleier (auch auf Training, dort mit Zurück-Knopf) */
+:root[data-layout="new"][data-glas] .topbar{ background:linear-gradient(rgba(12,14,18,.86) 62%, rgba(12,14,18,0)); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); -webkit-mask-image:linear-gradient(#000 82%, transparent); mask-image:linear-gradient(#000 82%, transparent); box-shadow:none; border:0; }   /* weich und leicht verwischt: beim Scrollen scheint kein Text durch, ohne harte Kante */
+/* Wochenkarte fast deckend, damit die Kante des Foto-Kopfs darunter nicht durchscheint */
+:root[data-layout="new"][data-glas] .woche-neu .woche{ background:rgba(28,28,31,.92); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); }
+/* Symbole ruhiger: weiß auf Glas statt Orange; Workout (orange) und Mobility & Stretch (grün) behalten ihre Bereichsfarbe */
+:root[data-layout="new"][data-glas] .wi-zeile .at-ico{ background:rgba(255,255,255,.1); color:rgba(255,255,255,.9); border:1px solid rgba(255,255,255,.2); box-shadow:none; }
+:root[data-layout="new"][data-glas] .wi-zeile[data-bereich="warm"] .at-ico{ color:var(--ws-color); }
+:root[data-layout="new"][data-glas] .wi-zeile[data-bereich="katalog"] .at-ico{ color:var(--accent); }   /* Workout orange, Mobility & Stretch grün */
+:root[data-layout="new"][data-glas] .tabbar .tab.active{ color:#fff; background:rgba(255,255,255,.14); }
+/* Übungen: Figuren weiß ohne farbigen Schimmer, Umrandung nach Ort (Fitnessstudio rot, Freiluft blau, Mobility grün) */
+:root[data-layout="new"][data-glas] .fig-bild, :root[data-layout="new"][data-glas] .wb-kachel.gewaehlt .fig-bild{ --geraet:#fff; color:#fff; background:none; }
+:root[data-layout="new"][data-glas] .wb-kachel[style*="--gym-color"], :root[data-layout="new"][data-glas] .wb-mini[style*="--gym-color"]{ border:2px solid #e5484d; }
+:root[data-layout="new"][data-glas] .wb-kachel:not([style*="--gym-color"]), :root[data-layout="new"][data-glas] .wb-mini:not([style*="--gym-color"]){ border:2px solid #6a86f5; }
+:root[data-layout="new"][data-glas] .wb-kachel[style*="--c-stretch"], :root[data-layout="new"][data-glas] .wb-mini[style*="--c-stretch"]{ border:2px solid var(--c-stretch); }
+:root[data-layout="new"][data-glas] .wb-mini-illu, :root[data-layout="new"][data-glas] .wb-mini-illu *{ color:#fff; }
+:root[data-layout="new"] .dd-chips{ margin:0 0 10px; }
+:root[data-layout="new"] .dd-unter{ font-size:13px; font-weight:700; margin:12px 0 6px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.06em; }
+:root[data-layout="new"] .dd-verteilung .ausw-row{ display:grid; grid-template-columns:92px 1fr 40px 34px; align-items:center; gap:8px; }
+:root[data-layout="new"] .dd-delta{ font-size:12px; font-weight:700; text-align:right; color:var(--text-dim); }
+:root[data-layout="new"] .dd-delta.plus{ color:#5fd39a; }
+:root[data-layout="new"] .dd-delta.minus{ color:#ff8f6b; }
+:root[data-layout="new"] .dd-fussnote{ font-size:11.5px; color:var(--text-dim); margin-top:6px; }
+:root[data-layout="new"] .dd-vorschlag{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; margin:0 0 12px; padding:14px; cursor:pointer; color:var(--text); font:inherit; flex-wrap:wrap; }
+:root[data-layout="new"] .dd-vs-kicker{ flex-basis:100%; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); }
+:root[data-layout="new"] .dd-vs-name{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+:root[data-layout="new"] .dd-vs-name b{ font-size:16px; }
+:root[data-layout="new"] .dd-vs-name small{ font-size:13px; color:var(--text-dim); }
+:root[data-layout="new"] .dd-vs-play{ flex:none; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.9); color:#1c1c1e; display:grid; place-items:center; }
+:root[data-layout="new"] .dd-vs-play svg{ width:20px; height:20px; }
+:root[data-layout="new"][data-glas] .kopf-neu{ -webkit-mask-image:linear-gradient(180deg, #000 78%, transparent 100%); mask-image:linear-gradient(180deg, #000 78%, transparent 100%); }   /* Foto-Kopf von Heute läuft unten weich aus, keine harte Kante hinter der Wochenkarte */
+
+/* ---------- Path › Deep Dive: Häufigkeit pro Muskelgruppe, Woche im Überblick, Balance (2026-10-23) ---------- */
+:root[data-layout="new"] .dd-modus{ margin:0 0 10px; }
+:root[data-layout="new"] .dd-freq .kk-kopf{ margin:8px 0 0; padding:0; background:none; }
+:root[data-layout="new"] .dd-legende{ font-size:12px; color:var(--text-dim); margin-top:10px; line-height:1.4; }
+:root[data-layout="new"] .dd-who{ display:flex; gap:10px; align-items:center; margin-top:12px; font-size:13.5px; line-height:1.35; }
+:root[data-layout="new"] .dd-who-m{ flex:none; min-width:44px; text-align:center; padding:5px 8px; border-radius:999px; font-weight:800; font-size:13px; background:color-mix(in srgb, var(--text) 10%, transparent); color:var(--text-dim); }
+:root[data-layout="new"] .dd-who-m.ok{ background:color-mix(in srgb, var(--accent) 24%, transparent); color:var(--text); }
+:root[data-layout="new"] .dd-kal{ margin-top:8px; }
+:root[data-layout="new"] .dd-kal-zeile{ display:grid; grid-template-columns:84px repeat(7, 1fr) 34px; align-items:center; gap:6px; padding:6px 0; }
+:root[data-layout="new"] .dd-kal-kopf{ padding:0 0 2px; }
+:root[data-layout="new"] .dd-kal-kopf small{ text-align:center; font-size:11px; font-weight:700; color:var(--text-dim); }
+:root[data-layout="new"] .dd-kal-n{ font-size:13.5px; }
+:root[data-layout="new"] .dd-punkt{ justify-self:center; width:15px; height:15px; border-radius:50%; border:1.5px solid color-mix(in srgb, var(--text) 24%, transparent); box-sizing:border-box; }
+:root[data-layout="new"] .dd-punkt.an{ background:var(--accent); border-color:var(--accent); }
+:root[data-layout="new"] .dd-punkt.plan{ border-color:var(--accent); background:transparent; }
+:root[data-layout="new"] .dd-haeufig{ text-align:right; font-size:13px; }
+:root[data-layout="new"] .dd-haeufig.f0{ color:var(--text-dim); font-weight:600; }
+:root[data-layout="new"] .dd-haeufig.f1{ color:var(--accent); opacity:.7; }
+:root[data-layout="new"] .dd-haeufig.f2{ color:var(--accent); }
+:root[data-layout="new"] .dd-plan-btn{ margin-top:10px; }
+:root[data-layout="new"] .dd-bal{ margin:12px 0 4px; }
+:root[data-layout="new"] .dd-bal-k, :root[data-layout="new"] .dd-bal-z{ display:flex; justify-content:space-between; font-size:13px; }
+:root[data-layout="new"] .dd-bal-k{ color:var(--text-dim); margin-bottom:5px; }
+:root[data-layout="new"] .dd-bal-z{ margin-top:4px; }
+:root[data-layout="new"] .dd-split{ height:10px; border-radius:999px; background:color-mix(in srgb, var(--text) 16%, transparent); overflow:hidden; }
+:root[data-layout="new"] .dd-split i{ display:block; height:100%; background:var(--accent); }
+:root[data-layout="new"] .dd-split.leer i{ background:transparent; }
+:root[data-layout="new"] .info-historie{ font-size:13px; color:var(--text-dim); margin-top:10px; }
+
+/* Glas-Design: die orangen Hauptknöpfe werden Glas wie „Lauf starten“ (Fläche durchscheinend, Rand, weiße Schrift, Symbol in Orange) */
+:root[data-layout="new"][data-glas] .btn-primary{
+  background:rgba(255,255,255,.2); color:#fff; border:1px solid rgba(255,255,255,.4); box-shadow:0 8px 26px rgba(0,0,0,.2);
+  -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%); }
+:root[data-layout="new"][data-glas] .btn-primary svg{ color:#ff8f6b; }
+/* „Überrasch mich“ vorne auf Heute (Workout-Builder) und alle „LOS GEHTS“ bleiben orange (Path, BLOC-Seite, Deckblatt, Einführung) */
+:root[data-layout="new"][data-glas] .bn-knoepfe .btn-primary,
+:root[data-layout="new"][data-glas] .btn-primary.pg-go,
+:root[data-layout="new"][data-glas] .btn-primary[data-planlos],
+:root[data-layout="new"][data-glas] .btn-primary[data-go],
+:root[data-layout="new"][data-glas] .btn-primary[data-introweiter]{ background:var(--accent); color:#fff; border:1.5px solid var(--accent); box-shadow:0 4px 14px rgba(255,90,54,.35); -webkit-backdrop-filter:none; backdrop-filter:none; }
+:root[data-layout="new"][data-glas] .btn-primary.pg-go svg, :root[data-layout="new"][data-glas] .btn-primary[data-planlos] svg, :root[data-layout="new"][data-glas] .btn-primary[data-go] svg{ color:#fff; }
+:root[data-layout="new"][data-glas] .btn-primary:disabled{ opacity:.45; }
+:root[data-layout="new"][data-glas] .bau-karte.bau-sp:not(.ws-bau){ background:rgba(255,255,255,.2); color:#fff; border:1px solid rgba(255,255,255,.4); box-shadow:0 8px 26px rgba(0,0,0,.2); -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%); }
+:root[data-layout="new"][data-glas] .seg-row.bau-modus button.active{ background:rgba(255,255,255,.92); color:#1c1c1e; border-color:transparent; }
+:root[data-layout="new"] .dd-link{ display:flex; width:100%; align-items:center; justify-content:space-between; gap:12px; margin:12px 0 0; padding:14px 16px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--border); color:var(--text); font:inherit; font-weight:600; font-size:14px; line-height:1.35; text-align:left; cursor:pointer; }
+:root[data-layout="new"] .dd-link span:last-child{ font-size:22px; color:var(--text-dim); }
+:root[data-layout="new"] .bloc-fz{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-top:1px solid var(--border); }
+:root[data-layout="new"] .bloc-fz:first-of-type{ border-top:0; }
+:root[data-layout="new"] .bf-name{ display:flex; flex-direction:column; min-width:0; }
+:root[data-layout="new"] .bf-name b{ font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+:root[data-layout="new"] .bf-name small{ font-size:12.5px; color:var(--text-dim); }
+:root[data-layout="new"] .bf-trend{ flex:none; font-size:13px; font-weight:800; color:var(--text-dim); }
+:root[data-layout="new"] .bf-trend.plus{ color:#5fd39a; }
+:root[data-layout="new"] .bf-trend.minus{ color:#ff8f6b; }
+
+/* Glas-Design: Fenster, Menüs und Auswahlblätter undurchsichtig wie auf Run und Timer, damit nichts durchscheint */
+:root[data-layout="new"][data-glas] #overlayRoot, :root[data-layout="new"][data-glas] .fab-menu, :root[data-layout="new"][data-glas] .vol-popover{
+  --surface:#1d2025; --surface-2:#292d33; --border:rgba(255,255,255,.16); --text:#f4f4f6; --text-dim:rgba(255,255,255,.72); }
+:root[data-layout="new"][data-glas] .confirm-sheet{ background:#1d2025; color:#f4f4f6; -webkit-backdrop-filter:none; backdrop-filter:none; }
+:root[data-layout="new"][data-glas] .confirm-overlay{ background:rgba(0,0,0,.6); }
+:root[data-layout="new"][data-glas] .fab-menu .fab-opt{ background:#1d2025; color:#f4f4f6; border:1px solid rgba(255,255,255,.16); -webkit-backdrop-filter:none; backdrop-filter:none; }
+:root[data-layout="new"][data-glas] .vol-popover{ background:#1d2025; }
+/* Untere Leiste im Glas-Design deckender, damit darunter scrollender Text nicht durchscheint */
+:root[data-layout="new"][data-glas] .tabbar .pille{ background:rgba(24,27,32,.84); -webkit-backdrop-filter:blur(20px) saturate(150%); backdrop-filter:blur(20px) saturate(150%); }
+
+/* Fortschritt › Gespeicherte Trainings: eingeklappt, innen nach Muskelgruppe und Übung */
+:root[data-layout="new"] .stat-trainings .tr-gr{ margin:8px 0 0; border-top:1px solid var(--border); padding-top:6px; }
+:root[data-layout="new"] .stat-trainings .tr-gr > summary{ display:flex; align-items:center; gap:10px; list-style:none; cursor:pointer; padding:8px 0; }
+:root[data-layout="new"] .stat-trainings .tr-gr > summary::-webkit-details-marker{ display:none; }
+:root[data-layout="new"] .stat-trainings .tr-gr > summary b{ flex:1; font-size:15px; }
+:root[data-layout="new"] .tr-ex{ display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; padding:10px 4px; background:none; border:0; border-top:1px solid color-mix(in srgb, var(--border) 60%, transparent); color:var(--text); font:inherit; text-align:left; cursor:pointer; }
+:root[data-layout="new"] .te-name{ display:flex; flex-direction:column; min-width:0; }
+:root[data-layout="new"] .te-name b{ font-size:14.5px; font-weight:600; }
+:root[data-layout="new"] .te-name small{ font-size:12.5px; color:var(--text-dim); }
+:root[data-layout="new"] .te-best{ flex:none; font-size:13.5px; font-weight:700; }
+
+/* Katalog: die Übungen der Workouts als kleine Figuren unter dem Namen (wie in der Auswahl bei Path) */
+:root[data-layout="new"] .lib-card{ flex-wrap:wrap; }
+:root[data-layout="new"] .lib-card > .pg-figs{ flex:0 0 100%; order:9; margin:4px 0 0; padding:6px 0 0 4px; min-height:36px; border-top:1px solid var(--border); flex-wrap:wrap; }
+:root[data-layout="new"] .lib-card .pg-fig{ width:32px; height:32px; }
+/* Idee für die nächste Einheit: Name (öffnet das Workout), darunter In Kalender einfügen · Stern · Ansehen */
+:root[data-layout="new"] .dd-vorschlag{ cursor:default; }
+:root[data-layout="new"] .dd-vs-name{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; background:none; border:0; padding:0; color:var(--text); font:inherit; text-align:left; cursor:pointer; }
+:root[data-layout="new"] .dd-vs-akt{ flex-basis:100%; display:flex; align-items:center; gap:8px; margin-top:10px; }
+:root[data-layout="new"] .dd-vs-kal{ flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:11px 12px; font-size:14px; }
+:root[data-layout="new"] .dd-vs-akt .fav-btn{ flex:none; font-size:26px; padding:4px 8px; }
+:root[data-layout="new"] .dd-vs-play{ border:0; cursor:pointer; }
+/* Runder Hauptknopf: Symbol im Dunkel weiß (wie im Hellen) statt dunkel auf Orange */
+:root[data-layout="new"][data-glas] .tabbar .hauptknopf, :root[data-layout="new"][data-glas] .fab{ color:#fff; }
+:root[data-layout="new"][data-glas] .tabbar .hauptknopf svg{ color:#fff; stroke:#fff; }

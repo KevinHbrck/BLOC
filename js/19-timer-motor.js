@@ -93,6 +93,7 @@ function launchPlayer(w, source){
     rafId: null, source: source
   };
   document.getElementById("playerRoot").innerHTML = playerTemplate();
+  leistenFarbeAbgleichen();   // Statusleiste dunkel wie der Timer
   bindPlayerControls();
   progChipBinden(document.getElementById("playerRoot"), programmRefAusQuelle(source), exitPlayer);
   var ctx = audioCtx();   // noch im Tipp freischalten (iOS)
@@ -114,19 +115,10 @@ function rememberLastRun(w, source){
   save();
 }
 
-/* Timer in den BLOC-Farben: Belastung (die Übung ist zu erledigen) in BLOC-Orange mit weißer Schrift,
-   jede Pause, Blockpause und Vorbereitung auf Weiß mit dunkler Schrift */
+/* Timer: ein ruhiges dunkles Glas-Design in allen Phasen, die Farbe wechselt nicht (nur die Beschriftung sagt, was gerade ist) */
 function phaseVars(phase){
-  /* Modern: ein ruhiges dunkles Glas-Design in allen Phasen, die Farbe wechselt nicht (nur die Beschriftung sagt, was gerade ist) */
-  if(layoutNeu()){
-    var lb = { work:t("phWork"), rest:t("phRest"), blockrest:t("phBlockrest"), prep:t("phPrep") };
-    return { bg:"#0b0d10", text:"#f4f4f6", label:lb[phase] || "" };
-  }
-  if(phase==="work") return { bg:"var(--accent)", text:"#ffffff", label:t("phWork") };
-  if(phase==="rest") return { bg:"#ffffff", text:"#1c1c1e", label:t("phRest") };
-  if(phase==="blockrest") return { bg:"#ffffff", text:"#1c1c1e", label:t("phBlockrest") };
-  if(phase==="prep") return { bg:"#ffffff", text:"#1c1c1e", label:t("phPrep") };
-  return { bg:"var(--bg)", text:"var(--text)", label:"" };
+  var lb = { work:t("phWork"), rest:t("phRest"), blockrest:t("phBlockrest"), prep:t("phPrep") };
+  return { bg:"#0b0d10", text:"#f4f4f6", label:lb[phase] || "" };
 }
 
 /* Wohin gehört ein Training aus dem Timer: ein Plan-Workout zu seinem Plan, eine einzelne Übung zum geöffneten Plan oder zum freien Training des Tages */
@@ -269,7 +261,7 @@ function enterStep(idx, opt){
   el.style.setProperty("--phase-bg", pv.bg);
   el.style.setProperty("--phase-text", pv.text);
   el.setAttribute("data-phase", step.phase);
-  if(layoutNeu()) el.style.setProperty("--pl-foto", "url(img/neu-p-freiluft-meer.jpg)");   // Modern: helles, bläuliches, geblurrtes Foto (Meer) hinter dem Glas
+  el.style.setProperty("--pl-foto", "url(img/neu-p-freiluft-meer.jpg)");   // helles, bläuliches, geblurrtes Foto (Meer) hinter dem Glas
   // Ukraine Twist: während der ganzen Übung die wehende Flagge als Hintergrund
   var ua = step.ex === "russian-twists" && (step.phase === "work" || step.phase === "rest");
   el.classList.toggle("ua", ua);

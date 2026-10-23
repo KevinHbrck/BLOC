@@ -129,22 +129,33 @@ function triggerInstall(){
 }
 
 /* ============ Theme ============ */
-var LAYOUT_NUR_MODERN = !/[?&]schnelltest\b/.test(location.search);
 /* Farbe der Browser-/Statusleiste passend zum Seitenhintergrund */
-var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214", nacht:"#16110d" };
+var THEME_BAR_COLORS = { light:"#f5f5f2", dark:"#121214" };
 function applyTheme(){
   var t = state.db.settings.theme;
   var root = document.documentElement;
   if(THEME_BAR_COLORS[t]) root.setAttribute("data-theme", t);
   else root.removeAttribute("data-theme");
-  root.removeAttribute("data-vintage");   // altes Attribut des früheren Designs C60, falls es noch an der Seite hängt
-  /* Aussehen: Klassik (Standard, fehlt in alten Ständen) oder New - unabhängig von Hell/Dunkel/Nacht */
-  if(LAYOUT_NUR_MODERN || state.db.settings.layout === "new") root.setAttribute("data-layout", "new");
-  else root.removeAttribute("data-layout");
-  var dunkel = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  var bar = THEME_BAR_COLORS[t] || (dunkel ? THEME_BAR_COLORS.dark : THEME_BAR_COLORS.light);
+  /* Das Aussehen ist immer Modern (das frühere Classic und die Einstellung dazu sind entfernt); das Attribut bleibt, weil layout-new.css darauf aufbaut */
+  root.setAttribute("data-layout", "new");
+  /* Glas-Design (layout-new.css): im Dunkel, auch wenn „System“ gewählt ist und das Gerät dunkel läuft; Hell bleibt wie es ist */
+  var systemDunkel = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  if(t === "dark" || (!THEME_BAR_COLORS[t] && systemDunkel)) root.setAttribute("data-glas", "1");
+  else root.removeAttribute("data-glas");
+  leistenFarbeAbgleichen();
+}
+/* Statusleiste des Handys: Der Timer und das Satz-Training sind in allen Designs dunkel (Glas auf dunklem Foto) - solange sie offen sind, ist auch die
+   Leiste dunkel (sonst steht über dem dunklen Timer eine helle Leiste). Sonst passt sie zum gewählten Design. Die App kann die Farbe nur über das
+   Meta-Feld theme-color setzen. */
+var LEISTE_TRAINING = "#0b0d10";
+function leistenFarbeAbgleichen(){
   var meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute("content", bar);
+  if(!meta) return;
+  var pr = document.getElementById("playerRoot");
+  if((pr && pr.innerHTML) || document.querySelector(".satz-root")){ meta.setAttribute("content", LEISTE_TRAINING); return; }
+  var t = state.db.settings.theme;
+  var dunkel = !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  meta.setAttribute("content", THEME_BAR_COLORS[t] || (dunkel ? THEME_BAR_COLORS.dark : THEME_BAR_COLORS.light));
 }
 applyTheme();
 applyLang();
@@ -152,49 +163,45 @@ applyLang();
 /* ============ Render dispatch ============ */
 var app = document.getElementById("app");
 
-/* Leiste unten: Start · Suche · Statistik · Einstellungen - nur auf diesen Hauptseiten, nicht im Training oder in Listen und Editoren */
-var TAB_ROUTEN = { home:"#home", search:"#search", kalender:"#kalender", stats:"#stats", settings:"#settings" };
-/* Aussehen „New“ (settings.layout): vier Ziele (Heute · Training · Kalender · Fortschritt), Suche und Einstellungen als Symbole in der Kopfzeile */
-/* Classic ist abgeschafft (2026-10-19): es gibt nur noch das Aussehen Modern. Nur der Schnelltest (?schnelltest) prüft noch die alten Wege und bleibt in Classic. */
-function layoutNeu(){ return LAYOUT_NUR_MODERN || state.db.settings.layout === "new"; }
+/* Leiste unten: vier Ziele (Heute · Training · Path · Kalender), Suche und Einstellungen sind Symbole in der Kopfzeile */
 /* Foto-Pool für das Aussehen New: je Art mehrere Bilder. fotosZuteilen vergibt sie so, dass kein Bild doppelt vorkommt,
    solange es freie gibt: zuerst das passende der eigenen Art (ab einem festen Startpunkt, dann das nächste freie), danach das
    nächste freie aus allen anderen. Die Reihenfolge der Vergabe ist nach Schlüssel sortiert, damit es stabil bleibt. */
 var FOTO_POOL = (function(){
   var P = function(n){ return "img/neu-p-" + n + ".jpg"; };
   return {
-    tp:  ["img/neu-freiluft.jpg", P("freiluft-park"), P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt"), P("freiluft-sw")],
-    st:  [P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), "img/neu-workout.jpg", P("kraft-sw"), "img/neu-kopf.jpg"],   // Geräte zuerst (Wunsch: Workout-Karte ohne Person)
-    ti:  [P("timer-box"), "img/neu-timer.jpg", P("liegestuetz-feld"), P("studio-halle")],
+    tp:  ["img/neu-freiluft.jpg", P("freiluft-meer"), P("liegestuetz-strand"), P("liegestuetz-stadt")],
+    st:  [P("studio-hantelreihe"), P("studio-gewichtsblock"), P("studio-halle"), "img/neu-workout.jpg", "img/neu-kopf.jpg"],   // Geräte zuerst (Wunsch: Workout-Karte ohne Person)
+    ti:  ["img/neu-h-brust-2.jpg"],   // Timer im Dunkeln wie im Hellen (2026-10-23)
     ws:  [P("mobility-sitz"), P("mobility-ausfall")],   // ohne neu-mobility (Kopf im Profil, passte nicht zum Bereich)
-    run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-weg"), P("run-wald"), P("run-sw")],
+    run: ["img/neu-run.jpg", P("run-licht"), P("run-strasse"), P("run-sw")],
     /* Themen für Favoriten (nach Inhalt des Workouts, siehe favFotoPool) */
-    core:     ["img/neu-d-core.jpg", P("frau-kniebeuge"), P("liegestuetz-feld"), P("kraft-sw")],
+    core:     ["img/neu-d-core.jpg", P("frau-kniebeuge"), P("liegestuetz-feld")],
     beine:    [P("frau-kniebeuge"), P("mobility-ausfall"), P("freiluft-meer"), P("studio-gewichtsblock")],
-    ruecken:  [P("frau-klimmzug"), P("frau-latzug"), P("freiluft-park"), "img/neu-freiluft.jpg", P("freiluft-sw")],
+    ruecken:  [P("frau-klimmzug"), P("frau-latzug"), "img/neu-freiluft.jpg"],
     brust:    [P("liegestuetz-strand"), P("liegestuetz-stadt"), P("liegestuetz-feld")],
-    arme:     [P("frau-klimmzug"), P("studio-hantelreihe"), P("kraft-sw"), P("studio-halle")],
-    schulter: [P("frau-latzug"), P("kraft-sw"), P("studio-hantelreihe"), P("freiluft-park")],
+    arme:     [P("frau-klimmzug"), P("studio-hantelreihe"), P("studio-halle")],
+    schulter: [P("frau-latzug"), P("studio-hantelreihe")],
     mobility: [P("mobility-sitz"), P("mobility-ausfall")],
-    timer:    ["img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-feld")]
+    timer:    ["img/neu-h-brust-2.jpg", "img/neu-timer.jpg", P("studio-halle"), P("liegestuetz-feld")]
   };
 })();
 /* Heller Modus: helle Fotos (Pexels, siehe BilderBloc\Helle Bilder). Silhouetten und Schwarz-Weiß-Bilder bleiben dem Dunkel überlassen;
    Run behält in beiden Modi das klassische Läuferbild. Karten auf Training und Favoriten sind im Hellen „helle Karten“ (layout-new.css). */
 var FOTO_POOL_HELL = {
-  tp:  ["img/neu-h-klimmzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-ringe.jpg"],
-  st:  ["img/neu-h-halle.jpg", "img/neu-h-rack.jpg", "img/neu-h-kreuzheben.jpg"],
-  ti:  ["img/neu-p-timer-box.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-halle.jpg"],
+  tp:  FOTO_POOL.tp,   // wie im Dunkel (die hellen Klimmzug-Bilder sind gelöscht)
+  st:  ["img/neu-p-frau-kniebeuge.jpg"],   // Workout im Hellen: Kniebeuge (2026-10-23)
+  ti:  ["img/neu-h-brust-2.jpg"],   // Timer im Hellen (2026-10-23)
   ws:  FOTO_POOL.ws,   // wie im Dunkel
   run: FOTO_POOL.run,
   core:     ["img/neu-h-core-1.jpg", "img/neu-h-core-2.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"],
-  beine:    ["img/neu-p-frau-kniebeuge.jpg", "img/neu-h-kreuzheben.jpg", "img/neu-h-band.jpg", "img/neu-h-halle.jpg"],
-  ruecken:  ["img/neu-p-frau-klimmzug.jpg", "img/neu-p-frau-latzug.jpg", "img/neu-h-klimmzug-rueck.jpg", "img/neu-h-klimmzug.jpg", "img/neu-h-ringe.jpg"],
+  beine:    ["img/neu-p-frau-kniebeuge.jpg", "img/neu-h-band.jpg", "img/neu-h-halle.jpg"],
+  ruecken:  ["img/neu-p-frau-klimmzug.jpg", "img/neu-p-frau-latzug.jpg"],
   brust:    ["img/neu-h-brust-1.jpg", "img/neu-h-brust-2.jpg", "img/neu-h-rack.jpg"],
   arme:     ["img/neu-p-frau-klimmzug.jpg", "img/neu-h-kb-gelb.jpg", "img/neu-h-rack.jpg", "img/neu-h-kettlebell.jpg"],
-  schulter: ["img/neu-p-frau-latzug.jpg", "img/neu-h-rack.jpg", "img/neu-h-ringe.jpg", "img/neu-h-klimmzug.jpg"],
+  schulter: ["img/neu-p-frau-latzug.jpg", "img/neu-h-rack.jpg"],
   mobility: FOTO_POOL.mobility,
-  timer:    ["img/neu-h-halle.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"]
+  timer:    ["img/neu-h-brust-2.jpg", "img/neu-h-kettlebell.jpg", "img/neu-h-kb-gelb.jpg"]
 };
 function fotoPool(){ return themeIstDunkel() ? FOTO_POOL : FOTO_POOL_HELL; }
 /* Bildausschnitt je Foto: breite, flache Karten zeigen nur einen Streifen; hier steht, welcher Teil des Bildes dabei
@@ -202,32 +209,27 @@ function fotoPool(){ return themeIstDunkel() ? FOTO_POOL : FOTO_POOL_HELL; }
 var FOTO_FOKUS = {
   "img/neu-p-freiluft-leiter.jpg":"50% 62%",
   "img/neu-p-freiluft-meer.jpg":"50% 76%",   // Sportplatz am Meer
-  "img/neu-p-freiluft-park.jpg":"50% 50%",   // Stangen in der Mitte
-  "img/neu-p-freiluft-sw.jpg":"50% 45%",
+  // Stangen in der Mitte
   "img/neu-freiluft.jpg":"50% 66%",          // Gerüste knapp unter der Mitte
   "img/bereich-run.jpg":"85% 50%",           // klassisches Run-Bild: Läufer rechts der Mitte
   "img/neu-run.jpg":"50% 60%",
   "img/neu-p-run-licht.jpg":"50% 70%",
   "img/neu-p-run-strasse.jpg":"50% 68%",
   "img/neu-p-run-sw.jpg":"50% 70%",
-  "img/neu-p-run-wald.jpg":"50% 40%",
-  "img/neu-p-run-weg.jpg":"50% 82%",
   "img/neu-mobility.jpg":"50% 25%",          // Kopf und Arme statt nur der Hände
   "img/neu-p-mobility-ausfall.jpg":"50% 35%",
   "img/neu-p-mobility-sitz.jpg":"50% 60%",
   "img/neu-workout.jpg":"50% 48%",
   "img/neu-timer.jpg":"50% 66%",             // Person auf der Box im unteren Drittel
   "img/neu-kopf.jpg":"50% 60%",
-  "img/neu-p-kraft-sw.jpg":"50% 25%",
   "img/neu-p-liegestuetz-strand.jpg":"50% 70%",
   "img/neu-p-liegestuetz-stadt.jpg":"50% 55%",
   "img/neu-p-liegestuetz-feld.jpg":"50% 55%",
   "img/neu-p-studio-halle.jpg":"50% 55%",
   "img/neu-p-timer-box.jpg":"50% 62%",
   "img/neu-p-frau-latzug.jpg":"50% 38%", "img/neu-p-frau-klimmzug.jpg":"50% 40%", "img/neu-p-frau-kniebeuge.jpg":"50% 45%",
-  "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-kreuzheben.jpg":"50% 70%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
-  "img/neu-h-band.jpg":"50% 62%", "img/neu-h-kettlebell.jpg":"50% 32%", "img/neu-h-kb-gelb.jpg":"50% 70%", "img/neu-h-klimmzug.jpg":"50% 72%",
-  "img/neu-h-klimmzug-rueck.jpg":"50% 28%", "img/neu-h-ringe.jpg":"50% 55%", "img/neu-d-kalender.jpg":"50% 45%", "img/neu-h-brust-1.jpg":"50% 50%", "img/neu-h-brust-2.jpg":"50% 66%", "img/neu-h-core-1.jpg":"50% 50%", "img/neu-h-core-2.jpg":"50% 62%", "img/neu-d-core.jpg":"50% 68%", "img/neu-d-katalog.jpg":"50% 42%"
+  "img/neu-h-halle.jpg":"50% 62%", "img/neu-h-rack.jpg":"50% 45%", "img/neu-h-dehnen.jpg":"50% 40%",
+  "img/neu-h-band.jpg":"50% 62%", "img/neu-h-kettlebell.jpg":"50% 32%", "img/neu-h-kb-gelb.jpg":"50% 70%", "img/neu-d-kalender.jpg":"50% 45%", "img/neu-h-brust-1.jpg":"50% 50%", "img/neu-h-brust-2.jpg":"50% 66%", "img/neu-h-core-1.jpg":"50% 50%", "img/neu-h-core-2.jpg":"50% 62%", "img/neu-d-core.jpg":"50% 68%", "img/neu-d-katalog.jpg":"50% 42%"
 };
 function fotoFokus(pfad){ return FOTO_FOKUS[pfad] || ""; }
 function fotoHash(s){ var h = 0; s = String(s); for(var i = 0; i < s.length; i++) h = (h*31 + s.charCodeAt(i)) % 100003; return h; }
@@ -262,12 +264,11 @@ var SYM_SUCHE = '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>
 var SYM_SONNE = '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>';
 function themeIstDunkel(){
   var th = state.db.settings.theme;
-  if(th === "dark" || th === "nacht") return true;
+  if(th === "dark") return true;
   if(th === "light") return false;
   return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
 }
 function kopfSymboleNeu(art){
-  if(!layoutNeu()) return "";
   var s = "";
   if(art === "home"){
     var d = themeIstDunkel();
@@ -281,9 +282,9 @@ function kopfSymboleNeu(art){
 function bindThemeToggle(){
   var b = app.querySelector("[data-themetoggle]");
   if(b) b.addEventListener("click", function(){
-    /* Kreis: Hell → Dunkel → Nacht → Hell (aus „System“ wird das Gegenteil des aktuellen Aussehens) */
+    /* Wechsel: Hell ↔ Dunkel (aus „System“ wird das Gegenteil des aktuellen Aussehens) */
     var th = state.db.settings.theme;
-    state.db.settings.theme = th === "light" ? "dark" : th === "dark" ? "nacht" : th === "nacht" ? "light" : (themeIstDunkel() ? "light" : "dark");
+    state.db.settings.theme = th === "light" ? "dark" : th === "dark" ? "light" : (themeIstDunkel() ? "light" : "dark");
     save(); applyTheme(); render();
   });
 }
@@ -301,36 +302,24 @@ function hauptAktionNeu(route){
   return route === "home" ? null : hauptAktionNeu("home");   // der runde Knopf steht auf allen Hauptseiten (Arena › Fortschritt, Fragen: wie auf Heute)
 }
 var NEU_TABS = { home:"#home", training:"#training", kalender:"#kalender", koerper:"#koerper", stats:"#koerper", faq:"#training" };
-/* Der Workout-Bereich zeigt die Leiste auf seinen Listen (Katalog, Übungen, Meine), nicht im Plan-Bau, in der Gewichtung und in Details */
-var BEREICH_LEISTE = { katalog:1, library:1, timers:1, uebungskatalog:1 };
 function tabLeiste(route){
   var el = document.getElementById("tabbar");
   if(!el) return;
-  var imBereich = !!BEREICH_LEISTE[route] && !(stPlanAktiv && stPlanFind(stPlanAktiv));
-  var neu = layoutNeu();
-  /* New: die Leiste steht nur auf den vier Hauptseiten (wie im Entwurf); Klassik: auch auf Suche, Einstellungen und den Bereichslisten */
-  var aktiv = neu ? (NEU_TABS[route] || null) : (TAB_ROUTEN[route] || (imBereich ? "#home" : null));
+  /* Die Leiste steht nur auf den vier Hauptseiten */
+  var aktiv = NEU_TABS[route] || null;
   if(!aktiv){ el.innerHTML = ""; el.classList.add("hidden"); document.body.classList.remove("mit-tabs"); return; }
-  var eintraege = neu ? [
+  var eintraege = [
     ["#home", t("tabHeute"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
     ["#training", t("tabTraining"), '<path d="M6 7v10M3 10v4M18 7v10M21 10v4M6 12h12"/>'],
-    ["#koerper", t("tabArena"), '<ellipse cx="12" cy="12" rx="9" ry="6.5"/><ellipse cx="12" cy="12" rx="4.2" ry="2.5"/>'],
+    ["#koerper", t("tabArena"), '<circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8.2 19h8.3a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h8.3"/>'],
     ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>']
-  ] : [
-    ["#home", t("tabStart"), '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/>'],
-    ["#search", t("search"), '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5l5 5"/>'],
-    ["#kalender", t("tabKalender"), '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
-    ["#stats", t("tabStats"), '<path d="M5 20V11M12 20V4M19 20v-6"/>'],
-    ["#settings", t("settings"), null]
   ];
   var tabsHTML = eintraege.map(function(x){
     return '<button type="button" class="tab'+(x[0] === aktiv ? ' active' : '')+'" data-nav="'+x[0]+'"'+(x[0] === aktiv ? ' aria-current="page"' : '')+'>'+
       (x[2] ? svgIcon(x[2]) : '<span class="ico">'+ICON_SETTINGS+'</span>')+'<span>'+esc(x[1])+'</span></button>';
   }).join("");
-  var haupt = neu ? hauptAktionNeu(route) : null;
-  el.innerHTML = neu
-    ? '<div class="pille">'+tabsHTML+'</div>'+(haupt ? '<button type="button" class="hauptknopf" data-haupt aria-label="'+esc(haupt.label)+'" title="'+esc(haupt.label)+'">'+svgIcon(haupt.svg)+'</button>' : '')
-    : tabsHTML;
+  var haupt = hauptAktionNeu(route);
+  el.innerHTML = '<div class="pille">'+tabsHTML+'</div>'+(haupt ? '<button type="button" class="hauptknopf" data-haupt aria-label="'+esc(haupt.label)+'" title="'+esc(haupt.label)+'">'+svgIcon(haupt.svg)+'</button>' : '');
   el.classList.remove("hidden"); document.body.classList.add("mit-tabs");
   var hb = el.querySelector("[data-haupt]");
   if(hb) hb.addEventListener("click", function(){ haupt.fn(); });
@@ -345,9 +334,9 @@ function tabLeiste(route){
 }
 function render(){
   if(document.getElementById("playerRoot").innerHTML) return; // don't re-render behind active player
+  setTimeout(leistenFarbeAbgleichen, 0);   // nach dem Zeichnen: Statusleiste passend (Satz-Training dunkel, sonst das gewählte Design)
   var parts = parseHash();
   var route = parts[0] || "home";
-  if(route === "training" && !layoutNeu()){ route = "home"; navStack[navStack.length-1] = "#home"; setUrl("#home"); }   // Seite „Training“ gibt es nur im Aussehen New
   if(route !== "katalog") builderAuto = null;   // ein nicht ausgelöster Wunsch des Workout-Builders gilt nicht für den nächsten Besuch
   tabLeiste(route);
   if(route==="home" || route==="training"){   // Filter und aufklappbare Bereiche (Air-Filter, Studio-Filter, Studio-Timer) beginnen bei jedem neuen Besuch zugeklappt
@@ -388,7 +377,7 @@ function render(){
   if(route==="settings") return renderSettings();
   if(route==="search") return renderSearch();
   if(route==="koerper") return renderKoerper();
-  if(route==="stats"){ if(layoutNeu()){ state.db.settings.koerperTab = "fortschritt"; return renderKoerper(); } return renderStats(); }
+  if(route==="stats"){ state.db.settings.koerperTab = "fortschritt"; return renderKoerper(); }
   if(route==="studio") return renderStudioKarte(parts[1]);
   if(route==="install") return renderInstallGuide();
   if(route==="play") return startPlayer(parts[1]);

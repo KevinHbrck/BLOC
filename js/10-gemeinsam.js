@@ -35,6 +35,7 @@ function tippZeileHTML(key, textKey){
     '<button type="button" class="tipp-x" data-tippx aria-label="'+esc(t("tippAus"))+'" title="'+esc(t("tippAus"))+'">&times;</button></div>';
 }
 function bindCommon(){
+if(typeof pgFigurenFuellen === "function") pgFigurenFuellen(app);   // kleine Übungsfiguren auf Karten (Katalog) füllen
 app.querySelectorAll("[data-tippx]").forEach(function(b){    b.addEventListener("click", function(){      var z = b.closest("[data-tipp]"), s = state.db.settings;      (s.tippAus || (s.tippAus = {}))[z.getAttribute("data-tipp")] = 1; save(); z.remove();    });  });
   app.querySelectorAll("[data-hinweis]").forEach(function(b){ b.addEventListener("click", openHinweise); });
   app.querySelectorAll("[data-myedit]").forEach(function(b){   // Stift an einer Karte unter Meine: ins Bearbeiten (die Karte selbst führt zum Deckblatt mit „Los geht’s“)
@@ -398,7 +399,7 @@ function favItemsHTML(){
   var list = favEntries();
   if(!list.length) return "";
   var shown = favShowAll ? list : list.slice(0, FAV_LIMIT);
-  if(typeof layoutNeu === "function" && layoutNeu()){   // Aussehen New: Fotokarten in einer Reihe zum Wischen (wie im Entwurf)
+  // Fotokarten in einer Reihe zum Wischen (wie im Entwurf)
     var fotos = fotosZuteilen(list.map(function(e){ return { key:e.key || e.name, pool:favFotoPool(e) }; }));   // Fitnessstudio-Workouts bekommen Studio-Bilder, nicht die Calisthenics-Anlage   // kein Foto doppelt, solange es freie gibt
     var BEREICH = { ti:t("tabTimer"), ws:t("warmTitle"), tp:t("katalog"), st:t("katalog") };
     return '<div class="fav-fotos">'+shown.map(function(e){
@@ -410,15 +411,6 @@ function favItemsHTML(){
         '<span class="ff-text"><small class="ff-bereich">'+esc(BEREICH[e.cls] || "")+'</small><b class="ff-name">'+esc(e.name)+'</b><small class="ff-sub">'+e.sub+'</small></span>'+
       '</div>';
     }).join("")+'</div>';
-  }
-  return '<div class="fav-grid">'+shown.map(function(e){
-    return '<div class="list-item fav-tile" role="button" tabindex="0" '+(e.cover ? 'data-favgo="'+e.cover+'"' : 'data-favstart="'+e.go+'"')+
-        (e.cat ? ' style="--cat:'+e.cat+'"' : '')+(e.ok ? '' : ' aria-disabled="true"')+'>'+
-      '<span class="playbtn '+e.cls+' ft-play" aria-hidden="true">'+ICON_PLAY+'</span>'+
-      '<span class="ft-text"><b class="ft-name">'+esc(e.name)+'</b><small class="ft-sub">'+e.sub+'</small></span>'+
-      '<span class="ft-star" aria-hidden="true">'+svgIcon(ICON_STAR)+'</span>'+
-    '</div>';
-  }).join("")+'</div>';
 }
 /* merkt sich, wann ein Favorit zuletzt gestartet wurde (für die Reihenfolge auf der Startseite) */
 function markFavUsed(source){
