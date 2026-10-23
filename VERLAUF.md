@@ -3,7 +3,7 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-23 (abends) · Favoriten entfernen per Langdruck, breiterer Kopfstreifen (Fassung 2026-10-23-9)
+## 2026-10-23 (abends) · Favoriten entfernen per Langdruck, breiterer Kopfstreifen (Fassung 2026-10-23-10)
 
 - **Favoriten auf Heute**: langes Drücken (0,5 s) auf eine Kachel fragt „Aus Favoriten entfernen?“ und entfernt sie nach Bestätigung (`langDruck` + `confirmSheet` in `bindFavItems`, js/09-studio-karte.js; Texte `favEntfernen*`). Das Workout selbst bleibt erhalten.
 - **Abstand links**: die Favoriten-Reihe rastet nicht mehr am Rand ein (`scroll-padding-left`), das Symbol der Glas-Kachel sitzt etwas weiter innen.
@@ -13,7 +13,7 @@ Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fa
 - **Timer bearbeiten**: statt des Plus (Workouts hinzufügen) hat jede Timer-Zeile einen Stift; er öffnet dasselbe Fenster wie „Neuer Timer“ mit den Werten (Sätze, Zeit, Pause, Runden, Name) zum Ändern (`timerBearbeiten`, `timerPlusAus`, `timerPlusAendern` in js/07-studio.js). Timer aus mehreren Blöcken öffnen den Editor.
 - **Eigene Übung anlegen**: letzte Kachel im Baukasten (Workout) und in Mobility & Stretch (gestrichelt, stärker verwischt). Eigene Übungen stehen im Katalog in einer neuen obersten Rubrik „Eigene Übungen“ (vor Ganzkörper) und zusätzlich in ihrem Bereich (Rücken, Arme, Bauch, Beine, Cardio aus den gewählten Kategorien; `katBereichEigene` in js/11b-katalog.js). Bei Mobility & Stretch landet die Übung unter Dehnen; unter Aufwärmen erscheinen eigene Übungen nicht.
 - **Eigene Übungen ohne Figur**: überall, wo sonst die Figur steht (Kacheln, Übungsseite, Info, Satz-Training, Mini-Ablauf im Baukasten), erscheint das Symbol der ersten Kategorie (`exSymbol` in js/02-bibliothek.js). Der laufende Timer bleibt unverändert. Die gestrichelte Linie der Kachel „Eigene Übung anlegen“ gilt jetzt auch im Hellen.
-- **Kopfzeilen-Streifen** (Verlauf hinter Zurück-Knopf und Titel) im Dunkel entfernt; im Hellen bleibt er, damit der Titel beim Scrollen lesbar bleibt.
+- **Kopfzeilen-Streifen** (Verlauf hinter Zurück-Knopf und Titel) überall entfernt (Dunkel und Hell).
 - **Glas-Karten dunkler** (dunkle statt weißer Tönung, Run-Seite unverändert), **Symbole weiß** (Baukasten-Karten, Favoriten ohne Foto), **Logo** auf Heute etwas weiter oben.
 
 ## 2026-10-23 · Glas-Design, Path mit Deep Dive, Katalog-Ergänzungen, Nacht entfällt (Fassung 2026-10-23-1)

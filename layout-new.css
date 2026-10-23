@@ -1286,3 +1286,6 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 
 /* Kopfzeilen-Streifen im Dunkel ganz entfernt (kein Verlauf, kein Blur, keine Maske hinter Zurück-Knopf und Titel) */
 :root[data-layout="new"][data-glas] .topbar{ background:none; -webkit-backdrop-filter:none; backdrop-filter:none; -webkit-mask-image:none; mask-image:none; box-shadow:none; border:0; }
+
+/* Kopfzeilen-Streifen auch im Hellen entfernt */
+:root[data-layout="new"] .topbar{ background:none; -webkit-backdrop-filter:none; backdrop-filter:none; -webkit-mask-image:none; mask-image:none; box-shadow:none; border:0; }
