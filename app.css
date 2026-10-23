@@ -2232,3 +2232,11 @@ details[open] > summary > .pg-pfeil{ transform:rotate(180deg); }
 .pg-sek{ margin:0 0 6px; } .pg-sek > summary{ display:flex; align-items:center; gap:8px; padding:10px 4px; cursor:pointer; list-style:none; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); }
 .pg-sek > summary::-webkit-details-marker{ display:none; } .pg-sek > summary b{ flex:1; font-weight:800; }
 .bloc-sheet .bloc-opt[style*="--oc"]{ border:2px solid var(--oc); }   /* Umrandung in der Farbe des Ortes: Fitnessstudio rot, Freiluft blau, Mobility & Stretch grün (direkte Unterscheidung wie bei den Übungskarten) */
+
+/* Eigene Übungen: Symbol der Kategorie statt Figur */
+.ex-symbol{ display:flex; align-items:center; justify-content:center; color:var(--cat, var(--text)); }
+.ex-symbol svg{ width:100%; height:100%; }
+.ex-symbol.big{ width:110px; height:110px; margin:6px auto; }
+.ex-symbol.mini{ width:34px; height:34px; margin:0 auto 4px; }
+.fig-bild .st-ohne svg{ width:46px; height:46px; }
+.fig-karte .st-ohne{ color:var(--cat, var(--text)); opacity:.9; }

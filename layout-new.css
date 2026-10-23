@@ -1277,3 +1277,9 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .bau-karte.bau-eigen{ border-style:dashed; background:color-mix(in srgb, var(--text) 5%, transparent); box-shadow:none; }
 :root[data-layout="new"][data-glas] .bau-karte.bau-eigen{ background:rgba(18,20,24,.38); border:1.5px dashed rgba(255,255,255,.4); -webkit-backdrop-filter:blur(28px) saturate(130%); backdrop-filter:blur(28px) saturate(130%); box-shadow:none; }
 :root[data-layout="new"][data-glas] .bau-karte.bau-eigen .bk-ico{ background:transparent; border:1.5px dashed rgba(255,255,255,.5); }
+
+/* Eigene Übung anlegen: gestrichelte Linie auch im Hellen */
+:root[data-layout="new"] .bau-karte.bau-eigen{ border:1.5px dashed var(--text-dim); background:transparent; }
+:root[data-layout="new"] .bau-karte.bau-eigen .bk-ico{ background:transparent; border:1.5px dashed var(--text-dim); color:var(--text); }
+:root[data-layout="new"][data-glas] .bau-karte.bau-eigen{ background:rgba(18,20,24,.38); border:1.5px dashed rgba(255,255,255,.4); }
+:root[data-layout="new"][data-glas] .bau-karte.bau-eigen .bk-ico{ border:1.5px dashed rgba(255,255,255,.5); color:#fff; }

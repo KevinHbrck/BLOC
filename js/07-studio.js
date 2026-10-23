@@ -192,7 +192,7 @@ function studioKachel(id){
   var la = last ? arbeitsSaetze(last) : [], sub = la.length ? (la[0][0] > 0 ? studioKg(la[0][0])+" kg · " : "")+la.length+" × "+la[0][1] : t("stNoData");
   if(studioNurBlock(ex) && !la.length && zielGesetzt(id)){ sub = satzKurz(id).replace("×", " × "); last = null; }   // ohne Eintrag das selbst gesetzte Ziel: „3 × 12“ bzw. „3 × 40 s“
   return '<div class="fig-karte st-kachel" role="button" tabindex="0" data-studio="'+id+'" data-q="'+esc(exSearchText(ex))+'" style="--cat:'+studioFarbe(ex)+'">'+
-    '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+exFavBtn(id)+'</span>'+
+    '<span class="fig-bild">'+(ILLU[id] ? illuHTML(id, "fig-illu") : '<span class="st-ohne">'+(ex.custom ? exSymbol(ex) : svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db))+'</span>')+exFavBtn(id)+'</span>'+
     '<span class="fig-name">'+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+(sub === t("stNoData") ? '' : '<span class="st-sub'+(last ? ' an' : '')+'">'+esc(sub)+'</span>')+
     (last ? wochenKurve(studioWochen(id), "st-spark") : '')+'</div>';
 }
@@ -514,7 +514,7 @@ function planZeileHTML(id, nr, bl, p){   // bl: { art, k, n, bid } - die Übung 
     (block ? planFeldHTML("pause", t("planPause"), tm.rest, 0, 600, 5) : planFeldHTML("pause", t("planPause"), e.pause || 90, 0, 600, 15));
   return '<div class="pz-zeile'+(bl ? ' pz-imblock' : '')+'" data-pz="'+id+'"'+(bl ? ' data-pzblk="'+esc(bl.bid)+'"' : '')+' style="--cat:'+studioFarbe(ex)+'">'+
     '<div class="pz-kopf" role="button" tabindex="0" data-studio="'+id+'" aria-label="'+esc(tplText(ex.name))+'">'+
-      '<span class="pz-bild">'+(ILLU[id] ? illuStillHTML(id, "pz-illu") : '<span class="st-ohne">'+svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db)+'</span>')+'</span>'+
+      '<span class="pz-bild">'+(ILLU[id] ? illuStillHTML(id, "pz-illu") : '<span class="st-ohne">'+(findExercise(id) && findExercise(id).custom ? exSymbol(findExercise(id)) : svgIcon(EQUIP_ICON.gym || EQUIP_ICON.db))+'</span>')+'</span>'+
       '<span class="pz-text"><span class="pz-name"><i>'+nr+'</i> '+esc(tplText(ex.name))+'</span>'+kachelMuskel(ex)+
         (bl ? '<span class="pz-bm">'+esc(t(bl.art === "zirkel" ? "blkZirkel" : "blkSuper"))+' · '+bl.k+'/'+bl.n+'</span>' : '')+
         '<span class="pz-letzte'+(l ? ' an' : '')+'">'+(l ? esc(t("planZuletzt", { d:studioTagText(l.at), s:studioLetzteText(l) })) : esc(t("planNochNie")))+'</span>'+
@@ -713,7 +713,7 @@ function renderStudioPlan(){
         (ids.length ? '<div class="wb-streifen">'+ids.map(function(id, i){
           var ex = findExercise(id);
           return ex ? '<button type="button" class="wb-mini'+(stPlanSel === i ? ' sel' : '')+'" data-plansel="'+i+'" style="--cat:'+studioFarbe(ex)+'" aria-pressed="'+(stPlanSel === i)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name)+", "+satzZiel(id))+'">'+
-            (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span>'+(zielGesetzt(id) ? '<span class="wb-mini-sub">'+esc(satzKurz(id))+'</span>' : '')+'</button>' : "";
+            (ILLU[id] ? illuStillHTML(id, "wb-mini-illu") : (ex.custom ? '<span class="ex-symbol mini">'+exSymbol(ex)+'</span>' : ''))+'<span class="wb-mini-nr">'+(i+1)+'</span><span class="wb-mini-name">'+esc(tplText(ex.name))+'</span>'+(zielGesetzt(id) ? '<span class="wb-mini-sub">'+esc(satzKurz(id))+'</span>' : '')+'</button>' : "";
         }).join("")+'</div>'+
           (stPlanSel > -1 && stPlanSel < ids.length ? '<div class="plan-ctrl"><button type="button" data-planmv="-1" aria-label="'+esc(t("moveLeft"))+'"'+(stPlanSel === 0 ? ' disabled' : '')+'>&#9664;</button>'+
             '<button type="button" class="del" data-plandelsel>'+ICON_TRASH+' '+esc(t("planRaus"))+'</button>'+

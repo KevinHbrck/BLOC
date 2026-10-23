@@ -364,7 +364,7 @@ function renderStudioKarte(id){
     topbar(tplText(ex.name), { back:"#timers", right:exFavBtn(id) }) +
     '<div class="card st-hero" style="--cat:'+studioFarbe(ex)+'">'+
       studioStatsLeiste(id)+
-      (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : '')+
+      (ILLU[id] ? '<div class="st-figur">'+illuHTML(id, "st-illu")+'</div>' : (ex.custom ? '<div class="st-figur"><span class="ex-symbol big">'+exSymbol(ex)+'</span></div>' : ''))+
       bandAnkerHTML(id)+   // Band-Übung: „Band befestigen“ gehört direkt unter die bewegte Figur
       griffHTML(id)+
       '<div class="st-ziel">'+esc(t("stGoal"))+' '+satzName(z.saetze)+' × '+z.wdh+

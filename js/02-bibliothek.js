@@ -333,6 +333,8 @@ var EQUIP_ICON = {
 function svgIcon(inner, cls){
   return '<svg class="'+(cls||"ico")+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';
 }
+/* Eigene Übungen haben keine Figur: stattdessen das Symbol ihrer ersten Kategorie (Rücken, Beine, Cardio ...) */
+function exSymbol(ex){ return catIcon((ex && ex.cats && ex.cats[0]) || "weight") || catIcon("weight"); }
 function catIcon(c){ return CAT_ICON[c] ? svgIcon(CAT_ICON[c]) : ""; }
 function catTags(cats){
   return cats.map(function(c){ return '<span class="cat-tag">'+catIcon(c)+esc(catName(c))+'</span>'; }).join("");
@@ -911,7 +913,7 @@ function openExInfo(exId, live, lib){
     (ILLU2[exId]
       ? '<div class="info-views"><figure>'+illuHTML(exId, "info-illu")+'<figcaption>'+t(ILLU_VIEW2[exId].haupt === "front" ? "viewFront" : "viewSide")+'</figcaption></figure>'+
         '<figure>'+illuHTML(exId, "info-illu", true)+'<figcaption>'+t({ top:"viewTop", side:"viewSide" }[ILLU_VIEW2[exId].typ] || "viewFront")+'</figcaption></figure></div>'
-      : illuHTML(exId, "info-illu"))+
+      : (ILLU[exId] ? illuHTML(exId, "info-illu") : (ex.custom ? '<div class="info-views"><span class="ex-symbol big">'+exSymbol(ex)+'</span></div>' : "")))+
     gearChipsHTML(ex, live)+griffHTML(exId)+
     bandAnkerHTML(exId)+   // Band-Übungen: wo und wie das Band befestigt wird (aufklappbar, unter den Figuren)
     (EX_MUSCLES[exId] ? '<div class="info-mus"><div class="info-mus-t"><div><b>'+esc(musclesLabel(ex))+':</b> '+esc(musclesMain(ex))+'</div>'+

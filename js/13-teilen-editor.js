@@ -264,7 +264,7 @@ function renderDraftPage(d, cfg){
     var ex = findExercise(it.ex);
     if(!ex) return "";
     return '<button type="button" class="wb-mini" data-wbitem="'+i+'" style="--cat:'+exFarbe(ex)+'" aria-label="'+esc((i+1)+". "+tplText(ex.name))+'">'+
-      (ILLU[ex.id] ? illuStillHTML(ex.id, "wb-mini-illu") : '')+'<span class="wb-mini-nr">'+(i+1)+'</span>'+
+      (ILLU[ex.id] ? illuStillHTML(ex.id, "wb-mini-illu") : (ex.custom ? '<span class="ex-symbol mini">'+exSymbol(ex)+'</span>' : ''))+'<span class="wb-mini-nr">'+(i+1)+'</span>'+
       '<span class="wb-mini-name">'+esc(tplText(ex.name))+'</span></button>';
   }).join("");
 
