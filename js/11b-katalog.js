@@ -44,6 +44,12 @@ function katKuratiert(){
   if(!katKurat){ katKurat = {}; STUDIO_GRUPPEN.forEach(function(g){ g.ids.split(" ").forEach(function(id){ katKurat[id] = g.id; }); }); }
   return katKurat;
 }
+/* Eigene Übungen: Bereich aus den gewählten Kategorien (nur wo sie eindeutig sind), sonst nur unter „Eigene Übungen“ */
+var KAT_VON_KATEGORIE = { cardio:"cardio", back:"ruecken", legs:"beine", core:"bauch", arms:"arme" };
+function katBereichEigene(ex){
+  var l = (ex.cats || []).map(function(c){ return KAT_VON_KATEGORIE[c]; }).filter(Boolean);
+  return l.length ? l[0] : "";
+}
 function katGruppeVon(ex){
   if(ex.custom) return "eigene";
   var k = katKuratiert()[ex.id];
@@ -77,7 +83,10 @@ function katalogGruppen(){
   EXERCISES.forEach(function(ex){
     if(ex.main === "stretch" || libHidden("ex:"+ex.id)) return;
     var g = katGruppeVon(ex);
-    if(g === "eigene") eigene.ids.push(ex.id); else (by[g] || by.beine).ids.push(ex.id);
+    if(g === "eigene"){
+      eigene.ids.push(ex.id);   // immer unter „Eigene Übungen“ ...
+      var bg = katBereichEigene(ex); if(bg && by[bg]) by[bg].ids.push(ex.id);   // ... und zusätzlich in ihrem Bereich
+    } else (by[g] || by.beine).ids.push(ex.id);
   });
   out.push(eigene);
   return out;
@@ -352,9 +361,11 @@ function renderKatalogBaukasten(){
       '<span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte" data-bauselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte" data-baukatalog><span class="bk-ico">'+svgIcon(HOME_ICON.katalog)+'</span><span class="bk-t"><b>'+esc(t("bauKatalog"))+'</b><small>'+esc(t("bauKatalogSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<button type="button" class="bau-karte bau-eigen" data-baueigen><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauEigene"))+'</b><small>'+esc(t("bauEigeneSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<div style="height:40px"></div>';
   bindCommon();
   katKopfBinden();
+  app.querySelector("[data-baueigen]").addEventListener("click", function(){ exEditVorgabe = { equip:["gym"], cats:["weight"], reps:3, work:40, rest:60 }; go("#exedit/new"); });
   app.querySelector("[data-baukatalog]").addEventListener("click", function(){ katKatalogOeffnen(); });
   bauArtBinden(modus, function(){ renderKatalog(); });
   bauOrtBinden(function(){ renderKatalog(); });
@@ -603,6 +614,10 @@ function renderKatalogWorkouts(){
   var je = {};
   sichtbar.forEach(function(r){ (je[r.bereich] = je[r.bereich] || []).push(libWoCard(r.lw, r.exs, false, r.dur, r.mains)); });
   var liste = "";
+  var eig = gruppen.filter(function(g){ return g.eigene; })[0], eigIds = eig ? eig.ids.filter(function(id){ return !fGr.length || fGr.indexOf("eigene") > -1; }) : [];
+  if(eigIds.length) liste += katZeileHTML("wo-eigene", katIcon("eigene"), t("stOwn"), eigIds.length,
+    '<div class="kat-inhalt"><div class="fig-grid">'+eigIds.map(function(i){ return studioKachel(i); }).join("")+
+    '<button type="button" class="fig-karte st-neu" data-stnew3>'+ICON_PLUS+'<span class="fig-name">'+esc(t("stOwnNew"))+'</span></button></div></div>', katOffenStd("wo-eigene", false), "", false);
   KAT_WO_BEREICHE.forEach(function(b){
     if(!je[b]) return;
     var name = b === "ganz" ? t("katGanz") : t(KAT_GRUPPEN.filter(function(g){ return g.id === b; })[0].key);
@@ -626,6 +641,13 @@ function renderKatalogWorkouts(){
   function neu(){ var y = window.scrollY; renderKatalog(); window.scrollTo(0, y); }
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   studioFilterBinden(fGr, fArt, zonen, neu);
+  on("[data-stnew3]", function(){ go("#exedit/new"); });
+  app.querySelectorAll("[data-studio]").forEach(function(b){   // Eigene Übungen in der Rubrik: öffnen, lange drücken = in ein Workout legen
+    function oeffnen(){ go("#studio/"+b.getAttribute("data-studio")); }
+    b.addEventListener("click", oeffnen);
+    b.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); oeffnen(); } });
+    langDruck(b, function(){ exZuProgramm(b.getAttribute("data-studio")); });
+  });
   on("[data-lfsort]", function(el){ s.libWoSort = el.getAttribute("data-lfsort"); save(); neu(); });
   katBinden(function(){ return libQuery; });
   var lq = app.querySelector("#l-q");

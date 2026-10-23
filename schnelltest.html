@@ -1160,7 +1160,7 @@
       pruefe($$(".kat-gr .sag-ico").every(function (e) { return W.getComputedStyle(e).color === body; }), "Symbole der Körperregionen sollen schwarz/weiß sein");
       await zuBaukasten();   // „Überrasch mich“ im BLOC-Orange (Symbol und Hintergrund), „Selber bauen“ in der Standardfarbe
       var le = $(".bau-karte[data-surprise]"), sb = $(".bau-karte[data-bauselber]");
-      pruefe(W.getComputedStyle(le.querySelector(".bk-ico")).color !== body && W.getComputedStyle(le).backgroundColor !== W.getComputedStyle(sb).backgroundColor, "Überrasch mich soll im BLOC-Orange stehen (Symbol und Hintergrund), Selber bauen in der Standardfarbe");
+      pruefe(W.getComputedStyle(le.querySelector(".bk-ico")).color === "rgb(255, 255, 255)" && W.getComputedStyle(le).backgroundColor !== W.getComputedStyle(sb).backgroundColor, "Überrasch mich soll sich im Hintergrund von Selber bauen abheben, die Symbole der Karten sind weiß (Kontrast)");
       W.go("#search");
       eingeben(await bis(function () { return $("#gs-q"); }, 3000, "Suchfeld"), "ganzk");
       await bis(function () { return $(".sr-welt"); }, 3000, "Suche zeigt den Ort bei Workouts");

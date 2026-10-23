@@ -39,12 +39,15 @@ function renderWsBaukasten(art){
     '<button type="button" class="bau-karte ws-bau" data-wsselber><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauSelber"))+'</b><small>'+
       esc(t("bauSelberSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
     '<button type="button" class="bau-karte ws-bau" data-wskatalog><span class="bk-ico">'+svgIcon(HOME_ICON.katalog)+'</span><span class="bk-t"><b>'+esc(t("bauKatalog"))+'</b><small>'+
-      esc(t("bauKatalogSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button></div>'+
+      esc(t("bauKatalogSub"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button>'+
+    '<button type="button" class="bau-karte ws-bau bau-eigen" data-wseigen><span class="bk-ico">'+ICON_PLUS+'</span><span class="bk-t"><b>'+esc(t("bauEigene"))+'</b><small>'+
+      esc(t("bauEigeneSubWs"))+'</small></span><span class="bk-pfeil">'+ICON_CHEV+'</span></button></div>'+
     '<div style="height:40px"></div>';
   bindCommon();
   wsKopfBinden();
   app.querySelector("[data-wssurprise]").addEventListener("click", function(){ openWsSurprise(art); });
   app.querySelector("[data-wsselber]").addEventListener("click", function(){ bauNeuWs = art; go("#mybuild/new"); });
+  app.querySelector("[data-wseigen]").addEventListener("click", function(){ exEditVorgabe = { equip:["none"], cats:["stretch"], reps:1, work:30, rest:10 }; go("#exedit/new"); });
   app.querySelector("[data-wskatalog]").addEventListener("click", function(){ var s = state.db.settings; s.wsTab = "katalog"; s.wsAbt = "workouts"; save(); renderWarmStretch(); window.scrollTo(0, 0); });
 }
 /* Überrasch mich für Mobility & Stretch: Dauer (und bei Dehnen die Körperregionen) wählen, daraus entsteht ein Ablauf zum Prüfen und Starten */

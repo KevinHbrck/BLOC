@@ -259,18 +259,48 @@ function timerPlusBauen(p, name){
   state.db.workouts.push(w); save();
   return w;
 }
-function openTimerPlus(){
-  var p = timerPlusWerte(), root = document.getElementById("overlayRoot");
+/* Werte eines Timers aus „Neuer Timer“ (ein Block, gleichmäßige Pausen zwischen den Runden); sonst null, dann öffnet sich der Editor */
+function timerPlusAus(w){
+  var its = w && w.items || [], b = its.length ? findBlock(its[0].blockId) : null, i;
+  if(!b) return null;
+  for(i = 0; i < its.length; i++){
+    if(its[i].blockId !== b.id) return null;
+    if(i < its.length - 1 && (its[i].restAfterSec || 0) !== (its[0].restAfterSec || 0)) return null;
+  }
+  return { rn:its.length, rp:its.length > 1 ? (its[0].restAfterSec || 0) : timerPlusWerte().rp, en:b.reps, ew:b.workSec, ep:b.restSec };
+}
+/* Timer nachträglich ändern: Sätze und Runden im selben Fenster wie beim Anlegen; komplexere Timer (mehrere Blöcke) öffnen den Editor */
+function timerBearbeiten(id){
+  var w = findWorkout(id), p = w && timerPlusAus(w);
+  if(!w) return;
+  if(!p){ go("#workout/"+id); return; }
+  openTimerPlus(w, p);
+}
+function timerPlusAendern(w, p, name){
+  var b = findBlock(w.items[0].blockId), now = Date.now(), r;
+  var autoAlt = b.name === t("timerSatzBlock", { s:b.workSec });   // eigener Blockname bleibt erhalten
+  b.reps = p.en; b.workSec = p.ew; b.restSec = p.ep; b.updatedAt = now;
+  if(autoAlt) b.name = t("timerSatzBlock", { s:p.ew });
+  w.items = []; for(r = 1; r <= p.rn; r++) w.items.push({ blockId:b.id, restAfterSec:r < p.rn ? p.rp : 0 });
+  w.name = (name || "").trim() || t("timerAuto", { m:Math.max(1, Math.round(timerPlusSekunden(p)/60)) });
+  w.updatedAt = now; save();
+}
+function openTimerPlus(bearb, vorgabe){
+  var p = vorgabe ? { zn:1, zp:0, rn:vorgabe.rn, rp:vorgabe.rp, en:vorgabe.en, ew:vorgabe.ew, ep:vorgabe.ep } : timerPlusWerte(), root = document.getElementById("overlayRoot");
+  if(bearb && bearb.target) bearb = null;   // als Klick-Handler aufgerufen: neuer Timer
   function zeile(label, id, v, min, max, schritt){ return '<div class="tp-zeile"><label for="'+id+'">'+esc(label)+'</label>'+stepperHTML(id, v, min, max, schritt)+'</div>'; }
   function gruppe(nr, titel, sub, zeilen){ return '<div class="tp-gruppe"><div class="tp-kopf"><i>'+nr+'</i><span><b>'+esc(titel)+'</b><small>'+esc(sub)+'</small></span></div>'+zeilen+'</div>'; }
-  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tp-sheet" role="dialog" aria-label="'+esc(t("fabTimer"))+'"><h3>'+esc(t("fabTimer"))+'</h3>'+
-    '<div class="tp-name"><label for="tp-name">'+esc(t("name"))+'</label><input type="text" id="tp-name" maxlength="60" placeholder="'+esc(t("timerNamePh"))+'"></div>'+
+  root.innerHTML = '<div class="confirm-overlay"><div class="confirm-sheet tp-sheet" role="dialog" aria-label="'+esc(t("fabTimer"))+'"><h3>'+esc(bearb ? t("timerBearbeiten") : t("fabTimer"))+'</h3>'+
+    '<div class="tp-name"><label for="tp-name">'+esc(t("name"))+'</label><input type="text" id="tp-name" maxlength="60" value="'+esc(bearb ? (bearb.name || "") : "")+'" placeholder="'+esc(t("timerNamePh"))+'"></div>'+
     gruppe(1, t("timerUebungen"), t("timerUebungenSub"), zeile(t("timerAnzahl"), "tp-en", p.en, 1, 30, 1)+zeile(t("timerZeitS"), "tp-ew", p.ew, 5, 600, 5)+zeile(t("timerPauseS"), "tp-ep", p.ep, 0, 300, 5))+
     gruppe(2, t("timerRunden"), t("timerRundenSub"), zeile(t("timerAnzahl"), "tp-rn", p.rn, 1, 20, 1)+zeile(t("timerPauseS"), "tp-rp", p.rp, 0, 600, 5))+
     '<div class="tp-summe" id="tp-summe"></div>'+
-    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button><button class="btn btn-primary" data-tpok>'+esc(t("create"))+'</button></div></div></div>';
+    '<div class="btn-row"><button class="btn btn-secondary" data-cancel>'+esc(t("cancel"))+'</button><button class="btn btn-primary" data-tpok>'+esc(bearb ? t("save") : t("create"))+'</button></div></div></div>';
   function lesen(){
     var q = {}; ["rn", "rp", "en", "ew", "ep"].forEach(function(k){ q[k] = root.querySelector("#tp-"+k).value; });
+    if(bearb){   // beim Bearbeiten bleiben die Vorgaben für neue Timer unverändert
+      var alt = state.db.settings.timerPlus; state.db.settings.timerPlus = q; p = timerPlusWerte(); state.db.settings.timerPlus = alt; return p;
+    }
     state.db.settings.timerPlus = q; p = timerPlusWerte(); return p;
   }
   function summe(){ var q = lesen(); root.querySelector("#tp-summe").textContent = t("timerGesamt", { d:fmtDuration(timerPlusSekunden(q)), n:q.rn*q.en }); }
@@ -279,7 +309,11 @@ function openTimerPlus(){
   function zu(){ root.innerHTML = ""; }
   root.querySelector("[data-cancel]").addEventListener("click", zu);
   root.querySelector(".confirm-overlay").addEventListener("click", function(e){ if(e.target.classList.contains("confirm-overlay")) zu(); });
-  root.querySelector("[data-tpok]").addEventListener("click", function(){ var q = lesen(), nm = root.querySelector("#tp-name").value; save(); zu(); timerPlusBauen(q, nm); go("#intervall"); });
+  root.querySelector("[data-tpok]").addEventListener("click", function(){
+    var q = lesen(), nm = root.querySelector("#tp-name").value;
+    if(bearb){ timerPlusAendern(bearb, q, nm); zu(); render(); return; }
+    save(); zu(); timerPlusBauen(q, nm); go("#intervall");
+  });
 }
 function timerPanelHTML(hw){
   var tws = state.db.workouts.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); });
@@ -301,7 +335,7 @@ function renderIntervall(){
   function on(sel, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener("click", function(e){ e.stopPropagation(); fn(el, e); }); }); }
   on("[data-play]", function(el){ if(!el.disabled) go("#play/"+el.getAttribute("data-play")); });
   on("[data-playblock]", function(el){ go("#playblock/"+el.getAttribute("data-playblock")); });
-  on("[data-twplus]", function(el){ openSurprise(el.getAttribute("data-twplus")); });
+  on("[data-twedit]", function(el){ timerBearbeiten(el.getAttribute("data-twedit")); });
   on("[data-fav]", function(el){ toggleFav(el.getAttribute("data-fav")); neu(); });
   bindTrash(neu);
   bindFabMenu({ "timerplus": openTimerPlus });

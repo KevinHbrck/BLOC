@@ -118,7 +118,7 @@ function timerWorkoutRow(w){
     '<button class="playbtn bl" data-play="'+w.id+'" '+(count?'':'disabled style="opacity:.3"')+' title="'+t("start")+'" aria-label="'+t("start")+'">'+ICON_PLAY+'</button>'+
     '<div class="meta"><div class="name">'+esc(w.name||t("untitled"))+'</div>'+
     '<div class="sub">'+count+' '+(count===1?t("blockOne"):t("blockMany"))+SEP+fmtDauerKurz(workoutDuration(w))+'</div></div>'+
-    '<button type="button" class="plus-btn" data-twplus="'+w.id+'" title="'+esc(t("spFill"))+'" aria-label="'+esc(t("spFill")+": "+(w.name || t("untitled")))+'">'+ICON_PLUS+'</button>'+
+    '<button type="button" class="plus-btn bearb-btn" data-twedit="'+w.id+'" title="'+esc(t("timerBearbeiten"))+'" aria-label="'+esc(t("timerBearbeiten")+": "+(w.name || t("untitled")))+'">'+svgIcon(ICON_EDIT)+'</button>'+
     favBtn("tw:"+w.id)+trashBtn("tw", w.id, w.name)+'</div>';
 }
 function blockRow(b){

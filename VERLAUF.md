@@ -3,13 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
-## 2026-10-23 (abends) · Favoriten entfernen per Langdruck, breiterer Kopfstreifen (Fassung 2026-10-23-6)
+## 2026-10-23 (abends) · Favoriten entfernen per Langdruck, breiterer Kopfstreifen (Fassung 2026-10-23-7)
 
 - **Favoriten auf Heute**: langes Drücken (0,5 s) auf eine Kachel fragt „Aus Favoriten entfernen?“ und entfernt sie nach Bestätigung (`langDruck` + `confirmSheet` in `bindFavItems`, js/09-studio-karte.js; Texte `favEntfernen*`). Das Workout selbst bleibt erhalten.
 - **Abstand links**: die Favoriten-Reihe rastet nicht mehr am Rand ein (`scroll-padding-left`), das Symbol der Glas-Kachel sitzt etwas weiter innen.
 - **Kopfstreifen** (Verlauf hinter der Kopfzeile) läuft jetzt über die ganze Bildschirmbreite statt nur über die Spalte, auch auf breiten Geräten wie Klapphandys und Tablets; der Inhalt bleibt in der Spalte (`.topbar` in layout-new.css).
 - **Hintergrund** (Glas-Design) genau wie auf der Run-Seite: Blur 11 px statt 26 px und nur noch 10 % Abdunklung statt 42–68 %, dadurch heller und schärfer (`.glas-bg` in layout-new.css). Dasselbe gilt für die Timer-Seite und alle Seiten mit `.run-bg` (Blur 11 px statt 24 px), damit Heute, Training, Timer und Run gleich aussehen.
 - **Timer-Seite**: die Workout-Zeilen sind jetzt runde Glas-Karten wie auf Training (statt eckiger Zeilen mit Trennlinie), der Play-Knopf sitzt 16 px vom Rand.
+- **Timer bearbeiten**: statt des Plus (Workouts hinzufügen) hat jede Timer-Zeile einen Stift; er öffnet dasselbe Fenster wie „Neuer Timer“ mit den Werten (Sätze, Zeit, Pause, Runden, Name) zum Ändern (`timerBearbeiten`, `timerPlusAus`, `timerPlusAendern` in js/07-studio.js). Timer aus mehreren Blöcken öffnen den Editor.
+- **Eigene Übung anlegen**: letzte Kachel im Baukasten (Workout) und in Mobility & Stretch (gestrichelt, stärker verwischt). Eigene Übungen stehen im Katalog in einer neuen obersten Rubrik „Eigene Übungen“ (vor Ganzkörper) und zusätzlich in ihrem Bereich (Rücken, Arme, Bauch, Beine, Cardio aus den gewählten Kategorien; `katBereichEigene` in js/11b-katalog.js). Bei Mobility & Stretch landet die Übung unter Dehnen; unter Aufwärmen erscheinen eigene Übungen nicht.
+- **Glas-Karten dunkler** (dunkle statt weißer Tönung, Run-Seite unverändert), **Symbole weiß** (Baukasten-Karten, Favoriten ohne Foto), **Logo** auf Heute etwas weiter oben.
 
 ## 2026-10-23 · Glas-Design, Path mit Deep Dive, Katalog-Ergänzungen, Nacht entfällt (Fassung 2026-10-23-1)
 

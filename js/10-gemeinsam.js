@@ -50,7 +50,7 @@ app.querySelectorAll("[data-tippx]").forEach(function(b){    b.addEventListener(
   });
   app.querySelectorAll("[data-nav]").forEach(function(el){
     el.addEventListener("click", function(ev){
-      if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]") || ev.target.closest("[data-del]") || ev.target.closest("[data-twplus]")) return;
+      if(ev.target.closest("[data-play]") || ev.target.closest("[data-playblock]") || ev.target.closest("[data-del]") || ev.target.closest("[data-twedit]")) return;
       go(el.getAttribute("data-nav"));
     });
   });
