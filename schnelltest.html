@@ -1554,7 +1554,7 @@
       await bis(function () { return $$(".pg-eintrag").length === 1; }, 2000, "Eintrag im Programm");
       var p = W.programmListe()[0];
       p.items.push("zufall");
-      p.tage = [0, 1, 2, 3, 4, 5, 6]; W.save();
+      p.tage = [0, 1, 2, 3, 4, 5, 6]; p.wochen = 6; W.save();
       var n = W.programmUebernehmen(p);
       pruefe(n >= 28 && W.kalListe().filter(function (e) { return e.prog && e.prog.id === p.id; }).length === n, "Wochenplan: Kalender-Einträge fehlen: " + n);
       var w = W.programmWeiter("run");

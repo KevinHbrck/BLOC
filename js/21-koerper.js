@@ -248,7 +248,7 @@ function programmListe(){
 function progFav(p){ return isFav('prog:'+p.id); }
 function programmFinde(id){ var l = programmListe(); for(var i = 0; i < l.length; i++) if(l[i].id === id) return l[i]; return null; }
 function programmNeu(){
-  var l = programmListe(), p = { id:uid(), name:t("progName", { n:l.length + 1 }), items:[], tage:[0, 2, 4], wochen:6, pos:0, updatedAt:Date.now() };
+  var l = programmListe(), p = { id:uid(), name:t("progName", { n:l.length + 1 }), items:[], tage:[], wochen:null, am:"alle", pos:0, updatedAt:Date.now() };
   l.push(p); save();
   pgOffen[p.id] = true;
   return p;
@@ -271,18 +271,23 @@ function progSortiert(){
 }
 /* Wochenplan in den Kalender: ab heute, an den gewählten Wochentagen, der Reihe nach durch die Einträge (bei mehr Einträgen als Tagen geht es in der
    nächsten Woche weiter). Frühere, noch nicht erledigte Termine dieses Trainingsplans ab heute werden dabei ersetzt. */
+/* p.am: "alle" (Standard) = jeder gewählte Tag bekommt alle Einträge des TrainingsBLOCs zusammen; "nach" = die Einträge laufen der Reihe nach über die Tage */
 function programmUebernehmen(p){
   var n = p.items.length;
-  if(!n || !p.tage.length) return 0;
+  if(!n || !p.tage.length || !p.wochen) return 0;
   var heute = kalTagKey(Date.now()), start = new Date(); start.setHours(12, 0, 0, 0);
   state.db.settings.kalender = { e:kalListe().filter(function(e){ return !(e.prog && e.prog.id === p.id && e.tag >= heute && e.erledigt !== true); }) };
-  var idx = p.pos || 0, anzahl = 0;
+  var idx = p.pos || 0, anzahl = 0, alle = p.am !== "nach";
   for(var d = 0; d < p.wochen*7; d++){
     var tag = kalPlus(start, d);
     if(p.tage.indexOf((tag.getDay() + 6) % 7) < 0) continue;
-    var i = idx % n, o = progEintrag(p.items[i]), e = kalHinzu(kalTagKey(tag), { art:o.art, ref:o.ref });
-    e.prog = { id:p.id, i:i };
-    idx++; anzahl++;
+    var reihe = alle ? p.items.map(function(r, j){ return j; }) : [idx % n];
+    reihe.forEach(function(i){
+      var o = progEintrag(p.items[i]), e = kalHinzu(kalTagKey(tag), { art:o.art, ref:o.ref });
+      e.prog = { id:p.id, i:i };
+      anzahl++;
+    });
+    if(!alle) idx++;
   }
   save();
   return anzahl;
@@ -417,7 +422,10 @@ function progKarteHTML(p){
           return '<button type="button" class="kp-chip'+(an ? ' an' : '')+'" data-pgtag="'+esc(p.id)+':'+d+'" aria-pressed="'+an+'">'+esc(progTagName(d))+'</button>'; }).join("")+'</div>'+
         '<div class="kp-chips" role="group" aria-label="'+esc(t("planWochen"))+'">'+KP_WOCHEN.map(function(w){
           return '<button type="button" class="kp-chip'+(p.wochen === w ? ' an' : '')+'" data-pgwochen="'+esc(p.id)+':'+w+'" aria-pressed="'+(p.wochen === w)+'">'+esc(t("progWochenN", { n:w }))+'</button>'; }).join("")+'</div>'+
-        '<button type="button" class="btn btn-primary kp-ok" data-pgok="'+esc(p.id)+'"'+(p.items.length && p.tage.length ? '' : ' disabled')+'>'+esc(t("progUebernehmen"))+'</button></details>'+
+        '<div class="kp-chips" role="group" aria-label="'+esc(t("progModus"))+'">'+[["alle", "progModusAlle"], ["nach", "progModusNach"]].map(function(m){
+          var an = (p.am !== "nach" ? "alle" : "nach") === m[0];
+          return '<button type="button" class="kp-chip'+(an ? ' an' : '')+'" data-pgam="'+esc(p.id)+':'+m[0]+'" aria-pressed="'+an+'">'+esc(t(m[1]))+'</button>'; }).join("")+'</div>'+
+        '<button type="button" class="btn btn-primary kp-ok" data-pgok="'+esc(p.id)+'"'+(p.items.length && p.tage.length && p.wochen ? '' : ' disabled')+'>'+esc(t("progUebernehmen"))+'</button></details>'+
     '</div></details>';
 }
 function renderProgramme(){
@@ -462,13 +470,19 @@ function renderProgramme(){
     x.p.updatedAt = Date.now(); save(); pgOffen[x.p.id] = true; pgOffen["w"+x.p.id] = true; neu();
   }); });
   app.querySelectorAll("[data-pgwochen]").forEach(function(b){ b.addEventListener("click", function(){ var x = teile(b.getAttribute("data-pgwochen")); if(!x.p) return; x.p.wochen = x.n; x.p.updatedAt = Date.now(); save(); pgOffen[x.p.id] = true; pgOffen["w"+x.p.id] = true; neu(); }); });
+  app.querySelectorAll("[data-pgam]").forEach(function(b){ b.addEventListener("click", function(){
+    var x = teile(b.getAttribute("data-pgam")); if(!x.p) return;
+    x.p.am = x.n; x.p.updatedAt = Date.now(); save(); pgOffen[x.p.id] = true; pgOffen["w"+x.p.id] = true; neu();
+  }); });
+  /* „In den Kalender übernehmen“ öffnet nur noch ein Feld mit „In Kalender übertragen“; danach bleibt man im Trainingsplan */
   app.querySelectorAll("[data-pgok]").forEach(function(b){ b.addEventListener("click", function(){
     var p = programmFinde(b.getAttribute("data-pgok")); if(!p) return;
-    if(!p.tage.length){ showToast(t("progKeinTag")); return; }
-    var n = programmUebernehmen(p);
-    if(!n) return;
-    kalBasis = null; kalAnsicht = "woche"; showToast(t("progUebernommen", { n:n }));
-    go("#kalender");
+    if(!p.tage.length || !p.wochen){ showToast(t("progKeinTag")); return; }
+    openActionSheet(p.name, [{ ico:P_CHECK, label:t("progInKalender"), fn:function(){
+      var n = programmUebernehmen(p);
+      if(n) showToast(t("progUebernommen", { n:n }));
+      neu();
+    } }]);
   }); });
   // langes Drücken auf eine Karte: Kopieren · Teilen · Löschen (sichtbar bleibt nur der Stern)
   app.querySelectorAll("summary").forEach(function(sm){

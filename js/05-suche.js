@@ -321,6 +321,7 @@ function renderTraining(){
 /* Fragen & Antworten: eigene Seite (Kachel unter Run auf Training), alles aufgeklappt wie ein kleines Nachschlagewerk */
 function renderFaq(){
   app.innerHTML = topbar(t("faqTitel"), { back:"#training", right:kopfSymboleNeu("training") })+faqHTML();
+  var bkF = app.querySelector(".topbar .back"); if(bkF) bkF.classList.add("zeigen");   // Zurück-Pfeil oben links auch auf Wissensaustausch (im Tab-Layout sonst ausgeblendet)
   bindCommon();
   var kopf = app.querySelector(".faq-kopf"), inh = app.querySelector(".faq-inhalt");
   if(kopf) kopf.style.display = "none";

@@ -7,7 +7,7 @@
 var PROT_T = {
   de: {
     titel:"Protein-Tracker", kachelSub:"Tagesziel, Kalorienbedarf, Schnellbuttons", heute:"Heute", von:"von {g} g", noch:"noch {g} g", erreicht:"Ziel erreicht",
-    rueck:"Rückgängig", schnell:"Schnellbuttons", schnellHint:"",
+    rueck:"Rückgängig", schnell:"Schnellbuttons", schnellHint:"", katalog:"Katalog A–Z", katalogHint:"Ein Tipp trägt die Menge unten ein (Basis 100 g: je 100 g steht die Protein-Menge in der Zeile). ＋ speichert das Lebensmittel als eigenen Schnellbutton.",
     onbTitel:"Dein Bedarf", onbText:"Für dein Proteinziel und deinen Kalorienbedarf.",
     onbFertig:"Fertig", onbSpaeter:"Später", onbFehl:"Bitte mindestens das Gewicht eintragen.", onbOffen:"Bedarf noch offen",
     kcal:"Kalorienbedarf", kcalWert:"Bedarf ca. {k} kcal pro Tag", kcalHint:"Schätzung, 10–20 % Abweichung möglich.",
@@ -64,7 +64,7 @@ var PROT_T = {
   },
   en: {
     titel:"Protein Tracker", kachelSub:"Daily goal, calorie need, quick buttons", heute:"Today", von:"of {g} g", noch:"{g} g to go", erreicht:"Goal reached",
-    rueck:"Undo", schnell:"Quick buttons", schnellHint:"",
+    rueck:"Undo", schnell:"Quick buttons", schnellHint:"", katalog:"Catalogue A–Z", katalogHint:"One tap logs the amount below (base 100 g: each row shows protein per 100 g). ＋ saves the food as your own quick button.",
     onbTitel:"Your needs", onbText:"For your protein goal and calorie need.",
     onbFertig:"Done", onbSpaeter:"Later", onbFehl:"Please enter at least your weight.", onbOffen:"Needs not set yet",
     kcal:"Calorie need", kcalWert:"Need about {k} kcal per day", kcalHint:"Estimate, 10–20 % deviation possible.",
@@ -127,7 +127,7 @@ var PROT_START = [
 ];
 /* Mitgelieferte Lebensmittel: „Name|Protein in g je 100 g“. Eigene Auswahl mit grob gerundeten Richtwerten; die Packungsangabe geht vor.
    Neue Einträge einfach als weitere Zeile anhängen. */
-var PROT_FOODS = ("Magerquark|12;Quark 20 % Fett|11;Skyr|11;Griechischer Joghurt 10 %|6;Naturjoghurt 3,5 %|4;Joghurt fettarm|4;Hüttenkäse|12;Frischkäse|6;Milch 1,5 %|3,4;Buttermilch|3,5;Kefir|3,5;"+
+var PROT_FOODS_BASIS = ("Magerquark|12;Quark 20 % Fett|11;Skyr|11;Griechischer Joghurt 10 %|6;Naturjoghurt 3,5 %|4;Joghurt fettarm|4;Hüttenkäse|12;Frischkäse|6;Milch 1,5 %|3,4;Buttermilch|3,5;Kefir|3,5;"+
   "Gouda|25;Emmentaler|29;Mozzarella|18;Parmesan|36;Feta|15;Harzer Käse|30;Camembert|20;Proteinpudding|10;Sojadrink|3,3;Haferdrink|1;"+
   "Whey-Pulver|75;Casein-Pulver|80;Erbsenprotein-Pulver|78;Proteinriegel|35;Protein-Shake fertig|10;"+
   "Ei|13;Eiklar|11;"+
@@ -141,6 +141,23 @@ var PROT_FOODS = ("Magerquark|12;Quark 20 % Fett|11;Skyr|11;Griechischer Joghurt
   "Erdnüsse|26;Erdnussmus|25;Mandeln|21;Walnüsse|15;Cashews|18;Haselnüsse|15;Kürbiskerne|30;Sonnenblumenkerne|21;Chiasamen|17;Leinsamen|18;Hanfsamen|32").split(";").map(function(z){
   var x = z.split("|"); return [x[0], parseFloat(x[1].replace(",", "."))];
 });
+/* Weitere Lebensmittel: Käse, Wurst, vegane Wurst, Nudeln, Riegel, Fleisch, Fisch, Hülsenfrüchte, Brot und Getreide */
+var PROT_FOODS_MEHR = ("Appenzeller|27;Bergkäse|30;Brie|18;Butter|0,7;Butterkäse|23;Cheddar|25;Cottage Cheese|11;Edamer|25;Frischkäse light|8;Halloumi|22;Hirtenkäse|15;Mascarpone|4;Mozzarella light|20;Ricotta|9;Schafskäse|18;Schmelzkäse|15;Schweizer Käse|28;Tilsiter|27;Ziegenkäse|20;Schmand|3;Sahne|2,5;Margarine|0,3;Veganer Käse|2;"+
+  "Bierschinken|13;Bockwurst|12;Cervelatwurst|22;Chorizo|24;Corned Beef|22;Fleischkäse|14;Fleischwurst|12;Frikadelle|15;Geflügelwurst|14;Gelbwurst|12;Krakauer|14;Kochschinken mager|18;Landjäger|28;Leberwurst|12;Lyoner|11;Mettwurst|16;Mortadella|15;Putenwurst|16;Rohschinken|27;Serranoschinken|28;Teewurst|22;Wiener Würstchen|12;"+
+  "Vegane Wurst|14;Vegane Salami|15;Vegane Mortadella|13;Veggie-Aufschnitt|14;Sojawurst|13;Seitan-Aufschnitt|18;Lupinen-Aufschnitt|15;Tofu-Würstchen|13;Veggie-Frikadelle|12;Vegane Bratwurst|13;Veganes Hack|16;Sojageschnetzeltes|13;"+
+  "Dinkelnudeln|12;Vollkornnudeln|13;Hartweizennudeln|12;Eiernudeln|13;Linsennudeln|23;Kichererbsennudeln|19;Protein-Nudeln|35;Reisnudeln|7;Glasnudeln|0,5;Spätzle|12;Lasagneplatten|12;Vollkornnudeln gekocht|5;"+
+  "Proteinriegel Schoko|25;Proteinriegel Erdnuss|27;Eiweißriegel|35;Protein-Waffel|20;Müsliriegel|6;Haferriegel|8;Reiswaffel|8;Beef Jerky|33;Protein-Chips|30;"+
+  "Rinderfilet|21;Rindergulasch|21;Rinderbraten|23;Kalbfleisch|20;Kalbsschnitzel|21;Hirsch|22;Wildschwein|21;Entenbrust|20;Schweinebraten|21;Schweinenacken|19;Kasseler|20;Putenhack|20;Hähnchenbrust gekocht|30;Hähnchenschnitzel|23;Hühnchenkeule ohne Haut|18;Gänsebrust|18;Hackfleisch gemischt|18;"+
+  "Hecht|19;Zander|19;Karpfen|17;Dorade|19;Pangasius|16;Shrimps gekocht|24;Lachs geräuchert|24;Heringsfilet|16;Thunfisch in Öl|23;Forelle geräuchert|23;Saibling|20;Rotbarsch|17;Scampi|20;Muscheln|12;Tintenfisch|16;Sardellen|25;"+
+  "Kidneybohnen trocken|22;Kichererbsen trocken|19;Linsen rot trocken|24;Bohnen rot gekocht|8;Schwarze Bohnen gekocht|8;Falafel|13;Tofu seidig|8;Sojajoghurt|3,5;Veganer Quark|8;Lupinenjoghurt|10;Sojaschnetzel|50;Mandelmus|21;Tahini|17;"+
+  "Ei gekocht|13;Eigelb|16;Vollmilch|3,4;Kondensmilch|7;Milchreis|3;"+
+  "Roggenbrot|8;Knäckebrot|10;Vollkornbrötchen|9;Haferkleie|17;Weizenkleie|15;Buchweizen gekocht|4;Hirse gekocht|3;Bulgur gekocht|3;Polenta|3;Haferbrei|4").split(";").map(function(z){
+  var x = z.split("|"); return [x[0], parseFloat(x[1].replace(",", "."))];
+});
+/* Katalog: alle Lebensmittel alphabetisch (deutsche Sortierung), gleiche Namen nur einmal */
+var PROT_FOODS = PROT_FOODS_BASIS.concat(PROT_FOODS_MEHR).filter(function(f, i, all){
+  return all.findIndex(function(g){ return g[0] === f[0]; }) === i;
+}).sort(function(a, b){ return a[0].localeCompare(b[0], "de"); });
 var protOffen = {};   // eingeklappte Karten, die der Nutzer geöffnet hat (bleiben beim Neuzeichnen offen)
 function protT(key, vars){
   var s = (PROT_T[currentLang()] || PROT_T.de)[key];
@@ -227,6 +244,16 @@ function protKopfHTML(summe){
 function protKarte(key, titel, inhalt){
   return '<details class="prot-karte prot-info" data-pdet="'+key+'"'+(protOffen[key] ? ' open' : '')+'><summary>'+esc(titel)+'</summary>'+inhalt+'</details>';
 }
+/* Katalog A–Z: ein Tipp trägt die Menge im Feld „Menge (g)“ ein (Basis 100 g); ＋ legt daraus einen eigenen Schnellbutton an */
+function protKatalogHTML(){
+  var letzter = "";
+  return PROT_FOODS.map(function(f, idx){
+    var b = f[0].charAt(0).toUpperCase(), kopf = "";
+    if(b !== letzter){ letzter = b; kopf = '<h4 class="prot-buchst">'+esc(b)+'</h4>'; }
+    return kopf+'<div class="prot-eintrag"><button type="button" class="prot-treffer" data-pfood="'+idx+'"><b>'+esc(f[0])+'</b><small>'+esc(protT("je100kurz", { g:String(f[1]).replace(".", ",") }))+'</small></button>'+
+      '<button type="button" class="prot-x" data-pfbtn="'+idx+'" aria-label="'+esc(protT("alsButton"))+'" title="'+esc(protT("alsButton"))+'">＋</button></div>';
+  }).join("");
+}
 function renderProtein(){
   var p = protDaten(), heute = kalTagKey(Date.now()), eint = protTag(heute), summe = protSumme(eint);
   var kg = protKg(), lang = currentLang() === "en" ? "en-GB" : "de-DE", s = state.db.settings;
@@ -301,10 +328,10 @@ function renderProtein(){
       '<section class="prot-karte prot-heute" aria-label="'+esc(protT("heute"))+'"><div id="pKopf">'+protKopfHTML(summe)+'</div>'+
         '<button type="button" class="prot-rueck" data-prueck'+(eint.length ? '' : ' disabled')+'>'+esc(protT("rueck"))+'</button></section>'+
       '<section class="prot-karte" aria-label="'+esc(protT("schnell"))+'"><div class="prot-raster">'+knopf+'</div></section>'+
-      '<section class="prot-karte"><h3>'+esc(protT("suche"))+'</h3>'+
-        '<div class="prot-form"><div><input id="pFS" type="search" aria-label="'+esc(protT("suche"))+'" placeholder="'+esc(protT("suchePh"))+'"></div>'+
-        '<div><input id="pFG" type="number" inputmode="decimal" value="100" aria-label="'+esc(protT("menge"))+'" placeholder="'+esc(protT("menge"))+'"></div></div>'+
-        '<div id="pFRes" style="margin-top:6px"></div></section>'+
+      '<section class="prot-karte"><h3>'+esc(protT("katalog"))+'</h3>'+
+        '<p class="prot-hint-txt">'+esc(protT("katalogHint"))+'</p>'+
+        '<div class="prot-form"><div class="voll"><label>'+esc(protT("menge"))+'</label><input id="pFG" type="number" inputmode="decimal" value="100" min="1" max="2000"></div></div>'+
+        '<div id="pKat" style="margin-top:8px">'+protKatalogHTML()+'</div></section>'+
       '<section class="prot-karte"><h3>'+esc(protT("liste"))+'</h3>'+liste+'</section>'+
       protKarte("eigen", protT("eigenDetails"), eigenes)+
       protKarte("woche", protT("wocheDetails"), woche)+
@@ -349,30 +376,22 @@ function renderProtein(){
       }));
     });
   });
-  /* Lebensmittelliste: suchen, Menge eingeben, Treffer antippen; „Als Button speichern“ legt daraus einen Schnellbutton an */
-  var fS = document.getElementById("pFS"), fG = document.getElementById("pFG"), fRes = document.getElementById("pFRes");
-  if(fS) fS.addEventListener("input", function(){
-    var q = fS.value.toLowerCase().trim(), hits = q ? PROT_FOODS.filter(function(f){ return f[0].toLowerCase().indexOf(q) > -1; }).slice(0, 8) : [];
-    fRes.innerHTML = q ? (hits.length ? hits.map(function(f){
-      var idx = PROT_FOODS.indexOf(f);
-      return '<div class="prot-eintrag"><button type="button" class="prot-treffer" data-pfood="'+idx+'"><b>'+esc(f[0])+'</b><small>'+esc(protT("je100kurz", { g:String(f[1]).replace(".", ",") }))+'</small></button>'+
-        '<button type="button" class="prot-x" data-pfbtn="'+idx+'" aria-label="'+esc(protT("alsButton"))+'" title="'+esc(protT("alsButton"))+'">＋</button></div>';
-    }).join("") : '<p class="prot-leer">'+esc(protT("sucheLeer"))+'</p>') : "";
-    fRes.querySelectorAll("[data-pfood]").forEach(function(b){
-      b.addEventListener("click", function(){
-        var f = PROT_FOODS[+b.getAttribute("data-pfood")], g = +fG.value;
-        if(!f || !(g > 0 && g <= 2000)) return;
-        protEintragen(f[0], g * f[1] / 100, Math.round(g));
-        neu();
-      });
+  /* Katalog: Tipp trägt die Menge aus „Menge (g)“ ein; ＋ legt daraus einen Schnellbutton an */
+  var fG = document.getElementById("pFG");
+  app.querySelectorAll("[data-pfood]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var f = PROT_FOODS[+b.getAttribute("data-pfood")], g = +fG.value;
+      if(!f || !(g > 0 && g <= 2000)) return;
+      protEintragen(f[0], g * f[1] / 100, Math.round(g));
+      neu();
     });
-    fRes.querySelectorAll("[data-pfbtn]").forEach(function(b){
-      b.addEventListener("click", function(){
-        var f = PROT_FOODS[+b.getAttribute("data-pfbtn")], g = +fG.value;
-        if(!f || !(g > 0 && g <= 2000)) return;
-        protDaten().knoepfe.unshift({ id:uid(), n:f[0], a:Math.round(g), p:Math.round(g * f[1] / 100), nutz:0 });
-        save(); showToast(protT("angelegt")); neu();
-      });
+  });
+  app.querySelectorAll("[data-pfbtn]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var f = PROT_FOODS[+b.getAttribute("data-pfbtn")], g = +fG.value;
+      if(!f || !(g > 0 && g <= 2000)) return;
+      protDaten().knoepfe.unshift({ id:uid(), n:f[0], a:Math.round(g), p:Math.round(g * f[1] / 100), nutz:0 });
+      save(); showToast(protT("angelegt")); neu();
     });
   });
   /* Kombi-Button: Summe mehrerer Buttons als ein neuer */

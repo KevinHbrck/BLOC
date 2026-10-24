@@ -211,7 +211,7 @@
     var s = W.state.db.settings, alt = s.kalender;
     try {
       s.kalender = { e: [] };
-      var p = { id: "test-plan", name: "Test", items: ["run", "zufall"], tage: [0, 2], wochen: 2, pos: 0 };
+      var p = { id: "test-plan", name: "Test", items: ["run", "zufall"], tage: [0, 2], wochen: 2, pos: 0, am: "nach" };
       gleich(W.programmUebernehmen(p), 4, "2 Wochen × 2 Tage");
       var e = W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan"; }).sort(function (a, b) { return a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0; });
       gleich(e.map(function (x) { return x.art; }), ["run", "zufall", "run", "zufall"], "Einträge wechseln der Reihe nach");
@@ -223,7 +223,7 @@
     var s = W.state.db.settings, alt = s.kalender;
     try {
       s.kalender = { e: [] };
-      var p = { id: "test-plan2", name: "Test", items: ["run", "zufall", "run"], tage: [0, 3], wochen: 1, pos: 0 };
+      var p = { id: "test-plan2", name: "Test", items: ["run", "zufall", "run"], tage: [0, 3], wochen: 1, pos: 0, am: "nach" };
       gleich(W.programmUebernehmen(p), 2, "zwei Termine je Woche");
       gleich(W.programmUebernehmen(p), 2, "nochmal übernommen");
       gleich(W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan2"; }).length, 2, "keine Doppelten");
