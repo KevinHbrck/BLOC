@@ -2,7 +2,7 @@
 /* ============ Trainingskalender ============
    Wochen- oder Monatsansicht (Montag zuerst). Einträge: eigene Workouts (Nach Zeit), Pläne (Nach Sätzen), Workouts aus dem Katalog, Mobility & Stretch,
    Run (frei oder mit Ziel in km) und ein Zufallstraining („Überrasch mich“ erst am Tag selbst).
-   Hinzufügen nur über „+ Hinzufügen“ am Tag (Workouts › Meine Workouts, Meine Pläne, Zufallstraining, Katalog, Mobility; Run). Im Monat
+   Hinzufügen nur über „+ Hinzufügen“ am Tag (BLOC, Workout aus dem Katalog, TrainingsBLOC, Run – je ein Teil). Im Monat
    wählt ein Tipp den Tag, seine Einträge stehen unter dem Raster. Einträge verschiebt man über ihr Menü
    („Auf einen anderen Tag“). Daten: settings.kalender = { e:[{ id, tag:"JJJJ-MM-TT", art, ref, name, km, erledigt, at }] }
    - nur auf dem Gerät, wie alles andere. Art: workout | plan | lib | run | zufall; bei run steht rad:true für eine Radfahrt.
@@ -354,40 +354,21 @@ function kalRunSheet(tag){
     zu(); kalHinzu(tag, { art:"run", name:n, km:km, rad:rad }); kalNeu();
   });
 }
-/* „Hinzufügen“ an einem Tag: erst die Art - Workouts (dann Meine Workouts zuerst, Meine Pläne, Zufallstraining, Workoutkatalog, Mobility & Stretch), Run */
+/* „Hinzufügen“ an einem Tag: genau ein Teil je Eintrag – BLOC (Nach Sätzen), Workout aus dem Katalog, TrainingsBLOC oder Run */
 function kalHinzuMenue(tag){
   function fertig(art, ref){ kalHinzu(tag, { art:art, ref:ref }); kalNeu(); }
-  function workoutsMenue(){
-    openActionSheet(t("kalWorkouts")+" · "+kalTagText(tag), [
-      { ico:HOME_ICON.lib, label:t("kalMeineWo"), fn:function(){
-        var items = (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return !mw.ws; }).map(function(mw){
-          var exs = mw.items.map(function(it){ return findExercise(it.ex); }).filter(Boolean);
-          return { id:mw.id, name:mw.name, sub:t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(myRun(mw))) };
-        });
-        kalPicker(t("kalMeineWo"), items, function(id){ fertig("workout", id); });
-      } },
-      { ico:HOME_ICON.timer, label:t("kalMeinePl"), fn:function(){
-        var items = stPlaene().filter(function(p){ return !p.entwurf; }).map(function(p){ return { id:p.id, name:p.name, sub:planAnzahl(stPlanIds(p).length) }; });
-        kalPicker(t("kalMeinePl"), items, function(id){ fertig("plan", id); });
-      } },
-      { ico:P_PLUS, label:t("kalZufall"), fn:function(){ fertig("zufall", ""); } },
-      { ico:HOME_ICON.lib, label:t("kalKat"), fn:function(){
-        var items = LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); }).map(function(lw){
-          var exs = lw.exercises.map(findExercise).filter(Boolean);
-          return { id:lw.id, name:tplText(lw.name), sub:t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(libWorkoutRun(lw))) };
-        });
-        kalPicker(t("kalKat"), items, function(id){ fertig("lib", id); });
-      } },
-      { ico:HOME_ICON.warm, label:t("kalMob"), fn:function(){
-        var items = [];
-        (state.db.myWorkouts || []).map(normMy).filter(function(mw){ return mw.ws; }).forEach(function(mw){ items.push({ id:"w:"+mw.id, name:mw.name, sub:t("ownTag") }); });
-        LIB_WORKOUTS.filter(function(lw){ return libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); }).forEach(function(lw){ items.push({ id:"l:"+lw.id, name:tplText(lw.name), sub:"" }); });
-        kalPicker(t("kalMob"), items, function(id){ fertig(id.charAt(0) === "w" ? "workout" : "lib", id.slice(2)); });
-      } }
-    ]);
-  }
   openActionSheet(kalTagText(tag), [
-    { ico:HOME_ICON.lib, label:t("kalWorkouts"), fn:workoutsMenue },
+    { ico:HOME_ICON.timer, label:t("kalBloc"), fn:function(){
+      var items = stPlaene().filter(function(p){ return !p.entwurf; }).map(function(p){ return { id:p.id, name:p.name, sub:planAnzahl(stPlanIds(p).length) }; });
+      kalPicker(t("kalBloc"), items, function(id){ fertig("plan", id); });
+    } },
+    { ico:HOME_ICON.lib, label:t("kalKat"), fn:function(){
+      var items = LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw) && !libHidden("wo:"+lw.id); }).map(function(lw){
+        var exs = lw.exercises.map(findExercise).filter(Boolean);
+        return { id:lw.id, name:tplText(lw.name), sub:t("exCount", { n:exs.length })+" · "+fmtDauerKurz(workoutDuration(libWorkoutRun(lw))) };
+      });
+      kalPicker(t("kalKat"), items, function(id){ fertig("lib", id); });
+    } },
     { ico:'<circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8.2 19h8.3a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h8.3"/>', label:t("kalPlan"), fn:function(){
       var items = programmListe().filter(function(pg){ return pg.items.length; }).map(function(pg){ return { id:pg.id, name:pg.name, sub:pg.items.length === 1 ? t("progMeta1") : t("progMeta", { n:pg.items.length }) }; });
       kalPicker(t("kalPlan"), items, function(id){ fertig("programm", id); });

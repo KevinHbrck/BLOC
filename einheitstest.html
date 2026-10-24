@@ -211,22 +211,36 @@
     var s = W.state.db.settings, alt = s.kalender;
     try {
       s.kalender = { e: [] };
-      var p = { id: "test-plan", name: "Test", items: ["run", "zufall"], tage: [0, 2], wochen: 2, pos: 0, am: "nach" };
-      gleich(W.programmUebernehmen(p), 4, "2 Wochen × 2 Tage");
-      var e = W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan"; }).sort(function (a, b) { return a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0; });
-      gleich(e.map(function (x) { return x.art; }), ["run", "zufall", "run", "zufall"], "Einträge wechseln der Reihe nach");
-      gleich(e.map(function (x) { return W.kalTagDatum(x.tag).getDay(); }), [1, 3, 1, 3], "nur Montag und Mittwoch");
-      gleich(e.map(function (x) { return x.prog.i; }), [0, 1, 0, 1], "Position im Trainingsplan");
+      var p = { id: "test-plan", name: "Test", items: ["run", "zufall"], tage: [0, 2], wochen: 2, pos: 0 };
+      gleich(W.programmUebernehmen(p), 8, "2 Wochen × 2 Tage × 2 Einträge");
+      var e = W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan"; });
+      var tage = {};
+      e.forEach(function (x) { tage[x.tag] = (tage[x.tag] || []).concat([x.prog.i]); });
+      gleich(Object.keys(tage).length, 4, "vier Tage");
+      gleich(Object.keys(tage).every(function (k) { return tage[k].join() === "0,1"; }), true, "jeder Tag bekommt beide Einträge zusammen");
+      gleich(Object.keys(tage).map(function (k) { return W.kalTagDatum(k).getDay(); }).filter(function (d, i, all) { return all.indexOf(d) === i; }).sort(), [1, 3], "nur Montag und Mittwoch");
     } finally { s.kalender = alt; }
   });
   test("Trainingsplan: erneutes Übernehmen ersetzt die offenen Termine, ohne Doppeltes", function () {
     var s = W.state.db.settings, alt = s.kalender;
     try {
       s.kalender = { e: [] };
-      var p = { id: "test-plan2", name: "Test", items: ["run", "zufall", "run"], tage: [0, 3], wochen: 1, pos: 0, am: "nach" };
-      gleich(W.programmUebernehmen(p), 2, "zwei Termine je Woche");
-      gleich(W.programmUebernehmen(p), 2, "nochmal übernommen");
-      gleich(W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan2"; }).length, 2, "keine Doppelten");
+      var p = { id: "test-plan2", name: "Test", items: ["run", "zufall", "run"], tage: [0, 3], wochen: 1, pos: 0 };
+      gleich(W.programmUebernehmen(p), 6, "zwei Tage × drei Einträge");
+      gleich(W.programmUebernehmen(p), 6, "nochmal übernommen");
+      gleich(W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan2"; }).length, 6, "keine Doppelten");
+    } finally { s.kalender = alt; }
+  });
+  test("Trainingsplan: Aus Kalender nehmen entfernt nur offene Termine dieses Plans", function () {
+    var s = W.state.db.settings, alt = s.kalender;
+    try {
+      s.kalender = { e: [] };
+      var p = { id: "test-plan3", name: "Test", items: ["run", "zufall"], tage: [0], wochen: 1, pos: 0 };
+      gleich(W.programmUebernehmen(p), 2, "ein Tag × zwei Einträge");
+      var andere = W.kalHinzu(W.kalTagKey(new Date()), { art: "run" });
+      gleich(W.programmAusKalender(p), 2, "beide offenen Termine entfernt");
+      gleich(W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan3"; }).length, 0, "keine Termine dieses Plans mehr");
+      gleich(W.kalListe().length, 1, "fremder Termin bleibt");
     } finally { s.kalender = alt; }
   });
   test("Muskel: Chip und Figur sind eine Auswahl (Gruppe wählt alle Zonen, nochmal antippen nimmt sie wieder raus)", function () {
@@ -477,6 +491,20 @@
       s.koerper = { kg: 70 };
       gleich(W.koerperDaten().kg, 70, "gültiges Gewicht");
     } finally { s.koerper = alt; }
+  });
+  test("Protein: Favoriten aus dem Katalog per Stern ein- und ausschalten, Katalog ist A–Z sortiert", function () {
+    var s = W.state.db.settings, alt = s.protein;
+    try {
+      s.protein = { stufe: 1.6, kg: 80, knoepfe: [], favs: [], tage: {} };
+      gleich(W.protIstFav("Skyr"), false, "zu Beginn kein Favorit");
+      W.protFavWechseln("Skyr");
+      gleich(W.protIstFav("Skyr"), true, "Stern gesetzt");
+      W.protFavWechseln("Skyr");
+      gleich(W.protIstFav("Skyr"), false, "Stern wieder entfernt");
+      var namen = W.PROT_FOODS.map(function (f) { return f[0]; });
+      gleich(namen.slice().sort(function (a, b) { return a.localeCompare(b, "de"); }), namen, "Katalog alphabetisch");
+      gleich(W.PROT_FOODS.length >= 200, true, "Katalog hat mindestens 200 Lebensmittel");
+    } finally { s.protein = alt; }
   });
   test("Protein: Ziel nach Gewicht und Stufe, Tagessumme, Schnellbuttons nach Nutzung", function () {
     var s = W.state.db.settings, alt = s.protein, altK = s.koerper;

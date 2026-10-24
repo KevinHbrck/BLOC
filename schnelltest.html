@@ -1473,8 +1473,8 @@
       klick('#tabbar [data-nav="#kalender"]');
       await bis(function () { return $$(".kal-tag").length === 7 && $(".kal-nav"); }, 3000, "Wochenansicht mit sieben Tagen");
       klick($(".kal-tag:not(.heute) [data-kaladd]"));   // nicht heute: an einem Tag mit schon erledigten Trainings gilt der Eintrag von selbst als erledigt, das Abhaken wäre dann ein Zurücknehmen (so rot an Montagen)
-      klick(await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Menü „Hinzufügen“: Workouts"));
-      klick(await bis(function () { return $$("#overlayRoot [data-act]")[2]; }, 2000, "Workouts: Zufallstraining (Meine Workouts stehen vorn)"));
+      await bis(function () { return $$("#overlayRoot [data-act]")[0]; }, 2000, "Menü „Hinzufügen“: BLOC, Workout aus dem Katalog, TrainingsBLOC, Run");
+      klick(await bis(function () { return $$("#overlayRoot [data-act]")[1]; }, 2000, "Menü: Workout aus dem Katalog")); klick(await bis(function () { return $("#overlayRoot [data-kpick]"); }, 2000, "Katalog-Workout wählen"));
       await bis(function () { return $$(".kal-eintrag").length === 1; }, 2000, "Eintrag steht im Kalender");
       var tag0 = daten().settings.kalender.e[0].tag;
       klick($("[data-kalok]"));
@@ -1596,7 +1596,7 @@
       var o = W.kalAufloesen(W.kalAn(tag).filter(function (e) { return e.art === "programm"; })[0]);
       pruefe(o.ok && o.name === "Plan Kal" && /2/.test(o.sub), "Kalender-Eintrag Trainingsplan: " + JSON.stringify(o));
       W.kalHinzuMenue(tag);
-      await bis(function () { return /Trainingsplan/.test(($("#overlayRoot") || {}).textContent || ""); }, 2000, "Menü zeigt Trainingsplan");
+      await bis(function () { return /TrainingsBLOC/.test(($("#overlayRoot") || {}).textContent || ""); }, 2000, "Menü zeigt TrainingsBLOC");
       klick("#overlayRoot [data-actclose]");
     }],
     ["Satz-Training: Ende-Karte (Workout: Speichern & fertig; Trainingsplan: Speichern & weiter, am Schluss Auswertung zum Wischen)", async function () {
@@ -1675,7 +1675,7 @@
       klick($("#overlayRoot .act-sheet [data-act=\"0\"]"));
       var neuE = W.kalListe().filter(function (e) { return e.art === "lib" && e.ref === ideeId; }).pop();
       pruefe(W.kalListe().length === kalVor + 1 && neuE, "Termin im Kalender angelegt");
-      W.state.db.settings.kalender.e = W.kalListe().filter(function (e) { return e !== neuE; });
+      W.state.db.settings.kalender.e = [];   // alle Testtermine weg, damit der Umschalter nur ohne Termine geprüft wird
       W.renderKoerper();
       pruefe($(".dd-freq .kk-paar") && $$(".dd-freq .kk-zeile").length >= 1, "Häufigkeit pro Muskelgruppe: Figur und Zeilen");
       pruefe($$(".dd-kal-zeile:not(.dd-kal-kopf)").length === 6 && $$(".dd-kal-zeile:not(.dd-kal-kopf) .dd-punkt").length === 42, "Muskel-Kalender: sechs Gruppen mal sieben Tage");
