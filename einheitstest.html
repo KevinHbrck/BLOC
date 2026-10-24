@@ -207,20 +207,27 @@
     gleich(W.workoutThema(["air-squats"], "Cardio Express"), "ganz", "Cardio = ganz");
     gleich(W.workoutThema([], ""), "ganz", "ohne Übungen");
   });
-  test("Trainingsplan: Wochen × Trainingstage ergeben Kalender-Einträge ab einem Montag, leere Tage fallen weg", function () {
-    var e = W.planEintraege({ wochen: 4, tage: [2, 0], wahl: { 0: "zufall", 2: "run" } });
-    gleich(e.length, 8, "4 Wochen × 2 Tage");
-    gleich([e[0].art, e[1].art], ["zufall", "run"], "Reihenfolge nach Wochentag");
-    gleich(W.kalTagDatum(e[0].tag).getDay(), 1, "erster Eintrag am Montag");
-    gleich(W.planEintraege({ wochen: 6, tage: [0, 1], wahl: { 0: "zufall" } }).length, 6, "Tag ohne Auswahl bleibt leer");
-    var lib = W.LIB_WORKOUTS.filter(function (l) { return !W.libIstWarmDehn(l); })[0];
-    gleich(W.planEintraege({ wochen: 4, tage: [3], wahl: { 3: "lib:" + lib.id } })[0].ref, lib.id, "Katalog-Workout als Verweis");
+  test("Trainingsplan: Wochen × Trainingstage ergeben Kalender-Einträge an den gewählten Wochentagen, der Reihe nach", function () {
+    var s = W.state.db.settings, alt = s.kalender;
+    try {
+      s.kalender = { e: [] };
+      var p = { id: "test-plan", name: "Test", items: ["run", "zufall"], tage: [0, 2], wochen: 2, pos: 0 };
+      gleich(W.programmUebernehmen(p), 4, "2 Wochen × 2 Tage");
+      var e = W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan"; }).sort(function (a, b) { return a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0; });
+      gleich(e.map(function (x) { return x.art; }), ["run", "zufall", "run", "zufall"], "Einträge wechseln der Reihe nach");
+      gleich(e.map(function (x) { return W.kalTagDatum(x.tag).getDay(); }), [1, 3, 1, 3], "nur Montag und Mittwoch");
+      gleich(e.map(function (x) { return x.prog.i; }), [0, 1, 0, 1], "Position im Trainingsplan");
+    } finally { s.kalender = alt; }
   });
-  test("Plan: mehrere Workouts je Tag (auch das frühere Textformat), Reihenfolge bleibt", function () {
-    var e = W.planEintraege({ wochen: 2, tage: [0, 3], wahl: { 0: ["zufall", "run"], 3: "run" } });
-    gleich(e.length, 6, "2 Wochen × (2 + 1) Einträge");
-    gleich([e[0].art, e[1].art, e[2].art], ["zufall", "run", "run"], "erst Montag (zwei), dann Donnerstag");
-    gleich(e[0].tag === e[1].tag && e[1].tag !== e[2].tag, true, "zwei Einträge am selben Tag");
+  test("Trainingsplan: erneutes Übernehmen ersetzt die offenen Termine, ohne Doppeltes", function () {
+    var s = W.state.db.settings, alt = s.kalender;
+    try {
+      s.kalender = { e: [] };
+      var p = { id: "test-plan2", name: "Test", items: ["run", "zufall", "run"], tage: [0, 3], wochen: 1, pos: 0 };
+      gleich(W.programmUebernehmen(p), 2, "zwei Termine je Woche");
+      gleich(W.programmUebernehmen(p), 2, "nochmal übernommen");
+      gleich(W.kalListe().filter(function (x) { return x.prog && x.prog.id === "test-plan2"; }).length, 2, "keine Doppelten");
+    } finally { s.kalender = alt; }
   });
   test("Muskel: Chip und Figur sind eine Auswahl (Gruppe wählt alle Zonen, nochmal antippen nimmt sie wieder raus)", function () {
     var an = W.kkGrpToggle([], "brust");
@@ -241,9 +248,8 @@
     gleich(W.runPaceHinweis({ ziel: null, art: "lauf", splits: [1] }, 1), "", "ohne Vorgabe");
     gleich(W.runPaceHinweis({ ziel: { pace: 330 }, art: "rad", splits: [342000] }, 1), "", "Rad: keine Pace");
   });
-  test("Classic ist abgeschafft: Modern gilt immer, nur ?schnelltest bleibt klassisch", function () {
-    wahr(W.LAYOUT_NUR_MODERN === !/[?&]schnelltest\b/.test(W.location.search), "Schalter folgt der Adresse");
-    gleich(W.layoutNeu(), W.LAYOUT_NUR_MODERN || W.state.db.settings.layout === "new", "layoutNeu");
+  test("Aussehen ist immer Modern (Classic entfernt), auch mit ?schnelltest", function () {
+    gleich(W.document.documentElement.getAttribute("data-layout"), "new", "data-layout");
   });
 
   /* ---------- Zeiten ---------- */
@@ -279,15 +285,12 @@
       gleich(W.gymSatzKachel("push-ups"), "", "Freiluft-Übung hat hier keinen Text");
     } finally { s.studio = alt; }
   });
-  test("Einzeiler-Tipps zu Gesten: sichtbar, bis man sie ausblendet (und dann dauerhaft weg)", function () {
+  test("Tipp-Zeilen entfallen auf allen Seiten (weniger Text)", function () {
     var s = W.state.db.settings, alt = s.tippAus;
     try {
       s.tippAus = {};
-      var h = W.tippZeileHTML("uebung", "tippUebung");
-      wahr(h.indexOf("data-tipp=\"uebung\"") > -1 && h.indexOf(W.t("tippUebung")) > -1 && h.indexOf("data-tippx") > -1, "Tipp mit Text und Schließen-Knopf");
-      s.tippAus = { uebung: 1 };
-      gleich(W.tippZeileHTML("uebung", "tippUebung"), "", "ausgeblendeter Tipp");
-      wahr(W.tippZeileHTML("workout", "tippWorkout") !== "", "andere Tipps bleiben");
+      gleich(W.tippZeileHTML("uebung", "tippUebung"), "", "Tipp-Zeile leer");
+      gleich(W.tippZeileHTML("workout", "tippWorkout"), "", "auch ohne Ausblenden leer");
     } finally { s.tippAus = alt; }
   });
   test("Kalender: Wochenbeginn Montag, Kalenderwoche (ISO), Tagesschlüssel", function () {
@@ -456,15 +459,21 @@
     gleich(W.einheitTagKey(new Date(2026, 9, 5, 23, 59).getTime()), "2026-10-05", "Datum mit führenden Nullen");
   });
 
-  test("Statistik: Kalorien-Schätzung (nur Gewicht, mit Größe/Alter/Geschlecht, ungültige Werte)", function () {
+  test("Kalorien: Lauf und Rad nach Körperdaten (ohne gültiges Gewicht keine Schätzung)", function () {
     var s = W.state.db.settings, alt = s.koerper;
     try {
-      gleich(W.kcalSchaetzung({ katalog: 3600 }, { kg: 80, cm: 0, alter: 0, sex: "" }), 280, "nur Gewicht: (4,5 - 1) x 80 kcal je Stunde");
-      gleich(W.kcalSchaetzung({}, { kg: 80, cm: 0, alter: 0, sex: "" }), 0, "ohne Zeit keine Kalorien");
-      var m = W.kcalSchaetzung({ katalog: 3600 }, { kg: 80, cm: 180, alter: 30, sex: "m" }), f = W.kcalSchaetzung({ katalog: 3600 }, { kg: 80, cm: 180, alter: 30, sex: "w" });
-      wahr(m > f && m > 200 && m < 320, "gleiche Daten: Mann höher als Frau (Ruheumsatz), plausibel: " + m + " / " + f);
+      s.koerper = { kg: 80 };
+      gleich(W.runKcal(10000, 3600, false), 909, "Lauf 10 km in 1 h: 1,036 kcal je kg und km + Ruheumsatz (80 kcal je Stunde)");
+      gleich(W.runKcal(20000, 3600, true), 640, "Rad 20 km/h: 8 MET");
+      gleich(W.runKcal(30, 3600, false), 0, "zu kurze Strecke: keine Schätzung");
+      s.koerper = { kg: 80, cm: 180, alter: 30, sex: "m" };
+      var m = W.runKcal(10000, 3600, false);
+      s.koerper = { kg: 80, cm: 180, alter: 30, sex: "w" };
+      var f = W.runKcal(10000, 3600, false);
+      wahr(m > f && m > 800 && m < 1000, "gleiche Daten: Mann höher als Frau (Ruheumsatz), plausibel: " + m + " / " + f);
       s.koerper = { kg: 20, cm: 180 };
       gleich(W.koerperDaten(), null, "Gewicht außerhalb 30-250 kg: keine Schätzung");
+      gleich(W.runKcal(10000, 3600, false), 0, "ohne Körperdaten 0");
       s.koerper = { kg: 70 };
       gleich(W.koerperDaten().kg, 70, "gültiges Gewicht");
     } finally { s.koerper = alt; }
