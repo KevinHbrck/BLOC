@@ -3,6 +3,17 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-24 (später) · Protein: Bedarf, Foto, aufgeräumt (Fassung 2026-10-24-3)
+
+- **Onboarding** beim ersten Öffnen: Gewicht, Größe, Alter, Geschlecht (auch „keine Angabe“), Aktivität in einem Bildschirm, „Später“ möglich. Es sind dieselben Körperdaten wie unter Fortschritt (`settings.koerper`, neu: `pal`); dort wie hier änderbar.
+- **kcal oben** neben der Tagessumme: Grundumsatz nach Mifflin-St-Jeor mal Aktivitätsfaktor, auf 50 gerundet, „± 10 %“ dabei; ohne Geschlecht der Mittelwert beider Formeln.
+- **Foto** (Pexels, Klaus Nielsen) als Kopf der Protein-Seite, Nachweis in quellen.html; Datenschutzseite nennt Protein-Einträge und Körperdaten.
+- **Aufgeräumt**: wenig sichtbarer Text; Eigenes (Gramm, eigener Button, Kombi), Woche und Verteilung, Bedarf und Erklärung mit Quellen stehen in Klappkarten. Suche steht vor der Liste, Touch-Ziele mindestens 44 px.
+- **Produktliste** von 20 auf rund 120 Einträge (eigene Auswahl, grob gerundete Richtwerte, Packung geht vor); Treffer lassen sich mit ＋ als Schnellbutton speichern.
+- **Kein Barcode-Scanner**: Er bräuchte eine Produktdatenbank im Netz und bräche das Versprechen „nichts verlässt das Gerät“. Alternative: eigener Button mit Protein je 100 g.
+- `settings.protein` trägt jetzt eine Versionsnummer (`v:1`).
+- Tests: Schnelltest 45/45, Einheitstest 59/59 (kcal-Rechnung neu).
+
 ## 2026-10-24 · Protein-Tracker, Tools, ruhigerer Dunkel-Hintergrund (Fassung 2026-10-24-1)
 
 - **Protein** (neu, js/23-protein.js, Kachel unter Tools): Tagessumme als Hauptanzeige, Ziel nach Körpergewicht und Stufe (Basis 0,83 · Training 1,6 · Intensiv 2,0 g/kg), Schnellbuttons mit einem Tipp (Langdruck: Portion ½ / 1 / 1,5 / 2 ×), eigene Buttons (Protein je 100 g), Kombi-Buttons, mitgelieferte Lebensmittelliste mit Suche, Gramm-Eingabe, Rückgängig, Verteilung morgens/mittags/abends, Wochenblick mit Schnitt in g/kg und dezentem Hinweis ab 2,2 g/kg. Alles lokal in `settings.protein`; keine Erinnerung ums Training, keine rote Warnung; Texte in eigenen Worten.

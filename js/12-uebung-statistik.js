@@ -277,7 +277,7 @@ function statPaceSvg(runs){
 function koerperDaten(){
   var k = state.db.settings.koerper || {}, kg = +k.kg;
   if(!(kg >= 30 && kg <= 250)) return null;
-  return { kg:kg, cm:+k.cm || 0, alter:+k.alter || 0, sex:k.sex || "" };
+  return { kg:kg, cm:+k.cm || 0, alter:+k.alter || 0, sex:k.sex || "", pal:+k.pal || 0 };
 }
 function kcalProStunde(kd){
   if(kd.cm >= 120 && kd.cm <= 230 && (kd.sex === "m" || kd.sex === "w")){

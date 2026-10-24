@@ -489,6 +489,12 @@
       W.protEintragen("Test", 25, 100);
       gleich(W.protSumme(W.protTag(W.kalTagKey(Date.now()))), 25, "Summe heute");
       gleich(W.protKnoepfe()[0].id, "b", "häufig genutzter Button steht vorn");
+      s.koerper = { kg: 80, cm: 180, alter: 30, sex: "m", pal: 1.65 };
+      gleich(W.protKcal(), 2950, "Mann 30 J., 180 cm, 80 kg, Faktor 1,65: (1780 × 1,65) auf 50 gerundet");
+      s.koerper.sex = "";
+      gleich(W.protKcal(), 2800, "ohne Geschlecht: Mittelwert beider Formeln");
+      s.koerper = { kg: 80 };
+      gleich(W.protKcal(), 0, "ohne Größe und Alter keine Kalorienschätzung");
       s.protein.kg = 0; s.koerper = {};
       gleich(W.protZiel(), 0, "ohne Gewicht kein Ziel");
     } finally { s.protein = alt; s.koerper = altK; }

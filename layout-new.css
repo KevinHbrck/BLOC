@@ -1345,3 +1345,32 @@ body:has(.kal-nav) #app{ touch-action:pan-y; }   /* waagerechte Wischer gehören
 .prot-verteil div{ background:color-mix(in srgb, var(--text) 6%, transparent); border-radius:12px; padding:8px; text-align:center; }
 .prot-verteil b{ display:block; font-size:16px; }
 .prot-verteil small{ color:var(--text-dim); font-size:12px; }
+.prot-hint-txt:empty{ display:none; }
+.prot-karte h4{ margin:16px 0 6px; font-size:13px; color:var(--text); }
+.prot-karte h4:first-child{ margin-top:0; }
+.prot-bild{ height:150px; border-radius:20px; margin:4px 0 12px; background:url("img/neu-protein.jpg") 50% 40%/cover no-repeat; position:relative; overflow:hidden; }
+.prot-bild::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(8,10,14,.05), rgba(8,10,14,.45)); }
+.prot-kcal{ margin-top:12px; padding-top:10px; border-top:1px solid var(--border); }
+.prot-kcal b{ display:block; font-size:16px; }
+.prot-kcal small{ color:var(--text-dim); font-size:12px; }
+.prot-zeile-flex{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.prot-treffer{ flex:1; min-width:0; text-align:left; background:none; border:0; color:var(--text); font:inherit; cursor:pointer; display:flex; flex-direction:column; padding:0; }
+.prot-treffer small{ color:var(--text-dim); font-size:12px; }
+.prot-onb-knoepfe{ display:flex; gap:8px; margin-top:12px; }
+.prot-onb-knoepfe .prot-btn{ flex:1; }
+.seg-pal{ flex-wrap:wrap; }
+.seg-pal button{ flex:1 1 45%; }
+.prot-seite .koerper-form input{ width:100%; }
+.prot-seite summary{ list-style:none; }
+.prot-seite .koerper-form > div[style*="font-size:12px"]{ display:none; }
+/* Protein-Seite, Feinschliff nach UX-Prüfung (2026-10-24): Foto zeigt Schale und Dotter, größere Touch-Ziele, größere Zahl oben */
+.prot-bild{ height:clamp(140px, 38vw, 180px); background-position:50% 62%; }
+.prot-heute{ position:relative; border-color:color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.prot-heute .prot-gross b{ font-size:44px; }
+.prot-rueck{ position:absolute; top:12px; right:12px; min-height:44px; padding:0 8px; border:0; background:none; color:var(--accent); font:inherit; font-weight:700; cursor:pointer; }
+.prot-rueck:disabled{ opacity:.35; cursor:default; }
+.prot-kcal small:empty{ display:none; }
+.prot-btn{ min-height:44px; }
+.prot-stufe{ min-height:44px; }
+.prot-x{ min-width:44px; min-height:44px; margin-left:4px; }
+.prot-saeule small, .prot-kn small, .prot-stufe small{ font-size:12px; }

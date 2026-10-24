@@ -242,17 +242,22 @@ function einstMehr(key, titel, unter, inhalt, ico, cls){
     '<div class="om-inhalt">'+inhalt+'</div></details>';
 }
 /* Körperdaten (optional) für die Kalorien-Schätzung in der Statistik; nur lokal in den Einstellungen */
-function koerperFormHTML(s){
+var KOERPER_PAL = [[1.2, "koerperPal1"], [1.45, "koerperPal2"], [1.65, "koerperPal3"], [1.9, "koerperPal4"]];   // Aktivitätsfaktor (PAL) für den Gesamtbedarf; mehr in js/23-protein.js
+function koerperFormHTML(s, opt){
   var k = s.koerper || {};
+  opt = opt || {};
   function feld(id, label, wert, min, max){
     return '<label class="koerper-feld"><span>'+esc(label)+'</span><input type="number" inputmode="decimal" id="'+id+'" min="'+min+'" max="'+max+'" value="'+(wert ? esc(String(wert)) : "")+'"></label>';
   }
-  return '<div class="koerper-form"><label class="koerper-feld"><span>'+esc(t("koerperName"))+'</span>'+
-    '<input type="text" id="k-name" maxlength="30" autocomplete="given-name" value="'+esc(s.name || "")+'"></label>'+
+  return '<div class="koerper-form">'+(opt.ohneName ? '' : '<label class="koerper-feld"><span>'+esc(t("koerperName"))+'</span>'+
+    '<input type="text" id="k-name" maxlength="30" autocomplete="given-name" value="'+esc(s.name || "")+'"></label>')+
     feld("k-kg", t("koerperKg"), k.kg, 30, 250)+feld("k-cm", t("koerperCm"), k.cm, 120, 230)+feld("k-alter", t("koerperAlter"), k.alter, 10, 99)+
     '<div class="label" style="margin:10px 0 6px">'+esc(t("koerperSex"))+'</div><div class="seg-row" role="group">'+
     [["w", t("koerperW")], ["m", t("koerperM")], ["", t("koerperKeine")]].map(function(x){
       return '<button type="button" data-ksex="'+x[0]+'" class="'+((k.sex || "") === x[0] ? "active" : "")+'">'+esc(x[1])+'</button>'; }).join("")+'</div>'+
+    '<div class="label" style="margin:10px 0 6px">'+esc(t("koerperAktiv"))+'</div><div class="seg-row seg-pal" role="group">'+
+    KOERPER_PAL.map(function(x){
+      return '<button type="button" data-kpal="'+x[0]+'" class="'+(+k.pal === x[0] ? "active" : "")+'">'+esc(t(x[1]))+'</button>'; }).join("")+'</div>'+
     '<div style="font-size:12px;color:var(--text-dim);margin-top:10px">'+esc(t("koerperHint"))+'</div></div>';
 }
 /* Körperdaten binden (in der Statistik-Ansicht, siehe openKoerperSheet): Zahlen prüfen, nur sinnvolle Werte speichern (sonst leer = keine Schätzung) */
@@ -271,6 +276,12 @@ function koerperBinden(wurzel){
     b.addEventListener("click", function(){
       s.koerper = s.koerper || {}; s.koerper.sex = b.getAttribute("data-ksex"); save();
       wurzel.querySelectorAll("[data-ksex]").forEach(function(x){ x.classList.toggle("active", x === b); });
+    });
+  });
+  wurzel.querySelectorAll("[data-kpal]").forEach(function(b){
+    b.addEventListener("click", function(){
+      s.koerper = s.koerper || {}; s.koerper.pal = +b.getAttribute("data-kpal"); save();
+      wurzel.querySelectorAll("[data-kpal]").forEach(function(x){ x.classList.toggle("active", x === b); });
     });
   });
   wurzel.querySelectorAll("input[type=number]").forEach(function(el){ el.addEventListener("blur", speichern); });
