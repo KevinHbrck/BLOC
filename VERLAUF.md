@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-24 (nachts) · Wissensaustausch im Magazinstil (Fassung 2026-10-24-7)
+
+- **Umbenannt**: „Fragen & Antworten“ heißt jetzt **Wissensaustausch** (Tools-Kachel „25 Beiträge mit Quellen“, Seitentitel, Verweise in der App, quellen.html).
+- **Alle 25 Beiträge neu geschrieben** (Deutsch und Englisch): Titel mit Biss, Kernaussage `k` vorweg, kurze Stichpunkte `p` mit Praxis-Satz, „Wie sicher ist das?“ `s`, gekürzte Begriffe `b`. Deutlich weniger Text (rund 45–135 Wörter je Beitrag); keine neuen Tatsachenbehauptungen, alle [F#]-Marker bleiben bei Quellen des Beitrags.
+- **Fachprüfung** (Vergleich mit der Vorlage) eingearbeitet: Aussagen auf Quellenstärke abgeschwächt (z. B. Alkohol, glykämischer Index, Dehnen, Frauen/Männer, Push/Pull), Marker an reinen App-Beschreibungen entfernt, Hinweise ergänzt (Niere beim Eiweiß, Vorerkrankungen bei Intervallen, Notruf 112, Sicherung bis zum Muskelversagen, Schmerz abbrechen).
+- **Kalorien-Beitrag** an den Stand der App angepasst: nur Lauf und Rad, nur mit Körperdaten, Kraft und Zirkel bewusst ohne Kalorien.
+- faq.js wird jetzt direkt gepflegt (docs/FAQ-ENTWURF.md ist nicht mehr die Quelle).
+- Nicht verifiziert: Quellen gegen die Originale (nur gegen Titel), Zahlen der Nationalen Verzehrsstudie II (81 g und 60 g).
+- Tests: Schnelltest 45/45, Einheitstest 59/59.
+
 ## 2026-10-24 (abends) · Protein-Tracker: Ziel, Sonderfälle, geprüfte Quellen (Fassung 2026-10-24-6)
 
 - **Umbenannt** in „Protein-Tracker“; das Eier-Foto sitzt auf der Kachel unter Tools (Ausschnitt Hände und Eierschalen), nicht mehr auf der Seite. „Dein Bedarf“ ist einklappbar.
