@@ -490,11 +490,26 @@
       gleich(W.protSumme(W.protTag(W.kalTagKey(Date.now()))), 25, "Summe heute");
       gleich(W.protKnoepfe()[0].id, "b", "häufig genutzter Button steht vorn");
       s.koerper = { kg: 80, cm: 180, alter: 30, sex: "m", pal: 1.65 };
-      gleich(W.protKcal(), 2950, "Mann 30 J., 180 cm, 80 kg, Faktor 1,65: (1780 × 1,65) auf 50 gerundet");
+      gleich(W.protKcal(), 2900, "Mann 30 J., 180 cm, 80 kg, Faktor 1,65: (1780 × 1,65) auf 100 gerundet");
       s.koerper.sex = "";
       gleich(W.protKcal(), 2800, "ohne Geschlecht: Mittelwert beider Formeln");
       s.koerper = { kg: 80 };
       gleich(W.protKcal(), 0, "ohne Größe und Alter keine Kalorienschätzung");
+      s.koerper = { kg: 80, cm: 180, alter: 30, sex: "m", pal: 1.65 };
+      s.protein.ziel = "ab";
+      gleich(W.protKcalZiel(), 2500, "Abnehmen: 15 % unter der Erhaltung, auf 100 gerundet");
+      gleich(W.protZiel(), 160, "Abnehmen: mindestens 2,0 g/kg");
+      s.protein.ziel = "auf";
+      gleich(W.protKcalZiel(), 3100, "Aufbauen: etwa 8 % mehr");
+      s.protein.ziel = "halten";
+      gleich(W.protKcalZiel(), 2900, "Halten: Erhaltung");
+      s.koerper = { kg: 60, cm: 170, alter: 16, sex: "m", pal: 1.55 };
+      gleich(W.protKcal(), 0, "unter 18: keine Kalorienschätzung");
+      s.koerper = { kg: 100, cm: 170, alter: 30, sex: "m", pal: 1.55 };
+      gleich(W.protZiel(), 116, "ab BMI 30 zählt das Gewicht bei BMI 25: 72,3 kg × 1,6");
+      s.protein.stufe = 0.83; s.koerper = { kg: 70, cm: 170, alter: 70, sex: "w", pal: 1.4 };
+      gleich(W.protStufe(), 1, "ab 65 mindestens 1,0 g/kg");
+      s.protein.stufe = 1.6;
       s.protein.kg = 0; s.koerper = {};
       gleich(W.protZiel(), 0, "ohne Gewicht kein Ziel");
     } finally { s.protein = alt; s.koerper = altK; }

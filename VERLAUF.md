@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-24 (abends) · Protein-Tracker: Ziel, Sonderfälle, geprüfte Quellen (Fassung 2026-10-24-6)
+
+- **Umbenannt** in „Protein-Tracker“; das Eier-Foto sitzt auf der Kachel unter Tools (Ausschnitt Hände und Eierschalen), nicht mehr auf der Seite. „Dein Bedarf“ ist einklappbar.
+- **Ziel** abnehmen / halten / aufbauen: Abnehmen −15 % (nie unter Grundumsatz, nie unter 1.500 / 1.200 / 1.350 kcal) und mindestens 2,0 g/kg Protein, Aufbauen +8 %; kcal auf 100 gerundet, „10–20 % Abweichung möglich“.
+- **Sonderfälle** (fachlich geprüft): unter 18 keine Kalorienschätzung, ab 65 mindestens 1,0 g/kg, ab BMI 30 Bezug Gewicht bei BMI 25, Hinweis zu Schwangerschaft, Stillzeit, Niere, Essstörung (Ärztin oder Arzt).
+- **Aktivitätsfaktoren** 1,4 / 1,55 / 1,75 / 2,0 (an FAO/WHO/UNU 2004 angelehnt; 1,2 lag unter der Spanne).
+- **Quellen** gegen die Originale geprüft und ergänzt (Morton 2018, Schoenfeld & Aragon 2018, Frankenfield 2005, Helms 2014, PROT-AGE 2013, FAO 2004); Aussagen angepasst: 0,25–0,4 g/kg je Mahlzeit, „enges Zeitfenster nicht nötig“, 2,2 g/kg als obere Grenze statt Schwelle. Nicht im Volltext gelesen: WHO TRS 935, EFSA 2012, ACSM-Position (über Zweitquellen bestätigt).
+- **Lebensmittelwerte**: Stichprobe gegen USDA FoodData Central (11 Einträge, alle innerhalb der Toleranz); Whey 75, Fertig-Shake 10; Schnellbuttons „Hähnchenbrust (roh)“ und „Thunfisch (abgetropft)“.
+- Tests: Schnelltest 45/45, Einheitstest 59/59.
+
 ## 2026-10-24 (später) · Protein: Bedarf, Foto, aufgeräumt (Fassung 2026-10-24-3)
 
 - **Onboarding** beim ersten Öffnen: Gewicht, Größe, Alter, Geschlecht (auch „keine Angabe“), Aktivität in einem Bildschirm, „Später“ möglich. Es sind dieselben Körperdaten wie unter Fortschritt (`settings.koerper`, neu: `pal`); dort wie hier änderbar.

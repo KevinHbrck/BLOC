@@ -6,11 +6,15 @@
    Keine Erinnerung ums Training, keine rote Warnung. Texte dieser Seite stehen in PROT_T (Deutsch und Englisch). */
 var PROT_T = {
   de: {
-    titel:"Protein", kachelSub:"Tagesziel, Kalorienbedarf, Schnellbuttons", heute:"Heute", von:"von {g} g", noch:"noch {g} g", erreicht:"Ziel erreicht",
+    titel:"Protein-Tracker", kachelSub:"Tagesziel, Kalorienbedarf, Schnellbuttons", heute:"Heute", von:"von {g} g", noch:"noch {g} g", erreicht:"Ziel erreicht",
     rueck:"Rückgängig", schnell:"Schnellbuttons", schnellHint:"",
     onbTitel:"Dein Bedarf", onbText:"Für dein Proteinziel und deinen Kalorienbedarf.",
     onbFertig:"Fertig", onbSpaeter:"Später", onbFehl:"Bitte mindestens das Gewicht eintragen.", onbOffen:"Bedarf noch offen",
-    kcal:"Kalorienbedarf", kcalWert:"ca. {k} kcal pro Tag · ±10 %", kcalHint:"",
+    kcal:"Kalorienbedarf", kcalWert:"Bedarf ca. {k} kcal pro Tag", kcalHint:"Schätzung, 10–20 % Abweichung möglich.",
+    kcalZiel:"Ziel ca. {k} kcal pro Tag", kcalErhalt:"Erhaltung ca. {k} kcal · Schätzung, 10–20 % Abweichung möglich.",
+    kcalMinder:"Unter 18: keine Kalorienschätzung. Bitte mit Ärztin oder Arzt besprechen.",
+    zielTitel:"Ziel", zielAb:"Abnehmen", zielHalten:"Halten", zielAuf:"Aufbauen",
+    sonder:"Schwangerschaft, Stillzeit, Nierenerkrankung oder Essstörung: Ziele bitte mit Ärztin oder Arzt klären.",
     kcalOffen:"Für den Kalorienbedarf fehlen Größe und Alter.",
     bedarf:"Mein Bedarf", bedarfHint:"", stufeTitel:"Proteinziel pro kg Körpergewicht",
     manuell:"Gramm eintippen", manuellHint:"", manuellName:"Manuell",
@@ -27,35 +31,47 @@ var PROT_T = {
     woche:"Letzte 7 Tage", schnitt:"Schnitt an erfassten Tagen", gkg:"in g/kg",
     fehlt:"Im Schnitt fehlen {g} g pro Tag, etwa ein Skyr oder Shake.", ok:"Ziel im Wochenschnitt erreicht.",
     viel:"Über 2,2 g/kg im Schnitt: mehr bringt kaum zusätzlichen Nutzen.",
-    basis:"Basis", training:"Training", intensiv:"Intensiv", basisS:"0,83 g/kg · WHO", trainS:"1,6 g/kg", intensivS:"2,0 g/kg",
-    proMahl:"pro Mahlzeit (0,3–0,4 g/kg)",
+    basis:"Basis", training:"Training", intensiv:"Intensiv", basisS:"0,83 g/kg · WHO/EFSA", trainS:"1,6 g/kg", intensivS:"2,0 g/kg",
+    proMahl:"pro Mahlzeit (0,25–0,4 g/kg)",
     quelle:"",
     info:"So rechnet die Seite",
     quellenTitel:"Quellen",
     infoListe:[
-      "Die Tagessumme zählt am meisten.",
-      "Kalorien: Grundumsatz (Mifflin-St-Jeor) mal Aktivität, eine Schätzung mit etwa ±10 %.",
-      "Verteilung: 3 bis 5 Mahlzeiten mit je 0,3 bis 0,4 g/kg sind etwas besser als alles auf einmal.",
-      "Timing: Ein Zeitfenster nach dem Training gibt es nicht.",
-      "Über 2,2 g/kg im Wochenschnitt bringt mehr kaum Nutzen.",
-      "Nieren: Bei eingeschränkter Funktion die Menge mit einer Ärztin oder einem Arzt klären.",
-      "Werte aus Packungen und Listen sind auf etwa ±10 bis 20 % genau.",
+      "Die Tagessumme zählt am meisten. Die Stufen 1,6 und 2,0 g/kg sind eine eigene Wahl innerhalb der Spannen der Quellen.",
+      "Kalorien: Grundumsatz (Mifflin-St-Jeor, erst ab 18) mal Aktivität. Das ist der Erhaltungsbedarf; bei einem einzelnen Menschen sind 10 bis 20 % Abweichung möglich. Abnehmen rechnet etwa 15 % weniger, nie unter dem Grundumsatz und nie unter 1.500 (Männer), 1.200 (Frauen) bzw. 1.350 kcal; Aufbauen etwa 8 % mehr. Ohne Angabe zum Geschlecht rechnet die Seite mit dem Mittelwert beider Formeln, die Aktivitätsfaktoren sind an FAO/WHO/UNU 2004 angelehnt.",
+      "Verteilung: 3 bis 5 Mahlzeiten mit je etwa 0,25 bis 0,4 g/kg gelten als sinnvoll, die Belege dafür sind schwach.",
+      "Timing: Ein enges Zeitfenster nach dem Training ist nicht nötig, die Tagessumme zählt am meisten.",
+      "Beim Abnehmen steigt die Stufe auf mindestens 2,0 g/kg, weil im Defizit mehr Eiweiß hilft, Muskeln zu halten. Ab 65 Jahren gilt mindestens 1,0 g/kg. Ab BMI 30 rechnet die Seite mit dem Gewicht bei BMI 25.",
+      "Über etwa 2,2 g/kg im Wochenschnitt zeigt die Studienlage kaum zusätzlichen Muskelzuwachs. Das ist die obere Grenze, kein fester Schwellenwert.",
+      "Nieren, Schwangerschaft, Stillzeit, Essstörung und unter 18: Menge und Kalorien mit einer Ärztin oder einem Arzt klären, die Seite ist dafür nicht gedacht.",
+      "Lebensmittelwerte sind grob gerundete Richtwerte, die Packungsangabe geht vor. Angaben aus Packungen und Listen sind auf etwa ±10 bis 20 % genau.",
       "Keine medizinische Beratung."
     ],
     quellen:[
-      "WHO/FAO/UNU: Protein and amino acid requirements in human nutrition (2007)",
-      "ISSN Position Stand: Protein and exercise (Jäger et al., 2017)",
-      "ACSM/AND/DC Position Stand: Nutrition and athletic performance (2016)",
-      "EFSA: Dietary Reference Values for protein (2012)",
-      "Mifflin et al.: A new predictive equation for resting energy expenditure (1990)"
+      "Joint WHO/FAO/UNU Expert Consultation: Protein and amino acid requirements in human nutrition, WHO TRS 935 (2007)",
+      "Jäger et al.: ISSN Position Stand: protein and exercise, J Int Soc Sports Nutr 14:20 (2017)",
+      "Thomas, Erdman, Burke: Position of the Academy of Nutrition and Dietetics, Dietitians of Canada and the American College of Sports Medicine: Nutrition and athletic performance, J Acad Nutr Diet 116:501 (2016)",
+      "Morton et al.: Protein supplementation and resistance training-induced gains in muscle mass and strength, meta-analysis, Br J Sports Med 52:376 (2018)",
+      "Schoenfeld, Aragon: How much protein can the body use in a single meal for muscle-building?, J Int Soc Sports Nutr 15:10 (2018)",
+      "EFSA NDA Panel: Scientific Opinion on Dietary Reference Values for protein, EFSA Journal 10(2):2557 (2012)",
+      "Mifflin et al.: A new predictive equation for resting energy expenditure in healthy individuals, Am J Clin Nutr 51:241 (1990)",
+      "Frankenfield et al.: Comparison of predictive equations for resting metabolic rate in healthy nonobese and obese adults, J Am Diet Assoc 105:775 (2005)",
+      "Helms et al.: Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation, J Int Soc Sports Nutr 11:20 (2014)",
+      "Bauer et al.: Evidence-based recommendations for optimal dietary protein intake in older people (PROT-AGE), J Am Med Dir Assoc 14:542 (2013)",
+      "FAO/WHO/UNU: Human energy requirements, FAO Food and Nutrition Technical Report 1 (2004)",
+      "Lebensmittelwerte: eigene Auswahl grob gerundeter Richtwerte, stichprobenartig abgeglichen mit USDA FoodData Central"
     ]
   },
   en: {
-    titel:"Protein", kachelSub:"Daily goal, calorie need, quick buttons", heute:"Today", von:"of {g} g", noch:"{g} g to go", erreicht:"Goal reached",
+    titel:"Protein Tracker", kachelSub:"Daily goal, calorie need, quick buttons", heute:"Today", von:"of {g} g", noch:"{g} g to go", erreicht:"Goal reached",
     rueck:"Undo", schnell:"Quick buttons", schnellHint:"",
     onbTitel:"Your needs", onbText:"For your protein goal and calorie need.",
     onbFertig:"Done", onbSpaeter:"Later", onbFehl:"Please enter at least your weight.", onbOffen:"Needs not set yet",
-    kcal:"Calorie need", kcalWert:"about {k} kcal per day · ±10 %", kcalHint:"",
+    kcal:"Calorie need", kcalWert:"Need about {k} kcal per day", kcalHint:"Estimate, 10–20 % deviation possible.",
+    kcalZiel:"Goal about {k} kcal per day", kcalErhalt:"Maintenance about {k} kcal · estimate, 10–20 % deviation possible.",
+    kcalMinder:"Under 18: no calorie estimate. Please talk to a doctor.",
+    zielTitel:"Goal", zielAb:"Lose weight", zielHalten:"Maintain", zielAuf:"Build",
+    sonder:"Pregnancy, breastfeeding, kidney disease or an eating disorder: please clarify goals with a doctor.",
     kcalOffen:"Height and age are missing for the calorie need.",
     bedarf:"My needs", bedarfHint:"", stufeTitel:"Protein goal per kg body weight",
     manuell:"Type in grams", manuellHint:"", manuellName:"Manual",
@@ -72,40 +88,48 @@ var PROT_T = {
     woche:"Last 7 days", schnitt:"Average on logged days", gkg:"in g/kg",
     fehlt:"On average {g} g a day are missing, about one skyr or shake.", ok:"Weekly average reaches the goal.",
     viel:"Above 2.2 g/kg on average: more brings little extra benefit.",
-    basis:"Basic", training:"Training", intensiv:"Intensive", basisS:"0.83 g/kg · WHO", trainS:"1.6 g/kg", intensivS:"2.0 g/kg",
-    proMahl:"per meal (0.3–0.4 g/kg)",
+    basis:"Basic", training:"Training", intensiv:"Intensive", basisS:"0.83 g/kg · WHO/EFSA", trainS:"1.6 g/kg", intensivS:"2.0 g/kg",
+    proMahl:"per meal (0.25–0.4 g/kg)",
     quelle:"",
     info:"How the page calculates",
     quellenTitel:"Sources",
     infoListe:[
-      "The daily total counts most.",
-      "Calories: basal rate (Mifflin-St Jeor) times activity, an estimate with about ±10 %.",
-      "Spread: 3 to 5 meals with 0.3 to 0.4 g/kg each are a bit better than all at once.",
-      "Timing: there is no window after training.",
-      "Above 2.2 g/kg on average, more brings little extra benefit.",
-      "Kidneys: with reduced function, clarify the amount with a doctor.",
-      "Values from packs and lists are about ±10 to 20 % accurate.",
+      "The daily total counts most. The levels 1.6 and 2.0 g/kg are our own choice within the ranges of the sources.",
+      "Calories: basal rate (Mifflin-St Jeor, from 18) times activity. This is the maintenance need; for one person 10 to 20 % deviation is possible. Losing weight uses about 15 % less, never below the basal rate and never below 1,500 (men), 1,200 (women) or 1,350 kcal; building about 8 % more. Without a sex entry the page uses the mean of both formulas; the activity factors follow FAO/WHO/UNU 2004.",
+      "Spread: 3 to 5 meals with about 0.25 to 0.4 g/kg each are considered sensible, the evidence is weak.",
+      "Timing: a narrow window after training is not necessary, the daily total counts most.",
+      "When losing weight the level rises to at least 2.0 g/kg, because in a deficit more protein helps keep muscle. From 65 the minimum is 1.0 g/kg. From BMI 30 the page uses the weight at BMI 25.",
+      "Above about 2.2 g/kg on average the studies show little extra muscle gain. That is the upper bound, not a fixed threshold.",
+      "Kidneys, pregnancy, breastfeeding, eating disorder and under 18: clarify amount and calories with a doctor, the page is not meant for this.",
+      "Food values are roughly rounded guide values, the pack comes first. Figures from packs and lists are about ±10 to 20 % accurate.",
       "No medical advice."
     ],
     quellen:[
-      "WHO/FAO/UNU: Protein and amino acid requirements in human nutrition (2007)",
-      "ISSN Position Stand: Protein and exercise (Jäger et al., 2017)",
-      "ACSM/AND/DC Position Stand: Nutrition and athletic performance (2016)",
-      "EFSA: Dietary Reference Values for protein (2012)",
-      "Mifflin et al.: A new predictive equation for resting energy expenditure (1990)"
+      "Joint WHO/FAO/UNU Expert Consultation: Protein and amino acid requirements in human nutrition, WHO TRS 935 (2007)",
+      "Jäger et al.: ISSN Position Stand: protein and exercise, J Int Soc Sports Nutr 14:20 (2017)",
+      "Thomas, Erdman, Burke: Position of the Academy of Nutrition and Dietetics, Dietitians of Canada and the American College of Sports Medicine: Nutrition and athletic performance, J Acad Nutr Diet 116:501 (2016)",
+      "Morton et al.: Protein supplementation and resistance training-induced gains in muscle mass and strength, meta-analysis, Br J Sports Med 52:376 (2018)",
+      "Schoenfeld, Aragon: How much protein can the body use in a single meal for muscle-building?, J Int Soc Sports Nutr 15:10 (2018)",
+      "EFSA NDA Panel: Scientific Opinion on Dietary Reference Values for protein, EFSA Journal 10(2):2557 (2012)",
+      "Mifflin et al.: A new predictive equation for resting energy expenditure in healthy individuals, Am J Clin Nutr 51:241 (1990)",
+      "Frankenfield et al.: Comparison of predictive equations for resting metabolic rate in healthy nonobese and obese adults, J Am Diet Assoc 105:775 (2005)",
+      "Helms et al.: Evidence-based recommendations for natural bodybuilding contest preparation: nutrition and supplementation, J Int Soc Sports Nutr 11:20 (2014)",
+      "Bauer et al.: Evidence-based recommendations for optimal dietary protein intake in older people (PROT-AGE), J Am Med Dir Assoc 14:542 (2013)",
+      "FAO/WHO/UNU: Human energy requirements, FAO Food and Nutrition Technical Report 1 (2004)",
+      "Food values: own selection of roughly rounded guide values, spot-checked against USDA FoodData Central"
     ]
   }
 };
 /* Schnellbuttons zum Start (Portion in g, Protein in g) */
 var PROT_START = [
   { n:"Skyr", a:500, p:55 }, { n:"Magerquark", a:250, p:30 }, { n:"Whey-Shake", a:30, p:24 }, { n:"Eier (3 Stk)", a:180, p:21 },
-  { n:"Hähnchenbrust", a:150, p:35 }, { n:"Linsen, gekocht", a:200, p:18 }, { n:"Haferflocken", a:80, p:11 }, { n:"Thunfisch (Dose)", a:130, p:32 }
+  { n:"Hähnchenbrust (roh)", a:150, p:35 }, { n:"Linsen, gekocht", a:200, p:18 }, { n:"Haferflocken", a:80, p:11 }, { n:"Thunfisch (abgetropft)", a:100, p:26 }
 ];
 /* Mitgelieferte Lebensmittel: „Name|Protein in g je 100 g“. Eigene Auswahl mit grob gerundeten Richtwerten; die Packungsangabe geht vor.
    Neue Einträge einfach als weitere Zeile anhängen. */
 var PROT_FOODS = ("Magerquark|12;Quark 20 % Fett|11;Skyr|11;Griechischer Joghurt 10 %|6;Naturjoghurt 3,5 %|4;Joghurt fettarm|4;Hüttenkäse|12;Frischkäse|6;Milch 1,5 %|3,4;Buttermilch|3,5;Kefir|3,5;"+
   "Gouda|25;Emmentaler|29;Mozzarella|18;Parmesan|36;Feta|15;Harzer Käse|30;Camembert|20;Proteinpudding|10;Sojadrink|3,3;Haferdrink|1;"+
-  "Whey-Pulver|80;Casein-Pulver|80;Erbsenprotein-Pulver|78;Proteinriegel|35;Protein-Shake fertig|15;"+
+  "Whey-Pulver|75;Casein-Pulver|80;Erbsenprotein-Pulver|78;Proteinriegel|35;Protein-Shake fertig|10;"+
   "Ei|13;Eiklar|11;"+
   "Hähnchenbrust, roh|23;Hähnchenschenkel|19;Putenbrust|24;Rinderhack, mager|21;Rindersteak|22;Schweinefilet|22;Schweinehack|17;Schinken, gekocht|20;"+
   "Putenaufschnitt|17;Salami|20;Leberkäse|12;Bratwurst|13;Lammfleisch|20;"+
@@ -137,19 +161,42 @@ function protKg(){
   var kd = koerperDaten();
   return kd ? kd.kg : (protDaten().kg || null);
 }
-function protZiel(){
-  var kg = protKg();
-  return kg ? Math.round(kg * protDaten().stufe) : 0;
+/* Ziel: "ab" abnehmen, "halten", "auf" aufbauen (Standard halten) */
+function protZielArt(){ var z = protDaten().ziel; return z === "ab" || z === "auf" ? z : "halten"; }
+/* Gewicht als Bezug fürs Proteinziel: ab BMI 30 das Gewicht bei BMI 25 (sonst wird der Bedarf überschätzt) */
+function protBezugKg(){
+  var kd = koerperDaten(), kg = protKg();
+  if(kd && kd.cm >= 120 && kd.cm <= 230){ var m = kd.cm / 100; if(kg / (m*m) > 30) return Math.round(25 * m*m * 10) / 10; }
+  return kg;
 }
-/* Grundumsatz nach Mifflin-St-Jeor; ohne Angabe zum Geschlecht der Mittelwert beider Formeln. Ohne Größe und Alter: 0 */
+/* Gramm pro kg: gewählte Stufe; beim Abnehmen mindestens 2,0 (im Defizit höher), ab 65 mindestens 1,0 */
+function protStufe(){
+  var st = protDaten().stufe, kd = koerperDaten();
+  if(protZielArt() === "ab") st = Math.max(st, 2);
+  if(kd && kd.alter >= 65) st = Math.max(st, 1);
+  return st;
+}
+function protZiel(){
+  var kg = protBezugKg();
+  return kg ? Math.round(kg * protStufe()) : 0;
+}
+/* Grundumsatz nach Mifflin-St-Jeor (an Erwachsenen geprüft: erst ab 18); ohne Angabe zum Geschlecht der Mittelwert beider Formeln. Ohne Größe und Alter: 0 */
 function protGrundumsatz(kd){
-  if(!kd || !(kd.cm >= 120 && kd.cm <= 230) || !(kd.alter >= 10)) return 0;
+  if(!kd || !(kd.cm >= 120 && kd.cm <= 230) || !(kd.alter >= 18)) return 0;
   return 10*kd.kg + 6.25*kd.cm - 5*kd.alter + (kd.sex === "m" ? 5 : kd.sex === "w" ? -161 : -78);
 }
-/* Kalorienbedarf = Grundumsatz × Aktivität (ohne Angabe 1,65), auf 50 kcal gerundet - eine Schätzung mit etwa ±10 % */
+/* Erhaltungsbedarf = Grundumsatz × Aktivität (ohne Angabe 1,55), auf 100 kcal gerundet - eine Schätzung, 10 bis 20 % Abweichung sind möglich */
 function protKcal(){
   var kd = koerperDaten(), b = protGrundumsatz(kd);
-  return b > 0 ? Math.round(b * (kd.pal || 1.65) / 50) * 50 : 0;
+  return b > 0 ? Math.round(b * (kd.pal || 1.55) / 100) * 100 : 0;
+}
+/* Tagesziel in kcal: halten = Erhaltung, aufbauen +8 %, abnehmen −15 % (nie unter dem Grundumsatz und nie unter 1.500 / 1.200 / 1.350 kcal, nie über der Erhaltung) */
+function protKcalZiel(){
+  var e = protKcal(), art = protZielArt(), kd = koerperDaten();
+  if(!e || art === "halten") return e;
+  if(art === "auf") return Math.round(e * 1.08 / 100) * 100;
+  var boden = Math.max(Math.round(protGrundumsatz(kd)), kd.sex === "m" ? 1500 : kd.sex === "w" ? 1200 : 1350);
+  return Math.min(e, Math.round(Math.max(e * 0.85, boden) / 100) * 100);
 }
 function protTag(key){ var p = protDaten(); return p.tage[key] || []; }
 function protSumme(eintraege){ return eintraege.reduce(function(a, e){ return a + e.p; }, 0); }
@@ -168,12 +215,14 @@ function protZeit(at){
 }
 /* Kopfkarte: Protein von Ziel, Balken, Kalorienbedarf - wird auch nach Änderung der Körperdaten allein neu gezeichnet */
 function protKopfHTML(summe){
-  var ziel = protZiel(), rest = ziel - summe, proz = ziel ? Math.min(100, Math.round(summe / ziel * 100)) : 0, kcal = protKcal(), kd = koerperDaten();
+  var ziel = protZiel(), rest = ziel - summe, proz = ziel ? Math.min(100, Math.round(summe / ziel * 100)) : 0, kcal = protKcalZiel(), erh = protKcal(), kd = koerperDaten();
+  var zahl = function(n){ return n.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE"); };
   return '<div class="prot-gross"><b>'+summe+' g</b>'+(ziel ? '<span>'+esc(protT("von", { g:ziel }))+'</span>' : '')+'</div>'+
     '<div class="prot-bar"><i style="width:'+proz+'%"></i></div>'+
     '<div class="prot-zeile">'+esc(ziel ? (rest > 0 ? protT("noch", { g:rest }) : protT("erreicht")) : protT("onbOffen"))+'</div>'+
-    (kcal ? '<div class="prot-kcal"><b>'+esc(protT("kcalWert", { k:kcal.toLocaleString(currentLang() === "en" ? "en-GB" : "de-DE") }))+'</b><small>'+esc(protT("kcalHint"))+'</small></div>'
-          : kd ? '<div class="prot-kcal"><small>'+esc(protT("kcalOffen"))+'</small></div>' : '');
+    (kcal ? '<div class="prot-kcal"><b>'+esc(protT(protZielArt() === "halten" ? "kcalWert" : "kcalZiel", { k:zahl(kcal) }))+'</b>'+
+              '<small>'+esc(protZielArt() === "halten" ? protT("kcalHint") : protT("kcalErhalt", { k:zahl(erh) }))+'</small></div>'
+          : kd ? '<div class="prot-kcal"><small>'+esc(protT(kd.alter > 0 && kd.alter < 18 ? "kcalMinder" : "kcalOffen"))+'</small></div>' : '');
 }
 function protKarte(key, titel, inhalt){
   return '<details class="prot-karte prot-info" data-pdet="'+key+'"'+(protOffen[key] ? ' open' : '')+'><summary>'+esc(titel)+'</summary>'+inhalt+'</details>';
@@ -190,8 +239,8 @@ function renderProtein(){
   }
   var max = Math.max.apply(null, [ziel, 1].concat(tage.map(function(x){ return x.sum; }))) * 1.1;
   var erfasst = tage.filter(function(x){ return x.n > 0; }), avg = erfasst.length ? Math.round(erfasst.reduce(function(a, x){ return a + x.sum; }, 0) / erfasst.length) : null;
-  var avgKg = avg && kg ? avg / kg : null, hinweis = "";
-  if(avgKg && avgKg > 2.2) hinweis = '<div class="prot-tip">'+esc(protT("viel"))+'</div>';
+  var bezug = protBezugKg(), avgKg = avg && bezug ? avg / bezug : null, hinweis = "";
+  if(avgKg && avgKg > (protZielArt() === "ab" ? 2.7 : 2.2)) hinweis = '<div class="prot-tip">'+esc(protT("viel"))+'</div>';
   else if(avg && ziel && avg >= ziel * 0.95) hinweis = '<div class="prot-tip">'+esc(protT("ok"))+'</div>';
   else if(avg && ziel) hinweis = '<div class="prot-tip">'+esc(protT("fehlt", { g:ziel - avg }))+'</div>';
   var saeulen = tage.map(function(x){
@@ -212,14 +261,18 @@ function renderProtein(){
       '<div class="prot-e-rechts">'+e.p+' g <button type="button" class="prot-x" data-pdel="'+esc(e.id)+'" aria-label="'+esc(protT("loeschen"))+'">×</button></div></div>';
   }).join("") : '<p class="prot-leer">'+esc(protT("leer"))+'</p>';
   var stufen = [["basis", 0.83, "basisS"], ["training", 1.6, "trainS"], ["intensiv", 2, "intensivS"]].map(function(x){
-    return '<button type="button" class="prot-stufe'+(p.stufe === x[1] ? ' an' : '')+'" data-pstufe="'+x[1]+'" aria-pressed="'+(p.stufe === x[1])+'">'+esc(protT(x[0]))+'<small>'+esc(protT(x[2]))+'</small></button>';
+    return '<button type="button" class="prot-stufe'+(protStufe() === x[1] ? ' an' : '')+'" data-pstufe="'+x[1]+'" aria-pressed="'+(protStufe() === x[1])+'">'+esc(protT(x[0]))+'<small>'+esc(protT(x[2]))+'</small></button>';
   }).join("");
-  var proMahl = kg ? '<p class="prot-hint-txt">'+esc(protT("proMahl"))+': '+Math.round(kg * 0.3)+'–'+Math.round(kg * 0.4)+' g</p>' : '';
+  var proMahl = bezug ? '<p class="prot-hint-txt">'+esc(protT("proMahl"))+': '+Math.round(bezug * 0.25)+'–'+Math.round(bezug * 0.4)+' g</p>' : '';
   var profilForm = koerperFormHTML(s, { ohneName:true });
+  var zielChips = '<h4>'+esc(protT("zielTitel"))+'</h4><div class="prot-stufen">'+[["ab", "zielAb"], ["halten", "zielHalten"], ["auf", "zielAuf"]].map(function(x){
+    return '<button type="button" class="prot-stufe'+(protZielArt() === x[0] ? ' an' : '')+'" data-pziel="'+x[0]+'" aria-pressed="'+(protZielArt() === x[0])+'">'+esc(protT(x[1]))+'</button>';
+  }).join("")+'</div>';
+  var sonder = '<p class="prot-hint-txt" style="margin-top:12px">'+esc(protT("sonder"))+'</p>';
   var onb = onboarding
-    ? '<section class="prot-karte prot-onb"><h3>'+esc(protT("onbTitel"))+'</h3><p class="prot-hint-txt">'+esc(protT("onbText"))+'</p>'+profilForm+
+    ? '<details class="prot-karte prot-onb prot-info" data-pdet="onb"'+(protOffen.onb === false ? '' : ' open')+'><summary>'+esc(protT("onbTitel"))+'</summary><p class="prot-hint-txt">'+esc(protT("onbText"))+'</p>'+profilForm+zielChips+sonder+
       '<div class="prot-onb-knoepfe"><button type="button" class="prot-btn" data-ponbfertig>'+esc(protT("onbFertig"))+'</button>'+
-      '<button type="button" class="prot-btn ghost" data-ponbspaeter>'+esc(protT("onbSpaeter"))+'</button></div></section>' : '';
+      '<button type="button" class="prot-btn ghost" data-ponbspaeter>'+esc(protT("onbSpaeter"))+'</button></div></details>' : '';
   var eigenes =
     '<h4>'+esc(protT("manuell"))+'</h4><p class="prot-hint-txt">'+esc(protT("manuellHint"))+'</p>'+
     '<div class="prot-form"><div class="voll"><label>'+esc(protT("name"))+'</label><input id="pManN" maxlength="40"></div>'+
@@ -240,12 +293,10 @@ function renderProtein(){
   var woche = '<div class="prot-wochen">'+saeulen+linie+'</div>'+
     '<div class="prot-gross" style="margin-top:14px"><span>'+esc(protT("schnitt"))+'</span></div>'+
     '<div class="prot-gross"><b>'+(avg ? avg : '–')+' g</b>'+(avgKg ? '<span>'+avgKg.toFixed(2).replace('.', ',')+' '+esc(protT("gkg"))+'</span>' : '')+'</div>'+hinweis+verteil;
-  var bedarf = '<p class="prot-hint-txt">'+esc(protT("bedarfHint"))+'</p>'+(onboarding ? '' : profilForm)+
-    '<h4>'+esc(protT("stufeTitel"))+'</h4><div class="prot-stufen">'+stufen+'</div>'+proMahl+
-    '<p class="prot-hint-txt">'+esc(protT("quelle"))+'</p>';
+  var bedarf = '<p class="prot-hint-txt">'+esc(protT("bedarfHint"))+'</p>'+(onboarding ? '' : profilForm+zielChips)+
+    '<h4>'+esc(protT("stufeTitel"))+'</h4><div class="prot-stufen">'+stufen+'</div>'+proMahl+sonder;
   app.innerHTML = topbar(protT("titel"), { back:"#training", right:kopfSymboleNeu("training") }) +
     '<div class="prot-seite">'+
-      '<div class="prot-bild" role="img" aria-label="'+esc(protT("titel"))+'"></div>'+
       onb+
       '<section class="prot-karte prot-heute" aria-label="'+esc(protT("heute"))+'"><div id="pKopf">'+protKopfHTML(summe)+'</div>'+
         '<button type="button" class="prot-rueck" data-prueck'+(eint.length ? '' : ' disabled')+'>'+esc(protT("rueck"))+'</button></section>'+
@@ -365,6 +416,9 @@ function renderProtein(){
     if(!n || !(a > 0) || !(per > 0)){ showToast(protT("fehlEingabe")); return; }
     protDaten().knoepfe.unshift({ id:uid(), n:n, a:Math.round(a), p:Math.round(a * per / 100), nutz:0 });
     save(); neu();
+  });
+  app.querySelectorAll("[data-pziel]").forEach(function(b){
+    b.addEventListener("click", function(){ protDaten().ziel = b.getAttribute("data-pziel"); save(); neu(); });
   });
   app.querySelectorAll("[data-pstufe]").forEach(function(b){
     b.addEventListener("click", function(){ protDaten().stufe = +b.getAttribute("data-pstufe"); save(); neu(); });

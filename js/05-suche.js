@@ -311,6 +311,7 @@ function renderTraining(){
   app.querySelectorAll(".training-seite .area-tile[data-bereich]").forEach(function(el){
     var k = el.getAttribute("data-bereich");
     if(k === "faq"){ el.style.backgroundImage = "url(img/neu-faq.jpg)"; el.style.backgroundPosition = "50% 55%"; return; }
+    if(k === "protein"){ el.style.backgroundImage = "url(img/neu-protein.jpg)"; el.style.backgroundPosition = "50% 27%"; return; }   // Hände mit den Eierschalen
     if(fotos[k]){ el.style.backgroundImage = "url(" + fotos[k] + ")"; var fk = fotoFokus(fotos[k]); if(fk) el.style.backgroundPosition = fk; }
   });
   app.querySelectorAll("[data-bereich]:not([data-bereich=\"faq\"])").forEach(function(el){ langDruck(el, openBereicheSheet); });

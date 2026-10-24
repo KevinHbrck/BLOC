@@ -242,7 +242,7 @@ function einstMehr(key, titel, unter, inhalt, ico, cls){
     '<div class="om-inhalt">'+inhalt+'</div></details>';
 }
 /* Körperdaten (optional) für die Kalorien-Schätzung in der Statistik; nur lokal in den Einstellungen */
-var KOERPER_PAL = [[1.2, "koerperPal1"], [1.45, "koerperPal2"], [1.65, "koerperPal3"], [1.9, "koerperPal4"]];   // Aktivitätsfaktor (PAL) für den Gesamtbedarf; mehr in js/23-protein.js
+var KOERPER_PAL = [[1.4, "koerperPal1"], [1.55, "koerperPal2"], [1.75, "koerperPal3"], [2, "koerperPal4"]];   // Aktivitätsfaktor (PAL) für den Gesamtbedarf; mehr in js/23-protein.js
 function koerperFormHTML(s, opt){
   var k = s.koerper || {};
   opt = opt || {};
