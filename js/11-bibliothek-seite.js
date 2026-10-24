@@ -128,7 +128,8 @@ function libWoCard(lw, exs, hidden, dur, mains){
    Tippen = Übungsinfo (eigene Übung: bearbeiten), ▶ unten links = starten, ☆ = merken, lange drücken = in Workout oder Plan legen;
    unten rechts auf der Figur das Gerät, falls eines gebraucht wird. */
 function libExKachel(ex){
-  var g = ex.equip[0], geraet = g && g !== "none" && EQUIP_ICON[g]
+  var g = ex.equip[0], mobil = exIsMobility(ex.id) || AUFWAERM_IDS.indexOf(ex.id) > -1;   // Mobility & Stretch: ohne Geräte-Symbol (2026-10-24)
+  var geraet = !mobil && g && g !== "none" && EQUIP_ICON[g]
     ? '<span class="air-gear" aria-label="'+esc(exEquipText(ex))+'">'+svgIcon(EQUIP_ICON[g])+'</span>' : '';   // Kurzhantel, Kettlebell, Stange, Dip-Barren; ohne Geräte nichts
   return uebKachel({ bild:ex.id, name:tplText(ex.name), attr:(ex.custom ? 'data-exedit="' : 'data-info="')+ex.id+'" data-exlang="'+ex.id+'"', q:exSearchText(ex),
     cat:'var(--bereich, '+catVar(ex.cats[0])+')', klasse:'air-kachel', ico:ex.custom ? catIcon(ex.cats[0]) : "",

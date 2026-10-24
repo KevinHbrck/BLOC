@@ -352,6 +352,7 @@ function render(){
   if(route==="home") return renderHome();
   if(route==="training") return renderTraining();
   if(route==="faq") return renderFaq();
+  if(route==="protein") return renderProtein();
   if(route==="satz") return renderSatzTraining(parts[1], parts[2]);
   if(route==="warmstretch") return renderWarmStretch();
   if(route==="kalender"){ renderKalender(); setTimeout(kalHeuteSichtbar, 80); return; }   // go() setzt danach nach oben: erst dann den heutigen Tag ins Bild holen

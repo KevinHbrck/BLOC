@@ -3,6 +3,16 @@
 Kurze Notizen zu den **letzten Änderungen** (ab 2026-10-05), jeweils mit der Fassung. Ältere Einträge stehen im
 [Archiv](docs/VERLAUF-Archiv.md). Den **aktuellen** Stand beschreibt die [README](README.md).
 
+## 2026-10-24 · Protein-Tracker, Tools, ruhigerer Dunkel-Hintergrund (Fassung 2026-10-24-1)
+
+- **Protein** (neu, js/23-protein.js, Kachel unter Tools): Tagessumme als Hauptanzeige, Ziel nach Körpergewicht und Stufe (Basis 0,83 · Training 1,6 · Intensiv 2,0 g/kg), Schnellbuttons mit einem Tipp (Langdruck: Portion ½ / 1 / 1,5 / 2 ×), eigene Buttons (Protein je 100 g), Kombi-Buttons, mitgelieferte Lebensmittelliste mit Suche, Gramm-Eingabe, Rückgängig, Verteilung morgens/mittags/abends, Wochenblick mit Schnitt in g/kg und dezentem Hinweis ab 2,2 g/kg. Alles lokal in `settings.protein`; keine Erinnerung ums Training, keine rote Warnung; Texte in eigenen Worten.
+- **Training heißt jetzt Tools**; die Kacheln heißen Workout-Builder und Mobility & Stretch-Builder (`tileWorkout`, `tileWarm`).
+- **Dunkel**: Hintergrund ruhiger (`brightness` .66 → .52, Abdunklung 10 → 20 %); die Timer-Seite (Blöcke bauen) bekommt denselben Hintergrund (`.run-bg.timer-bg`). Laufender Timer, Satz-Training und Run bleiben unverändert.
+- **Kopf auf Heute**: Logo und Einstellungs-Icons ca. 2 mm tiefer.
+- **Mobility & Stretch**: keine Geräte-Symbole mehr auf den Übungskacheln.
+- **Satz-Training**: Wischen wechselt die Übung zusätzlich per Touch-Auswertung (`touchstart`/`touchend`), falls der Browser das Scrollen nicht übernimmt.
+- Tests: Schnelltest 45/45, Einheitstest 59/59 (Protein-Rechnung neu, Tools-Beschriftung und Kachelzahl angepasst).
+
 ## 2026-10-23 (abends) · Favoriten entfernen per Langdruck, breiterer Kopfstreifen (Fassung 2026-10-23-10)
 
 - **Favoriten auf Heute**: langes Drücken (0,5 s) auf eine Kachel fragt „Aus Favoriten entfernen?“ und entfernt sie nach Bestätigung (`langDruck` + `confirmSheet` in `bindFavItems`, js/09-studio-karte.js; Texte `favEntfernen*`). Das Workout selbst bleibt erhalten.

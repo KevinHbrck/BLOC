@@ -6,6 +6,7 @@ var HOME_ICON = {
   lib:'<path d="M3 8.5h10a3 3 0 1 0-3-3"/><path d="M3 12.5h15a3 3 0 1 1-3 3"/><path d="M3 16.5h6"/>',   /* Air: Wind (Menüs beim langen Drücken) */
   katalog:'<path d="M4.5 19.5L19.5 4.5"/><path stroke-width="3.2" d="M4.6 13.4l6 6M13.4 4.6l6 6"/><path stroke-width="3.2" d="M3.2 16.2l4.6 4.6M16.2 3.2l4.6 4.6"/>',   /* Workout: schräge Kurzhantel mit je zwei Scheiben (Katalog und Baukasten) */
   warm:'<circle cx="19" cy="5.6" r="2.6" fill="currentColor" stroke="none"/><path d="M3.5 18H10.2L16.2 9.2M16.2 9.5V18"/><path d="M3 21.5H21"/>',   /* Mobility & Stretch: Figur liegt auf dem Boden und drückt den Oberkörper nach oben (Kobra); klare Linien, Kopf gefüllt, damit es auch klein scharf bleibt */
+  protein:'<path d="M12 3.5c3.2 4.1 5.5 7.3 5.5 10.3a5.5 5.5 0 0 1-11 0c0-3 2.3-6.2 5.5-10.3z"/><path d="M9.2 14.2a2.8 2.8 0 0 0 2.8 2.8"/>',   /* Protein: Tropfen */
   faq:'<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9M12 16.6v.1"/>',
   run:'<circle cx="14" cy="4.5" r="2"/><path d="M6 21l3-6 3 2v5M9 15l1-4 4-1 2 3 3 1M10 11L8 8"/>'   /* Lauf: Läufer */
 };
@@ -26,11 +27,11 @@ var BEREICH_KEYS = ["lib", "timer", "intervall", "run", "warm"];   // Bereiche i
 var HOME_KEYS = ["katalog", "warm", "intervall", "run"];   // Startseite, Sortierung, Fokus: Air und Studio sind der Katalog
 var HOME_GROSS = ["katalog"];   // steht fest vorn (nicht sortierbar): der Kopfblock (heroNeuHTML) führt dorthin, und Workout hat zusätzlich die erste Kachel unter „Weitere Bereiche“
 function bereichDaten(k){
-  if(k === "katalog") return ["#katalog", t("katalog"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
+  if(k === "katalog") return ["#katalog", t("tileWorkout"), t("htKatalog", { w:LIB_WORKOUTS.filter(function(lw){ return !libIstWarmDehn(lw); }).length,
     e:EXERCISES.filter(function(ex){ return !ex.custom && ex.main !== "stretch"; }).length }), "var(--accent)"];
   if(k === "intervall"){ var tw = state.db.workouts.length, tb = state.db.blocks.length; return ["#intervall", t("tabTimer"), tw || tb ? t("tmQuick", { w:tw, b:tb }) : t("tmQuickLeer"), "var(--ti-color)"]; }
   if(k === "run") return ["#run", t("runTitle"), run ? t("runLaeuft", { km:runKm(run.dist) }) : t("runTeaser"), "var(--run-color, #e5573f)"];
-  return ["#warmstretch", t("warmTitle"), t("htWarm", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length }), "var(--ws-color)"];
+  return ["#warmstretch", t("tileWarm"), t("htWarm", { p:LIB_WORKOUTS.filter(libIstWarmDehn).length }), "var(--ws-color)"];
 }
 /* Gespeicherte Reihenfolgen kennen noch „lib“ (Air) und „timer“ (Studio): beide stehen jetzt als „katalog“ an der Stelle des ersten */
 function bereichReihe(){

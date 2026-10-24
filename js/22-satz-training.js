@@ -198,6 +198,19 @@ function renderSatzTraining(planId, start){
   }
   function geheZu(i, weich){ i = clamp(i, 0, ids.length - 1); wisch.scrollTo({ left:i*breite(), behavior:weich ? "smooth" : "auto" }); nr(i); }
   wisch.addEventListener("scroll", function(){ nr(clamp(Math.round(wisch.scrollLeft/breite()), 0, ids.length - 1)); });
+  /* Wischen (2026-10-24 wieder sicher): ein waagerechter Wisch wechselt genau eine Übung. Der Browser scrollt die Karten ohnehin; hier wird nur
+     auf die Übung gesprungen, die beim Loslassen dran ist - auch wenn das Scrollen nicht greift. Starts auf Knöpfen und Eingaben zählen nicht. */
+  var wx0 = 0, wy0 = 0, wVon = -1;
+  wisch.addEventListener("touchstart", function(e){
+    wVon = e.touches.length === 1 && !e.target.closest("input, select, textarea, button") ? (aktuell < 0 ? 0 : aktuell) : -1;
+    wx0 = e.touches[0].clientX; wy0 = e.touches[0].clientY;
+  }, { passive:true });
+  wisch.addEventListener("touchend", function(e){
+    if(wVon < 0) return;
+    var t1 = e.changedTouches[0], dx = t1.clientX - wx0, dy = t1.clientY - wy0;
+    if(Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)*0.8) return;
+    geheZu(wVon + (dx < 0 ? 1 : -1), true); wVon = -1;
+  }, { passive:true });
   root.querySelectorAll("[data-satzgo]").forEach(function(b){ b.addEventListener("click", function(){ geheZu(+b.getAttribute("data-satzgo"), true); }); });
   function raus(){ studioPauseStop(); if(satzUhr){ clearInterval(satzUhr); satzUhr = 0; } if(programmKontextFuer("plan:"+p.id)) go("#koerper"); else goBack("#katalog"); }
   root.querySelector("[data-satzexit]").addEventListener("click", raus);

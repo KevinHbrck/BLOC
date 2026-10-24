@@ -589,8 +589,8 @@ function runHoehenlinien(){
 /* Run (vor dem Start) und Timer-Seite: im Dunkel mit dem Foto-Hintergrund, im Hellen wie Workout und Mobility & Stretch (heller Grund, Felder wie sie sind).
    Das laufende Training (Lauf, Timer, Satz-Training) behält in beiden Modi seinen dunklen Hintergrund. */
 function runSeitenHintergrundHTML(){ return themeIstDunkel() ? runHintergrundHTML() : ""; }
-function runHintergrundHTML(){
-  return '<div class="run-bg" aria-hidden="true"><i style="background-image:url('+"img/neu-p-freiluft-meer.jpg"+')"></i>'+'</div>';
+function runHintergrundHTML(klasse){
+  return '<div class="run-bg'+(klasse ? ' '+klasse : '')+'" aria-hidden="true"><i style="background-image:url('+"img/neu-p-freiluft-meer.jpg"+')"></i>'+'</div>';
 }
 /* Strecke mit Zwischenwerten (Modern, Lauf-Details): weiße Linie, Punkte bei jedem Kilometer, daran kleine Glas-Chips „1 km · 5:44“ */
 function runStreckeNeu(x){

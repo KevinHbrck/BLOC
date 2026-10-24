@@ -154,7 +154,7 @@
       klick("[data-introweg]");
       pruefe(!$("#overlayRoot .intro-sheet"), "„Überspringen“ schließt nicht");
     }],
-    ["Startseite: Foto-Kopf, Meine Woche, Workout-Builder; die Bereiche stehen auf „Training“", async function () {
+    ["Startseite: Foto-Kopf, Meine Woche, Workout-Builder; die Bereiche stehen auf „Tools“", async function () {
       await heim();
       pruefe($(".kopf-neu") && $(".woche-neu .woche") && $(".builder-neu"), "Kopf, Wochenkarte und Workout-Builder fehlen");
       pruefe(!$$(".area-tile").length, "Bereichs-Kacheln stehen nicht mehr auf Heute");
@@ -168,9 +168,9 @@
       klick('#tabbar [data-nav="#training"]');
       await bis(function () { return $(".training-seite .area-tile"); }, 3000, "Seite Training");
       var bereiche = $$(".training-seite .area-tile[data-bereich]").map(function (e) { return e.getAttribute("data-bereich"); }).join(",");
-      pruefe(bereiche === "katalog,warm,intervall,run,faq", "Workout, Mobility & Stretch, Timer, Run und Fragen auf Training: " + bereiche);
+      pruefe(bereiche === "katalog,warm,intervall,run,protein,faq", "Workout, Mobility & Stretch, Timer, Run, Protein und Fragen auf Tools: " + bereiche);
       pruefe($('.area-tile[data-bereich="intervall"][data-nav="#intervall"]') && $('.area-tile[data-bereich="katalog"][data-nav="#katalog"]'), "Timer und Workout fehlen als Bereich auf Training");
-      pruefe($("#tabbar .tab.active") && /Training/.test($("#tabbar .tab.active").textContent), "In der Leiste soll „Training“ markiert sein");
+      pruefe($("#tabbar .tab.active") && /Tools/.test($("#tabbar .tab.active").textContent), "In der Leiste soll „Tools“ markiert sein");
       // Workout führt direkt in den Baukasten
       zuWorkout();
       await bis(function () { return W.location.hash === "#katalog" && $('[data-kattab="baukasten"].active') && $(".ort-foto"); }, 3000, "Workout öffnet den Baukasten");
@@ -1152,7 +1152,7 @@
       var body = W.getComputedStyle(W.document.body).color;
       W.go("#training");
       await bis(function () { return $(".training-seite .area-tile"); }, 3000, "Seite Training");
-      pruefe($$(".training-seite .area-tile").length === 5, "Training zeigt fünf Bereiche");
+      pruefe($$(".training-seite .area-tile").length === 6, "Tools zeigt sechs Bereiche");
       pruefe(true, "(Symbole der Startseite: entfällt) Mobility & Stretch in Grün und Workout in Orange)");
       zuWorkout();
       await zuKatalogTab();

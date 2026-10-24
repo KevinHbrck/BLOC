@@ -478,6 +478,21 @@
       gleich(W.koerperDaten().kg, 70, "gültiges Gewicht");
     } finally { s.koerper = alt; }
   });
+  test("Protein: Ziel nach Gewicht und Stufe, Tagessumme, Schnellbuttons nach Nutzung", function () {
+    var s = W.state.db.settings, alt = s.protein, altK = s.koerper;
+    try {
+      s.koerper = {};
+      s.protein = { stufe: 1.6, kg: 80, knoepfe: [{ id: "a", n: "A", a: 100, p: 10, nutz: 0 }, { id: "b", n: "B", a: 100, p: 30, nutz: 2 }], tage: {} };
+      gleich(W.protZiel(), 128, "80 kg × 1,6 g/kg");
+      s.protein.stufe = 0.83; gleich(W.protZiel(), 66, "Basis: 80 × 0,83");
+      s.protein.stufe = 1.6;
+      W.protEintragen("Test", 25, 100);
+      gleich(W.protSumme(W.protTag(W.kalTagKey(Date.now()))), 25, "Summe heute");
+      gleich(W.protKnoepfe()[0].id, "b", "häufig genutzter Button steht vorn");
+      s.protein.kg = 0; s.koerper = {};
+      gleich(W.protZiel(), 0, "ohne Gewicht kein Ziel");
+    } finally { s.protein = alt; s.koerper = altK; }
+  });
   test("Statistik: Fortschritt je Übung (erstes gegen bestes Gewicht, ohne Gewicht Wiederholungen, nur ab zwei Einheiten)", function () {
     var s = W.state.db.settings, alt = s.studio, tag = 86400000, n = Date.now();
     try {
